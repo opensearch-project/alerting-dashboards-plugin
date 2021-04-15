@@ -13,7 +13,7 @@
  *   permissions and limitations under the License.
  */
 
-import { schema } from '@kbn/config-schema';
+import { schema } from '@osd/config-schema';
 
 export default function (services, router) {
   const { elasticsearchService } = services;

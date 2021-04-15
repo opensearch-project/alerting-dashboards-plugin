@@ -71,7 +71,7 @@ export function triggerToFormik(trigger, monitor) {
     anomalyDetector: {
       /*If trigger type doesn't exist fallback to query trigger with following reasons
         1. User has changed monitory type from normal monitor to AD monitor.
-        2. User has created / updated from API and visiting Kibana to do other operations.
+        2. User has created / updated from API and visiting OpenSearchDashboards to do other operations.
       */
       triggerType: triggerType ? triggerType : TRIGGER_TYPE.ALERT_TRIGGER,
       anomalyGradeThresholdValue,

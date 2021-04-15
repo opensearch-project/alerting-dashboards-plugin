@@ -1,19 +1,20 @@
 {
   "name": "opendistro-alerting",
   "version": "1.13.0.0",
-  "description": "Kibana Alerting Plugin",
+  "description": "OpenSearch Dashboards Alerting Plugin",
   "main": "index.js",
   "license": "Apache-2.0",
-  "homepage": "https://github.com/opendistro-for-elasticsearch/alerting-kibana-plugin",
+  "homepage": "https://github.com/opensearch-project/alerting-dashboards-plugin",
   "repository": {
     "type": "git",
-    "url": "https://github.com/opendistro-for-elasticsearch/alerting-kibana-plugin"
+    "url": "https://github.com/opensearch-project/alerting-dashboards-plugin"
   },
   "config": {
-    "id": "opendistroAlertingKibana"
+    "id": "opendistroAlertingOpenSearchDashboards"
   },
   "scripts": {
-    "kbn": "node ../../scripts/kbn",
+    "osd": "node ../../scripts/osd",
+    "opensearch": "node ../../scripts/opensearch",
     "lint": "../../node_modules/.bin/eslint '**/*.js' -c .eslintrc --ignore-path .gitignore",
     "test:jest": "../../node_modules/.bin/jest --config ./test/jest.config.js",
     "build": "yarn plugin-helpers build",
@@ -26,6 +27,8 @@
     }
   },
   "devDependencies": {
+    "@elastic/elastic-eslint-config-kibana": "link:../../packages/opensearch-eslint-config-opensearch-dashboards",
+    "@elastic/eslint-import-resolver-kibana": "link:../../packages/osd-eslint-import-resolver-opensearch-dashboards",
     "cypress": "^6.0.0",
     "husky": "^3.0.0",
     "lint-staged": "^9.2.0"

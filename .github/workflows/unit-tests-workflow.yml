@@ -9,43 +9,43 @@ jobs:
     name: Run unit tests
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout Alerting Kibana plugin
+      - name: Checkout Alerting OpenSearchDashboards plugin
         uses: actions/checkout@v2
         with:
-          path: alerting-kibana-plugin
-      - name: Get Kibana version
-        id: kibana_version
+          path: alerting-dashboards-plugin
+      - name: Get OpenSearchDashboards version
+        id: opensearch_dashboards_version
         run: |
-          echo "::set-output name=kibana_version::$(node -p "(require('./alerting-kibana-plugin/kibana.json').kibanaVersion).match(/[.0-9]+/)[0]")"
-      - name: Checkout Kibana
+          echo "::set-output name=opensearch_dashboards_version::$(node -p "(require('./alerting-dashboards-plugin/opensearch_dashboards.json').opensearchDashboardsVersion).match(/[.0-9]+/)[0]")"
+      - name: Checkout OpenSearchDashboards
         uses: actions/checkout@v2
         with:
-          repository: opendistro-for-elasticsearch/kibana-oss
-          ref: ${{ steps.kibana_version.outputs.kibana_version }}
-          token: ${{ secrets.GITHUB_KIBANA_OSS }}
-          path: kibana
+          repository: opensearch-project/OpenSearch-Dashboards
+          ref: ${{ steps.opensearch_dashboards_version.outputs.opensearch_dashboards_version }}
+          token: ${{ secrets.GITHUB_OPENSEARCH_DASHBOARDS_OSS }}
+          path: opensearchDashboards
       - name: Get node and yarn versions
         id: versions_step
         run: |
-          echo "::set-output name=node_version::$(node -p "(require('./kibana/package.json').engines.node).match(/[.0-9]+/)[0]")"
-          echo "::set-output name=yarn_version::$(node -p "(require('./kibana/package.json').engines.yarn).match(/[.0-9]+/)[0]")"
+          echo "::set-output name=node_version::$(node -p "(require('./OpenSearch-Dashboards/package.json').engines.node).match(/[.0-9]+/)[0]")"
+          echo "::set-output name=yarn_version::$(node -p "(require('./OpenSearch-Dashboards/package.json').engines.yarn).match(/[.0-9]+/)[0]")"
       - name: Setup node
         uses: actions/setup-node@v1
         with:
           node-version: ${{ steps.versions_step.outputs.node_version }}
           registry-url: 'https://registry.npmjs.org'
-      - name: Install correct yarn version for Kibana
+      - name: Install correct yarn version for OpenSearchDashboards
         run: |
           npm uninstall -g yarn
           echo "Installing yarn ${{ steps.versions_step.outputs.yarn_version }}"
           npm i -g yarn@${{ steps.versions_step.outputs.yarn_version }}
-      - name: Bootstrap plugin/kibana
+      - name: Bootstrap plugin/opensearch-dashboards
         run: |
-          mkdir -p kibana/plugins
-          mv alerting-kibana-plugin kibana/plugins
-          cd kibana/plugins/alerting-kibana-plugin
-          yarn kbn bootstrap
+          mkdir -p Opensearch-Dashboards/plugins
+          mv alerting-dashboards-plugin Opensearch-Dashboards/plugins
+          cd Opensearch-Dashboards/plugins/alerting-dashboards-plugin
+          yarn osd bootstrap
       - name: Run tests
         run: |
-          cd kibana/plugins/alerting-kibana-plugin
+          cd Opensearch-Dashboards/plugins/alerting-dashboards-plugin
           yarn run test:jest

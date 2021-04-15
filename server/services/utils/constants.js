@@ -22,7 +22,7 @@ export const EMAIL_GROUP_BASE_API = `${DESTINATION_BASE_API}/email_groups`;
 export const DEFAULT_HEADERS = {
   'Content-Type': 'application/json',
   Accept: 'application/json',
-  'User-Agent': 'Kibana',
+  'User-Agent': 'OpenSearchDashboards',
 };
 export const CLUSTER = {
   ADMIN: 'admin',

@@ -24,7 +24,7 @@ export class AlertingPlugin {
     core.application.register({
       id: PLUGIN_NAME,
       title: 'Alerting',
-      description: 'Kibana Alerting Plugin',
+      description: 'OpenSearchDashboards Alerting Plugin',
       category: {
         id: 'odfe',
         label: 'Open Distro for Elasticsearch',

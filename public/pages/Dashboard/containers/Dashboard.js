@@ -22,7 +22,7 @@ import ContentPanel from '../../../components/ContentPanel';
 import DashboardEmptyPrompt from '../components/DashboardEmptyPrompt';
 import DashboardControls from '../components/DashboardControls';
 import { columns } from '../utils/tableUtils';
-import { KIBANA_AD_PLUGIN } from '../../../utils/constants';
+import { OPENSEARCH_DASHBOARDS_AD_PLUGIN } from '../../../utils/constants';
 import { backendErrorNotification } from '../../../utils/helpers';
 
 const DEFAULT_PAGE_SIZE_OPTIONS = [5, 10, 20, 50];
@@ -326,7 +326,10 @@ export default class Dashboard extends Component {
       const actions = [<EuiButton onClick={this.acknowledgeAlert}>Acknowledge</EuiButton>];
       if (detectorIds.length) {
         actions.unshift(
-          <EuiButton href={`${KIBANA_AD_PLUGIN}#/detectors/${detectorIds[0]}`} target="_blank">
+          <EuiButton
+            href={`${OPENSEARCH_DASHBOARDS_AD_PLUGIN}#/detectors/${detectorIds[0]}`}
+            target="_blank"
+          >
             View detector <EuiIcon type="popout" />
           </EuiButton>
         );
