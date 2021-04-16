@@ -20,7 +20,7 @@ import { AlertingPageProvider } from './pageObjects';
 // the default export of config files must be a config provider
 // that returns an object with the projects config values
 export default async function ({ readConfigFile }) {
-  // read the OpenSearchDashboards config file so that we can utilize some of
+  // read the OpenSearch Dashboards config file so that we can utilize some of
   // its services and PageObjects
   const openSearchDashboardsConfig = await readConfigFile(
     resolveOpenSearchDashboardsPath('test/functional/config.js')
@@ -37,7 +37,7 @@ export default async function ({ readConfigFile }) {
     },
     servers: openSearchDashboardsConfig.get('servers'),
     // just like services, PageObjects are defined as a map of
-    // names to Providers. Merge in OpenSearchDashboards's or pick specific ones
+    // names to Providers. Merge in OpenSearch Dashboards's or pick specific ones
     pageObjects: {
       ...openSearchDashboardsConfig.get('pageObjects'),
       alertingCommon: AlertingPageProvider,
@@ -46,7 +46,7 @@ export default async function ({ readConfigFile }) {
     // the apps section defines the urls that
     // `PageObjects.common.navigateTo(appKey)` will use.
     // Merge urls for your plugin with the urls defined in
-    // OpenSearchDashboards's config in order to use this helper
+    // OpenSearch Dashboards's config in order to use this helper
     apps: {
       ...openSearchDashboardsConfig.get('apps'),
       alerting: {

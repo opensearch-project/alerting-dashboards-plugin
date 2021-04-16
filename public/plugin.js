@@ -24,7 +24,7 @@ export class AlertingPlugin {
     core.application.register({
       id: PLUGIN_NAME,
       title: 'Alerting',
-      description: 'OpenSearchDashboards Alerting Plugin',
+      description: 'OpenSearch Dashboards Alerting Plugin',
       category: {
         id: 'odfe',
         label: 'OpenSearch',

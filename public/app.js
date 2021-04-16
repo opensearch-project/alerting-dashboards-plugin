@@ -18,7 +18,7 @@ import ReactDOM from 'react-dom';
 import { HashRouter as Router, Route } from 'react-router-dom';
 
 import 'react-vis/dist/style.css';
-// TODO: review the CSS style and migrate the necessary style to SASS, as Less is not supported in OpenSearchDashboards "new platform" anymore
+// TODO: review the CSS style and migrate the necessary style to SASS, as Less is not supported in OpenSearch Dashboards "new platform" anymore
 // import './less/main.less';
 import Main from './pages/Main';
 import { CoreContext } from './utils/CoreContext';

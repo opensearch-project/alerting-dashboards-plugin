@@ -7,18 +7,18 @@ on:
 
 jobs:
   build:
-    name: Build Alerting OpenSearchDashboards
+    name: Build Alerting OpenSearch Dashboards
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout Alerting OpenSearchDashboards plugin
+      - name: Checkout Alerting OpenSearch Dashboards plugin
         uses: actions/checkout@v2
         with:
           path: alerting-dashboards-plugin
-      - name: Get OpenSearchDashboards version
+      - name: Get OpenSearch Dashboards version
         id: opensearch_dashboards_version
         run: |
           echo "::set-output name=opensearch_dashboards_version::$(node -p "(require('./alerting-dashboards-plugin/opensearch_dashboards.json').opensearchDashboardsVersion).match(/[.0-9]+/)[0]")"
-      - name: Checkout OpenSearchDashboards
+      - name: Checkout OpenSearch Dashboards
         uses: actions/checkout@v2
         with:
           repository: opensearch-project/OpenSearch-Dashboards
@@ -35,7 +35,7 @@ jobs:
         with:
           node-version: ${{ steps.versions.outputs.node_version }}
           registry-url: 'https://registry.npmjs.org'
-      - name: Install correct yarn version for OpenSearchDashboards
+      - name: Install correct yarn version for OpenSearch Dashboards
         run: |
           npm uninstall -g yarn
           echo "Installing yarn ${{ steps.versions_step.outputs.yarn_version }}"

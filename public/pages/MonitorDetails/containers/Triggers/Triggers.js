@@ -41,7 +41,7 @@ export default class Triggers extends Component {
 
   componentWillReceiveProps(nextProps, nextContext) {
     if (this.props.monitor !== nextProps.monitor) {
-      // In the React version OpenSearchDashboards uses there is a bug regarding getDerivedStateFromProps
+      // In the React version OpenSearch Dashboards uses there is a bug regarding getDerivedStateFromProps
       // which EuiInMemoryTable uses which causes items to not be updated correctly.
       // Whenever the monitor is updated we'll generate a new key for the table
       // which will cause the table component to remount

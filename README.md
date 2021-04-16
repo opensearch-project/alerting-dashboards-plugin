@@ -1,6 +1,6 @@
 # OpenSearch Alerting Dashboards
 
-The OpenSearch Alerting Dashboards plugin lets you manage your [OpenSearch Alerting plugin](https://github.com/opensearch-project/alerting) to monitor your data and send notifications when certain criteria are met---all from OpenSearchDashboards.
+The OpenSearch Alerting Dashboards plugin lets you manage your [OpenSearch Alerting plugin](https://github.com/opensearch-project/alerting) to monitor your data and send notifications when certain criteria are met---all from OpenSearch Dashboards.
 
 
 ## Highlights
