@@ -26,7 +26,7 @@ export class AlertingPlugin {
       title: 'Alerting',
       description: 'OpenSearch Dashboards Alerting Plugin',
       category: {
-        id: 'odfe',
+        id: 'opensearch',
         label: 'OpenSearch',
         order: 2000,
       },
