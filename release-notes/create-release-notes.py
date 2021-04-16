@@ -16,15 +16,15 @@ plugin_name = "alerting-dashboards-plugin"
 plugin_version = raw_input('Plugin version (x.x.x.x): ')
 
 app_num = int(
-    raw_input('Elasticsearch plugin (enter 1) or OpenSearchDashboards plugin (enter 2)? '))
-app = 'Elasticsearch'
+    raw_input('Opensearch plugin (enter 1) or OpenSearchDashboards plugin (enter 2)? '))
+app = 'Opensearch'
 if app_num is 2:
     app = 'OpenSearchDashboards'
 
 app_version = raw_input(app + ' compatibility version (x.x.x): ')
 
 for line in fileinput.input(file_path, inplace=True):
-    # Add title and ES/OpenSearchDashboards compatibility
+    # Add title and OpenSearch/OpenSearchDashboards compatibility
     if fileinput.isfirstline():
         line = "## Version " + plugin_version + " " + current_date + "\n\n" \
             "Compatible with " + app + " " + app_version + "\n"

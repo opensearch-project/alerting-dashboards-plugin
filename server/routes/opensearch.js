@@ -16,7 +16,7 @@
 import { schema } from '@osd/config-schema';
 
 export default function (services, router) {
-  const { elasticsearchService } = services;
+  const { opensearchService } = services;
 
   router.post(
     {
@@ -25,7 +25,7 @@ export default function (services, router) {
         body: schema.any(),
       },
     },
-    elasticsearchService.search
+    opensearchService.search
   );
 
   router.post(
@@ -37,7 +37,7 @@ export default function (services, router) {
         }),
       },
     },
-    elasticsearchService.getIndices
+    opensearchService.getIndices
   );
 
   router.post(
@@ -49,7 +49,7 @@ export default function (services, router) {
         }),
       },
     },
-    elasticsearchService.getAliases
+    opensearchService.getAliases
   );
 
   router.post(
@@ -61,7 +61,7 @@ export default function (services, router) {
         }),
       },
     },
-    elasticsearchService.getMappings
+    opensearchService.getMappings
   );
 
   router.get(
@@ -69,7 +69,7 @@ export default function (services, router) {
       path: '/api/alerting/_plugins',
       validate: false,
     },
-    elasticsearchService.getPlugins
+    opensearchService.getPlugins
   );
 
   router.get(
@@ -77,6 +77,6 @@ export default function (services, router) {
       path: '/api/alerting/_settings',
       validate: false,
     },
-    elasticsearchService.getSettings
+    opensearchService.getSettings
   );
 }

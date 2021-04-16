@@ -65,6 +65,7 @@ jobs:
           # inject build number before the suffix
           zip_outfile=`basename ${zip%.zip}-build-${GITHUB_RUN_NUMBER}.zip`
 
+          # TODO: Change s3 location
           s3_prefix="s3://staging.artifacts.opendistroforelasticsearch.amazon.com/snapshots/opensearch-dashboards-plugins/alerting/"
 
           echo "Copying ${zip} to ${s3_prefix}${zip_outfile}"

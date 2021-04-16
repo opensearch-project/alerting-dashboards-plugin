@@ -1,11 +1,11 @@
-# Open Distro for Elasticsearch Alerting OpenSearchDashboards
+# OpenSearch Alerting Dashboards
 
-The Open Distro for Elasticsearch Alerting OpenSearchDashboards plugin lets you manage your [Open Distro for Elasticsearch alerting plugin](https://github.com/opendistro-for-elasticsearch/alerting) to monitor your data and send notifications when certain criteria are met---all from OpenSearchDashboards.
+The OpenSearch Alerting Dashboards plugin lets you manage your [OpenSearch Alerting plugin](https://github.com/opensearch-project/alerting) to monitor your data and send notifications when certain criteria are met---all from OpenSearchDashboards.
 
 
 ## Highlights
 
-- Create and schedule *monitors*, which run period queries against data in Elasticsearch.
+- Create and schedule *monitors*, which run period queries against data in Opensearch.
 - Evaluate query results against *triggers* to see if they meet certain criteria.
 - If trigger criteria are met, generate *alerts* and perform *actions* (e.g. post a message in a Slack channel).
 
@@ -21,7 +21,7 @@ Please see our [documentation](https://opendistro.github.io/for-elasticsearch-do
 1. Download and install the appropriate [OpenSearch Alerting plugin](https://github.com/opensearch-project/alerting).
 1. Download the OpenSearch-Dashboards source code for the [version specified in package.json](./package.json#L9) you want to set up.
 
-   See the [OpenSearch Dashboards contributing guide](https://github.com/opensearch-project/OpenSearch-Dashboards/blob/master/CONTRIBUTING.md#setting-up-your-development-environment) for more instructions on setting up your development environment.
+   See the [OpenSearch Dashboards developer guide](https://github.com/opensearch-project/OpenSearch/blob/main/DEVELOPER_GUIDE.md) for more instructions on setting up your development environment.
 
 1. Change your node version to the version specified in `.node-version` inside the OpenSearch-Dashboards root directory.
 1. cd into the `plugins` directory of the OpenSearch-Dashboards source code directory.

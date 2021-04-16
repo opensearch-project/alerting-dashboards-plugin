@@ -148,7 +148,7 @@ const Sender = ({ sender, arrayHelpers, context, index, onDelete }) => {
         rowProps={{
           label: 'Encryption method',
           helpText: `SSL or TLS is recommended for security.
-          SSL and TLS requires validation by adding the following fields to the Elasticsearch keystore:
+          SSL and TLS requires validation by adding the following fields to the Opensearch keystore:
           opendistro.alerting.destination.email.${!name ? '[sender name]' : name}.username
           opendistro.alerting.destination.email.${!name ? '[sender name]' : name}.password`,
           style: { padding: '10px 0px' },

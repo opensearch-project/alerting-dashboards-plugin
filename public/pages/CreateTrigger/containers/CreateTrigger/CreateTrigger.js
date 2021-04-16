@@ -72,7 +72,6 @@ export default class CreateTrigger extends Component {
     console.log(JSON.stringify(monitor));
     const { ui_metadata: uiMetadata, triggers } = monitor;
     const updatedTriggers = [trigger].concat(triggers);
-    console.log('hi');
     const updatedUiMetadata = {
       ...uiMetadata,
       triggers: { ...uiMetadata.triggers, ...triggerMetadata },

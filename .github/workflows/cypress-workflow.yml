@@ -23,9 +23,9 @@ jobs:
         uses: actions/checkout@v2
         with:
           path: alerting
-          # TODO: Move this after OpenSearchDashboards plugin setup so we can pull down the correct branch to support all opendistro branches
-          repository: opendistro-for-elasticsearch/alerting
-      - name: Run Elasticsearch with plugin
+          # TODO: Move this after OpenSearch-Dashboards plugin setup so we can pull down the correct branch to support all opendistro branches
+          repository: opensearch-project/alerting
+      - name: Run Opensearch with plugin
         run: |
           cd alerting
           ./gradlew run &

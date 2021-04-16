@@ -10,7 +10,7 @@
     "url": "https://github.com/opensearch-project/alerting-dashboards-plugin"
   },
   "config": {
-    "id": "opendistroAlertingOpenSearchDashboards"
+    "id": "alertingDashboards"
   },
   "scripts": {
     "osd": "node ../../scripts/osd",

@@ -1,5 +1,5 @@
 {
-  "id": "opendistroAlertingOpenSearchDashboards",
+  "id": "alertingDashboards",
   "version": "1.13.0.0",
   "opensearchDashboardsVersion": "7.10.2",
   "configPath": ["opendistro_alerting"],

@@ -27,7 +27,7 @@ export class AlertingPlugin {
       description: 'OpenSearchDashboards Alerting Plugin',
       category: {
         id: 'odfe',
-        label: 'Open Distro for Elasticsearch',
+        label: 'OpenSearch',
         order: 2000,
       },
       order: 4000,
