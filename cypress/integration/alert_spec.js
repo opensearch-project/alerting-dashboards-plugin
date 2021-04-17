@@ -24,8 +24,8 @@ describe('Alerts', () => {
     // Set welcome screen tracking to false
     localStorage.setItem('home:welcome:show', 'false');
 
-    // Visit Alerting Kibana
-    cy.visit(`${Cypress.env('kibana')}/app/${PLUGIN_NAME}#`);
+    // Visit Alerting OpenSearch Dashboards
+    cy.visit(`${Cypress.env('opensearch_dashboards')}/app/${PLUGIN_NAME}#`);
 
     // Common text to wait for to confirm page loaded, give up to 30 seconds for initial load
     cy.contains('Acknowledge', { timeout: 30000 });

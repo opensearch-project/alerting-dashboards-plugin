@@ -13,7 +13,7 @@
  *   permissions and limitations under the License.
  */
 
-import { schema } from '@kbn/config-schema';
+import { schema } from '@osd/config-schema';
 import { AlertingPlugin } from './plugin';
 
 export const configSchema = schema.object({

@@ -41,7 +41,7 @@ export default class Triggers extends Component {
 
   componentWillReceiveProps(nextProps, nextContext) {
     if (this.props.monitor !== nextProps.monitor) {
-      // In the React version Kibana uses there is a bug regarding getDerivedStateFromProps
+      // In the React version OpenSearch Dashboards uses there is a bug regarding getDerivedStateFromProps
       // which EuiInMemoryTable uses which causes items to not be updated correctly.
       // Whenever the monitor is updated we'll generate a new key for the table
       // which will cause the table component to remount
@@ -56,7 +56,7 @@ export default class Triggers extends Component {
       (map, item) => ({ ...map, [item.name]: true }),
       {}
     );
-    const shouldKeepTrigger = trigger => !triggersToDelete[trigger.name];
+    const shouldKeepTrigger = (trigger) => !triggersToDelete[trigger.name];
     const updatedTriggers = monitor.triggers.filter(shouldKeepTrigger);
     updateMonitor({ triggers: updatedTriggers });
   }
@@ -89,7 +89,7 @@ export default class Triggers extends Component {
         name: 'Number of actions',
         sortable: true,
         truncateText: false,
-        render: actions => actions.length,
+        render: (actions) => actions.length,
       },
       {
         field: 'severity',

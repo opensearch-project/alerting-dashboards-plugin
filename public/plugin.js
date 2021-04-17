@@ -24,10 +24,10 @@ export class AlertingPlugin {
     core.application.register({
       id: PLUGIN_NAME,
       title: 'Alerting',
-      description: 'Kibana Alerting Plugin',
+      description: 'OpenSearch Dashboards Alerting Plugin',
       category: {
-        id: 'odfe',
-        label: 'Open Distro for Elasticsearch',
+        id: 'opensearch',
+        label: 'OpenSearch Plugins',
         order: 2000,
       },
       order: 4000,

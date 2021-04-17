@@ -64,7 +64,7 @@ class CreateDestination extends React.Component {
     let ifSeqNo, ifPrimaryTerm;
     if (edit) {
       // In case user is refreshing in edit mode , redirect them to the destination page.
-      // TODO:: Ideally this should fetch the destination from ElasticSearch and fill in value
+      // TODO:: Ideally this should fetch the destination from OpenSearch and fill in value
       const destinationToEdit = _.get(location, 'state.destinationToEdit', null);
       if (destinationToEdit) {
         const initialValues = { ...(await destinationToFormik(httpClient, destinationToEdit)) };

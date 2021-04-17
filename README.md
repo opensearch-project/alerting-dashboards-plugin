@@ -1,11 +1,11 @@
-# Open Distro for Elasticsearch Alerting Kibana
+# OpenSearch Alerting Dashboards
 
-The Open Distro for Elasticsearch Alerting Kibana plugin lets you manage your [Open Distro for Elasticsearch alerting plugin](https://github.com/opendistro-for-elasticsearch/alerting) to monitor your data and send notifications when certain criteria are met---all from Kibana.
+The OpenSearch Alerting Dashboards plugin lets you manage your [OpenSearch Alerting plugin](https://github.com/opensearch-project/alerting) to monitor your data and send notifications when certain criteria are met---all from OpenSearch Dashboards.
 
 
 ## Highlights
 
-- Create and schedule *monitors*, which run period queries against data in Elasticsearch.
+- Create and schedule *monitors*, which run period queries against data in Opensearch.
 - Evaluate query results against *triggers* to see if they meet certain criteria.
 - If trigger criteria are met, generate *alerts* and perform *actions* (e.g. post a message in a Slack channel).
 
@@ -17,24 +17,24 @@ Please see our [documentation](https://opendistro.github.io/for-elasticsearch-do
 
 ## Setup
 
-1. Download Elasticsearch for the version that matches the [Kibana version specified in package.json](./package.json#L9).
-1. Download and install the appropriate [Open Distro for Elasticsearch Alerting plugin](https://github.com/opendistro-for-elasticsearch/alerting).
-1. Download the Kibana source code for the [version specified in package.json](./package.json#L9) you want to set up.
+1. Download OpenSearch for the version that matches the [OpenSearch Dashboard version specified in package.json](./package.json#L9).
+1. Download and install the appropriate [OpenSearch Alerting plugin](https://github.com/opensearch-project/alerting).
+1. Download the OpenSearch-Dashboards source code for the [version specified in package.json](./package.json#L9) you want to set up.
 
-   See the [Kibana contributing guide](https://github.com/elastic/kibana/blob/master/CONTRIBUTING.md#setting-up-your-development-environment) for more instructions on setting up your development environment.
+   See the [OpenSearch Dashboards developer guide](https://github.com/opensearch-project/OpenSearch/blob/main/DEVELOPER_GUIDE.md) for more instructions on setting up your development environment.
 
-1. Change your node version to the version specified in `.node-version` inside the Kibana root directory.
-1. cd into the `plugins` directory of the Kibana source code directory.
+1. Change your node version to the version specified in `.node-version` inside the OpenSearch-Dashboards root directory.
+1. cd into the `plugins` directory of the OpenSearch-Dashboards source code directory.
 1. Check out this package from version control into the `plugins` directory.
-1. Run `yarn kbn bootstrap` inside `kibana/plugins/alerting-kibana-plugin`.
+1. Run `yarn osd bootstrap` inside `Opensearch-Dashboards/plugins/alerting-dashboards-plugin`.
 
 Ultimately, your directory structure should look like this:
 
 ```md
 .
-├── kibana
+├── OpenSearch-Dashboards
 │   └── plugins
-│       └── alerting-kibana-plugin
+│       └── alerting-dashboards-plugin
 ```
 
 
@@ -42,16 +42,16 @@ Ultimately, your directory structure should look like this:
 
 To build the plugin's distributable zip simply run `yarn build`.
 
-Example output: `./build/opendistroAlertingKibana-1.12.0.0.zip`
+Example output: `./build/opendistroAlertingDashboards-1.12.0.0.zip`
 
 
 ## Run
 
 - `yarn start`
 
-  - Starts Kibana and includes this plugin. Kibana will be available on `localhost:5601`.
-  - Please run in the Kibana root directory
-  - You must have Elasticsearch running with the Alerting plugin
+  - Starts OpenSearch-Dashboards and includes this plugin. OpenSearch-Dashboards will be available on `localhost:5601`.
+  - Please run in the OpenSearch-Dashboards root directory
+  - You must have OpenSearch running with the Alerting plugin
 
 ## Test
   
@@ -69,17 +69,17 @@ Example output: `./build/opendistroAlertingKibana-1.12.0.0.zip`
 
   - Runs all Cypress tests headlessly in the Electron browser.
 
- To run the Cypress tests, you must have both Elasticsearch and Kibana running with the Alerting plugin.
+ To run the Cypress tests, you must have both OpenSearch and OpenSearch-Dashboards running with the Alerting plugin.
   
- If you are running Cypress tests with Kibana development server, pass these 2 options to `yarn start`: 
+ If you are running Cypress tests with OpenSearch-Dashboards development server, pass these 2 options to `yarn start`: 
   1. `--no-base-path`: opt out the BasePathProxy.
   1. `--no-watch`: make sure your server is not restarted.
 
 
-## Contributing to Open Distro for Elasticsearch Alerting Kibana
+## Contributing to OpenSearch Alerting OpenSearch-Dashboards
 
 - Refer to [CONTRIBUTING.md](./CONTRIBUTING.md).
-- Since this is a Kibana plugin, it can be useful to review the [Kibana contributing guide](https://github.com/elastic/kibana/blob/master/CONTRIBUTING.md) alongside the documentation around [Kibana plugins](https://www.elastic.co/guide/en/kibana/master/kibana-plugins.html) and [plugin development](https://www.elastic.co/guide/en/kibana/master/external-plugin-development.html).
+- Since this is an OpenSearch-Dashboards plugin, it can be useful to review the [OpenSearch Dashboards contributing guide](https://github.com/opensearch-project/OpenSearch-Dashboards/blob/main/CONTRIBUTING.md).
 
 
 ## License

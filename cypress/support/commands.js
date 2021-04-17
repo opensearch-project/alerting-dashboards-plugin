@@ -42,7 +42,7 @@ const { API, ADMIN_AUTH } = require('./constants');
 // Cypress.Commands.overwrite("visit", (originalFn, url, options) => { ... })
 
 Cypress.Commands.overwrite('visit', (originalFn, url, options) => {
-  // Add the basic auth header when security enabled in the Elasticsearch cluster
+  // Add the basic auth header when security enabled in the Opensearch cluster
   // https://github.com/cypress-io/cypress/issues/1288
   if (Cypress.env('security_enabled')) {
     if (options) {
@@ -50,7 +50,7 @@ Cypress.Commands.overwrite('visit', (originalFn, url, options) => {
     } else {
       options = { auth: ADMIN_AUTH };
     }
-    // Add query parameters - select the default Kibana tenant
+    // Add query parameters - select the default OpenSearch Dashboards tenant
     options.qs = { security_tenant: 'private' };
     return originalFn(url, options);
   } else {
@@ -61,7 +61,7 @@ Cypress.Commands.overwrite('visit', (originalFn, url, options) => {
 // Be able to add default options to cy.request(), https://github.com/cypress-io/cypress/issues/726
 Cypress.Commands.overwrite('request', (originalFn, ...args) => {
   let defaults = {};
-  // Add the basic authentication header when security enabled in the Elasticsearch cluster
+  // Add the basic authentication header when security enabled in the Opensearch cluster
   if (Cypress.env('security_enabled')) {
     defaults.auth = ADMIN_AUTH;
   }
@@ -81,19 +81,19 @@ Cypress.Commands.overwrite('request', (originalFn, ...args) => {
 });
 
 Cypress.Commands.add('createMonitor', (monitorJSON) => {
-  cy.request('POST', `${Cypress.env('elasticsearch')}${API.MONITOR_BASE}`, monitorJSON);
+  cy.request('POST', `${Cypress.env('opensearch')}${API.MONITOR_BASE}`, monitorJSON);
 });
 
 Cypress.Commands.add('createDestination', (destinationJSON) => {
-  cy.request('POST', `${Cypress.env('elasticsearch')}${API.DESTINATION_BASE}`, destinationJSON);
+  cy.request('POST', `${Cypress.env('opensearch')}${API.DESTINATION_BASE}`, destinationJSON);
 });
 
 Cypress.Commands.add('createAndExecuteMonitor', (monitorJSON) => {
-  cy.request('POST', `${Cypress.env('elasticsearch')}${API.MONITOR_BASE}`, monitorJSON).then(
+  cy.request('POST', `${Cypress.env('opensearch')}${API.MONITOR_BASE}`, monitorJSON).then(
     (response) => {
       cy.request(
         'POST',
-        `${Cypress.env('elasticsearch')}${API.MONITOR_BASE}/${response.body._id}/_execute`
+        `${Cypress.env('opensearch')}${API.MONITOR_BASE}/${response.body._id}/_execute`
       );
     }
   );
@@ -110,11 +110,11 @@ Cypress.Commands.add('deleteMonitorByName', (monitorName) => {
       },
     },
   };
-  cy.request('GET', `${Cypress.env('elasticsearch')}${API.MONITOR_BASE}/_search`, body).then(
+  cy.request('GET', `${Cypress.env('opensearch')}${API.MONITOR_BASE}/_search`, body).then(
     (response) => {
       cy.request(
         'DELETE',
-        `${Cypress.env('elasticsearch')}${API.MONITOR_BASE}/${response.body.hits.hits[0]._id}`
+        `${Cypress.env('opensearch')}${API.MONITOR_BASE}/${response.body.hits.hits[0]._id}`
       );
     }
   );
@@ -131,7 +131,7 @@ Cypress.Commands.add('deleteAllMonitors', () => {
   };
   cy.request({
     method: 'GET',
-    url: `${Cypress.env('elasticsearch')}${API.MONITOR_BASE}/_search`,
+    url: `${Cypress.env('opensearch')}${API.MONITOR_BASE}/_search`,
     failOnStatusCode: false, // In case there is no alerting config index in cluster, where the status code is 404
     body,
   }).then((response) => {
@@ -139,7 +139,7 @@ Cypress.Commands.add('deleteAllMonitors', () => {
       for (let i = 0; i < response.body.hits.total.value; i++) {
         cy.request(
           'DELETE',
-          `${Cypress.env('elasticsearch')}${API.MONITOR_BASE}/${response.body.hits.hits[i]._id}`
+          `${Cypress.env('opensearch')}${API.MONITOR_BASE}/${response.body.hits.hits[i]._id}`
         );
       }
     } else {
@@ -151,16 +151,14 @@ Cypress.Commands.add('deleteAllMonitors', () => {
 Cypress.Commands.add('deleteAllDestinations', () => {
   cy.request({
     method: 'GET',
-    url: `${Cypress.env('elasticsearch')}${API.DESTINATION_BASE}?size=200`,
+    url: `${Cypress.env('opensearch')}${API.DESTINATION_BASE}?size=200`,
     failOnStatusCode: false, // In case there is no alerting config index in cluster, where the status code is 404
   }).then((response) => {
     if (response.status === 200) {
       for (let i = 0; i < response.body.totalDestinations; i++) {
         cy.request(
           'DELETE',
-          `${Cypress.env('elasticsearch')}${API.DESTINATION_BASE}/${
-            response.body.destinations[i].id
-          }`
+          `${Cypress.env('opensearch')}${API.DESTINATION_BASE}/${response.body.destinations[i].id}`
         );
       }
     } else {
@@ -170,17 +168,13 @@ Cypress.Commands.add('deleteAllDestinations', () => {
 });
 
 Cypress.Commands.add('createIndexByName', (indexName) => {
-  cy.request('PUT', `${Cypress.env('elasticsearch')}/${indexName}`);
+  cy.request('PUT', `${Cypress.env('opensearch')}/${indexName}`);
 });
 
 Cypress.Commands.add('deleteIndexByName', (indexName) => {
-  cy.request('DELETE', `${Cypress.env('elasticsearch')}/${indexName}`);
+  cy.request('DELETE', `${Cypress.env('opensearch')}/${indexName}`);
 });
 
 Cypress.Commands.add('insertDocumentToIndex', (indexName, documentId, documentBody) => {
-  cy.request(
-    'PUT',
-    `${Cypress.env('elasticsearch')}/${indexName}/_doc/${documentId}`,
-    documentBody
-  );
+  cy.request('PUT', `${Cypress.env('opensearch')}/${indexName}/_doc/${documentId}`, documentBody);
 });

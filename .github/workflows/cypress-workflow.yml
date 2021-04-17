@@ -23,59 +23,59 @@ jobs:
         uses: actions/checkout@v2
         with:
           path: alerting
-          # TODO: Move this after Kibana plugin setup so we can pull down the correct branch to support all opendistro branches
-          repository: opendistro-for-elasticsearch/alerting
-      - name: Run Elasticsearch with plugin
+          # TODO: Move this after OpenSearch-Dashboards plugin setup so we can pull down the correct branch to support all opendistro branches
+          repository: opensearch-project/alerting
+      - name: Run Opensearch with plugin
         run: |
           cd alerting
           ./gradlew run &
           timeout 300 bash -c 'while [[ "$(curl -s -o /dev/null -w ''%{http_code}'' localhost:9200)" != "200" ]]; do sleep 5; done'
-      - name: Checkout Alerting Kibana plugin
+      - name: Checkout Alerting OpenSearch Dashboards plugin
         uses: actions/checkout@v2
         with:
-          path: alerting-kibana-plugin
-      - name: Get Kibana version
-        id: kibana_version
+          path: alerting-dashboards-plugin
+      - name: Get OpenSearch Dashboards version
+        id: opensearch_dashboards_version
         run: |
-          echo "::set-output name=kibana_version::$(node -p "(require('./alerting-kibana-plugin/kibana.json').kibanaVersion).match(/[.0-9]+/)[0]")"
-      - name: Checkout Kibana
+          echo "::set-output name=opensearch_dashboards_version::$(node -p "(require('./alerting-dashboards-plugin/opensearch_dashboards.json').opensearchDashboardsVersion).match(/[.0-9]+/)[0]")"
+      - name: Checkout OpenSearch Dashboards
         uses: actions/checkout@v2
         with:
-          repository: opendistro-for-elasticsearch/kibana-oss
-          ref: ${{ steps.kibana_version.outputs.kibana_version }}
-          token: ${{ secrets.GITHUB_KIBANA_OSS }}
-          path: kibana
+          repository: opensearch-project/OpenSearch-Dashboards
+          ref: ${{ steps.opensearch_dashboards_version.outputs.opensearch_dashboards_version }}
+          token: ${{ secrets.GITHUB_OPENSEARCH_DASHBOARDS_OSS }}
+          path: opensearchDashboards
       - name: Get node and yarn versions
         id: versions
         run: |
-          echo "::set-output name=node_version::$(node -p "(require('./kibana/package.json').engines.node).match(/[.0-9]+/)[0]")"
-          echo "::set-output name=yarn_version::$(node -p "(require('./kibana/package.json').engines.yarn).match(/[.0-9]+/)[0]")"
+          echo "::set-output name=node_version::$(node -p "(require('./OpenSearch-Dashboards/package.json').engines.node).match(/[.0-9]+/)[0]")"
+          echo "::set-output name=yarn_version::$(node -p "(require('./OpenSearch-Dashboards/package.json').engines.yarn).match(/[.0-9]+/)[0]")"
       - name: Setup node
         uses: actions/setup-node@v1
         with:
           node-version: ${{ steps.versions.outputs.node_version }}
           registry-url: 'https://registry.npmjs.org'
-      - name: Install correct yarn version for Kibana
+      - name: Install correct yarn version for OpenSearch Dashboards
         run: |
           npm uninstall -g yarn
           echo "Installing yarn ${{ steps.versions_step.outputs.yarn_version }}"
           npm i -g yarn@${{ steps.versions.outputs.yarn_version }}
-      - name: Bootstrap Kibana with plugin
+      - name: Bootstrap OpenSearch Dashboards with plugin
         run: |
-          mkdir -p kibana/plugins
-          mv alerting-kibana-plugin kibana/plugins
-          cd kibana/plugins/alerting-kibana-plugin
-          yarn kbn bootstrap
-      - name: Run Kibana server
+          mkdir -p Opensearch-Dashboards/plugins
+          mv alerting-dashboards-plugin Opensearch-Dashboards/plugins
+          cd Opensearch-Dashboards/plugins/alerting-dashboards-plugin
+          yarn osd bootstrap
+      - name: Run OpenSearch Dashboards server
         run: |
-          cd kibana
+          cd Opensearch-Dashboards
           yarn start --no-base-path --no-watch &
           sleep 300
         # timeout 300 bash -c 'while [[ "$(curl -s -o /dev/null -w ''%{http_code}'' localhost:5601/api/status)" != "200" ]]; do sleep 5; done'
       - name: Run Cypress tests
         uses: cypress-io/github-action@v2
         with:
-          working-directory: kibana/plugins/alerting-kibana-plugin
+          working-directory: Opensearch-Dashboards/plugins/alerting-dashboards-plugin
           command: yarn run cypress run
 
       # Screenshots are only captured on failure, will change this once we do visual regression tests
@@ -83,10 +83,10 @@ jobs:
         if: failure()
         with:
           name: cypress-screenshots
-          path: kibana/plugins/alerting-kibana-plugin/cypress/screenshots
+          path: Opensearch-Dashboards/plugins/alerting-dashboards-plugin/cypress/screenshots
       # Test run video was always captured, so this action uses "always()" condition
       - uses: actions/upload-artifact@v1
         if: always()
         with:
           name: cypress-videos
-          path: kibana/plugins/alerting-kibana-plugin/cypress/videos
+          path: Opensearch-Dashboards/plugins/alerting-dashboards-plugin/cypress/videos

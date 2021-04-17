@@ -77,7 +77,7 @@ exports[`DefineMonitor should show warning in case of Ad monitor and plugin is n
     color="warning"
     iconType="help"
     size="s"
-    title="Anomaly detector plugin is not installed on Elasticsearch, This monitor will not functional properly."
+    title="Anomaly detector plugin is not installed on Opensearch, This monitor will not functional properly."
   />
   <EuiSpacer
     size="s"

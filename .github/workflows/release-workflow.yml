@@ -7,49 +7,49 @@ on:
 
 jobs:
   build:
-    name: Build Alerting Kibana
+    name: Build Alerting OpenSearch Dashboards
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout Alerting Kibana plugin
+      - name: Checkout Alerting OpenSearch Dashboards plugin
         uses: actions/checkout@v2
         with:
-          path: alerting-kibana-plugin
-      - name: Get Kibana version
-        id: kibana_version
+          path: alerting-dashboards-plugin
+      - name: Get OpenSearch Dashboards version
+        id: opensearch_dashboards_version
         run: |
-          echo "::set-output name=kibana_version::$(node -p "(require('./alerting-kibana-plugin/kibana.json').kibanaVersion).match(/[.0-9]+/)[0]")"
-      - name: Checkout Kibana
+          echo "::set-output name=opensearch_dashboards_version::$(node -p "(require('./alerting-dashboards-plugin/opensearch_dashboards.json').opensearchDashboardsVersion).match(/[.0-9]+/)[0]")"
+      - name: Checkout OpenSearch Dashboards
         uses: actions/checkout@v2
         with:
-          repository: opendistro-for-elasticsearch/kibana-oss
-          ref: ${{ steps.kibana_version.outputs.kibana_version }}
-          token: ${{ secrets.GITHUB_KIBANA_OSS }}
-          path: kibana
+          repository: opensearch-project/OpenSearch-Dashboards
+          ref: ${{ steps.opensearch_dashboards_version.outputs.opensearch_dashboards_version }}
+          token: ${{ secrets.GITHUB_OPENSEARCH_DASHBOARDS_OSS }}
+          path: opensearchDashboards
       - name: Get node and yarn versions
         id: versions
         run: |
-          echo "::set-output name=node_version::$(node -p "(require('./kibana/package.json').engines.node).match(/[.0-9]+/)[0]")"
-          echo "::set-output name=yarn_version::$(node -p "(require('./kibana/package.json').engines.yarn).match(/[.0-9]+/)[0]")"
+          echo "::set-output name=node_version::$(node -p "(require('./OpenSearch-Dashboards/package.json').engines.node).match(/[.0-9]+/)[0]")"
+          echo "::set-output name=yarn_version::$(node -p "(require('./OpenSearch-Dashboards/package.json').engines.yarn).match(/[.0-9]+/)[0]")"
       - name: Setup node
         uses: actions/setup-node@v1
         with:
           node-version: ${{ steps.versions.outputs.node_version }}
           registry-url: 'https://registry.npmjs.org'
-      - name: Install correct yarn version for Kibana
+      - name: Install correct yarn version for OpenSearch Dashboards
         run: |
           npm uninstall -g yarn
           echo "Installing yarn ${{ steps.versions_step.outputs.yarn_version }}"
           npm i -g yarn@${{ steps.versions.outputs.yarn_version }}
-      - name: Bootstrap plugin/kibana
+      - name: Bootstrap plugin/opensearch-dashboards
         run: |
-          mkdir -p kibana/plugins
-          mv alerting-kibana-plugin kibana/plugins
-          cd kibana/plugins/alerting-kibana-plugin
-          yarn kbn bootstrap
+          mkdir -p Opensearch-Dashboards/plugins
+          mv alerting-dashboards-plugin Opensearch-Dashboards/plugins
+          cd Opensearch-Dashboards/plugins/alerting-dashboards-plugin
+          yarn osd bootstrap
       - name: Build plugin
         id: build_zip
         run: |
-          cd kibana/plugins/alerting-kibana-plugin
+          cd Opensearch-Dashboards/plugins/alerting-dashboards-plugin
           yarn build
           zip_path=`ls $(pwd)/build/*.zip`
           echo "::set-output name=zip_path::$zip_path"
@@ -65,7 +65,8 @@ jobs:
           # inject build number before the suffix
           zip_outfile=`basename ${zip%.zip}-build-${GITHUB_RUN_NUMBER}.zip`
 
-          s3_prefix="s3://staging.artifacts.opendistroforelasticsearch.amazon.com/snapshots/kibana-plugins/alerting/"
+          # TODO: Change s3 location
+          s3_prefix="s3://staging.artifacts.opendistroforelasticsearch.amazon.com/snapshots/opensearch-dashboards-plugins/alerting/"
 
           echo "Copying ${zip} to ${s3_prefix}${zip_outfile}"
           aws s3 cp --quiet $zip ${s3_prefix}${zip_outfile}
@@ -85,7 +86,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_name: opendistro_alerting_kibana.zip
+          asset_name: opendistro_alerting_dashboards.zip
           asset_path: ${{ steps.build_zip.outputs.zip_path }}
           asset_content_type: application/zip
       - name: Upload Workflow Artifacts

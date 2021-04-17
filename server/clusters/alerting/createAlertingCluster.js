@@ -17,10 +17,10 @@ import alertingPlugin from './alertingPlugin';
 import { CLUSTER, DEFAULT_HEADERS } from '../../services/utils/constants';
 
 export default function createAlertingCluster(core, globalConfig) {
-  const { customHeaders, ...rest } = globalConfig.elasticsearch;
-  return core.elasticsearch.legacy.createClient(CLUSTER.ALERTING, {
+  const { customHeaders, ...rest } = globalConfig.opensearch;
+  return core.opensearch.legacy.createClient(CLUSTER.ALERTING, {
     plugins: [alertingPlugin],
-    // Currently we are overriding any headers with our own since we explicitly required User-Agent to be Kibana
+    // Currently we are overriding any headers with our own since we explicitly required User-Agent to be OpenSearch Dashboards
     // for integration with our backend plugin.
     // TODO: Change our required header to x-<Header> to avoid overriding
     customHeaders: { ...customHeaders, ...DEFAULT_HEADERS },

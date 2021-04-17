@@ -15,14 +15,14 @@
 
 import AlertService from './AlertService';
 import DestinationsService from './DestinationsService';
-import ElasticsearchService from './ElasticsearchService';
+import OpensearchService from './OpensearchService';
 import MonitorService from './MonitorService';
 import AnomalyDetectorService from './AnomalyDetectorService';
 
 export {
   AlertService,
   DestinationsService,
-  ElasticsearchService,
+  OpensearchService,
   MonitorService,
   AnomalyDetectorService,
 };

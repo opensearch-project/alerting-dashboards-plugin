@@ -351,7 +351,7 @@ class DefineMonitor extends Component {
           ? [
               <EuiCallOut
                 color="warning"
-                title="Anomaly detector plugin is not installed on Elasticsearch, This monitor will not functional properly."
+                title="Anomaly detector plugin is not installed on Opensearch, This monitor will not functional properly."
                 iconType="help"
                 size="s"
               />,

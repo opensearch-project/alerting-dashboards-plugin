@@ -13,7 +13,7 @@
  *   permissions and limitations under the License.
  */
 
-import { validateUrl } from './validate';
+import { validateUrl, validateHost } from './validate';
 
 import { URL_TYPE } from '../../../containers/CreateDestination/utils/constants';
 
@@ -33,11 +33,12 @@ describe('validateUrl', () => {
       validateUrl('https://opendistro.github.io/for-elasticsearch/news.html', typeFullUrl)
     ).toBeUndefined();
     expect(
-      validateUrl('https://username:password@opendistro.github.io/for-elasticsearch/news.html', typeFullUrl)
+      validateUrl(
+        'https://username:password@opendistro.github.io/for-elasticsearch/news.html',
+        typeFullUrl
+      )
     ).toBeUndefined();
-    expect(
-      validateUrl('http://alerts-smtp-forwarder:8080/email', typeFullUrl)
-    ).toBeUndefined();
+    expect(validateUrl('http://alerts-smtp-forwarder:8080/email', typeFullUrl)).toBeUndefined();
     expect(validateUrl('http://127.0.0.1:8080/', typeFullUrl)).toBeUndefined();
     expect(
       validateUrl('http://192.168.0.1/test.php?foo=bar&action=test', typeFullUrl)
@@ -79,19 +80,18 @@ describe('validateUrl', () => {
 });
 
 describe('validateHost', () => {
-  const typeAttributeUrl = { type: 'custom_webhook', custom_webhook: { urlType: URL_TYPE.ATTRIBUTE_URL } };
+  const typeAttributeUrl = {
+    type: 'custom_webhook',
+    custom_webhook: { urlType: URL_TYPE.ATTRIBUTE_URL },
+  };
 
   test('returns Required if is empty', () => {
     expect(validateHost('', typeAttributeUrl)).toBe('Required');
   });
 
   test('returns undefined if valid', () => {
-    expect(
-      validateHost('opendistro.github.io', typeAttributeUrl)
-    ).toBeUndefined();
-    expect(
-      validateHost('alerts-smtp-forwarder', typeAttributeUrl)
-    ).toBeUndefined();
+    expect(validateHost('opendistro.github.io', typeAttributeUrl)).toBeUndefined();
+    expect(validateHost('alerts-smtp-forwarder', typeAttributeUrl)).toBeUndefined();
     expect(validateHost('127.0.0.1', typeAttributeUrl)).toBeUndefined();
     expect(
       validateHost('2001:0db8:85a3:0000:0000:0000:0000:7344', typeAttributeUrl)
