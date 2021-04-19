@@ -1,4 +1,15 @@
 /*
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * The OpenSearch Contributors require contributions made to
+ * this file be licensed under the Apache-2.0 license or a
+ * compatible open source license.
+ *
+ * Modifications Copyright OpenSearch Contributors. See
+ * GitHub history for details.
+ */
+
+/*
  *   Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  *   Licensed under the Apache License, Version 2.0 (the "License").
@@ -50,7 +61,7 @@ describe('destinationToFormik', () => {
         [DESTINATION_TYPE.CUSTOM_HOOK]: {
           url: 'https://custom.webhook',
           port: -1,
-          method: 'PUT',     
+          method: 'PUT',
           query_params: { key1: 'value1', key2: 'Value2' },
           header_params: {
             'Content-Type': 'application/json',

@@ -1,4 +1,15 @@
 /*
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * The OpenSearch Contributors require contributions made to
+ * this file be licensed under the Apache-2.0 license or a
+ * compatible open source license.
+ *
+ * Modifications Copyright OpenSearch Contributors. See
+ * GitHub history for details.
+ */
+
+/*
  *   Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  *   Licensed under the Apache License, Version 2.0 (the "License").
@@ -33,7 +44,7 @@ class DateRangePicker extends React.PureComponent {
     };
   }
 
-  getStartDatePickerProps = startDateTime => {
+  getStartDatePickerProps = (startDateTime) => {
     return {
       selected: startDateTime.isAfter(moment()) ? moment().startOf('day') : startDateTime,
       minTime: startDateTime.clone().startOf('day'),
@@ -54,9 +65,9 @@ class DateRangePicker extends React.PureComponent {
     };
   };
 
-  handleChangeStart = startDateTime => {
+  handleChangeStart = (startDateTime) => {
     const { onRangeChange } = this.props;
-    this.setState(state => {
+    this.setState((state) => {
       // If preselected endTime is out of range / grater than start update end time accordingly
       let endTime = state.rangeEndDateTime.selected;
       if (endTime.isSame(startDateTime)) {
@@ -79,7 +90,7 @@ class DateRangePicker extends React.PureComponent {
     });
   };
 
-  handleChangeEnd = endDateTime => {
+  handleChangeEnd = (endDateTime) => {
     const { onRangeChange } = this.props;
     this.setState(({ rangeStartDateTime, rangeEndDateTime }) => {
       let startTime = rangeStartDateTime.selected;

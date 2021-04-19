@@ -1,4 +1,15 @@
 /*
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * The OpenSearch Contributors require contributions made to
+ * this file be licensed under the Apache-2.0 license or a
+ * compatible open source license.
+ *
+ * Modifications Copyright OpenSearch Contributors. See
+ * GitHub history for details.
+ */
+
+/*
  *   Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  *   Licensed under the Apache License, Version 2.0 (the "License").
@@ -52,7 +63,7 @@ export default function monitorToFormik(monitor) {
     timezone: timezone ? [{ label: timezone }] : [],
 
     detectorId: isAD ? _.get(inputs, INPUTS_DETECTOR_ID) : undefined,
-    index: inputs[0].search.indices.map(index => ({ label: index })),
+    index: inputs[0].search.indices.map((index) => ({ label: index })),
     query: JSON.stringify(inputs[0].search.query, null, 4),
   };
 }

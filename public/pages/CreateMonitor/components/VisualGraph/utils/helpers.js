@@ -1,4 +1,15 @@
 /*
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * The OpenSearch Contributors require contributions made to
+ * this file be licensed under the Apache-2.0 license or a
+ * compatible open source license.
+ *
+ * Modifications Copyright OpenSearch Contributors. See
+ * GitHub history for details.
+ */
+
+/*
  *   Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  *   Licensed under the Apache License, Version 2.0 (the "License").
@@ -63,7 +74,10 @@ export function getAnnotationData(xDomain, yDomain, thresholdValue) {
   let yValue = thresholdValue;
   if (thresholdValue > yMax) yValue = yMax;
   if (thresholdValue < yMin) yValue = yMin;
-  return [{ x: xMin, y: yValue }, { x: xMax, y: yValue }];
+  return [
+    { x: xMin, y: yValue },
+    { x: xMax, y: yValue },
+  ];
 }
 
 export function getDataFromResponse(response) {
@@ -84,7 +98,7 @@ export function filterInvalidYValues({ y }) {
 }
 
 export function getMarkData(data) {
-  return data.map(d => ({ ...d, size: DEFAULT_MARK_SIZE }));
+  return data.map((d) => ({ ...d, size: DEFAULT_MARK_SIZE }));
 }
 
 export function getAggregationTitle(values) {
