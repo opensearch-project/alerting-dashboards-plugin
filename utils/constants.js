@@ -1,6 +1,6 @@
 export const OPEN_DISTRO_PREFIX = 'opendistro';
 
-export const PLUGIN_NAME = `${OPEN_DISTRO_PREFIX}-alerting`;
+export const PLUGIN_NAME = `alerting`;
 export const INDEX_PREFIX = `${OPEN_DISTRO_PREFIX}-alerting`;
 export const INDEX = {
   SCHEDULED_JOBS: `.${INDEX_PREFIX}-config`,
