@@ -1,5 +1,5 @@
 {
-  "name": "opendistro-alerting",
+  "name": "opensearch-alerting-dashboards",
   "version": "1.13.0.0",
   "description": "OpenSearch Dashboards Alerting Plugin",
   "main": "index.js",

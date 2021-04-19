@@ -24,7 +24,7 @@ export const API = {
   DESTINATION_BASE: `${API_ROUTE_PREFIX}/destinations`,
 };
 
-export const PLUGIN_NAME = 'opendistro-alerting';
+export const PLUGIN_NAME = 'alerting';
 
 export const ADMIN_AUTH = {
   username: 'admin',

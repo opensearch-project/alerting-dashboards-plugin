@@ -13,7 +13,7 @@ replacers:
   - search: '##'
     replace: '###'
 
-# Organizing the tagged PRs into unified ODFE categories
+# Organizing the tagged PRs into unified Opensearch categories
 categories:
   - title: 'Breaking changes'
     labels:
