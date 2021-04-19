@@ -1,4 +1,15 @@
 /*
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * The OpenSearch Contributors require contributions made to
+ * this file be licensed under the Apache-2.0 license or a
+ * compatible open source license.
+ *
+ * Modifications Copyright OpenSearch Contributors. See
+ * GitHub history for details.
+ */
+
+/*
  *   Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  *   Licensed under the Apache License, Version 2.0 (the "License").
@@ -31,10 +42,7 @@ describe('Time Utils', () => {
       Date.now = jest.fn(() => 1539619200000);
       const currentTime = moment('2018-10-13T10:00:00');
       expect(timeUtils.getRangeMaxTime(currentTime).format()).toBe(
-        currentTime
-          .clone()
-          .endOf('day')
-          .format()
+        currentTime.clone().endOf('day').format()
       );
     });
   });

@@ -1,4 +1,15 @@
 /*
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * The OpenSearch Contributors require contributions made to
+ * this file be licensed under the Apache-2.0 license or a
+ * compatible open source license.
+ *
+ * Modifications Copyright OpenSearch Contributors. See
+ * GitHub history for details.
+ */
+
+/*
  *   Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  *   Licensed under the Apache License, Version 2.0 (the "License").
@@ -26,7 +37,7 @@ describe('<DelayedLoader/>', () => {
     expect(
       render(
         <DelayedLoader isLoading={false}>
-          {showLoader => <div style={{ opacity: showLoader ? '0.2' : '1' }} />}
+          {(showLoader) => <div style={{ opacity: showLoader ? '0.2' : '1' }} />}
         </DelayedLoader>
       )
     ).toMatchSnapshot();
@@ -35,7 +46,7 @@ describe('<DelayedLoader/>', () => {
   test('should set Timer for 1 seconds if initial loading is true', () => {
     const wrapper = mount(
       <DelayedLoader isLoading={true}>
-        {showLoader => <div style={{ opacity: showLoader ? '0.2' : '1' }} />}
+        {(showLoader) => <div style={{ opacity: showLoader ? '0.2' : '1' }} />}
       </DelayedLoader>
     );
     expect(setTimeout).toHaveBeenCalledTimes(1);
@@ -45,7 +56,7 @@ describe('<DelayedLoader/>', () => {
   test('should clear Timer on componentWillUnmount if exists', () => {
     const wrapper = mount(
       <DelayedLoader isLoading={true}>
-        {showLoader => <div style={{ opacity: showLoader ? '0.2' : '1' }} />}
+        {(showLoader) => <div style={{ opacity: showLoader ? '0.2' : '1' }} />}
       </DelayedLoader>
     );
     expect(setTimeout).toHaveBeenCalledTimes(1);
@@ -57,7 +68,7 @@ describe('<DelayedLoader/>', () => {
   test('should not show loader if data fetching is finished before threshold', () => {
     const wrapper = mount(
       <DelayedLoader isLoading={true}>
-        {showLoader => <div style={{ opacity: showLoader ? '0.2' : '1' }} />}
+        {(showLoader) => <div style={{ opacity: showLoader ? '0.2' : '1' }} />}
       </DelayedLoader>
     );
     wrapper.setProps({ isLoading: false });
@@ -68,7 +79,7 @@ describe('<DelayedLoader/>', () => {
   test('should show loader if data fetching takes more than threshold', () => {
     const wrapper = mount(
       <DelayedLoader isLoading={false}>
-        {showLoader => <div style={{ opacity: showLoader ? '0.2' : '1' }} />}
+        {(showLoader) => <div style={{ opacity: showLoader ? '0.2' : '1' }} />}
       </DelayedLoader>
     );
     wrapper.setProps({ isLoading: true });

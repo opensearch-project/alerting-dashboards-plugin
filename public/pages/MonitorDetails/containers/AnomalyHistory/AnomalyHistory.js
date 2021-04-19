@@ -1,4 +1,15 @@
 /*
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * The OpenSearch Contributors require contributions made to
+ * this file be licensed under the Apache-2.0 license or a
+ * compatible open source license.
+ *
+ * Modifications Copyright OpenSearch Contributors. See
+ * GitHub history for details.
+ */
+
+/*
  *   Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  *   Licensed under the Apache License, Version 2.0 (the "License").
@@ -61,20 +72,20 @@ class AnomalyHistory extends Component {
           startTime={this.state.startTime.valueOf()}
           endTime={this.state.endTime.valueOf()}
           detectorId={detectorId}
-          render={anomalyData => {
+          render={(anomalyData) => {
             let featureData = [];
             //Skip disabled features showing from Alerting.
             featureData = get(anomalyData, 'detector.featureAttributes', [])
-              .filter(feature => feature.featureEnabled)
+              .filter((feature) => feature.featureEnabled)
               .map((feature, index) => ({
                 featureName: feature.featureName,
                 data: anomalyData.anomalyResult.featureData[feature.featureId] || [],
               }));
             const annotations = get(anomalyData, 'anomalyResult.anomalies', [])
               .filter(
-                anomaly => anomaly.anomalyGrade > 0 && anomaly.startTime >= monitorLastEnabledTime
+                (anomaly) => anomaly.anomalyGrade > 0 && anomaly.startTime >= monitorLastEnabledTime
               )
-              .map(anomaly => ({
+              .map((anomaly) => ({
                 coordinates: {
                   x0: anomaly.startTime,
                   x1: anomaly.endTime,
@@ -103,7 +114,7 @@ class AnomalyHistory extends Component {
                   so doing this on client side.
                 */
                   anomalies={anomalyData.anomalyResult.anomalies.filter(
-                    anomaly => anomaly.startTime > monitorLastEnabledTime
+                    (anomaly) => anomaly.startTime > monitorLastEnabledTime
                   )}
                   isLoading={anomalyData.isLoading}
                   title="Anomalies"

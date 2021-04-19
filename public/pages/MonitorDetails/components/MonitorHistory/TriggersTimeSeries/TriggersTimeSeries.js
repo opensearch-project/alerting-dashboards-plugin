@@ -1,4 +1,15 @@
 /*
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * The OpenSearch Contributors require contributions made to
+ * this file be licensed under the Apache-2.0 license or a
+ * compatible open source license.
+ *
+ * Modifications Copyright OpenSearch Contributors. See
+ * GitHub history for details.
+ */
+
+/*
  *   Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  *   Licensed under the Apache License, Version 2.0 (the "License").
@@ -48,10 +59,10 @@ class TriggersTimeSeries extends Component {
     const { hints } = this.state;
     return (
       <DelayedLoader isLoading={isLoading}>
-        {showLoader => (
+        {(showLoader) => (
           <div style={{ minHeight: triggers.length * 40, opacity: showLoader ? '0.2' : '1' }}>
             <EuiFlexGroup direction="column" gutterSize="none">
-              {triggers.map(currentTrigger => (
+              {triggers.map((currentTrigger) => (
                 <EuiFlexItem key={currentTrigger.name}>
                   <EuiFlexGroup justifyContent="center" gutterSize="none" alignItems="center">
                     <EuiFlexItem
@@ -74,7 +85,7 @@ class TriggersTimeSeries extends Component {
                           xDomain={this.xDomain}
                           xType="time"
                           yType="ordinal"
-                          getColor={dataPoint =>
+                          getColor={(dataPoint) =>
                             ALERT_TIMELINE_COLORS_MAP[
                               dataPoint.meta.state === TIME_SERIES_ALERT_STATE.ERROR
                                 ? TIME_SERIES_ALERT_STATE.ERROR
@@ -87,7 +98,7 @@ class TriggersTimeSeries extends Component {
                             data={triggersData[currentTrigger.id]}
                             colorType="literal"
                             onValueMouseOut={() => this.handleValueMouseInOut(currentTrigger.name)}
-                            onValueMouseOver={dataPoint =>
+                            onValueMouseOver={(dataPoint) =>
                               this.handleValueMouseInOut(currentTrigger.name, dataPoint)
                             }
                           />

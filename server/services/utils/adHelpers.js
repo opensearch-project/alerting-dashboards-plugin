@@ -1,4 +1,15 @@
 /*
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * The OpenSearch Contributors require contributions made to
+ * this file be licensed under the Apache-2.0 license or a
+ * compatible open source license.
+ *
+ * Modifications Copyright OpenSearch Contributors. See
+ * GitHub history for details.
+ */
+
+/*
  *   Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  *   Licensed under the Apache License, Version 2.0 (the "License").
@@ -13,7 +24,7 @@
  *   permissions and limitations under the License.
  */
 
-export const anomalyResultMapper = anomalyResults => {
+export const anomalyResultMapper = (anomalyResults) => {
   let resultData = {
     anomalies: [],
     featureData: {},
@@ -21,7 +32,7 @@ export const anomalyResultMapper = anomalyResults => {
   if (anomalyResults.length === 0) return resultData;
   //initialize features list.
   const firstAnomaly = anomalyResults[0];
-  Object.values(firstAnomaly.featureData).forEach(feature => {
+  Object.values(firstAnomaly.featureData).forEach((feature) => {
     resultData.featureData[feature.featureId] = [];
   });
   anomalyResults.forEach(({ featureData, ...rest }) => {
@@ -37,7 +48,7 @@ export const anomalyResultMapper = anomalyResults => {
           : 0,
       plotTime: rest.dataStartTime + Math.floor((rest.dataEndTime - rest.dataStartTime) / 2),
     });
-    featureData.forEach(feature => {
+    featureData.forEach((feature) => {
       resultData.featureData[feature.featureId].push({
         startTime: rest.dataStartTime,
         endTime: rest.dataEndTime,

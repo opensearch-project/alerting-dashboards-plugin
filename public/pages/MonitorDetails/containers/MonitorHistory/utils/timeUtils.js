@@ -1,4 +1,15 @@
 /*
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * The OpenSearch Contributors require contributions made to
+ * this file be licensed under the Apache-2.0 license or a
+ * compatible open source license.
+ *
+ * Modifications Copyright OpenSearch Contributors. See
+ * GitHub history for details.
+ */
+
+/*
  *   Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  *   Licensed under the Apache License, Version 2.0 (the "License").
@@ -15,16 +26,16 @@
 
 import moment from 'moment';
 
-export const isToday = currentDate => currentDate.isSame(moment(Date.now()), 'day');
+export const isToday = (currentDate) => currentDate.isSame(moment(Date.now()), 'day');
 
-export const getRangeMaxTime = currentDate =>
+export const getRangeMaxTime = (currentDate) =>
   isToday(currentDate) ? moment(Date.now()) : currentDate.clone().endOf('day');
 
 /*
     This function will find an interval (Moment Duration), Which will be within 30 days.
     Don't use if duration is more than 30 days.
 */
-export const calculateInterval = duration => {
+export const calculateInterval = (duration) => {
   const bucketWindows = [
     moment.duration(1, 'd'),
     moment.duration(18, 'hour'),
