@@ -9,10 +9,6 @@ jobs:
     name: Run unit tests
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout Alerting OpenSearch Dashboards plugin
-        uses: actions/checkout@v2
-        with:
-          path: alerting-dashboards-plugin
       - name: Get OpenSearch Dashboards version
         id: opensearch_dashboards_version
         run: |
@@ -38,10 +34,12 @@ jobs:
           npm uninstall -g yarn
           echo "Installing yarn ${{ steps.versions_step.outputs.yarn_version }}"
           npm i -g yarn@${{ steps.versions_step.outputs.yarn_version }}
+      - name: Checkout Alerting OpenSearch Dashboards plugin
+        uses: actions/checkout@v2
+        with:
+          path: OpenSearch-Dashboards/plugins/alerting-dashboards-plugin
       - name: Bootstrap plugin/opensearch-dashboards
         run: |
-          mkdir -p Opensearch-Dashboards/plugins
-          mv alerting-dashboards-plugin Opensearch-Dashboards/plugins
           cd Opensearch-Dashboards/plugins/alerting-dashboards-plugin
           yarn osd bootstrap
       - name: Run tests
