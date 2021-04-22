@@ -22,7 +22,6 @@ jobs:
         with:
           repository: opensearch-project/OpenSearch-Dashboards
           ref: ${{ steps.opensearch_dashboards_version.outputs.opensearch_dashboards_version }}
-          token: ${{ secrets.GITHUB_OPENSEARCH_DASHBOARDS_OSS }}
           path: opensearchDashboards
       - name: Get node and yarn versions
         id: versions_step
