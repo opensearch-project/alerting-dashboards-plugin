@@ -39,7 +39,8 @@ jobs:
           path: OpenSearch-Dashboards/plugins/alerting-dashboards-plugin
       - name: Bootstrap plugin/opensearch-dashboards
         run: |
-          ls
+          ls Opensearch-Dashboards
+          ls Opensearch-Dashboards/plugins
           pwd
           cd Opensearch-Dashboards/plugins/alerting-dashboards-plugin
           yarn osd bootstrap
