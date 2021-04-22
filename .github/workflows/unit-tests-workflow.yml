@@ -22,7 +22,7 @@ jobs:
         with:
           repository: opensearch-project/OpenSearch-Dashboards
           ref: ${{ steps.opensearch_dashboards_version.outputs.opensearch_dashboards_version }}
-          path: opensearchDashboards
+          path: OpenSearch-Dashboards
       - name: Get node and yarn versions
         id: versions_step
         run: |
