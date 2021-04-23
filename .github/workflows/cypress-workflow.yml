@@ -26,7 +26,7 @@ jobs:
       - name: Checkout OpenSearch
         uses: actions/checkout@v2
         with:
-          repository: 'opensearch-project/OpenSearch'
+          repository: opensearch-project/OpenSearch
           path: OpenSearch
           ref: '1.0.0-alpha1'
       - name: Build OpenSearch
@@ -36,7 +36,7 @@ jobs:
       - name: Checkout common-utils
         uses: actions/checkout@v2
         with:
-          repository: 'opensearch-project/common-utils'
+          repository: opensearch-project/common-utils
           path: common-utils
       - name: Build common-utils
         working-directory: ./common-utils
@@ -46,7 +46,7 @@ jobs:
         with:
           path: alerting
           # TODO: Move this after OpenSearch-Dashboards plugin setup so we can pull down the correct branch to support all opendistro branches
-          repository: lezzago/alerting
+          repository: opensearch-project/alerting
       - name: Run Opensearch with plugin
         run: |
           cd alerting
