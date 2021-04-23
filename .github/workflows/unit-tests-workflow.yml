@@ -3,27 +3,21 @@ on:
   push:
     branches:
       - main
+  pull_request:
+    branches:
+      - main
 
 jobs:
   tests:
     name: Run unit tests
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout Alerting OpenSearch Dashboards plugin
-        uses: actions/checkout@v2
-        with:
-          path: alerting-dashboards-plugin
-      - name: Get OpenSearch Dashboards version
-        id: opensearch_dashboards_version
-        run: |
-          echo "::set-output name=opensearch_dashboards_version::$(node -p "(require('./alerting-dashboards-plugin/opensearch_dashboards.json').opensearchDashboardsVersion).match(/[.0-9]+/)[0]")"
       - name: Checkout OpenSearch Dashboards
         uses: actions/checkout@v2
         with:
           repository: opensearch-project/OpenSearch-Dashboards
-          ref: ${{ steps.opensearch_dashboards_version.outputs.opensearch_dashboards_version }}
-          token: ${{ secrets.GITHUB_OPENSEARCH_DASHBOARDS_OSS }}
-          path: opensearchDashboards
+          ref: ${{ env.OPENSEARCH_DASHBOARDS_VERSION }}
+          path: OpenSearch-Dashboards
       - name: Get node and yarn versions
         id: versions_step
         run: |
@@ -39,13 +33,15 @@ jobs:
           npm uninstall -g yarn
           echo "Installing yarn ${{ steps.versions_step.outputs.yarn_version }}"
           npm i -g yarn@${{ steps.versions_step.outputs.yarn_version }}
+      - name: Checkout Alerting OpenSearch Dashboards plugin
+        uses: actions/checkout@v2
+        with:
+          path: OpenSearch-Dashboards/plugins/alerting-dashboards-plugin
       - name: Bootstrap plugin/opensearch-dashboards
         run: |
-          mkdir -p Opensearch-Dashboards/plugins
-          mv alerting-dashboards-plugin Opensearch-Dashboards/plugins
-          cd Opensearch-Dashboards/plugins/alerting-dashboards-plugin
+          cd OpenSearch-Dashboards/plugins/alerting-dashboards-plugin
           yarn osd bootstrap
       - name: Run tests
         run: |
-          cd Opensearch-Dashboards/plugins/alerting-dashboards-plugin
+          cd OpenSearch-Dashboards/plugins/alerting-dashboards-plugin
           yarn run test:jest

@@ -1,5 +1,8 @@
 name: E2E Cypress tests
 on:
+  pull_request:
+    branches:
+      - main
   push:
     branches:
       - main
@@ -19,6 +22,25 @@ jobs:
         with:
           # TODO: Parse this from alerting plugin
           java-version: 14
+      # dependencies: OpenSearch
+      - name: Checkout OpenSearch
+        uses: actions/checkout@v2
+        with:
+          repository: opensearch-project/OpenSearch
+          path: OpenSearch
+          ref: '1.0.0-alpha1'
+      - name: Build OpenSearch
+        working-directory: ./OpenSearch
+        run: ./gradlew publishToMavenLocal -Dbuild.version_qualifier=alpha1 -Dbuild.snapshot=false
+      # dependencies: common-utils
+      - name: Checkout common-utils
+        uses: actions/checkout@v2
+        with:
+          repository: opensearch-project/common-utils
+          path: common-utils
+      - name: Build common-utils
+        working-directory: ./common-utils
+        run: ./gradlew publishToMavenLocal -Dopensearch.version=1.0.0-alpha1
       - name: Checkout
         uses: actions/checkout@v2
         with:
@@ -28,23 +50,18 @@ jobs:
       - name: Run Opensearch with plugin
         run: |
           cd alerting
-          ./gradlew run &
+          ./gradlew run -Dopensearch.version=1.0.0-alpha1 &
           timeout 300 bash -c 'while [[ "$(curl -s -o /dev/null -w ''%{http_code}'' localhost:9200)" != "200" ]]; do sleep 5; done'
-      - name: Checkout Alerting OpenSearch Dashboards plugin
-        uses: actions/checkout@v2
-        with:
-          path: alerting-dashboards-plugin
-      - name: Get OpenSearch Dashboards version
-        id: opensearch_dashboards_version
-        run: |
-          echo "::set-output name=opensearch_dashboards_version::$(node -p "(require('./alerting-dashboards-plugin/opensearch_dashboards.json').opensearchDashboardsVersion).match(/[.0-9]+/)[0]")"
       - name: Checkout OpenSearch Dashboards
         uses: actions/checkout@v2
         with:
           repository: opensearch-project/OpenSearch-Dashboards
-          ref: ${{ steps.opensearch_dashboards_version.outputs.opensearch_dashboards_version }}
-          token: ${{ secrets.GITHUB_OPENSEARCH_DASHBOARDS_OSS }}
-          path: opensearchDashboards
+          ref: ${{ env.OPENSEARCH_DASHBOARDS_VERSION }}
+          path: OpenSearch-Dashboards
+      - name: Checkout Alerting OpenSearch Dashboards plugin
+        uses: actions/checkout@v2
+        with:
+          path: OpenSearch-Dashboards/plugins/alerting-dashboards-plugin
       - name: Get node and yarn versions
         id: versions
         run: |
@@ -62,20 +79,18 @@ jobs:
           npm i -g yarn@${{ steps.versions.outputs.yarn_version }}
       - name: Bootstrap OpenSearch Dashboards with plugin
         run: |
-          mkdir -p Opensearch-Dashboards/plugins
-          mv alerting-dashboards-plugin Opensearch-Dashboards/plugins
-          cd Opensearch-Dashboards/plugins/alerting-dashboards-plugin
+          cd OpenSearch-Dashboards/plugins/alerting-dashboards-plugin
           yarn osd bootstrap
       - name: Run OpenSearch Dashboards server
         run: |
-          cd Opensearch-Dashboards
+          cd OpenSearch-Dashboards
           yarn start --no-base-path --no-watch &
           sleep 300
         # timeout 300 bash -c 'while [[ "$(curl -s -o /dev/null -w ''%{http_code}'' localhost:5601/api/status)" != "200" ]]; do sleep 5; done'
       - name: Run Cypress tests
         uses: cypress-io/github-action@v2
         with:
-          working-directory: Opensearch-Dashboards/plugins/alerting-dashboards-plugin
+          working-directory: OpenSearch-Dashboards/plugins/alerting-dashboards-plugin
           command: yarn run cypress run
 
       # Screenshots are only captured on failure, will change this once we do visual regression tests
@@ -83,10 +98,10 @@ jobs:
         if: failure()
         with:
           name: cypress-screenshots
-          path: Opensearch-Dashboards/plugins/alerting-dashboards-plugin/cypress/screenshots
+          path: OpenSearch-Dashboards/plugins/alerting-dashboards-plugin/cypress/screenshots
       # Test run video was always captured, so this action uses "always()" condition
       - uses: actions/upload-artifact@v1
         if: always()
         with:
           name: cypress-videos
-          path: Opensearch-Dashboards/plugins/alerting-dashboards-plugin/cypress/videos
+          path: OpenSearch-Dashboards/plugins/alerting-dashboards-plugin/cypress/videos
