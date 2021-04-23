@@ -61,7 +61,7 @@ jobs:
         with:
           repository: opensearch-project/OpenSearch-Dashboards
           ref: ${{ env.OPENSEARCH_DASHBOARDS_VERSION }}
-          path: opensearchDashboards
+          path: OpenSearch-Dashboards
       - name: Get node and yarn versions
         id: versions
         run: |
