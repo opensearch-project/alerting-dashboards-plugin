@@ -59,9 +59,9 @@ jobs:
           ref: ${{ env.OPENSEARCH_DASHBOARDS_VERSION }}
           path: OpenSearch-Dashboards
       - name: Checkout Alerting OpenSearch Dashboards plugin
-          uses: actions/checkout@v2
-          with:
-            path: OpenSearch-Dashboards/plugins/alerting-dashboards-plugin
+        uses: actions/checkout@v2
+        with:
+          path: OpenSearch-Dashboards/plugins/alerting-dashboards-plugin
       - name: Get node and yarn versions
         id: versions
         run: |
