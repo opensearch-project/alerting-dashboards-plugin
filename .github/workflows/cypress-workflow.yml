@@ -43,7 +43,7 @@ jobs:
         with:
           path: alerting
           # TODO: Move this after OpenSearch-Dashboards plugin setup so we can pull down the correct branch to support all opendistro branches
-          repository: opensearch-project/alerting
+          repository: lezzago/alerting
       - name: Run Opensearch with plugin
         run: |
           cd alerting
