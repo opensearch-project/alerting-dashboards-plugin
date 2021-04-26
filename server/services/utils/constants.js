@@ -37,7 +37,7 @@ export const DEFAULT_HEADERS = {
 };
 export const CLUSTER = {
   ADMIN: 'admin',
-  ALERTING: 'opendistro_alerting',
+  ALERTING: 'opensearch_alerting',
   AD_ALERTING: 'alerting_ad',
   DATA: 'data',
 };
