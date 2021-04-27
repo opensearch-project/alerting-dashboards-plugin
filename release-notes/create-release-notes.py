@@ -38,8 +38,8 @@ for line in fileinput.input(file_path, inplace=True):
                       "](" + link_prefix + pr_num + "))", line)
     sys.stdout.write(line)
 
-# Rename file to be consistent with ODFE standards
-new_file_path = "opendistro-for-elasticsearch-" + plugin_name + ".release-notes-" + \
+# Rename file to be consistent with opensearch standards
+new_file_path = "opensearch-" + plugin_name + ".release-notes-" + \
     plugin_version + ".md"
 os.rename(file_path, new_file_path)
 
