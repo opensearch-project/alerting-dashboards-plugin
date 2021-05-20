@@ -24,9 +24,9 @@
  *   permissions and limitations under the License.
  */
 
-export const API_ROUTE_PREFIX = '/_opendistro/_alerting';
+export const API_ROUTE_PREFIX = '/_plugins/_alerting';
 export const MONITOR_BASE_API = `${API_ROUTE_PREFIX}/monitors`;
-export const AD_BASE_API = `/_opendistro/_anomaly_detection/detectors`;
+export const AD_BASE_API = `/_plugins/_anomaly_detection/detectors`;
 export const DESTINATION_BASE_API = `${API_ROUTE_PREFIX}/destinations`;
 export const EMAIL_ACCOUNT_BASE_API = `${DESTINATION_BASE_API}/email_accounts`;
 export const EMAIL_GROUP_BASE_API = `${DESTINATION_BASE_API}/email_groups`;

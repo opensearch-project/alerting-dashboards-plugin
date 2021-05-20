@@ -24,7 +24,7 @@
  * permissions and limitations under the License.
  */
 
-export const API_ROUTE_PREFIX = '/_opendistro/_alerting';
+export const API_ROUTE_PREFIX = '/_plugins/_alerting';
 
 export const INDEX = {
   OPENDISTRO_ALERTING_CONFIG: '.opendistro-alerting-config',

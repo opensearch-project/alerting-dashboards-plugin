@@ -38,7 +38,6 @@ jobs:
         with:
           repository: opensearch-project/common-utils
           path: common-utils
-          ref: '1.0.0-beta1'
       - name: Build common-utils
         working-directory: ./common-utils
         run: ./gradlew publishToMavenLocal -Dopensearch.version=1.0.0-beta1
@@ -47,7 +46,6 @@ jobs:
         with:
           path: alerting
           repository: opensearch-project/alerting
-          ref: '1.0.0-beta1'
       - name: Run Opensearch with plugin
         run: |
           cd alerting
