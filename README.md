@@ -42,7 +42,7 @@ Ultimately, your directory structure should look like this:
 
 To build the plugin's distributable zip simply run `yarn build`.
 
-Example output: `./build/alertingDashboards-1.0.0-beta1.zip`
+Example output: `./build/alertingDashboards-1.0.0-rc1.zip`
 
 
 ## Run
