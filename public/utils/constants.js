@@ -65,7 +65,7 @@ export const DATA_TYPES = {
   KEYWORD: 'keyword',
 };
 
-export const ES_AD_PLUGIN = 'opensearch-anomaly-detection';
+export const OS_AD_PLUGIN = 'opensearch-anomaly-detection';
 export const OPENSEARCH_DASHBOARDS_AD_PLUGIN = 'anomaly-detection-dashboards';
 
 export const INPUTS_DETECTOR_ID = '0.search.query.query.bool.filter[1].term.detector_id.value';

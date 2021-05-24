@@ -9,10 +9,10 @@
  * GitHub history for details.
  */
 
-export const OPEN_DISTRO_PREFIX = 'opendistro';
+export const OPEN_SEARCH_PREFIX = 'opendistro';
 
 export const PLUGIN_NAME = `alerting`;
-export const INDEX_PREFIX = `${OPEN_DISTRO_PREFIX}-alerting`;
+export const INDEX_PREFIX = `${OPEN_SEARCH_PREFIX}-alerting`;
 export const INDEX = {
   SCHEDULED_JOBS: `.${INDEX_PREFIX}-config`,
   ALERTS: `.${INDEX_PREFIX}-alerts`,
