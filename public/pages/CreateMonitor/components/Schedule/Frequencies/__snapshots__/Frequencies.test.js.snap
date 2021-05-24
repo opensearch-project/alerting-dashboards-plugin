@@ -45,7 +45,7 @@ exports[`Frequencies renders CustomCron 1`] = `
             Use 
             <a
               class="euiLink euiLink--primary"
-              href="https://opendistro.github.io/for-elasticsearch-docs/docs/alerting/"
+              href="https://docs-beta.opensearch.org/docs/alerting/"
               rel="noopener noreferrer"
               target="_blank"
             >

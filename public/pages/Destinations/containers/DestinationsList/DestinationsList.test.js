@@ -47,7 +47,7 @@ describe('DestinationsList', () => {
   test('renders', async () => {
     const mockSettings = {
       defaults: {
-        opendistro: {
+        plugins: {
           alerting: {
             destination: {
               allow_list: Object.values(DESTINATION_TYPE),
@@ -83,7 +83,7 @@ describe('DestinationsList', () => {
     const mockAllowList = ['chime', 'slack', 'custom_webhook'];
     const mockSettings = {
       defaults: {
-        opendistro: {
+        plugins: {
           alerting: {
             destination: {
               allow_list: mockAllowList,
@@ -120,7 +120,7 @@ describe('DestinationsList', () => {
   test('getDestinations', async () => {
     const mockSettings = {
       defaults: {
-        opendistro: {
+        plugins: {
           alerting: {
             destination: {
               allow_list: Object.values(DESTINATION_TYPE),
