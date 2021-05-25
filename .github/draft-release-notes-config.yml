@@ -41,6 +41,7 @@ categories:
   - title: 'Maintenance'
     labels:
       - 'version support'
+      - 'backwards-compatibility'
   - title: 'Refactoring'
     labels:
       - 'refactor'
