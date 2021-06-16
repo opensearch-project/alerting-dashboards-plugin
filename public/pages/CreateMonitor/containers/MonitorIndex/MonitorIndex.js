@@ -243,10 +243,11 @@ class MonitorIndex extends React.Component {
         fieldProps={{ validate: validateIndex }}
         rowProps={{
           label: 'Index',
-          helpText: 'You can use a * as a wildcard in your index pattern',
+          helpText:
+            'You can use a * as a wildcard or date math index resolution in your index pattern',
           isInvalid,
           error: hasError,
-          style: { paddingLeft: '10px' },
+          style: { paddingLeft: '10px', textAlign: 'center' },
         }}
         inputProps={{
           placeholder: 'Select indices',
