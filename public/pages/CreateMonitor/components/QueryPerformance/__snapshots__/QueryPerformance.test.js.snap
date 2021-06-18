@@ -18,7 +18,7 @@ Array [
     <span>
       Check the performance of your query and make sure to follow best practices. 
       <a
-        href="https://docs-beta.opensearch.org/docs/alerting/"
+        href="https://docs-beta.opensearch.org/monitoring-plugins/alerting/"
       >
         Learn more
       </a>

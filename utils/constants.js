@@ -22,7 +22,7 @@ export const INDEX = {
 
 export const URL = {
   MUSTACHE: 'https://mustache.github.io/mustache.5.html',
-  DOCUMENTATION: 'https://docs-beta.opensearch.org/docs/alerting/',
+  DOCUMENTATION: 'https://docs-beta.opensearch.org/monitoring-plugins/alerting/',
 };
 
 export const MAX_THROTTLE_VALUE = 1440;

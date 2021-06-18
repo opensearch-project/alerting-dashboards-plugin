@@ -101,7 +101,7 @@ export const validateMonthlyDay = (value) => {
     return 'Must be a positive integer between 1-31';
 };
 
-export const ILLEGAL_CHARACTERS = ['\\', '/', '?', '"', '<', '>', '|', ',', ' '];
+export const ILLEGAL_CHARACTERS = ['?', '"', ',', ' '];
 
 export const validateDetector = (detectorId, selectedDetector) => {
   if (!detectorId) return 'Must select detector';

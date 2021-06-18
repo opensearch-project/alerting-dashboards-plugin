@@ -45,7 +45,7 @@ exports[`Frequencies renders CustomCron 1`] = `
             Use 
             <a
               class="euiLink euiLink--primary"
-              href="https://docs-beta.opensearch.org/docs/alerting/"
+              href="https://docs-beta.opensearch.org/monitoring-plugins/alerting/"
               rel="noopener noreferrer"
               target="_blank"
             >
