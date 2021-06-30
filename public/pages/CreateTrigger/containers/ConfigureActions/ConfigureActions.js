@@ -98,8 +98,7 @@ class ConfigureActions extends React.Component {
     }
   };
 
-  checkForError = (response) => {
-    let error =  null;
+  checkForError = (response, error) => {
     for (const trigger_name in response.resp.trigger_results) {
       // Check for errors in the trigger response
       if (!response.resp.trigger_results[trigger_name].error) {
@@ -111,7 +110,6 @@ class ConfigureActions extends React.Component {
         error = response.resp.trigger_results[trigger_name].error
       }
     }
-    console.log("Here is the Error Response", error)
     return error
   }
 
@@ -129,10 +127,14 @@ class ConfigureActions extends React.Component {
         query: { dryrun: false },
         body: JSON.stringify(testMonitor),
       });
-      const error = this.checkForError(response)
-      if (error) {
-        console.error('There was an error trying to send test message', error);
-        backendErrorNotification(notifications, 'send', 'test message', error);
+      let error = null
+      if (response.ok) {
+        error = this.checkForError(response, error)
+      }
+      if (error || !response.ok) {
+        const errorMessage = error==null ? response.resp : error
+        console.error('There was an error trying to send test message', errorMessage);
+        backendErrorNotification(notifications, 'send', 'test message', errorMessage);
       }
     } catch (err) {
       console.error('There was an error trying to send test message', err);
