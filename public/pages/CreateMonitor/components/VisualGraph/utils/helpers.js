@@ -21,7 +21,9 @@ import {
   UNITS_OF_TIME,
 } from '../../MonitorExpressions/expressions/utils/constants';
 import { Y_DOMAIN_BUFFER, DEFAULT_MARK_SIZE } from './constants';
+import { MONITOR_TYPE } from '../../../../../utils/constants';
 
+//TODO: Modify this function to get the graph title using index
 export function getYTitle(values) {
   return _.get(values, 'fieldName[0].label', 'count');
 }
@@ -63,13 +65,32 @@ export function getAnnotationData(xDomain, yDomain, thresholdValue) {
   let yValue = thresholdValue;
   if (thresholdValue > yMax) yValue = yMax;
   if (thresholdValue < yMin) yValue = yMin;
-  return [{ x: xMin, y: yValue }, { x: xMax, y: yValue }];
+  return [
+    { x: xMin, y: yValue },
+    { x: xMax, y: yValue },
+  ];
 }
 
-export function getDataFromResponse(response) {
+//TODO:
+export function getDataFromResponse(response, fieldName, monitorType) {
   if (!response) return [];
-  const buckets = _.get(response, 'aggregations.over.buckets', []);
-  return buckets.map(getXYValues).filter(filterInvalidYValues);
+  const isTraditionalMonitor = monitorType === MONITOR_TYPE.TRADITIONAL;
+
+  const buckets = isTraditionalMonitor
+    ? _.get(response, 'aggregations.over.buckets', [])
+    : _.get(response, 'aggregations.composite_agg.buckets', []);
+  //TODO: confirm that the new method using field name is working properly
+  return buckets
+    .map((bucket) => getXYValuesByFieldName(bucket, fieldName))
+    .filter(filterInvalidYValues);
+  // return buckets.map(getXYValues).filter(filterInvalidYValues);
+}
+
+export function getXYValuesByFieldName(bucket, fieldName) {
+  const x = new Date(bucket.key_as_string);
+  const path = bucket[fieldName] ? `${fieldName}.value` : 'doc_count';
+  const y = _.get(bucket, path, null);
+  return { x, y };
 }
 
 export function getXYValues(bucket) {
@@ -84,7 +105,7 @@ export function filterInvalidYValues({ y }) {
 }
 
 export function getMarkData(data) {
-  return data.map(d => ({ ...d, size: DEFAULT_MARK_SIZE }));
+  return data.map((d) => ({ ...d, size: DEFAULT_MARK_SIZE }));
 }
 
 export function getAggregationTitle(values) {

@@ -158,14 +158,13 @@ class DefineMonitor extends Component {
           touched={touched}
           onRunQuery={this.onRunQuery}
           dataTypes={this.state.dataTypes}
-          ofEnabled={this.props.values.aggregationType !== 'count'}
         />
         <EuiSpacer size="s" />
         {errors.where ? (
           renderEmptyMessage('Invalid input in WHERE filter. Remove WHERE filter or adjust filter ')
         ) : aggregations.length ? (
           _.map(aggregations, (field) => {
-            const fieldName = field.aggregationType + ' of ' + field.fieldName;
+            const fieldName = field.fieldName;
             return (
               <VisualGraph
                 values={this.state.formikSnapshot}

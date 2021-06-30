@@ -35,7 +35,7 @@ export default class VisualGraph extends Component {
 
   state = { hint: null };
 
-  onNearestX = value => {
+  onNearestX = (value) => {
     this.setState({ hint: value });
   };
 
@@ -43,8 +43,8 @@ export default class VisualGraph extends Component {
     this.setState({ hint: null });
   };
 
-  renderXYPlot = data => {
-    const { annotation, thresholdValue, values } = this.props;
+  renderXYPlot = (data) => {
+    const { annotation, thresholdValue, values, fieldName } = this.props;
     const { hint } = this.state;
     const xDomain = getXDomain(data);
     const yDomain = getYDomain(data);
@@ -94,8 +94,9 @@ export default class VisualGraph extends Component {
   );
 
   render() {
-    const { response } = this.props;
-    const data = getDataFromResponse(response);
+    const { response, fieldName, values } = this.props;
+    const monitorType = values.monitor_type;
+    const data = getDataFromResponse(response, fieldName, monitorType);
     return (
       <div style={{ padding: '20px', border: '1px solid #D9D9D9', borderRadius: '5px' }}>
         {data.length ? this.renderXYPlot(data) : this.renderEmptyData()}

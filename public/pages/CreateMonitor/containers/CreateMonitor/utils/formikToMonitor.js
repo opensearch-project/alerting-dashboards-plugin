@@ -198,7 +198,10 @@ export function formikToGraphQuery(values) {
 
 export function formikToUiGraphQuery(values) {
   const { bucketValue, bucketUnitOfTime } = values;
-  const overAggregation = formikToUiOverAggregation(values);
+  const hasGroupBy = values.groupBy.length;
+  const aggregation = hasGroupBy
+    ? formikToCompositeAggregation(values)
+    : formikToUiOverAggregation(values);
   const timeField = values.timeField;
   const filters = [
     {
@@ -217,7 +220,7 @@ export function formikToUiGraphQuery(values) {
   }
   return {
     size: 0,
-    aggregations: overAggregation,
+    aggregations: aggregation,
     query: {
       bool: {
         filter: filters,
