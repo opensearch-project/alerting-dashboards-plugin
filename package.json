@@ -1,6 +1,6 @@
 {
   "name": "opensearch-alerting-dashboards",
-  "version": "1.0.0.0-rc1",
+  "version": "1.0.0.0",
   "description": "OpenSearch Dashboards Alerting Plugin",
   "main": "index.js",
   "license": "Apache-2.0",
@@ -45,7 +45,7 @@
     "fstream": "1.0.12"
   },
   "engines": {
-    "node": "10.23.1",
+    "node": "10.24.1",
     "yarn": "^1.21.1"
   }
 }
