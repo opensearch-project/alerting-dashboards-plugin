@@ -42,9 +42,9 @@ export default class VisualGraph extends Component {
   resetHint = () => {
     this.setState({ hint: null });
   };
-
+  //TODO: Render bar graph to support group by
   renderXYPlot = (data) => {
-    const { annotation, thresholdValue, values, fieldName } = this.props;
+    const { annotation, thresholdValue, values } = this.props;
     const { hint } = this.state;
     const xDomain = getXDomain(data);
     const yDomain = getYDomain(data);

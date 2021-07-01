@@ -71,7 +71,7 @@ export function getAnnotationData(xDomain, yDomain, thresholdValue) {
   ];
 }
 
-//TODO:
+//TODO: Check whether the data is fetched correctly for aggregation monitors
 export function getDataFromResponse(response, fieldName, monitorType) {
   if (!response) return [];
   const isTraditionalMonitor = monitorType === MONITOR_TYPE.TRADITIONAL;
@@ -79,7 +79,6 @@ export function getDataFromResponse(response, fieldName, monitorType) {
   const buckets = isTraditionalMonitor
     ? _.get(response, 'aggregations.over.buckets', [])
     : _.get(response, 'aggregations.composite_agg.buckets', []);
-  //TODO: confirm that the new method using field name is working properly
   return buckets
     .map((bucket) => getXYValuesByFieldName(bucket, fieldName))
     .filter(filterInvalidYValues);
@@ -87,7 +86,7 @@ export function getDataFromResponse(response, fieldName, monitorType) {
 }
 
 export function getXYValuesByFieldName(bucket, fieldName) {
-  const x = new Date(bucket.key_as_string);
+  const x = new Date(bucket.key.date);
   const path = bucket[fieldName] ? `${fieldName}.value` : 'doc_count';
   const y = _.get(bucket, path, null);
   return { x, y };
