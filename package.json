@@ -42,7 +42,8 @@
     "react-vis": "^1.8.1"
   },
   "resolutions": {
-    "fstream": "1.0.12"
+    "fstream": "1.0.12",
+    "glob-parent": "^5.1.2"
   },
   "engines": {
     "node": "10.24.1",
