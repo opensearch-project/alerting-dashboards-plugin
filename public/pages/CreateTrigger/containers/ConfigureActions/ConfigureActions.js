@@ -43,6 +43,21 @@ const createActionContext = (context, action) => ({
   },
 });
 
+export const checkForError = (response, error) => {
+  for (const trigger_name in response.resp.trigger_results) {
+    // Check for errors in the trigger response
+    if (!response.resp.trigger_results[trigger_name].error) {
+      // Check for errors in the actions configured
+      for (const action_result in response.resp.trigger_results[trigger_name].action_results) {
+        error = response.resp.trigger_results[trigger_name].action_results[action_result].error;
+      }
+    } else {
+      error = response.resp.trigger_results[trigger_name].error;
+    }
+  }
+  return error;
+};
+
 class ConfigureActions extends React.Component {
   constructor(props) {
     super(props);
@@ -98,21 +113,6 @@ class ConfigureActions extends React.Component {
     }
   };
 
-  checkForError = (response, error) => {
-    for (const trigger_name in response.resp.trigger_results) {
-      // Check for errors in the trigger response
-      if (!response.resp.trigger_results[trigger_name].error) {
-        // Check for errors in the actions configured
-        for (const action_result in response.resp.trigger_results[trigger_name].action_results) {
-          error = response.resp.trigger_results[trigger_name].action_results[action_result].error
-        }
-      } else {
-        error = response.resp.trigger_results[trigger_name].error
-      }
-    }
-    return error
-  }
-
   sendTestMessage = async (index) => {
     const {
       context: { monitor, trigger },
@@ -127,12 +127,12 @@ class ConfigureActions extends React.Component {
         query: { dryrun: false },
         body: JSON.stringify(testMonitor),
       });
-      let error = null
+      let error = null;
       if (response.ok) {
-        error = this.checkForError(response, error)
+        error = checkForError(response, error);
       }
       if (error || !response.ok) {
-        const errorMessage = error==null ? response.resp : error
+        const errorMessage = error == null ? response.resp : error;
         console.error('There was an error trying to send test message', errorMessage);
         backendErrorNotification(notifications, 'send', 'test message', errorMessage);
       }
