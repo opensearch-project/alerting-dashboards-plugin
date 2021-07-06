@@ -15,7 +15,16 @@
 
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Hint, XAxis, YAxis, MarkSeries, LineSeries, FlexibleXYPlot } from 'react-vis';
+import {
+  Hint,
+  XAxis,
+  YAxis,
+  MarkSeries,
+  LineSeries,
+  FlexibleXYPlot,
+  RectSeries,
+  VerticalBarSeries,
+} from 'react-vis';
 
 import { SIZE_RANGE, ANNOTATION_STYLES, HINT_STYLES, LINE_STYLES } from './utils/constants';
 import {
@@ -28,7 +37,9 @@ import {
   getDataFromResponse,
   getMarkData,
   getAggregationTitle,
+  getRectData,
 } from './utils/helpers';
+import BarSeries from 'react-vis/es/plot/series/bar-series';
 
 export default class VisualGraph extends Component {
   static defaultProps = { annotation: false };
@@ -53,35 +64,53 @@ export default class VisualGraph extends Component {
     const yTitle = getYTitle(values);
     const leftPadding = getLeftPadding(yDomain);
     const markData = getMarkData(data);
+    const rectData = getRectData(data);
     const aggregationTitle = getAggregationTitle(values);
+
+    // Debug use
+    console.log('Printing out markData: ' + JSON.stringify(markData));
+    console.log('Printing out data: ' + JSON.stringify(data));
     return (
-      <FlexibleXYPlot
-        height={400}
-        xType="time"
-        margin={{ top: 20, right: 20, bottom: 70, left: leftPadding }}
-        xDomain={xDomain}
-        yDomain={yDomain}
-        onMouseLeave={this.resetHint}
-      >
-        <XAxis title={xTitle} />
-        <XAxis
-          title={aggregationTitle}
-          position="middle"
-          orientation="top"
-          tickTotal={0}
-          top={-25}
-          style={{ strokeWidth: '0px' }}
-        />
-        <YAxis title={yTitle} tickFormat={formatYAxisTick} />
-        <LineSeries data={data} style={LINE_STYLES} />
-        <MarkSeries data={markData} sizeRange={SIZE_RANGE} onNearestX={this.onNearestX} />
-        {annotation && <LineSeries data={annotations} style={ANNOTATION_STYLES} />}
-        {hint && (
-          <Hint value={hint}>
-            <div style={HINT_STYLES}>({hint.y.toLocaleString()})</div>
-          </Hint>
-        )}
-      </FlexibleXYPlot>
+      <div>
+        <FlexibleXYPlot
+          height={400}
+          xType="time"
+          margin={{ top: 20, right: 20, bottom: 70, left: leftPadding }}
+          xDomain={xDomain}
+          yDomain={yDomain}
+          onMouseLeave={this.resetHint}
+        >
+          <XAxis title={xTitle} />
+          <XAxis
+            title={aggregationTitle}
+            position="middle"
+            orientation="top"
+            tickTotal={0}
+            top={-25}
+            style={{ strokeWidth: '0px' }}
+          />
+          <YAxis title={yTitle} tickFormat={formatYAxisTick} />
+          {/*TODO: Convert to LineMarkSeries with individual data (e.g. "key1Data", "key2Data"*/}
+          <LineSeries data={data} style={LINE_STYLES} />
+          <MarkSeries data={markData} sizeRange={SIZE_RANGE} onNearestX={this.onNearestX} />
+          {/*TODO: Add each group by data with a bar series graph using different colors*/}
+          {/*<VerticalBarSeries data={rectData} />*/}
+          {annotation && <LineSeries data={annotations} style={ANNOTATION_STYLES} />}
+          {hint && (
+            <Hint value={hint}>
+              <div style={HINT_STYLES}>({hint.y.toLocaleString()})</div>
+            </Hint>
+          )}
+        </FlexibleXYPlot>
+        <FlexibleXYPlot
+          height={400}
+          xType="time"
+          margin={{ top: 20, right: 20, bottom: 70, left: leftPadding }}
+          xDomain={xDomain}
+          yDomain={yDomain}
+          onMouseLeave={this.resetHint}
+        ></FlexibleXYPlot>
+      </div>
     );
   };
 

@@ -71,7 +71,7 @@ export function getAnnotationData(xDomain, yDomain, thresholdValue) {
   ];
 }
 
-//TODO: Check whether the data is fetched correctly for aggregation monitors
+//TODO: Check whether the data is fetched correctly for aggregation monitors and separate the data by group by terms
 export function getDataFromResponse(response, fieldName, monitorType) {
   if (!response) return [];
   const isTraditionalMonitor = monitorType === MONITOR_TYPE.TRADITIONAL;
@@ -107,6 +107,12 @@ export function getMarkData(data) {
   return data.map((d) => ({ ...d, size: DEFAULT_MARK_SIZE }));
 }
 
+export function getRectData(data) {
+  const ONE_HOUR = 3600000;
+  return data.map((d) => ({ ...d, x0: d.x - ONE_HOUR, size: DEFAULT_MARK_SIZE }));
+}
+
+//TODO: Modify aggregation title to new format with field name as title and other info in smaller text
 export function getAggregationTitle(values) {
   const aggregationType = selectOptionValueToText(values.aggregationType, AGGREGATION_TYPES);
   const when = `WHEN ${aggregationType}`;

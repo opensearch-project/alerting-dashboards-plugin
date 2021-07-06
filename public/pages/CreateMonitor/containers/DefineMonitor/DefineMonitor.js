@@ -195,6 +195,7 @@ class DefineMonitor extends Component {
         requests = [buildSearchRequest(values)];
         break;
       case SEARCH_TYPE.GRAPH:
+        // TODO: Might need to check if groupBy is defined if monitor_type === Graph, and prevent onRunQuery() if no group by defined to avoid errors.
         // If we are running a visual graph query, then we need to run two separate queries
         // 1. The actual query that will be saved on the monitor, to get accurate query performance stats
         // 2. The UI generated query that gets [BUCKET_COUNT] times the aggregated buckets to show past history of query
