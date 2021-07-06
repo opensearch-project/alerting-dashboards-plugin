@@ -33,15 +33,17 @@ class GroupByExpression extends Component {
     } = this.props;
     return values.groupBy.map((groupByItem, index) => {
       return (
-        <GroupByItem
-          values={values}
-          onMadeChanges={onMadeChanges}
-          arrayHelpers={arrayHelpers}
-          fieldOptions={fieldOptions}
-          expressionWidth={expressionWidth}
-          groupByItem={groupByItem}
-          index={index}
-        />
+        <span style={{ paddingRight: '5px' }}>
+          <GroupByItem
+            values={values}
+            onMadeChanges={onMadeChanges}
+            arrayHelpers={arrayHelpers}
+            fieldOptions={fieldOptions}
+            expressionWidth={expressionWidth}
+            groupByItem={groupByItem}
+            index={index}
+          />
+        </span>
       );
     });
   };
@@ -75,6 +77,7 @@ class GroupByExpression extends Component {
         <EuiText size="xs">
           <h4>Group by</h4>
         </EuiText>
+        <EuiSpacer size="s" />
         {this.renderFieldItems(arrayHelpers, fieldOptions, expressionWidth)}
         <EuiSpacer size="xs" />
         <EuiButtonEmpty
