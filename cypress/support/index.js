@@ -56,5 +56,15 @@ Cypress.on('uncaught:exception', (err) => {
 
 // Switch the base URL of Opensearch when security enabled in the cluster
 if (Cypress.env('security_enabled')) {
-  Cypress.env('opensearch', 'https://localhost:9200');
+  Cypress.env('opensearch', `https://${Cypress.env('base_url')}:${Cypress.env('opensearch_port')}`);
+  Cypress.env(
+    'opensearch_dashboards',
+    `https://${Cypress.env('base_url')}:${Cypress.env('opensearch_dashboards_port')}`
+  );
+} else {
+  Cypress.env('opensearch', `http://${Cypress.env('base_url')}:${Cypress.env('opensearch_port')}`);
+  Cypress.env(
+    'opensearch_dashboards',
+    `http://${Cypress.env('base_url')}:${Cypress.env('opensearch_dashboards_port')}`
+  );
 }
