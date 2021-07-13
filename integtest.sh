@@ -75,4 +75,4 @@ fi
 
 yarn osd bootstrap
 
-cypress run --env security_enabled=$SECURITY_ENABLED opensearch_dashboards_port=${BIND_PORT} baseurl=${BIND_ADDRESS}
+cypress run --env security_enabled=$SECURITY_ENABLED opensearch_dashboards_port=${BIND_PORT} base_url=${BIND_ADDRESS}
