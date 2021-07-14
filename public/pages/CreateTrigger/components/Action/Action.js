@@ -26,7 +26,14 @@
 
 import React from 'react';
 import _ from 'lodash';
-import { EuiAccordion, EuiButton, EuiHorizontalRule, EuiSpacer } from '@elastic/eui';
+import {
+  EuiAccordion,
+  EuiButton,
+  EuiHorizontalRule,
+  EuiSpacer,
+  EuiFlexGroup,
+  EuiFlexItem,
+} from '@elastic/eui';
 import { FormikFieldText, FormikComboBox } from '../../../../components/FormControls';
 import { isInvalid, hasError, validateActionName } from '../../../../utils/validate';
 import { ActionsMap } from './utils/constants';
@@ -78,33 +85,43 @@ const Action = ({
           }}
           inputProps={{ isInvalid }}
         />
-        <FormikComboBox
-          name={`actions.${index}.destination_id`}
-          formRow
-          fieldProps={{ validate: validateDestination(destinations) }}
-          rowProps={{
-            label: 'Destination',
-            isInvalid,
-            error: hasError,
-          }}
-          inputProps={{
-            placeholder: 'Select a destination',
-            options: destinations,
-            selectedOptions: selectedDestination,
-            onChange: (options) => {
-              // Just a swap correct fields.
-              arrayHelpers.replace(index, {
-                ...action,
-                destination_id: options[0].value,
-              });
-            },
-            onBlur: (e, field, form) => {
-              form.setFieldTouched(`actions.${index}.destination_id`, true);
-            },
-            singleSelection: { asPlainText: true },
-            isClearable: false,
-          }}
-        />
+        <EuiSpacer size="m" />
+        <EuiFlexGroup wrap alignItems="flexEnd">
+          <EuiFlexItem style={{ maxWidth: 400 }}>
+            <FormikComboBox
+              name={`actions.${index}.destination_id`}
+              formRow
+              fieldProps={{ validate: validateDestination(destinations) }}
+              rowProps={{
+                label: 'Channels',
+                isInvalid,
+                error: hasError,
+              }}
+              inputProps={{
+                placeholder: 'Select channels to notify',
+                options: destinations,
+                selectedOptions: selectedDestination,
+                onChange: (options) => {
+                  // Just a swap correct fields.
+                  arrayHelpers.replace(index, {
+                    ...action,
+                    destination_id: options[0].value,
+                  });
+                },
+                onBlur: (e, field, form) => {
+                  form.setFieldTouched(`actions.${index}.destination_id`, true);
+                },
+                singleSelection: { asPlainText: true },
+                isClearable: false,
+              }}
+            />
+          </EuiFlexItem>
+          <EuiFlexItem grow={false}>
+            <EuiButton iconType="popout" iconSide="right">
+              Manage channels
+            </EuiButton>
+          </EuiFlexItem>
+        </EuiFlexGroup>
         <EuiSpacer size="m" />
         <ActionComponent
           action={action}
