@@ -1,16 +1,16 @@
 const templatePkg = require('./package.json');
-const kibanaPkg = require('../../package.json');
+const opensearchDashboardsPkg = require('../../package.json');
 
 const debugInfo = {
-  kibana: {
-    version: kibanaPkg.version,
-    build: kibanaPkg.build,
-    engines: kibanaPkg.engines,
+  opensearchDashboards: {
+    version: opensearchDashboardsPkg.version,
+    build: opensearchDashboardsPkg.build,
+    engines: opensearchDashboardsPkg.engines,
   },
   plugin: {
     name: templatePkg.name,
     version: templatePkg.version,
-    kibana: templatePkg.kibana,
+    opensearchDashboards: templatePkg.opensearchDashboards,
     dependencies: templatePkg.dependencies,
   },
 };

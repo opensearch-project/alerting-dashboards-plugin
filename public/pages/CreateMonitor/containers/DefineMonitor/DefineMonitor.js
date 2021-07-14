@@ -39,7 +39,7 @@ import MonitorTimeField from '../../components/MonitorTimeField';
 import { formikToMonitor } from '../CreateMonitor/utils/formikToMonitor';
 import { getPathsPerDataType } from './utils/mappings';
 import { buildSearchRequest } from './utils/searchRequests';
-import { SEARCH_TYPE, ES_AD_PLUGIN } from '../../../../utils/constants';
+import { SEARCH_TYPE, OS_AD_PLUGIN } from '../../../../utils/constants';
 import AnomalyDetectors from '../AnomalyDetectors/AnomalyDetectors';
 import { backendErrorNotification } from '../../../../utils/helpers';
 
@@ -346,7 +346,7 @@ class DefineMonitor extends Component {
   showPluginWarning() {
     const { values } = this.props;
     const { plugins } = this.state;
-    return values.searchType == SEARCH_TYPE.AD && plugins.indexOf(ES_AD_PLUGIN) == -1;
+    return values.searchType == SEARCH_TYPE.AD && plugins.indexOf(OS_AD_PLUGIN) == -1;
   }
 
   render() {

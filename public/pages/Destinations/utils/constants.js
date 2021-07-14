@@ -38,4 +38,4 @@ export const DESTINATION_OPTIONS = [
   { value: DESTINATION_TYPE.EMAIL, text: 'Email' },
 ];
 
-export const ALLOW_LIST_SETTING_PATH = 'opendistro.alerting.destination.allow_list';
+export const ALLOW_LIST_SETTING_PATH = 'plugins.alerting.destination.allow_list';

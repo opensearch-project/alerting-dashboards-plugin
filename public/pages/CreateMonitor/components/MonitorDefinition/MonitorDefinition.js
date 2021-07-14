@@ -26,7 +26,7 @@
 
 import React from 'react';
 import FormikSelect from '../../../../components/FormControls/FormikSelect/FormikSelect';
-import { ES_AD_PLUGIN } from '../../../../utils/constants';
+import { OS_AD_PLUGIN } from '../../../../utils/constants';
 
 const defaultSelectDefinitions = [
   { value: 'graph', text: 'Define using visual graph' },
@@ -40,7 +40,7 @@ const onChangeDefinition = (e, form, resetResponse) => {
 };
 
 const selectDefinitions = (plugins) => {
-  return plugins === undefined || plugins.indexOf(ES_AD_PLUGIN) == -1
+  return plugins === undefined || plugins.indexOf(OS_AD_PLUGIN) == -1
     ? defaultSelectDefinitions
     : [...defaultSelectDefinitions, { value: 'ad', text: 'Define using anomaly detector' }];
 };

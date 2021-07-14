@@ -10,3 +10,5 @@
 | Rishabh Maurya | [rishabhmaurya](https://github.com/rishabhmaurya) | Amazon | 
 | Tianli Feng | [tlfeng](https://github.com/tlfeng) | Amazon |
 | Annie Lee | [leeyun-amzn](https://github.com/leeyun-amzn) | Amazon |
+
+[This document](https://github.com/opensearch-project/.github/blob/main/MAINTAINERS.md) explains what maintainers do in this repo, and how they should be doing it. If you're interested in contributing, see [CONTRIBUTING](CONTRIBUTING.md).

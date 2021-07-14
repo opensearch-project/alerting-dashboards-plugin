@@ -1,8 +1,8 @@
 {
   "defaultCommandTimeout": 10000,
   "env": {
-    "opensearch": "localhost:9200",
-    "opensearch_dashboards": "localhost:5601",
+    "opensearch_url": "localhost:9200",
+    "opensearch_dashboards_url": "localhost:5601",
     "security_enabled": false
   }
 }

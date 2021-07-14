@@ -10,7 +10,7 @@
  */
 
 /*
- *   Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ *   Copyright 2021 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  *   Licensed under the Apache License, Version 2.0 (the "License").
  *   You may not use this file except in compliance with the License.
@@ -106,6 +106,7 @@ const EmailGroup = ({ emailGroup, emailOptions, arrayHelpers, context, index, on
             form.setFieldTouched(`emailGroups.${index}.emails`, true);
           },
           onCreateOption: (value, field, form) => {
+            onEmailGroupChange(index, emailGroup, arrayHelpers);
             onCreateOption(`emailGroups.${index}.emails`, value, field.value, form.setFieldValue);
           },
           isClearable: true,
