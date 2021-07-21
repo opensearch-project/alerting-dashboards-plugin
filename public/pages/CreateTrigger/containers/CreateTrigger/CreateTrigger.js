@@ -202,7 +202,15 @@ export default class CreateTrigger extends Component {
   });
 
   render() {
-    const { monitor, onCloseTrigger, setFlyout, edit, httpClient, notifications } = this.props;
+    const {
+      monitor,
+      onCloseTrigger,
+      setFlyout,
+      edit,
+      httpClient,
+      notifications,
+      notificationService,
+    } = this.props;
     const { initialValues, executeResponse } = this.state;
     return (
       <div style={{ padding: '25px 50px' }}>
@@ -234,6 +242,7 @@ export default class CreateTrigger extends Component {
                     setFlyout={setFlyout}
                     values={values}
                     notifications={notifications}
+                    notificationService={notificationService}
                   />
                 )}
               </FieldArray>

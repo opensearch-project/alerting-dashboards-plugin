@@ -75,3 +75,23 @@ export const MONITOR_INPUT_DETECTOR_ID = `inputs.${INPUTS_DETECTOR_ID}`;
 export const AD_PREVIEW_DAYS = 7;
 
 export const MAX_QUERY_RESULT_SIZE = 200;
+
+// Notification related constants
+
+export const BACKEND_CHANNEL_TYPE = Object.freeze({
+  SLACK: 'slack',
+  EMAIL: 'email',
+  CHIME: 'chime',
+  CUSTOM_WEBHOOK: 'webhook',
+  SES: 'ses',
+  SNS: 'sns',
+});
+
+export const CHANNEL_TYPE = Object.freeze({
+  [BACKEND_CHANNEL_TYPE.SLACK]: 'Slack',
+  [BACKEND_CHANNEL_TYPE.EMAIL]: 'Email',
+  [BACKEND_CHANNEL_TYPE.CHIME]: 'Chime',
+  [BACKEND_CHANNEL_TYPE.CUSTOM_WEBHOOK]: 'Custom webhook',
+  [BACKEND_CHANNEL_TYPE.SES]: 'Amazon SES',
+  [BACKEND_CHANNEL_TYPE.SNS]: 'Amazon SNS',
+});

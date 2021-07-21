@@ -66,6 +66,8 @@ class ConfigureActions extends React.Component {
       allowList: [],
       loadingDestinations: true,
       actionDeleted: false,
+      items: [],
+      total: 0,
     };
   }
 
@@ -79,6 +81,8 @@ class ConfigureActions extends React.Component {
   }
 
   loadDestinations = async (searchText = '') => {
+    //Debug use
+    console.log('Entering loadDestinations...');
     const { httpClient, values, arrayHelpers, notifications } = this.props;
     const { allowList, actionDeleted } = this.state;
     this.setState({ loadingDestinations: true });
@@ -104,6 +108,23 @@ class ConfigureActions extends React.Component {
         if (destinations.length > 0 && !values.actions && !actionDeleted) {
           arrayHelpers.insert(0, FORMIK_INITIAL_ACTION_VALUES);
         }
+
+        //TODO: Try to fetch channels from notification here
+        //Debug use
+        console.log('Attempting to get channels...');
+        const tempQueryObj = {
+          from_index: 0,
+          max_items: 10,
+          query: searchText,
+          config_type: ['slack', 'email', 'chime', 'webhook', 'ses', 'sns'],
+          sort_field: 'name',
+          sort_order: 'asc',
+        };
+        // const queryObject = Channels.getQueryObjectFromState(this.state);
+        const channels = await this.props.notificationService.getChannels(tempQueryObj);
+        //Debug use
+        console.log('channels: ' + JSON.stringify(channels));
+        this.setState({ items: channels.items, total: channels.total });
       } else {
         backendErrorNotification(notifications, 'load', 'destinations', response.err);
       }
@@ -168,6 +189,7 @@ class ConfigureActions extends React.Component {
       <ActionEmptyPrompt arrayHelpers={arrayHelpers} hasDestinations={hasDestinations} />
     );
   };
+
   render() {
     const { loadingDestinations } = this.state;
     const { arrayHelpers } = this.props;

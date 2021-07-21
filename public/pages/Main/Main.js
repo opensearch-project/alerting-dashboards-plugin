@@ -35,6 +35,7 @@ import MonitorDetails from '../MonitorDetails/containers/MonitorDetails';
 import CreateDestination from '../Destinations/containers/CreateDestination';
 import Flyout from '../../components/Flyout';
 import { APP_PATH } from '../../utils/constants';
+import { ServicesConsumer } from '../../services';
 
 class Main extends Component {
   state = { flyout: null };
@@ -57,6 +58,9 @@ class Main extends Component {
       <CoreConsumer>
         {(core) =>
           core && (
+            // <ServicesConsumer>
+            //   {(services) =>
+            //     services && (
             <div style={{ padding: '15px 0px' }}>
               <Breadcrumbs history={history} httpClient={core.http} {...rest} />
               <Flyout
@@ -109,6 +113,7 @@ class Main extends Component {
                       setFlyout={this.setFlyout}
                       notifications={core.notifications}
                       isDarkMode={core.isDarkMode}
+                      notificationService={services.notificationService}
                       {...props}
                     />
                   )}
@@ -125,6 +130,9 @@ class Main extends Component {
                 />
               </Switch>
             </div>
+            //     )
+            //   }
+            // </ServicesConsumer>
           )
         }
       </CoreConsumer>
