@@ -49,12 +49,14 @@ const Action = ({
   onDelete,
   sendTestMessage,
   setFlyout,
+  httpClient,
 }) => {
   const selectedDestination = destinations.filter((item) => item.value === action.destination_id);
   const type = _.get(selectedDestination, '0.type', DEFAULT_ACTION_TYPE);
   const { name } = action;
   const ActionComponent = ActionsMap[type].component;
   const actionLabel = ActionsMap[type].label;
+  const manageChannelsUrl = httpClient.basePath.prepend(`/app/notifications-dashboards#/channels`);
   return (
     <EuiAccordion
       id={name}
@@ -117,7 +119,7 @@ const Action = ({
             />
           </EuiFlexItem>
           <EuiFlexItem grow={false}>
-            <EuiButton iconType="popout" iconSide="right">
+            <EuiButton iconType="popout" iconSide="right" href={manageChannelsUrl}>
               Manage channels
             </EuiButton>
           </EuiFlexItem>
