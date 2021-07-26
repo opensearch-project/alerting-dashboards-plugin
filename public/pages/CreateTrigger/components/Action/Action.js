@@ -33,12 +33,13 @@ import {
   EuiSpacer,
   EuiFlexGroup,
   EuiFlexItem,
+  EuiText,
 } from '@elastic/eui';
 import { FormikFieldText, FormikComboBox } from '../../../../components/FormControls';
 import { isInvalid, hasError, validateActionName } from '../../../../utils/validate';
 import { ActionsMap } from './utils/constants';
 import { validateDestination } from './utils/validate';
-import { DEFAULT_ACTION_TYPE } from '../../utils/constants';
+import { DEFAULT_ACTION_TYPE, MANAGE_CHANNELS_PATH } from '../../utils/constants';
 
 const Action = ({
   action,
@@ -56,7 +57,7 @@ const Action = ({
   const { name } = action;
   const ActionComponent = ActionsMap[type].component;
   const actionLabel = ActionsMap[type].label;
-  const manageChannelsUrl = httpClient.basePath.prepend(`/app/notifications-dashboards#/channels`);
+  const manageChannelsUrl = httpClient.basePath.prepend(MANAGE_CHANNELS_PATH);
   return (
     <EuiAccordion
       id={name}
@@ -113,8 +114,18 @@ const Action = ({
                 onBlur: (e, field, form) => {
                   form.setFieldTouched(`actions.${index}.destination_id`, true);
                 },
-                singleSelection: { asPlainText: true },
+                // singleSelection: { asPlainText: true },
                 isClearable: false,
+                // renderOption: (
+                //   <React.Fragment>
+                //     <strong>{}</strong>
+                //     <EuiText size="s" color="subdued">
+                //       <p className="euiTextColor--subdued">
+                //         Has a short description giving more detail to the option.
+                //       </p>
+                //     </EuiText>
+                //   </React.Fragment>
+                // ),
               }}
             />
           </EuiFlexItem>

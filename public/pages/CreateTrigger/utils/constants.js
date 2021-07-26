@@ -51,3 +51,7 @@ export const FORMIK_INITIAL_ACTION_VALUES = {
 };
 
 export const DEFAULT_ACTION_TYPE = 'slack';
+
+export const MANAGE_CHANNELS_PATH = `/notifications-dashboards#/channels`;
+
+export const CHANNEL_TYPES = ['slack', 'email', 'chime', 'webhook', 'ses', 'sns'];
