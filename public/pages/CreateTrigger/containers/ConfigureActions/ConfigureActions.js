@@ -125,8 +125,8 @@ class ConfigureActions extends React.Component {
           arrayHelpers.insert(0, FORMIK_INITIAL_ACTION_VALUES);
         }
 
-        // const channelOptionsByType = getChannelOptions(channelOptions, CHANNEL_TYPES);
-        this.setState({ destinations, loadingDestinations: false });
+        const channelOptionsByType = getChannelOptions(destinations, CHANNEL_TYPES);
+        this.setState({ destinations: channelOptionsByType, loadingDestinations: false });
       } else {
         backendErrorNotification(notifications, 'load', 'destinations', response.err);
       }
