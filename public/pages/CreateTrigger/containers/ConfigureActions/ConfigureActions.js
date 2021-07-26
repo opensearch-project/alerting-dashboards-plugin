@@ -120,13 +120,13 @@ class ConfigureActions extends React.Component {
           }))
           .filter(({ type }) => allowList.includes(type));
 
+        const channelOptionsByType = getChannelOptions(destinations, CHANNEL_TYPES);
+        this.setState({ destinations: channelOptionsByType, loadingDestinations: false });
+
         // If actions is not defined  If user choose to delete actions, it will not override customer's preferences.
         if (destinations.length > 0 && !values.actions && !actionDeleted) {
           arrayHelpers.insert(0, FORMIK_INITIAL_ACTION_VALUES);
         }
-
-        const channelOptionsByType = getChannelOptions(destinations, CHANNEL_TYPES);
-        this.setState({ destinations: channelOptionsByType, loadingDestinations: false });
       } else {
         backendErrorNotification(notifications, 'load', 'destinations', response.err);
       }
