@@ -34,6 +34,7 @@ import {
   EuiFlexGroup,
   EuiFlexItem,
   EuiText,
+  EuiFormRow,
 } from '@elastic/eui';
 import { FormikFieldText, FormikComboBox } from '../../../../components/FormControls';
 import { isInvalid, hasError, validateActionName } from '../../../../utils/validate';
@@ -89,7 +90,7 @@ const Action = ({
           inputProps={{ isInvalid }}
         />
         <EuiSpacer size="m" />
-        <EuiFlexGroup wrap alignItems="flexEnd">
+        <EuiFlexGroup wrap>
           <EuiFlexItem style={{ maxWidth: 400 }}>
             <FormikComboBox
               name={`actions.${index}.destination_id`}
@@ -116,7 +117,6 @@ const Action = ({
                 },
                 singleSelection: { asPlainText: true },
                 isClearable: false,
-                //TODO: Render the options with description
                 renderOption: (option) => (
                   <React.Fragment>
                     <EuiText size="s">{option.label}</EuiText>
@@ -130,7 +130,12 @@ const Action = ({
             />
           </EuiFlexItem>
           <EuiFlexItem grow={false}>
-            <EuiButton iconType="popout" iconSide="right" href={manageChannelsUrl}>
+            <EuiSpacer size="l" />
+            <EuiButton
+              iconType="popout"
+              iconSide="right"
+              onClick={() => window.open(manageChannelsUrl)}
+            >
               Manage channels
             </EuiButton>
           </EuiFlexItem>
