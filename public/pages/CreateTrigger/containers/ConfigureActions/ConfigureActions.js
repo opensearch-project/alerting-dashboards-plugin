@@ -30,11 +30,12 @@ import Action from '../../components/Action';
 import ActionEmptyPrompt from '../../components/ActionEmptyPrompt';
 import AddActionButton from '../../components/AddActionButton';
 import ContentPanel from '../../../../components/ContentPanel';
-import { FORMIK_INITIAL_ACTION_VALUES } from '../../utils/constants';
+import { CHANNEL_TYPES, FORMIK_INITIAL_ACTION_VALUES } from '../../utils/constants';
 import { DESTINATION_OPTIONS } from '../../../Destinations/utils/constants';
 import { getAllowList } from '../../../Destinations/utils/helpers';
 import { MAX_QUERY_RESULT_SIZE } from '../../../../utils/constants';
 import { backendErrorNotification } from '../../../../utils/helpers';
+import { getChannelOptions } from '../../utils/helper';
 
 const createActionContext = (context, action) => ({
   ctx: {
@@ -81,8 +82,6 @@ class ConfigureActions extends React.Component {
   }
 
   loadDestinations = async (searchText = '') => {
-    //Debug use
-    console.log('Entering loadDestinations...');
     const { httpClient, values, arrayHelpers, notifications } = this.props;
     const { allowList, actionDeleted } = this.state;
     this.setState({ loadingDestinations: true });
@@ -96,35 +95,38 @@ class ConfigureActions extends React.Component {
         query: { search: searchText, size: MAX_QUERY_RESULT_SIZE },
       });
       if (response.ok) {
+        // Fetch description for channels
+        const tempQueryObj = {
+          from_index: 0,
+          max_items: MAX_QUERY_RESULT_SIZE,
+          query: searchText,
+          config_type: CHANNEL_TYPES,
+          sort_field: 'name',
+          sort_order: 'asc',
+        };
+        const channelsResponse = await this.props.notificationService.getChannels(tempQueryObj);
+        const channels = channelsResponse.items;
+        const getDestinationDescription = (destination) => {
+          const foundDestination = channels.find(({ config_id }) => config_id === destination.id);
+          if (foundDestination) return foundDestination.description;
+          return '';
+        };
         const destinations = response.destinations
           .map((destination) => ({
             label: `${destination.name} - (${getDestinationLabel(destination)})`,
             value: destination.id,
             type: destination.type,
+            description: getDestinationDescription(destination),
           }))
           .filter(({ type }) => allowList.includes(type));
-        this.setState({ destinations, loadingDestinations: false });
+
         // If actions is not defined  If user choose to delete actions, it will not override customer's preferences.
         if (destinations.length > 0 && !values.actions && !actionDeleted) {
           arrayHelpers.insert(0, FORMIK_INITIAL_ACTION_VALUES);
         }
 
-        //TODO: Try to fetch channels from notification here
-        //Debug use
-        console.log('Attempting to get channels...');
-        const tempQueryObj = {
-          from_index: 0,
-          max_items: 10,
-          query: searchText,
-          config_type: ['slack', 'email', 'chime', 'webhook', 'ses', 'sns'],
-          sort_field: 'name',
-          sort_order: 'asc',
-        };
-        // const queryObject = Channels.getQueryObjectFromState(this.state);
-        const channels = await this.props.notificationService.getChannels(tempQueryObj);
-        //Debug use
-        console.log('channels: ' + JSON.stringify(channels));
-        this.setState({ items: channels.items, total: channels.total });
+        // const channelOptionsByType = getChannelOptions(channelOptions, CHANNEL_TYPES);
+        this.setState({ destinations, loadingDestinations: false });
       } else {
         backendErrorNotification(notifications, 'load', 'destinations', response.err);
       }
@@ -163,7 +165,7 @@ class ConfigureActions extends React.Component {
   };
 
   renderActions = (arrayHelpers) => {
-    const { context, setFlyout, values } = this.props;
+    const { context, setFlyout, values, httpClient } = this.props;
     const { destinations } = this.state;
     const hasDestinations = !_.isEmpty(destinations);
     const hasActions = !_.isEmpty(values.actions);
@@ -183,6 +185,7 @@ class ConfigureActions extends React.Component {
           }}
           sendTestMessage={this.sendTestMessage}
           setFlyout={setFlyout}
+          httpClient={httpClient}
         />
       ))
     ) : (
