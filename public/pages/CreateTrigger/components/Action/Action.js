@@ -114,18 +114,18 @@ const Action = ({
                 onBlur: (e, field, form) => {
                   form.setFieldTouched(`actions.${index}.destination_id`, true);
                 },
-                // singleSelection: { asPlainText: true },
+                singleSelection: { asPlainText: true },
                 isClearable: false,
-                // renderOption: (
-                //   <React.Fragment>
-                //     <strong>{}</strong>
-                //     <EuiText size="s" color="subdued">
-                //       <p className="euiTextColor--subdued">
-                //         Has a short description giving more detail to the option.
-                //       </p>
-                //     </EuiText>
-                //   </React.Fragment>
-                // ),
+                //TODO: Render the options with description
+                renderOption: (option) => (
+                  <React.Fragment>
+                    <EuiText size="s">{option.label}</EuiText>
+                    <EuiText size="xs" color="subdued">
+                      {`${option.description}`}
+                    </EuiText>
+                  </React.Fragment>
+                ),
+                rowHeight: 45,
               }}
             />
           </EuiFlexItem>
