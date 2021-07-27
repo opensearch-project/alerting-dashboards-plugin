@@ -64,6 +64,7 @@ class ConfigureActions extends React.Component {
     super(props);
     this.state = {
       destinations: [],
+      flattenDestinations: [],
       allowList: [],
       loadingDestinations: true,
       actionDeleted: false,
@@ -85,11 +86,6 @@ class ConfigureActions extends React.Component {
     const { httpClient, values, arrayHelpers, notifications } = this.props;
     const { allowList, actionDeleted } = this.state;
     this.setState({ loadingDestinations: true });
-    const getDestinationLabel = (destination) => {
-      const foundDestination = DESTINATION_OPTIONS.find(({ value }) => value === destination.type);
-      if (foundDestination) return foundDestination.text;
-      return destination.type;
-    };
     try {
       const response = await httpClient.get('../api/alerting/destinations', {
         query: { search: searchText, size: MAX_QUERY_RESULT_SIZE },
@@ -121,7 +117,11 @@ class ConfigureActions extends React.Component {
           .filter(({ type }) => allowList.includes(type));
 
         const channelOptionsByType = getChannelOptions(destinations, CHANNEL_TYPES);
-        this.setState({ destinations: channelOptionsByType, loadingDestinations: false });
+        this.setState({
+          destinations: channelOptionsByType,
+          flattenDestinations: destinations,
+          loadingDestinations: false,
+        });
 
         // If actions is not defined  If user choose to delete actions, it will not override customer's preferences.
         if (destinations.length > 0 && !values.actions && !actionDeleted) {
@@ -166,7 +166,7 @@ class ConfigureActions extends React.Component {
 
   renderActions = (arrayHelpers) => {
     const { context, setFlyout, values, httpClient } = this.props;
-    const { destinations } = this.state;
+    const { destinations, flattenDestinations } = this.state;
     const hasDestinations = !_.isEmpty(destinations);
     const hasActions = !_.isEmpty(values.actions);
     const shouldRenderActions = hasActions || (hasDestinations && hasActions);
@@ -178,6 +178,7 @@ class ConfigureActions extends React.Component {
           arrayHelpers={arrayHelpers}
           context={createActionContext(context, action)}
           destinations={destinations}
+          flattenDestinations={flattenDestinations}
           index={index}
           onDelete={() => {
             this.setState({ actionDeleted: true });
