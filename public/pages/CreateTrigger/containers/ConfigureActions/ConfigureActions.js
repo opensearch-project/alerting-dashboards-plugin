@@ -31,7 +31,6 @@ import ActionEmptyPrompt from '../../components/ActionEmptyPrompt';
 import AddActionButton from '../../components/AddActionButton';
 import ContentPanel from '../../../../components/ContentPanel';
 import { CHANNEL_TYPES, FORMIK_INITIAL_ACTION_VALUES } from '../../utils/constants';
-import { DESTINATION_OPTIONS } from '../../../Destinations/utils/constants';
 import { getAllowList } from '../../../Destinations/utils/helpers';
 import { MAX_QUERY_RESULT_SIZE } from '../../../../utils/constants';
 import { backendErrorNotification } from '../../../../utils/helpers';
@@ -67,9 +66,6 @@ class ConfigureActions extends React.Component {
       flattenDestinations: [],
       allowList: [],
       loadingDestinations: true,
-      actionDeleted: false,
-      items: [],
-      total: 0,
     };
   }
 
