@@ -120,7 +120,7 @@ const Action = ({
                   <React.Fragment>
                     <EuiText size="s">{option.label}</EuiText>
                     <EuiText size="xs" color="subdued">
-                      {`${option.description}`}
+                      {option.description}
                     </EuiText>
                   </React.Fragment>
                 ),

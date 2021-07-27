@@ -113,7 +113,7 @@ class ConfigureActions extends React.Component {
         };
         const destinations = response.destinations
           .map((destination) => ({
-            label: `${destination.name} - (${getDestinationLabel(destination)})`,
+            label: destination.name,
             value: destination.id,
             type: destination.type,
             description: getDestinationDescription(destination),
