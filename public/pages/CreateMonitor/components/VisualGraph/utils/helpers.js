@@ -72,17 +72,34 @@ export function getAnnotationData(xDomain, yDomain, thresholdValue) {
 }
 
 //TODO: Check whether the data is fetched correctly for aggregation monitors and separate the data by group by terms
-export function getDataFromResponse(response, fieldName, monitorType) {
+export function getDataFromResponse(response, fieldName, monitorType, groupByField) {
   if (!response) return [];
   const isTraditionalMonitor = monitorType === MONITOR_TYPE.TRADITIONAL;
 
-  const buckets = isTraditionalMonitor
-    ? _.get(response, 'aggregations.over.buckets', [])
-    : _.get(response, 'aggregations.composite_agg.buckets', []);
-  return buckets
-    .map((bucket) => getXYValuesByFieldName(bucket, fieldName))
-    .filter(filterInvalidYValues);
-  // return buckets.map(getXYValues).filter(filterInvalidYValues);
+  if (isTraditionalMonitor) {
+    const buckets = _.get(response, 'aggregations.over.buckets', []);
+    return buckets.map(getXYValues).filter(filterInvalidYValues);
+  } else {
+    const buckets = _.get(response, 'aggregations.composite_agg.buckets', []);
+    //TODO: Find all of the occurrence of key objects and take the first 2 only.
+    const keysWithoutDate = buckets.map((bucket) => _.cloneDeep(_.omit(bucket.key, 'date')));
+    //TODO: Check how to correctly use the unique function
+    const uniqueKeys = _.uniqBy(keysWithoutDate, 'key');
+    //Debug use
+    console.log('keysWithoutDate: ' + JSON.stringify(keysWithoutDate));
+    console.log('uniqueKeys: ' + JSON.stringify(uniqueKeys));
+
+    const allData = buckets
+      .map((bucket) => getXYValuesByFieldName(bucket, fieldName))
+      .filter(filterInvalidYValues);
+    //Group the data to multiple arrays
+    // const result = _.groupBy(allData, (data) => data.key.customer_gender);
+    // console.log("result: " + result);
+    return buckets
+      .map((bucket) => getXYValuesByFieldName(bucket, fieldName))
+      .filter(filterInvalidYValues);
+    // return result;
+  }
 }
 
 export function getXYValuesByFieldName(bucket, fieldName) {
@@ -104,6 +121,10 @@ export function filterInvalidYValues({ y }) {
 }
 
 export function getMarkData(data) {
+  return data.map((d) => ({ ...d, size: DEFAULT_MARK_SIZE }));
+}
+
+export function getMarkDataByKeys(data) {
   return data.map((d) => ({ ...d, size: DEFAULT_MARK_SIZE }));
 }
 
