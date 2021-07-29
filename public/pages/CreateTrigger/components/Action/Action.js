@@ -97,7 +97,7 @@ const Action = ({
             <FormikComboBox
               name={`actions.${index}.destination_id`}
               formRow
-              fieldProps={{ validate: validateDestination(destinations) }}
+              fieldProps={{ validate: validateDestination(flattenDestinations) }}
               rowProps={{
                 label: 'Channels',
                 isInvalid,
