@@ -102,6 +102,16 @@ export default class VisualGraph extends Component {
             </Hint>
           )}
         </FlexibleXYPlot>
+        {/*<FlexibleXYPlot*/}
+        {/*  height={400}*/}
+        {/*  xType="time"*/}
+        {/*  margin={{ top: 20, right: 20, bottom: 70, left: leftPadding }}*/}
+        {/*  xDomain={xDomain}*/}
+        {/*  yDomain={yDomain}*/}
+        {/*  onMouseLeave={this.resetHint}*/}
+        {/*></FlexibleXYPlot>*/}
+        // Debug use console.log('Printing out markData: ' + JSON.stringify(markData));
+        console.log('Printing out data: ' + JSON.stringify(data));
         <FlexibleXYPlot
           height={400}
           xType="time"
@@ -110,6 +120,14 @@ export default class VisualGraph extends Component {
           yDomain={yDomain}
           onMouseLeave={this.resetHint}
         ></FlexibleXYPlot>
+        {/*<FlexibleXYPlot*/}
+        {/*  height={400}*/}
+        {/*  xType="time"*/}
+        {/*  margin={{ top: 20, right: 20, bottom: 70, left: leftPadding }}*/}
+        {/*  xDomain={xDomain}*/}
+        {/*  yDomain={yDomain}*/}
+        {/*  onMouseLeave={this.resetHint}*/}
+        {/*></FlexibleXYPlot>*/}
       </div>
     );
   };
@@ -126,6 +144,9 @@ export default class VisualGraph extends Component {
     const { response, fieldName, values } = this.props;
     const monitorType = values.monitor_type;
     const data = getDataFromResponse(response, fieldName, monitorType);
+
+    // Debug use
+    console.log('values: ' + JSON.stringify(values));
     return (
       <div style={{ padding: '20px', border: '1px solid #D9D9D9', borderRadius: '5px' }}>
         {data.length ? this.renderXYPlot(data) : this.renderEmptyData()}

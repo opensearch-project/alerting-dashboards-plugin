@@ -72,7 +72,7 @@ export function getAnnotationData(xDomain, yDomain, thresholdValue) {
 }
 
 //TODO: Check whether the data is fetched correctly for aggregation monitors and separate the data by group by terms
-export function getDataFromResponse(response, fieldName, monitorType, groupByField) {
+export function getDataFromResponse(response, fieldName, monitorType) {
   if (!response) return [];
   const isTraditionalMonitor = monitorType === MONITOR_TYPE.TRADITIONAL;
 
@@ -84,7 +84,7 @@ export function getDataFromResponse(response, fieldName, monitorType, groupByFie
     //TODO: Find all of the occurrence of key objects and take the first 2 only.
     const keysWithoutDate = buckets.map((bucket) => _.cloneDeep(_.omit(bucket.key, 'date')));
     //TODO: Check how to correctly use the unique function
-    const uniqueKeys = _.uniqBy(keysWithoutDate, 'key');
+    const uniqueKeys = _.uniq(keysWithoutDate);
     //Debug use
     console.log('keysWithoutDate: ' + JSON.stringify(keysWithoutDate));
     console.log('uniqueKeys: ' + JSON.stringify(uniqueKeys));
@@ -138,6 +138,24 @@ export function getAggregationTitle(values) {
   const aggregationType = selectOptionValueToText(values.aggregationType, AGGREGATION_TYPES);
   const when = `WHEN ${aggregationType}`;
   const fieldName = _.get(values, 'fieldName[0].label');
+  const of = `OF ${fieldName}`;
+  const overDocuments = values.overDocuments;
+  const over = `OVER ${overDocuments}`;
+  const value = values.bucketValue;
+  const unit = selectOptionValueToText(values.bucketUnitOfTime, UNITS_OF_TIME);
+  const forTheLast = `FOR THE LAST ${value} ${unit}`;
+
+  if (aggregationType === 'count()') {
+    return `${when} ${over} ${forTheLast}`;
+  }
+
+  return `${when} ${of} ${over} ${forTheLast}`;
+}
+
+export function getCustomAggregationTitle(values, fieldName, aggregationType) {
+  // const aggregationType = selectOptionValueToText(values.aggregationType, AGGREGATION_TYPES);
+  const when = `WHEN ${aggregationType}`;
+  // const fieldName = _.get(values, 'fieldName[0].label');
   const of = `OF ${fieldName}`;
   const overDocuments = values.overDocuments;
   const over = `OVER ${overDocuments}`;

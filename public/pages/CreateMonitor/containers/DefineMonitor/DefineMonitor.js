@@ -164,11 +164,11 @@ class DefineMonitor extends Component {
           renderEmptyMessage('Invalid input in WHERE filter. Remove WHERE filter or adjust filter ')
         ) : aggregations.length ? (
           _.map(aggregations, (field) => {
-            const fieldName = `${field.aggregationType}_${field.fieldName}`;
             return (
               <VisualGraph
                 values={this.state.formikSnapshot}
-                fieldName={fieldName}
+                fieldName={field.fieldName}
+                aggregationType={field.aggregationType}
                 response={this.state.response}
               />
             );
