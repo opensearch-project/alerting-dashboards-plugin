@@ -112,7 +112,6 @@ export default class VisualGraph extends Component {
     const leftPadding = getLeftPadding(yDomain);
     const markData = getMarkData(data);
     const aggregationTitle = getCustomAggregationTitle(values, fieldName, aggregationType);
-    console.log('Printing out data: ' + JSON.stringify(data));
     return (
       <div>
         <FlexibleXYPlot
@@ -145,14 +144,6 @@ export default class VisualGraph extends Component {
             </Hint>
           )}
         </FlexibleXYPlot>
-        {/*<FlexibleXYPlot*/}
-        {/*  height={400}*/}
-        {/*  xType="time"*/}
-        {/*  margin={{ top: 20, right: 20, bottom: 70, left: leftPadding }}*/}
-        {/*  xDomain={xDomain}*/}
-        {/*  yDomain={yDomain}*/}
-        {/*  onMouseLeave={this.resetHint}*/}
-        {/*></FlexibleXYPlot>*/}
       </div>
     );
   };
