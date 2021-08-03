@@ -81,25 +81,29 @@ export function getDataFromResponse(response, fieldName, monitorType) {
     return buckets.map(getXYValues).filter(filterInvalidYValues);
   } else {
     const buckets = _.get(response, 'aggregations.composite_agg.buckets', []);
-    //TODO: Find all of the occurrence of key objects and take the first 2 only.
-    const keysWithoutDate = buckets.map((bucket) => _.cloneDeep(_.omit(bucket.key, 'date')));
-    //TODO: Check how to correctly use the unique function
-    const uniqueKeys = _.uniq(keysWithoutDate);
-    //Debug use
-    console.log('keysWithoutDate: ' + JSON.stringify(keysWithoutDate));
-    console.log('uniqueKeys: ' + JSON.stringify(uniqueKeys));
-
-    const allData = buckets
-      .map((bucket) => getXYValuesByFieldName(bucket, fieldName))
-      .filter(filterInvalidYValues);
-    //Group the data to multiple arrays
-    // const result = _.groupBy(allData, (data) => data.key.customer_gender);
-    // console.log("result: " + result);
     return buckets
       .map((bucket) => getXYValuesByFieldName(bucket, fieldName))
       .filter(filterInvalidYValues);
-    // return result;
   }
+}
+
+// Function for aggregation type monitors to get Map of data
+export function getMapDataFromResponse(response, fieldName, groupByFields) {
+  if (!response) return [];
+  const buckets = _.get(response, 'aggregations.composite_agg.buckets', []);
+  let allData = new Map();
+  buckets.map((bucket) => {
+    const dataPoint = getXYValuesByFieldName(bucket, fieldName);
+    // Key of object is the string concat by group by field values
+    const key = groupByFields.map((field) => _.get(bucket.key, field, '-')).join(', ');
+    allData.has(key)
+      ? allData.set(key, [dataPoint, ...allData.get(key)])
+      : allData.set(key, [dataPoint]);
+  });
+  for (const [key, value] of allData.entries()) {
+    allData.set(key, _.filter(value, filterInvalidYValues));
+  }
+  return allData;
 }
 
 export function getXYValuesByFieldName(bucket, fieldName) {

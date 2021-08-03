@@ -37,8 +37,8 @@ import {
   getDataFromResponse,
   getMarkData,
   getAggregationTitle,
-  getRectData,
   getCustomAggregationTitle,
+  getMapDataFromResponse,
 } from './utils/helpers';
 import BarSeries from 'react-vis/es/plot/series/bar-series';
 import { MONITOR_TYPE } from '../../../../utils/constants';
@@ -55,7 +55,7 @@ export default class VisualGraph extends Component {
   resetHint = () => {
     this.setState({ hint: null });
   };
-  //TODO: Render bar graph to support group by
+
   renderXYPlot = (data) => {
     const { annotation, thresholdValue, values } = this.props;
     const { hint } = this.state;
@@ -66,7 +66,6 @@ export default class VisualGraph extends Component {
     const yTitle = getYTitle(values);
     const leftPadding = getLeftPadding(yDomain);
     const markData = getMarkData(data);
-    const rectData = getRectData(data);
     const aggregationTitle = getAggregationTitle(values);
 
     return (
@@ -89,11 +88,8 @@ export default class VisualGraph extends Component {
             style={{ strokeWidth: '0px' }}
           />
           <YAxis title={yTitle} tickFormat={formatYAxisTick} />
-          {/*TODO: Convert to LineMarkSeries with individual data (e.g. "key1Data", "key2Data"*/}
           <LineSeries data={data} style={LINE_STYLES} />
           <MarkSeries data={markData} sizeRange={SIZE_RANGE} onNearestX={this.onNearestX} />
-          {/*TODO: Add each group by data with a bar series graph using different colors*/}
-          {/*<VerticalBarSeries data={rectData} />*/}
           {annotation && <LineSeries data={annotations} style={ANNOTATION_STYLES} />}
           {hint && (
             <Hint value={hint}>
@@ -101,19 +97,11 @@ export default class VisualGraph extends Component {
             </Hint>
           )}
         </FlexibleXYPlot>
-        {/*<FlexibleXYPlot*/}
-        {/*  height={400}*/}
-        {/*  xType="time"*/}
-        {/*  margin={{ top: 20, right: 20, bottom: 70, left: leftPadding }}*/}
-        {/*  xDomain={xDomain}*/}
-        {/*  yDomain={yDomain}*/}
-        {/*  onMouseLeave={this.resetHint}*/}
-        {/*></FlexibleXYPlot>*/}
       </div>
     );
   };
 
-  renderAggregationXYPlot = (data) => {
+  renderAggregationXYPlot = (data, groupedData) => {
     const { annotation, thresholdValue, values, fieldName, aggregationType } = this.props;
     const { hint } = this.state;
     const xDomain = getXDomain(data);
@@ -123,9 +111,7 @@ export default class VisualGraph extends Component {
     const yTitle = getYTitle(values);
     const leftPadding = getLeftPadding(yDomain);
     const markData = getMarkData(data);
-    const rectData = getRectData(data);
     const aggregationTitle = getCustomAggregationTitle(values, fieldName, aggregationType);
-    // Debug use console.log('Printing out markData: ' + JSON.stringify(markData));
     console.log('Printing out data: ' + JSON.stringify(data));
     return (
       <div>
@@ -184,11 +170,10 @@ export default class VisualGraph extends Component {
     const monitorType = values.monitor_type;
     const isTraditionalMonitor = monitorType === MONITOR_TYPE.TRADITIONAL;
     const aggTypeFieldName = `${aggregationType}_${fieldName}`;
-
-    // Debug use
-    console.log('values: ' + JSON.stringify(values));
-    //TODO: Pass in the groupBy field to the following method in order to sort data
     const data = getDataFromResponse(response, aggTypeFieldName, monitorType);
+    const groupedData = isTraditionalMonitor
+      ? null
+      : getMapDataFromResponse(response, aggTypeFieldName, values.groupBy);
     // Show empty graph view when data is empty or aggregation monitor does not have group by defined.
     const showEmpty =
       !data.length || (monitorType == MONITOR_TYPE.AGGREGATION && !values.groupBy.length);
@@ -199,7 +184,7 @@ export default class VisualGraph extends Component {
           ? this.renderEmptyData()
           : isTraditionalMonitor
           ? this.renderXYPlot(data)
-          : this.renderAggregationXYPlot(data)}
+          : this.renderAggregationXYPlot(data, groupedData)}
       </div>
     );
   }
