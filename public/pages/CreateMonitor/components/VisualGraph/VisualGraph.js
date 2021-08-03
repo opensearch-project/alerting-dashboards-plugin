@@ -108,7 +108,7 @@ export default class VisualGraph extends Component {
     const yDomain = getYDomain(data);
     const annotations = getAnnotationData(xDomain, yDomain, thresholdValue);
     const xTitle = values.timeField;
-    const yTitle = getYTitle(values);
+    const yTitle = fieldName;
     const leftPadding = getLeftPadding(yDomain);
     const markData = getMarkData(data);
     const aggregationTitle = getCustomAggregationTitle(values, fieldName, aggregationType);
