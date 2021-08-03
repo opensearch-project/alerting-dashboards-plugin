@@ -31,5 +31,7 @@ export const HINT_STYLES = {
 // Don't want values to reach top of graph so increase by a buffer % so we always have a yDomain with a slightly higher max
 export const Y_DOMAIN_BUFFER = 1.4; // 40%
 
+export const X_DOMAIN_BUFFER = 0.2; // 40%
+
 // Size of circle for each point on graph
 export const DEFAULT_MARK_SIZE = 3;

@@ -20,7 +20,7 @@ import {
   AGGREGATION_TYPES,
   UNITS_OF_TIME,
 } from '../../MonitorExpressions/expressions/utils/constants';
-import { Y_DOMAIN_BUFFER, DEFAULT_MARK_SIZE } from './constants';
+import { Y_DOMAIN_BUFFER, DEFAULT_MARK_SIZE, X_DOMAIN_BUFFER } from './constants';
 import { MONITOR_TYPE } from '../../../../../utils/constants';
 
 //TODO: Modify this function to get the graph title using index
@@ -40,9 +40,12 @@ export function getLeftPadding(yDomain) {
 }
 
 export function getXDomain(data) {
-  const minDate = data[0];
-  const maxDate = data[data.length - 1];
-  return [minDate.x, maxDate.x];
+  const minDate = data[0].x;
+  const maxDate = data[data.length - 1].x;
+  const timeRange = maxDate - minDate;
+  const minDateBuffer = minDate - timeRange * X_DOMAIN_BUFFER;
+  const maxDateBuffer = maxDate.getTime() + timeRange * X_DOMAIN_BUFFER;
+  return [minDateBuffer, maxDateBuffer];
 }
 
 export function getYDomain(data) {
@@ -71,7 +74,6 @@ export function getAnnotationData(xDomain, yDomain, thresholdValue) {
   ];
 }
 
-//TODO: Check whether the data is fetched correctly for aggregation monitors and separate the data by group by terms
 export function getDataFromResponse(response, fieldName, monitorType) {
   if (!response) return [];
   const isTraditionalMonitor = monitorType === MONITOR_TYPE.TRADITIONAL;
