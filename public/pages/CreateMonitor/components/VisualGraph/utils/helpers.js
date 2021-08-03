@@ -132,9 +132,8 @@ export function getMarkDataByKeys(data) {
   return data.map((d) => ({ ...d, size: DEFAULT_MARK_SIZE }));
 }
 
-export function getRectData(data) {
-  const ONE_HOUR = 3600000;
-  return data.map((d) => ({ ...d, x0: d.x - ONE_HOUR, size: DEFAULT_MARK_SIZE }));
+export function getRectData(data, width) {
+  return data.map((d) => ({ ...d, x0: d.x - width }));
 }
 
 //TODO: Modify aggregation title to new format with field name as title and other info in smaller text

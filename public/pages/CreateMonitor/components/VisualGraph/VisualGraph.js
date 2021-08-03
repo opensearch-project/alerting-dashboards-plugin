@@ -22,8 +22,8 @@ import {
   MarkSeries,
   LineSeries,
   FlexibleXYPlot,
-  RectSeries,
   VerticalBarSeries,
+  VerticalRectSeries,
 } from 'react-vis';
 
 import { SIZE_RANGE, ANNOTATION_STYLES, HINT_STYLES, LINE_STYLES } from './utils/constants';
@@ -39,8 +39,9 @@ import {
   getAggregationTitle,
   getCustomAggregationTitle,
   getMapDataFromResponse,
+  getBarData,
+  getRectData,
 } from './utils/helpers';
-import BarSeries from 'react-vis/es/plot/series/bar-series';
 import { MONITOR_TYPE } from '../../../../utils/constants';
 
 export default class VisualGraph extends Component {
@@ -90,6 +91,7 @@ export default class VisualGraph extends Component {
           <YAxis title={yTitle} tickFormat={formatYAxisTick} />
           <LineSeries data={data} style={LINE_STYLES} />
           <MarkSeries data={markData} sizeRange={SIZE_RANGE} onNearestX={this.onNearestX} />
+
           {annotation && <LineSeries data={annotations} style={ANNOTATION_STYLES} />}
           {hint && (
             <Hint value={hint}>
@@ -111,6 +113,11 @@ export default class VisualGraph extends Component {
     const yTitle = fieldName;
     const leftPadding = getLeftPadding(yDomain);
     const markData = getMarkData(data);
+    const barSeriesData1 = getRectData(groupedData.values().next().value, 300000);
+    // const barSeriesData1 =  groupedData.values().next().value;
+    console.log('BarSeriesData1: ' + JSON.stringify(barSeriesData1));
+    console.log('markData: ' + JSON.stringify(markData));
+    console.log('data: ' + JSON.stringify(data));
     const aggregationTitle = getCustomAggregationTitle(values, fieldName, aggregationType);
     return (
       <div>
@@ -133,10 +140,10 @@ export default class VisualGraph extends Component {
           />
           <YAxis title={yTitle} tickFormat={formatYAxisTick} />
           {/*TODO: Convert to LineMarkSeries with individual data (e.g. "key1Data", "key2Data"*/}
-          <LineSeries data={data} style={LINE_STYLES} />
-          <MarkSeries data={markData} sizeRange={SIZE_RANGE} onNearestX={this.onNearestX} />
+          {/*<LineSeries data={data} style={LINE_STYLES} />*/}
+          {/*<MarkSeries data={markData} sizeRange={SIZE_RANGE} onNearestX={this.onNearestX} />*/}
           {/*TODO: Add each group by data with a bar series graph using different colors*/}
-          {/*<VerticalBarSeries data={rectData} />*/}
+          <VerticalRectSeries data={barSeriesData1} />
           {annotation && <LineSeries data={annotations} style={ANNOTATION_STYLES} />}
           {hint && (
             <Hint value={hint}>
