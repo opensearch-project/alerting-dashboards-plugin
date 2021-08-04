@@ -114,8 +114,6 @@ export default class VisualGraph extends Component {
     const yTitle = fieldName;
     const leftPadding = getLeftPadding(yDomain);
     const width = computeBarWidth(xDomain);
-    // const barSeriesData1 =  groupedData.values().next().value;
-    console.log('data: ' + JSON.stringify(data));
     const aggregationTitle = getCustomAggregationTitle(values, fieldName, aggregationType);
     return (
       <div>
@@ -137,10 +135,8 @@ export default class VisualGraph extends Component {
             style={{ strokeWidth: '0px' }}
           />
           <YAxis title={yTitle} tickFormat={formatYAxisTick} />
-          {/*TODO: Add each group by data with a bar series graph using different colors*/}
-          {groupedData.map((dataSeries) => {
-            const rectData = getRectData(dataSeries.data, width);
-            console.log('rectData: ' + JSON.stringify(rectData));
+          {groupedData.map((dataSeries, index, arr) => {
+            const rectData = getRectData(dataSeries.data, width, index, arr.length);
             return <VerticalRectSeries data={rectData} />;
           })}
           {annotation && <LineSeries data={annotations} style={ANNOTATION_STYLES} />}

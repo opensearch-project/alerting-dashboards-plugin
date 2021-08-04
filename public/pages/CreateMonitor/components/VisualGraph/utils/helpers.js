@@ -29,7 +29,6 @@ import {
 } from './constants';
 import { MONITOR_TYPE } from '../../../../../utils/constants';
 
-//TODO: Modify this function to get the graph title using index
 export function getYTitle(values) {
   return _.get(values, 'fieldName[0].label', 'count');
 }
@@ -49,7 +48,6 @@ export function getXDomain(data) {
   const minDate = data[0].x;
   const maxDate = data[data.length - 1].x;
   const timeRange = maxDate - minDate;
-  console.log('timeRange: ' + timeRange);
   const minDateBuffer = minDate - timeRange * X_DOMAIN_BUFFER;
   const maxDateBuffer = maxDate.getTime() + timeRange * X_DOMAIN_BUFFER;
   return [minDateBuffer, maxDateBuffer];
@@ -115,8 +113,8 @@ export function getMapDataFromResponse(response, fieldName, groupByFields) {
     entryLength.push({ key, length: value.length });
   }
   // Return arrays of data with more data points
-  entryLength.sort((entryA, entryB) => entryB.length - entryA.length).slice(0, BAR_KEY_COUNT);
-  const result = entryLength.map((entry) => {
+  entryLength.sort((entryA, entryB) => entryB.length - entryA.length);
+  const result = entryLength.slice(0, BAR_KEY_COUNT).map((entry) => {
     return { key: entry.key, data: allData.get(entry.key) };
   });
   return result;
@@ -148,8 +146,19 @@ export function getMarkDataByKeys(data) {
   return data.map((d) => ({ ...d, size: DEFAULT_MARK_SIZE }));
 }
 
-export function getRectData(data, width = 30000) {
-  return data.map((d) => ({ ...d, x0: d.x - width }));
+export function getRectData(data, width = 30000, index, seriesCount) {
+  // Shift x and x0 value according to total number of data series
+  const midIndex = seriesCount / 2;
+  const shiftAmount = (index - midIndex) * width;
+  return data.map((d) => {
+    const x = d.x.getTime() + shiftAmount;
+    const x0 = x - width;
+    return {
+      x0,
+      x,
+      y: d.y,
+    };
+  });
 }
 
 //TODO: Modify aggregation title to new format with field name as title and other info in smaller text
