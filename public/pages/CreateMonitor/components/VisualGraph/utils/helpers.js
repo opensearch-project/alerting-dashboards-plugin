@@ -20,7 +20,13 @@ import {
   AGGREGATION_TYPES,
   UNITS_OF_TIME,
 } from '../../MonitorExpressions/expressions/utils/constants';
-import { Y_DOMAIN_BUFFER, DEFAULT_MARK_SIZE, X_DOMAIN_BUFFER } from './constants';
+import {
+  Y_DOMAIN_BUFFER,
+  DEFAULT_MARK_SIZE,
+  X_DOMAIN_BUFFER,
+  BAR_PERCENTAGE,
+  BAR_KEY_COUNT,
+} from './constants';
 import { MONITOR_TYPE } from '../../../../../utils/constants';
 
 //TODO: Modify this function to get the graph title using index
@@ -43,6 +49,7 @@ export function getXDomain(data) {
   const minDate = data[0].x;
   const maxDate = data[data.length - 1].x;
   const timeRange = maxDate - minDate;
+  console.log('timeRange: ' + timeRange);
   const minDateBuffer = minDate - timeRange * X_DOMAIN_BUFFER;
   const maxDateBuffer = maxDate.getTime() + timeRange * X_DOMAIN_BUFFER;
   return [minDateBuffer, maxDateBuffer];
@@ -102,10 +109,17 @@ export function getMapDataFromResponse(response, fieldName, groupByFields) {
       ? allData.set(key, [dataPoint, ...allData.get(key)])
       : allData.set(key, [dataPoint]);
   });
+  let entryLength = [];
   for (const [key, value] of allData.entries()) {
     allData.set(key, _.filter(value, filterInvalidYValues));
+    entryLength.push({ key, length: value.length });
   }
-  return allData;
+  // Return arrays of data with more data points
+  entryLength.sort((entryA, entryB) => entryB.length - entryA.length).slice(0, BAR_KEY_COUNT);
+  const result = entryLength.map((entry) => {
+    return { key: entry.key, data: allData.get(entry.key) };
+  });
+  return result;
 }
 
 export function getXYValuesByFieldName(bucket, fieldName) {
@@ -134,7 +148,7 @@ export function getMarkDataByKeys(data) {
   return data.map((d) => ({ ...d, size: DEFAULT_MARK_SIZE }));
 }
 
-export function getRectData(data, width) {
+export function getRectData(data, width = 30000) {
   return data.map((d) => ({ ...d, x0: d.x - width }));
 }
 
@@ -158,9 +172,7 @@ export function getAggregationTitle(values) {
 }
 
 export function getCustomAggregationTitle(values, fieldName, aggregationType) {
-  // const aggregationType = selectOptionValueToText(values.aggregationType, AGGREGATION_TYPES);
   const when = `WHEN ${aggregationType}`;
-  // const fieldName = _.get(values, 'fieldName[0].label');
   const of = `OF ${fieldName}`;
   const overDocuments = values.overDocuments;
   const over = `OVER ${overDocuments}`;
@@ -173,4 +185,10 @@ export function getCustomAggregationTitle(values, fieldName, aggregationType) {
   }
 
   return `${when} ${of} ${over} ${forTheLast}`;
+}
+
+export function computeBarWidth(xDomain) {
+  const [min, max] = xDomain;
+  console.log('min: ' + min + ' max: ' + max);
+  return Math.abs(max - min) * BAR_PERCENTAGE;
 }

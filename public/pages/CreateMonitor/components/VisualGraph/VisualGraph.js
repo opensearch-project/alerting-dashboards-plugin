@@ -41,6 +41,7 @@ import {
   getMapDataFromResponse,
   getBarData,
   getRectData,
+  computeBarWidth,
 } from './utils/helpers';
 import { MONITOR_TYPE } from '../../../../utils/constants';
 
@@ -112,11 +113,8 @@ export default class VisualGraph extends Component {
     const xTitle = values.timeField;
     const yTitle = fieldName;
     const leftPadding = getLeftPadding(yDomain);
-    const markData = getMarkData(data);
-    const barSeriesData1 = getRectData(groupedData.values().next().value, 300000);
+    const width = computeBarWidth(xDomain);
     // const barSeriesData1 =  groupedData.values().next().value;
-    console.log('BarSeriesData1: ' + JSON.stringify(barSeriesData1));
-    console.log('markData: ' + JSON.stringify(markData));
     console.log('data: ' + JSON.stringify(data));
     const aggregationTitle = getCustomAggregationTitle(values, fieldName, aggregationType);
     return (
@@ -139,11 +137,12 @@ export default class VisualGraph extends Component {
             style={{ strokeWidth: '0px' }}
           />
           <YAxis title={yTitle} tickFormat={formatYAxisTick} />
-          {/*TODO: Convert to LineMarkSeries with individual data (e.g. "key1Data", "key2Data"*/}
-          {/*<LineSeries data={data} style={LINE_STYLES} />*/}
-          {/*<MarkSeries data={markData} sizeRange={SIZE_RANGE} onNearestX={this.onNearestX} />*/}
           {/*TODO: Add each group by data with a bar series graph using different colors*/}
-          <VerticalRectSeries data={barSeriesData1} />
+          {groupedData.map((dataSeries) => {
+            const rectData = getRectData(dataSeries.data, width);
+            console.log('rectData: ' + JSON.stringify(rectData));
+            return <VerticalRectSeries data={rectData} />;
+          })}
           {annotation && <LineSeries data={annotations} style={ANNOTATION_STYLES} />}
           {hint && (
             <Hint value={hint}>

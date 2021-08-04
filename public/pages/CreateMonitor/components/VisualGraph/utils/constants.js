@@ -35,3 +35,7 @@ export const X_DOMAIN_BUFFER = 0.2; // 40%
 
 // Size of circle for each point on graph
 export const DEFAULT_MARK_SIZE = 3;
+
+export const BAR_PERCENTAGE = 0.015;
+
+export const BAR_KEY_COUNT = 3;

@@ -15,7 +15,7 @@
 
 import _ from 'lodash';
 import moment from 'moment-timezone';
-import { BUCKET_COUNT } from './constants';
+import { BUCKET_COUNT, DEFAULT_COMPOSITE_AGG_SIZE } from './constants';
 import { SEARCH_TYPE } from '../../../../../utils/constants';
 import { OPERATORS_QUERY_MAP } from './whereFilters';
 
@@ -303,7 +303,10 @@ export function formikToUiCompositeAggregation(values) {
   });
   return {
     composite_agg: {
-      composite: { sources },
+      composite: {
+        sources,
+        size: DEFAULT_COMPOSITE_AGG_SIZE,
+      },
       aggs,
     },
   };
