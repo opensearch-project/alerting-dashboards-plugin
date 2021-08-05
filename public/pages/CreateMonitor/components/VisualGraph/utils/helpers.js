@@ -200,7 +200,6 @@ export function getCustomAggregationTitle(values, fieldName, aggregationType) {
 
 export function computeBarWidth(xDomain) {
   const [min, max] = xDomain;
-  console.log('min: ' + min + ' max: ' + max);
   return Math.abs(max - min) * BAR_PERCENTAGE;
 }
 

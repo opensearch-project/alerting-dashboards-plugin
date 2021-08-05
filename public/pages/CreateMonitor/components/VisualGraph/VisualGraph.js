@@ -96,7 +96,6 @@ export default class VisualGraph extends Component {
         <YAxis title={yTitle} tickFormat={formatYAxisTick} />
         <LineSeries data={data} style={LINE_STYLES} />
         <MarkSeries data={markData} sizeRange={SIZE_RANGE} onNearestX={this.onNearestX} />
-
         {annotation && <LineSeries data={annotations} style={ANNOTATION_STYLES} />}
         {hint && (
           <Hint value={hint}>
