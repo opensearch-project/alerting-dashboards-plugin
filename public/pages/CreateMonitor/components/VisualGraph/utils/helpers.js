@@ -157,6 +157,7 @@ export function getRectData(data, width = 30000, index, seriesCount) {
       x0,
       x,
       y: d.y,
+      actualX: d.x,
     };
   });
 }
@@ -200,4 +201,14 @@ export function computeBarWidth(xDomain) {
   const [min, max] = xDomain;
   console.log('min: ' + min + ' max: ' + max);
   return Math.abs(max - min) * BAR_PERCENTAGE;
+}
+
+export function getAggregationGraphHint(hint) {
+  return (
+    hint.seriesName +
+    ': (' +
+    hint.data.actualX.toLocaleString() +
+    ', ' +
+    hint.data.y.toLocaleString()
+  );
 }

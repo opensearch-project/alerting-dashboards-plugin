@@ -41,6 +41,7 @@ import {
   getMapDataFromResponse,
   getRectData,
   computeBarWidth,
+  getAggregationGraphHint,
 } from './utils/helpers';
 import { MONITOR_TYPE } from '../../../../utils/constants';
 
@@ -151,9 +152,7 @@ export default class VisualGraph extends Component {
           {annotation && <LineSeries data={annotations} style={ANNOTATION_STYLES} />}
           {hint && (
             <Hint value={hint}>
-              <div style={HINT_STYLES}>
-                {hint.seriesName + ': (' + hint.data.y.toLocaleString()})
-              </div>
+              <div style={HINT_STYLES}>{getAggregationGraphHint(hint)}</div>
             </Hint>
           )}
         </FlexibleXYPlot>
