@@ -39,7 +39,6 @@ import {
   getAggregationTitle,
   getCustomAggregationTitle,
   getMapDataFromResponse,
-  getBarData,
   getRectData,
   computeBarWidth,
 } from './utils/helpers';
@@ -52,6 +51,10 @@ export default class VisualGraph extends Component {
 
   onNearestX = (value) => {
     this.setState({ hint: value });
+  };
+
+  onValueMouseOver = (data, seriesName) => {
+    this.setState({ hint: { seriesName, data } });
   };
 
   resetHint = () => {
@@ -137,12 +140,20 @@ export default class VisualGraph extends Component {
           <YAxis title={yTitle} tickFormat={formatYAxisTick} />
           {groupedData.map((dataSeries, index, arr) => {
             const rectData = getRectData(dataSeries.data, width, index, arr.length);
-            return <VerticalRectSeries data={rectData} />;
+            return (
+              <VerticalRectSeries
+                className={dataSeries.key}
+                data={rectData}
+                onValueMouseOver={(d) => this.onValueMouseOver(d, dataSeries.key)}
+              />
+            );
           })}
           {annotation && <LineSeries data={annotations} style={ANNOTATION_STYLES} />}
           {hint && (
             <Hint value={hint}>
-              <div style={HINT_STYLES}>({hint.y.toLocaleString()})</div>
+              <div style={HINT_STYLES}>
+                {hint.seriesName + ': (' + hint.data.y.toLocaleString()})
+              </div>
             </Hint>
           )}
         </FlexibleXYPlot>
