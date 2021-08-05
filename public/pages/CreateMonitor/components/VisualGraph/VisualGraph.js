@@ -140,7 +140,7 @@ export default class VisualGraph extends Component {
           />
           <YAxis title={yTitle} tickFormat={formatYAxisTick} />
           <DiscreteColorLegend
-            style={{ position: 'fixed', right: '50px', top: '10px' }}
+            style={{ position: 'absolute', right: '50px', top: '10px' }}
             items={legends}
           />
           {groupedData.map((dataSeries, index, arr) => {
