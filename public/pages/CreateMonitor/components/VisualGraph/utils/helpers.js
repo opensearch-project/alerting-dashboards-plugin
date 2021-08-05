@@ -45,6 +45,12 @@ export function getLeftPadding(yDomain) {
 }
 
 export function getXDomain(data) {
+  const minDate = data[0];
+  const maxDate = data[data.length - 1];
+  return [minDate.x, maxDate.x];
+}
+
+export function getBufferedXDomain(data) {
   const minDate = data[0].x;
   const maxDate = data[data.length - 1].x;
   const timeRange = maxDate - minDate;
@@ -142,10 +148,6 @@ export function getMarkData(data) {
   return data.map((d) => ({ ...d, size: DEFAULT_MARK_SIZE }));
 }
 
-export function getMarkDataByKeys(data) {
-  return data.map((d) => ({ ...d, size: DEFAULT_MARK_SIZE }));
-}
-
 export function getRectData(data, width = 30000, index, seriesCount) {
   // Shift x and x0 value according to total number of data series
   const midIndex = seriesCount / 2;
@@ -162,7 +164,6 @@ export function getRectData(data, width = 30000, index, seriesCount) {
   });
 }
 
-//TODO: Modify aggregation title to new format with field name as title and other info in smaller text
 export function getAggregationTitle(values) {
   const aggregationType = selectOptionValueToText(values.aggregationType, AGGREGATION_TYPES);
   const when = `WHEN ${aggregationType}`;

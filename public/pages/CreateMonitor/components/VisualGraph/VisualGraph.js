@@ -42,6 +42,7 @@ import {
   getRectData,
   computeBarWidth,
   getAggregationGraphHint,
+  getBufferedXDomain,
 } from './utils/helpers';
 import { MONITOR_TYPE } from '../../../../utils/constants';
 
@@ -75,43 +76,41 @@ export default class VisualGraph extends Component {
     const aggregationTitle = getAggregationTitle(values);
 
     return (
-      <div>
-        <FlexibleXYPlot
-          height={400}
-          xType="time"
-          margin={{ top: 20, right: 20, bottom: 70, left: leftPadding }}
-          xDomain={xDomain}
-          yDomain={yDomain}
-          onMouseLeave={this.resetHint}
-        >
-          <XAxis title={xTitle} />
-          <XAxis
-            title={aggregationTitle}
-            position="middle"
-            orientation="top"
-            tickTotal={0}
-            top={-25}
-            style={{ strokeWidth: '0px' }}
-          />
-          <YAxis title={yTitle} tickFormat={formatYAxisTick} />
-          <LineSeries data={data} style={LINE_STYLES} />
-          <MarkSeries data={markData} sizeRange={SIZE_RANGE} onNearestX={this.onNearestX} />
+      <FlexibleXYPlot
+        height={400}
+        xType="time"
+        margin={{ top: 20, right: 20, bottom: 70, left: leftPadding }}
+        xDomain={xDomain}
+        yDomain={yDomain}
+        onMouseLeave={this.resetHint}
+      >
+        <XAxis title={xTitle} />
+        <XAxis
+          title={aggregationTitle}
+          position="middle"
+          orientation="top"
+          tickTotal={0}
+          top={-25}
+          style={{ strokeWidth: '0px' }}
+        />
+        <YAxis title={yTitle} tickFormat={formatYAxisTick} />
+        <LineSeries data={data} style={LINE_STYLES} />
+        <MarkSeries data={markData} sizeRange={SIZE_RANGE} onNearestX={this.onNearestX} />
 
-          {annotation && <LineSeries data={annotations} style={ANNOTATION_STYLES} />}
-          {hint && (
-            <Hint value={hint}>
-              <div style={HINT_STYLES}>({hint.y.toLocaleString()})</div>
-            </Hint>
-          )}
-        </FlexibleXYPlot>
-      </div>
+        {annotation && <LineSeries data={annotations} style={ANNOTATION_STYLES} />}
+        {hint && (
+          <Hint value={hint}>
+            <div style={HINT_STYLES}>({hint.y.toLocaleString()})</div>
+          </Hint>
+        )}
+      </FlexibleXYPlot>
     );
   };
 
   renderAggregationXYPlot = (data, groupedData) => {
     const { annotation, thresholdValue, values, fieldName, aggregationType } = this.props;
     const { hint } = this.state;
-    const xDomain = getXDomain(data);
+    const xDomain = getBufferedXDomain(data);
     const yDomain = getYDomain(data);
     const annotations = getAnnotationData(xDomain, yDomain, thresholdValue);
     const xTitle = values.timeField;
