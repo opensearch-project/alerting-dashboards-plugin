@@ -209,6 +209,7 @@ export function getAggregationGraphHint(hint) {
     ': (' +
     hint.data.actualX.toLocaleString() +
     ', ' +
-    hint.data.y.toLocaleString()
+    hint.data.y.toLocaleString() +
+    ')'
   );
 }

@@ -22,8 +22,8 @@ import {
   MarkSeries,
   LineSeries,
   FlexibleXYPlot,
-  VerticalBarSeries,
   VerticalRectSeries,
+  DiscreteColorLegend,
 } from 'react-vis';
 
 import { SIZE_RANGE, ANNOTATION_STYLES, HINT_STYLES, LINE_STYLES } from './utils/constants';
@@ -119,6 +119,7 @@ export default class VisualGraph extends Component {
     const leftPadding = getLeftPadding(yDomain);
     const width = computeBarWidth(xDomain);
     const aggregationTitle = getCustomAggregationTitle(values, fieldName, aggregationType);
+    const legends = groupedData.map((dataSeries) => dataSeries.key);
     return (
       <div>
         <FlexibleXYPlot
@@ -139,6 +140,10 @@ export default class VisualGraph extends Component {
             style={{ strokeWidth: '0px' }}
           />
           <YAxis title={yTitle} tickFormat={formatYAxisTick} />
+          <DiscreteColorLegend
+            style={{ position: 'fixed', right: '50px', top: '10px' }}
+            items={legends}
+          />
           {groupedData.map((dataSeries, index, arr) => {
             const rectData = getRectData(dataSeries.data, width, index, arr.length);
             return (
