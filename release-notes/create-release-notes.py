@@ -7,24 +7,24 @@ import sys
 import fileinput
 import re
 
-link_prefix = "https://github.com/opendistro-for-elasticsearch/alerting-kibana-plugin/pull/"
+link_prefix = "https://github.com/opensearch-project/alerting-dashboards-plugin/pull/"
 searchExp = re.compile("([\(\[]).*?([\)\]])")
 
 current_date = raw_input("what day is today (e.g. 2020-06-29): ")
 file_path = raw_input("Path to raw note file (e.g., note.md): ")
-plugin_name = "alerting-kibana-plugin"
+plugin_name = "alerting-dashboards-plugin"
 plugin_version = raw_input('Plugin version (x.x.x.x): ')
 
 app_num = int(
-    raw_input('Elasticsearch plugin (enter 1) or Kibana plugin (enter 2)? '))
-app = 'Elasticsearch'
+    raw_input('Opensearch plugin (enter 1) or OpenSearch Dashboards plugin (enter 2)? '))
+app = 'Opensearch'
 if app_num is 2:
-    app = 'Kibana'
+    app = 'OpenSearchDashboards'
 
 app_version = raw_input(app + ' compatibility version (x.x.x): ')
 
 for line in fileinput.input(file_path, inplace=True):
-    # Add title and ES/Kibana compatibility
+    # Add title and OpenSearch/OpenSearch Dashboards compatibility
     if fileinput.isfirstline():
         line = "## Version " + plugin_version + " " + current_date + "\n\n" \
             "Compatible with " + app + " " + app_version + "\n"
@@ -38,8 +38,8 @@ for line in fileinput.input(file_path, inplace=True):
                       "](" + link_prefix + pr_num + "))", line)
     sys.stdout.write(line)
 
-# Rename file to be consistent with ODFE standards
-new_file_path = "opendistro-for-elasticsearch-" + plugin_name + ".release-notes-" + \
+# Rename file to be consistent with opensearch standards
+new_file_path = "opensearch-" + plugin_name + ".release-notes-" + \
     plugin_version + ".md"
 os.rename(file_path, new_file_path)
 

@@ -92,11 +92,12 @@ exports[`MonitorIndex renders 1`] = `
       rowProps={
         Object {
           "error": [Function],
-          "helpText": "You can use a * as a wildcard in your index pattern",
+          "helpText": "You can use a * as a wildcard or date math index resolution in your index pattern",
           "isInvalid": [Function],
           "label": "Index",
           "style": Object {
             "paddingLeft": "10px",
+            "textAlign": "center",
           },
         }
       }
@@ -257,11 +258,12 @@ exports[`MonitorIndex renders 1`] = `
             rowProps={
               Object {
                 "error": [Function],
-                "helpText": "You can use a * as a wildcard in your index pattern",
+                "helpText": "You can use a * as a wildcard or date math index resolution in your index pattern",
                 "isInvalid": [Function],
                 "label": "Index",
                 "style": Object {
                   "paddingLeft": "10px",
+                  "textAlign": "center",
                 },
               }
             }
@@ -272,7 +274,7 @@ exports[`MonitorIndex renders 1`] = `
               fullWidth={false}
               hasChildLabel={true}
               hasEmptyLabelSpace={false}
-              helpText="You can use a * as a wildcard in your index pattern"
+              helpText="You can use a * as a wildcard or date math index resolution in your index pattern"
               id="index-form-row"
               isInvalid={false}
               label="Index"
@@ -280,6 +282,7 @@ exports[`MonitorIndex renders 1`] = `
               style={
                 Object {
                   "paddingLeft": "10px",
+                  "textAlign": "center",
                 }
               }
             >
@@ -289,6 +292,7 @@ exports[`MonitorIndex renders 1`] = `
                 style={
                   Object {
                     "paddingLeft": "10px",
+                    "textAlign": "center",
                   }
                 }
               >
@@ -717,7 +721,7 @@ exports[`MonitorIndex renders 1`] = `
                       className="euiFormHelpText euiFormRow__text"
                       id="index-form-row-help"
                     >
-                      You can use a * as a wildcard in your index pattern
+                      You can use a * as a wildcard or date math index resolution in your index pattern
                     </div>
                   </EuiFormHelpText>
                 </div>

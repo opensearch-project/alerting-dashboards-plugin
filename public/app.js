@@ -1,4 +1,15 @@
 /*
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * The OpenSearch Contributors require contributions made to
+ * this file be licensed under the Apache-2.0 license or a
+ * compatible open source license.
+ *
+ * Modifications Copyright OpenSearch Contributors. See
+ * GitHub history for details.
+ */
+
+/*
  *   Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  *   Licensed under the Apache License, Version 2.0 (the "License").
@@ -18,7 +29,7 @@ import ReactDOM from 'react-dom';
 import { HashRouter as Router, Route } from 'react-router-dom';
 
 import 'react-vis/dist/style.css';
-// TODO: review the CSS style and migrate the necessary style to SASS, as Less is not supported in Kibana "new platform" anymore
+// TODO: review the CSS style and migrate the necessary style to SASS, as Less is not supported in OpenSearch Dashboards "new platform" anymore
 // import './less/main.less';
 import Main from './pages/Main';
 import { CoreContext } from './utils/CoreContext';

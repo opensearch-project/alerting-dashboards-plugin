@@ -1,4 +1,15 @@
 /*
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * The OpenSearch Contributors require contributions made to
+ * this file be licensed under the Apache-2.0 license or a
+ * compatible open source license.
+ *
+ * Modifications Copyright OpenSearch Contributors. See
+ * GitHub history for details.
+ */
+
+/*
  *   Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  *   Licensed under the Apache License, Version 2.0 (the "License").
@@ -21,7 +32,7 @@ import { DEFAULT_EMPTY_DATA, SEARCH_TYPE } from '../../../../../utils/constants'
 
 // TODO: used in multiple places, move into helper
 function getTime(time) {
-  // TODO: Use Kibanas saved timezone (if there is one, if not THEN default to using browser)
+  // TODO: Use OpenSearch Dashboards saved timezone (if there is one, if not THEN default to using browser)
   const momentTime = moment.tz(time, moment.tz.guess());
   if (time && momentTime.isValid()) return momentTime.format('MM/DD/YY h:mm a z');
   return DEFAULT_EMPTY_DATA;

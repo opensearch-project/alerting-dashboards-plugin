@@ -1,4 +1,15 @@
 /*
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * The OpenSearch Contributors require contributions made to
+ * this file be licensed under the Apache-2.0 license or a
+ * compatible open source license.
+ *
+ * Modifications Copyright OpenSearch Contributors. See
+ * GitHub history for details.
+ */
+
+/*
  *   Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  *   Licensed under the Apache License, Version 2.0 (the "License").
@@ -31,6 +42,21 @@ const createActionContext = (context, action) => ({
     action,
   },
 });
+
+export const checkForError = (response, error) => {
+  for (const trigger_name in response.resp.trigger_results) {
+    // Check for errors in the trigger response
+    if (!response.resp.trigger_results[trigger_name].error) {
+      // Check for errors in the actions configured
+      for (const action_result in response.resp.trigger_results[trigger_name].action_results) {
+        error = response.resp.trigger_results[trigger_name].action_results[action_result].error;
+      }
+    } else {
+      error = response.resp.trigger_results[trigger_name].error;
+    }
+  }
+  return error;
+};
 
 class ConfigureActions extends React.Component {
   constructor(props) {
@@ -101,9 +127,14 @@ class ConfigureActions extends React.Component {
         query: { dryrun: false },
         body: JSON.stringify(testMonitor),
       });
-      if (!response.ok) {
-        console.error('There was an error trying to send test message', response.resp);
-        backendErrorNotification(notifications, 'send', 'test message', response.resp);
+      let error = null;
+      if (response.ok) {
+        error = checkForError(response, error);
+      }
+      if (error || !response.ok) {
+        const errorMessage = error == null ? response.resp : error;
+        console.error('There was an error trying to send test message', errorMessage);
+        backendErrorNotification(notifications, 'send', 'test message', errorMessage);
       }
     } catch (err) {
       console.error('There was an error trying to send test message', err);

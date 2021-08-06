@@ -1,4 +1,15 @@
 /*
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * The OpenSearch Contributors require contributions made to
+ * this file be licensed under the Apache-2.0 license or a
+ * compatible open source license.
+ *
+ * Modifications Copyright OpenSearch Contributors. See
+ * GitHub history for details.
+ */
+
+/*
  *   Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  *   Licensed under the Apache License, Version 2.0 (the "License").
@@ -38,7 +49,7 @@ import Triggers from './Triggers';
 import {
   MONITOR_ACTIONS,
   TRIGGER_ACTIONS,
-  KIBANA_AD_PLUGIN,
+  OPENSEARCH_DASHBOARDS_AD_PLUGIN,
   MONITOR_INPUT_DETECTOR_ID,
 } from '../../../utils/constants';
 import { migrateTriggerMetadata } from './utils/helpers';
@@ -305,7 +316,10 @@ export default class MonitorDetails extends Component {
               <EuiFlexItem grow={false}>
                 <EuiText size="s">
                   Created from detector:{' '}
-                  <EuiLink href={`${KIBANA_AD_PLUGIN}#/detectors/${detectorId}`} target="_blank">
+                  <EuiLink
+                    href={`${OPENSEARCH_DASHBOARDS_AD_PLUGIN}#/detectors/${detectorId}`}
+                    target="_blank"
+                  >
                     {detector.name} <EuiIcon size="s" type="popout" />
                   </EuiLink>
                 </EuiText>

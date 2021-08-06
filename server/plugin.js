@@ -1,4 +1,15 @@
 /*
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * The OpenSearch Contributors require contributions made to
+ * this file be licensed under the Apache-2.0 license or a
+ * compatible open source license.
+ *
+ * Modifications Copyright OpenSearch Contributors. See
+ * GitHub history for details.
+ */
+
+/*
  *   Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  *   Licensed under the Apache License, Version 2.0 (the "License").
@@ -18,11 +29,11 @@ import { createAlertingCluster, createAlertingADCluster } from './clusters';
 import {
   AlertService,
   DestinationsService,
-  ElasticsearchService,
+  OpensearchService,
   MonitorService,
   AnomalyDetectorService,
 } from './services';
-import { alerts, destinations, elasticsearch, monitors, detectors } from '../server/routes';
+import { alerts, destinations, opensearch, monitors, detectors } from '../server/routes';
 
 export class AlertingPlugin {
   constructor(initializerContext) {
@@ -40,14 +51,14 @@ export class AlertingPlugin {
 
     // Initialize services
     const alertService = new AlertService(alertingESClient);
-    const elasticsearchService = new ElasticsearchService(alertingESClient);
+    const opensearchService = new OpensearchService(alertingESClient);
     const monitorService = new MonitorService(alertingESClient);
     const destinationsService = new DestinationsService(alertingESClient);
     const anomalyDetectorService = new AnomalyDetectorService(adESClient);
     const services = {
       alertService,
       destinationsService,
-      elasticsearchService,
+      opensearchService,
       monitorService,
       anomalyDetectorService,
     };
@@ -57,7 +68,7 @@ export class AlertingPlugin {
     // Add server routes
     alerts(services, router);
     destinations(services, router);
-    elasticsearch(services, router);
+    opensearch(services, router);
     monitors(services, router);
     detectors(services, router);
 

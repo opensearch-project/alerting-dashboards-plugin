@@ -1,4 +1,15 @@
 /*
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * The OpenSearch Contributors require contributions made to
+ * this file be licensed under the Apache-2.0 license or a
+ * compatible open source license.
+ *
+ * Modifications Copyright OpenSearch Contributors. See
+ * GitHub history for details.
+ */
+
+/*
  *   Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  *   Licensed under the Apache License, Version 2.0 (the "License").
@@ -13,10 +24,10 @@
  *   permissions and limitations under the License.
  */
 
-import { schema } from '@kbn/config-schema';
+import { schema } from '@osd/config-schema';
 
 export default function (services, router) {
-  const { elasticsearchService } = services;
+  const { opensearchService } = services;
 
   router.post(
     {
@@ -25,7 +36,7 @@ export default function (services, router) {
         body: schema.any(),
       },
     },
-    elasticsearchService.search
+    opensearchService.search
   );
 
   router.post(
@@ -37,7 +48,7 @@ export default function (services, router) {
         }),
       },
     },
-    elasticsearchService.getIndices
+    opensearchService.getIndices
   );
 
   router.post(
@@ -49,7 +60,7 @@ export default function (services, router) {
         }),
       },
     },
-    elasticsearchService.getAliases
+    opensearchService.getAliases
   );
 
   router.post(
@@ -61,7 +72,7 @@ export default function (services, router) {
         }),
       },
     },
-    elasticsearchService.getMappings
+    opensearchService.getMappings
   );
 
   router.get(
@@ -69,7 +80,7 @@ export default function (services, router) {
       path: '/api/alerting/_plugins',
       validate: false,
     },
-    elasticsearchService.getPlugins
+    opensearchService.getPlugins
   );
 
   router.get(
@@ -77,6 +88,6 @@ export default function (services, router) {
       path: '/api/alerting/_settings',
       validate: false,
     },
-    elasticsearchService.getSettings
+    opensearchService.getSettings
   );
 }

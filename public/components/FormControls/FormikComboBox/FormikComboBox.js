@@ -1,4 +1,15 @@
 /*
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * The OpenSearch Contributors require contributions made to
+ * this file be licensed under the Apache-2.0 license or a
+ * compatible open source license.
+ *
+ * Modifications Copyright OpenSearch Contributors. See
+ * GitHub history for details.
+ */
+
+/*
  *   Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  *   Licensed under the Apache License, Version 2.0 (the "License").
@@ -53,21 +64,21 @@ const ComboBox = ({
     id={name}
     onChange={
       typeof onChange === 'function'
-        ? options => {
+        ? (options) => {
             onChange(options, field, form);
           }
         : onChange
     }
     onCreateOption={
       typeof onCreateOption === 'function'
-        ? value => {
+        ? (value) => {
             onCreateOption(value, field, form);
           }
         : onCreateOption
     }
     onBlur={
       typeof onBlur === 'function'
-        ? e => {
+        ? (e) => {
             onBlur(e, field, form);
           }
         : onBlur

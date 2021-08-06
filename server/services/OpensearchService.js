@@ -1,4 +1,15 @@
 /*
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * The OpenSearch Contributors require contributions made to
+ * this file be licensed under the Apache-2.0 license or a
+ * compatible open source license.
+ *
+ * Modifications Copyright OpenSearch Contributors. See
+ * GitHub history for details.
+ */
+
+/*
  *   Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  *   Licensed under the Apache License, Version 2.0 (the "License").
@@ -13,7 +24,7 @@
  *   permissions and limitations under the License.
  */
 
-export default class ElasticsearchService {
+export default class OpensearchService {
   constructor(esDriver) {
     this.esDriver = esDriver;
   }
@@ -33,7 +44,7 @@ export default class ElasticsearchService {
         },
       });
     } catch (err) {
-      console.error('Alerting - ElasticsearchService - search', err);
+      console.error('Alerting - OpensearchService - search', err);
       return res.ok({
         body: {
           ok: false,
@@ -59,7 +70,7 @@ export default class ElasticsearchService {
         },
       });
     } catch (err) {
-      // Elasticsearch throws an index_not_found_exception which we'll treat as a success
+      // Opensearch throws an index_not_found_exception which we'll treat as a success
       if (err.statusCode === 404) {
         return res.ok({
           body: {
@@ -68,7 +79,7 @@ export default class ElasticsearchService {
           },
         });
       } else {
-        console.error('Alerting - ElasticsearchService - getIndices:', err);
+        console.error('Alerting - OpensearchService - getIndices:', err);
         return res.ok({
           body: {
             ok: false,
@@ -95,7 +106,7 @@ export default class ElasticsearchService {
         },
       });
     } catch (err) {
-      console.error('Alerting - ElasticsearchService - getAliases:', err);
+      console.error('Alerting - OpensearchService - getAliases:', err);
       return res.ok({
         body: {
           ok: false,
@@ -117,7 +128,7 @@ export default class ElasticsearchService {
         },
       });
     } catch (err) {
-      console.error('Alerting - ElasticsearchService - getMappings:', err);
+      console.error('Alerting - OpensearchService - getMappings:', err);
       return res.ok({
         body: {
           ok: false,
@@ -141,7 +152,7 @@ export default class ElasticsearchService {
         },
       });
     } catch (err) {
-      console.error('Alerting - ElasticsearchService - getPlugins:', err);
+      console.error('Alerting - OpensearchService - getPlugins:', err);
       return res.ok({
         body: {
           ok: false,
@@ -164,7 +175,7 @@ export default class ElasticsearchService {
         },
       });
     } catch (err) {
-      console.error('Alerting - ElasticsearchService - getSettings:', err);
+      console.error('Alerting - OpensearchService - getSettings:', err);
       return res.ok({
         body: {
           ok: false,

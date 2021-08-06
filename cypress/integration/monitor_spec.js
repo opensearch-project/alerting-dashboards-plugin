@@ -1,4 +1,15 @@
 /*
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * The OpenSearch Contributors require contributions made to
+ * this file be licensed under the Apache-2.0 license or a
+ * compatible open source license.
+ *
+ * Modifications Copyright OpenSearch Contributors. See
+ * GitHub history for details.
+ */
+
+/*
  * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
@@ -29,8 +40,8 @@ describe('Monitors', () => {
     // Set welcome screen tracking to false
     localStorage.setItem('home:welcome:show', 'false');
 
-    // Visit Alerting Kibana
-    cy.visit(`${Cypress.env('kibana')}/app/${PLUGIN_NAME}#/monitors`);
+    // Visit Alerting OpenSearch Dashboards
+    cy.visit(`${Cypress.env('opensearch_dashboards')}/app/${PLUGIN_NAME}#/monitors`);
 
     // Common text to wait for to confirm page loaded, give up to 20 seconds for initial load
     cy.contains('Create monitor', { timeout: 20000 });

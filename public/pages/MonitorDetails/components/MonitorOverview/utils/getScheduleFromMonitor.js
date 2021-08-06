@@ -1,4 +1,15 @@
 /*
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * The OpenSearch Contributors require contributions made to
+ * this file be licensed under the Apache-2.0 license or a
+ * compatible open source license.
+ *
+ * Modifications Copyright OpenSearch Contributors. See
+ * GitHub history for details.
+ */
+
+/*
  *   Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  *   Licensed under the Apache License, Version 2.0 (the "License").
@@ -44,11 +55,7 @@ export default function getScheduleFromMonitor(monitor) {
         return `Every ${interval} ${unit.toLowerCase()}`;
       }
       if (frequency === 'daily') {
-        return `Every day around ${moment
-          .tz(timezone)
-          .hours(daily)
-          .minutes(0)
-          .format('h:mm a z')}`;
+        return `Every day around ${moment.tz(timezone).hours(daily).minutes(0).format('h:mm a z')}`;
       }
       if (frequency === 'weekly') {
         const daysOfWeek = Object.entries(weekly)
@@ -59,7 +66,7 @@ export default function getScheduleFromMonitor(monitor) {
           daysOfWeek,
           (arrVal, otherVal) => arrVal.abbr === otherVal
         )
-          .map(weekday => weekday.full)
+          .map((weekday) => weekday.full)
           .join(', ');
         return `Every ${fullDays} around ${moment
           .tz(timezone)

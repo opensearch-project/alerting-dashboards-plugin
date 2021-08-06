@@ -1,4 +1,15 @@
 /*
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * The OpenSearch Contributors require contributions made to
+ * this file be licensed under the Apache-2.0 license or a
+ * compatible open source license.
+ *
+ * Modifications Copyright OpenSearch Contributors. See
+ * GitHub history for details.
+ */
+
+/*
  *   Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  *   Licensed under the Apache License, Version 2.0 (the "License").
@@ -32,12 +43,9 @@ describe('<DateRangePicker/>', () => {
       />
     );
     expect(wrapper.update().state().rangeStartDateTime.selected).toBe(initialStartTime);
-    expect(
-      wrapper
-        .update()
-        .state()
-        .rangeEndDateTime.selected.format()
-    ).toBe(initialEndTime.format());
+    expect(wrapper.update().state().rangeEndDateTime.selected.format()).toBe(
+      initialEndTime.format()
+    );
   });
   test('should generate correct min / max times', () => {
     const wrapper = shallow(
@@ -47,38 +55,14 @@ describe('<DateRangePicker/>', () => {
         onRangeChange={jest.fn()}
       />
     );
-    expect(
-      wrapper
-        .update()
-        .state()
-        .rangeStartDateTime.minTime.format()
-    ).toBe(
-      initialStartTime
-        .clone()
-        .startOf('day')
-        .format()
+    expect(wrapper.update().state().rangeStartDateTime.minTime.format()).toBe(
+      initialStartTime.clone().startOf('day').format()
     );
-    expect(
-      wrapper
-        .update()
-        .state()
-        .rangeStartDateTime.minTime.format()
-    ).toBe(
-      initialStartTime
-        .clone()
-        .startOf('day')
-        .format()
+    expect(wrapper.update().state().rangeStartDateTime.minTime.format()).toBe(
+      initialStartTime.clone().startOf('day').format()
     );
-    expect(
-      wrapper
-        .update()
-        .state()
-        .rangeEndDateTime.minTime.format()
-    ).toBe(
-      initialEndTime
-        .clone()
-        .startOf('day')
-        .format()
+    expect(wrapper.update().state().rangeEndDateTime.minTime.format()).toBe(
+      initialEndTime.clone().startOf('day').format()
     );
   });
   test.skip('outside range dates should be disabled', () => {
@@ -90,10 +74,7 @@ describe('<DateRangePicker/>', () => {
       />
     );
     // Open End Range Calendar
-    wrapper
-      .find('input')
-      .at(1)
-      .simulate('click');
+    wrapper.find('input').at(1).simulate('click');
     // Navigate To Next
     wrapper.find('.react-datepicker__navigation--next').simulate('click');
     expect(wrapper.find('.react-datepicker__day--disabled').length).toBe(17);
@@ -109,10 +90,7 @@ describe('<DateRangePicker/>', () => {
         />
       );
       // Open Start Range Calendar
-      wrapper
-        .find('input')
-        .at(0)
-        .simulate('click');
+      wrapper.find('input').at(0).simulate('click');
       // Click on 10th Oct
       wrapper
         .find('.react-datepicker__day')
@@ -134,10 +112,7 @@ describe('<DateRangePicker/>', () => {
         />
       );
       // Open End Range Calendar
-      wrapper
-        .find('input')
-        .at(0)
-        .simulate('click');
+      wrapper.find('input').at(0).simulate('click');
       // Navigate To Next
       wrapper.find('.react-datepicker__navigation--previous').simulate('click');
       // Click on 10th Sep
@@ -163,10 +138,7 @@ describe('<DateRangePicker/>', () => {
         />
       );
       // Open End Range Calendar
-      wrapper
-        .find('input')
-        .at(0)
-        .simulate('click');
+      wrapper.find('input').at(0).simulate('click');
       // Click on 10th Oct
       wrapper
         .find('.react-datepicker__day')
@@ -178,10 +150,7 @@ describe('<DateRangePicker/>', () => {
         moment('2018-10-17T09:00:00').format()
       );
       expect(wrapper.state().rangeEndDateTime.selected.format()).toBe(
-        initialEndTime
-          .clone()
-          .add(30, 'm')
-          .format()
+        initialEndTime.clone().add(30, 'm').format()
       );
     });
     test('if selected date is after current end date time, should update endTime', () => {
@@ -193,10 +162,7 @@ describe('<DateRangePicker/>', () => {
         />
       );
       // Open End Range Calendar
-      wrapper
-        .find('input')
-        .at(0)
-        .simulate('click');
+      wrapper.find('input').at(0).simulate('click');
       // Click on 18 th Oct
       wrapper
         .find('.react-datepicker__day')
@@ -208,10 +174,7 @@ describe('<DateRangePicker/>', () => {
         moment('2018-10-18T09:00:00').format()
       );
       expect(wrapper.state().rangeEndDateTime.selected.format()).toBe(
-        initialEndTime
-          .clone()
-          .add(2, 'd')
-          .format()
+        initialEndTime.clone().add(2, 'd').format()
       );
     });
     test('should call onRangeChange with correct start / end Date', () => {
@@ -224,10 +187,7 @@ describe('<DateRangePicker/>', () => {
         />
       );
       // Open End Range Calendar
-      wrapper
-        .find('input')
-        .at(0)
-        .simulate('click');
+      wrapper.find('input').at(0).simulate('click');
       // Click on 18 th Oct
       wrapper
         .find('.react-datepicker__day')
@@ -252,10 +212,7 @@ describe('<DateRangePicker/>', () => {
         />
       );
       // Open End Range Calendar
-      wrapper
-        .find('input')
-        .at(1)
-        .simulate('click');
+      wrapper.find('input').at(1).simulate('click');
       // Click on 15 th Oct
       wrapper
         .find('.react-datepicker__day')
@@ -278,10 +235,7 @@ describe('<DateRangePicker/>', () => {
         />
       );
       // Open End Range Calendar
-      wrapper
-        .find('input')
-        .at(1)
-        .simulate('click');
+      wrapper.find('input').at(1).simulate('click');
       // Click on 13 th Oct
       wrapper
         .find('.react-datepicker__day')
@@ -306,10 +260,7 @@ describe('<DateRangePicker/>', () => {
         />
       );
       // Open End Range Calendar
-      wrapper
-        .find('input')
-        .at(1)
-        .simulate('click');
+      wrapper.find('input').at(1).simulate('click');
       // Click on 25 th Oct
       wrapper
         .find('.react-datepicker__day')

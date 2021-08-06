@@ -1,4 +1,15 @@
 /*
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * The OpenSearch Contributors require contributions made to
+ * this file be licensed under the Apache-2.0 license or a
+ * compatible open source license.
+ *
+ * Modifications Copyright OpenSearch Contributors. See
+ * GitHub history for details.
+ */
+
+/*
  * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
@@ -13,10 +24,10 @@
  * permissions and limitations under the License.
  */
 
-export const API_ROUTE_PREFIX = '/_opendistro/_alerting';
+export const API_ROUTE_PREFIX = '/_plugins/_alerting';
 
 export const INDEX = {
-  OPENDISTRO_ALERTING_CONFIG: '.opendistro-alerting-config',
+  OPENSEARCH_ALERTING_CONFIG: '.opendistro-alerting-config',
 };
 
 export const API = {
@@ -24,7 +35,7 @@ export const API = {
   DESTINATION_BASE: `${API_ROUTE_PREFIX}/destinations`,
 };
 
-export const PLUGIN_NAME = 'opendistro-alerting';
+export const PLUGIN_NAME = 'alerting';
 
 export const ADMIN_AUTH = {
   username: 'admin',

@@ -1,4 +1,15 @@
 /*
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * The OpenSearch Contributors require contributions made to
+ * this file be licensed under the Apache-2.0 license or a
+ * compatible open source license.
+ *
+ * Modifications Copyright OpenSearch Contributors. See
+ * GitHub history for details.
+ */
+
+/*
  *   Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  *   Licensed under the Apache License, Version 2.0 (the "License").
@@ -54,8 +65,8 @@ export const DATA_TYPES = {
   KEYWORD: 'keyword',
 };
 
-export const ES_AD_PLUGIN = 'opendistro-anomaly-detection';
-export const KIBANA_AD_PLUGIN = 'opendistro-anomaly-detection-kibana';
+export const OS_AD_PLUGIN = 'opensearch-anomaly-detection';
+export const OPENSEARCH_DASHBOARDS_AD_PLUGIN = 'anomaly-detection-dashboards';
 
 export const INPUTS_DETECTOR_ID = '0.search.query.query.bool.filter[1].term.detector_id.value';
 

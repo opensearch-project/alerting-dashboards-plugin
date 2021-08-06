@@ -1,4 +1,15 @@
 /*
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * The OpenSearch Contributors require contributions made to
+ * this file be licensed under the Apache-2.0 license or a
+ * compatible open source license.
+ *
+ * Modifications Copyright OpenSearch Contributors. See
+ * GitHub history for details.
+ */
+
+/*
  *   Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  *   Licensed under the Apache License, Version 2.0 (the "License").
@@ -16,9 +27,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { EuiEmptyPrompt, EuiButton, EuiText, EuiLoadingChart } from '@elastic/eui';
-import { KIBANA_AD_PLUGIN } from '../../../../../utils/constants';
+import { OPENSEARCH_DASHBOARDS_AD_PLUGIN } from '../../../../../utils/constants';
 
-const EmptyFeaturesMessage = props => (
+const EmptyFeaturesMessage = (props) => (
   <div
     style={{
       borderRadius: '5px',
@@ -43,7 +54,7 @@ const EmptyFeaturesMessage = props => (
         actions={[
           <EuiButton
             data-test-subj="createButton"
-            href={`${KIBANA_AD_PLUGIN}#/detectors/${props.detectorId}/features`}
+            href={`${OPENSEARCH_DASHBOARDS_AD_PLUGIN}#/detectors/${props.detectorId}/features`}
             target="_blank"
           >
             Add Feature

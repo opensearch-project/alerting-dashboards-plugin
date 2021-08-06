@@ -1,4 +1,15 @@
 /*
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * The OpenSearch Contributors require contributions made to
+ * this file be licensed under the Apache-2.0 license or a
+ * compatible open source license.
+ *
+ * Modifications Copyright OpenSearch Contributors. See
+ * GitHub history for details.
+ */
+
+/*
  *   Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  *   Licensed under the Apache License, Version 2.0 (the "License").
@@ -114,7 +125,7 @@ export async function getBreadcrumb(route, routeState, httpClient) {
   const [base, queryParams] = route.split('?');
   if (!base) return null;
   // This condition is true for any auto generated 20 character long,
-  // URL-safe, base64-encoded document ID by elasticsearch
+  // URL-safe, base64-encoded document ID by opensearch
   if (RegExp(/^[0-9a-z_-]{20}$/i).test(base)) {
     const { action } = queryString.parse(`?${queryParams}`);
     switch (action) {

@@ -1,4 +1,15 @@
 /*
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * The OpenSearch Contributors require contributions made to
+ * this file be licensed under the Apache-2.0 license or a
+ * compatible open source license.
+ *
+ * Modifications Copyright OpenSearch Contributors. See
+ * GitHub history for details.
+ */
+
+/*
  *   Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  *   Licensed under the Apache License, Version 2.0 (the "License").
@@ -148,9 +159,9 @@ const Sender = ({ sender, arrayHelpers, context, index, onDelete }) => {
         rowProps={{
           label: 'Encryption method',
           helpText: `SSL or TLS is recommended for security.
-          SSL and TLS requires validation by adding the following fields to the Elasticsearch keystore:
-          opendistro.alerting.destination.email.${!name ? '[sender name]' : name}.username
-          opendistro.alerting.destination.email.${!name ? '[sender name]' : name}.password`,
+          SSL and TLS requires validation by adding the following fields to the Opensearch keystore:
+          plugins.alerting.destination.email.${!name ? '[sender name]' : name}.username
+          plugins.alerting.destination.email.${!name ? '[sender name]' : name}.password`,
           style: { padding: '10px 0px' },
         }}
         inputProps={{

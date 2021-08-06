@@ -1,4 +1,15 @@
 /*
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * The OpenSearch Contributors require contributions made to
+ * this file be licensed under the Apache-2.0 license or a
+ * compatible open source license.
+ *
+ * Modifications Copyright OpenSearch Contributors. See
+ * GitHub history for details.
+ */
+
+/*
  *   Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  *   Licensed under the Apache License, Version 2.0 (the "License").
@@ -27,7 +38,7 @@ import { ScaleUtils, AbstractSeries } from 'react-vis';
 import { isEqual } from 'lodash';
 import PropTypes from 'prop-types';
 
-const getLocs = evt => {
+const getLocs = (evt) => {
   const targetBounding = evt.currentTarget.getBoundingClientRect();
   const offsetX = evt.clientX - targetBounding.left;
   const offsetY = evt.clientY - targetBounding.top;
@@ -168,7 +179,7 @@ class Highlight extends AbstractSeries {
     This is a public method which can be accessed via ref which will allow
     consumer to control Highlight Window.
   */
-  setHighlightedArea = highlightArea => {
+  setHighlightedArea = (highlightArea) => {
     const {
       highlightHeight,
       highlightWidth,
@@ -352,21 +363,21 @@ class Highlight extends AbstractSeries {
           y={0}
           width={Math.max(touchWidth, 0)}
           height={Math.max(touchHeight, 0)}
-          onMouseDown={e => this.startBrushing(e)}
-          onMouseMove={e => this.onBrush(e)}
-          onMouseUp={e => this.stopBrushing(e)}
-          onMouseLeave={e => this.stopBrushing(e)}
+          onMouseDown={(e) => this.startBrushing(e)}
+          onMouseMove={(e) => this.onBrush(e)}
+          onMouseUp={(e) => this.stopBrushing(e)}
+          onMouseLeave={(e) => this.stopBrushing(e)}
           // preventDefault() so that mouse event emulation does not happen
-          onTouchEnd={e => {
+          onTouchEnd={(e) => {
             e.preventDefault();
             this.stopBrushing(e);
           }}
-          onTouchCancel={e => {
+          onTouchCancel={(e) => {
             e.preventDefault();
             this.stopBrushing(e);
           }}
-          onContextMenu={e => e.preventDefault()}
-          onContextMenuCapture={e => e.preventDefault()}
+          onContextMenu={(e) => e.preventDefault()}
+          onContextMenuCapture={(e) => e.preventDefault()}
         />
 
         {/* Left side of overlay which allows us to give an opacity to cover */}
@@ -377,7 +388,7 @@ class Highlight extends AbstractSeries {
           y="0"
           width={Math.max(left - marginLeft, 0)}
           height={Math.max(touchHeight, 0)}
-          onMouseLeave={e => e.preventDefault()}
+          onMouseLeave={(e) => e.preventDefault()}
           {...this.getHighlighterStyles()}
         />
         {/* A Center Highlighter */}
@@ -389,7 +400,7 @@ class Highlight extends AbstractSeries {
           y={top}
           width={Math.max(0, right - left)}
           height={Math.max(0, bottom - top)}
-          onMouseLeave={e => e.preventDefault()}
+          onMouseLeave={(e) => e.preventDefault()}
         />
         {/* Right side of overlay which allows us to give an opacity to cover */}
         <rect
@@ -399,7 +410,7 @@ class Highlight extends AbstractSeries {
           y="0"
           width={Math.max(touchWidth - right, 0)}
           height={Math.max(touchHeight, 0)}
-          onMouseLeave={e => e.preventDefault()}
+          onMouseLeave={(e) => e.preventDefault()}
           {...this.getHighlighterStyles()}
         />
 
@@ -413,7 +424,7 @@ class Highlight extends AbstractSeries {
             height={Math.max(0, bottom - top)}
             fill="rgb(151,151,151)"
             stroke="none"
-            onMouseLeave={e => e.preventDefault()}
+            onMouseLeave={(e) => e.preventDefault()}
           />
           <rect
             pointerEvents="none"
@@ -423,7 +434,7 @@ class Highlight extends AbstractSeries {
             height={Math.max(0, bottom - top)}
             fill="rgb(151,151,151)"
             stroke="none"
-            onMouseLeave={e => e.preventDefault()}
+            onMouseLeave={(e) => e.preventDefault()}
           />
           <line
             pointerEvents="none"
@@ -431,7 +442,7 @@ class Highlight extends AbstractSeries {
             x2={right}
             stroke="rgb(151,151,151)"
             strokeWidth={2}
-            onMouseLeave={e => e.preventDefault()}
+            onMouseLeave={(e) => e.preventDefault()}
           />
         </g>
       </g>

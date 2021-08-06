@@ -1584,7 +1584,7 @@ exports[`Dashboard renders 1`] = `
                                         actions={
                                           <EuiButton
                                             fill={true}
-                                            href="opendistro-alerting#/create-monitor"
+                                            href="alerting#/create-monitor"
                                           >
                                             Create monitor
                                           </EuiButton>
@@ -1649,18 +1649,18 @@ exports[`Dashboard renders 1`] = `
                                           </EuiSpacer>
                                           <EuiButton
                                             fill={true}
-                                            href="opendistro-alerting#/create-monitor"
+                                            href="alerting#/create-monitor"
                                           >
                                             <EuiButtonDisplay
                                               element="a"
                                               fill={true}
-                                              href="opendistro-alerting#/create-monitor"
+                                              href="alerting#/create-monitor"
                                               isDisabled={false}
                                               rel="noreferrer"
                                             >
                                               <a
                                                 className="euiButton euiButton--primary euiButton--fill"
-                                                href="opendistro-alerting#/create-monitor"
+                                                href="alerting#/create-monitor"
                                                 rel="noreferrer"
                                               >
                                                 <EuiButtonContent

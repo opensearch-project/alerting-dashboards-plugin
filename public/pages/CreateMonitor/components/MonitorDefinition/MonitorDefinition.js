@@ -1,4 +1,15 @@
 /*
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * The OpenSearch Contributors require contributions made to
+ * this file be licensed under the Apache-2.0 license or a
+ * compatible open source license.
+ *
+ * Modifications Copyright OpenSearch Contributors. See
+ * GitHub history for details.
+ */
+
+/*
  *   Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  *   Licensed under the Apache License, Version 2.0 (the "License").
@@ -15,7 +26,7 @@
 
 import React from 'react';
 import FormikSelect from '../../../../components/FormControls/FormikSelect/FormikSelect';
-import { ES_AD_PLUGIN } from '../../../../utils/constants';
+import { OS_AD_PLUGIN } from '../../../../utils/constants';
 
 const defaultSelectDefinitions = [
   { value: 'graph', text: 'Define using visual graph' },
@@ -28,8 +39,8 @@ const onChangeDefinition = (e, form, resetResponse) => {
   form.setFieldValue('searchType', type);
 };
 
-const selectDefinitions = plugins => {
-  return plugins === undefined || plugins.indexOf(ES_AD_PLUGIN) == -1
+const selectDefinitions = (plugins) => {
+  return plugins === undefined || plugins.indexOf(OS_AD_PLUGIN) == -1
     ? defaultSelectDefinitions
     : [...defaultSelectDefinitions, { value: 'ad', text: 'Define using anomaly detector' }];
 };

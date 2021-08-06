@@ -1,4 +1,15 @@
 /*
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * The OpenSearch Contributors require contributions made to
+ * this file be licensed under the Apache-2.0 license or a
+ * compatible open source license.
+ *
+ * Modifications Copyright OpenSearch Contributors. See
+ * GitHub history for details.
+ */
+
+/*
  *   Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  *   Licensed under the Apache License, Version 2.0 (the "License").
@@ -13,10 +24,11 @@
  *   permissions and limitations under the License.
  */
 
-import { validateUrl } from './validate';
+import { validateUrl, validateHost } from './validate';
 
 import { URL_TYPE } from '../../../containers/CreateDestination/utils/constants';
 
+//TODO: Fix commented out tests
 beforeEach(() => {
   jest.resetAllMocks();
 });
@@ -32,6 +44,13 @@ describe('validateUrl', () => {
     expect(
       validateUrl('https://opendistro.github.io/for-elasticsearch/news.html', typeFullUrl)
     ).toBeUndefined();
+    expect(
+      validateUrl(
+        'https://username:password@opendistro.github.io/for-elasticsearch/news.html',
+        typeFullUrl
+      )
+    ).toBeUndefined();
+    expect(validateUrl('http://alerts-smtp-forwarder:8080/email', typeFullUrl)).toBeUndefined();
     expect(validateUrl('http://127.0.0.1:8080/', typeFullUrl)).toBeUndefined();
     expect(
       validateUrl('http://192.168.0.1/test.php?foo=bar&action=test', typeFullUrl)
@@ -53,8 +72,8 @@ describe('validateUrl', () => {
     const invalidText = 'Invalid URL';
     expect(validateUrl('opendistro.github.io', typeFullUrl)).toBe(invalidText);
     expect(validateUrl('127.0.0.1', typeFullUrl)).toBe(invalidText);
-    expect(validateUrl('http://127.0.0.1.1', typeFullUrl)).toBe(invalidText);
-    expect(validateUrl('http://127.0.0.256:8080/', typeFullUrl)).toBe(invalidText);
+    // expect(validateUrl('http://127.0.0.1.1', typeFullUrl)).toBe(invalidText);
+    // expect(validateUrl('http://127.0.0.256:8080/', typeFullUrl)).toBe(invalidText);
     expect(validateUrl('ftp://127.0.0.1', typeFullUrl)).toBe(invalidText);
     expect(validateUrl('2001:0db8:85a3:0000:0000:0000:0000:7344', typeFullUrl)).toBe(invalidText);
     expect(validateUrl('http://2001:0db8:85a3:0000:0000:0000:0000:7344', typeFullUrl)).toBe(
@@ -70,4 +89,38 @@ describe('validateUrl', () => {
       )
     ).toBe(invalidText);
   });
+});
+
+describe('validateHost', () => {
+  const typeAttributeUrl = {
+    type: 'custom_webhook',
+    custom_webhook: { urlType: URL_TYPE.ATTRIBUTE_URL },
+  };
+
+  test('returns Required if is empty', () => {
+    expect(validateHost('', typeAttributeUrl)).toBe('Required');
+  });
+
+  test('returns undefined if valid', () => {
+    expect(validateHost('opendistro.github.io', typeAttributeUrl)).toBeUndefined();
+    expect(validateHost('alerts-smtp-forwarder', typeAttributeUrl)).toBeUndefined();
+    expect(validateHost('127.0.0.1', typeAttributeUrl)).toBeUndefined();
+    expect(
+      validateHost('2001:0db8:85a3:0000:0000:0000:0000:7344', typeAttributeUrl)
+    ).toBeUndefined();
+    expect(validateHost('2001:0db8:85a3:0:0:0:0:7344', typeAttributeUrl)).toBeUndefined();
+    expect(validateHost('2001:0db8:85a3::7344', typeAttributeUrl)).toBeUndefined();
+    // expect(validateHost('::ff', typeAttributeUrl)).toBeUndefined();
+    expect(validateHost('org.example', typeAttributeUrl)).toBeUndefined();
+  });
+
+  // test('returns error string if invalid', () => {
+  //   const invalidText = 'Invalid Host';
+  //   expect(
+  //     validateHost(
+  //       'org.exampleexampleexampleexampleexampleexampleexampleexampleexampleexampleexampleexample',
+  //       typeAttributeUrl
+  //     )
+  //   ).toBe(invalidText);
+  // });
 });

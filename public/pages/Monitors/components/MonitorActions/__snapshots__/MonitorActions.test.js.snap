@@ -61,7 +61,7 @@ exports[`MonitorActions renders 1`] = `
     <a
       class="euiButton euiButton--primary euiButton--fill"
       data-test-subj="createButton"
-      href="opendistro-alerting#/create-monitor"
+      href="alerting#/create-monitor"
       rel="noreferrer"
     >
       <span

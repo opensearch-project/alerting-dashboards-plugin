@@ -1,4 +1,15 @@
 /*
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * The OpenSearch Contributors require contributions made to
+ * this file be licensed under the Apache-2.0 license or a
+ * compatible open source license.
+ *
+ * Modifications Copyright OpenSearch Contributors. See
+ * GitHub history for details.
+ */
+
+/*
  * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
@@ -43,7 +54,11 @@ Cypress.on('uncaught:exception', (err) => {
   }
 });
 
-// Switch the base URL of Elasticsearch when security enabled in the cluster
+// Switch the base URL of Opensearch when security enabled in the cluster
 if (Cypress.env('security_enabled')) {
-  Cypress.env('elasticsearch', 'https://localhost:9200');
+  Cypress.env('opensearch', `https://${Cypress.env('opensearch_url')}`);
+  Cypress.env('opensearch_dashboards', `https://${Cypress.env('opensearch_dashboards_url')}`);
+} else {
+  Cypress.env('opensearch', `http://${Cypress.env('opensearch_url')}`);
+  Cypress.env('opensearch_dashboards', `http://${Cypress.env('opensearch_dashboards_url')}`);
 }

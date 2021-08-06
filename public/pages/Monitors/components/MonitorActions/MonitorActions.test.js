@@ -1,4 +1,15 @@
 /*
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * The OpenSearch Contributors require contributions made to
+ * this file be licensed under the Apache-2.0 license or a
+ * compatible open source license.
+ *
+ * Modifications Copyright OpenSearch Contributors. See
+ * GitHub history for details.
+ */
+
+/*
  *   Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  *   Licensed under the Apache License, Version 2.0 (the "License").
@@ -69,29 +80,17 @@ describe('MonitorActions', () => {
 
   test('toggles isActionOpen when Actions Edit button', () => {
     expect(wrapper.state('isActionsOpen')).toBe(false);
-    wrapper
-      .find('[data-test-subj="actionsButton"]')
-      .hostNodes()
-      .simulate('click');
+    wrapper.find('[data-test-subj="actionsButton"]').hostNodes().simulate('click');
     expect(wrapper.state('isActionsOpen')).toBe(true);
-    wrapper
-      .find('[data-test-subj="actionsButton"]')
-      .hostNodes()
-      .simulate('click');
+    wrapper.find('[data-test-subj="actionsButton"]').hostNodes().simulate('click');
     expect(wrapper.state('isActionsOpen')).toBe(false);
   });
 
   test('calls onCloseActions and onBulkAcknowledge when clicking Acknowledge item', () => {
     const instance = wrapper.instance();
     jest.spyOn(instance, 'onCloseActions');
-    wrapper
-      .find('[data-test-subj="actionsButton"]')
-      .hostNodes()
-      .simulate('click');
-    wrapper
-      .find('[data-test-subj="acknowledgeItem"]')
-      .hostNodes()
-      .simulate('click');
+    wrapper.find('[data-test-subj="actionsButton"]').hostNodes().simulate('click');
+    wrapper.find('[data-test-subj="acknowledgeItem"]').hostNodes().simulate('click');
     expect(instance.onCloseActions).toHaveBeenCalledTimes(1);
     expect(props.onBulkAcknowledge).toHaveBeenCalledTimes(1);
   });
@@ -99,14 +98,8 @@ describe('MonitorActions', () => {
   test('calls onCloseActions and onBulkEnable when clicking Enable item', () => {
     const instance = wrapper.instance();
     jest.spyOn(instance, 'onCloseActions');
-    wrapper
-      .find('[data-test-subj="actionsButton"]')
-      .hostNodes()
-      .simulate('click');
-    wrapper
-      .find('[data-test-subj="enableItem"]')
-      .hostNodes()
-      .simulate('click');
+    wrapper.find('[data-test-subj="actionsButton"]').hostNodes().simulate('click');
+    wrapper.find('[data-test-subj="enableItem"]').hostNodes().simulate('click');
     expect(instance.onCloseActions).toHaveBeenCalledTimes(1);
     expect(props.onBulkEnable).toHaveBeenCalledTimes(1);
   });
@@ -114,14 +107,8 @@ describe('MonitorActions', () => {
   test('calls onCloseActions and onBulkDisable when clicking Disable item', () => {
     const instance = wrapper.instance();
     jest.spyOn(instance, 'onCloseActions');
-    wrapper
-      .find('[data-test-subj="actionsButton"]')
-      .hostNodes()
-      .simulate('click');
-    wrapper
-      .find('[data-test-subj="disableItem"]')
-      .hostNodes()
-      .simulate('click');
+    wrapper.find('[data-test-subj="actionsButton"]').hostNodes().simulate('click');
+    wrapper.find('[data-test-subj="disableItem"]').hostNodes().simulate('click');
     expect(instance.onCloseActions).toHaveBeenCalledTimes(1);
     expect(props.onBulkDisable).toHaveBeenCalledTimes(1);
   });
@@ -129,33 +116,21 @@ describe('MonitorActions', () => {
   test('calls onCloseActions and onBulkDelete when clicking Delete item', () => {
     const instance = wrapper.instance();
     jest.spyOn(instance, 'onCloseActions');
-    wrapper
-      .find('[data-test-subj="actionsButton"]')
-      .hostNodes()
-      .simulate('click');
-    wrapper
-      .find('[data-test-subj="deleteItem"]')
-      .hostNodes()
-      .simulate('click');
+    wrapper.find('[data-test-subj="actionsButton"]').hostNodes().simulate('click');
+    wrapper.find('[data-test-subj="deleteItem"]').hostNodes().simulate('click');
     expect(instance.onCloseActions).toHaveBeenCalledTimes(1);
     expect(props.onBulkDelete).toHaveBeenCalledTimes(1);
   });
 
   test('does not call onClickEdit when Edit is clicked and edit is disabled', () => {
-    wrapper
-      .find('[data-test-subj="editButton"]')
-      .hostNodes()
-      .simulate('click');
+    wrapper.find('[data-test-subj="editButton"]').hostNodes().simulate('click');
     expect(props.onClickEdit).toHaveBeenCalledTimes(0);
   });
 
   test('calls onClickEdit when Edit is clicked and isEditDisabled=false', () => {
     const props = getProps();
     wrapper.setProps({ ...props, isEditDisabled: false });
-    wrapper
-      .find('[data-test-subj="editButton"]')
-      .hostNodes()
-      .simulate('click');
+    wrapper.find('[data-test-subj="editButton"]').hostNodes().simulate('click');
     expect(props.onClickEdit).toHaveBeenCalledTimes(1);
   });
 });

@@ -1,4 +1,15 @@
 /*
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * The OpenSearch Contributors require contributions made to
+ * this file be licensed under the Apache-2.0 license or a
+ * compatible open source license.
+ *
+ * Modifications Copyright OpenSearch Contributors. See
+ * GitHub history for details.
+ */
+
+/*
  *   Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  *   Licensed under the Apache License, Version 2.0 (the "License").
@@ -15,8 +26,8 @@
 
 import alerts from './alerts';
 import destinations from './destinations';
-import elasticsearch from './elasticsearch';
+import opensearch from './opensearch';
 import monitors from './monitors';
 import detectors from './anomalyDetector';
 
-export { alerts, destinations, elasticsearch, monitors, detectors };
+export { alerts, destinations, opensearch, monitors, detectors };

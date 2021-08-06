@@ -1,4 +1,15 @@
 /*
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * The OpenSearch Contributors require contributions made to
+ * this file be licensed under the Apache-2.0 license or a
+ * compatible open source license.
+ *
+ * Modifications Copyright OpenSearch Contributors. See
+ * GitHub history for details.
+ */
+
+/*
  *   Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  *   Licensed under the Apache License, Version 2.0 (the "License").
@@ -42,9 +53,9 @@ export const staticColumns = [
     sortable: true,
     textOnly: true,
     width: '100px',
-    render: value => {
+    render: (value) => {
       //TODO:: Convert this to proper map of text to avoid filters always
-      const actionType = DESTINATION_OPTIONS.filter(item => item.value === value);
+      const actionType = DESTINATION_OPTIONS.filter((item) => item.value === value);
       if (actionType.length > 0) {
         return actionType[0].text;
       } else {

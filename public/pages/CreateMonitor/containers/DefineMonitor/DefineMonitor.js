@@ -1,4 +1,15 @@
 /*
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * The OpenSearch Contributors require contributions made to
+ * this file be licensed under the Apache-2.0 license or a
+ * compatible open source license.
+ *
+ * Modifications Copyright OpenSearch Contributors. See
+ * GitHub history for details.
+ */
+
+/*
  *   Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  *   Licensed under the Apache License, Version 2.0 (the "License").
@@ -28,7 +39,7 @@ import MonitorTimeField from '../../components/MonitorTimeField';
 import { formikToMonitor } from '../CreateMonitor/utils/formikToMonitor';
 import { getPathsPerDataType } from './utils/mappings';
 import { buildSearchRequest } from './utils/searchRequests';
-import { SEARCH_TYPE, ES_AD_PLUGIN } from '../../../../utils/constants';
+import { SEARCH_TYPE, OS_AD_PLUGIN } from '../../../../utils/constants';
 import AnomalyDetectors from '../AnomalyDetectors/AnomalyDetectors';
 import { backendErrorNotification } from '../../../../utils/helpers';
 
@@ -335,7 +346,7 @@ class DefineMonitor extends Component {
   showPluginWarning() {
     const { values } = this.props;
     const { plugins } = this.state;
-    return values.searchType == SEARCH_TYPE.AD && plugins.indexOf(ES_AD_PLUGIN) == -1;
+    return values.searchType == SEARCH_TYPE.AD && plugins.indexOf(OS_AD_PLUGIN) == -1;
   }
 
   render() {
@@ -351,7 +362,7 @@ class DefineMonitor extends Component {
           ? [
               <EuiCallOut
                 color="warning"
-                title="Anomaly detector plugin is not installed on Elasticsearch, This monitor will not functional properly."
+                title="Anomaly detector plugin is not installed on Opensearch, This monitor will not functional properly."
                 iconType="help"
                 size="s"
               />,

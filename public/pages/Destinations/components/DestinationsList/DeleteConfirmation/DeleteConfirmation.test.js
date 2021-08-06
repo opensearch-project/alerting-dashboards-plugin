@@ -1,4 +1,15 @@
 /*
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * The OpenSearch Contributors require contributions made to
+ * this file be licensed under the Apache-2.0 license or a
+ * compatible open source license.
+ *
+ * Modifications Copyright OpenSearch Contributors. See
+ * GitHub history for details.
+ */
+
+/*
  *   Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  *   Licensed under the Apache License, Version 2.0 (the "License").
@@ -40,10 +51,7 @@ describe('<DeleteConfirmation />', () => {
       <DeleteConfirmation isVisible onConfirm={handleOnConfirm} onCancel={jest.fn()} />
     );
     // Simulate Confirm Click
-    wrapper
-      .find('button')
-      .at(2)
-      .simulate('click');
+    wrapper.find('button').at(2).simulate('click');
     expect(handleOnConfirm).toHaveBeenCalledTimes(1);
   });
   test('should call onCancel on click of Cancel button', () => {
@@ -52,10 +60,7 @@ describe('<DeleteConfirmation />', () => {
       <DeleteConfirmation isVisible onConfirm={jest.fn()} onCancel={handleOnCancel} />
     );
     // Simulate Cancel Click
-    wrapper
-      .find('button')
-      .at(1)
-      .simulate('click');
+    wrapper.find('button').at(1).simulate('click');
     expect(handleOnCancel).toHaveBeenCalledTimes(1);
   });
 });

@@ -1,4 +1,15 @@
 /*
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * The OpenSearch Contributors require contributions made to
+ * this file be licensed under the Apache-2.0 license or a
+ * compatible open source license.
+ *
+ * Modifications Copyright OpenSearch Contributors. See
+ * GitHub history for details.
+ */
+
+/*
  *   Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  *   Licensed under the Apache License, Version 2.0 (the "License").
@@ -14,15 +25,17 @@
  */
 
 import { resolve } from 'path';
-import { resolveKibanaPath } from '@elastic/plugin-helpers';
+import { resolveOpenSearchDashboardsPath } from '@elastic/plugin-helpers';
 import { AlertingPageProvider } from './pageObjects';
 
 // the default export of config files must be a config provider
 // that returns an object with the projects config values
 export default async function ({ readConfigFile }) {
-  // read the Kibana config file so that we can utilize some of
+  // read the OpenSearch Dashboards config file so that we can utilize some of
   // its services and PageObjects
-  const kibanaConfig = await readConfigFile(resolveKibanaPath('test/functional/config.js'));
+  const openSearchDashboardsConfig = await readConfigFile(
+    resolveOpenSearchDashboardsPath('test/functional/config.js')
+  );
   return {
     // list paths to the files that contain your plugins tests
     testFiles: [resolve(__dirname, './tests/index.js')],
@@ -31,22 +44,22 @@ export default async function ({ readConfigFile }) {
     // available to your tests. If you don't specify anything here
     // only the built-in services will be available
     services: {
-      ...kibanaConfig.get('services'),
+      ...openSearchDashboardsConfig.get('services'),
     },
-    servers: kibanaConfig.get('servers'),
+    servers: openSearchDashboardsConfig.get('servers'),
     // just like services, PageObjects are defined as a map of
-    // names to Providers. Merge in Kibana's or pick specific ones
+    // names to Providers. Merge in OpenSearch Dashboards's or pick specific ones
     pageObjects: {
-      ...kibanaConfig.get('pageObjects'),
+      ...openSearchDashboardsConfig.get('pageObjects'),
       alertingCommon: AlertingPageProvider,
     },
 
     // the apps section defines the urls that
     // `PageObjects.common.navigateTo(appKey)` will use.
     // Merge urls for your plugin with the urls defined in
-    // Kibana's config in order to use this helper
+    // OpenSearch Dashboards's config in order to use this helper
     apps: {
-      ...kibanaConfig.get('apps'),
+      ...openSearchDashboardsConfig.get('apps'),
       alerting: {
         pathname: '/app/alerting',
       },

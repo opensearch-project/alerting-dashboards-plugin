@@ -1,4 +1,15 @@
 /*
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * The OpenSearch Contributors require contributions made to
+ * this file be licensed under the Apache-2.0 license or a
+ * compatible open source license.
+ *
+ * Modifications Copyright OpenSearch Contributors. See
+ * GitHub history for details.
+ */
+
+/*
  *   Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  *   Licensed under the Apache License, Version 2.0 (the "License").
@@ -71,7 +82,7 @@ export function triggerToFormik(trigger, monitor) {
     anomalyDetector: {
       /*If trigger type doesn't exist fallback to query trigger with following reasons
         1. User has changed monitory type from normal monitor to AD monitor.
-        2. User has created / updated from API and visiting Kibana to do other operations.
+        2. User has created / updated from API and visiting OpenSearch Dashboards to do other operations.
       */
       triggerType: triggerType ? triggerType : TRIGGER_TYPE.ALERT_TRIGGER,
       anomalyGradeThresholdValue,

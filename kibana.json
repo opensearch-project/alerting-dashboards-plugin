@@ -1,9 +1,0 @@
-{
-  "id": "opendistroAlertingKibana",
-  "version": "1.13.0.0",
-  "kibanaVersion": "7.10.2",
-  "configPath": ["opendistro_alerting"],
-  "requiredPlugins": [],
-  "server": true,
-  "ui": true
-}

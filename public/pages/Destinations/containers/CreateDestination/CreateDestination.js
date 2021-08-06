@@ -1,4 +1,15 @@
 /*
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * The OpenSearch Contributors require contributions made to
+ * this file be licensed under the Apache-2.0 license or a
+ * compatible open source license.
+ *
+ * Modifications Copyright OpenSearch Contributors. See
+ * GitHub history for details.
+ */
+
+/*
  *   Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  *   Licensed under the Apache License, Version 2.0 (the "License").
@@ -64,7 +75,7 @@ class CreateDestination extends React.Component {
     let ifSeqNo, ifPrimaryTerm;
     if (edit) {
       // In case user is refreshing in edit mode , redirect them to the destination page.
-      // TODO:: Ideally this should fetch the destination from ElasticSearch and fill in value
+      // TODO:: Ideally this should fetch the destination from OpenSearch and fill in value
       const destinationToEdit = _.get(location, 'state.destinationToEdit', null);
       if (destinationToEdit) {
         const initialValues = { ...(await destinationToFormik(httpClient, destinationToEdit)) };
