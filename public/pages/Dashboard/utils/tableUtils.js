@@ -101,32 +101,29 @@ export const columns = [
 
 export const alertColumns = [
   {
-    field: '',
+    field: 'total',
     name: 'Alerts',
     sortable: true,
     truncateText: false,
-    render: () => <EuiLink>2 alerts</EuiLink>,
+    render: (total) => <EuiLink>{`${total} alerts`}</EuiLink>,
   },
   {
-    field: '',
+    field: 'ACTIVE',
     name: 'Active',
     sortable: true,
     truncateText: false,
-    render: renderTime,
   },
   {
-    field: '',
+    field: 'ACKNOWLEDGED',
     name: 'Acknowledged',
     sortable: true,
     truncateText: false,
-    render: renderTime,
   },
   {
-    field: '',
+    field: 'ERROR',
     name: 'Errors',
     sortable: true,
     truncateText: false,
-    render: renderTime,
   },
   {
     field: 'trigger_name',

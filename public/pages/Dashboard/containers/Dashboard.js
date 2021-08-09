@@ -35,6 +35,7 @@ import DashboardControls from '../components/DashboardControls';
 import { alertColumns } from '../utils/tableUtils';
 import { OPENSEARCH_DASHBOARDS_AD_PLUGIN } from '../../../utils/constants';
 import { backendErrorNotification } from '../../../utils/helpers';
+import { groupAlertsByTrigger } from '../utils/helpers';
 
 const DEFAULT_PAGE_SIZE_OPTIONS = [5, 10, 20, 50];
 const DEFAULT_QUERY_PARAMS = {
@@ -67,6 +68,7 @@ export default class Dashboard extends Component {
 
     this.state = {
       alerts: [],
+      alertsByTriggers: [],
       alertState,
       monitorIds: this.props.monitorIds,
       page: Math.floor(from / size),
@@ -77,6 +79,7 @@ export default class Dashboard extends Component {
       sortDirection,
       sortField,
       totalAlerts: 0,
+      totalTriggers: 0,
     };
   }
 
@@ -198,9 +201,12 @@ export default class Dashboard extends Component {
       httpClient.get('../api/alerting/alerts', { query: params }).then((resp) => {
         if (resp.ok) {
           const { alerts, totalAlerts } = resp;
+          const alertsByTriggers = groupAlertsByTrigger(alerts);
           this.setState({
             alerts,
             totalAlerts,
+            totalTriggers: alertsByTriggers.length,
+            alertsByTriggers,
           });
         } else {
           console.log('error getting alerts:', resp);
@@ -301,6 +307,7 @@ export default class Dashboard extends Component {
   render() {
     const {
       alerts,
+      alertsByTriggers,
       alertState,
       page,
       search,
@@ -309,13 +316,14 @@ export default class Dashboard extends Component {
       sortDirection,
       sortField,
       totalAlerts,
+      totalTriggers,
     } = this.state;
     const { monitorIds, detectorIds, onCreateTrigger } = this.props;
 
     const pagination = {
       pageIndex: page,
       pageSize: size,
-      totalItemCount: Math.min(MAX_ALERT_COUNT, totalAlerts),
+      totalItemCount: Math.min(MAX_ALERT_COUNT, totalTriggers),
       pageSizeOptions: DEFAULT_PAGE_SIZE_OPTIONS,
     };
 
@@ -347,16 +355,6 @@ export default class Dashboard extends Component {
       }
       return actions;
     };
-    //
-    // let alertsByTriggers = new Map();
-    // alerts.map((alert)=>{
-    //   const triggerID = alert.trigger_id;
-    //   const state = alert.state;
-    //   alertsByTriggers.has(triggerID)
-    //     ? alertsByTriggers.set(triggerID, [dataPoint, ...allData.get(key)])
-    //     : alertsByTriggers.set(triggerID, [dataPoint]);
-    //   }
-    // );
 
     return (
       <ContentPanel
@@ -367,7 +365,7 @@ export default class Dashboard extends Component {
       >
         <DashboardControls
           activePage={page}
-          pageCount={Math.ceil(totalAlerts / size) || 1}
+          pageCount={Math.ceil(totalTriggers / size) || 1}
           search={search}
           severity={severityLevel}
           state={alertState}
@@ -380,13 +378,13 @@ export default class Dashboard extends Component {
         <EuiHorizontalRule margin="xs" />
 
         <EuiBasicTable
-          items={alerts}
+          items={alertsByTriggers}
           /*
            * If using just ID, doesn't update selectedItems when doing acknowledge
            * because the next getAlerts have the same id
            * $id-$version will correctly remove selected items
            * */
-          itemId={(item) => `${item.id}-${item.version}`}
+          itemId={(item) => `${item.triggerID}-${item.version}`}
           columns={alertColumns}
           pagination={pagination}
           sorting={sorting}
