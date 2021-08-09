@@ -10,7 +10,7 @@
  */
 
 /*
- *   Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ *   Copyright 2021 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  *   Licensed under the Apache License, Version 2.0 (the "License").
  *   You may not use this file except in compliance with the License.
@@ -26,7 +26,7 @@
 
 import _ from 'lodash';
 import moment from 'moment-timezone';
-import { BUCKET_COUNT } from './constants';
+import { BUCKET_COUNT, FORMIK_INITIAL_VALUES } from './constants';
 import { SEARCH_TYPE } from '../../../../../utils/constants';
 import { OPERATORS_QUERY_MAP } from './whereFilters';
 
@@ -37,20 +37,26 @@ export function formikToMonitor(values) {
   return {
     name: values.name,
     type: 'monitor',
+    monitor_type: values.monitor_type,
     enabled: !values.disabled,
     schedule,
-    inputs: [formikToSearch(values)],
+    inputs: [formikToInputs(values)],
     triggers: [],
     ui_metadata: {
       schedule: uiSchedule,
       search: uiSearch,
+      monitor_type: values.monitor_type,
     },
   };
 }
 
 export function formikToInputs(values) {
-  const isAD = values.searchType === SEARCH_TYPE.AD;
-  return [isAD ? formikToAd(values) : formikToSearch(values)];
+  switch (values.searchType) {
+    case SEARCH_TYPE.AD:
+      return formikToAd(values);
+    default:
+      return formikToSearch(values);
+  }
 }
 
 export function formikToSearch(values) {
@@ -110,12 +116,15 @@ export function formikToAd(values) {
     },
   };
 }
+
 export function formikToUiSearch(values) {
   const {
     searchType,
     aggregationType,
     timeField,
     fieldName: [{ label: fieldName = '' } = {}],
+    aggregations,
+    groupBy,
     overDocuments,
     groupedOverTop,
     groupedOverFieldName,
@@ -128,6 +137,8 @@ export function formikToUiSearch(values) {
     aggregationType,
     timeField,
     fieldName,
+    aggregations,
+    groupBy,
     overDocuments,
     groupedOverTop,
     groupedOverFieldName,
@@ -147,12 +158,23 @@ export function formikToQuery(values) {
 }
 
 export function formikToExtractionQuery(values) {
-  return JSON.parse(values.query);
+  let query = _.get(values, 'query', FORMIK_INITIAL_VALUES.query);
+  try {
+    // JSON.parse() throws an exception when the argument is a malformed JSON string.
+    // This caused exceptions when tinkering with the JSON in the code editor.
+    // This try/catch block will only parse the JSON string if it is not malformed.
+    // It will otherwise store the JSON as a string for continued editing.
+    query = JSON.parse(query);
+  } catch (err) {}
+  return query;
 }
 
 export function formikToGraphQuery(values) {
   const { bucketValue, bucketUnitOfTime } = values;
-  const whenAggregation = formikToWhenAggregation(values);
+  const hasGroupBy = values.groupBy.length;
+  const aggregation = hasGroupBy
+    ? formikToCompositeAggregation(values)
+    : formikToAggregation(values);
   const timeField = values.timeField;
   const filters = [
     {
@@ -171,7 +193,7 @@ export function formikToGraphQuery(values) {
   }
   return {
     size: 0,
-    aggregations: whenAggregation,
+    aggregations: aggregation,
     query: {
       bool: {
         filter: filters,
@@ -245,6 +267,52 @@ export function formikToWhenAggregation(values) {
   } = values;
   if (aggregationType === 'count' || !field) return {};
   return { when: { [aggregationType]: { field } } };
+}
+
+export function formikToCompositeAggregation(values) {
+  const { aggregations, groupBy } = values;
+
+  let aggs = {};
+  aggregations.map((aggItem) => {
+    // TODO: Changing any occurrence of '.' in the fieldName to '_' since the
+    //  bucketSelector uses the '.' syntax to resolve aggregation paths.
+    //  Should revisit this as replacing with `_` could cause collisions with fields named like that.
+    const name = `${aggItem.aggregationType}_${aggItem.fieldName.replace(/\./g, '_')}`;
+    const type = aggItem.aggregationType === 'count' ? 'value_count' : aggItem.aggregationType;
+    aggs[name] = {
+      [type]: { field: aggItem.fieldName },
+    };
+  });
+  let sources = [];
+  groupBy.map((groupByItem) =>
+    sources.push({
+      [groupByItem]: {
+        terms: {
+          field: groupByItem,
+        },
+      },
+    })
+  );
+  return {
+    composite_agg: {
+      composite: { sources },
+      aggs,
+    },
+  };
+}
+
+export function formikToAggregation(values) {
+  const { aggregations } = values;
+
+  let aggs = {};
+  aggregations.map((aggItem) => {
+    const name = `${aggItem.aggregationType}_${aggItem.fieldName}`;
+    const type = aggItem.aggregationType === 'count' ? 'value_count' : aggItem.aggregationType;
+    aggs[name] = {
+      [type]: { field: aggItem.fieldName },
+    };
+  });
+  return aggs;
 }
 
 export function formikToUiSchedule(values) {
