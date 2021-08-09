@@ -133,10 +133,12 @@ export const alertColumns = [
     textOnly: true,
   },
   {
-    field: 'severity',
-    name: 'Severity',
-    sortable: false,
+    field: 'start_time',
+    name: 'Trigger start time',
+    sortable: true,
     truncateText: false,
+    render: renderTime,
+    dataType: 'date',
   },
   {
     field: 'last_notification_time',
@@ -147,12 +149,10 @@ export const alertColumns = [
     dataType: 'date',
   },
   {
-    field: 'start_time',
-    name: 'Trigger start time',
-    sortable: true,
+    field: 'severity',
+    name: 'Severity',
+    sortable: false,
     truncateText: false,
-    render: renderTime,
-    dataType: 'date',
   },
   {
     field: 'monitor_name',
