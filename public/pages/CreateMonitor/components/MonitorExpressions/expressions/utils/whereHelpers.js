@@ -26,6 +26,7 @@
 
 import _ from 'lodash';
 import { COMPARISON_OPERATORS, OPERATORS_MAP } from './constants';
+import { TRIGGER_COMPARISON_OPERATORS } from '../../../../../CreateTrigger/containers/DefineBucketLevelTrigger/DefineBucketLevelTrigger';
 
 export const getOperators = (fieldType) =>
   COMPARISON_OPERATORS.reduce(
@@ -42,13 +43,15 @@ export const isNullOperator = (selectedOperator) =>
   [OPERATORS_MAP.IS_NULL, OPERATORS_MAP.IS_NOT_NULL].includes(selectedOperator);
 
 export const displayText = (whereValues) => {
+  const comparisonOperators = _.concat(COMPARISON_OPERATORS, TRIGGER_COMPARISON_OPERATORS);
+
   const whereFieldName = _.get(whereValues, 'fieldName[0].label', undefined);
   if (!whereFieldName) {
     return 'all fields are included';
   }
   const selectedOperator = _.get(whereValues, 'operator', 'is');
   const operatorObj =
-    COMPARISON_OPERATORS.find((operator) => operator.value === selectedOperator) || {};
+    comparisonOperators.find((operator) => operator.value === selectedOperator) || {};
   const initialText = `${whereFieldName} ${operatorObj.text || ''}`;
 
   if (isRangeOperator(selectedOperator)) {
