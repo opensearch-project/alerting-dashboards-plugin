@@ -32,7 +32,7 @@ import { EuiBasicTable, EuiButton, EuiHorizontalRule, EuiIcon } from '@elastic/e
 import ContentPanel from '../../../components/ContentPanel';
 import DashboardEmptyPrompt from '../components/DashboardEmptyPrompt';
 import DashboardControls from '../components/DashboardControls';
-import { columns } from '../utils/tableUtils';
+import { alertColumns } from '../utils/tableUtils';
 import { OPENSEARCH_DASHBOARDS_AD_PLUGIN } from '../../../utils/constants';
 import { backendErrorNotification } from '../../../utils/helpers';
 
@@ -347,10 +347,20 @@ export default class Dashboard extends Component {
       }
       return actions;
     };
+    //
+    // let alertsByTriggers = new Map();
+    // alerts.map((alert)=>{
+    //   const triggerID = alert.trigger_id;
+    //   const state = alert.state;
+    //   alertsByTriggers.has(triggerID)
+    //     ? alertsByTriggers.set(triggerID, [dataPoint, ...allData.get(key)])
+    //     : alertsByTriggers.set(triggerID, [dataPoint]);
+    //   }
+    // );
 
     return (
       <ContentPanel
-        title="Alerts"
+        title="Alerts by triggers"
         titleSize={monitorIds.length ? 's' : 'l'}
         bodyStyles={{ padding: 'initial' }}
         actions={actions()}
@@ -377,7 +387,7 @@ export default class Dashboard extends Component {
            * $id-$version will correctly remove selected items
            * */
           itemId={(item) => `${item.id}-${item.version}`}
-          columns={columns}
+          columns={alertColumns}
           pagination={pagination}
           sorting={sorting}
           isSelectable={true}

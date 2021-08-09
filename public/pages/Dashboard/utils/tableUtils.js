@@ -98,3 +98,73 @@ export const columns = [
     dataType: 'date',
   },
 ];
+
+export const alertColumns = [
+  {
+    field: '',
+    name: 'Alerts',
+    sortable: true,
+    truncateText: false,
+    render: () => <EuiLink>2 alerts</EuiLink>,
+  },
+  {
+    field: '',
+    name: 'Active',
+    sortable: true,
+    truncateText: false,
+    render: renderTime,
+  },
+  {
+    field: '',
+    name: 'Acknowledged',
+    sortable: true,
+    truncateText: false,
+    render: renderTime,
+  },
+  {
+    field: '',
+    name: 'Errors',
+    sortable: true,
+    truncateText: false,
+    render: renderTime,
+  },
+  {
+    field: 'trigger_name',
+    name: 'Trigger name',
+    sortable: true,
+    truncateText: true,
+    textOnly: true,
+  },
+  {
+    field: 'severity',
+    name: 'Severity',
+    sortable: false,
+    truncateText: false,
+  },
+  {
+    field: 'last_notification_time',
+    name: 'Trigger last updated',
+    sortable: true,
+    truncateText: true,
+    render: renderTime,
+    dataType: 'date',
+  },
+  {
+    field: 'start_time',
+    name: 'Trigger start time',
+    sortable: true,
+    truncateText: false,
+    render: renderTime,
+    dataType: 'date',
+  },
+  {
+    field: 'monitor_name',
+    name: 'Monitor name',
+    sortable: true,
+    truncateText: true,
+    textOnly: true,
+    render: (name, alert) => (
+      <EuiLink href={`${PLUGIN_NAME}#/monitors/${alert.monitor_id}`}>{name}</EuiLink>
+    ),
+  },
+];

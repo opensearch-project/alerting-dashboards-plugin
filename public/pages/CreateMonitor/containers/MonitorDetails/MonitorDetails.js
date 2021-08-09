@@ -13,13 +13,11 @@
  *   permissions and limitations under the License.
  */
 
-import { React } from '@kbn/ui-shared-deps/entry';
+import { React } from 'react';
 import { EuiSpacer } from '@elastic/eui';
 import ContentPanel from '../../../../components/ContentPanel';
 import FormikFieldText from '../../../../components/FormControls/FormikFieldText';
 import { hasError, isInvalid, required, validateMonitorName } from '../../../../utils/validate';
-import MonitorState from '../../components/MonitorState';
-import { FormikFieldRadio } from '../../../../components/FormControls';
 import Schedule from '../../components/Schedule';
 
 const MonitorDetails = ({ httpClient, monitorToEdit, isAd }) => (
