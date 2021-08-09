@@ -33,6 +33,7 @@ export const Expressions = {
   OVER: 'OVER',
   FOR_THE_LAST: 'FOR_THE_LAST',
   WHERE: 'WHERE',
+  METRICS: 'METRICS',
 };
 export const NUMBER_TYPES = [
   'long',
@@ -110,3 +111,5 @@ export const AGGREGATION_TYPES = [
   { value: 'min', text: 'min()' },
   { value: 'max', text: 'max()' },
 ];
+
+export const GROUP_BY_ERROR = 'Must specify at least 1 group by expression';
