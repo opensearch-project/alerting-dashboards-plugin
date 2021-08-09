@@ -10,22 +10,24 @@
  */
 
 /*
- *   Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2021 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
- *   Licensed under the Apache License, Version 2.0 (the "License").
- *   You may not use this file except in compliance with the License.
- *   A copy of the License is located at
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- *   or in the "license" file accompanying this file. This file is distributed
- *   on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- *   express or implied. See the License for the specific language governing
- *   permissions and limitations under the License.
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
  */
 
 import _ from 'lodash';
 import { INDEX, MAX_THROTTLE_VALUE, WRONG_THROTTLE_WARNING } from '../../utils/constants';
+import { MONITOR_TYPE } from './constants';
+import { TRIGGER_TYPE } from '../pages/CreateTrigger/containers/CreateTrigger/utils/constants';
 
 // TODO: Use a validation framework to clean all of this up or create own.
 
@@ -34,9 +36,20 @@ export const isInvalid = (name, form) =>
 
 export const hasError = (name, form) => _.get(form.errors, name);
 
-export const validateActionName = (trigger) => (value) => {
+export const validateActionName = (monitor, trigger) => (value) => {
   if (!value) return 'Required';
-  const matches = trigger.actions.filter((action) => action.name === value);
+  // GetMonitor is being used to retrieve the Trigger which means it will always
+  // be wrapped in Trigger type (even for old Monitors)
+  // TODO: Should clean this up later since a similar check is done in several places.
+  // TODO: Expand on this validation by passing in triggerValues and comparing the current
+  //  action's name with names of other actions in the trigger creation form.
+  let actions;
+  if (monitor.monitor_type === MONITOR_TYPE.QUERY_LEVEL) {
+    actions = _.get(trigger, `${TRIGGER_TYPE.QUERY_LEVEL}.actions`, []);
+  } else if (monitor.monitor_type === MONITOR_TYPE.BUCKET_LEVEL) {
+    actions = _.get(trigger, `${TRIGGER_TYPE.BUCKET_LEVEL}.actions`, []);
+  }
+  const matches = actions.filter((action) => action.name === value);
   if (matches.length > 1) return 'Action name is already used';
 };
 
