@@ -42,7 +42,7 @@ const Frequency = () => (
     name="frequency"
     formRow
     rowProps={{
-      label: 'Frequency',
+      label: 'Monitor frequency',
       style: { paddingLeft: '10px' },
       isInvalid,
       error: hasError,
