@@ -9,7 +9,7 @@
  * GitHub history for details.
  */
 
-import { React } from '@kbn/ui-shared-deps/entry';
+import React from 'react';
 import { EuiSpacer } from '@elastic/eui';
 import ContentPanel from '../../../../components/ContentPanel';
 import FormikFieldText from '../../../../components/FormControls/FormikFieldText';
