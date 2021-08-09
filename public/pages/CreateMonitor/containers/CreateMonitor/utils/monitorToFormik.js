@@ -10,7 +10,7 @@
  */
 
 /*
- *   Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ *   Copyright 2021 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  *   Licensed under the Apache License, Version 2.0 (the "License").
  *   You may not use this file except in compliance with the License.
@@ -34,6 +34,7 @@ export default function monitorToFormik(monitor) {
   if (!monitor) return formikValues;
   const {
     name,
+    monitor_type,
     enabled,
     schedule: { cron: { expression: cronExpression = formikValues.cronExpression, timezone } = {} },
     inputs,
@@ -57,6 +58,7 @@ export default function monitorToFormik(monitor) {
     cronExpression,
 
     /* DEFINE MONITOR */
+    monitor_type,
     ...search,
     searchType,
     fieldName: fieldName ? [{ label: fieldName }] : [],
