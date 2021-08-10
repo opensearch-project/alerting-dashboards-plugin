@@ -304,7 +304,7 @@ class DefineBucketLevelTrigger extends Component {
           </EuiButton>
         }
       >
-        <div style={{ padding: '0px 10px' }}>
+        <div style={{ padding: '0px 10px', paddingTop: '20px' }}>
           <FormikFieldText
             name={`${fieldPath}name`}
             fieldProps={{ validate: validateTriggerName(triggers, triggerValues, fieldPath) }}
