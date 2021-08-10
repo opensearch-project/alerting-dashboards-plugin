@@ -221,6 +221,7 @@ class ConfigureActions extends React.Component {
           sendTestMessage={this.sendTestMessage}
           setFlyout={setFlyout}
           fieldPath={fieldPath}
+          values={values}
         />
       ))
     ) : (
@@ -235,15 +236,13 @@ class ConfigureActions extends React.Component {
     const displayAddActionButton = numOfActions > 0;
     //TODO:: Handle loading Destinations inside the Action which will be more intuitive for customers.
     return (
-      <div style={{ paddingLeft: '10px', paddingRight: '10px' }}>
-        <EuiFormRow
-          helpText={'Define actions when trigger conditions are met.'}
-          style={{ paddingBottom: '5px' }}
-        >
-          <EuiText>
-            <h4>{`Actions (${numOfActions})`}</h4>
-          </EuiText>
-        </EuiFormRow>
+      <div style={{ paddingLeft: '20px', paddingRight: '15px' }}>
+        <EuiText>
+          <h4>{`Actions (${numOfActions})`}</h4>
+        </EuiText>
+        <EuiText color={'subdued'} size={'xs'} style={{ paddingBottom: '5px' }}>
+          Define actions when trigger conditions are met.
+        </EuiText>
         <EuiPanel style={{ backgroundColor: '#F7F7F7', padding: '20px' }}>
           {loadingDestinations ? (
             <div style={{ display: 'flex', justifyContent: 'center' }}>Loading Destinations...</div>
