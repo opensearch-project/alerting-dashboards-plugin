@@ -32,7 +32,7 @@ import { EuiBasicTable, EuiButton, EuiHorizontalRule, EuiIcon } from '@elastic/e
 import ContentPanel from '../../../components/ContentPanel';
 import DashboardEmptyPrompt from '../components/DashboardEmptyPrompt';
 import DashboardControls from '../components/DashboardControls';
-import { alertColumns } from '../utils/tableUtils';
+import { columns, alertColumns } from '../utils/tableUtils';
 import { OPENSEARCH_DASHBOARDS_AD_PLUGIN } from '../../../utils/constants';
 import { backendErrorNotification } from '../../../utils/helpers';
 import { groupAlertsByTrigger } from '../utils/helpers';
@@ -319,11 +319,12 @@ export default class Dashboard extends Component {
       totalTriggers,
     } = this.state;
     const { monitorIds, detectorIds, onCreateTrigger } = this.props;
-
+    const inMonitorDetails = typeof onCreateTrigger === 'function';
+    const totalItems = inMonitorDetails ? totalAlerts : totalTriggers;
     const pagination = {
       pageIndex: page,
       pageSize: size,
-      totalItemCount: Math.min(MAX_ALERT_COUNT, totalTriggers),
+      totalItemCount: Math.min(MAX_ALERT_COUNT, totalItems),
       pageSizeOptions: DEFAULT_PAGE_SIZE_OPTIONS,
     };
 
@@ -358,14 +359,14 @@ export default class Dashboard extends Component {
 
     return (
       <ContentPanel
-        title="Alerts by triggers"
+        title={inMonitorDetails ? 'Alerts' : 'Alerts by triggers'}
         titleSize={monitorIds.length ? 's' : 'l'}
         bodyStyles={{ padding: 'initial' }}
         actions={actions()}
       >
         <DashboardControls
           activePage={page}
-          pageCount={Math.ceil(totalTriggers / size) || 1}
+          pageCount={Math.ceil(totalItems / size) || 1}
           search={search}
           severity={severityLevel}
           state={alertState}
@@ -378,14 +379,14 @@ export default class Dashboard extends Component {
         <EuiHorizontalRule margin="xs" />
 
         <EuiBasicTable
-          items={alertsByTriggers}
+          items={inMonitorDetails ? alerts : alertsByTriggers}
           /*
            * If using just ID, doesn't update selectedItems when doing acknowledge
            * because the next getAlerts have the same id
            * $id-$version will correctly remove selected items
            * */
           itemId={(item) => `${item.triggerID}-${item.version}`}
-          columns={alertColumns}
+          columns={inMonitorDetails ? columns : alertColumns}
           pagination={pagination}
           sorting={sorting}
           isSelectable={true}
