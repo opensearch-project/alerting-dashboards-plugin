@@ -319,8 +319,8 @@ export default class Dashboard extends Component {
       totalTriggers,
     } = this.state;
     const { monitorIds, detectorIds, onCreateTrigger } = this.props;
-    const inMonitorDetails = typeof onCreateTrigger === 'function';
-    const totalItems = inMonitorDetails ? totalAlerts : totalTriggers;
+    const perAlertView = typeof onCreateTrigger === 'function';
+    const totalItems = perAlertView ? totalAlerts : totalTriggers;
     const pagination = {
       pageIndex: page,
       pageSize: size,
@@ -359,7 +359,7 @@ export default class Dashboard extends Component {
 
     return (
       <ContentPanel
-        title={inMonitorDetails ? 'Alerts' : 'Alerts by triggers'}
+        title={perAlertView ? 'Alerts' : 'Alerts by triggers'}
         titleSize={monitorIds.length ? 's' : 'l'}
         bodyStyles={{ padding: 'initial' }}
         actions={actions()}
@@ -379,14 +379,14 @@ export default class Dashboard extends Component {
         <EuiHorizontalRule margin="xs" />
 
         <EuiBasicTable
-          items={inMonitorDetails ? alerts : alertsByTriggers}
+          items={perAlertView ? alerts : alertsByTriggers}
           /*
            * If using just ID, doesn't update selectedItems when doing acknowledge
            * because the next getAlerts have the same id
            * $id-$version will correctly remove selected items
            * */
           itemId={(item) => `${item.triggerID}-${item.version}`}
-          columns={inMonitorDetails ? columns : alertColumns}
+          columns={perAlertView ? columns : alertColumns}
           pagination={pagination}
           sorting={sorting}
           isSelectable={true}
