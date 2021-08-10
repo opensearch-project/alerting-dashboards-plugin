@@ -33,3 +33,16 @@ export function getOfExpressionAllowedTypes(values) {
   if (['min', 'max'].includes(values.aggregationType)) types.push('date');
   return types;
 }
+
+export function getMetricExpressionAllowedTypes(values) {
+  const types = ['number'];
+  if (['min', 'max', 'count'].includes(values.aggregationType)) types.push('date');
+  if (['count'].includes(values.aggregationType)) types.push('keyword');
+
+  return types;
+}
+
+export function getGroupByExpressionAllowedTypes() {
+  const types = ['keyword'];
+  return types;
+}
