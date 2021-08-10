@@ -66,16 +66,6 @@ export const columns = [
     dataType: 'date',
   },
   {
-    field: 'monitor_name',
-    name: 'Monitor name',
-    sortable: true,
-    truncateText: true,
-    textOnly: true,
-    render: (name, alert) => (
-      <EuiLink href={`${PLUGIN_NAME}#/monitors/${alert.monitor_id}`}>{name}</EuiLink>
-    ),
-  },
-  {
     field: 'trigger_name',
     name: 'Trigger name',
     sortable: true,
