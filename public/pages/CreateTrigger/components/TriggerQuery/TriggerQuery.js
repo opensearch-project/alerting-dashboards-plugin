@@ -35,6 +35,7 @@ import {
   EuiFlexItem,
   EuiFormRow,
   EuiLink,
+  EuiSpacer,
   EuiText,
 } from '@elastic/eui';
 import 'brace/mode/json';
@@ -57,20 +58,42 @@ export const getExecuteMessage = (response) => {
 
 const TriggerQuery = ({
   context,
+  error,
   executeResponse,
   onRun,
+  response,
   triggerValues,
   setFlyout,
   isDarkMode,
   fieldPath,
+  isAd = false,
 }) => {
   const currentTrigger = _.isEmpty(fieldPath)
     ? triggerValues
     : _.get(triggerValues, `${fieldPath.slice(0, -1)}`, {});
   const trigger = { ...formikToTrigger(currentTrigger), actions: [] };
+  const responseToFormat = _.isEmpty(response) && isAd ? onRun([trigger]) : response;
+  const formattedResponse = JSON.stringify(responseToFormat, null, 4);
   const fieldName = `${fieldPath}script.source`;
   return (
     <div style={{ padding: '0px 10px', marginTop: '0px' }}>
+      {isAd ? (
+        <div>
+          <EuiSpacer size={'s'} />
+          <EuiFormRow label="Response">
+            <EuiCodeEditor
+              mode="json"
+              theme={isDarkMode ? 'sense-dark' : 'github'}
+              height="300px"
+              width="90%"
+              value={error || formattedResponse}
+              readOnly
+            />
+          </EuiFormRow>
+          <EuiSpacer size={'l'} />
+        </div>
+      ) : null}
+
       <EuiFlexGrid columns={2} gutterSize={'s'}>
         {/*// Grid slot for the trigger definition code editor header*/}
         <EuiFlexItem>
@@ -98,7 +121,7 @@ const TriggerQuery = ({
         <EuiFlexItem>
           <EuiFlexGroup alignItems={'center'} gutterSize={'none'}>
             <EuiText size={'s'}>
-              <h5>Trigger condition response:</h5>
+              <h5>Trigger condition response</h5>
             </EuiText>
           </EuiFlexGroup>
         </EuiFlexItem>
