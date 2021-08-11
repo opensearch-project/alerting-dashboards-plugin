@@ -38,16 +38,6 @@ const renderTime = (time) => {
   return DEFAULT_EMPTY_DATA;
 };
 
-const renderAggAlertContent = (keys) => {
-  return keys.length
-    ? keys
-        .map((item) => {
-          return item;
-        })
-        .join(', ')
-    : '-';
-};
-
 export const queryColumns = [
   {
     field: 'start_time',
@@ -110,24 +100,14 @@ export const bucketColumns = [
   },
   {
     field: 'end_time',
-    name: 'Alert end time',
+    name: 'Alert last updated',
     sortable: true,
     truncateText: false,
-    render: renderTime,
+    render: (endTime, alert) => {
+      const ackTime = alert.acknowledged_time;
+      return renderTime(Math.max(endTime, ackTime));
+    },
     dataType: 'date',
-  },
-  {
-    field: 'trigger_name',
-    name: 'Trigger name',
-    sortable: true,
-    truncateText: true,
-    textOnly: true,
-  },
-  {
-    field: 'severity',
-    name: 'Severity',
-    sortable: false,
-    truncateText: false,
   },
   {
     field: 'state',
@@ -141,19 +121,17 @@ export const bucketColumns = [
     },
   },
   {
-    field: 'acknowledged_time',
-    name: 'Time acknowledged',
+    field: 'trigger_name',
+    name: 'Trigger name',
     sortable: true,
-    truncateText: false,
-    render: renderTime,
-    dataType: 'date',
+    truncateText: true,
+    textOnly: true,
   },
   {
-    field: 'agg_alert_content',
-    name: 'Aggregation alert content',
-    sortable: true,
+    field: 'severity',
+    name: 'Severity',
+    sortable: false,
     truncateText: false,
-    render: (content) => (content ? renderAggAlertContent(content.bucket_keys) : '-'),
   },
 ];
 

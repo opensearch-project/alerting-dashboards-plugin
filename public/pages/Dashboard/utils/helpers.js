@@ -72,7 +72,7 @@ export function insertGroupByColumn(groupBy) {
     result.splice(0, 0, {
       field: `agg_alert_content.bucket.key.${fieldName}`,
       name: fieldName,
-      sortable: true,
+      sortable: false,
       truncateText: false,
     })
   );
