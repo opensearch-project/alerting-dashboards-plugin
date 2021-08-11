@@ -379,7 +379,7 @@ export default class Dashboard extends Component {
     };
 
     const getItemId = (item) => {
-      if (perAlertView && !isBucketMonitor) return item.id;
+      if (perAlertView && isBucketMonitor) return item.id;
       return `${item.triggerID}-${item.version}`;
     };
 
