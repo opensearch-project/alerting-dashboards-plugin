@@ -98,9 +98,9 @@ export function getAnnotationData(xDomain, yDomain, thresholdValue) {
 
 export function getDataFromResponse(response, fieldName, monitorType) {
   if (!response) return [];
-  const isTraditionalMonitor = monitorType === MONITOR_TYPE.TRADITIONAL;
+  const isQueryMonitor = monitorType === MONITOR_TYPE.QUERY_LEVEL;
 
-  if (isTraditionalMonitor) {
+  if (isQueryMonitor) {
     const buckets = _.get(response, 'aggregations.over.buckets', []);
     return buckets.map(getXYValues).filter(filterInvalidYValues);
   } else {

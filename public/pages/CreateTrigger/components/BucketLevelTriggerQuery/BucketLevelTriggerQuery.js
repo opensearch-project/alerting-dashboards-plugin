@@ -69,8 +69,8 @@ const BucketLevelTriggerQuery = ({
   const currentTrigger = _.isEmpty(fieldPath)
     ? triggerValues
     : _.get(triggerValues, `${fieldPath.slice(0, -1)}`, {});
-  const trigger = formikToTrigger(currentTrigger, { monitor_type: MONITOR_TYPE.AGGREGATION });
-  _.set(trigger, `${TRIGGER_TYPE.AGGREGATION}.actions`, []);
+  const trigger = formikToTrigger(currentTrigger, { monitor_type: MONITOR_TYPE.BUCKET_LEVEL });
+  _.set(trigger, `${TRIGGER_TYPE.BUCKET_LEVEL}.actions`, []);
   const fieldName = `${fieldPath}bucketSelector`;
   return (
     <div style={{ padding: '0px 20px', marginTop: '0px' }}>

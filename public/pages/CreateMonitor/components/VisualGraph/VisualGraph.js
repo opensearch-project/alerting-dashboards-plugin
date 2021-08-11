@@ -184,21 +184,21 @@ export default class VisualGraph extends Component {
   render() {
     const { response, fieldName, values, aggregationType } = this.props;
     const monitorType = values.monitor_type;
-    const isTraditionalMonitor = monitorType === MONITOR_TYPE.TRADITIONAL;
+    const isQueryMonitor = monitorType === MONITOR_TYPE.QUERY_LEVEL;
     const aggTypeFieldName = `${aggregationType}_${fieldName}`;
     const data = getDataFromResponse(response, aggTypeFieldName, monitorType);
-    const groupedData = isTraditionalMonitor
+    const groupedData = isQueryMonitor
       ? null
       : getMapDataFromResponse(response, aggTypeFieldName, values.groupBy);
     // Show empty graph view when data is empty or aggregation monitor does not have group by defined.
     const showEmpty =
-      !data.length || (monitorType == MONITOR_TYPE.AGGREGATION && !values.groupBy.length);
+      !data.length || (monitorType == MONITOR_TYPE.BUCKET_LEVEL && !values.groupBy.length);
 
     return (
       <div style={{ padding: '20px', border: '1px solid #D9D9D9', borderRadius: '5px' }}>
         {showEmpty
           ? this.renderEmptyData()
-          : isTraditionalMonitor
+          : isQueryMonitor
           ? this.renderXYPlot(data)
           : this.renderAggregationXYPlot(data, groupedData)}
       </div>
