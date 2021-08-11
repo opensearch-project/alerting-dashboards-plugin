@@ -355,6 +355,7 @@ export default class MonitorDetails extends Component {
           history={history}
           notifications={notifications}
           monitorType={monitor.monitor_type}
+          perAlertView={true}
         />
       </div>
     );
