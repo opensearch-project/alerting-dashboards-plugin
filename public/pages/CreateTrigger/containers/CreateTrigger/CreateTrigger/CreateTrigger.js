@@ -32,19 +32,19 @@ import 'brace/mode/json';
 import 'brace/mode/plain_text';
 import 'brace/snippets/javascript';
 import 'brace/ext/language_tools';
-import ConfigureActions from '../ConfigureActions';
-import DefineTrigger from '../DefineTrigger';
-import monitorToFormik from '../../../CreateMonitor/containers/CreateMonitor/utils/monitorToFormik';
-import { buildSearchRequest } from '../../../CreateMonitor/containers/DefineMonitor/utils/searchRequests';
-import { formikToTrigger, formikToTriggerUiMetadata } from './utils/formikToTrigger';
-import { triggerToFormik } from './utils/triggerToFormik';
-import { FORMIK_INITIAL_TRIGGER_VALUES } from './utils/constants';
-import { SEARCH_TYPE } from '../../../../utils/constants';
-import { SubmitErrorHandler } from '../../../../utils/SubmitErrorHandler';
-import { backendErrorNotification } from '../../../../utils/helpers';
-import { buildLocalUriRequest } from '../../../CreateMonitor/containers/DefineMonitor/utils/localUriRequests';
-import DefineAggregationTrigger from '../DefineAggregationTrigger';
-import { getPathsPerDataType } from '../../../CreateMonitor/containers/DefineMonitor/utils/mappings';
+import ConfigureActions from '../../ConfigureActions';
+import DefineTrigger from '../../DefineTrigger';
+import monitorToFormik from '../../../../CreateMonitor/containers/CreateMonitor/utils/monitorToFormik';
+import { buildSearchRequest } from '../../../../CreateMonitor/containers/DefineMonitor/utils/searchRequests';
+import { formikToTrigger, formikToTriggerUiMetadata } from '../utils/formikToTrigger';
+import { triggerToFormik } from '../utils/triggerToFormik';
+import { FORMIK_INITIAL_TRIGGER_VALUES } from '../utils/constants';
+import { SEARCH_TYPE } from '../../../../../utils/constants';
+import { SubmitErrorHandler } from '../../../../../utils/SubmitErrorHandler';
+import { backendErrorNotification } from '../../../../../utils/helpers';
+import DefineBucketLevelTrigger from '../../DefineBucketLevelTrigger';
+import { getPathsPerDataType } from '../../../../CreateMonitor/containers/DefineMonitor/utils/mappings';
+import { MONITOR_TYPE } from '../../../../../utils/constants';
 
 export const DEFAULT_CLOSED_STATES = {
   WHEN: false,
@@ -110,9 +110,9 @@ export default class CreateTrigger extends Component {
     const { monitor, updateMonitor, onCloseTrigger, triggerToEdit } = this.props;
     const { ui_metadata: uiMetadata = {}, triggers, monitor_type } = monitor;
     const { name } =
-      monitor_type === 'traditional_monitor'
-        ? triggerToEdit.traditional_trigger
-        : triggerToEdit.aggregation_trigger;
+      monitor_type === MONITOR_TYPE.QUERY_LEVEL
+        ? triggerToEdit.query_level_trigger
+        : triggerToEdit.bucket_level_trigger;
     const updatedTriggersMetadata = _.cloneDeep(uiMetadata.triggers || {});
     delete updatedTriggersMetadata[name];
     const updatedUiMetadata = {
@@ -121,9 +121,9 @@ export default class CreateTrigger extends Component {
     };
 
     const findTriggerName = (element) => {
-      return monitor_type === 'traditional_monitor'
-        ? name === element.traditional_trigger.name
-        : name === element.aggregation_trigger.name;
+      return monitor_type === MONITOR_TYPE.QUERY_LEVEL
+        ? name === element.query_level_trigger.name
+        : name === element.bucket_level_trigger.name;
     };
 
     const indexToUpdate = _.findIndex(triggers, findTriggerName);
@@ -157,10 +157,6 @@ export default class CreateTrigger extends Component {
         const searchRequest = buildSearchRequest(formikValues);
         _.set(monitorToExecute, 'inputs[0].search', searchRequest);
         break;
-      case SEARCH_TYPE.LOCAL_URI:
-        const localUriRequest = buildLocalUriRequest(formikValues);
-        _.set(monitorToExecute, 'inputs[0].uri', localUriRequest);
-        break;
       default:
         console.log(`Unsupported searchType found: ${JSON.stringify(searchType)}`, searchType);
     }
@@ -169,7 +165,7 @@ export default class CreateTrigger extends Component {
       .post('../api/alerting/monitors/_execute', { body: JSON.stringify(monitorToExecute) })
       .then((resp) => {
         if (resp.ok) {
-          this.setState({ executeResponse: resp.resp }, this.overrideInitialValues);
+          this.setState({ executeResponse: resp.resp });
         } else {
           // TODO: need a notification system to show errors or banners at top
           console.error('err:', resp);
@@ -228,20 +224,6 @@ export default class CreateTrigger extends Component {
     monitor: monitor,
   });
 
-  overrideInitialValues = () => {
-    const { monitor, edit, triggerToEdit } = this.props;
-    const { initialValues, executeResponse } = this.state;
-    const useTriggerToFormik = edit && triggerToEdit;
-
-    // When searchType of the monitor is 'localUri', override the default trigger
-    // condition with the first name of the name-value pairs in the response
-    if (!useTriggerToFormik && 'uri' in monitor.inputs[0]) {
-      const response = _.get(executeResponse, 'input_results.results[0]');
-      _.set(initialValues, 'script.source', 'ctx.results[0].' + _.keys(response)[0] + ' != null');
-      this.setState({ initialValues: initialValues });
-    }
-  };
-
   openExpression = (expression) => {
     this.setState({
       openedStates: {
@@ -257,7 +239,7 @@ export default class CreateTrigger extends Component {
       // if made changes and close expression that was currently open => run query
 
       // TODO: Re-enable once we have implementation to support
-      //  rendering visual graphs for aggregation triggers.
+      //  rendering visual graphs for bucket-level triggers.
       // this.props.onRunQuery();
 
       this.setState({ madeChanges: false });
@@ -308,7 +290,7 @@ export default class CreateTrigger extends Component {
   render() {
     const { monitor, onCloseTrigger, setFlyout, edit, httpClient, notifications } = this.props;
     const { dataTypes, initialValues, executeResponse } = this.state;
-    const isTraditionalMonitor = _.get(monitor, 'monitor_type') === 'traditional_monitor';
+    const isQueryLevelMonitor = _.get(monitor, 'monitor_type') === MONITOR_TYPE.QUERY_LEVEL;
 
     return (
       <div style={{ padding: '25px 50px' }}>
@@ -320,7 +302,7 @@ export default class CreateTrigger extends Component {
                 <h1>{edit ? 'Edit' : 'Create'} trigger</h1>
               </EuiTitle>
               <EuiSpacer />
-              {isTraditionalMonitor ? (
+              {isQueryLevelMonitor ? (
                 <DefineTrigger
                   context={this.getTriggerContext(executeResponse, monitor, values)}
                   executeResponse={executeResponse}
@@ -334,7 +316,7 @@ export default class CreateTrigger extends Component {
               ) : (
                 <FieldArray name={'triggerConditions'} validateOnChange={true}>
                   {(arrayHelpers) => (
-                    <DefineAggregationTrigger
+                    <DefineBucketLevelTrigger
                       arrayHelpers={arrayHelpers}
                       context={this.getTriggerContext(executeResponse, monitor, values)}
                       executeResponse={executeResponse}

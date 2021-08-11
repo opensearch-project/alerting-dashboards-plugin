@@ -38,7 +38,7 @@ const AND_OR_CONDITION_OPTIONS = [
   { value: 'OR', text: 'OR' },
 ];
 
-class AggregationTriggerExpression extends Component {
+class BucketLevelTriggerExpression extends Component {
   constructor(props) {
     super(props);
 
@@ -147,7 +147,7 @@ class AggregationTriggerExpression extends Component {
                 arrayHelpers.remove(index);
               }}
             >
-              Delete
+              Remove condition
             </EuiButton>
           </EuiFlexItem>
         ) : null}
@@ -156,4 +156,4 @@ class AggregationTriggerExpression extends Component {
   }
 }
 
-export default AggregationTriggerExpression;
+export default BucketLevelTriggerExpression;

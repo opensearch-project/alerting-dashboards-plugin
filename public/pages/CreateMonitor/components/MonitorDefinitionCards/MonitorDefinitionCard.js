@@ -16,7 +16,7 @@
 import React from 'react';
 import { EuiFlexGroup, EuiFlexItem, EuiSpacer } from '@elastic/eui';
 import FormikCheckableCard from '../../../../components/FormControls/FormikCheckableCard/FormikCheckableCard';
-import { ES_AD_PLUGIN, SEARCH_TYPE } from '../../../../utils/constants';
+import { ES_AD_PLUGIN, MONITOR_TYPE, SEARCH_TYPE } from '../../../../utils/constants';
 
 const onChangeDefinition = (e, form) => {
   const type = e.target.value;
@@ -25,7 +25,7 @@ const onChangeDefinition = (e, form) => {
 
 const MonitorDefinitionCard = ({ values, resetResponse, plugins }) => {
   const hasADPlugin = plugins.indexOf(ES_AD_PLUGIN) !== -1;
-  const isAggregationMonitor = values.monitor_type === 'aggregation_monitor';
+  const isBucketLevelMonitor = values.monitor_type === MONITOR_TYPE.BUCKET_LEVEL;
   return (
     <div>
       <EuiFlexGroup>
@@ -68,28 +68,6 @@ const MonitorDefinitionCard = ({ values, resetResponse, plugins }) => {
             }}
           />
         </EuiFlexItem>
-        {!isAggregationMonitor && (
-          <EuiFlexItem>
-            <EuiSpacer />
-            <FormikCheckableCard
-              name="searchTypeLocalUri"
-              formRow
-              rowProps={{
-                label: '',
-                style: { paddingLeft: '10px' },
-              }}
-              inputProps={{
-                id: 'localUriRadioCard',
-                label: 'Local URI endpoint',
-                checked: values.searchType === SEARCH_TYPE.LOCAL_URI,
-                value: SEARCH_TYPE.LOCAL_URI,
-                onChange: (e, field, form) => {
-                  onChangeDefinition(e, form);
-                },
-              }}
-            />
-          </EuiFlexItem>
-        )}
         {/* TODO: only show the anomaly detector option when anomaly detection plugin is present */}
         {hasADPlugin && (
           <EuiFlexItem>

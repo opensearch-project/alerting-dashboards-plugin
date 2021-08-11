@@ -31,28 +31,15 @@ import 'brace/mode/json';
 import 'brace/mode/plain_text';
 import 'brace/snippets/javascript';
 import 'brace/ext/language_tools';
-import ConfigureActions from '../../ConfigureActions';
-import DefineTrigger from '../../DefineTrigger';
 import monitorToFormik from '../../../../CreateMonitor/containers/CreateMonitor/utils/monitorToFormik';
 import { buildSearchRequest } from '../../../../CreateMonitor/containers/DefineMonitor/utils/searchRequests';
 import { formikToTrigger, formikToTriggerUiMetadata } from '../utils/formikToTrigger';
 import { triggerToFormik } from '../utils/triggerToFormik';
-import { FORMIK_INITIAL_TRIGGER_VALUES } from '../utils/constants';
-import { SEARCH_TYPE } from '../../../../../utils/constants';
+import { FORMIK_INITIAL_TRIGGER_VALUES, TRIGGER_TYPE } from '../utils/constants';
+import { MONITOR_TYPE, SEARCH_TYPE } from '../../../../../utils/constants';
 import { SubmitErrorHandler } from '../../../../../utils/SubmitErrorHandler';
 import { backendErrorNotification } from '../../../../../utils/helpers';
-import { buildLocalUriRequest } from '../../../../CreateMonitor/containers/DefineMonitor/utils/localUriRequests';
-import { getPathsPerDataType } from '../../../../CreateMonitor/containers/DefineMonitor/utils/mappings';
 import ConfigureTriggers from '../../ConfigureTriggers';
-
-export const DEFAULT_CLOSED_STATES = {
-  WHEN: false,
-  OF_FIELD: false,
-  THRESHOLD: false,
-  OVER: false,
-  FOR_THE_LAST: false,
-  WHERE: false,
-};
 
 export default class CreateMultipleTriggers extends Component {
   constructor(props) {
@@ -64,12 +51,8 @@ export default class CreateMultipleTriggers extends Component {
       : _.cloneDeep(FORMIK_INITIAL_TRIGGER_VALUES);
 
     this.state = {
-      triggerResponse: null,
       executeResponse: null,
       initialValues,
-      dataTypes: {},
-      openedStates: DEFAULT_CLOSED_STATES,
-      madeChanges: false,
     };
   }
 
@@ -110,28 +93,33 @@ export default class CreateMultipleTriggers extends Component {
     const { monitor, updateMonitor, onCloseTrigger, triggerToEdit } = this.props;
     const { ui_metadata: uiMetadata = {}, triggers, monitor_type } = monitor;
     let updatedTriggersMetadata = _.cloneDeep(uiMetadata.triggers || {});
-    let updatedTriggers;
 
+    let triggerType;
     switch (monitor_type) {
-      case 'traditional_monitor':
-        // TODO: Refactor this case when ConfigureTriggers supports multiple traditional triggers
-        const { name } = triggerToEdit.traditional_trigger;
-        delete updatedTriggersMetadata[name];
-
-        const findTriggerName = (element) => {
-          return name === element.traditional_trigger.name;
-        };
-
-        const indexToUpdate = _.findIndex(triggers, findTriggerName);
-        updatedTriggers = triggers.slice();
-        updatedTriggers.splice(indexToUpdate, 1, trigger);
+      case MONITOR_TYPE.QUERY_LEVEL:
+        triggerType = TRIGGER_TYPE.QUERY_LEVEL;
         break;
-
-      case 'aggregation_monitor':
-        const names = triggerToEdit.map((entry) => entry.aggregation_trigger.name);
-        names.forEach((name) => delete updatedTriggersMetadata[name]);
-        updatedTriggers = _.cloneDeep(trigger);
+      case MONITOR_TYPE.BUCKET_LEVEL:
+        triggerType = TRIGGER_TYPE.BUCKET_LEVEL;
         break;
+    }
+
+    let updatedTriggers;
+    if (_.isArray(triggerToEdit)) {
+      const names = triggerToEdit.map((entry) => _.get(entry, `${triggerType}.name`));
+      names.forEach((name) => delete updatedTriggersMetadata[name]);
+      updatedTriggers = _.cloneDeep(trigger);
+    } else {
+      const { name } = _.get(triggerToEdit, `${triggerType}`);
+      delete updatedTriggersMetadata[name];
+
+      const findTriggerName = (element) => {
+        return name === _.get(element, `${triggerType}.name`);
+      };
+
+      const indexToUpdate = _.findIndex(triggers, findTriggerName);
+      updatedTriggers = triggers.slice();
+      updatedTriggers.splice(indexToUpdate, 1, trigger);
     }
 
     const updatedUiMetadata = {
@@ -167,10 +155,6 @@ export default class CreateMultipleTriggers extends Component {
         const searchRequest = buildSearchRequest(formikValues);
         _.set(monitorToExecute, 'inputs[0].search', searchRequest);
         break;
-      case SEARCH_TYPE.LOCAL_URI:
-        const localUriRequest = buildLocalUriRequest(formikValues);
-        _.set(monitorToExecute, 'inputs[0].uri', localUriRequest);
-        break;
       default:
         console.log(`Unsupported searchType found: ${JSON.stringify(searchType)}`, searchType);
     }
@@ -179,7 +163,7 @@ export default class CreateMultipleTriggers extends Component {
       .post('../api/alerting/monitors/_execute', { body: JSON.stringify(monitorToExecute) })
       .then((resp) => {
         if (resp.ok) {
-          this.setState({ executeResponse: resp.resp }, this.overrideInitialValues);
+          this.setState({ executeResponse: resp.resp });
         } else {
           // TODO: need a notification system to show errors or banners at top
           console.error('err:', resp);
@@ -238,54 +222,9 @@ export default class CreateMultipleTriggers extends Component {
     monitor: monitor,
   });
 
-  overrideInitialValues = () => {
-    const { monitor, edit, triggerToEdit } = this.props;
-    const { initialValues, executeResponse } = this.state;
-    const useTriggerToFormik = edit && triggerToEdit;
-
-    // When searchType of the monitor is 'localUri', override the default trigger
-    // condition with the first name of the name-value pairs in the response
-    if (!useTriggerToFormik && 'uri' in monitor.inputs[0]) {
-      const response = _.get(executeResponse, 'input_results.results[0]');
-      _.set(initialValues, 'script.source', 'ctx.results[0].' + _.keys(response)[0] + ' != null');
-      this.setState({ initialValues: initialValues });
-    }
-  };
-
-  async queryMappings(index) {
-    if (!index.length) {
-      return {};
-    }
-
-    try {
-      const response = await this.props.httpClient.post('../api/alerting/_mappings', {
-        body: JSON.stringify({ index }),
-      });
-      if (response.ok) {
-        return response.resp;
-      }
-      return {};
-    } catch (err) {
-      throw err;
-    }
-  }
-
-  async onQueryMappings() {
-    const indices = this.props.monitor.inputs[0].search.indices;
-    try {
-      const mappings = await this.queryMappings(indices);
-      const dataTypes = getPathsPerDataType(mappings);
-      this.setState({ dataTypes });
-    } catch (err) {
-      console.error('There was an error getting mappings for query', err);
-    }
-  }
-
   render() {
     const { monitor, onCloseTrigger, setFlyout, edit, httpClient, notifications } = this.props;
-    const { dataTypes, initialValues, executeResponse } = this.state;
-    const isTraditionalMonitor = _.get(monitor, 'monitor_type') === 'traditional_monitor';
-
+    const { initialValues, executeResponse } = this.state;
     return (
       <div style={{ padding: '25px 50px' }}>
         {this.renderSuccessCallOut()}
@@ -293,54 +232,23 @@ export default class CreateMultipleTriggers extends Component {
           {({ values, handleSubmit, isSubmitting, errors, isValid }) => (
             <Fragment>
               <EuiSpacer />
-              {/*// TODO: Add traditional monitor logic to ConfigureTriggers.js to support the single page experience.*/}
-              {isTraditionalMonitor ? (
-                <div>
-                  <DefineTrigger
+              <FieldArray name={'triggerDefinitions'} validateOnChange={true}>
+                {(triggerArrayHelpers) => (
+                  <ConfigureTriggers
+                    triggerArrayHelpers={triggerArrayHelpers}
                     context={this.getTriggerContext(executeResponse, monitor, values)}
                     executeResponse={executeResponse}
+                    monitor={monitor}
                     monitorValues={monitorToFormik(monitor)}
-                    onRun={this.onRunExecute}
                     setFlyout={setFlyout}
-                    triggers={monitor.triggers}
+                    triggers={_.get(monitor, 'triggers', [])}
                     triggerValues={values}
                     isDarkMode={this.props.isDarkMode}
+                    httpClient={httpClient}
+                    notifications={notifications}
                   />
-                  <EuiSpacer />
-                  <FieldArray name="actions" validateOnChange={true}>
-                    {(arrayHelpers) => (
-                      <ConfigureActions
-                        arrayHelpers={arrayHelpers}
-                        context={this.getTriggerContext(executeResponse, monitor, values)}
-                        httpClient={httpClient}
-                        setFlyout={setFlyout}
-                        values={values}
-                        notifications={notifications}
-                      />
-                    )}
-                  </FieldArray>
-                </div>
-              ) : (
-                <FieldArray name={'aggregationTriggers'} validateOnChange={true}>
-                  {(triggerArrayHelpers) => (
-                    <ConfigureTriggers
-                      triggerArrayHelpers={triggerArrayHelpers}
-                      context={this.getTriggerContext(executeResponse, monitor, values)}
-                      executeResponse={executeResponse}
-                      monitor={monitor}
-                      monitorValues={monitorToFormik(monitor)}
-                      onRun={this.onRunExecute}
-                      setFlyout={setFlyout}
-                      triggers={monitor.triggers}
-                      triggerValues={values}
-                      isDarkMode={this.props.isDarkMode}
-                      dataTypes={dataTypes}
-                      httpClient={httpClient}
-                      notifications={notifications}
-                    />
-                  )}
-                </FieldArray>
-              )}
+                )}
+              </FieldArray>
               <EuiSpacer />
               <EuiFlexGroup alignItems="center" justifyContent="flexEnd">
                 <EuiFlexItem grow={false}>
