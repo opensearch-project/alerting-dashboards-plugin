@@ -87,7 +87,6 @@ exports[`AnomalyDetectors renders 1`] = `
 }",
         "searchType": "graph",
         "timeField": "",
-        "timezone": Array [],
         "weekly": Object {
           "fri": false,
           "mon": false,
