@@ -48,7 +48,68 @@ const renderAggAlertContent = (keys) => {
     : '-';
 };
 
-export const columns = [
+export const queryColumns = [
+  {
+    field: 'start_time',
+    name: 'Alert start time',
+    sortable: true,
+    truncateText: false,
+    render: renderTime,
+    dataType: 'date',
+  },
+  {
+    field: 'end_time',
+    name: 'Alert end time',
+    sortable: true,
+    truncateText: false,
+    render: renderTime,
+    dataType: 'date',
+  },
+  {
+    field: 'monitor_name',
+    name: 'Monitor name',
+    sortable: true,
+    truncateText: true,
+    textOnly: true,
+    render: (name, alert) => (
+      <EuiLink href={`${PLUGIN_NAME}#/monitors/${alert.monitor_id}`}>{name}</EuiLink>
+    ),
+  },
+  {
+    field: 'trigger_name',
+    name: 'Trigger name',
+    sortable: true,
+    truncateText: true,
+    textOnly: true,
+  },
+  {
+    field: 'severity',
+    name: 'Severity',
+    sortable: false,
+    truncateText: false,
+  },
+  {
+    field: 'state',
+    name: 'State',
+    sortable: false,
+    truncateText: false,
+    render: (state, alert) => {
+      const stateText =
+        typeof state !== 'string' ? DEFAULT_EMPTY_DATA : _.capitalize(state.toLowerCase());
+      return state === ALERT_STATE.ERROR ? `${stateText}: ${alert.error_message}` : stateText;
+    },
+  },
+  {
+    field: 'acknowledged_time',
+    name: 'Time acknowledged',
+    sortable: true,
+    truncateText: false,
+    render: renderTime,
+    dataType: 'date',
+  },
+];
+
+export const bucketColumns = [
   {
     field: 'start_time',
     name: 'Alert start time',

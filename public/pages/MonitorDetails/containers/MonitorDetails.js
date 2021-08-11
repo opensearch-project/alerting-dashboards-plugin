@@ -354,6 +354,7 @@ export default class MonitorDetails extends Component {
           location={location}
           history={history}
           notifications={notifications}
+          monitorType={monitor.monitor_type}
         />
       </div>
     );

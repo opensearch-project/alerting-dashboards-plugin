@@ -32,8 +32,8 @@ import { EuiBasicTable, EuiButton, EuiHorizontalRule, EuiIcon } from '@elastic/e
 import ContentPanel from '../../../components/ContentPanel';
 import DashboardEmptyPrompt from '../components/DashboardEmptyPrompt';
 import DashboardControls from '../components/DashboardControls';
-import { columns, alertColumns } from '../utils/tableUtils';
-import { OPENSEARCH_DASHBOARDS_AD_PLUGIN } from '../../../utils/constants';
+import { columns, alertColumns, bucketColumns, queryColumns } from '../utils/tableUtils';
+import { MONITOR_TYPE, OPENSEARCH_DASHBOARDS_AD_PLUGIN } from '../../../utils/constants';
 import { backendErrorNotification } from '../../../utils/helpers';
 import { groupAlertsByTrigger } from '../utils/helpers';
 
@@ -318,9 +318,15 @@ export default class Dashboard extends Component {
       totalAlerts,
       totalTriggers,
     } = this.state;
-    const { monitorIds, detectorIds, onCreateTrigger } = this.props;
+    const { monitorIds, detectorIds, onCreateTrigger, monitorType } = this.props;
     const perAlertView = typeof onCreateTrigger === 'function';
     const totalItems = perAlertView ? totalAlerts : totalTriggers;
+    const isBucketMonitor = monitorType === MONITOR_TYPE.BUCKET_LEVEL;
+    const columnType = perAlertView
+      ? isBucketMonitor
+        ? bucketColumns
+        : queryColumns
+      : alertColumns;
     const pagination = {
       pageIndex: page,
       pageSize: size,
@@ -357,6 +363,11 @@ export default class Dashboard extends Component {
       return actions;
     };
 
+    const getItemId = (item) => {
+      if (perAlertView && !isBucketMonitor) return item.id;
+      return `${item.triggerID}-${item.version}`;
+    };
+
     return (
       <ContentPanel
         title={perAlertView ? 'Alerts' : 'Alerts by triggers'}
@@ -385,8 +396,8 @@ export default class Dashboard extends Component {
            * because the next getAlerts have the same id
            * $id-$version will correctly remove selected items
            * */
-          itemId={(item) => `${item.triggerID}-${item.version}`}
-          columns={perAlertView ? columns : alertColumns}
+          itemId={this.getItemId}
+          columns={columnType}
           pagination={pagination}
           sorting={sorting}
           isSelectable={true}
