@@ -12,10 +12,10 @@
 import React, { Component } from 'react';
 import { EuiSpacer } from '@elastic/eui';
 
-import { 
-  ForExpression, 
-  OfExpression, 
-  WhereExpression 
+import {
+  ForExpression,
+  OfExpression,
+  WhereExpression
 } from './expressions';
 import MetricExpression from './expressions/MetricExpression';
 
