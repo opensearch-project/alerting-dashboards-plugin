@@ -34,14 +34,6 @@ exports[`AnomalyDetectors renders 1`] = `
 }",
       "searchType": "graph",
       "timeField": "",
-      "timezone": Array [],
-      "uri": Object {
-        "host": "localhost",
-        "path": "",
-        "port": "9200",
-        "scheme": "http",
-        "url": "",
-      },
       "weekly": Object {
         "fri": false,
         "mon": false,
@@ -96,13 +88,6 @@ exports[`AnomalyDetectors renders 1`] = `
         "searchType": "graph",
         "timeField": "",
         "timezone": Array [],
-        "uri": Object {
-          "host": "localhost",
-          "path": "",
-          "port": "9200",
-          "scheme": "http",
-          "url": "",
-        },
         "weekly": Object {
           "fri": false,
           "mon": false,
@@ -218,13 +203,6 @@ exports[`AnomalyDetectors renders 1`] = `
                     "searchType": "graph",
                     "timeField": "",
                     "timezone": Array [],
-                    "uri": Object {
-                      "host": "localhost",
-                      "path": "",
-                      "port": "9200",
-                      "scheme": "http",
-                      "url": "",
-                    },
                     "weekly": Object {
                       "fri": false,
                       "mon": false,
@@ -298,13 +276,6 @@ exports[`AnomalyDetectors renders 1`] = `
                     "searchType": "graph",
                     "timeField": "",
                     "timezone": Array [],
-                    "uri": Object {
-                      "host": "localhost",
-                      "path": "",
-                      "port": "9200",
-                      "scheme": "http",
-                      "url": "",
-                    },
                     "weekly": Object {
                       "fri": false,
                       "mon": false,
@@ -426,13 +397,6 @@ exports[`AnomalyDetectors renders 1`] = `
                             "searchType": "graph",
                             "timeField": "",
                             "timezone": Array [],
-                            "uri": Object {
-                              "host": "localhost",
-                              "path": "",
-                              "port": "9200",
-                              "scheme": "http",
-                              "url": "",
-                            },
                             "weekly": Object {
                               "fri": false,
                               "mon": false,
@@ -506,13 +470,6 @@ exports[`AnomalyDetectors renders 1`] = `
                             "searchType": "graph",
                             "timeField": "",
                             "timezone": Array [],
-                            "uri": Object {
-                              "host": "localhost",
-                              "path": "",
-                              "port": "9200",
-                              "scheme": "http",
-                              "url": "",
-                            },
                             "weekly": Object {
                               "fri": false,
                               "mon": false,

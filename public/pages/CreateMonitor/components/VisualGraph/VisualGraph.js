@@ -85,7 +85,6 @@ export default class VisualGraph extends Component {
     const leftPadding = getLeftPadding(yDomain);
     const markData = getMarkData(data);
     const aggregationTitle = getAggregationTitle(values);
-
     return (
       <FlexibleXYPlot
         height={400}
