@@ -55,7 +55,7 @@ class ConfigureTriggers extends React.Component {
     const prevMonitorType = _.get(prevProps, 'monitor.monitor_type', MONITOR_TYPE.QUERY_LEVEL);
     const currMonitorType = _.get(this.props, 'monitor.monitor_type', MONITOR_TYPE.QUERY_LEVEL);
     if (prevMonitorType !== currMonitorType)
-      _.set(this.state, 'isBucketLevelMonitor', currMonitorType);
+      _.set(this.state, 'isBucketLevelMonitor', currMonitorType === MONITOR_TYPE.BUCKET_LEVEL);
 
     const prevInputs = prevProps.monitor.inputs[0];
     const currInputs = this.props.monitor.inputs[0];

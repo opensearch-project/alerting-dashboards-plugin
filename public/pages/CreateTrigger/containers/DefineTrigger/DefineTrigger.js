@@ -27,7 +27,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
-import { EuiAccordion, EuiButton, EuiFormRow, EuiSpacer, EuiText, EuiTitle } from '@elastic/eui';
+import { EuiAccordion, EuiButton, EuiSpacer, EuiText, EuiTitle } from '@elastic/eui';
 import 'brace/mode/plain_text';
 import { FormikFieldText, FormikSelect } from '../../../../components/FormControls';
 import { isInvalid, hasError } from '../../../../utils/validate';
@@ -233,11 +233,12 @@ class DefineTrigger extends Component {
           <EuiSpacer size={'m'} />
           {isAd ? (
             <div style={{ paddingLeft: '10px', marginTop: '0px' }}>
-              <EuiFormRow helpText={'Define type of anomaly detector trigger'}>
-                <EuiText size={'xs'} style={{ paddingBottom: '0px', marginBottom: '0px' }}>
-                  <h4>Trigger type</h4>
-                </EuiText>
-              </EuiFormRow>
+              <EuiText size={'xs'} style={{ paddingBottom: '0px', marginBottom: '0px' }}>
+                <h4>Trigger type</h4>
+              </EuiText>
+              <EuiText color={'subdued'} size={'xs'} style={{ paddingBottom: '5px' }}>
+                Define type of anomaly detector trigger
+              </EuiText>
               <FormikSelect
                 name={`${fieldPath}anomalyDetector.triggerType`}
                 formRow

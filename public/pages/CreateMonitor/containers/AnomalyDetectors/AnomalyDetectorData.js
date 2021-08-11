@@ -49,8 +49,15 @@ class AnomalyDetectorData extends React.Component {
     };
     this.getPreviewData = this.getPreviewData.bind(this);
   }
+
   async componentDidMount() {
     await this.getPreviewData();
+  }
+
+  async componentDidUpdate(prevProps) {
+    if (prevProps.detectorId !== this.props.detectorId) {
+      await this.getPreviewData();
+    }
   }
 
   async getPreviewData() {
