@@ -64,8 +64,8 @@ const MonitorDefinitionCard = ({ values, resetResponse, plugins }) => {
             }}
           />
         </EuiFlexItem>
-        {/* TODO: only show the anomaly detector option when anomaly detection plugin is present */}
-        {hasADPlugin && (
+        {/*// Only show the anomaly detector option when anomaly detection plugin is present, but not for bucket-level monitors.*/}
+        {hasADPlugin && !isBucketLevelMonitor && (
           <EuiFlexItem>
             <EuiSpacer />
             <FormikCheckableCard

@@ -14,7 +14,6 @@
  */
 
 import React from 'react';
-import { EuiSpacer } from '@elastic/eui';
 import BucketLevelTriggerExpression from './BucketLevelTriggerExpression';
 import {
   DEFAULT_AND_OR_CONDITION,
@@ -49,7 +48,7 @@ const BucketLevelTriggerGraph = ({
   const thresholdValue = _.get(triggerValues, `${fieldNamePath}thresholdValue`);
 
   return (
-    <div style={{ padding: '0px 10px' }}>
+    <div style={{ padding: '0px 10px', paddingBottom: '20px' }}>
       <BucketLevelTriggerExpression
         arrayHelpers={arrayHelpers}
         index={index}
@@ -64,7 +63,6 @@ const BucketLevelTriggerGraph = ({
         valueFieldName={`${fieldNamePath}thresholdValue`}
         label="Trigger conditions"
       />
-      <EuiSpacer size={'s'} />
       {/*TODO: Implement VisualGraph illustrating the trigger expression similar to the implementation in TriggerGraph.js*/}
     </div>
   );

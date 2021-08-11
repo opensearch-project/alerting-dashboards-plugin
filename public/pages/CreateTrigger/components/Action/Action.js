@@ -77,9 +77,10 @@ const Action = ({
               Remove action
             </EuiButton>
           }
+          paddingSize={'s'}
         >
           <EuiHorizontalRule margin="s" />
-          <div>
+          <div style={{ paddingTop: '10px' }}>
             <FormikFieldText
               name={`${fieldPath}actions.${index}.name`}
               formRow

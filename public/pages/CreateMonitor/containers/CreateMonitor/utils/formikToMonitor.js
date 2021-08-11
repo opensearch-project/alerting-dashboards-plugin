@@ -52,8 +52,6 @@ export function formikToMonitor(values) {
 
 export function formikToInputs(values) {
   switch (values.searchType) {
-    case SEARCH_TYPE.AD:
-      return formikToAd(values);
     default:
       return formikToSearch(values);
   }

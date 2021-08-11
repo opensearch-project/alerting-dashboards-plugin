@@ -10,13 +10,18 @@
  */
 
 import React from 'react';
+import _ from 'lodash';
 import { EuiFlexGroup, EuiFlexItem, EuiSpacer } from '@elastic/eui';
 import FormikCheckableCard from '../../../../components/FormControls/FormikCheckableCard';
-import { MONITOR_TYPE } from '../../../../utils/constants';
+import { MONITOR_TYPE, SEARCH_TYPE } from '../../../../utils/constants';
+import { FORMIK_INITIAL_TRIGGER_VALUES } from '../../../CreateTrigger/containers/CreateTrigger/utils/constants';
 
 const onChangeDefinition = (e, form) => {
   const type = e.target.value;
   form.setFieldValue('monitor_type', type);
+
+  // Clearing trigger definitions when changing monitor types.
+  form.setFieldValue('triggerDefinitions', FORMIK_INITIAL_TRIGGER_VALUES.triggerConditions);
 };
 
 const MonitorType = ({ values }) => (
@@ -56,6 +61,11 @@ const MonitorType = ({ values }) => (
             checked: values.monitor_type === MONITOR_TYPE.BUCKET_LEVEL,
             value: MONITOR_TYPE.BUCKET_LEVEL,
             onChange: (e, field, form) => {
+              const searchType = _.get(values, 'searchType');
+              // Setting search type to graph when changing monitor type from query-level to bucket-level,
+              // and the search type is not supported by bucket-level monitors.
+              if (searchType !== SEARCH_TYPE.GRAPH || searchType !== SEARCH_TYPE.QUERY)
+                form.setFieldValue('searchType', SEARCH_TYPE.GRAPH);
               onChangeDefinition(e, form);
             },
           }}

@@ -249,6 +249,15 @@ class DefineBucketLevelTrigger extends Component {
         <FieldArray name={`${fieldPath}triggerConditions`} validateOnChange={true}>
           {(conditionsArrayHelpers) => (
             <div>
+              <div style={{ paddingLeft: '20px', paddingTop: '10px' }}>
+                <EuiText>
+                  <h4>Trigger conditions</h4>
+                </EuiText>
+                <EuiText color={'subdued'} size={'xs'}>
+                  Specify thresholds for the metrics you have chosen in your query above.
+                </EuiText>
+              </div>
+
               {this.renderBucketLevelTriggerGraph(
                 conditionsArrayHelpers,
                 fieldPath,
@@ -303,8 +312,9 @@ class DefineBucketLevelTrigger extends Component {
             Remove trigger
           </EuiButton>
         }
+        style={{ paddingBottom: '15px', paddingTop: triggerIndex === 0 ? '10px' : '10px' }}
       >
-        <div style={{ padding: '0px 10px' }}>
+        <div style={{ padding: '0px 10px', paddingTop: '20px' }}>
           <FormikFieldText
             name={`${fieldPath}name`}
             fieldProps={{ validate: validateTriggerName(triggers, triggerValues, fieldPath) }}
@@ -321,17 +331,6 @@ class DefineBucketLevelTrigger extends Component {
             inputProps={selectInputProps}
           />
           <EuiSpacer size={'m'} />
-
-          {isGraph ? (
-            <div>
-              <EuiText style={{ paddingLeft: '0px' }}>
-                <h4>Trigger conditions</h4>
-              </EuiText>
-              <EuiText color={'69707D'} size={'xs'} style={{ paddingLeft: '20px' }}>
-                Specify thresholds for the metrics you have chosen in your query above.
-              </EuiText>
-            </div>
-          ) : null}
 
           {bucketLevelTriggerContent}
 
@@ -350,7 +349,6 @@ class DefineBucketLevelTrigger extends Component {
               />
             )}
           </FieldArray>
-          <EuiSpacer />
         </div>
       </EuiAccordion>
     );

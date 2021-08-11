@@ -106,19 +106,6 @@ export const DEFAULT_ACTIONABLE_ALERTS_SELECTIONS = [
 
 export const NO_ACTIONABLE_ALERT_SELECTIONS = 'Must select at least 1 option';
 
-const messageHelpText = () => (
-  <EuiFlexGroup justifyContent="spaceBetween" alignItems="center">
-    <EuiFlexItem>
-      <Fragment>
-        <EuiText size="xs">
-          Embed variables in your message using Mustache templates.{' '}
-          <a href={URL.MUSTACHE}>Learn more</a>
-        </EuiText>
-      </Fragment>
-    </EuiFlexItem>
-  </EuiFlexGroup>
-);
-
 const renderSendTestMessageButton = (
   index,
   sendTestMessage,
@@ -193,15 +180,18 @@ export default function Message(
     values,
     `${actionExecutionPolicyPath}.action_execution_scope.${NOTIFY_OPTIONS_VALUES.PER_ALERT}.actionable_alerts`
   );
+
   if (
     actionExecutionScopeId === NOTIFY_OPTIONS_VALUES.PER_ALERT &&
-    _.isEmpty(actionableAlertsSelections)
-  )
+    actionableAlertsSelections === undefined
+  ) {
     _.set(
       values,
       `${actionExecutionPolicyPath}.action_execution_scope.${NOTIFY_OPTIONS_VALUES.PER_ALERT}.actionable_alerts`,
       DEFAULT_ACTIONABLE_ALERTS_SELECTIONS
     );
+    actionableAlertsSelections = DEFAULT_ACTIONABLE_ALERTS_SELECTIONS;
+  }
 
   let preview = '';
   try {
@@ -237,8 +227,13 @@ export default function Message(
         rowProps={{
           label: (
             <div>
-              <span>Message</span>
-              {messageHelpText}
+              <EuiText size={'xs'} style={{ paddingBottom: '0px', marginBottom: '0px' }}>
+                <h4>Message</h4>
+              </EuiText>
+              <EuiText color={'subdued'} size={'xs'}>
+                Embed variables in your message using Mustache templates.{' '}
+                <a href={URL.MUSTACHE}>Learn more</a>
+              </EuiText>
             </div>
           ),
           style: { maxWidth: '100%' },
@@ -294,6 +289,21 @@ export default function Message(
                 name={`${actionExecutionPolicyPath}.action_execution_scope`}
                 formRow
                 inputProps={{
+                  id: `${actionExecutionPolicyPath}.${NOTIFY_OPTIONS_VALUES.PER_EXECUTION}`,
+                  value: NOTIFY_OPTIONS_VALUES.PER_EXECUTION,
+                  checked: actionExecutionScopeId === NOTIFY_OPTIONS_VALUES.PER_EXECUTION,
+                  label: NOTIFY_OPTIONS_LABELS.PER_EXECUTION,
+                  onChange: (e, field, form) => {
+                    field.onChange(e);
+                  },
+                }}
+              />
+            </EuiFlexItem>
+            <EuiFlexItem>
+              <FormikFieldRadio
+                name={`${actionExecutionPolicyPath}.action_execution_scope`}
+                formRow
+                inputProps={{
                   id: `${actionExecutionPolicyPath}.${NOTIFY_OPTIONS_VALUES.PER_ALERT}`,
                   value: NOTIFY_OPTIONS_VALUES.PER_ALERT,
                   checked: actionExecutionScopeId === NOTIFY_OPTIONS_VALUES.PER_ALERT,
@@ -322,12 +332,14 @@ export default function Message(
                       rowProps={{
                         label: 'Actionable alerts',
                         style: { width: '400px' },
-                        isInvalid: _.isEmpty(
-                          _.get(
-                            action,
-                            `action_execution_policy.action_execution_scope.${NOTIFY_OPTIONS_VALUES.PER_ALERT}.actionable_alerts`
-                          )
-                        ),
+                        isInvalid:
+                          actionExecutionScopeId === NOTIFY_OPTIONS_VALUES.PER_ALERT &&
+                          _.isEmpty(
+                            _.get(
+                              action,
+                              `action_execution_policy.action_execution_scope.${NOTIFY_OPTIONS_VALUES.PER_ALERT}.actionable_alerts`
+                            )
+                          ),
                         error: NO_ACTIONABLE_ALERT_SELECTIONS,
                       }}
                       inputProps={{
@@ -353,22 +365,6 @@ export default function Message(
                 </EuiFormRow>
               ) : null}
             </EuiFlexItem>
-
-            <EuiFlexItem>
-              <FormikFieldRadio
-                name={`${actionExecutionPolicyPath}.action_execution_scope`}
-                formRow
-                inputProps={{
-                  id: `${actionExecutionPolicyPath}.${NOTIFY_OPTIONS_VALUES.PER_EXECUTION}`,
-                  value: NOTIFY_OPTIONS_VALUES.PER_EXECUTION,
-                  checked: actionExecutionScopeId === NOTIFY_OPTIONS_VALUES.PER_EXECUTION,
-                  label: NOTIFY_OPTIONS_LABELS.PER_EXECUTION,
-                  onChange: (e, field, form) => {
-                    field.onChange(e);
-                  },
-                }}
-              />
-            </EuiFlexItem>
           </EuiFlexGroup>
         </EuiFormRow>
       ) : null}
@@ -378,13 +374,13 @@ export default function Message(
         style={{ maxWidth: '100%' }}
       >
         <EuiFlexGroup direction="column">
-          <EuiFlexItem
-            grow={false}
-            style={{ marginBottom: _.get(action, `throttle_enabled`) ? '0px' : '12px' }}
-          >
+          <EuiFlexItem grow={false} style={{ marginBottom: '0px' }}>
             <FormikCheckbox
               name={`${fieldPath}actions.${index}.throttle_enabled`}
-              inputProps={{ label: 'Enable action throttling' }}
+              inputProps={{
+                disabled: actionExecutionScopeId === NOTIFY_OPTIONS_VALUES.PER_EXECUTION,
+                label: 'Enable action throttling',
+              }}
             />
           </EuiFlexItem>
           <EuiFlexGroup
