@@ -15,7 +15,7 @@ import { EuiSpacer } from '@elastic/eui';
 import {
   ForExpression,
   OfExpression,
-  WhereExpression
+  WhereExpression,
 } from './expressions';
 import MetricExpression from './expressions/MetricExpression';
 
