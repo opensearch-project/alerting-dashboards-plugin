@@ -33,7 +33,6 @@ import {
   EuiPopover,
   EuiButtonEmpty,
   EuiText,
-  EuiSpacer,
   EuiBadge,
 } from '@elastic/eui';
 import _ from 'lodash';
@@ -228,7 +227,6 @@ class WhereExpression extends Component {
         <EuiText size="xs">
           <h4>{whereFilterHeader}</h4>
         </EuiText>
-        <EuiSpacer size="s" />
         <EuiBadge
           iconSide="right"
           iconType="cross"
