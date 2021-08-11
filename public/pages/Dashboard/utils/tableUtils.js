@@ -115,3 +115,70 @@ export const columns = [
     render: (content) => (content ? renderAggAlertContent(content.bucket_keys) : '-'),
   },
 ];
+
+export const alertColumns = [
+  {
+    field: 'total',
+    name: 'Alerts',
+    sortable: true,
+    truncateText: false,
+    render: (total) => <EuiLink>{`${total} alerts`}</EuiLink>,
+  },
+  {
+    field: 'ACTIVE',
+    name: 'Active',
+    sortable: true,
+    truncateText: false,
+  },
+  {
+    field: 'ACKNOWLEDGED',
+    name: 'Acknowledged',
+    sortable: true,
+    truncateText: false,
+  },
+  {
+    field: 'ERROR',
+    name: 'Errors',
+    sortable: true,
+    truncateText: false,
+  },
+  {
+    field: 'trigger_name',
+    name: 'Trigger name',
+    sortable: true,
+    truncateText: true,
+    textOnly: true,
+  },
+  {
+    field: 'start_time',
+    name: 'Trigger start time',
+    sortable: true,
+    truncateText: false,
+    render: renderTime,
+    dataType: 'date',
+  },
+  {
+    field: 'last_notification_time',
+    name: 'Trigger last updated',
+    sortable: true,
+    truncateText: true,
+    render: renderTime,
+    dataType: 'date',
+  },
+  {
+    field: 'severity',
+    name: 'Severity',
+    sortable: false,
+    truncateText: false,
+  },
+  {
+    field: 'monitor_name',
+    name: 'Monitor name',
+    sortable: true,
+    truncateText: true,
+    textOnly: true,
+    render: (name, alert) => (
+      <EuiLink href={`${PLUGIN_NAME}#/monitors/${alert.monitor_id}`}>{name}</EuiLink>
+    ),
+  },
+];
