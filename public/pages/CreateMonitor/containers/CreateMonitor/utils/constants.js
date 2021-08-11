@@ -73,3 +73,5 @@ export const FORMIK_INITIAL_AGG_VALUES = {
   aggregationType: 'count',
   fieldName: '',
 };
+
+export const DEFAULT_COMPOSITE_AGG_SIZE = 50;
