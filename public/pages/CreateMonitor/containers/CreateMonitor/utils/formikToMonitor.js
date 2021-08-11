@@ -26,7 +26,7 @@
 
 import _ from 'lodash';
 import moment from 'moment-timezone';
-import { BUCKET_COUNT, FORMIK_INITIAL_VALUES } from './constants';
+import { BUCKET_COUNT, DEFAULT_COMPOSITE_AGG_SIZE, FORMIK_INITIAL_VALUES } from './constants';
 import { SEARCH_TYPE } from '../../../../../utils/constants';
 import { OPERATORS_QUERY_MAP } from './whereFilters';
 
