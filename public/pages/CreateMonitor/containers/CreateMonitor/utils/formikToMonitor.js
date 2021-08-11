@@ -26,7 +26,7 @@
 
 import _ from 'lodash';
 import moment from 'moment-timezone';
-import { BUCKET_COUNT, FORMIK_INITIAL_VALUES } from './constants';
+import { BUCKET_COUNT, DEFAULT_COMPOSITE_AGG_SIZE, FORMIK_INITIAL_VALUES } from './constants';
 import { SEARCH_TYPE } from '../../../../../utils/constants';
 import { OPERATORS_QUERY_MAP } from './whereFilters';
 
@@ -202,7 +202,11 @@ export function formikToGraphQuery(values) {
 
 export function formikToUiGraphQuery(values) {
   const { bucketValue, bucketUnitOfTime } = values;
-  const overAggregation = formikToUiOverAggregation(values);
+  const hasGroupBy = values.groupBy.length;
+  //TODO: Check whether the condition should be using group by or monitor_type
+  const aggregation = hasGroupBy
+    ? formikToUiCompositeAggregation(values)
+    : formikToUiOverAggregation(values);
   const timeField = values.timeField;
   const filters = [
     {
@@ -221,7 +225,7 @@ export function formikToUiGraphQuery(values) {
   }
   return {
     size: 0,
-    aggregations: overAggregation,
+    aggregations: aggregation,
     query: {
       bool: {
         filter: filters,
@@ -265,6 +269,51 @@ export function formikToWhenAggregation(values) {
   } = values;
   if (aggregationType === 'count' || !field) return {};
   return { when: { [aggregationType]: { field } } };
+}
+
+export function formikToUiCompositeAggregation(values) {
+  const { aggregations, groupBy, timeField, bucketValue, bucketUnitOfTime } = values;
+
+  let aggs = {};
+  aggregations.map((aggItem) => {
+    // TODO: Changing any occurrence of '.' in the fieldName to '_' since the
+    //  bucketSelector uses the '.' syntax to resolve aggregation paths.
+    //  Should revisit this as replacing with `_` could cause collisions with fields named like that.
+    const name = `${aggItem.aggregationType}_${aggItem.fieldName.replace(/\./g, '_')}`;
+    const type = aggItem.aggregationType === 'count' ? 'value_count' : aggItem.aggregationType;
+    aggs[name] = {
+      [type]: { field: aggItem.fieldName },
+    };
+  });
+
+  let sources = [];
+  groupBy.map((groupByItem) =>
+    sources.push({
+      [groupByItem]: {
+        terms: {
+          field: groupByItem,
+        },
+      },
+    })
+  );
+  sources.push({
+    date: {
+      date_histogram: {
+        field: timeField,
+        interval: `${bucketValue}${bucketUnitOfTime}`,
+        time_zone: moment.tz.guess(),
+      },
+    },
+  });
+  return {
+    composite_agg: {
+      composite: {
+        sources,
+        size: DEFAULT_COMPOSITE_AGG_SIZE,
+      },
+      aggs,
+    },
+  };
 }
 
 export function formikToCompositeAggregation(values) {
