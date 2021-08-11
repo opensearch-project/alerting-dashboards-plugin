@@ -13,7 +13,9 @@
  *   permissions and limitations under the License.
  */
 
+import _ from 'lodash';
 import { EMPTY_ALERT_LIST } from './constants';
+import { bucketColumns } from './tableUtils';
 
 export function groupAlertsByTrigger(alerts) {
   let alertsByTriggers = new Map();
@@ -62,4 +64,17 @@ export function addAlert(alertList, newAlert) {
   alertList.alerts.push(newAlert);
   //Compare start time and last updated time
   return alertList;
+}
+
+export function insertGroupByColumn(groupBy) {
+  let result = _.cloneDeep(bucketColumns);
+  groupBy.map((fieldName) =>
+    result.splice(0, 0, {
+      field: `agg_alert_content.bucket.key.${fieldName}`,
+      name: fieldName,
+      sortable: true,
+      truncateText: false,
+    })
+  );
+  return result;
 }

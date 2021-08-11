@@ -35,7 +35,7 @@ import DashboardControls from '../components/DashboardControls';
 import { columns, alertColumns, bucketColumns, queryColumns } from '../utils/tableUtils';
 import { MONITOR_TYPE, OPENSEARCH_DASHBOARDS_AD_PLUGIN } from '../../../utils/constants';
 import { backendErrorNotification } from '../../../utils/helpers';
-import { groupAlertsByTrigger } from '../utils/helpers';
+import { groupAlertsByTrigger, insertGroupByColumn } from '../utils/helpers';
 
 const DEFAULT_PAGE_SIZE_OPTIONS = [5, 10, 20, 50];
 const DEFAULT_QUERY_PARAMS = {
@@ -325,14 +325,23 @@ export default class Dashboard extends Component {
       totalAlerts,
       totalTriggers,
     } = this.state;
-    const { monitorIds, detectorIds, onCreateTrigger, perAlertView, monitorType } = this.props;
+    const {
+      monitorIds,
+      detectorIds,
+      onCreateTrigger,
+      perAlertView,
+      monitorType,
+      groupBy,
+    } = this.props;
     const totalItems = perAlertView ? totalAlerts : totalTriggers;
     const isBucketMonitor = monitorType === MONITOR_TYPE.BUCKET_LEVEL;
+
     const columnType = perAlertView
       ? isBucketMonitor
-        ? bucketColumns
+        ? insertGroupByColumn(groupBy)
         : queryColumns
       : alertColumns;
+
     const pagination = {
       pageIndex: page,
       pageSize: size,
