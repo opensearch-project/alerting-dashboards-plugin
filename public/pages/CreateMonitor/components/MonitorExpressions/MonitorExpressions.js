@@ -80,7 +80,7 @@ export default class MonitorExpressions extends Component {
   });
 
   render() {
-    const { dataTypes, errors, touched } = this.props;
+    const { dataTypes, errors, touched, isBucketMonitor } = this.props;
     return (
       <div>
         {/*TODO: run query when metrics or group by expression is changed*/}
@@ -98,17 +98,19 @@ export default class MonitorExpressions extends Component {
         <EuiSpacer size="xs" />
         <WhereExpression {...this.getExpressionProps()} dataTypes={dataTypes} />
         <EuiSpacer size="s" />
-        <FieldArray name="groupBy" validateOnChange={false}>
-          {(arrayHelpers) => (
-            <GroupByExpression
-              {...this.getExpressionProps()}
-              errors={errors}
-              touched={touched}
-              arrayHelpers={arrayHelpers}
-              dataTypes={dataTypes}
-            />
-          )}
-        </FieldArray>
+        {isBucketMonitor && (
+          <FieldArray name="groupBy" validateOnChange={false}>
+            {(arrayHelpers) => (
+              <GroupByExpression
+                {...this.getExpressionProps()}
+                errors={errors}
+                touched={touched}
+                arrayHelpers={arrayHelpers}
+                dataTypes={dataTypes}
+              />
+            )}
+          </FieldArray>
+        )}
         <EuiSpacer size="xs" />
       </div>
     );

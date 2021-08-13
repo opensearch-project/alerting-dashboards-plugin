@@ -153,7 +153,7 @@ class DefineMonitor extends Component {
 
   renderGraph() {
     const { errors, touched, values } = this.props;
-    const isQueryLevelMonitor = _.get(values, 'monitor_type') === MONITOR_TYPE.QUERY_LEVEL;
+    const isBucketMonitor = _.get(values, 'monitor_type') === MONITOR_TYPE.BUCKET_LEVEL;
     const aggregations = _.get(values, 'aggregations');
 
     // TODO: Implement different graph view for query-level and bucket-level monitor
@@ -166,10 +166,11 @@ class DefineMonitor extends Component {
           touched={touched}
           onRunQuery={this.onRunQuery}
           dataTypes={this.state.dataTypes}
+          isBucketMonitor={isBucketMonitor}
         />
         <EuiSpacer size="s" />
         {errors.where ? (
-          renderEmptyMessage('Invalid input in WHERE filter. Remove WHERE filter or adjust filter ')
+          renderEmptyMessage('Invalid input in data filter. Remove data filter or adjust filter ')
         ) : aggregations.length ? (
           _.map(aggregations, (field) => {
             return (
