@@ -10,18 +10,18 @@
  */
 
 /*
- *   Copyright 2021 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2021 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
- *   Licensed under the Apache License, Version 2.0 (the "License").
- *   You may not use this file except in compliance with the License.
- *   A copy of the License is located at
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- *   or in the "license" file accompanying this file. This file is distributed
- *   on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- *   express or implied. See the License for the specific language governing
- *   permissions and limitations under the License.
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
  */
 
 import React, { Component, Fragment } from 'react';
@@ -37,7 +37,6 @@ import { formikToMonitor } from '../CreateMonitor/utils/formikToMonitor';
 import { getPathsPerDataType } from './utils/mappings';
 import { buildSearchRequest } from './utils/searchRequests';
 import { SEARCH_TYPE, OS_AD_PLUGIN, MONITOR_TYPE } from '../../../../utils/constants';
-import AnomalyDetectors from '../AnomalyDetectors/AnomalyDetectors';
 import { backendErrorNotification } from '../../../../utils/helpers';
 import DataSource from '../DataSource';
 
@@ -84,7 +83,6 @@ class DefineMonitor extends Component {
     this.queryMappings = this.queryMappings.bind(this);
     this.renderVisualMonitor = this.renderVisualMonitor.bind(this);
     this.renderExtractionQuery = this.renderExtractionQuery.bind(this);
-    this.renderAnomalyDetector = this.renderAnomalyDetector.bind(this);
     this.getMonitorContent = this.getMonitorContent.bind(this);
     this.getPlugins = this.getPlugins.bind(this);
     this.showPluginWarning = this.showPluginWarning.bind(this);
@@ -344,30 +342,10 @@ class DefineMonitor extends Component {
       ),
     };
   }
-  renderAnomalyDetector() {
-    const { httpClient, values, detectorId } = this.props;
-    return {
-      actions: [],
-      content: (
-        <React.Fragment>
-          <div style={{ padding: '0px 10px' }}>
-            <AnomalyDetectors
-              httpClient={httpClient}
-              values={values}
-              renderEmptyMessage={renderEmptyMessage}
-              detectorId={detectorId}
-            />
-          </div>
-        </React.Fragment>
-      ),
-    };
-  }
 
   getMonitorContent() {
     const { values } = this.props;
     switch (values.searchType) {
-      case SEARCH_TYPE.AD:
-        return this.renderAnomalyDetector();
       case SEARCH_TYPE.GRAPH:
         return this.renderVisualMonitor();
       default:
