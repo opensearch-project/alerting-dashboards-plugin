@@ -27,7 +27,7 @@
 import React, { Component, Fragment } from 'react';
 import _ from 'lodash';
 import PropTypes from 'prop-types';
-import { EuiSpacer, EuiButton, EuiCallOut } from '@elastic/eui';
+import { EuiSpacer, EuiButton, EuiCallOut, EuiAccordion } from '@elastic/eui';
 import ContentPanel from '../../../../components/ContentPanel';
 import VisualGraph from '../../components/VisualGraph';
 import ExtractionQuery from '../../components/ExtractionQuery';
@@ -164,6 +164,7 @@ class DefineMonitor extends Component {
 
   renderGraph() {
     const { errors, touched, values } = this.props;
+    const { response, performanceResponse } = this.state;
     const isBucketMonitor = _.get(values, 'monitor_type') === MONITOR_TYPE.BUCKET_LEVEL;
     const aggregations = _.get(values, 'aggregations');
 
@@ -179,27 +180,34 @@ class DefineMonitor extends Component {
           dataTypes={this.state.dataTypes}
           isBucketMonitor={isBucketMonitor}
         />
-        <EuiSpacer size="s" />
-        {errors.where ? (
-          renderEmptyMessage('Invalid input in data filter. Remove data filter or adjust filter ')
-        ) : aggregations.length ? (
-          _.map(aggregations, (field) => {
-            return (
-              <VisualGraph
-                values={this.state.formikSnapshot}
-                fieldName={field.fieldName}
-                aggregationType={field.aggregationType}
-                response={this.state.response}
-              />
-            );
-          })
-        ) : (
-          <VisualGraph
-            values={this.state.formikSnapshot}
-            fieldName="Select a field"
-            response={this.state.response}
-          />
-        )}
+        <EuiSpacer size="m" />
+        <EuiAccordion buttonContent="Preview query and performance">
+          <EuiSpacer size="m" />
+          <QueryPerformance response={performanceResponse} />
+          {errors.where ? (
+            renderEmptyMessage('Invalid input in data filter. Remove data filter or adjust filter ')
+          ) : aggregations.length ? (
+            _.map(aggregations, (field) => {
+              return (
+                <Fragment>
+                  <EuiSpacer size="m" />
+                  <VisualGraph
+                    values={this.state.formikSnapshot}
+                    fieldName={field.fieldName}
+                    aggregationType={field.aggregationType}
+                    response={response}
+                  />
+                </Fragment>
+              );
+            })
+          ) : (
+            <VisualGraph
+              values={this.state.formikSnapshot}
+              fieldName="Select a field"
+              response={this.state.response}
+            />
+          )}
+        </EuiAccordion>
       </Fragment>
     );
   }
@@ -311,13 +319,16 @@ class DefineMonitor extends Component {
     } else {
       content = renderEmptyMessage('You must specify an index.');
     }
+    const runIsDisabled = !index.length || !values.groupBy.length || !timeField;
     return {
-      actions: [],
+      actions: [
+        <EuiButton disabled={runIsDisabled} onClick={this.onRunQuery}>
+          Run
+        </EuiButton>,
+      ],
       content: (
         <React.Fragment>
           <div style={{ padding: '0px 10px' }}>{content}</div>
-          <EuiSpacer size="m" />
-          <QueryPerformance response={performanceResponse} />
         </React.Fragment>
       ),
     };
