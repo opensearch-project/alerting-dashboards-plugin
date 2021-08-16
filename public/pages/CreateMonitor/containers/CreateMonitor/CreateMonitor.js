@@ -270,18 +270,25 @@ export default class CreateMonitor extends Component {
                 monitorToEdit={monitorToEdit}
                 plugins={plugins}
                 isAd={values.searchType === SEARCH_TYPE.AD}
-              />
-              <EuiSpacer />
-              <DefineMonitor
-                values={values}
-                errors={errors}
-                touched={touched}
-                httpClient={httpClient}
                 detectorId={this.props.detectorId}
-                notifications={notifications}
-                isDarkMode={isDarkMode}
               />
               <EuiSpacer />
+
+              {values.searchType !== SEARCH_TYPE.AD && (
+                <div>
+                  <DefineMonitor
+                    values={values}
+                    errors={errors}
+                    touched={touched}
+                    httpClient={httpClient}
+                    detectorId={this.props.detectorId}
+                    notifications={notifications}
+                    isDarkMode={isDarkMode}
+                  />
+                  <EuiSpacer />
+                </div>
+              )}
+
               <FieldArray name={'triggerDefinitions'} validateOnChange={true}>
                 {(triggerArrayHelpers) => (
                   <ConfigureTriggers
