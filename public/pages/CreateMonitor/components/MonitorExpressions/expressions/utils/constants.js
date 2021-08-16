@@ -34,6 +34,7 @@ export const Expressions = {
   FOR_THE_LAST: 'FOR_THE_LAST',
   WHERE: 'WHERE',
   METRICS: 'METRICS',
+  GROUP_BY: 'GROUP_BY',
 };
 export const NUMBER_TYPES = [
   'long',

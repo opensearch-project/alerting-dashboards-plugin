@@ -129,12 +129,14 @@ class DefineMonitor extends Component {
       // c) different time fields, to aggregate on new data/axis
       const diffTimeFields = prevTimeField !== timeField;
       const hasTimeField = !!timeField;
+      const wasQueryType = prevMonitorType === MONITOR_TYPE.QUERY_LEVEL;
       if (hasTimeField) {
-        if (wasQuery || diffIndices || diffTimeFields) this.onRunQuery();
+        // TODO: check whether bucket level query is changed here and run query
+        if (wasQuery || diffIndices || diffTimeFields || wasQueryType) this.onRunQuery();
       }
     }
     // Reset response when monitor type or definition method is changed
-    if (prevSearchType !== searchType) this.resetResponse();
+    if (prevSearchType !== searchType || prevMonitorType !== monitor_type) this.resetResponse();
   }
 
   async getPlugins() {
