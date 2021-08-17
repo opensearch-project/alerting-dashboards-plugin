@@ -38,7 +38,7 @@ const TriggerGraph = ({ monitorValues, response, thresholdValue, thresholdEnum, 
       valueFieldName={`${fieldPath}thresholdValue`}
       label="Trigger condition"
     />
-    <EuiSpacer size="s" />
+    <EuiSpacer size="m" />
     <VisualGraph
       annotation
       values={monitorValues}
