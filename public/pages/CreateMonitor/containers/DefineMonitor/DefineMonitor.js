@@ -180,8 +180,7 @@ class DefineMonitor extends Component {
             response={performanceResponse}
             actions={[
               <EuiButton disabled={runIsDisabled} onClick={this.onRunQuery}>
-                {' '}
-                Run{' '}
+                Run
               </EuiButton>,
             ]}
           />

@@ -26,15 +26,7 @@
 
 import React, { Fragment } from 'react';
 import _ from 'lodash';
-import {
-  EuiFlexGroup,
-  EuiFlexItem,
-  EuiSpacer,
-  EuiText,
-  EuiPanel,
-  EuiTitle,
-  EuiHorizontalRule,
-} from '@elastic/eui';
+import { EuiFlexGroup, EuiFlexItem, EuiSpacer, EuiText } from '@elastic/eui';
 
 import { DEFAULT_EMPTY_DATA } from '../../../../utils/constants';
 import { URL } from '../../../../../utils/constants';
@@ -46,10 +38,10 @@ const QueryPerformance = ({ response, actions }) => (
       title="Query performance"
       titleSize="s"
       description={
-        <Fragment>
+        <span>
           Check the performance of your query and make sure to follow best practices.{' '}
           <a href={URL.DOCUMENTATION}>Learn more</a>
-        </Fragment>
+        </span>
       }
       actions={actions}
     >
