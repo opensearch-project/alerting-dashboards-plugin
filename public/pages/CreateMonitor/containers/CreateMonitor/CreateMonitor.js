@@ -139,6 +139,7 @@ export default class CreateMonitor extends Component {
         resp: { _id },
       } = resp;
       if (ok) {
+        notifications.toasts.addSuccess(`Monitor "${monitor.name}" successfully created.`);
         this.props.history.push(`/monitors/${_id}`);
       } else {
         console.log('Failed to create:', resp);
@@ -206,13 +207,14 @@ export default class CreateMonitor extends Component {
   };
 
   async onUpdate(monitor, { setSubmitting, setErrors }) {
-    const { updateMonitor } = this.props;
+    const { updateMonitor, notifications } = this.props;
     const updatedMonitor = _.cloneDeep(monitor);
     try {
       const resp = await updateMonitor(updatedMonitor);
       setSubmitting(false);
       const { ok, id } = resp;
       if (ok) {
+        notifications.toasts.addSuccess(`Monitor "${monitor.name}" successfully updated.`);
         this.props.history.push(`/monitors/${id}`);
       } else {
         console.log('Failed to update:', resp);
