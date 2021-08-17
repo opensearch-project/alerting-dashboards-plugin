@@ -136,16 +136,8 @@ class DefineMonitor extends Component {
         if (wasQuery || diffIndices || diffTimeFields || wasQueryType) this.onRunQuery();
       }
     }
-    const isBucketLevel = monitor_type === MONITOR_TYPE.BUCKET_LEVEL;
-    const hadGroupBy = prevGroupBy.length;
-    const hasNoGroupBy = !groupBy.length;
     // Reset response when monitor type or definition method is changed
-    if (
-      prevSearchType !== searchType ||
-      prevMonitorType !== monitor_type ||
-      (isBucketLevel && hadGroupBy && hasNoGroupBy)
-    )
-      this.resetResponse();
+    if (prevSearchType !== searchType || prevMonitorType !== monitor_type) this.resetResponse();
   }
 
   async getPlugins() {
@@ -165,9 +157,10 @@ class DefineMonitor extends Component {
   renderGraph() {
     const { errors, touched, values } = this.props;
     const { response, performanceResponse } = this.state;
+    const { index, timeField } = values;
     const isBucketMonitor = _.get(values, 'monitor_type') === MONITOR_TYPE.BUCKET_LEVEL;
     const aggregations = _.get(values, 'aggregations');
-
+    const runIsDisabled = !index.length || !timeField;
     // TODO: Implement different graph view for query-level and bucket-level monitor
     // if (isQueryLevelMonitor)
     return (
@@ -183,7 +176,15 @@ class DefineMonitor extends Component {
         <EuiSpacer size="m" />
         <EuiAccordion buttonContent="Preview query and performance">
           <EuiSpacer size="m" />
-          <QueryPerformance response={performanceResponse} />
+          <QueryPerformance
+            response={performanceResponse}
+            actions={[
+              <EuiButton disabled={runIsDisabled} onClick={this.onRunQuery}>
+                {' '}
+                Run{' '}
+              </EuiButton>,
+            ]}
+          />
           {errors.where ? (
             renderEmptyMessage('Invalid input in data filter. Remove data filter or adjust filter ')
           ) : aggregations.length ? (
@@ -310,7 +311,6 @@ class DefineMonitor extends Component {
   renderVisualMonitor() {
     const { values } = this.props;
     const { index, timeField } = values;
-    const { performanceResponse } = this.state;
     let content = null;
     if (index.length) {
       content = timeField
@@ -319,13 +319,8 @@ class DefineMonitor extends Component {
     } else {
       content = renderEmptyMessage('You must specify an index.');
     }
-    const runIsDisabled = !index.length || !values.groupBy.length || !timeField;
     return {
-      actions: [
-        <EuiButton disabled={runIsDisabled} onClick={this.onRunQuery}>
-          Run
-        </EuiButton>,
-      ],
+      actions: [],
       content: (
         <React.Fragment>
           <div style={{ padding: '0px 10px' }}>{content}</div>
