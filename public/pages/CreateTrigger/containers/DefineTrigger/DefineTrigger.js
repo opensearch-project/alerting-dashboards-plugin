@@ -214,6 +214,7 @@ class DefineTrigger extends Component {
             Remove trigger
           </EuiButton>
         }
+        style={{ paddingBottom: '15px', paddingTop: '10px' }}
       >
         <div style={{ padding: '0px 20px', paddingTop: '20px' }}>
           <FormikFieldText
@@ -265,7 +266,6 @@ class DefineTrigger extends Component {
               />
             )}
           </FieldArray>
-          <EuiSpacer />
         </div>
       </EuiAccordion>
     );
