@@ -98,19 +98,17 @@ export default class MonitorExpressions extends Component {
         <EuiSpacer size="xs" />
         <WhereExpression {...this.getExpressionProps()} dataTypes={dataTypes} />
         <EuiSpacer size="s" />
-        {isBucketMonitor && (
-          <FieldArray name="groupBy" validateOnChange={false}>
-            {(arrayHelpers) => (
-              <GroupByExpression
-                {...this.getExpressionProps()}
-                errors={errors}
-                touched={touched}
-                arrayHelpers={arrayHelpers}
-                dataTypes={dataTypes}
-              />
-            )}
-          </FieldArray>
-        )}
+        <FieldArray name="groupBy" validateOnChange={false}>
+          {(arrayHelpers) => (
+            <GroupByExpression
+              {...this.getExpressionProps()}
+              errors={errors}
+              touched={touched}
+              arrayHelpers={arrayHelpers}
+              dataTypes={dataTypes}
+            />
+          )}
+        </FieldArray>
         <EuiSpacer size="xs" />
       </div>
     );

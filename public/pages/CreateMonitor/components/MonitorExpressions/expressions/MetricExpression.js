@@ -23,6 +23,7 @@ import {
 import { MetricItem } from './index';
 import { Expressions } from './utils/constants';
 import MetricPopover from './MetricPopover';
+import { MONITOR_TYPE } from '../../../../../utils/constants';
 
 class MetricExpression extends Component {
   renderFieldItems = (arrayHelpers, fieldOptions, expressionWidth) => {
@@ -90,7 +91,7 @@ class MetricExpression extends Component {
           }}
           data-test-subj="addMetricButton"
         >
-          + Add metric
+          + Add another metric
         </EuiButtonEmpty>
       </div>
     );
