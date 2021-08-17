@@ -108,9 +108,8 @@ class DefineMonitor extends Component {
       index: prevIndex,
       timeField: prevTimeField,
       monitor_type: prevMonitorType,
-      groupBy: prevGroupBy,
     } = prevProps.values;
-    const { searchType, index, timeField, monitor_type, groupBy } = this.props.values;
+    const { searchType, index, timeField, monitor_type } = this.props.values;
     const isGraph = searchType === SEARCH_TYPE.GRAPH;
     const hasIndices = !!index.length;
     // If customer is defining query through extraction query, then they are manually running their own queries
@@ -130,7 +129,8 @@ class DefineMonitor extends Component {
       // c) different time fields, to aggregate on new data/axis
       const diffTimeFields = prevTimeField !== timeField;
       const hasTimeField = !!timeField;
-      const wasQueryType = prevMonitorType === MONITOR_TYPE.QUERY_LEVEL;
+      const wasQueryType =
+        prevMonitorType === MONITOR_TYPE.QUERY_LEVEL && monitor_type === MONITOR_TYPE.BUCKET_LEVEL;
       if (hasTimeField) {
         // TODO: check whether bucket level query is changed here and run query
         if (wasQuery || diffIndices || diffTimeFields || wasQueryType) this.onRunQuery();

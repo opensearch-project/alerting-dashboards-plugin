@@ -37,6 +37,7 @@ const QueryPerformance = ({ response, actions }) => (
     <ContentPanel
       title="Query performance"
       titleSize="s"
+      panelStyles={{ paddingLeft: '10px' }}
       description={
         <span>
           Check the performance of your query and make sure to follow best practices.{' '}
