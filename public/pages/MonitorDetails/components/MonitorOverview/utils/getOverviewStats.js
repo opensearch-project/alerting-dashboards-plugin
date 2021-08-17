@@ -31,7 +31,7 @@ import getScheduleFromMonitor from './getScheduleFromMonitor';
 import { DEFAULT_EMPTY_DATA, SEARCH_TYPE } from '../../../../../utils/constants';
 
 // TODO: used in multiple places, move into helper
-function getTime(time) {
+export function getTime(time) {
   // TODO: Use OpenSearch Dashboards saved timezone (if there is one, if not THEN default to using browser)
   const momentTime = moment.tz(time, moment.tz.guess());
   if (time && momentTime.isValid()) return momentTime.format('MM/DD/YY h:mm a z');

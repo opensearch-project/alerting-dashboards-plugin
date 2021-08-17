@@ -10,18 +10,18 @@
  */
 
 /*
- *   Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2021 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
- *   Licensed under the Apache License, Version 2.0 (the "License").
- *   You may not use this file except in compliance with the License.
- *   A copy of the License is located at
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- *   or in the "license" file accompanying this file. This file is distributed
- *   on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- *   express or implied. See the License for the specific language governing
- *   permissions and limitations under the License.
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
  */
 
 import React, { Component } from 'react';
@@ -32,13 +32,15 @@ import { EuiBasicTable, EuiButton, EuiHorizontalRule, EuiIcon } from '@elastic/e
 import ContentPanel from '../../../components/ContentPanel';
 import DashboardEmptyPrompt from '../components/DashboardEmptyPrompt';
 import DashboardControls from '../components/DashboardControls';
-import { columns, alertColumns, bucketColumns, queryColumns } from '../utils/tableUtils';
+import { alertColumns, queryColumns } from '../utils/tableUtils';
 import { MONITOR_TYPE, OPENSEARCH_DASHBOARDS_AD_PLUGIN } from '../../../utils/constants';
 import { backendErrorNotification } from '../../../utils/helpers';
-import { groupAlertsByTrigger, insertGroupByColumn } from '../utils/helpers';
+import { groupAlertsByTrigger, insertGroupByColumn, removeColumns } from '../utils/helpers';
+import { DEFAULT_QUERY_PARAMS } from '../../Monitors/containers/Monitors/utils/constants';
+import { DEFAULT_NUM_FLYOUT_ROWS } from '../../../components/Flyout/flyouts/alertsDashboard';
 
 const DEFAULT_PAGE_SIZE_OPTIONS = [5, 10, 20, 50];
-const DEFAULT_QUERY_PARAMS = {
+const DEFAULT_GET_ALERTS_QUERY_PARAMS = {
   alertState: 'ALL',
   from: 0,
   search: '',
@@ -56,6 +58,8 @@ export default class Dashboard extends Component {
   constructor(props) {
     super(props);
 
+    const { isAlertsFlyout = false } = props;
+
     const {
       alertState,
       from,
@@ -70,12 +74,14 @@ export default class Dashboard extends Component {
       alerts: [],
       alertsByTriggers: [],
       alertState,
+      loadingMonitors: true,
+      monitors: [],
       monitorIds: this.props.monitorIds,
       page: Math.floor(from / size),
       search,
       selectedItems: [],
       severityLevel,
-      size,
+      size: isAlertsFlyout ? DEFAULT_NUM_FLYOUT_ROWS : size,
       sortDirection,
       sortField,
       totalAlerts: 0,
@@ -160,19 +166,19 @@ export default class Dashboard extends Component {
 
   getURLQueryParams = () => {
     const {
-      from = DEFAULT_QUERY_PARAMS.from,
-      size = DEFAULT_QUERY_PARAMS.size,
-      search = DEFAULT_QUERY_PARAMS.search,
-      sortField = DEFAULT_QUERY_PARAMS.sortField,
-      sortDirection = DEFAULT_QUERY_PARAMS.sortDirection,
-      severityLevel = DEFAULT_QUERY_PARAMS.severityLevel,
-      alertState = DEFAULT_QUERY_PARAMS.alertState,
+      from = DEFAULT_GET_ALERTS_QUERY_PARAMS.from,
+      size = DEFAULT_GET_ALERTS_QUERY_PARAMS.size,
+      search = DEFAULT_GET_ALERTS_QUERY_PARAMS.search,
+      sortField = DEFAULT_GET_ALERTS_QUERY_PARAMS.sortField,
+      sortDirection = DEFAULT_GET_ALERTS_QUERY_PARAMS.sortDirection,
+      severityLevel = DEFAULT_GET_ALERTS_QUERY_PARAMS.severityLevel,
+      alertState = DEFAULT_GET_ALERTS_QUERY_PARAMS.alertState,
       monitorIds = this.props.monitorIds,
     } = queryString.parse(this.props.location.search);
 
     return {
-      from: isNaN(parseInt(from, 10)) ? DEFAULT_QUERY_PARAMS.from : parseInt(from, 10),
-      size: isNaN(parseInt(size, 10)) ? DEFAULT_QUERY_PARAMS.size : parseInt(size, 10),
+      from: isNaN(parseInt(from, 10)) ? DEFAULT_GET_ALERTS_QUERY_PARAMS.from : parseInt(from, 10),
+      size: isNaN(parseInt(size, 10)) ? DEFAULT_GET_ALERTS_QUERY_PARAMS.size : parseInt(size, 10),
       search,
       sortField,
       sortDirection,
@@ -201,19 +207,18 @@ export default class Dashboard extends Component {
       httpClient.get('../api/alerting/alerts', { query: params }).then((resp) => {
         if (resp.ok) {
           const { alerts, totalAlerts } = resp;
-          const alertsByTriggers = groupAlertsByTrigger(alerts);
           this.setState({
             alerts,
             totalAlerts,
-            totalTriggers: alertsByTriggers.length,
-            alertsByTriggers,
           });
+
           if (!perAlertView) {
             const alertsByTriggers = groupAlertsByTrigger(alerts);
             this.setState({
               totalTriggers: alertsByTriggers.length,
               alertsByTriggers,
             });
+            this.getMonitors(from, size);
           }
         } else {
           console.log('error getting alerts:', resp);
@@ -224,6 +229,32 @@ export default class Dashboard extends Component {
     500,
     { leading: true }
   );
+
+  async getMonitors(from, size) {
+    const { httpClient } = this.props;
+    const { alertsByTriggers } = this.state;
+    this.setState({ ...this.state, loadingMonitors: true });
+    let monitors = {};
+    try {
+      const response = await httpClient.get('../api/alerting/monitors', {
+        query: { ...DEFAULT_QUERY_PARAMS, from, size },
+      });
+      if (response.ok) {
+        const returnedMonitors = _.get(response, 'monitors', []);
+        alertsByTriggers.map((alert) => {
+          const { monitor_id } = alert;
+          monitors[monitor_id] = returnedMonitors.find((entry) => {
+            return entry.id === monitor_id;
+          });
+        });
+      } else {
+        console.log('error getting monitors:', response);
+      }
+    } catch (err) {
+      console.error(err);
+    }
+    this.setState({ ...this.state, loadingMonitors: false, monitors: monitors });
+  }
 
   // TODO: exists in both Dashboard and Monitors, should be moved to redux when implemented
   acknowledgeAlert = async () => {
@@ -316,6 +347,8 @@ export default class Dashboard extends Component {
       alerts,
       alertsByTriggers,
       alertState,
+      loadingMonitors,
+      monitors,
       page,
       search,
       severityLevel,
@@ -332,15 +365,31 @@ export default class Dashboard extends Component {
       perAlertView,
       monitorType,
       groupBy,
+      setFlyout,
+      httpClient,
+      location,
+      history,
+      notifications,
+      isAlertsFlyout = false,
     } = this.props;
     const totalItems = perAlertView ? totalAlerts : totalTriggers;
     const isBucketMonitor = monitorType === MONITOR_TYPE.BUCKET_LEVEL;
 
-    const columnType = perAlertView
+    let columnType = perAlertView
       ? isBucketMonitor
         ? insertGroupByColumn(groupBy)
         : queryColumns
-      : alertColumns;
+      : alertColumns(
+          history,
+          httpClient,
+          loadingMonitors,
+          location,
+          monitors,
+          notifications,
+          setFlyout
+        );
+
+    if (isAlertsFlyout) columnType = removeColumns(['severity', 'trigger_name'], columnType);
 
     const pagination = {
       pageIndex: page,
@@ -400,6 +449,7 @@ export default class Dashboard extends Component {
           onSeverityChange={this.onSeverityLevelChange}
           onStateChange={this.onAlertStateChange}
           onPageChange={this.onPageClick}
+          isAlertsFlyout={isAlertsFlyout}
         />
 
         <EuiHorizontalRule margin="xs" />
