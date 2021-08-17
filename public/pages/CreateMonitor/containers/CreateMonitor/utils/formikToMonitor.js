@@ -27,7 +27,7 @@
 import _ from 'lodash';
 import moment from 'moment-timezone';
 import { BUCKET_COUNT, DEFAULT_COMPOSITE_AGG_SIZE, FORMIK_INITIAL_VALUES } from './constants';
-import { SEARCH_TYPE } from '../../../../../utils/constants';
+import { MONITOR_TYPE, SEARCH_TYPE } from '../../../../../utils/constants';
 import { OPERATORS_QUERY_MAP } from './whereFilters';
 
 export function formikToMonitor(values) {
@@ -168,8 +168,8 @@ export function formikToExtractionQuery(values) {
 }
 
 export function formikToGraphQuery(values) {
-  const { bucketValue, bucketUnitOfTime } = values;
-  const hasGroupBy = values.groupBy.length;
+  const { bucketValue, bucketUnitOfTime, monitor_type } = values;
+  const hasGroupBy = monitor_type === MONITOR_TYPE.BUCKET_LEVEL;
   const aggregation = hasGroupBy
     ? formikToCompositeAggregation(values)
     : formikToAggregation(values);
@@ -201,8 +201,8 @@ export function formikToGraphQuery(values) {
 }
 
 export function formikToUiGraphQuery(values) {
-  const { bucketValue, bucketUnitOfTime } = values;
-  const hasGroupBy = values.groupBy.length;
+  const { bucketValue, bucketUnitOfTime, monitor_type } = values;
+  const hasGroupBy = monitor_type === MONITOR_TYPE.BUCKET_LEVEL;
   //TODO: Check whether the condition should be using group by or monitor_type
   const aggregation = hasGroupBy
     ? formikToUiCompositeAggregation(values)
