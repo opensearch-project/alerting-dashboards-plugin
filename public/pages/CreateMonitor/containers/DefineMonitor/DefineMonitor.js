@@ -174,7 +174,10 @@ class DefineMonitor extends Component {
           isBucketMonitor={isBucketMonitor}
         />
         <EuiSpacer size="m" />
-        <EuiAccordion buttonContent="Preview query and performance">
+        <EuiAccordion
+          id="preview-query-performance-accordion"
+          buttonContent="Preview query and performance"
+        >
           <EuiSpacer size="m" />
           <QueryPerformance
             response={performanceResponse}
@@ -187,9 +190,9 @@ class DefineMonitor extends Component {
           {errors.where ? (
             renderEmptyMessage('Invalid input in data filter. Remove data filter or adjust filter ')
           ) : aggregations.length ? (
-            _.map(aggregations, (field) => {
+            aggregations.map((field, index) => {
               return (
-                <Fragment>
+                <Fragment key={`multi-visual-graph-${index}`}>
                   <EuiSpacer size="m" />
                   <VisualGraph
                     values={this.state.formikSnapshot}
@@ -307,6 +310,7 @@ class DefineMonitor extends Component {
       throw err;
     }
   }
+
   renderVisualMonitor() {
     const { values } = this.props;
     const { index, timeField } = values;
@@ -327,6 +331,7 @@ class DefineMonitor extends Component {
       ),
     };
   }
+
   renderExtractionQuery() {
     const { values, isDarkMode } = this.props;
     const { response, performanceResponse } = this.state;
@@ -371,6 +376,7 @@ class DefineMonitor extends Component {
         return this.renderExtractionQuery();
     }
   }
+
   showPluginWarning() {
     const { values } = this.props;
     const { plugins } = this.state;

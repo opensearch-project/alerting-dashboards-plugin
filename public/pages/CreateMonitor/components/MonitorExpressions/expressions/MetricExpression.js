@@ -12,17 +12,12 @@
 import React, { Component } from 'react';
 import { connect } from 'formik';
 
-import { EuiText, EuiButtonEmpty, EuiSpacer, EuiPopover } from '@elastic/eui';
+import { EuiText, EuiButtonEmpty, EuiSpacer, EuiBadge } from '@elastic/eui';
 import { getIndexFields } from './utils/dataTypes';
-import { getMetricExpressionAllowedTypes, getOfExpressionAllowedTypes } from './utils/helpers';
+import { getMetricExpressionAllowedTypes } from './utils/helpers';
 import _ from 'lodash';
-import {
-  FORMIK_INITIAL_AGG_VALUES,
-  FORMIK_INITIAL_VALUES,
-} from '../../../containers/CreateMonitor/utils/constants';
+import { FORMIK_INITIAL_AGG_VALUES } from '../../../containers/CreateMonitor/utils/constants';
 import { MetricItem } from './index';
-import { Expressions } from './utils/constants';
-import MetricPopover from './MetricPopover';
 
 class MetricExpression extends Component {
   renderFieldItems = (arrayHelpers, fieldOptions, expressionWidth) => {
@@ -34,7 +29,7 @@ class MetricExpression extends Component {
     } = this.props;
     return values.aggregations.map((aggregation, index) => {
       return (
-        <span style={{ paddingRight: '5px' }}>
+        <span style={{ paddingRight: '5px' }} key={`metric-expr-${index}`}>
           <MetricItem
             values={values}
             onMadeChanges={onMadeChanges}
@@ -55,12 +50,11 @@ class MetricExpression extends Component {
     const {
       formik: { values },
       arrayHelpers,
-      closeExpression,
-      openExpression,
       dataTypes,
     } = this.props;
 
     const fieldOptions = getIndexFields(dataTypes, getMetricExpressionAllowedTypes(values));
+
     const expressionWidth =
       Math.max(
         ...fieldOptions.map(({ options }) =>
@@ -69,29 +63,35 @@ class MetricExpression extends Component {
       ) *
         8 +
       60;
+
     return (
       <div>
         <EuiText size="xs">
           <h4>Metrics</h4>
         </EuiText>
         <EuiSpacer size="s" />
-        {this.renderFieldItems(
-          arrayHelpers,
-          fieldOptions,
-          openExpression,
-          closeExpression,
-          expressionWidth
-        )}
+
+        <span style={{ paddingRight: '5px' }}>
+          <EuiBadge color="hollow" style={{ paddingRight: '5px' }}>
+            COUNT OF documents
+          </EuiBadge>
+        </span>
+
+        {this.renderFieldItems(arrayHelpers, fieldOptions, expressionWidth)}
         <EuiSpacer size="xs" />
-        <EuiButtonEmpty
-          size="xs"
-          onClick={() => {
-            arrayHelpers.push(_.cloneDeep(FORMIK_INITIAL_AGG_VALUES));
-          }}
-          data-test-subj="addMetricButton"
-        >
-          + Add metric
-        </EuiButtonEmpty>
+
+        {values.aggregations.length < 5 && (
+          <EuiButtonEmpty
+            size="xs"
+            onClick={() => {
+              values.aggregationType = FORMIK_INITIAL_AGG_VALUES.aggregationType;
+              arrayHelpers.push(_.cloneDeep(FORMIK_INITIAL_AGG_VALUES));
+            }}
+            data-test-subj="addMetricButton"
+          >
+            + Add another metric
+          </EuiButtonEmpty>
+        )}
       </div>
     );
   }

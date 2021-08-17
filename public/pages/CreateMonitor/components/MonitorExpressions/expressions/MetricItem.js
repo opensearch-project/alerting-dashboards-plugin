@@ -10,7 +10,7 @@
  */
 
 import React, { useState } from 'react';
-import { EuiPopover, EuiBadge } from '@elastic/eui';
+import { EuiPopover, EuiBadge, EuiPopoverTitle } from '@elastic/eui';
 import MetricPopover from './MetricPopover';
 import { Expressions } from './utils/constants';
 
@@ -48,6 +48,7 @@ export default function MetricItem(
       button={
         <div>
           <EuiBadge
+            color="hollow"
             iconSide="right"
             iconType="cross"
             iconOnClick={() => arrayHelpers.remove(index)}
@@ -59,7 +60,7 @@ export default function MetricItem(
             }}
             onClickAriaLabel="Edit metric"
           >
-            {aggregation.aggregationType} of {aggregation.fieldName}
+            {aggregation.aggregationType.toUpperCase()} OF {aggregation.fieldName}
           </EuiBadge>
         </div>
       }
@@ -70,6 +71,7 @@ export default function MetricItem(
       withTitle
       anchorPosition="downLeft"
     >
+      <EuiPopoverTitle> ADD METRIC </EuiPopoverTitle>
       <MetricPopover
         values={values}
         onMadeChanges={onMadeChanges}

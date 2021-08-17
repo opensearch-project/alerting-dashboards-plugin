@@ -9,7 +9,7 @@
  * GitHub history for details.
  */
 
-import React from 'react';
+import React, { useState } from 'react';
 
 import {
   EuiText,
@@ -21,17 +21,31 @@ import {
 } from '@elastic/eui';
 
 import { EXPRESSION_STYLE, POPOVER_STYLE } from './utils/constants';
-import { FormikComboBox, FormikSelect } from '../../../../../components/FormControls';
+import { FormikComboBox } from '../../../../../components/FormControls';
 
 export default function GroupByPopover(
-  { values, onMadeChanges, arrayHelpers, options, closePopover, expressionWidth, index } = this
-    .props
+  {
+    values,
+    onMadeChanges,
+    arrayHelpers,
+    options,
+    closePopover,
+    expressionWidth,
+    index,
+    groupByItem,
+  } = this.props
 ) {
+  const defaultOption = options[0]?.options[0];
+  const [comboOption, setComboOption] = useState(groupByItem ? groupByItem : defaultOption.label);
+
   const onChangeFieldWrapper = (options, field, form) => {
     onMadeChanges();
-    form.setFieldValue('groupByField', options);
+    // form.setFieldValue('groupByField', options);
     form.setFieldError('groupBy', undefined);
+    setComboOption(options[0].label);
   };
+
+  // console.log(`groupBy groupByField ${JSON.stringify(values.groupBy)}, ${JSON.stringify(values.groupByField)}`)
 
   return (
     <div
@@ -51,6 +65,7 @@ export default function GroupByPopover(
         <EuiFlexItem>
           <FormikComboBox
             name="groupByField"
+            selectedOption={{ label: comboOption }}
             inputProps={{
               placeholder: 'Select a field',
               options,
@@ -62,12 +77,13 @@ export default function GroupByPopover(
           />
         </EuiFlexItem>
       </EuiFlexGroup>
+
       <EuiSpacer size="l" />
+
       <EuiFlexGroup alignItems="center" justifyContent="flexEnd">
         <EuiFlexItem grow={false}>
           <EuiButtonEmpty
             onClick={() => {
-              if (values.groupByField[0].label === '') arrayHelpers.remove(index);
               closePopover();
             }}
           >
@@ -78,8 +94,7 @@ export default function GroupByPopover(
           <EuiButton
             fill
             onClick={() => {
-              if (values.groupByField[0].label === '') arrayHelpers.remove(index);
-              else arrayHelpers.replace(index, values.groupByField[0].label);
+              arrayHelpers.replace(index, comboOption);
               closePopover();
             }}
           >

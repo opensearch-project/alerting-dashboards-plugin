@@ -36,7 +36,6 @@ import {
   VerticalRectSeries,
   DiscreteColorLegend,
 } from 'react-vis';
-
 import { SIZE_RANGE, ANNOTATION_STYLES, HINT_STYLES, LINE_STYLES } from './utils/constants';
 import {
   getLeftPadding,
@@ -156,6 +155,7 @@ export default class VisualGraph extends Component {
             const rectData = getRectData(dataSeries.data, width, index, arr.length);
             return (
               <VerticalRectSeries
+                key={`vertical-rect-${index}`}
                 className={dataSeries.key}
                 data={rectData}
                 onValueMouseOver={(d) => this.onValueMouseOver(d, dataSeries.key)}
