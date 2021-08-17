@@ -27,7 +27,7 @@
 import React, { Component, Fragment } from 'react';
 import _ from 'lodash';
 import PropTypes from 'prop-types';
-import { EuiSpacer, EuiButton, EuiCallOut } from '@elastic/eui';
+import { EuiSpacer, EuiButton, EuiCallOut, EuiAccordion } from '@elastic/eui';
 import ContentPanel from '../../../../components/ContentPanel';
 import VisualGraph from '../../components/VisualGraph';
 import ExtractionQuery from '../../components/ExtractionQuery';
@@ -106,8 +106,9 @@ class DefineMonitor extends Component {
       index: prevIndex,
       timeField: prevTimeField,
       monitor_type: prevMonitorType,
+      groupBy: prevGroupBy,
     } = prevProps.values;
-    const { searchType, index, timeField, monitor_type } = this.props.values;
+    const { searchType, index, timeField, monitor_type, groupBy } = this.props.values;
     const isGraph = searchType === SEARCH_TYPE.GRAPH;
     const hasIndices = !!index.length;
     // If customer is defining query through extraction query, then they are manually running their own queries
@@ -127,12 +128,16 @@ class DefineMonitor extends Component {
       // c) different time fields, to aggregate on new data/axis
       const diffTimeFields = prevTimeField !== timeField;
       const hasTimeField = !!timeField;
+      const wasQueryType =
+        prevMonitorType === MONITOR_TYPE.QUERY_LEVEL && monitor_type === MONITOR_TYPE.BUCKET_LEVEL;
       if (hasTimeField) {
-        if (wasQuery || diffIndices || diffTimeFields) this.onRunQuery();
+        if (wasQuery || diffIndices || diffTimeFields || wasQueryType) this.onRunQuery();
       }
     }
+    const groupByCleared = prevGroupBy && !groupBy;
     // Reset response when monitor type or definition method is changed
-    if (prevSearchType !== searchType) this.resetResponse();
+    if (prevSearchType !== searchType || prevMonitorType !== monitor_type || groupByCleared)
+      this.resetResponse();
   }
 
   async getPlugins() {
@@ -151,9 +156,11 @@ class DefineMonitor extends Component {
 
   renderGraph() {
     const { errors, touched, values } = this.props;
-    const isQueryLevelMonitor = _.get(values, 'monitor_type') === MONITOR_TYPE.QUERY_LEVEL;
+    const { response, performanceResponse } = this.state;
+    const { index, timeField } = values;
+    const isBucketMonitor = _.get(values, 'monitor_type') === MONITOR_TYPE.BUCKET_LEVEL;
     const aggregations = _.get(values, 'aggregations');
-
+    const runIsDisabled = !index.length || !timeField;
     // TODO: Implement different graph view for query-level and bucket-level monitor
     // if (isQueryLevelMonitor)
     return (
@@ -164,28 +171,43 @@ class DefineMonitor extends Component {
           touched={touched}
           onRunQuery={this.onRunQuery}
           dataTypes={this.state.dataTypes}
+          isBucketMonitor={isBucketMonitor}
         />
-        <EuiSpacer size="s" />
-        {errors.where ? (
-          renderEmptyMessage('Invalid input in WHERE filter. Remove WHERE filter or adjust filter ')
-        ) : aggregations.length ? (
-          _.map(aggregations, (field) => {
-            return (
-              <VisualGraph
-                values={this.state.formikSnapshot}
-                fieldName={field.fieldName}
-                aggregationType={field.aggregationType}
-                response={this.state.response}
-              />
-            );
-          })
-        ) : (
-          <VisualGraph
-            values={this.state.formikSnapshot}
-            fieldName="Select a field"
-            response={this.state.response}
+        <EuiSpacer size="m" />
+        <EuiAccordion buttonContent="Preview query and performance">
+          <EuiSpacer size="m" />
+          <QueryPerformance
+            response={performanceResponse}
+            actions={[
+              <EuiButton disabled={runIsDisabled} onClick={this.onRunQuery}>
+                Run
+              </EuiButton>,
+            ]}
           />
-        )}
+          {errors.where ? (
+            renderEmptyMessage('Invalid input in data filter. Remove data filter or adjust filter ')
+          ) : aggregations.length ? (
+            _.map(aggregations, (field) => {
+              return (
+                <Fragment>
+                  <EuiSpacer size="m" />
+                  <VisualGraph
+                    values={this.state.formikSnapshot}
+                    fieldName={field.fieldName}
+                    aggregationType={field.aggregationType}
+                    response={response}
+                  />
+                </Fragment>
+              );
+            })
+          ) : (
+            <VisualGraph
+              values={this.state.formikSnapshot}
+              fieldName="Select a field"
+              response={this.state.response}
+            />
+          )}
+        </EuiAccordion>
       </Fragment>
     );
   }
@@ -288,7 +310,6 @@ class DefineMonitor extends Component {
   renderVisualMonitor() {
     const { values } = this.props;
     const { index, timeField } = values;
-    const { performanceResponse } = this.state;
     let content = null;
     if (index.length) {
       content = timeField
@@ -302,8 +323,6 @@ class DefineMonitor extends Component {
       content: (
         <React.Fragment>
           <div style={{ padding: '0px 10px' }}>{content}</div>
-          <EuiSpacer size="m" />
-          <QueryPerformance response={performanceResponse} />
         </React.Fragment>
       ),
     };
