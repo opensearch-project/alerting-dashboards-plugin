@@ -10,18 +10,18 @@
  */
 
 /*
- *   Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2021 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
- *   Licensed under the Apache License, Version 2.0 (the "License").
- *   You may not use this file except in compliance with the License.
- *   A copy of the License is located at
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- *   or in the "license" file accompanying this file. This file is distributed
- *   on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- *   express or implied. See the License for the specific language governing
- *   permissions and limitations under the License.
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
  */
 
 import React from 'react';
@@ -30,11 +30,11 @@ import { ALERT_STATE } from '../../../../utils/constants';
 
 const severityOptions = [
   { value: 'ALL', text: 'All severity levels' },
-  { value: '1', text: '1' },
-  { value: '2', text: '2' },
-  { value: '3', text: '3' },
-  { value: '4', text: '4' },
-  { value: '5', text: '5' },
+  { value: '1', text: '1 (Highest)' },
+  { value: '2', text: '2 (High)' },
+  { value: '3', text: '3 (Medium)' },
+  { value: '4', text: '4 (Low)' },
+  { value: '5', text: '5 (Lowest)' },
 ];
 
 const stateOptions = [
@@ -56,6 +56,7 @@ const DashboardControls = ({
   onSeverityChange,
   onStateChange,
   onPageChange,
+  isAlertsFlyout = false,
 }) => (
   <EuiFlexGroup style={{ padding: '0px 5px' }}>
     <EuiFlexItem>
@@ -66,9 +67,13 @@ const DashboardControls = ({
         value={search}
       />
     </EuiFlexItem>
-    <EuiFlexItem grow={false}>
-      <EuiSelect options={severityOptions} value={severity} onChange={onSeverityChange} />
-    </EuiFlexItem>
+
+    {isAlertsFlyout ? null : (
+      <EuiFlexItem grow={false}>
+        <EuiSelect options={severityOptions} value={severity} onChange={onSeverityChange} />
+      </EuiFlexItem>
+    )}
+
     <EuiFlexItem grow={false}>
       <EuiSelect options={stateOptions} value={state} onChange={onStateChange} />
     </EuiFlexItem>

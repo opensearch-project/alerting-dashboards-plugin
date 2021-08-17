@@ -10,27 +10,33 @@
  */
 
 /*
- *   Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2021 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
- *   Licensed under the Apache License, Version 2.0 (the "License").
- *   You may not use this file except in compliance with the License.
- *   A copy of the License is located at
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- *   or in the "license" file accompanying this file. This file is distributed
- *   on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- *   express or implied. See the License for the specific language governing
- *   permissions and limitations under the License.
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
  */
 
 import React from 'react';
 import { EuiFieldSearch, EuiFlexGroup, EuiFlexItem, EuiPagination, EuiSelect } from '@elastic/eui';
 
+const MONITOR_STATES = {
+  ALL: 'all',
+  ENABLED: 'enabled',
+  DISABLED: 'disabled',
+};
+
 const states = [
-  { value: 'all', text: 'All states' },
-  { value: 'enabled', text: 'Enabled' },
-  { value: 'disabled', text: 'Disabled' },
+  { value: MONITOR_STATES.ALL, text: 'All states' },
+  { value: MONITOR_STATES.ENABLED, text: 'Enabled' },
+  { value: MONITOR_STATES.DISABLED, text: 'Disabled' },
 ];
 
 const MonitorControls = ({
