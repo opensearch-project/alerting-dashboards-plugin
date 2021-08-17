@@ -108,8 +108,9 @@ class DefineMonitor extends Component {
       index: prevIndex,
       timeField: prevTimeField,
       monitor_type: prevMonitorType,
+      groupBy: prevGroupBy,
     } = prevProps.values;
-    const { searchType, index, timeField, monitor_type } = this.props.values;
+    const { searchType, index, timeField, monitor_type, groupBy } = this.props.values;
     const isGraph = searchType === SEARCH_TYPE.GRAPH;
     const hasIndices = !!index.length;
     // If customer is defining query through extraction query, then they are manually running their own queries
@@ -132,12 +133,13 @@ class DefineMonitor extends Component {
       const wasQueryType =
         prevMonitorType === MONITOR_TYPE.QUERY_LEVEL && monitor_type === MONITOR_TYPE.BUCKET_LEVEL;
       if (hasTimeField) {
-        // TODO: check whether bucket level query is changed here and run query
         if (wasQuery || diffIndices || diffTimeFields || wasQueryType) this.onRunQuery();
       }
     }
+    const groupByCleared = prevGroupBy && !groupBy;
     // Reset response when monitor type or definition method is changed
-    if (prevSearchType !== searchType || prevMonitorType !== monitor_type) this.resetResponse();
+    if (prevSearchType !== searchType || prevMonitorType !== monitor_type || groupByCleared)
+      this.resetResponse();
   }
 
   async getPlugins() {
