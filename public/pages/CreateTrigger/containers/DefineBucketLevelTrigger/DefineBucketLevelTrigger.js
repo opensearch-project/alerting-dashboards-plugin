@@ -1,4 +1,15 @@
 /*
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * The OpenSearch Contributors require contributions made to
+ * this file be licensed under the Apache-2.0 license or a
+ * compatible open source license.
+ *
+ * Modifications Copyright OpenSearch Contributors. See
+ * GitHub history for details.
+ */
+
+/*
  * Copyright 2021 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
@@ -306,9 +317,9 @@ class DefineBucketLevelTrigger extends Component {
             Remove trigger
           </EuiButton>
         }
-        style={{ paddingBottom: '15px', paddingTop: triggerIndex === 0 ? '10px' : '10px' }}
+        style={{ paddingBottom: '15px', paddingTop: '10px' }}
       >
-        <div style={{ padding: '0px 10px', paddingTop: '20px' }}>
+        <div style={{ padding: '0px 10px', paddingTop: '10px' }}>
           <FormikFieldText
             name={`${fieldPath}name`}
             fieldProps={{ validate: validateTriggerName(triggers, triggerValues, fieldPath) }}
@@ -329,20 +340,22 @@ class DefineBucketLevelTrigger extends Component {
           {bucketLevelTriggerContent}
 
           <EuiSpacer size={'l'} />
-          <FieldArray name={`${fieldPath}actions`} validateOnChange={true}>
-            {(arrayHelpers) => (
-              <ConfigureActions
-                arrayHelpers={arrayHelpers}
-                context={context}
-                httpClient={httpClient}
-                setFlyout={setFlyout}
-                values={triggerValues}
-                notifications={notifications}
-                fieldPath={fieldPath}
-                triggerIndex={triggerIndex}
-              />
-            )}
-          </FieldArray>
+          <div style={{ paddingLeft: '10px', paddingRight: '10px' }}>
+            <FieldArray name={`${fieldPath}actions`} validateOnChange={true}>
+              {(arrayHelpers) => (
+                <ConfigureActions
+                  arrayHelpers={arrayHelpers}
+                  context={context}
+                  httpClient={httpClient}
+                  setFlyout={setFlyout}
+                  values={triggerValues}
+                  notifications={notifications}
+                  fieldPath={fieldPath}
+                  triggerIndex={triggerIndex}
+                />
+              )}
+            </FieldArray>
+          </div>
         </div>
       </EuiAccordion>
     );

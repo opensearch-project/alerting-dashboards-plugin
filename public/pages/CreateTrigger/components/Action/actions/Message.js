@@ -24,7 +24,7 @@
  * permissions and limitations under the License.
  */
 
-import React, { Fragment, useState } from 'react';
+import React, { useState } from 'react';
 import _ from 'lodash';
 import Mustache from 'mustache';
 import {
@@ -181,16 +181,19 @@ export default function Message(
     `${actionExecutionPolicyPath}.action_execution_scope.${NOTIFY_OPTIONS_VALUES.PER_ALERT}.actionable_alerts`
   );
 
-  if (
-    actionExecutionScopeId === NOTIFY_OPTIONS_VALUES.PER_ALERT &&
-    actionableAlertsSelections === undefined
-  ) {
-    _.set(
-      values,
-      `${actionExecutionPolicyPath}.action_execution_scope.${NOTIFY_OPTIONS_VALUES.PER_ALERT}.actionable_alerts`,
-      DEFAULT_ACTIONABLE_ALERTS_SELECTIONS
-    );
-    actionableAlertsSelections = DEFAULT_ACTIONABLE_ALERTS_SELECTIONS;
+  if (actionExecutionScopeId === NOTIFY_OPTIONS_VALUES.PER_ALERT) {
+    if (_.get(values, `${actionExecutionPolicyPath}.throttle.value`) === undefined) {
+      _.set(values, `${actionExecutionPolicyPath}.throttle.value`, 10);
+    }
+
+    if (actionableAlertsSelections === undefined) {
+      _.set(
+        values,
+        `${actionExecutionPolicyPath}.action_execution_scope.${NOTIFY_OPTIONS_VALUES.PER_ALERT}.actionable_alerts`,
+        DEFAULT_ACTIONABLE_ALERTS_SELECTIONS
+      );
+      actionableAlertsSelections = DEFAULT_ACTIONABLE_ALERTS_SELECTIONS;
+    }
   }
 
   let preview = '';
@@ -369,61 +372,54 @@ export default function Message(
         </EuiFormRow>
       ) : null}
 
-      <EuiFormRow
-        label={<span style={{ color: '#343741' }}>Throttling</span>}
-        style={{ maxWidth: '100%' }}
-      >
-        <EuiFlexGroup direction="column">
-          <EuiFlexItem grow={false} style={{ marginBottom: '0px' }}>
-            <FormikCheckbox
-              name={`${fieldPath}actions.${index}.throttle_enabled`}
-              inputProps={{
-                disabled: actionExecutionScopeId === NOTIFY_OPTIONS_VALUES.PER_EXECUTION,
-                label: 'Enable action throttling',
-              }}
-            />
-          </EuiFlexItem>
-          <EuiFlexGroup
-            alignItems="center"
-            style={{ margin: '0px', display: _.get(action, `throttle_enabled`) ? '' : 'none' }}
-          >
-            <EuiFlexItem grow={false} style={{ marginRight: '0px' }}>
-              <EuiFormRow label="Throttle actions to only trigger every">
-                <FormikFieldNumber
-                  name={`${actionExecutionPolicyPath}.throttle.value`}
-                  fieldProps={{ validate: validateActionThrottle(action) }}
-                  formRow={true}
-                  rowProps={{
-                    isInvalid: isInvalidActionThrottle(action),
-                    helpText: !isInvalidActionThrottle(action) && WRONG_THROTTLE_WARNING,
-                    error: [WRONG_THROTTLE_WARNING],
-                  }}
-                  inputProps={{
-                    style: { width: '400px', height: '40px' },
-                    min: 1,
-                    max: MAX_THROTTLE_VALUE,
-                    compressed: true,
-                    append: (
-                      <EuiText
-                        style={{
-                          height: '40px',
-                          lineHeight: '24px',
-                          backgroundColor: 'transparent',
-                          paddingLeft: '4px',
-                        }}
-                      >
-                        minutes
-                      </EuiText>
-                    ),
-                    className: 'euiFieldText',
-                    disabled: !_.get(action, `throttle_enabled`) ? 'disabled' : '',
-                  }}
-                />
-              </EuiFormRow>
+      {actionExecutionScopeId !== NOTIFY_OPTIONS_VALUES.PER_EXECUTION ? (
+        <EuiFormRow label={'Throttling'} style={{ paddingBottom: '10px', maxWidth: '100%' }}>
+          <EuiFlexGroup direction="column">
+            <EuiFlexItem grow={false} style={{ marginBottom: '0px' }}>
+              <FormikCheckbox
+                name={`${fieldPath}actions.${index}.throttle_enabled`}
+                inputProps={{ label: 'Enable action throttling' }}
+              />
             </EuiFlexItem>
+            <EuiFlexGroup
+              alignItems="center"
+              style={{ margin: '0px', display: _.get(action, `throttle_enabled`) ? '' : 'none' }}
+            >
+              <EuiFlexItem grow={false} style={{ marginRight: '0px' }}>
+                <EuiFormRow label="Throttle actions to only trigger every">
+                  <FormikFieldNumber
+                    name={`${actionExecutionPolicyPath}.throttle.value`}
+                    fieldProps={{ validate: validateActionThrottle(action) }}
+                    formRow={true}
+                    rowProps={{
+                      isInvalid: isInvalidActionThrottle(action),
+                      helpText: !isInvalidActionThrottle(action) && WRONG_THROTTLE_WARNING,
+                      error: [WRONG_THROTTLE_WARNING],
+                    }}
+                    inputProps={{
+                      style: { width: '400px' },
+                      min: 1,
+                      max: MAX_THROTTLE_VALUE,
+                      append: (
+                        <EuiText
+                          style={{
+                            backgroundColor: 'transparent',
+                            paddingLeft: '4px',
+                          }}
+                        >
+                          minutes
+                        </EuiText>
+                      ),
+                      className: 'euiFieldText',
+                      disabled: !_.get(action, `throttle_enabled`) ? 'disabled' : '',
+                    }}
+                  />
+                </EuiFormRow>
+              </EuiFlexItem>
+            </EuiFlexGroup>
           </EuiFlexGroup>
-        </EuiFlexGroup>
-      </EuiFormRow>
+        </EuiFormRow>
+      ) : null}
     </div>
   );
 }
