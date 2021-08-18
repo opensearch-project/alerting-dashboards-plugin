@@ -59,6 +59,7 @@ const MonitorDefinitionCard = ({ values, resetResponse, plugins }) => {
               onChange: (e, field, form) => {
                 onChangeDefinition(e, form);
               },
+              'data-test-subj': 'visualEditorRadioCard',
             }}
           />
         </EuiFlexItem>
@@ -75,6 +76,7 @@ const MonitorDefinitionCard = ({ values, resetResponse, plugins }) => {
               onChange: (e, field, form) => {
                 onChangeDefinition(e, form);
               },
+              'data-test-subj': 'extractionQueryEditorRadioCard',
             }}
           />
         </EuiFlexItem>
@@ -92,6 +94,7 @@ const MonitorDefinitionCard = ({ values, resetResponse, plugins }) => {
                 onChange: (e, field, form) => {
                   onChangeDefinition(e, form);
                 },
+                'data-test-subj': 'anomalyDetectorRadioCard',
               }}
             />
           </EuiFlexItem>

@@ -1,5 +1,5 @@
 {
-  "name": "sample_monitor_with_always_true_trigger",
+  "name": "sample_query_level_monitor_with_always_true_trigger",
   "enabled": true,
   "schedule": {
     "period": {

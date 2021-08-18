@@ -82,7 +82,7 @@ export default function GroupByPopover(
               onChange: onChangeFieldWrapper,
               isClearable: false,
               singleSelection: { asPlainText: true },
-              'data-test-subj': 'ofFieldComboBox',
+              'data-test-subj': `groupBy.${index}.ofFieldComboBox`,
             }}
           />
         </EuiFlexItem>
