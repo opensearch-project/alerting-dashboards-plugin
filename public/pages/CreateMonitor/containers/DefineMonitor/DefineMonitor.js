@@ -100,15 +100,16 @@ class DefineMonitor extends Component {
     }
   }
 
-  componentDidUpdate(prevProps) {
+  componentDidUpdate(prevProps, prevState) {
     const {
       searchType: prevSearchType,
       index: prevIndex,
       timeField: prevTimeField,
       monitor_type: prevMonitorType,
       groupBy: prevGroupBy,
+      aggregations: prevAggregations,
     } = prevProps.values;
-    const { searchType, index, timeField, monitor_type, groupBy } = this.props.values;
+    const { searchType, index, timeField, monitor_type, groupBy, aggregations } = this.props.values;
     const isGraph = searchType === SEARCH_TYPE.GRAPH;
     const hasIndices = !!index.length;
     // If customer is defining query through extraction query, then they are manually running their own queries
@@ -135,6 +136,20 @@ class DefineMonitor extends Component {
       }
     }
     const groupByCleared = prevGroupBy && !groupBy;
+
+    // console.log(`=============`)
+    // console.log(`prev aggregations ${JSON.stringify(prevAggregations)}`)
+    // console.log(`current aggregations ${JSON.stringify(aggregations)}`)
+    // console.log(`Prev == Curr? props ${_.isEqual(prevProps, this.props)}`)
+    // console.log(`Prev == Curr? state ${_.isEqual(prevState, this.state)}`)
+    // console.log(`Prev == Curr? state plugin ${_.isEqual(prevState.plugins, this.state.plugins)}`)
+    // console.log(`Prev == Curr? state response ${_.isEqual(prevState.response, this.state.response)}`)
+    // console.log(`Prev == Curr? state dataTypes ${_.isEqual(prevState.dataTypes, this.state.dataTypes)}`)
+    // console.log(`Prev == Curr? state formik ${_.isEqual(prevState.formikSnapshot, this.state.formikSnapshot)}`)
+    // console.log(`lodash compare ${_.isEqual(prevAggregations, aggregations)}`)
+    // console.log(`=============`)
+    if (prevAggregations !== aggregations) this.onRunQuery();
+    if (prevGroupBy !== groupBy) this.onRunQuery();
     // Reset response when monitor type or definition method is changed
     if (prevSearchType !== searchType || prevMonitorType !== monitor_type || groupByCleared)
       this.resetResponse();
@@ -172,6 +187,7 @@ class DefineMonitor extends Component {
           onRunQuery={this.onRunQuery}
           dataTypes={this.state.dataTypes}
           isBucketMonitor={isBucketMonitor}
+          topCloseExpression={this.topCloseExpression}
         />
         <EuiSpacer size="m" />
         <EuiAccordion
@@ -217,6 +233,10 @@ class DefineMonitor extends Component {
 
   async onRunQuery() {
     const { httpClient, values, notifications } = this.props;
+    console.log(`========= query ===========`);
+    console.log(`run query with aggregations ${JSON.stringify(values.aggregations)}`);
+    console.log(`run query with groupby ${JSON.stringify(values.groupBy)}`);
+    console.log(`========= query ===========`);
     const formikSnapshot = _.cloneDeep(values);
 
     const searchType = values.searchType;
@@ -267,6 +287,7 @@ class DefineMonitor extends Component {
         const performanceResponse = optionalResponse
           ? _.get(optionalResponse, 'resp.input_results.results[0]', null)
           : response;
+        console.log(`query finished, set state`);
         this.setState({ response, formikSnapshot, performanceResponse });
       } else {
         console.error('There was an error running the query', queryResponse.resp);
@@ -385,6 +406,12 @@ class DefineMonitor extends Component {
 
   render() {
     const { values, errors, httpClient, detectorId, notifications, isDarkMode } = this.props;
+
+    // console.log(`========= monitor render ===========`)
+    // console.log(`aggregations ${JSON.stringify(values.aggregations)}`)
+    // console.log(`groupby ${JSON.stringify(values.groupBy)}`)
+    // console.log(`========= monitor render ===========`)
+
     const { dataTypes } = this.state;
     const monitorContent = this.getMonitorContent();
     const { searchType } = this.props.values;

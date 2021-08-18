@@ -230,8 +230,8 @@ class WhereExpression extends Component {
     const whereValues = _.get(values, `${fieldPath}where`);
     const whereFieldName = _.get(whereValues, 'fieldName[0].label', undefined);
 
-    console.log(`where: ${JSON.stringify(values.where)}`);
-    console.log(`opened state: ${JSON.stringify(openedStates)}`);
+    // console.log(`where: ${JSON.stringify(values.where)}`);
+    // console.log(`opened state: ${JSON.stringify(openedStates)}`);
 
     return (
       <div>

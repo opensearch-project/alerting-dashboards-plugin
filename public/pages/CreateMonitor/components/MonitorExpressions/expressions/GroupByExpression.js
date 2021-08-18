@@ -61,6 +61,9 @@ class GroupByExpression extends Component {
     const fieldOptions = getIndexFields(dataTypes, getGroupByExpressionAllowedTypes(values));
     const defaultOption = fieldOptions[0]?.options[0];
 
+    // if (dataTypes['keyword']) console.log(`data types ${JSON.stringify([...dataTypes['keyword']])}`)
+    // console.log(`Group by options ${JSON.stringify(fieldOptions)}`)
+
     const expressionWidth =
       Math.max(
         ...fieldOptions.map(({ options }) =>
@@ -76,6 +79,18 @@ class GroupByExpression extends Component {
       values.monitor_type === MONITOR_TYPE.BUCKET_LEVEL
     )
       errors.groupBy = GROUP_BY_ERROR;
+
+    const { monitor_type: monitorType, groupBy } = values;
+
+    let showAddButtonFlag = false;
+    if (MONITOR_TYPE.QUERY_LEVEL === monitorType && groupBy.length < 1) {
+      showAddButtonFlag = true;
+    } else if (MONITOR_TYPE.BUCKET_LEVEL === monitorType && groupBy.length < 2) {
+      showAddButtonFlag = true;
+    }
+    console.log(
+      `monitor type and groupby: ${JSON.stringify(monitorType)}, ${JSON.stringify(groupBy)}`
+    );
 
     return (
       <div>
@@ -93,11 +108,11 @@ class GroupByExpression extends Component {
         {this.renderFieldItems(arrayHelpers, fieldOptions, expressionWidth)}
         <EuiSpacer size="xs" />
 
-        {values.groupBy.length < 2 && (
+        {showAddButtonFlag && (
           <EuiButtonEmpty
             size="xs"
             onClick={() => {
-              values.groupByField = defaultOption ? [defaultOption] : [];
+              // values.groupByField = defaultOption ? [defaultOption] : [];
               this.setState({ addButtonTouched: true });
               arrayHelpers.push('');
             }}

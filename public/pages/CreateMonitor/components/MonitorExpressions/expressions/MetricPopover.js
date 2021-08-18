@@ -44,7 +44,7 @@ export default function MetricPopover(
 
   const onChangeWrapper = (e, field) => {
     onMadeChanges();
-    field.onChange(e);
+    // field.onChange(e);
     setSelectOption(e.target.value);
     // console.log(`select field ${JSON.stringify(e.target.value)}`)
     // console.log(`select field ${JSON.stringify(field)}`)
@@ -52,7 +52,7 @@ export default function MetricPopover(
 
   const onChangeFieldWrapper = (options, field, form) => {
     onMadeChanges();
-    form.setFieldValue('fieldName', options);
+    // form.setFieldValue('fieldName', options);
     setComboOption(options[0].label);
     // console.log(`combo options ${JSON.stringify(options)}`)
   };
@@ -135,6 +135,7 @@ export default function MetricPopover(
           <EuiButton
             fill
             onClick={() => {
+              console.log('save metric');
               arrayHelpers.replace(index, {
                 aggregationType: selectOption,
                 fieldName: comboOption,

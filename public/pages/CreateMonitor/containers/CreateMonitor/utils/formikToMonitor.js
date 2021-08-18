@@ -263,10 +263,9 @@ export function formikToWhereClause({ where }) {
 }
 
 export function formikToWhenAggregation(values) {
-  const {
-    aggregationType,
-    fieldName: [{ label: field } = {}],
-  } = values;
+  const { aggregations } = values;
+  const aggregationType = aggregations[0]?.aggregationType;
+  const field = aggregations[0]?.fieldName;
   if (aggregationType === 'count' || !field) return {};
   return { when: { [aggregationType]: { field } } };
 }
@@ -319,6 +318,8 @@ export function formikToUiCompositeAggregation(values) {
 export function formikToCompositeAggregation(values) {
   const { aggregations, groupBy } = values;
 
+  // groupBy: [string,]
+  // [{label: keyword_value}]
   let aggs = {};
   aggregations.map((aggItem) => {
     // TODO: Changing any occurrence of '.' in the fieldName to '_' since the

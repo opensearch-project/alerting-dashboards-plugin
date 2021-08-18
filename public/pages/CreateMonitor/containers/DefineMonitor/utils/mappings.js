@@ -43,6 +43,7 @@ export function getFieldsFromProperties(properties, dataTypes, path) {
 }
 
 export function getTypeFromMappings(mappings, dataTypes, path = '') {
+  // properties: { "field_name":{"properties": ...} }
   if (shouldSkip(mappings)) return dataTypes;
   // if there are properties then type is inherently an object
   if (mappings.properties) {
@@ -50,6 +51,7 @@ export function getTypeFromMappings(mappings, dataTypes, path = '') {
     return dataTypes;
   }
 
+  // properties: { "field_name":{"type": "text"} }
   const type = mappings.type;
 
   if (dataTypes[type]) dataTypes[type].add(path);

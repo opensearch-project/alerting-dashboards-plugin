@@ -18,6 +18,7 @@ import { getMetricExpressionAllowedTypes } from './utils/helpers';
 import _ from 'lodash';
 import { FORMIK_INITIAL_AGG_VALUES } from '../../../containers/CreateMonitor/utils/constants';
 import { MetricItem } from './index';
+import { MONITOR_TYPE } from '../../../../../utils/constants';
 
 class MetricExpression extends Component {
   renderFieldItems = (arrayHelpers, fieldOptions, expressionWidth) => {
@@ -64,6 +65,20 @@ class MetricExpression extends Component {
         8 +
       60;
 
+    const { monitor_type: monitorType, aggregations } = values;
+    console.log(
+      `monitor type and aggregations: ${JSON.stringify(monitorType)}, ${JSON.stringify(
+        aggregations
+      )}`
+    );
+
+    let showAddButtonFlag = false;
+    if (MONITOR_TYPE.QUERY_LEVEL === monitorType && aggregations.length < 1) {
+      showAddButtonFlag = true;
+    } else if (MONITOR_TYPE.BUCKET_LEVEL === monitorType && aggregations.length < 5) {
+      showAddButtonFlag = true;
+    }
+
     return (
       <div>
         <EuiText size="xs">
@@ -80,11 +95,11 @@ class MetricExpression extends Component {
         {this.renderFieldItems(arrayHelpers, fieldOptions, expressionWidth)}
         <EuiSpacer size="xs" />
 
-        {values.aggregations.length < 5 && (
+        {showAddButtonFlag && (
           <EuiButtonEmpty
             size="xs"
             onClick={() => {
-              values.aggregationType = FORMIK_INITIAL_AGG_VALUES.aggregationType;
+              // values.aggregationType = FORMIK_INITIAL_AGG_VALUES.aggregationType;
               arrayHelpers.push(_.cloneDeep(FORMIK_INITIAL_AGG_VALUES));
             }}
             data-test-subj="addMetricButton"

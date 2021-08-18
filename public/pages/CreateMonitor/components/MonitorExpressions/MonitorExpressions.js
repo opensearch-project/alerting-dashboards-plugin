@@ -59,11 +59,16 @@ export default class MonitorExpressions extends Component {
 
   closeExpression = (expression) => {
     const { madeChanges, openedStates } = this.state;
-    if (madeChanges && openedStates[expression]) {
-      // if made changes and close expression that was currently open => run query
-      this.props.onRunQuery();
-      this.setState({ madeChanges: false });
-    }
+    console.log(
+      `close expression ${madeChanges}, ${JSON.stringify(expression)}, ${JSON.stringify(
+        openedStates[expression]
+      )}`
+    );
+    // if (madeChanges && openedStates[expression]) {
+    // if made changes and close expression that was currently open => run query
+    // this.props.onRunQuery();
+    this.setState({ madeChanges: true });
+    // }
     this.setState({ openedStates: { ...openedStates, [expression]: false } });
   };
 
@@ -98,19 +103,19 @@ export default class MonitorExpressions extends Component {
         <EuiSpacer size="xs" />
         <WhereExpression {...this.getExpressionProps()} dataTypes={dataTypes} />
         <EuiSpacer size="s" />
-        {isBucketMonitor && (
-          <FieldArray name="groupBy" validateOnChange={false}>
-            {(arrayHelpers) => (
-              <GroupByExpression
-                {...this.getExpressionProps()}
-                errors={errors}
-                touched={touched}
-                arrayHelpers={arrayHelpers}
-                dataTypes={dataTypes}
-              />
-            )}
-          </FieldArray>
-        )}
+        {/*{isBucketMonitor && (*/}
+        <FieldArray name="groupBy" validateOnChange={false}>
+          {(arrayHelpers) => (
+            <GroupByExpression
+              {...this.getExpressionProps()}
+              errors={errors}
+              touched={touched}
+              arrayHelpers={arrayHelpers}
+              dataTypes={dataTypes}
+            />
+          )}
+        </FieldArray>
+        {/*)}*/}
         <EuiSpacer size="xs" />
       </div>
     );
