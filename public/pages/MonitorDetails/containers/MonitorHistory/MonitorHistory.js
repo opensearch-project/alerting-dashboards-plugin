@@ -345,6 +345,7 @@ class MonitorHistory extends PureComponent {
               isLoading={isLoading}
               triggersData={triggersData}
               domainBounds={prevTimeSeriesWindow || timeSeriesWindow}
+              monitorType={this.props.monitorType}
             />
             <POIChart
               isLoading={isLoading}
