@@ -34,6 +34,10 @@ import {
   EuiButtonEmpty,
   EuiText,
   EuiBadge,
+  EuiPanel,
+  EuiEmptyPrompt,
+  EuiButton,
+  EuiSpacer,
 } from '@elastic/eui';
 import _ from 'lodash';
 import {
@@ -205,6 +209,7 @@ class WhereExpression extends Component {
       useTriggerFieldOperators = false,
       fieldPath = '',
     } = this.props;
+
     const indexFields =
       indexFieldFilters !== undefined
         ? getFilteredIndexFields(dataTypes, ALLOWED_TYPES, indexFieldFilters)
@@ -222,70 +227,88 @@ class WhereExpression extends Component {
 
     const whereFilterHeader = useTriggerFieldOperators ? 'Keyword filter' : 'Data filter';
 
+    const whereValues = _.get(values, `${fieldPath}where`);
+    const whereFieldName = _.get(whereValues, 'fieldName[0].label', undefined);
+
+    const showAddButtonFlag = !openedStates[Expressions.WHERE] && !whereFieldName;
+
     return (
       <div>
         <EuiText size="xs">
           <h4>{whereFilterHeader}</h4>
         </EuiText>
-        <EuiBadge
-          iconSide="right"
-          iconType="cross"
-          iconOnClick={() => this.resetValues()}
-          iconOnClickAriaLabel="Remove where filter"
-          onClick={() => {
-            openExpression(Expressions.WHERE);
-          }}
-          onClickAriaLabel="Edit where filter"
-        >
-          {displayText(_.get(values, `${fieldPath}where`))}
-        </EuiBadge>
-        <EuiPopover
-          id="where-popover"
-          button={
-            <EuiButtonEmpty
-              size="xs"
-              data-test-subj="addFilterButton"
-              onClick={() => openExpression(Expressions.WHERE)}
-            >
-              Edit where filter
-            </EuiButtonEmpty>
-          }
-          isOpen={openedStates.WHERE}
-          closePopover={this.handleClosePopOver}
-          panelPaddingSize="none"
-          ownFocus
-          withTitle
-          anchorPosition="downLeft"
-        >
-          <div style={POPOVER_STYLE}>
-            <EuiFlexGroup style={{ ...EXPRESSION_STYLE }}>
-              <EuiFlexItem grow={false} style={{ width: 200 }}>
-                <FormikComboBox
-                  name={`${fieldPath}where.fieldName`}
-                  inputProps={{
-                    placeholder: 'Select a field',
-                    options: indexFields,
-                    onChange: this.handleFieldChange,
-                    isClearable: false,
-                    singleSelection: { asPlainText: true },
-                  }}
-                />
-              </EuiFlexItem>
-              <EuiFlexItem grow={false}>
-                <FormikSelect
-                  name={`${fieldPath}where.operator`}
-                  inputProps={{
-                    onChange: this.handleOperatorChange,
-                    options: fieldOperators,
-                  }}
-                />
-              </EuiFlexItem>
-              {!isNullOperator(fieldOperator) && (
-                <EuiFlexItem>{this.renderValueField(fieldType, fieldOperator)}</EuiFlexItem>
-              )}
-            </EuiFlexGroup>
+
+        {showAddButtonFlag ? (
+          <div style={{ padding: '10px 0px' }}>
+            <p>No filters defined.</p>
           </div>
-        </EuiPopover>
+        ) : (
+          <EuiPopover
+            id={`${whereFilterHeader}-badge-popover`}
+            button={
+              <div>
+                <EuiBadge
+                  color="hollow"
+                  iconSide="right"
+                  iconType="cross"
+                  iconOnClick={() => this.resetValues()}
+                  iconOnClickAriaLabel="Remove where filter"
+                  onClick={() => {
+                    openExpression(Expressions.WHERE);
+                  }}
+                  onClickAriaLabel="Edit where filter"
+                >
+                  {displayText(_.get(values, `${fieldPath}where`))}
+                </EuiBadge>
+              </div>
+            }
+            isOpen={openedStates.WHERE}
+            closePopover={this.handleClosePopOver}
+            panelPaddingSize="none"
+            ownFocus
+            withTitle
+            anchorPosition="downLeft"
+          >
+            <div style={POPOVER_STYLE}>
+              <EuiFlexGroup style={{ ...EXPRESSION_STYLE }}>
+                <EuiFlexItem grow={false} style={{ width: 200 }}>
+                  <FormikComboBox
+                    name={`${fieldPath}where.fieldName`}
+                    inputProps={{
+                      placeholder: 'Select a field',
+                      options: indexFields,
+                      onChange: this.handleFieldChange,
+                      isClearable: false,
+                      singleSelection: { asPlainText: true },
+                    }}
+                  />
+                </EuiFlexItem>
+                <EuiFlexItem grow={false}>
+                  <FormikSelect
+                    name={`${fieldPath}where.operator`}
+                    inputProps={{
+                      onChange: this.handleOperatorChange,
+                      options: fieldOperators,
+                    }}
+                  />
+                </EuiFlexItem>
+                {!isNullOperator(fieldOperator) && (
+                  <EuiFlexItem>{this.renderValueField(fieldType, fieldOperator)}</EuiFlexItem>
+                )}
+              </EuiFlexGroup>
+            </div>
+          </EuiPopover>
+        )}
+
+        {showAddButtonFlag && (
+          <EuiButtonEmpty
+            size="xs"
+            data-test-subj="addFilterButton"
+            onClick={() => openExpression(Expressions.WHERE)}
+          >
+            + Add filter
+          </EuiButtonEmpty>
+        )}
       </div>
     );
   }
