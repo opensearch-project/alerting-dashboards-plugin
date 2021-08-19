@@ -10,18 +10,18 @@
  */
 
 /*
- *   Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2021 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
- *   Licensed under the Apache License, Version 2.0 (the "License").
- *   You may not use this file except in compliance with the License.
- *   A copy of the License is located at
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- *   or in the "license" file accompanying this file. This file is distributed
- *   on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- *   express or implied. See the License for the specific language governing
- *   permissions and limitations under the License.
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
  */
 
 import React, { Component, Fragment } from 'react';
@@ -35,12 +35,9 @@ import {
   EuiLink,
   EuiLoadingSpinner,
   EuiSpacer,
-  EuiText,
   EuiTitle,
-  EuiIcon,
   EuiHealth,
 } from '@elastic/eui';
-
 import CreateMonitor from '../../CreateMonitor';
 import MonitorOverview from '../components/MonitorOverview';
 import MonitorHistory from './MonitorHistory';
@@ -49,7 +46,6 @@ import Triggers from './Triggers';
 import {
   MONITOR_ACTIONS,
   TRIGGER_ACTIONS,
-  OPENSEARCH_DASHBOARDS_AD_PLUGIN,
   MONITOR_INPUT_DETECTOR_ID,
   MONITOR_GROUP_BY,
 } from '../../../utils/constants';
@@ -272,7 +268,7 @@ export default class MonitorDetails extends Component {
     return (
       <div style={{ padding: '25px 50px' }}>
         {this.renderNoTriggersCallOut()}
-        <EuiFlexGroup alignItems="center">
+        <EuiFlexGroup alignItems="flexEnd">
           <EuiFlexItem grow={false}>
             <EuiTitle size="l" style={{ whiteSpace: 'nowrap', overflow: 'hidden' }}>
               <h1
@@ -286,21 +282,8 @@ export default class MonitorDetails extends Component {
                 {monitor.name}
               </h1>
             </EuiTitle>
-            {detector ? (
-              <EuiFlexItem grow={false}>
-                <EuiText size="s">
-                  Created from detector:{' '}
-                  <EuiLink
-                    href={`${OPENSEARCH_DASHBOARDS_AD_PLUGIN}#/detectors/${detectorId}`}
-                    target="_blank"
-                  >
-                    {detector.name} <EuiIcon size="s" type="popout" />
-                  </EuiLink>
-                </EuiText>
-              </EuiFlexItem>
-            ) : null}
           </EuiFlexItem>
-          <EuiFlexItem>
+          <EuiFlexItem style={{ paddingBottom: '5px', marginLeft: '0px' }}>
             {monitor.enabled ? (
               <EuiHealth color="success">Enabled</EuiHealth>
             ) : (
@@ -334,6 +317,8 @@ export default class MonitorDetails extends Component {
           monitorId={monitorId}
           monitorVersion={monitorVersion}
           activeCount={activeCount}
+          detector={detector}
+          detectorId={detectorId}
         />
         <EuiSpacer />
         <Triggers
