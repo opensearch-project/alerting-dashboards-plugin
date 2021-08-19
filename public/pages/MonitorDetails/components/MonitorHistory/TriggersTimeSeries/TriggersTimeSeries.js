@@ -32,8 +32,9 @@ import {
   ALERT_TIMELINE_COLORS_MAP,
   TIME_SERIES_ALERT_STATE,
 } from '../../../containers/MonitorHistory/utils/constants';
-import { formatTooltip } from './utils/helpers';
+import { formatTooltip, formatTooltipAlertCount } from './utils/helpers';
 import DelayedLoader from '../../../../../components/DelayedLoader';
+import { MONITOR_TYPE } from '../../../../../utils/constants';
 
 class TriggersTimeSeries extends Component {
   constructor(props) {
@@ -55,8 +56,9 @@ class TriggersTimeSeries extends Component {
   };
 
   render() {
-    const { triggersData, isLoading, triggers } = this.props;
+    const { triggersData, isLoading, triggers, monitorType } = this.props;
     const { hints } = this.state;
+    const isBucketMonitor = monitorType === MONITOR_TYPE.BUCKET_LEVEL;
     return (
       <DelayedLoader isLoading={isLoading}>
         {(showLoader) => (
@@ -106,7 +108,7 @@ class TriggersTimeSeries extends Component {
                             <Hint
                               align={{ vertical: 'top', horizontal: 'auto' }}
                               value={hints[currentTrigger.name]}
-                              format={formatTooltip}
+                              format={isBucketMonitor ? formatTooltipAlertCount : formatTooltip}
                               style={{ title: { fontWeight: 'bold' } }}
                             />
                           ) : null}
@@ -150,5 +152,6 @@ TriggersTimeSeries.propTypes = {
     ),
   }).isRequired,
   domainBounds: PropTypes.object.isRequired,
+  monitorType: PropTypes.string.isRequired,
 };
 export default TriggersTimeSeries;

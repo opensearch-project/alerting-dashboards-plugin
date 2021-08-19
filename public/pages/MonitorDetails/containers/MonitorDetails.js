@@ -351,6 +351,7 @@ export default class MonitorDetails extends Component {
             triggers={getUnwrappedTriggers(monitor)}
             isDarkMode={isDarkMode}
             notifications={notifications}
+            monitorType={monitor.monitor_type}
           />
         </div>
         <EuiSpacer />
