@@ -25,7 +25,7 @@
  */
 
 import { ALERT_STATE } from '../../../../../utils/constants';
-import { TIME_SERIES_ALERT_STATE } from './constants';
+import { EMPTY_ALERT_COUNT, TIME_SERIES_ALERT_STATE } from './constants';
 
 export const dataPointsGenerator = ({
   startTime,
@@ -205,3 +205,44 @@ export const getPOISearchQuery = (monitorId, startTime, endTime, intervalDuratio
     },
   },
 });
+
+export const parseGroupedData = (triggerData) => {
+  let result = [];
+  triggerData.map((data) => {
+    if (data.state === TIME_SERIES_ALERT_STATE.NO_ALERTS) result.push(data);
+    // Check if result contains other overlapping data and update
+    else {
+      const foundIndex = result.findIndex((element) => {
+        return (
+          (element.x0 <= data.x0 || element.x >= data.x) &&
+          element.state !== TIME_SERIES_ALERT_STATE.NO_ALERTS
+        );
+      });
+      const state = data.state;
+      if (foundIndex < 0) {
+        //  If state is not no alert, push the item with initial count
+        let dataToPush = {
+          ...data,
+          state: TIME_SERIES_ALERT_STATE.TRIGGERED,
+          meta: { ...data.meta, ...EMPTY_ALERT_COUNT },
+        };
+        dataToPush.meta[state]++;
+        result.push(dataToPush);
+      } else {
+        // Update the grouped data with new state count and start, end time
+        const prevData = result[foundIndex];
+        result.splice(foundIndex, 1, {
+          ...prevData,
+          x0: Math.min(prevData.x0, data.x0),
+          x: Math.max(prevData.x, data.x),
+          meta: {
+            ...prevData.meta,
+            startTime: Math.min(prevData.meta.startTime, data.meta.startTime),
+            [state]: prevData.meta[state] + 1,
+          },
+        });
+      }
+    }
+  });
+  return result;
+};
