@@ -38,6 +38,7 @@ import {
   EuiText,
   EuiTitle,
   EuiIcon,
+  EuiHealth,
 } from '@elastic/eui';
 
 import CreateMonitor from '../../CreateMonitor';
@@ -272,7 +273,7 @@ export default class MonitorDetails extends Component {
       <div style={{ padding: '25px 50px' }}>
         {this.renderNoTriggersCallOut()}
         <EuiFlexGroup alignItems="center">
-          <EuiFlexItem>
+          <EuiFlexItem grow={false}>
             <EuiTitle size="l" style={{ whiteSpace: 'nowrap', overflow: 'hidden' }}>
               <h1
                 style={{
@@ -285,7 +286,6 @@ export default class MonitorDetails extends Component {
                 {monitor.name}
               </h1>
             </EuiTitle>
-
             {detector ? (
               <EuiFlexItem grow={false}>
                 <EuiText size="s">
@@ -300,7 +300,13 @@ export default class MonitorDetails extends Component {
               </EuiFlexItem>
             ) : null}
           </EuiFlexItem>
-
+          <EuiFlexItem>
+            {monitor.enabled ? (
+              <EuiHealth color="success">Enabled</EuiHealth>
+            ) : (
+              <EuiHealth color="subdued">Disabled</EuiHealth>
+            )}
+          </EuiFlexItem>
           <EuiFlexItem grow={false}>
             <EuiButton
               onClick={() => {
