@@ -304,7 +304,7 @@ export default class MonitorDetails extends Component {
             {monitor.enabled ? (
               <EuiHealth color="success">Enabled</EuiHealth>
             ) : (
-              <EuiHealth color="danger">Disabled</EuiHealth>
+              <EuiHealth color="subdued">Disabled</EuiHealth>
             )}
           </EuiFlexItem>
           <EuiFlexItem grow={false}>
