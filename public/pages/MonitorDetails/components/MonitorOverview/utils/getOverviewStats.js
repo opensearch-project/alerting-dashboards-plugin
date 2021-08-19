@@ -56,13 +56,14 @@ function getMonitorType(searchType) {
 }
 
 function getMonitorLevelType(monitorType) {
-  console.log(monitorType);
   switch (monitorType) {
     case MONITOR_TYPE.QUERY_LEVEL:
       return 'Per query monitor';
     case MONITOR_TYPE.BUCKET_LEVEL:
       return 'Per bucket monitor';
     default:
+      // TODO: May be valuable to implement a toast that displays in this case.
+      console.log('Unexpected monitor type:', monitorType);
       return '-';
   }
 }
