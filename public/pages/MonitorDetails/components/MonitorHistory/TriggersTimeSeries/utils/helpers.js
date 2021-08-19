@@ -77,3 +77,34 @@ export const formatTooltip = ({ meta = {}, state: dataPointState }) => {
     return alertsToolTip;
   }
 };
+
+export const formatTooltipAlertCount = ({ meta = {}, state: dataPointState }) => {
+  const formatHintDisplayDate = (date) => moment(date).format('MMM Do YYYY, h:mm A');
+  if (dataPointState == TIME_SERIES_ALERT_STATE.NO_ALERTS) {
+    return meta.startTime && meta.endTime
+      ? [
+          {
+            title: 'No Alerts',
+            value: `Between ${formatHintDisplayDate(meta.startTime)} and ${formatHintDisplayDate(
+              meta.endTime
+            )}`,
+          },
+        ]
+      : [];
+  } else {
+    return [
+      {
+        title: 'Active',
+        value: meta[TIME_SERIES_ALERT_STATE.TRIGGERED],
+      },
+      {
+        title: 'Acknowledged',
+        value: meta[TIME_SERIES_ALERT_STATE.ACKNOWLEDGED],
+      },
+      {
+        title: 'Error',
+        value: meta[TIME_SERIES_ALERT_STATE.ERROR],
+      },
+    ];
+  }
+};

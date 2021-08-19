@@ -32,7 +32,7 @@ import {
   ALERT_TIMELINE_COLORS_MAP,
   TIME_SERIES_ALERT_STATE,
 } from '../../../containers/MonitorHistory/utils/constants';
-import { formatTooltip } from './utils/helpers';
+import { formatTooltip, formatTooltipAlertCount } from './utils/helpers';
 import DelayedLoader from '../../../../../components/DelayedLoader';
 
 class TriggersTimeSeries extends Component {
@@ -106,7 +106,7 @@ class TriggersTimeSeries extends Component {
                             <Hint
                               align={{ vertical: 'top', horizontal: 'auto' }}
                               value={hints[currentTrigger.name]}
-                              format={formatTooltip}
+                              format={formatTooltipAlertCount}
                               style={{ title: { fontWeight: 'bold' } }}
                             />
                           ) : null}
