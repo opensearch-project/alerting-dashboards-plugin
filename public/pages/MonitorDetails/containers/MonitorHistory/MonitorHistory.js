@@ -44,10 +44,12 @@ import {
   generateFirstDataPoints,
   dataPointsGenerator,
   getPOISearchQuery,
+  parseGroupedData,
 } from './utils/chartHelpers';
 import * as HistoryConstants from './utils/constants';
 import { INDEX } from '../../../../../utils/constants';
 import { backendErrorNotification } from '../../../../utils/helpers';
+import { MONITOR_TYPE } from '../../../../utils/constants';
 
 class MonitorHistory extends PureComponent {
   constructor(props) {
@@ -95,6 +97,7 @@ class MonitorHistory extends PureComponent {
       meta: Any meta data
   */
   generatePlotData = (alertsData) => {
+    const { monitorType } = this.props;
     const {
       timeSeriesWindow: { startTime: windowStartTime, endTime: windowEndTime },
     } = this.state;
@@ -171,7 +174,11 @@ class MonitorHistory extends PureComponent {
         },
       });
     }
-    return [...firstAlertDataPoints, ...restAlertsDataPoints, ...lastAlertDataPoint];
+
+    const triggerData = [...firstAlertDataPoints, ...restAlertsDataPoints, ...lastAlertDataPoint];
+    // For bucket level monitors, group the alerts together
+    const isBucketMonitor = monitorType === MONITOR_TYPE.BUCKET_LEVEL;
+    return isBucketMonitor ? parseGroupedData(triggerData) : triggerData;
   };
 
   getWindowSize = (poiData, intervalDuration) => {
@@ -370,6 +377,7 @@ MonitorHistory.propTypes = {
   onShowTrigger: PropTypes.func.isRequired,
   isDarkMode: PropTypes.object.isRequired,
   notifications: PropTypes.object.isRequired,
+  monitorType: PropTypes.object.isRequired,
 };
 
 export default MonitorHistory;
