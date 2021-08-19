@@ -123,7 +123,6 @@ export default function MetricPopover(
           <EuiButton
             fill
             onClick={() => {
-              console.log('save metric');
               arrayHelpers.replace(index, {
                 aggregationType: selectOption,
                 fieldName: comboOption,

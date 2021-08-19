@@ -85,6 +85,7 @@ export default class MonitorExpressions extends Component {
           {(arrayHelpers) => (
             <MetricExpression
               {...this.getExpressionProps()}
+              errors={errors}
               arrayHelpers={arrayHelpers}
               dataTypes={dataTypes}
             />

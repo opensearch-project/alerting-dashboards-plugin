@@ -50,6 +50,7 @@ class MetricExpression extends Component {
   render() {
     const {
       formik: { values },
+      errors,
       arrayHelpers,
       dataTypes,
     } = this.props;
@@ -74,6 +75,21 @@ class MetricExpression extends Component {
       showAddButtonFlag = true;
     }
 
+    let duplicates = new Set();
+    aggregations.forEach((e1, index) => {
+      aggregations.slice(index + 1).forEach((e2) => {
+        if (e1.aggregationType === e2.aggregationType && e1.fieldName === e2.fieldName) {
+          duplicates.add(`${e1.aggregationType} of ${e1.fieldName}`);
+        }
+      });
+    });
+
+    if (duplicates.size > 0) {
+      errors.aggregations = `You have defined duplicated metrics: ${[...duplicates]}.`;
+    } else {
+      errors.aggregations = undefined;
+    }
+
     return (
       <div>
         <EuiText size="xs">
@@ -89,6 +105,10 @@ class MetricExpression extends Component {
 
         {this.renderFieldItems(arrayHelpers, fieldOptions, expressionWidth)}
         <EuiSpacer size="xs" />
+
+        <EuiText color="danger" size="xs">
+          {errors.aggregations}
+        </EuiText>
 
         {showAddButtonFlag && (
           <EuiButtonEmpty

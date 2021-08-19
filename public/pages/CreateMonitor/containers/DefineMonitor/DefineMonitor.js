@@ -150,11 +150,14 @@ class DefineMonitor extends Component {
     }
     const groupByCleared = prevGroupBy && !groupBy;
 
-    if (prevAggregations !== aggregations) this.onRunQuery();
-    if (prevBucketValue !== bucketValue || prevBucketUnitOfTime !== bucketUnitOfTime)
+    if (
+      prevAggregations !== aggregations ||
+      prevBucketValue !== bucketValue ||
+      prevBucketUnitOfTime !== bucketUnitOfTime ||
+      prevWhere !== where ||
+      prevGroupBy !== groupBy
+    )
       this.onRunQuery();
-    if (prevWhere !== where) this.onRunQuery();
-    if (prevGroupBy !== groupBy) this.onRunQuery();
 
     // Reset response when monitor type or definition method is changed
     if (prevSearchType !== searchType || prevMonitorType !== monitor_type || groupByCleared)

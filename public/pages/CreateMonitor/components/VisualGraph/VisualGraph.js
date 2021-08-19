@@ -134,7 +134,7 @@ export default class VisualGraph extends Component {
     return (
       <div>
         <ContentPanel
-          title={`${aggregationType.toUpperCase()} OF ${fieldName}`}
+          title={`${aggregationType?.toUpperCase()} OF ${fieldName}`}
           titleSize="s"
           panelStyles={{ paddingLeft: '10px' }}
           description={
