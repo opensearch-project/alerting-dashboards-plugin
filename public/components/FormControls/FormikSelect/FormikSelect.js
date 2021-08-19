@@ -37,6 +37,7 @@ const FormikSelect = ({
   fieldProps = {},
   rowProps = {},
   inputProps = {},
+  selectedOption = undefined,
 }) => (
   <FormikInputWrapper
     name={name}
@@ -47,18 +48,30 @@ const FormikSelect = ({
           <FieldSelect name={name} form={form} field={field} inputProps={inputProps} />
         </FormikFormRow>
       ) : (
-        <FieldSelect name={name} form={form} field={field} inputProps={inputProps} />
+        <FieldSelect
+          name={name}
+          form={form}
+          field={field}
+          inputProps={inputProps}
+          selectedOption={selectedOption}
+        />
       )
     }
   />
 );
 
-const FieldSelect = ({ name, field, form, inputProps: { onChange, isInvalid, ...rest } }) => (
+const FieldSelect = ({
+  name,
+  field,
+  form,
+  inputProps: { onChange, isInvalid, ...rest },
+  selectedOption,
+}) => (
   <EuiSelect
     name={name}
     id={name}
-    {...field}
     {...rest}
+    value={selectedOption ? selectedOption : field.value}
     onChange={(e) =>
       typeof onChange === 'function' ? onChange(e, field, form) : field.onChange(e)
     }

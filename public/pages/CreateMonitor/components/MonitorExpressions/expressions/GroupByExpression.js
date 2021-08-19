@@ -32,7 +32,7 @@ class GroupByExpression extends Component {
     } = this.props;
     return values.groupBy.map((groupByItem, index) => {
       return (
-        <span style={{ paddingRight: '5px' }}>
+        <span style={{ paddingRight: '5px' }} key={`group-by-expr-${index}`}>
           <GroupByItem
             values={values}
             onMadeChanges={onMadeChanges}
@@ -59,6 +59,7 @@ class GroupByExpression extends Component {
     } = this.props;
 
     const fieldOptions = getIndexFields(dataTypes, getGroupByExpressionAllowedTypes(values));
+
     const expressionWidth =
       Math.max(
         ...fieldOptions.map(({ options }) =>
@@ -67,30 +68,52 @@ class GroupByExpression extends Component {
       ) *
         8 +
       60;
+
     if (
       (this.state.addButtonTouched || touched.groupBy) &&
       !values.groupBy.length &&
       values.monitor_type === MONITOR_TYPE.BUCKET_LEVEL
     )
       errors.groupBy = GROUP_BY_ERROR;
+
+    const { monitor_type: monitorType, groupBy } = values;
+
+    let showAddButtonFlag = false;
+    if (MONITOR_TYPE.QUERY_LEVEL === monitorType && groupBy.length < 1) {
+      showAddButtonFlag = true;
+    } else if (MONITOR_TYPE.BUCKET_LEVEL === monitorType && groupBy.length < 2) {
+      showAddButtonFlag = true;
+    }
+
     return (
       <div>
         <EuiText size="xs">
           <h4>Group by</h4>
         </EuiText>
         <EuiSpacer size="s" />
+
+        {values.groupBy.length === 0 && (
+          <div style={{ padding: '10px 0px' }}>
+            <p>No group bys defined.</p>
+          </div>
+        )}
+
         {this.renderFieldItems(arrayHelpers, fieldOptions, expressionWidth)}
         <EuiSpacer size="xs" />
-        <EuiButtonEmpty
-          size="xs"
-          onClick={() => {
-            this.setState({ addButtonTouched: true });
-            arrayHelpers.push('');
-          }}
-          data-test-subj="addGroupByButton"
-        >
-          + Add another group by
-        </EuiButtonEmpty>
+
+        {showAddButtonFlag && (
+          <EuiButtonEmpty
+            size="xs"
+            onClick={() => {
+              this.setState({ addButtonTouched: true });
+              arrayHelpers.push('');
+            }}
+            data-test-subj="addGroupByButton"
+          >
+            + Add group by
+          </EuiButtonEmpty>
+        )}
+
         <EuiText color="danger" size="xs">
           {errors.groupBy}
         </EuiText>
