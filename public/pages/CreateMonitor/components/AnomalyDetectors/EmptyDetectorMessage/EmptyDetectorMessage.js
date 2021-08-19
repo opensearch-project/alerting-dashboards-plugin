@@ -10,7 +10,7 @@
  */
 
 /*
- * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2021 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -24,20 +24,36 @@
  * permissions and limitations under the License.
  */
 
-export const API_ROUTE_PREFIX = '/_plugins/_alerting';
+import React from 'react';
+import PropTypes from 'prop-types';
+import { EuiEmptyPrompt, EuiText } from '@elastic/eui';
 
-export const INDEX = {
-  OPENSEARCH_ALERTING_CONFIG: '.opensearch-alerting-config',
+const EmptyDetectorMessage = (props) => (
+  <div
+    style={{
+      borderRadius: '5px',
+      padding: '10px',
+      border: '1px solid #D9D9D9',
+      height: '250px',
+      width: '100%',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      ...props.containerStyle,
+    }}
+  >
+    <EuiEmptyPrompt
+      style={{ maxWidth: '45em' }}
+      body={<EuiText>You must specify a detector.</EuiText>}
+    />
+  </div>
+);
+
+EmptyDetectorMessage.propTypes = {
+  containerStyle: PropTypes.object,
+};
+EmptyDetectorMessage.defaultProps = {
+  containerStyle: {},
 };
 
-export const API = {
-  MONITOR_BASE: `${API_ROUTE_PREFIX}/monitors`,
-  DESTINATION_BASE: `${API_ROUTE_PREFIX}/destinations`,
-};
-
-export const PLUGIN_NAME = 'alerting';
-
-export const ADMIN_AUTH = {
-  username: 'admin',
-  password: 'admin',
-};
+export { EmptyDetectorMessage };

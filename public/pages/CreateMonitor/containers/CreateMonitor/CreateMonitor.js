@@ -35,6 +35,13 @@ import {
   EuiFlexItem,
   EuiSpacer,
   EuiTitle,
+  EuiOverlayMask,
+  EuiModal,
+  EuiModalHeader,
+  EuiModalHeaderTitle,
+  EuiModalBody,
+  EuiCodeBlock,
+  EuiModalFooter,
 } from '@elastic/eui';
 
 import DefineMonitor from '../DefineMonitor';
@@ -77,6 +84,7 @@ export default class CreateMonitor extends Component {
       plugins: [],
       response: null,
       performanceResponse: null,
+      isJsonModalOpen: false,
     };
 
     if (this.props.edit && this.props.monitorToEdit) {
@@ -249,12 +257,20 @@ export default class CreateMonitor extends Component {
     this.props.history.push({ ...this.props.location, search: '' });
   };
 
+  showJsonModal = () => {
+    this.setState({ isJsonModalOpen: true });
+  }
+
+  closeJsonModal = () => {
+    this.setState({ isJsonModalOpen: false });
+  }
+
   componentWillUnmount() {
     this.props.setFlyout(null);
   }
 
   render() {
-    const { initialValues, plugins } = this.state;
+    const { initialValues, plugins, isJsonModalOpen } = this.state;
     const { edit, httpClient, monitorToEdit, notifications, isDarkMode } = this.props;
     return (
       <div style={{ padding: '25px 50px' }}>
@@ -313,6 +329,9 @@ export default class CreateMonitor extends Component {
                   <EuiButtonEmpty onClick={this.onCancel}>Cancel</EuiButtonEmpty>
                 </EuiFlexItem>
                 <EuiFlexItem grow={false}>
+                  <EuiButton onClick={this.showJsonModal}>Export as JSON</EuiButton>
+                </EuiFlexItem>
+                <EuiFlexItem grow={false}>
                   <EuiButton fill onClick={handleSubmit} isLoading={isSubmitting}>
                     {edit ? 'Update' : 'Create'}
                   </EuiButton>
@@ -329,9 +348,30 @@ export default class CreateMonitor extends Component {
                   })
                 }
               />
+              { isJsonModalOpen && (
+                <EuiOverlayMask>
+                  <EuiModal onClose={this.closeJsonModal} style={{ padding: "5px 30px" }}>
+                    <EuiModalHeader>
+                      <EuiModalHeaderTitle>{"View JSON of " + values.name} </EuiModalHeaderTitle>
+                    </EuiModalHeader>
+
+                    <EuiModalBody>
+                      <EuiCodeBlock language="json" fontSize="m" paddingSize="m" overflowHeight={600} inline={false} isCopyable>
+                        {JSON.stringify(formikToMonitor(values))}
+                      </EuiCodeBlock>
+                    </EuiModalBody>
+
+                    <EuiModalFooter>
+                      <EuiButtonEmpty onClick={this.closeJsonModal}>Close</EuiButtonEmpty>
+                    </EuiModalFooter>
+                  </EuiModal>
+                </EuiOverlayMask>
+              )}
             </Fragment>
           )}
         </Formik>
+
+
       </div>
     );
   }

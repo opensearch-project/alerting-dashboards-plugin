@@ -9,7 +9,7 @@
  * GitHub history for details.
  */
 
-export const OPEN_SEARCH_PREFIX = 'opendistro';
+export const OPEN_SEARCH_PREFIX = 'opensearch';
 
 export const PLUGIN_NAME = `alerting`;
 export const INDEX_PREFIX = `${OPEN_SEARCH_PREFIX}-alerting`;

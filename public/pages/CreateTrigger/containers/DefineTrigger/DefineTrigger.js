@@ -244,7 +244,7 @@ class DefineTrigger extends Component {
               <FormikSelect
                 name={`${fieldPath}anomalyDetector.triggerType`}
                 formRow
-                rowProps={{ style: { paddingTop: '0px', marginTop: '0px' } }}
+                rowProps={{ style: { paddingTop: '0px', marginTop: '0px', width: '390px' } }}
                 inputProps={{ options: triggerOptions }}
               />
               <EuiSpacer size={'m'} />
