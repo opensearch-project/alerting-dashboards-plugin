@@ -221,7 +221,11 @@ export const parseGroupedData = (triggerData) => {
       const state = data.state;
       if (foundIndex < 0) {
         //  If state is not no alert, push the item with initial count
-        let dataToPush = { ...data, meta: { ...data.meta, ...EMPTY_ALERT_COUNT } };
+        let dataToPush = {
+          ...data,
+          state: TIME_SERIES_ALERT_STATE.TRIGGERED,
+          meta: { ...data.meta, ...EMPTY_ALERT_COUNT },
+        };
         dataToPush.meta[state]++;
         result.push(dataToPush);
       } else {

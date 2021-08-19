@@ -47,27 +47,41 @@ const timeSeriesLegend = [
   },
 ];
 
-const Legend = () => (
-  <EuiFlexGroup style={{ marginLeft: '20px' }} alignItems="center">
-    {timeSeriesLegend.map((legendItem) => (
-      <EuiFlexItem grow={false} key={legendItem.title}>
-        <EuiFlexGroup gutterSize="xs" style={{ height: '30px' }} alignItems="center">
-          <EuiFlexItem style={{ height: '30px' }}>
-            <div
-              style={{
-                height: '100%',
-                width: '15px',
-                backgroundColor: legendItem.color,
-              }}
-            />
-          </EuiFlexItem>
-          <EuiFlexItem grow={false}>
-            <EuiText size="xs">{legendItem.title}</EuiText>
-          </EuiFlexItem>
-        </EuiFlexGroup>
-      </EuiFlexItem>
-    ))}
-  </EuiFlexGroup>
-);
+const bucketTimeSeriesLegend = [
+  {
+    title: 'Triggered',
+    color: ALERT_TIMELINE_COLORS_MAP.TRIGGERED,
+  },
+  {
+    title: 'No alerts',
+    color: ALERT_TIMELINE_COLORS_MAP.NO_ALERTS,
+  },
+];
+
+const Legend = ({ showBucketLegend }) => {
+  const legend = showBucketLegend ? bucketTimeSeriesLegend : timeSeriesLegend;
+  return (
+    <EuiFlexGroup style={{ marginLeft: '20px' }} alignItems="center">
+      {legend.map((legendItem) => (
+        <EuiFlexItem grow={false} key={legendItem.title}>
+          <EuiFlexGroup gutterSize="xs" style={{ height: '30px' }} alignItems="center">
+            <EuiFlexItem style={{ height: '30px' }}>
+              <div
+                style={{
+                  height: '100%',
+                  width: '15px',
+                  backgroundColor: legendItem.color,
+                }}
+              />
+            </EuiFlexItem>
+            <EuiFlexItem grow={false}>
+              <EuiText size="xs">{legendItem.title}</EuiText>
+            </EuiFlexItem>
+          </EuiFlexGroup>
+        </EuiFlexItem>
+      ))}
+    </EuiFlexGroup>
+  );
+};
 
 export default Legend;

@@ -324,7 +324,8 @@ class MonitorHistory extends PureComponent {
       maxAlerts,
       prevTimeSeriesWindow,
     } = this.state;
-    const { triggers, onShowTrigger } = this.props;
+    const { triggers, onShowTrigger, monitorType } = this.props;
+    const isBucketMonitor = monitorType === MONITOR_TYPE.BUCKET_LEVEL;
     return (
       <ContentPanel
         title="History"
@@ -363,7 +364,7 @@ class MonitorHistory extends PureComponent {
               isDarkMode={this.props.isDarkMode}
             />
             <EuiHorizontalRule margin="xs" />
-            <Legend />
+            <Legend showBucketLegend={isBucketMonitor} />
           </React.Fragment>
         ) : (
           <EmptyHistory onShowTrigger={onShowTrigger} />
@@ -378,7 +379,7 @@ MonitorHistory.propTypes = {
   onShowTrigger: PropTypes.func.isRequired,
   isDarkMode: PropTypes.object.isRequired,
   notifications: PropTypes.object.isRequired,
-  monitorType: PropTypes.object.isRequired,
+  monitorType: PropTypes.string.isRequired,
 };
 
 export default MonitorHistory;

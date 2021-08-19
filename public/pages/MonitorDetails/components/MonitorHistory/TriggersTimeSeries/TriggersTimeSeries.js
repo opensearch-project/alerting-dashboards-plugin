@@ -152,6 +152,6 @@ TriggersTimeSeries.propTypes = {
     ),
   }).isRequired,
   domainBounds: PropTypes.object.isRequired,
-  monitorType: PropTypes.object.isRequired,
+  monitorType: PropTypes.string.isRequired,
 };
 export default TriggersTimeSeries;
