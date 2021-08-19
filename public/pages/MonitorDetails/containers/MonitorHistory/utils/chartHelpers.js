@@ -209,7 +209,7 @@ export const getPOISearchQuery = (monitorId, startTime, endTime, intervalDuratio
 export const parseGroupedData = (triggerData) => {
   let result = [];
   triggerData.map((data) => {
-    if (data.state === HistoryConstants.TIME_SERIES_ALERT_STATE.NO_ALERTS) result.push(data);
+    if (data.state === TIME_SERIES_ALERT_STATE.NO_ALERTS) result.push(data);
     // Check if result contains other overlapping data and update
     else {
       const foundIndex = result.findIndex((element) => {

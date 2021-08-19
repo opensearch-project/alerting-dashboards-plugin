@@ -78,7 +78,12 @@ export const formatTooltip = ({ meta = {}, state: dataPointState }) => {
   }
 };
 
-export const formatTooltipAlertCount = ({ meta = {}, state: dataPointState }) => {
+export const formatTooltipAlertCount = ({
+  meta = {},
+  state: dataPointState,
+  x0: serieStartTime,
+  x: seriesEndTime,
+}) => {
   const formatHintDisplayDate = (date) => moment(date).format('MMM Do YYYY, h:mm A');
   if (dataPointState == TIME_SERIES_ALERT_STATE.NO_ALERTS) {
     return meta.startTime && meta.endTime
@@ -93,6 +98,11 @@ export const formatTooltipAlertCount = ({ meta = {}, state: dataPointState }) =>
       : [];
   } else {
     return [
+      {
+        title: `${formatHintDisplayDate(serieStartTime)} to  ${formatHintDisplayDate(
+          seriesEndTime
+        )}`,
+      },
       {
         title: 'Active',
         value: meta[TIME_SERIES_ALERT_STATE.TRIGGERED],
