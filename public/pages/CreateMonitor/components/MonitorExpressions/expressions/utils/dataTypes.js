@@ -26,7 +26,6 @@
 
 import { NUMBER_TYPES } from './constants';
 
-// dataTypes, keyword
 export function getFieldsForType(dataTypes, type) {
   if (type === 'number') {
     return NUMBER_TYPES.reduce(

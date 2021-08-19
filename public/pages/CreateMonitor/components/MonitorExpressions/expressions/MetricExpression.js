@@ -66,11 +66,6 @@ class MetricExpression extends Component {
       60;
 
     const { monitor_type: monitorType, aggregations } = values;
-    console.log(
-      `monitor type and aggregations: ${JSON.stringify(monitorType)}, ${JSON.stringify(
-        aggregations
-      )}`
-    );
 
     let showAddButtonFlag = false;
     if (MONITOR_TYPE.QUERY_LEVEL === monitorType && aggregations.length < 1) {
@@ -99,7 +94,6 @@ class MetricExpression extends Component {
           <EuiButtonEmpty
             size="xs"
             onClick={() => {
-              // values.aggregationType = FORMIK_INITIAL_AGG_VALUES.aggregationType;
               arrayHelpers.push(_.cloneDeep(FORMIK_INITIAL_AGG_VALUES));
             }}
             data-test-subj="addMetricButton"

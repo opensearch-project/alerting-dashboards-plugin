@@ -35,8 +35,6 @@ export default function GroupByPopover(
     groupByItem,
   } = this.props
 ) {
-  // console.log(`options before ${JSON.stringify(options)}`)
-
   let defaultIndex = 0;
   const disableOption = (label) => {
     options[0].options.forEach((element, index) => {
@@ -50,15 +48,11 @@ export default function GroupByPopover(
     disableOption(label);
   });
 
-  // console.log(`default index ${defaultIndex}`)
-  // console.log(`options after ${JSON.stringify(options)}`)
-
   const defaultOption = options[0]?.options[defaultIndex];
   const [comboOption, setComboOption] = useState(groupByItem ? groupByItem : defaultOption.label);
 
   const onChangeFieldWrapper = (options, field, form) => {
     onMadeChanges();
-    // form.setFieldValue('groupByField', options);
     form.setFieldError('groupBy', undefined);
     setComboOption(options[0].label);
   };
@@ -110,7 +104,6 @@ export default function GroupByPopover(
           <EuiButton
             fill
             onClick={() => {
-              console.log('save groupBy');
               arrayHelpers.replace(index, comboOption);
               closePopover();
             }}

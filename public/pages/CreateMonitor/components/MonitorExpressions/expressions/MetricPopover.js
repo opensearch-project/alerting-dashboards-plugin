@@ -44,25 +44,13 @@ export default function MetricPopover(
 
   const onChangeWrapper = (e, field) => {
     onMadeChanges();
-    // field.onChange(e);
     setSelectOption(e.target.value);
-    // console.log(`select field ${JSON.stringify(e.target.value)}`)
-    // console.log(`select field ${JSON.stringify(field)}`)
   };
 
   const onChangeFieldWrapper = (options, field, form) => {
     onMadeChanges();
-    // form.setFieldValue('fieldName', options);
     setComboOption(options[0].label);
-    // console.log(`combo options ${JSON.stringify(options)}`)
   };
-
-  // console.log(`--------------------`)
-  // console.log(`aggregationtype ${JSON.stringify(values.aggregationType)}`)
-  // console.log(`fieldName ${JSON.stringify(values.fieldName)}`)
-  // console.log(`metric aggregation: ${JSON.stringify(aggregation)}`)
-  // console.log(`default option: ${JSON.stringify(defaultFieldOption)}`)
-  // console.log(`--------------------`)
 
   return (
     <div

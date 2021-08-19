@@ -230,8 +230,7 @@ class WhereExpression extends Component {
     const whereValues = _.get(values, `${fieldPath}where`);
     const whereFieldName = _.get(whereValues, 'fieldName[0].label', undefined);
 
-    // console.log(`where: ${JSON.stringify(values.where)}`);
-    // console.log(`opened state: ${JSON.stringify(openedStates)}`);
+    const showAddButtonFlag = !openedStates[Expressions.WHERE] && !whereFieldName;
 
     return (
       <div>
@@ -239,7 +238,7 @@ class WhereExpression extends Component {
           <h4>{whereFilterHeader}</h4>
         </EuiText>
 
-        {!openedStates[Expressions.WHERE] && !whereFieldName ? (
+        {showAddButtonFlag ? (
           <div style={{ padding: '10px 0px' }}>
             <p>No filters defined.</p>
           </div>
@@ -301,7 +300,7 @@ class WhereExpression extends Component {
           </EuiPopover>
         )}
 
-        {!openedStates[Expressions.WHERE] && !whereFieldName && (
+        {showAddButtonFlag && (
           <EuiButtonEmpty
             size="xs"
             data-test-subj="addFilterButton"
