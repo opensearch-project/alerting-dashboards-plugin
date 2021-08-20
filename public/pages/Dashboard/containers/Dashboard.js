@@ -47,7 +47,7 @@ import {
 } from '../../Monitors/containers/Monitors/utils/constants';
 import { MAX_ALERT_COUNT, DEFAULT_GET_ALERTS_QUERY_PARAMS } from '../utils/constants';
 
-// TODO: Abstract out a Table component to be used in both Dashboard and Monitors
+// TODO: Abstract out a Table component to be used in both Dashboard, Monitors, MonitorDetails, and alert Flyout
 
 export default class Dashboard extends Component {
   constructor(props) {
@@ -409,6 +409,13 @@ export default class Dashboard extends Component {
         selectable ? undefined : 'Only Active Alerts are Acknowledgeable',
     };
 
+    const triggerSelection = {
+      onSelectionChange: this.onSelectionChange,
+      selectable: (item) => item.ACTIVE,
+      selectableMessage: (selectable) =>
+        selectable ? undefined : 'Only Active Alerts are Acknowledgeable',
+    };
+
     const actions = () => {
       const actions = [<EuiButton onClick={this.acknowledgeAlert}>Acknowledge</EuiButton>];
       if (detectorIds.length) {
@@ -474,7 +481,8 @@ export default class Dashboard extends Component {
             columns={columnType}
             pagination={pagination}
             sorting={sorting}
-            isSelectable={false}
+            isSelectable={true}
+            selection={triggerSelection}
             onChange={this.onTableChange}
             noItemsMessage={<DashboardEmptyPrompt onCreateTrigger={onCreateTrigger} />}
           />

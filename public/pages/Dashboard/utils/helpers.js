@@ -33,7 +33,6 @@ export function groupAlertsByTrigger(alerts) {
   let alertsByTriggers = new Map();
   alerts.map((alert) => {
     const triggerID = alert.trigger_id;
-    // const prevAlertList = alertsByTriggers.has(triggerID) ? alertsByTriggers.get(triggerID) : EMPTY_ALERT_LIST;
     const newAlertList = alertsByTriggers.has(triggerID)
       ? addAlert(alertsByTriggers.get(triggerID), alert)
       : addFirstAlert(alert);
