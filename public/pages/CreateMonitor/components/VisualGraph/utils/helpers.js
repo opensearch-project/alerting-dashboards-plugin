@@ -196,7 +196,6 @@ export function getGraphDescription(bucketValue, bucketUnitOfTime, groupBy) {
     bucketUnitOfTime,
     UNITS_OF_TIME
   )}`;
-  console.log(`groupBy ${groupBy}`);
   if (_.isEmpty(groupBy)) return text;
   return text + ` GROUP BY ${groupBy}`;
 }
