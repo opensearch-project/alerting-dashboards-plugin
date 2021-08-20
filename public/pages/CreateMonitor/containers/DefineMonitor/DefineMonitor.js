@@ -107,8 +107,22 @@ class DefineMonitor extends Component {
       timeField: prevTimeField,
       monitor_type: prevMonitorType,
       groupBy: prevGroupBy,
+      aggregations: prevAggregations,
+      bucketValue: prevBucketValue,
+      bucketUnitOfTime: prevBucketUnitOfTime,
+      where: prevWhere,
     } = prevProps.values;
-    const { searchType, index, timeField, monitor_type, groupBy } = this.props.values;
+    const {
+      searchType,
+      index,
+      timeField,
+      monitor_type,
+      groupBy,
+      aggregations,
+      bucketValue,
+      bucketUnitOfTime,
+      where,
+    } = this.props.values;
     const isGraph = searchType === SEARCH_TYPE.GRAPH;
     const hasIndices = !!index.length;
     // If customer is defining query through extraction query, then they are manually running their own queries
@@ -135,6 +149,16 @@ class DefineMonitor extends Component {
       }
     }
     const groupByCleared = prevGroupBy && !groupBy;
+
+    if (
+      prevAggregations !== aggregations ||
+      prevBucketValue !== bucketValue ||
+      prevBucketUnitOfTime !== bucketUnitOfTime ||
+      prevWhere !== where ||
+      prevGroupBy !== groupBy
+    )
+      this.onRunQuery();
+
     // Reset response when monitor type or definition method is changed
     if (prevSearchType !== searchType || prevMonitorType !== monitor_type || groupByCleared)
       this.resetResponse();
@@ -167,27 +191,22 @@ class DefineMonitor extends Component {
         <MonitorExpressions
           errors={errors}
           touched={touched}
-          onRunQuery={this.onRunQuery}
           dataTypes={this.state.dataTypes}
           isBucketMonitor={isBucketMonitor}
         />
         <EuiSpacer size="m" />
-        <EuiAccordion buttonContent="Preview query and performance">
+        <EuiAccordion
+          id="preview-query-performance-accordion"
+          buttonContent="Preview query and performance"
+        >
           <EuiSpacer size="m" />
-          <QueryPerformance
-            response={performanceResponse}
-            actions={[
-              <EuiButton disabled={runIsDisabled} onClick={this.onRunQuery}>
-                Run
-              </EuiButton>,
-            ]}
-          />
+          <QueryPerformance response={performanceResponse} />
           {errors.where ? (
             renderEmptyMessage('Invalid input in data filter. Remove data filter or adjust filter ')
           ) : aggregations.length ? (
-            _.map(aggregations, (field) => {
+            aggregations.map((field, index) => {
               return (
-                <Fragment>
+                <Fragment key={`multi-visual-graph-${index}`}>
                   <EuiSpacer size="m" />
                   <VisualGraph
                     values={this.state.formikSnapshot}
@@ -305,6 +324,7 @@ class DefineMonitor extends Component {
       throw err;
     }
   }
+
   renderVisualMonitor() {
     const { values } = this.props;
     const { index, timeField } = values;
@@ -325,6 +345,7 @@ class DefineMonitor extends Component {
       ),
     };
   }
+
   renderExtractionQuery() {
     const { values, isDarkMode } = this.props;
     const { response, performanceResponse } = this.state;
@@ -369,6 +390,7 @@ class DefineMonitor extends Component {
         return this.renderExtractionQuery();
     }
   }
+
   showPluginWarning() {
     const { values } = this.props;
     const { plugins } = this.state;

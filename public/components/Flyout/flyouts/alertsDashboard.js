@@ -61,6 +61,10 @@ const getBucketLevelGraphConditions = (trigger) => {
   });
 };
 
+const getSeverityText = (severity) => {
+  return _.get(_.find(SEVERITY_OPTIONS, { value: severity }), 'text');
+};
+
 const getBucketLevelGraphFilter = (trigger) => {
   const compositeAggFilter = _.get(trigger, 'condition.composite_agg_filter');
   if (_.isEmpty(compositeAggFilter)) return DEFAULT_WHERE_EXPRESSION_TEXT;
@@ -126,6 +130,7 @@ const alertsDashboard = (payload) => {
     flyoutProps: {
       'aria-labelledby': 'alertsDashboardFlyout',
       size: 'm',
+      hideCloseButton: true,
     },
     headerProps: { hasBorder: true },
     header: (
@@ -155,7 +160,7 @@ const alertsDashboard = (payload) => {
           <EuiFlexItem>
             <EuiText size={'m'}>
               <strong>Severity</strong>
-              <p>{SEVERITY_OPTIONS[severity].text || severity}</p>
+              <p>{getSeverityText(severity) || severity || '-'}</p>
             </EuiText>
           </EuiFlexItem>
         </EuiFlexGroup>
@@ -195,7 +200,7 @@ const alertsDashboard = (payload) => {
         <EuiFlexGroup>
           <EuiFlexItem>
             <EuiText size={'m'}>
-              <strong>Conditions</strong>
+              <strong>{_.isArray(condition) ? 'Conditions' : 'Condition'}</strong>
               {loadingMonitors ? (
                 'Loading conditions...'
               ) : _.isArray(condition) ? (

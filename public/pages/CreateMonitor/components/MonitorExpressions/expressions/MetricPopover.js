@@ -9,7 +9,7 @@
  * GitHub history for details.
  */
 
-import React from 'react';
+import React, { useState } from 'react';
 
 import {
   EuiText,
@@ -35,73 +35,97 @@ export default function MetricPopover(
     index,
   } = this.props
 ) {
+  const [selectOption, setSelectOption] = useState(aggregation.aggregationType);
+
+  const defaultOption = options[0]?.options[0];
+  const [comboOption, setComboOption] = useState(
+    aggregation.fieldName ? aggregation.fieldName : defaultOption.label
+  );
+
   const onChangeWrapper = (e, field) => {
     onMadeChanges();
-    field.onChange(e);
+    setSelectOption(e.target.value);
   };
 
   const onChangeFieldWrapper = (options, field, form) => {
     onMadeChanges();
-    form.setFieldValue('fieldName', options);
+    setComboOption(options[0].label);
   };
 
   return (
     <div
       style={{
-        width: Math.max(expressionWidth, 280),
-        height: 220,
+        width: Math.max(expressionWidth, 280) + 120,
+        height: 160,
         ...POPOVER_STYLE,
         ...EXPRESSION_STYLE,
       }}
     >
-      <EuiFlexGroup direction="column" gutterSize="xs">
-        <EuiFlexItem>
-          <EuiText size="xs">
-            <h4>Aggregation</h4>
-          </EuiText>
+      <EuiFlexGroup gutterSize="s">
+        <EuiFlexItem grow={false}>
+          <EuiFlexGroup direction="column" gutterSize="xs">
+            <EuiFlexItem>
+              <EuiText size="xs">
+                <h4>Aggregation</h4>
+              </EuiText>
+            </EuiFlexItem>
+            <EuiFlexItem>
+              <FormikSelect
+                name="aggregationType"
+                selectedOption={selectOption}
+                inputProps={{
+                  onChange: onChangeWrapper,
+                  options: AGGREGATION_TYPES,
+                }}
+              />
+            </EuiFlexItem>
+          </EuiFlexGroup>
         </EuiFlexItem>
+
         <EuiFlexItem>
-          <FormikSelect
-            name="aggregationType"
-            inputProps={{
-              onChange: onChangeWrapper,
-              options: AGGREGATION_TYPES,
-            }}
-          />
+          <EuiFlexGroup direction="column" gutterSize="xs">
+            <EuiFlexItem>
+              <EuiText size="xs">
+                <h4>Field</h4>
+              </EuiText>
+            </EuiFlexItem>
+            <EuiFlexItem>
+              <FormikComboBox
+                name="fieldName"
+                selectedOption={{ label: comboOption }}
+                inputProps={{
+                  placeholder: 'Select a field',
+                  options,
+                  onChange: onChangeFieldWrapper,
+                  isClearable: false,
+                  singleSelection: { asPlainText: true },
+                  'data-test-subj': 'ofFieldComboBox',
+                }}
+              />
+            </EuiFlexItem>
+          </EuiFlexGroup>
         </EuiFlexItem>
       </EuiFlexGroup>
-      <EuiFlexGroup direction="column" gutterSize="xs">
-        <EuiFlexItem>
-          <EuiText size="xs">
-            <h4>Field</h4>
-          </EuiText>
-        </EuiFlexItem>
-        <EuiFlexItem>
-          <FormikComboBox
-            name="fieldName"
-            inputProps={{
-              placeholder: 'Select a field',
-              options,
-              onChange: onChangeFieldWrapper,
-              isClearable: false,
-              singleSelection: { asPlainText: true },
-              'data-test-subj': 'ofFieldComboBox',
-            }}
-          />
-        </EuiFlexItem>
-      </EuiFlexGroup>
+
       <EuiSpacer size="l" />
+
       <EuiFlexGroup alignItems="center" justifyContent="flexEnd">
         <EuiFlexItem>
-          <EuiButtonEmpty onClick={closePopover}>Cancel</EuiButtonEmpty>
+          <EuiButtonEmpty
+            onClick={() => {
+              closePopover();
+            }}
+          >
+            Cancel
+          </EuiButtonEmpty>
         </EuiFlexItem>
         <EuiFlexItem>
           <EuiButton
             fill
             onClick={() => {
               arrayHelpers.replace(index, {
-                aggregationType: values.aggregationType,
-                fieldName: values.fieldName[0].label,
+                aggregationType: selectOption,
+                fieldName: comboOption,
               });
               closePopover();
             }}
