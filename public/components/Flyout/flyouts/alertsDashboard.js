@@ -91,7 +91,7 @@ const alertsDashboard = (payload) => {
     triggerId,
     trigger_name,
   } = payload;
-  const monitor = _.get(monitors, `${monitor_id}.monitor`);
+  const monitor = _.get(_.find(monitors, { _id: monitor_id }), '_source');
   const monitorType = _.get(monitor, 'monitor_type', MONITOR_TYPE.QUERY_LEVEL);
   const searchType = _.get(monitor, 'ui_metadata.search.searchType', SEARCH_TYPE.GRAPH);
   const detectorId = _.get(monitor, MONITOR_INPUT_DETECTOR_ID);

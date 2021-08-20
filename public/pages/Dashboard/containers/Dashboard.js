@@ -36,7 +36,6 @@ import { alertColumns, queryColumns } from '../utils/tableUtils';
 import { MONITOR_TYPE, OPENSEARCH_DASHBOARDS_AD_PLUGIN } from '../../../utils/constants';
 import { backendErrorNotification } from '../../../utils/helpers';
 import { groupAlertsByTrigger, insertGroupByColumn, removeColumns } from '../utils/helpers';
-import { DEFAULT_QUERY_PARAMS } from '../../Monitors/containers/Monitors/utils/constants';
 import { DEFAULT_NUM_FLYOUT_ROWS } from '../../../components/Flyout/flyouts/alertsDashboard';
 
 const DEFAULT_PAGE_SIZE_OPTIONS = [5, 10, 20, 50];
@@ -218,7 +217,7 @@ export default class Dashboard extends Component {
               totalTriggers: alertsByTriggers.length,
               alertsByTriggers,
             });
-            this.getMonitors(from, size);
+            this.getMonitors();
           }
         } else {
           console.log('error getting alerts:', resp);
@@ -230,23 +229,27 @@ export default class Dashboard extends Component {
     { leading: true }
   );
 
-  async getMonitors(from, size) {
+  async getMonitors() {
     const { httpClient } = this.props;
     const { alertsByTriggers } = this.state;
     this.setState({ ...this.state, loadingMonitors: true });
-    let monitors = {};
+    const monitorIds = alertsByTriggers.map((alert) => alert.monitor_id);
+    let monitors;
     try {
-      const response = await httpClient.get('../api/alerting/monitors', {
-        query: { ...DEFAULT_QUERY_PARAMS, from, size },
+      const params = {
+        query: {
+          query: {
+            ids: {
+              values: monitorIds,
+            },
+          },
+        },
+      };
+      const response = await httpClient.post('../api/alerting/monitors/_search', {
+        body: JSON.stringify(params),
       });
       if (response.ok) {
-        const returnedMonitors = _.get(response, 'monitors', []);
-        alertsByTriggers.map((alert) => {
-          const { monitor_id } = alert;
-          monitors[monitor_id] = returnedMonitors.find((entry) => {
-            return entry.id === monitor_id;
-          });
-        });
+        monitors = _.get(response, 'resp.hits.hits', []);
       } else {
         console.log('error getting monitors:', response);
       }
