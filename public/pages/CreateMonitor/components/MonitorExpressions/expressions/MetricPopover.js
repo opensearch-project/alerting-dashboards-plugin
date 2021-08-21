@@ -9,7 +9,7 @@
  * GitHub history for details.
  */
 
-import React, { useState } from 'react';
+import React from 'react';
 
 import {
   EuiText,
@@ -24,32 +24,10 @@ import { AGGREGATION_TYPES, EXPRESSION_STYLE, POPOVER_STYLE } from './utils/cons
 import { FormikComboBox, FormikSelect } from '../../../../../components/FormControls';
 
 export default function MetricPopover(
-  {
-    values,
-    onMadeChanges,
-    arrayHelpers,
-    options,
-    closePopover,
-    expressionWidth,
-    aggregation,
-    index,
-  } = this.props
+  { options, closePopover, expressionWidth, index } = this.props
 ) {
-  const [selectOption, setSelectOption] = useState(aggregation.aggregationType);
-
-  const defaultOption = options[0]?.options[0];
-  const [comboOption, setComboOption] = useState(
-    aggregation.fieldName ? aggregation.fieldName : defaultOption.label
-  );
-
-  const onChangeWrapper = (e, field) => {
-    onMadeChanges();
-    setSelectOption(e.target.value);
-  };
-
   const onChangeFieldWrapper = (options, field, form) => {
-    onMadeChanges();
-    setComboOption(options[0].label);
+    form.setFieldValue(`aggregations.${index}.fieldName`, options[0].label);
   };
 
   return (
@@ -71,10 +49,8 @@ export default function MetricPopover(
             </EuiFlexItem>
             <EuiFlexItem>
               <FormikSelect
-                name="aggregationType"
-                selectedOption={selectOption}
+                name={`aggregations.${index}.aggregationType`}
                 inputProps={{
-                  onChange: onChangeWrapper,
                   options: AGGREGATION_TYPES,
                   'data-test-subj': `metrics.${index}.aggregationTypeSelect`,
                 }}
@@ -92,8 +68,7 @@ export default function MetricPopover(
             </EuiFlexItem>
             <EuiFlexItem>
               <FormikComboBox
-                name="fieldName"
-                selectedOption={{ label: comboOption }}
+                name={`aggregations.${index}.fieldName`}
                 inputProps={{
                   placeholder: 'Select a field',
                   options,
@@ -124,10 +99,6 @@ export default function MetricPopover(
           <EuiButton
             fill
             onClick={() => {
-              arrayHelpers.replace(index, {
-                aggregationType: selectOption,
-                fieldName: comboOption,
-              });
               closePopover();
             }}
           >

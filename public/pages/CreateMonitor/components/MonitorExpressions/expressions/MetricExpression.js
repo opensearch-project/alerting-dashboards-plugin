@@ -28,7 +28,7 @@ import React, { Component } from 'react';
 import { connect } from 'formik';
 import { EuiText, EuiButtonEmpty, EuiSpacer, EuiBadge } from '@elastic/eui';
 import { getIndexFields } from './utils/dataTypes';
-import { getMetricExpressionAllowedTypes } from './utils/helpers';
+import { getMetricExpressionAllowedTypes, validateAggregationsDuplicates } from './utils/helpers';
 import _ from 'lodash';
 import { FORMIK_INITIAL_AGG_VALUES } from '../../../containers/CreateMonitor/utils/constants';
 import { MetricItem } from './index';
@@ -38,23 +38,16 @@ class MetricExpression extends Component {
   renderFieldItems = (arrayHelpers, fieldOptions, expressionWidth) => {
     const {
       formik: { values },
-      onMadeChanges,
-      openExpression,
-      closeExpression,
     } = this.props;
     return values.aggregations.map((aggregation, index) => {
       return (
         <span style={{ paddingRight: '5px' }} key={`metric-expr-${index}`}>
           <MetricItem
-            values={values}
-            onMadeChanges={onMadeChanges}
             arrayHelpers={arrayHelpers}
             fieldOptions={fieldOptions}
             expressionWidth={expressionWidth}
             aggregation={aggregation}
             index={index}
-            openExpression={openExpression}
-            closeExpression={closeExpression}
           />
         </span>
       );
@@ -89,34 +82,28 @@ class MetricExpression extends Component {
       showAddButtonFlag = true;
     }
 
-    let duplicates = new Set();
-    aggregations.forEach((e1, index) => {
-      aggregations.slice(index + 1).forEach((e2) => {
-        if (e1.aggregationType === e2.aggregationType && e1.fieldName === e2.fieldName) {
-          duplicates.add(`${e1.aggregationType} of ${e1.fieldName}`);
-        }
-      });
-    });
-
-    if (duplicates.size > 0) {
-      errors.aggregations = `You have defined duplicated metrics: ${[...duplicates]}.`;
+    if (validateAggregationsDuplicates(aggregations)) {
+      errors.aggregations = `You have defined duplicated metrics.`;
     } else {
-      errors.aggregations = undefined;
+      delete errors.aggregations;
     }
 
     return (
-      <div>
+      <div id="aggregations">
         <EuiText size="xs">
           <strong>Metrics</strong>
           <i> - optional</i>
         </EuiText>
         <EuiSpacer size="s" />
 
-        <span style={{ paddingRight: '5px' }}>
-          <EuiBadge color="hollow" style={{ paddingRight: '5px' }}>
-            COUNT OF documents
-          </EuiBadge>
-        </span>
+        {/*For query monitor, if user choose a metric, then don't show this*/}
+        {!(MONITOR_TYPE.QUERY_LEVEL === monitorType && aggregations.length > 0) && (
+          <span style={{ paddingRight: '5px' }}>
+            <EuiBadge color="hollow" style={{ paddingRight: '5px' }}>
+              COUNT OF documents
+            </EuiBadge>
+          </span>
+        )}
 
         {this.renderFieldItems(arrayHelpers, fieldOptions, expressionWidth)}
         <EuiSpacer size="xs" />
@@ -133,7 +120,7 @@ class MetricExpression extends Component {
             }}
             data-test-subj="addMetricButton"
           >
-            + Add another metric
+            + Add metric
           </EuiButtonEmpty>
         )}
       </div>
