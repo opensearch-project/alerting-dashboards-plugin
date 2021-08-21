@@ -78,7 +78,6 @@ export default class Dashboard extends Component {
       sortField,
       totalAlerts: 0,
       totalTriggers: 0,
-      isLoading: true,
     };
   }
 
@@ -183,7 +182,6 @@ export default class Dashboard extends Component {
 
   getAlerts = _.debounce(
     (from, size, search, sortField, sortDirection, severityLevel, alertState, monitorIds) => {
-      this.setState({ isLoading: true });
       const params = {
         from,
         size,
@@ -219,7 +217,6 @@ export default class Dashboard extends Component {
           backendErrorNotification(notifications, 'get', 'alerts', resp.err);
         }
       });
-      this.setState({ isLoading: false });
     },
     500,
     { leading: true }
@@ -356,7 +353,6 @@ export default class Dashboard extends Component {
       sortField,
       totalAlerts,
       totalTriggers,
-      isLoading,
     } = this.state;
     const {
       monitorIds,
@@ -478,9 +474,7 @@ export default class Dashboard extends Component {
             isSelectable={true}
             selection={selection}
             onChange={this.onTableChange}
-            noItemsMessage={
-              <DashboardEmptyPrompt onCreateTrigger={onCreateTrigger} isLoading={isLoading} />
-            }
+            noItemsMessage={<DashboardEmptyPrompt onCreateTrigger={onCreateTrigger} />}
           />
         ) : (
           <EuiBasicTable
@@ -493,9 +487,7 @@ export default class Dashboard extends Component {
             // isSelectable={true}
             // selection={triggerSelection}
             onChange={this.onTableChange}
-            noItemsMessage={
-              <DashboardEmptyPrompt onCreateTrigger={onCreateTrigger} isLoading={isLoading} />
-            }
+            noItemsMessage={<DashboardEmptyPrompt onCreateTrigger={onCreateTrigger} />}
           />
         )}
       </ContentPanel>
