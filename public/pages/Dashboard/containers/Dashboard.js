@@ -417,6 +417,8 @@ export default class Dashboard extends Component {
     };
 
     const actions = () => {
+      //TODO: Hiding acknowledge button for now since acknowledge alerts by triggers is not supported. Remove this line once supported
+      if (!perAlertView) return [];
       const actions = [<EuiButton onClick={this.acknowledgeAlert}>Acknowledge</EuiButton>];
       if (detectorIds.length) {
         actions.unshift(
@@ -481,8 +483,9 @@ export default class Dashboard extends Component {
             columns={columnType}
             pagination={pagination}
             sorting={sorting}
-            isSelectable={true}
-            selection={triggerSelection}
+            // TODO: Support selecting alerts by triggers and handle the acknowledge function
+            // isSelectable={true}
+            // selection={triggerSelection}
             onChange={this.onTableChange}
             noItemsMessage={<DashboardEmptyPrompt onCreateTrigger={onCreateTrigger} />}
           />
