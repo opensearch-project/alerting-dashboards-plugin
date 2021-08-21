@@ -93,7 +93,7 @@ export default class AcknowledgeModal extends Component {
           maxWidth={650}
           onCancel={this.props.onClickCancel}
           onConfirm={this.onConfirm}
-          cancelButtonText="cancel"
+          cancelButtonText="Cancel"
           confirmButtonText="Acknowledge"
         >
           <p>Select which alerts to acknowledge.</p>
