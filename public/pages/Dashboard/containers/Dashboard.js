@@ -41,10 +41,7 @@ import {
   insertGroupByColumn,
   removeColumns,
 } from '../utils/helpers';
-import {
-  DEFAULT_PAGE_SIZE_OPTIONS,
-  DEFAULT_QUERY_PARAMS,
-} from '../../Monitors/containers/Monitors/utils/constants';
+import { DEFAULT_PAGE_SIZE_OPTIONS } from '../../Monitors/containers/Monitors/utils/constants';
 import { MAX_ALERT_COUNT, DEFAULT_GET_ALERTS_QUERY_PARAMS } from '../utils/constants';
 
 // TODO: Abstract out a Table component to be used in both Dashboard, Monitors, MonitorDetails, and alert Flyout
@@ -186,6 +183,7 @@ export default class Dashboard extends Component {
 
   getAlerts = _.debounce(
     (from, size, search, sortField, sortDirection, severityLevel, alertState, monitorIds) => {
+      this.setState({ isLoading: true });
       const params = {
         from,
         size,
@@ -214,35 +212,40 @@ export default class Dashboard extends Component {
               totalTriggers: alertsByTriggers.length,
               alertsByTriggers,
             });
-            this.getMonitors(from, size);
+            this.getMonitors();
           }
         } else {
           console.log('error getting alerts:', resp);
           backendErrorNotification(notifications, 'get', 'alerts', resp.err);
         }
       });
+      this.setState({ isLoading: false });
     },
     500,
     { leading: true }
   );
 
-  async getMonitors(from, size) {
+  async getMonitors() {
     const { httpClient } = this.props;
     const { alertsByTriggers } = this.state;
     this.setState({ ...this.state, loadingMonitors: true });
-    let monitors = {};
+    const monitorIds = alertsByTriggers.map((alert) => alert.monitor_id);
+    let monitors;
     try {
-      const response = await httpClient.get('../api/alerting/monitors', {
-        query: { ...DEFAULT_QUERY_PARAMS, from, size },
+      const params = {
+        query: {
+          query: {
+            ids: {
+              values: monitorIds,
+            },
+          },
+        },
+      };
+      const response = await httpClient.post('../api/alerting/monitors/_search', {
+        body: JSON.stringify(params),
       });
       if (response.ok) {
-        const returnedMonitors = _.get(response, 'monitors', []);
-        alertsByTriggers.map((alert) => {
-          const { monitor_id } = alert;
-          monitors[monitor_id] = returnedMonitors.find((entry) => {
-            return entry.id === monitor_id;
-          });
-        });
+        monitors = _.get(response, 'resp.hits.hits', []);
       } else {
         console.log('error getting monitors:', response);
       }
@@ -353,6 +356,7 @@ export default class Dashboard extends Component {
       sortField,
       totalAlerts,
       totalTriggers,
+      isLoading,
     } = this.state;
     const {
       monitorIds,
@@ -474,7 +478,9 @@ export default class Dashboard extends Component {
             isSelectable={true}
             selection={selection}
             onChange={this.onTableChange}
-            noItemsMessage={<DashboardEmptyPrompt onCreateTrigger={onCreateTrigger} />}
+            noItemsMessage={
+              <DashboardEmptyPrompt onCreateTrigger={onCreateTrigger} isLoading={isLoading} />
+            }
           />
         ) : (
           <EuiBasicTable
@@ -487,7 +493,9 @@ export default class Dashboard extends Component {
             // isSelectable={true}
             // selection={triggerSelection}
             onChange={this.onTableChange}
-            noItemsMessage={<DashboardEmptyPrompt onCreateTrigger={onCreateTrigger} />}
+            noItemsMessage={
+              <DashboardEmptyPrompt onCreateTrigger={onCreateTrigger} isLoading={isLoading} />
+            }
           />
         )}
       </ContentPanel>
