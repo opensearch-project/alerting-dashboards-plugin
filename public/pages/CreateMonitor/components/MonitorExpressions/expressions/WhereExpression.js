@@ -34,9 +34,6 @@ import {
   EuiButtonEmpty,
   EuiText,
   EuiBadge,
-  EuiPanel,
-  EuiEmptyPrompt,
-  EuiButton,
   EuiSpacer,
 } from '@elastic/eui';
 import _ from 'lodash';
@@ -53,7 +50,12 @@ import {
   isNullOperator,
   isRangeOperator,
 } from './utils/whereHelpers';
-import { isInvalid, required } from '../../../../../utils/validate';
+import {
+  hasError,
+  isInvalid,
+  required,
+  validateRequiredNumber,
+} from '../../../../../utils/validate';
 import {
   FormikComboBox,
   FormikSelect,
@@ -172,8 +174,10 @@ class WhereExpression extends Component {
       ) : (
         <FormikFieldNumber
           name={`${fieldPath}where.fieldValue`}
-          fieldProps={{ validate: required }}
-          inputProps={{ onChange: this.handleChangeWrapper, isInvalid }}
+          fieldProps={{ validate: validateRequiredNumber }}
+          inputProps={{ onChange: this.handleChangeWrapper }}
+          formRow
+          rowProps={{ isInvalid, error: hasError }}
         />
       );
     } else if (fieldType === DATA_TYPES.BOOLEAN) {
@@ -235,12 +239,14 @@ class WhereExpression extends Component {
     return (
       <div>
         <EuiText size="xs">
-          <h4>{whereFilterHeader}</h4>
+          <strong>{whereFilterHeader}</strong>
+          <i> - optional</i>
         </EuiText>
+        <EuiSpacer size={'s'} />
 
         {showAddButtonFlag ? (
-          <div style={{ padding: '10px 0px' }}>
-            <p>No filters defined.</p>
+          <div>
+            <EuiText size={'xs'}>No filters defined.</EuiText>
           </div>
         ) : (
           <EuiPopover
