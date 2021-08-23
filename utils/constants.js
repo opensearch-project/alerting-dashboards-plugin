@@ -26,5 +26,4 @@ export const URL = {
 };
 
 export const MAX_THROTTLE_VALUE = 1440;
-export const WRONG_THROTTLE_WARNING =
-  'Throttle value must be greater than 0 and less than ' + MAX_THROTTLE_VALUE;
+export const WRONG_THROTTLE_WARNING = `Throttle value must be greater than 0 and less than ${MAX_THROTTLE_VALUE}.`;
