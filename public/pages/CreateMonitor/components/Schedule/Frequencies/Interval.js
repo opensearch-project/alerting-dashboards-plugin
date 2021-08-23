@@ -42,7 +42,7 @@ const unitOptions = [
 ];
 
 const Interval = () => (
-  <EuiFlexGroup alignItems="flexEnd" gutterSize="m">
+  <EuiFlexGroup alignItems="flexStart" gutterSize="m">
     <EuiFlexItem>
       <FormikFieldNumber
         name="period.interval"
