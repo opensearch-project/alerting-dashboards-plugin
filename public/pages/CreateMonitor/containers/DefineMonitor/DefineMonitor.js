@@ -185,8 +185,6 @@ class DefineMonitor extends Component {
     const isBucketMonitor = _.get(values, 'monitor_type') === MONITOR_TYPE.BUCKET_LEVEL;
     const aggregations = _.get(values, 'aggregations');
     const runIsDisabled = !index.length || !timeField;
-    // TODO: Implement different graph view for query-level and bucket-level monitor
-    // if (isQueryLevelMonitor)
     return (
       <Fragment>
         <EuiSpacer size="s" />

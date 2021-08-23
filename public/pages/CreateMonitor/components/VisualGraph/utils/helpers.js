@@ -175,40 +175,6 @@ export function getRectData(data, width = 30000, index, seriesCount) {
   });
 }
 
-export function getAggregationTitle(values) {
-  const aggregationType = selectOptionValueToText(values.aggregationType, AGGREGATION_TYPES);
-  const when = `WHEN ${aggregationType}`;
-  const fieldName = _.get(values, 'fieldName[0].label');
-  const of = `OF ${fieldName}`;
-  const overDocuments = values.overDocuments;
-  const over = `OVER ${overDocuments}`;
-  const value = values.bucketValue;
-  const unit = selectOptionValueToText(values.bucketUnitOfTime, UNITS_OF_TIME);
-  const forTheLast = `FOR THE LAST ${value} ${unit}`;
-
-  if (aggregationType === 'count()') {
-    return `${when} ${over} ${forTheLast}`;
-  }
-
-  return `${when} ${of} ${over} ${forTheLast}`;
-}
-
-export function getCustomAggregationTitle(values, fieldName, aggregationType) {
-  const when = `WHEN ${aggregationType}`;
-  const of = `OF ${fieldName}`;
-  const overDocuments = values.overDocuments;
-  const over = `OVER ${overDocuments}`;
-  const value = values.bucketValue;
-  const unit = selectOptionValueToText(values.bucketUnitOfTime, UNITS_OF_TIME);
-  const forTheLast = `FOR THE LAST ${value} ${unit}`;
-
-  if (aggregationType === 'count()') {
-    return `${when} ${over} ${forTheLast}`;
-  }
-
-  return `${when} ${of} ${over} ${forTheLast}`;
-}
-
 export function computeBarWidth(xDomain) {
   const [min, max] = xDomain;
   return Math.abs(max - min) * BAR_PERCENTAGE;
@@ -223,4 +189,13 @@ export function getAggregationGraphHint(hint) {
     hint.data.y.toLocaleString() +
     ')'
   );
+}
+
+export function getGraphDescription(bucketValue, bucketUnitOfTime, groupBy) {
+  const text = `FOR THE LAST ${bucketValue}  ${selectOptionValueToText(
+    bucketUnitOfTime,
+    UNITS_OF_TIME
+  )}`;
+  if (_.isEmpty(groupBy)) return text;
+  return text + ` GROUP BY ${groupBy}`;
 }
