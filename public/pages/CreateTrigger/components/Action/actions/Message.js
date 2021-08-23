@@ -104,7 +104,7 @@ export const DEFAULT_ACTIONABLE_ALERTS_SELECTIONS = [
   },
 ];
 
-export const NO_ACTIONABLE_ALERT_SELECTIONS = 'Must select at least 1 option';
+export const NO_ACTIONABLE_ALERT_SELECTIONS = 'Must select at least 1 option.';
 
 const renderSendTestMessageButton = (
   index,
@@ -235,7 +235,9 @@ export default function Message(
               </EuiText>
               <EuiText color={'subdued'} size={'xs'}>
                 Embed variables in your message using Mustache templates.{' '}
-                <a href={URL.MUSTACHE}>Learn more</a>
+                <EuiLink external href={URL.MUSTACHE} target="_blank">
+                  Learn more
+                </EuiLink>
               </EuiText>
             </div>
           ),
