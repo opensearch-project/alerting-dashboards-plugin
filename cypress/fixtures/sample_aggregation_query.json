@@ -1,0 +1,41 @@
+{
+  "size": 0,
+  "query": {
+    "bool": {
+      "filter": [
+        {
+          "range": {
+            "order_date": {
+              "from": "{{period_end}}||-1h",
+              "to": "{{period_end}}",
+              "include_lower": true,
+              "include_upper": true,
+              "format": "epoch_millis",
+              "boost": 1.0
+            }
+          }
+        }
+      ],
+      "adjust_pure_negative": true,
+      "boost": 1.0
+    }
+  },
+  "aggregations": {
+    "composite_agg": {
+      "composite": {
+        "size": 10,
+        "sources": [
+          {
+            "user": {
+              "terms": {
+                "field": "user",
+                "missing_bucket": false,
+                "order": "asc"
+              }
+            }
+          }
+        ]
+      }
+    }
+  }
+}

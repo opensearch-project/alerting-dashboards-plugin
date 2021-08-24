@@ -189,3 +189,11 @@ Cypress.Commands.add('deleteIndexByName', (indexName) => {
 Cypress.Commands.add('insertDocumentToIndex', (indexName, documentId, documentBody) => {
   cy.request('PUT', `${Cypress.env('opensearch')}/${indexName}/_doc/${documentId}`, documentBody);
 });
+
+Cypress.Commands.add('loadSampleEcommerceData', () => {
+  cy.request({
+    method: 'POST',
+    headers: { 'osd-xsrf': 'opensearch-dashboards' },
+    url: `${Cypress.env('opensearch_dashboards')}/api/sample_data/ecommerce`,
+  });
+});

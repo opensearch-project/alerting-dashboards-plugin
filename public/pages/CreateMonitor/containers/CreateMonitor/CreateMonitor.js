@@ -259,11 +259,11 @@ export default class CreateMonitor extends Component {
 
   showJsonModal = () => {
     this.setState({ isJsonModalOpen: true });
-  }
+  };
 
   closeJsonModal = () => {
     this.setState({ isJsonModalOpen: false });
-  }
+  };
 
   componentWillUnmount() {
     this.props.setFlyout(null);
@@ -272,6 +272,7 @@ export default class CreateMonitor extends Component {
   render() {
     const { initialValues, plugins, isJsonModalOpen } = this.state;
     const { edit, httpClient, monitorToEdit, notifications, isDarkMode } = this.props;
+
     return (
       <div style={{ padding: '25px 50px' }}>
         <Formik initialValues={initialValues} onSubmit={this.onSubmit} validateOnChange={false}>
@@ -281,6 +282,7 @@ export default class CreateMonitor extends Component {
                 <h1>{edit ? 'Edit' : 'Create'} monitor</h1>
               </EuiTitle>
               <EuiSpacer />
+
               <MonitorDetails
                 values={values}
                 errors={errors}
@@ -323,6 +325,7 @@ export default class CreateMonitor extends Component {
                   />
                 )}
               </FieldArray>
+
               <EuiSpacer />
               <EuiFlexGroup alignItems="center" justifyContent="flexEnd">
                 <EuiFlexItem grow={false}>
@@ -348,15 +351,22 @@ export default class CreateMonitor extends Component {
                   })
                 }
               />
-              { isJsonModalOpen && (
+              {isJsonModalOpen && (
                 <EuiOverlayMask>
-                  <EuiModal onClose={this.closeJsonModal} style={{ padding: "5px 30px" }}>
+                  <EuiModal onClose={this.closeJsonModal} style={{ padding: '5px 30px' }}>
                     <EuiModalHeader>
-                      <EuiModalHeaderTitle>{"View JSON of " + values.name} </EuiModalHeaderTitle>
+                      <EuiModalHeaderTitle>{'View JSON of ' + values.name} </EuiModalHeaderTitle>
                     </EuiModalHeader>
 
                     <EuiModalBody>
-                      <EuiCodeBlock language="json" fontSize="m" paddingSize="m" overflowHeight={600} inline={false} isCopyable>
+                      <EuiCodeBlock
+                        language="json"
+                        fontSize="m"
+                        paddingSize="m"
+                        overflowHeight={600}
+                        inline={false}
+                        isCopyable
+                      >
                         {JSON.stringify(formikToMonitor(values))}
                       </EuiCodeBlock>
                     </EuiModalBody>
@@ -370,8 +380,6 @@ export default class CreateMonitor extends Component {
             </Fragment>
           )}
         </Formik>
-
-
       </div>
     );
   }

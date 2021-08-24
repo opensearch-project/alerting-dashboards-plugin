@@ -74,6 +74,7 @@ const TriggerQuery = ({
   const responseToFormat = _.isEmpty(response) && isAd ? onRun([trigger]) : response;
   const formattedResponse = JSON.stringify(responseToFormat, null, 4);
   const fieldName = `${fieldPath}script.source`;
+
   return (
     <EuiFlexGroup direction={'column'}>
       <EuiFlexItem style={{ paddingLeft: '10px', paddingRight: '10px' }}>

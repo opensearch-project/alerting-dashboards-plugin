@@ -46,13 +46,12 @@ import {
   getAnnotationData,
   getDataFromResponse,
   getMarkData,
-  getAggregationTitle,
-  getCustomAggregationTitle,
   getMapDataFromResponse,
   getRectData,
   computeBarWidth,
   getAggregationGraphHint,
   getBufferedXDomain,
+  getGraphDescription,
 } from './utils/helpers';
 import { MONITOR_TYPE } from '../../../../utils/constants';
 import { URL } from '../../../../../utils/constants';
@@ -79,43 +78,51 @@ export default class VisualGraph extends Component {
 
   renderXYPlot = (data) => {
     const { annotation, thresholdValue, values } = this.props;
+    const { bucketValue, bucketUnitOfTime, groupBy, aggregations } = values;
+    const aggregationType = aggregations[0]?.aggregationType;
+    const fieldName = aggregations[0]?.fieldName;
     const { hint } = this.state;
+
     const xDomain = getXDomain(data);
     const yDomain = getYDomain(data);
     const annotations = getAnnotationData(xDomain, yDomain, thresholdValue);
+
     const xTitle = values.timeField;
     const yTitle = getYTitle(values);
     const leftPadding = getLeftPadding(yDomain);
     const markData = getMarkData(data);
-    const aggregationTitle = getAggregationTitle(values);
+    const title = aggregationType
+      ? `${aggregationType?.toUpperCase()} OF ${fieldName}`
+      : 'COUNT of documents';
+    const description = getGraphDescription(bucketValue, bucketUnitOfTime, groupBy);
+
     return (
-      <FlexibleXYPlot
-        height={400}
-        xType="time"
-        margin={{ top: 20, right: 20, bottom: 70, left: leftPadding }}
-        xDomain={xDomain}
-        yDomain={yDomain}
-        onMouseLeave={this.resetHint}
+      <ContentPanel
+        title={title}
+        titleSize="s"
+        panelStyles={{ paddingLeft: '10px' }}
+        description={description}
       >
-        <XAxis title={xTitle} />
-        <XAxis
-          title={aggregationTitle}
-          position="middle"
-          orientation="top"
-          tickTotal={0}
-          top={-25}
-          style={{ strokeWidth: '0px' }}
-        />
-        <YAxis title={yTitle} tickFormat={formatYAxisTick} />
-        <LineSeries data={data} style={LINE_STYLES} />
-        <MarkSeries data={markData} sizeRange={SIZE_RANGE} onNearestX={this.onNearestX} />
-        {annotation && <LineSeries data={annotations} style={ANNOTATION_STYLES} />}
-        {hint && (
-          <Hint value={hint}>
-            <div style={HINT_STYLES}>({hint.y.toLocaleString()})</div>
-          </Hint>
-        )}
-      </FlexibleXYPlot>
+        <FlexibleXYPlot
+          height={400}
+          xType="time"
+          margin={{ top: 20, right: 20, bottom: 70, left: leftPadding }}
+          xDomain={xDomain}
+          yDomain={yDomain}
+          onMouseLeave={this.resetHint}
+        >
+          <XAxis title={xTitle} />
+          <YAxis title={yTitle} tickFormat={formatYAxisTick} />
+          <LineSeries data={data} style={LINE_STYLES} />
+          <MarkSeries data={markData} sizeRange={SIZE_RANGE} onNearestX={this.onNearestX} />
+          {annotation && <LineSeries data={annotations} style={ANNOTATION_STYLES} />}
+          {hint && (
+            <Hint value={hint}>
+              <div style={HINT_STYLES}>({hint.y.toLocaleString()})</div>
+            </Hint>
+          )}
+        </FlexibleXYPlot>
+      </ContentPanel>
     );
   };
 
@@ -129,56 +136,58 @@ export default class VisualGraph extends Component {
     const yTitle = fieldName;
     const leftPadding = getLeftPadding(yDomain);
     const width = computeBarWidth(xDomain);
-    const aggregationTitle = getCustomAggregationTitle(values, fieldName, aggregationType);
+
+    const title = aggregationType
+      ? `${aggregationType?.toUpperCase()} OF ${fieldName}`
+      : 'COUNT of documents';
     const legends = groupedData.map((dataSeries) => dataSeries.key);
+
     return (
-      <div>
-        <ContentPanel
-          title={`${aggregationType?.toUpperCase()} OF ${fieldName}`}
-          titleSize="s"
-          panelStyles={{ paddingLeft: '10px' }}
-          description={
-            <span>
-              FOR THE LAST {values.bucketValue}{' '}
-              {selectOptionValueToText(values.bucketUnitOfTime, UNITS_OF_TIME)}, GROUP BY{' '}
-              {`${values.groupBy}`}, Showing top 3 buckets.
-            </span>
-          }
+      <ContentPanel
+        title={title}
+        titleSize="s"
+        panelStyles={{ paddingLeft: '10px' }}
+        description={
+          <span>
+            FOR THE LAST {values.bucketValue}{' '}
+            {selectOptionValueToText(values.bucketUnitOfTime, UNITS_OF_TIME)}, GROUP BY{' '}
+            {`${values.groupBy}`}, Showing top 3 buckets.
+          </span>
+        }
+      >
+        <FlexibleXYPlot
+          height={400}
+          xType="time"
+          margin={{ top: 20, right: 20, bottom: 70, left: leftPadding }}
+          xDomain={xDomain}
+          yDomain={yDomain}
+          onMouseLeave={this.resetHint}
         >
-          <FlexibleXYPlot
-            height={400}
-            xType="time"
-            margin={{ top: 20, right: 20, bottom: 70, left: leftPadding }}
-            xDomain={xDomain}
-            yDomain={yDomain}
-            onMouseLeave={this.resetHint}
-          >
-            <XAxis title={xTitle} />
-            <YAxis title={yTitle} tickFormat={formatYAxisTick} />
-            <DiscreteColorLegend
-              style={{ position: 'absolute', right: '50px', top: '10px' }}
-              items={legends}
-            />
-            {groupedData.map((dataSeries, index, arr) => {
-              const rectData = getRectData(dataSeries.data, width, index, arr.length);
-              return (
-                <VerticalRectSeries
-                  key={`vertical-rect-${index}`}
-                  className={dataSeries.key}
-                  data={rectData}
-                  onValueMouseOver={(d) => this.onValueMouseOver(d, dataSeries.key)}
-                />
-              );
-            })}
-            {annotation && <LineSeries data={annotations} style={ANNOTATION_STYLES} />}
-            {hint && (
-              <Hint value={hint}>
-                <div style={HINT_STYLES}>{getAggregationGraphHint(hint)}</div>
-              </Hint>
-            )}
-          </FlexibleXYPlot>
-        </ContentPanel>
-      </div>
+          <XAxis title={xTitle} />
+          <YAxis title={yTitle} tickFormat={formatYAxisTick} />
+          <DiscreteColorLegend
+            style={{ position: 'absolute', right: '50px', top: '10px' }}
+            items={legends}
+          />
+          {groupedData.map((dataSeries, index, arr) => {
+            const rectData = getRectData(dataSeries.data, width, index, arr.length);
+            return (
+              <VerticalRectSeries
+                key={`vertical-rect-${index}`}
+                className={dataSeries.key}
+                data={rectData}
+                onValueMouseOver={(d) => this.onValueMouseOver(d, dataSeries.key)}
+              />
+            );
+          })}
+          {annotation && <LineSeries data={annotations} style={ANNOTATION_STYLES} />}
+          {hint && (
+            <Hint value={hint}>
+              <div style={HINT_STYLES}>{getAggregationGraphHint(hint)}</div>
+            </Hint>
+          )}
+        </FlexibleXYPlot>
+      </ContentPanel>
     );
   };
 
@@ -191,7 +200,7 @@ export default class VisualGraph extends Component {
   );
 
   render() {
-    const { response, fieldName, values, aggregationType } = this.props;
+    const { values, response, fieldName, aggregationType } = this.props;
     const monitorType = values.monitor_type;
     const isQueryMonitor = monitorType === MONITOR_TYPE.QUERY_LEVEL;
     const aggTypeFieldName = `${aggregationType}_${fieldName}`;
@@ -204,13 +213,13 @@ export default class VisualGraph extends Component {
       !data.length || (monitorType == MONITOR_TYPE.BUCKET_LEVEL && !values.groupBy.length);
 
     return (
-      <div style={{ padding: '20px', border: '1px solid #D9D9D9', borderRadius: '5px' }}>
+      <>
         {showEmpty
           ? this.renderEmptyData()
           : isQueryMonitor
           ? this.renderXYPlot(data)
           : this.renderAggregationXYPlot(data, groupedData)}
-      </div>
+      </>
     );
   }
 }

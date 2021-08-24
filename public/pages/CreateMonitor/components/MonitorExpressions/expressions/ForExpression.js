@@ -25,19 +25,12 @@
  */
 
 import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'formik';
 import { EuiText, EuiFlexGroup, EuiFlexItem, EuiSpacer } from '@elastic/eui';
 import { UNITS_OF_TIME } from './utils/constants';
 import { FormikFieldNumber, FormikSelect } from '../../../../../components/FormControls';
 import { hasError, isInvalid, validatePositiveInteger } from '../../../../../utils/validate';
 
 class ForExpression extends Component {
-  onChangeWrapper = (e, field) => {
-    this.props.onMadeChanges();
-    field.onChange(e);
-  };
-
   render() {
     return (
       <div>
@@ -62,7 +55,6 @@ class ForExpression extends Component {
             <FormikSelect
               name="bucketUnitOfTime"
               inputProps={{
-                onChange: this.onChangeWrapper,
                 options: UNITS_OF_TIME,
               }}
             />
@@ -73,9 +65,4 @@ class ForExpression extends Component {
   }
 }
 
-ForExpression.propTypes = {
-  formik: PropTypes.object.isRequired,
-  onMadeChanges: PropTypes.func.isRequired,
-};
-
-export default connect(ForExpression);
+export default ForExpression;

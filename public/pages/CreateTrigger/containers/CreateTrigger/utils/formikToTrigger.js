@@ -196,12 +196,13 @@ export function formikToTriggerUiMetadata(values, monitorUiMetadata) {
 export function formikToCondition(values, monitorUiMetadata = {}) {
   const { thresholdValue, thresholdEnum } = values;
   const searchType = _.get(monitorUiMetadata, 'search.searchType', 'query');
-  const aggregationType = _.get(monitorUiMetadata, 'search.aggregationType', 'count');
+  const aggregationType = _.get(monitorUiMetadata, 'search.aggregations.0.aggregationType');
 
   if (searchType === SEARCH_TYPE.QUERY) return { script: values.script };
   if (searchType === SEARCH_TYPE.AD) return getADCondition(values);
 
-  const isCount = aggregationType === 'count';
+  // If no aggregation type defined, default to count of documents situation
+  const isCount = !aggregationType;
   const resultsPath = getResultsPath(isCount);
   const operator = getRelationalOperator(thresholdEnum);
   return getCondition(resultsPath, operator, thresholdValue, isCount);
