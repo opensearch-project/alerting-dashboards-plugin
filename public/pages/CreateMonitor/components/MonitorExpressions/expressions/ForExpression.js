@@ -10,27 +10,27 @@
  */
 
 /*
- *   Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2021 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
- *   Licensed under the Apache License, Version 2.0 (the "License").
- *   You may not use this file except in compliance with the License.
- *   A copy of the License is located at
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- *   or in the "license" file accompanying this file. This file is distributed
- *   on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- *   express or implied. See the License for the specific language governing
- *   permissions and limitations under the License.
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
  */
 
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'formik';
-import { EuiText, EuiFlexGroup, EuiFlexItem, EuiPopover, EuiExpression } from '@elastic/eui';
-import { Expressions, POPOVER_STYLE, UNITS_OF_TIME, EXPRESSION_STYLE } from './utils/constants';
-import { selectOptionValueToText } from './utils/helpers';
+import { EuiText, EuiFlexGroup, EuiFlexItem, EuiSpacer } from '@elastic/eui';
+import { UNITS_OF_TIME } from './utils/constants';
 import { FormikFieldNumber, FormikSelect } from '../../../../../components/FormControls';
+import { hasError, isInvalid, validatePositiveInteger } from '../../../../../utils/validate';
 
 class ForExpression extends Component {
   onChangeWrapper = (e, field) => {
@@ -42,11 +42,21 @@ class ForExpression extends Component {
     return (
       <div>
         <EuiText size="xs">
-          <h4>For the last</h4>
+          <strong>Time range for the last</strong>
         </EuiText>
-        <EuiFlexGroup style={{ maxWidth: 600, ...EXPRESSION_STYLE }}>
-          <EuiFlexItem grow={false} style={{ width: 100 }}>
-            <FormikFieldNumber name="bucketValue" inputProps={{ onChange: this.onChangeWrapper }} />
+        <EuiSpacer size={'s'} />
+        <EuiFlexGroup style={{ maxWidth: 600 }}>
+          <EuiFlexItem grow={false} style={{ width: 150 }}>
+            <FormikFieldNumber
+              name="bucketValue"
+              formRow
+              fieldProps={{ validate: validatePositiveInteger }}
+              inputProps={{ min: 1, onChange: this.onChangeWrapper }}
+              rowProps={{
+                isInvalid,
+                error: hasError,
+              }}
+            />
           </EuiFlexItem>
           <EuiFlexItem grow={false} style={{ width: 150 }}>
             <FormikSelect

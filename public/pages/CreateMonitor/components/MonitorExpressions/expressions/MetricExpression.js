@@ -9,9 +9,23 @@
  * GitHub history for details.
  */
 
+/*
+ * Copyright 2021 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
+
 import React, { Component } from 'react';
 import { connect } from 'formik';
-
 import { EuiText, EuiButtonEmpty, EuiSpacer, EuiBadge } from '@elastic/eui';
 import { getIndexFields } from './utils/dataTypes';
 import { getMetricExpressionAllowedTypes } from './utils/helpers';
@@ -93,7 +107,8 @@ class MetricExpression extends Component {
     return (
       <div>
         <EuiText size="xs">
-          <h4>Metrics</h4>
+          <strong>Metrics</strong>
+          <i> - optional</i>
         </EuiText>
         <EuiSpacer size="s" />
 
