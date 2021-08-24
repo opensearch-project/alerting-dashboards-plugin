@@ -23,6 +23,7 @@ const AddTriggerConditionButton = ({ arrayHelpers, disabled }) => {
     <EuiButtonEmpty
       onClick={() => arrayHelpers.push(_.cloneDeep(FORMIK_INITIAL_TRIGGER_CONDITION_VALUES))}
       disabled={disabled}
+      data-test-subj="addTriggerConditionButton"
     >
       + Add condition
     </EuiButtonEmpty>
