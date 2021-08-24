@@ -75,6 +75,7 @@ const MonitorType = ({ values }) => (
             onChangeDefinition(e, form);
           },
           children: queryLevelDescription,
+          'data-test-subj': 'queryLevelMonitorRadioCard',
         }}
       />
     </EuiFlexItem>
@@ -97,6 +98,7 @@ const MonitorType = ({ values }) => (
             onChangeDefinition(e, form);
           },
           children: bucketLevelDescription,
+          'data-test-subj': 'bucketLevelMonitorRadioCard',
         }}
       />
     </EuiFlexItem>

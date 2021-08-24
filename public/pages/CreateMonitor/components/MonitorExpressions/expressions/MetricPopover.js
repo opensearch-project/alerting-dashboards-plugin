@@ -76,6 +76,7 @@ export default function MetricPopover(
                 inputProps={{
                   onChange: onChangeWrapper,
                   options: AGGREGATION_TYPES,
+                  'data-test-subj': `metrics.${index}.aggregationTypeSelect`,
                 }}
               />
             </EuiFlexItem>
@@ -99,7 +100,7 @@ export default function MetricPopover(
                   onChange: onChangeFieldWrapper,
                   isClearable: false,
                   singleSelection: { asPlainText: true },
-                  'data-test-subj': 'ofFieldComboBox',
+                  'data-test-subj': `metrics.${index}.ofFieldComboBox`,
                 }}
               />
             </EuiFlexItem>
