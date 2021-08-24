@@ -9,7 +9,7 @@
  * GitHub history for details.
  */
 
-import React, { useState } from 'react';
+import React from 'react';
 
 import {
   EuiText,
@@ -24,37 +24,22 @@ import { EXPRESSION_STYLE, POPOVER_STYLE } from './utils/constants';
 import { FormikComboBox } from '../../../../../components/FormControls';
 
 export default function GroupByPopover(
-  {
-    values,
-    onMadeChanges,
-    arrayHelpers,
-    options,
-    closePopover,
-    expressionWidth,
-    index,
-    groupByItem,
-  } = this.props
+  { values, options, closePopover, expressionWidth, index } = this.props
 ) {
-  let defaultIndex = 0;
   const disableOption = (label) => {
-    options[0].options.forEach((element, index) => {
+    options[0].options.forEach((element) => {
       if (element.label === label) {
         element.disabled = true;
-        if (defaultIndex === index) defaultIndex++;
       }
     });
   };
+
   values.groupBy.forEach((label) => {
     disableOption(label);
   });
 
-  const defaultOption = options[0]?.options[defaultIndex];
-  const [comboOption, setComboOption] = useState(groupByItem ? groupByItem : defaultOption.label);
-
   const onChangeFieldWrapper = (options, field, form) => {
-    onMadeChanges();
-    form.setFieldError('groupBy', undefined);
-    setComboOption(options[0].label);
+    form.setFieldValue(`groupBy.${index}`, options[0].label);
   };
 
   return (
@@ -74,8 +59,7 @@ export default function GroupByPopover(
         </EuiFlexItem>
         <EuiFlexItem>
           <FormikComboBox
-            name="groupByField"
-            selectedOption={{ label: comboOption }}
+            name={`groupBy.${index}`}
             inputProps={{
               placeholder: 'Select a field',
               options,
@@ -92,22 +76,10 @@ export default function GroupByPopover(
 
       <EuiFlexGroup alignItems="center" justifyContent="flexEnd">
         <EuiFlexItem grow={false}>
-          <EuiButtonEmpty
-            onClick={() => {
-              closePopover();
-            }}
-          >
-            Cancel
-          </EuiButtonEmpty>
+          <EuiButtonEmpty onClick={closePopover}>Cancel</EuiButtonEmpty>
         </EuiFlexItem>
         <EuiFlexItem grow={false}>
-          <EuiButton
-            fill
-            onClick={() => {
-              arrayHelpers.replace(index, comboOption);
-              closePopover();
-            }}
-          >
+          <EuiButton fill onClick={closePopover}>
             Save
           </EuiButton>
         </EuiFlexItem>

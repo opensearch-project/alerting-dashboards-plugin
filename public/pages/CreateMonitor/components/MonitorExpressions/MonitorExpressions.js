@@ -33,13 +33,15 @@ import { FieldArray } from 'formik';
 import GroupByExpression from './expressions/GroupByExpression';
 
 export const DEFAULT_CLOSED_STATES = {
+  WHERE: false,
+  // not using
   METRICS: false,
-  WHEN: false,
-  OF_FIELD: false,
-  THRESHOLD: false,
+  GROUP_BY: false,
   OVER: false,
   FOR_THE_LAST: false,
-  WHERE: false,
+  THRESHOLD: false,
+  WHEN: false,
+  OF_FIELD: false,
 };
 
 export default class MonitorExpressions extends Component {
@@ -78,33 +80,22 @@ export default class MonitorExpressions extends Component {
   });
 
   render() {
-    const { dataTypes, errors, touched, isBucketMonitor } = this.props;
+    const { dataTypes, errors } = this.props;
     return (
       <div>
         <FieldArray name="aggregations" validateOnChange={false}>
           {(arrayHelpers) => (
-            <MetricExpression
-              {...this.getExpressionProps()}
-              errors={errors}
-              arrayHelpers={arrayHelpers}
-              dataTypes={dataTypes}
-            />
+            <MetricExpression errors={errors} arrayHelpers={arrayHelpers} dataTypes={dataTypes} />
           )}
         </FieldArray>
         <EuiSpacer size="m" />
-        <ForExpression {...this.getExpressionProps()} />
+        <ForExpression />
         <EuiSpacer size="l" />
         <WhereExpression {...this.getExpressionProps()} dataTypes={dataTypes} />
         <EuiSpacer size="m" />
         <FieldArray name="groupBy" validateOnChange={false}>
           {(arrayHelpers) => (
-            <GroupByExpression
-              {...this.getExpressionProps()}
-              errors={errors}
-              touched={touched}
-              arrayHelpers={arrayHelpers}
-              dataTypes={dataTypes}
-            />
+            <GroupByExpression errors={errors} arrayHelpers={arrayHelpers} dataTypes={dataTypes} />
           )}
         </FieldArray>
         <EuiSpacer size="xs" />
