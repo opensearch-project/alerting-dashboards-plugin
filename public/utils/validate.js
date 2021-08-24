@@ -37,7 +37,7 @@ export const isInvalid = (name, form) =>
 export const hasError = (name, form) => _.get(form.errors, name);
 
 export const validateActionName = (monitor, trigger) => (value) => {
-  if (!value) return 'Required';
+  if (!value) return 'Required.';
   // GetMonitor is being used to retrieve the Trigger which means it will always
   // be wrapped in Trigger type (even for old Monitors)
   // TODO: Should clean this up later since a similar check is done in several places.
@@ -50,7 +50,7 @@ export const validateActionName = (monitor, trigger) => (value) => {
     actions = _.get(trigger, `${TRIGGER_TYPE.BUCKET_LEVEL}.actions`, []);
   }
   const matches = actions.filter((action) => action.name === value);
-  if (matches.length > 1) return 'Action name is already used';
+  if (matches.length > 1) return 'Action name is already used.';
 };
 
 export const isInvalidActionThrottle = (action) => {
@@ -70,12 +70,16 @@ export const validateActionThrottle = (action) => (value) => {
 };
 
 export const required = (value) => {
-  if (!value) return 'Required';
+  if (!value) return 'Required.';
+};
+
+export const validateRequiredNumber = (value) => {
+  if (_.isEmpty(value)) return 'Provide a value.';
 };
 
 export const validateMonitorName = (httpClient, monitorToEdit) => async (value) => {
   try {
-    if (!value) return 'Required';
+    if (!value) return 'Required.';
     const options = {
       index: INDEX.SCHEDULED_JOBS,
       query: { query: { term: { 'monitor.name.keyword': value } } },
@@ -84,9 +88,9 @@ export const validateMonitorName = (httpClient, monitorToEdit) => async (value) 
       body: JSON.stringify(options),
     });
     if (_.get(response, 'resp.hits.total.value', 0)) {
-      if (!monitorToEdit) return 'Monitor name is already used';
+      if (!monitorToEdit) return 'Monitor name is already used.';
       if (monitorToEdit && monitorToEdit.name !== value) {
-        return 'Monitor name is already used';
+        return 'Monitor name is already used.';
       }
     }
     // TODO: Handle the situation that monitors with a same name can be created when user don't have the permission of 'cluster:admin/opendistro/alerting/monitor/search'
@@ -97,34 +101,34 @@ export const validateMonitorName = (httpClient, monitorToEdit) => async (value) 
 };
 
 export const validateTimezone = (value) => {
-  if (!Array.isArray(value)) return 'Required';
-  if (!value.length) return 'Required';
+  if (!Array.isArray(value)) return 'Select a timezone.';
+  if (!value.length) return 'Select a timezone.';
 };
 
 export const validatePositiveInteger = (value) => {
-  if (!Number.isInteger(value) || value < 1) return 'Must be a positive integer';
+  if (!Number.isInteger(value) || value < 1) return 'Must be a positive integer.';
 };
 
 export const validateUnit = (value) => {
-  if (!['MINUTES', 'HOURS', 'DAYS'].includes(value)) return 'Must be one of minutes, hours, days';
+  if (!['MINUTES', 'HOURS', 'DAYS'].includes(value)) return 'Must be one of minutes, hours, days.';
 };
 
 export const validateMonthlyDay = (value) => {
   if (!Number.isInteger(value) || value < 1 || value > 31)
-    return 'Must be a positive integer between 1-31';
+    return 'Must be a positive integer between 1-31.';
 };
 
 export const ILLEGAL_CHARACTERS = ['?', '"', ',', ' '];
 
 export const validateDetector = (detectorId, selectedDetector) => {
-  if (!detectorId) return 'Must select detector';
+  if (!detectorId) return 'Must select detector.';
   if (selectedDetector && selectedDetector.features.length === 0)
-    return 'Must choose detector which has features';
+    return 'Must choose detector which has features.';
 };
 
 export const validateIndex = (options) => {
-  if (!Array.isArray(options)) return 'Must specify an index';
-  if (!options.length) return 'Must specify an index';
+  if (!Array.isArray(options)) return 'Must specify an index.';
+  if (!options.length) return 'Must specify an index.';
 
   const illegalCharacters = ILLEGAL_CHARACTERS.join(' ');
   const pattern = options.map(({ label }) => label).join('');
@@ -149,6 +153,6 @@ export function validateExtractionQuery(value) {
   try {
     JSON.parse(value);
   } catch (err) {
-    return 'Invalid JSON';
+    return 'Invalid JSON.';
   }
 }

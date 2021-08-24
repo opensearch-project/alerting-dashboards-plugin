@@ -45,7 +45,7 @@ class TriggerExpressions extends Component {
     const { label, keyFieldName, valueFieldName } = this.props;
     return (
       <EuiFormRow label={label} style={{ width: '390px' }}>
-        <EuiFlexGroup alignItems={'flexStart'} fullWidth gutterSize={'m'}>
+        <EuiFlexGroup alignItems={'flexStart'} gutterSize={'m'}>
           <EuiFlexItem grow={1}>
             <Field name={keyFieldName}>
               {({ field: { onBlur, ...rest }, form: { touched, errors } }) => (

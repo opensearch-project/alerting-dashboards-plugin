@@ -194,12 +194,12 @@ class DefineMonitor extends Component {
           dataTypes={this.state.dataTypes}
           isBucketMonitor={isBucketMonitor}
         />
-        <EuiSpacer size="m" />
+        <EuiSpacer size="xl" />
         <EuiAccordion
           id="preview-query-performance-accordion"
           buttonContent="Preview query and performance"
         >
-          <EuiSpacer size="m" />
+          <EuiSpacer size="s" />
           <QueryPerformance response={performanceResponse} />
           {errors.where ? (
             renderEmptyMessage('Invalid input in data filter. Remove data filter or adjust filter ')
@@ -218,13 +218,17 @@ class DefineMonitor extends Component {
               );
             })
           ) : (
-            <VisualGraph
-              values={this.state.formikSnapshot}
-              fieldName="Select a field"
-              response={this.state.response}
-            />
+            <div>
+              <EuiSpacer size="m" />
+              <VisualGraph
+                values={this.state.formikSnapshot}
+                fieldName="Select a field"
+                response={this.state.response}
+              />
+            </div>
           )}
         </EuiAccordion>
+        <EuiSpacer size="m" />
       </Fragment>
     );
   }
@@ -423,6 +427,10 @@ class DefineMonitor extends Component {
         <ContentPanel
           title="Query"
           titleSize="s"
+          panelStyles={{
+            paddingLeft: '10px',
+            paddingRight: '10px',
+          }}
           bodyStyles={{ padding: 'initial' }}
           actions={monitorContent.actions}
         >
