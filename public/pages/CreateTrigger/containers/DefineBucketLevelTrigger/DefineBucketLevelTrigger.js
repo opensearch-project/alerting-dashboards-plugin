@@ -41,6 +41,7 @@ import WhereExpression from '../../../CreateMonitor/components/MonitorExpression
 import { FieldArray } from 'formik';
 import ConfigureActions from '../ConfigureActions';
 import { SEVERITY_OPTIONS } from '../DefineTrigger/DefineTrigger';
+import { inputLimitText } from '../../../../utils/helpers';
 
 const defaultRowProps = {
   label: 'Trigger name',
@@ -81,7 +82,6 @@ const propTypes = {
 
 const DEFAULT_TRIGGER_NAME = 'New trigger';
 const MAX_TRIGGER_CONDITIONS = 5;
-const MAX_WHERE_FILTERS = 1;
 
 export const DEFAULT_METRIC_AGGREGATION = { value: '_count', text: 'Count of documents' };
 export const DEFAULT_AND_OR_CONDITION = 'AND';
@@ -272,10 +272,18 @@ class DefineBucketLevelTrigger extends Component {
                 triggerValues
               )}
               <div style={{ paddingLeft: '15px' }}>
+                <EuiSpacer size={'xs'} />
                 <AddTriggerConditionButton
                   arrayHelpers={conditionsArrayHelpers}
                   disabled={disableAddTriggerConditionButton}
                 />
+                {inputLimitText(
+                  _.get(triggerValues, `${fieldPath}triggerConditions`, []).length,
+                  MAX_TRIGGER_CONDITIONS,
+                  'trigger condition',
+                  'trigger conditions',
+                  { paddingLeft: '10px' }
+                )}
               </div>
             </div>
           )}
