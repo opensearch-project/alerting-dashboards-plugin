@@ -67,6 +67,12 @@ export default class MonitorDetails extends Component {
       updating: false,
       error: null,
       triggerToEdit: null,
+      editMonitor: () => {
+        this.props.history.push({
+          ...this.props.location,
+          search: `?action=${MONITOR_ACTIONS.UPDATE_MONITOR}`,
+        });
+      },
     };
   }
 
@@ -200,7 +206,7 @@ export default class MonitorDetails extends Component {
   };
 
   renderNoTriggersCallOut = () => {
-    const { monitor } = this.state;
+    const { monitor, editMonitor } = this.state;
     if (!monitor.triggers.length) {
       return (
         <Fragment>
@@ -210,7 +216,7 @@ export default class MonitorDetails extends Component {
                 This monitor has no triggers configured. To receive alerts from this monitor you
                 must first{' '}
                 {
-                  <EuiLink style={{ textDecoration: 'underline' }} onClick={this.onCreateTrigger}>
+                  <EuiLink style={{ textDecoration: 'underline' }} onClick={editMonitor}>
                     create at trigger
                   </EuiLink>
                 }
@@ -229,7 +235,15 @@ export default class MonitorDetails extends Component {
   };
 
   render() {
-    const { monitor, detector, monitorVersion, activeCount, updating, loading } = this.state;
+    const {
+      monitor,
+      detector,
+      monitorVersion,
+      activeCount,
+      updating,
+      loading,
+      editMonitor,
+    } = this.state;
     const {
       location,
       match: {
@@ -291,16 +305,7 @@ export default class MonitorDetails extends Component {
             )}
           </EuiFlexItem>
           <EuiFlexItem grow={false}>
-            <EuiButton
-              onClick={() => {
-                this.props.history.push({
-                  ...this.props.location,
-                  search: `?action=${MONITOR_ACTIONS.UPDATE_MONITOR}`,
-                });
-              }}
-            >
-              Edit
-            </EuiButton>
+            <EuiButton onClick={editMonitor}>Edit</EuiButton>
           </EuiFlexItem>
           <EuiFlexItem grow={false}>
             <EuiButton
@@ -332,7 +337,7 @@ export default class MonitorDetails extends Component {
           <MonitorHistory
             httpClient={httpClient}
             monitorId={monitorId}
-            onShowTrigger={this.onCreateTrigger}
+            onShowTrigger={editMonitor}
             triggers={getUnwrappedTriggers(monitor)}
             isDarkMode={isDarkMode}
             notifications={notifications}
@@ -343,7 +348,7 @@ export default class MonitorDetails extends Component {
         <Dashboard
           monitorIds={[monitorId]}
           detectorIds={detectorId ? [detectorId] : []}
-          onCreateTrigger={this.onCreateTrigger}
+          onCreateTrigger={editMonitor}
           httpClient={httpClient}
           location={location}
           history={history}
