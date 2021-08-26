@@ -79,7 +79,7 @@ class GroupByExpression extends Component {
       60;
 
     const isBucketLevelMonitor = values.monitor_type === MONITOR_TYPE.BUCKET_LEVEL;
-    if (!values.groupBy.length && !isBucketLevelMonitor) {
+    if (!values.groupBy.length && isBucketLevelMonitor) {
       errors.groupBy = GROUP_BY_ERROR;
     } else {
       delete errors.groupBy;
