@@ -333,15 +333,15 @@ export default class MonitorDetails extends Component {
             <EuiButton onClick={editMonitor}>Edit</EuiButton>
           </EuiFlexItem>
           <EuiFlexItem grow={false}>
-            <EuiButton onClick={this.showJsonModal}>Export as JSON</EuiButton>
-          </EuiFlexItem>
-          <EuiFlexItem grow={false}>
             <EuiButton
               isLoading={updating}
               onClick={() => this.updateMonitor({ enabled: !monitor.enabled })}
             >
               {monitor.enabled ? 'Disable' : 'Enable'}
             </EuiButton>
+          </EuiFlexItem>
+          <EuiFlexItem grow={false}>
+            <EuiButton onClick={this.showJsonModal}>Export as JSON</EuiButton>
           </EuiFlexItem>
         </EuiFlexGroup>
         <EuiSpacer />
