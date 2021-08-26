@@ -225,13 +225,12 @@ export default class MonitorDetails extends Component {
             title={
               <span>
                 This monitor has no triggers configured. To receive alerts from this monitor you
-                must first{' '}
+                must first create a trigger.{' '}
                 {
                   <EuiLink style={{ textDecoration: 'underline' }} onClick={editMonitor}>
-                    create at trigger
+                    Edit monitor
                   </EuiLink>
                 }
-                .
               </span>
             }
             iconType="alert"

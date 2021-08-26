@@ -147,6 +147,7 @@ export default class Triggers extends Component {
           columns={columns}
           sorting={sorting}
           onTableChange={this.onTableChange}
+          noItemsMessage={'There are no triggers.'}
         />
       </ContentPanel>
     );
