@@ -26,7 +26,14 @@
 
 import React from 'react';
 import _ from 'lodash';
-import { EuiAccordion, EuiButton, EuiHorizontalRule, EuiSpacer } from '@elastic/eui';
+import {
+  EuiAccordion,
+  EuiButton,
+  EuiHorizontalRule,
+  EuiPanel,
+  EuiSpacer,
+  EuiText,
+} from '@elastic/eui';
 import { FormikFieldText, FormikComboBox } from '../../../../components/FormControls';
 import { isInvalid, hasError, validateActionName } from '../../../../utils/validate';
 import { ActionsMap } from './utils/constants';
@@ -42,80 +49,96 @@ const Action = ({
   onDelete,
   sendTestMessage,
   setFlyout,
+  fieldPath,
+  values,
 }) => {
   const selectedDestination = destinations.filter((item) => item.value === action.destination_id);
   const type = _.get(selectedDestination, '0.type', DEFAULT_ACTION_TYPE);
   const { name } = action;
   const ActionComponent = ActionsMap[type].component;
   const actionLabel = ActionsMap[type].label;
+  const isFirstAction = index !== undefined && index === 0;
   return (
-    <EuiAccordion
-      id={name}
-      initialIsOpen={!name}
-      className="accordion-action"
-      buttonContent={
-        !_.get(selectedDestination, '0.type', undefined)
-          ? 'Notification'
-          : `${actionLabel}: ${name}`
-      }
-      extraAction={
-        <div style={{ paddingRight: '10px' }}>
-          <EuiButton onClick={onDelete}>Delete</EuiButton>
-        </div>
-      }
-    >
-      <EuiHorizontalRule margin="xs" />
-      <div style={{ padding: '0px 12px' }}>
-        <FormikFieldText
-          name={`actions.${index}.name`}
-          formRow
-          fieldProps={{ validate: validateActionName(context.ctx.trigger) }}
-          rowProps={{
-            label: 'Action name',
-            helpText: 'Names can only contain letters, numbers, and special characters',
-            isInvalid,
-            error: hasError,
-          }}
-          inputProps={{ isInvalid }}
-        />
-        <FormikComboBox
-          name={`actions.${index}.destination_id`}
-          formRow
-          fieldProps={{ validate: validateDestination(destinations) }}
-          rowProps={{
-            label: 'Destination',
-            isInvalid,
-            error: hasError,
-          }}
-          inputProps={{
-            placeholder: 'Select a destination',
-            options: destinations,
-            selectedOptions: selectedDestination,
-            onChange: (options) => {
-              // Just a swap correct fields.
-              arrayHelpers.replace(index, {
-                ...action,
-                destination_id: options[0].value,
-              });
-            },
-            onBlur: (e, field, form) => {
-              form.setFieldTouched(`actions.${index}.destination_id`, true);
-            },
-            singleSelection: { asPlainText: true },
-            isClearable: false,
-          }}
-        />
-        <EuiSpacer size="m" />
-        <ActionComponent
-          action={action}
-          context={context}
-          index={index}
-          sendTestMessage={sendTestMessage}
-          setFlyout={setFlyout}
-        />
-      </div>
-      <EuiSpacer />
-    </EuiAccordion>
+    <div style={{ paddingTop: isFirstAction ? undefined : '20px' }}>
+      <EuiPanel panelStyles={{ backgroundColor: '#FFFFFF' }}>
+        <EuiAccordion
+          id={name}
+          initialIsOpen={!name}
+          className="accordion-action"
+          buttonContent={
+            <EuiText>
+              {!_.get(selectedDestination, '0.type', undefined)
+                ? 'Notification'
+                : `${actionLabel}: ${name}`}
+            </EuiText>
+          }
+          extraAction={
+            <EuiButton color={'danger'} onClick={onDelete} size={'s'}>
+              Remove action
+            </EuiButton>
+          }
+        >
+          <EuiHorizontalRule margin="s" />
+          <div>
+            <FormikFieldText
+              name={`${fieldPath}actions.${index}.name`}
+              formRow
+              fieldProps={{
+                validate: validateActionName(context.ctx.monitor, context.ctx.trigger),
+              }}
+              rowProps={{
+                label: 'Action name',
+                helpText: 'Names can only contain letters, numbers, and special characters',
+                isInvalid,
+                error: hasError,
+              }}
+              inputProps={{
+                placeholder: 'Enter action name',
+                isInvalid,
+              }}
+            />
+            <FormikComboBox
+              name={`${fieldPath}actions.${index}.destination_id`}
+              formRow
+              fieldProps={{ validate: validateDestination(destinations) }}
+              rowProps={{
+                label: 'Destination',
+                isInvalid,
+                error: hasError,
+              }}
+              inputProps={{
+                placeholder: 'Select a destination',
+                options: destinations,
+                selectedOptions: selectedDestination,
+                onChange: (options) => {
+                  // Just a swap correct fields.
+                  arrayHelpers.replace(index, {
+                    ...action,
+                    destination_id: options[0].value,
+                  });
+                },
+                onBlur: (e, field, form) => {
+                  form.setFieldTouched(`${fieldPath}actions.${index}.destination_id`, true);
+                },
+                singleSelection: { asPlainText: true },
+                isClearable: false,
+              }}
+            />
+            <EuiSpacer size="m" />
+            <ActionComponent
+              action={action}
+              context={context}
+              index={index}
+              sendTestMessage={sendTestMessage}
+              setFlyout={setFlyout}
+              fieldPath={fieldPath}
+              values={values}
+            />
+          </div>
+          <EuiSpacer size={'l'} />
+        </EuiAccordion>
+      </EuiPanel>
+    </div>
   );
 };
 

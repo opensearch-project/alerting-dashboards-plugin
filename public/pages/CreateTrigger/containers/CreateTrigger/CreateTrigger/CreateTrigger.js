@@ -1,27 +1,16 @@
 /*
- * SPDX-License-Identifier: Apache-2.0
+ * Copyright 2021 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
- * The OpenSearch Contributors require contributions made to
- * this file be licensed under the Apache-2.0 license or a
- * compatible open source license.
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
  *
- * Modifications Copyright OpenSearch Contributors. See
- * GitHub history for details.
- */
-
-/*
- *   Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- *   Licensed under the Apache License, Version 2.0 (the "License").
- *   You may not use this file except in compliance with the License.
- *   A copy of the License is located at
- *
- *       http://www.apache.org/licenses/LICENSE-2.0
- *
- *   or in the "license" file accompanying this file. This file is distributed
- *   on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- *   express or implied. See the License for the specific language governing
- *   permissions and limitations under the License.
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
  */
 
 import React, { Component, Fragment } from 'react';
@@ -43,16 +32,28 @@ import 'brace/mode/json';
 import 'brace/mode/plain_text';
 import 'brace/snippets/javascript';
 import 'brace/ext/language_tools';
-import ConfigureActions from '../ConfigureActions';
-import DefineTrigger from '../DefineTrigger';
-import monitorToFormik from '../../../CreateMonitor/containers/CreateMonitor/utils/monitorToFormik';
-import { buildSearchRequest } from '../../../CreateMonitor/containers/DefineMonitor/utils/searchRequests';
-import { formikToTrigger, formikToTriggerUiMetadata } from './utils/formikToTrigger';
-import { triggerToFormik } from './utils/triggerToFormik';
-import { FORMIK_INITIAL_VALUES } from './utils/constants';
-import { SEARCH_TYPE } from '../../../../utils/constants';
-import { SubmitErrorHandler } from '../../../../utils/SubmitErrorHandler';
-import { backendErrorNotification } from '../../../../utils/helpers';
+import ConfigureActions from '../../ConfigureActions';
+import DefineTrigger from '../../DefineTrigger';
+import monitorToFormik from '../../../../CreateMonitor/containers/CreateMonitor/utils/monitorToFormik';
+import { buildSearchRequest } from '../../../../CreateMonitor/containers/DefineMonitor/utils/searchRequests';
+import { formikToTrigger, formikToTriggerUiMetadata } from '../utils/formikToTrigger';
+import { triggerToFormik } from '../utils/triggerToFormik';
+import { FORMIK_INITIAL_TRIGGER_VALUES } from '../utils/constants';
+import { SEARCH_TYPE } from '../../../../../utils/constants';
+import { SubmitErrorHandler } from '../../../../../utils/SubmitErrorHandler';
+import { backendErrorNotification } from '../../../../../utils/helpers';
+import DefineBucketLevelTrigger from '../../DefineBucketLevelTrigger';
+import { getPathsPerDataType } from '../../../../CreateMonitor/containers/DefineMonitor/utils/mappings';
+import { MONITOR_TYPE } from '../../../../../utils/constants';
+
+export const DEFAULT_CLOSED_STATES = {
+  WHEN: false,
+  OF_FIELD: false,
+  THRESHOLD: false,
+  OVER: false,
+  FOR_THE_LAST: false,
+  WHERE: false,
+};
 
 export default class CreateTrigger extends Component {
   constructor(props) {
@@ -61,17 +62,21 @@ export default class CreateTrigger extends Component {
     const useTriggerToFormik = this.props.edit && this.props.triggerToEdit;
     const initialValues = useTriggerToFormik
       ? triggerToFormik(this.props.triggerToEdit, this.props.monitor)
-      : _.cloneDeep(FORMIK_INITIAL_VALUES);
+      : _.cloneDeep(FORMIK_INITIAL_TRIGGER_VALUES);
 
     this.state = {
       triggerResponse: null,
       executeResponse: null,
       initialValues,
+      dataTypes: {},
+      openedStates: DEFAULT_CLOSED_STATES,
+      madeChanges: false,
     };
   }
 
   componentDidMount() {
     this.onRunExecute();
+    this.onQueryMappings();
   }
 
   componentWillUnmount() {
@@ -103,15 +108,25 @@ export default class CreateTrigger extends Component {
 
   onEdit = (trigger, triggerMetadata, { setSubmitting, setErrors }) => {
     const { monitor, updateMonitor, onCloseTrigger, triggerToEdit } = this.props;
-    const { ui_metadata: uiMetadata = {}, triggers } = monitor;
-    const { name } = triggerToEdit;
+    const { ui_metadata: uiMetadata = {}, triggers, monitor_type } = monitor;
+    const { name } =
+      monitor_type === MONITOR_TYPE.QUERY_LEVEL
+        ? triggerToEdit.query_level_trigger
+        : triggerToEdit.bucket_level_trigger;
     const updatedTriggersMetadata = _.cloneDeep(uiMetadata.triggers || {});
     delete updatedTriggersMetadata[name];
     const updatedUiMetadata = {
       ...uiMetadata,
       triggers: { ...updatedTriggersMetadata, ...triggerMetadata },
     };
-    const indexToUpdate = _.findIndex(triggers, { name });
+
+    const findTriggerName = (element) => {
+      return monitor_type === MONITOR_TYPE.QUERY_LEVEL
+        ? name === element.query_level_trigger.name
+        : name === element.bucket_level_trigger.name;
+    };
+
+    const indexToUpdate = _.findIndex(triggers, findTriggerName);
     const updatedTriggers = triggers.slice();
     updatedTriggers.splice(indexToUpdate, 1, trigger);
     const actionKeywords = ['update', 'trigger'];
@@ -132,12 +147,20 @@ export default class CreateTrigger extends Component {
   onRunExecute = (triggers = []) => {
     const { httpClient, monitor, notifications } = this.props;
     const formikValues = monitorToFormik(monitor);
+    const searchType = formikValues.searchType;
     const monitorToExecute = _.cloneDeep(monitor);
     _.set(monitorToExecute, 'triggers', triggers);
-    if (formikValues.searchType !== SEARCH_TYPE.AD) {
-      const searchRequest = buildSearchRequest(formikValues);
-      _.set(monitorToExecute, 'inputs[0].search', searchRequest);
+
+    switch (searchType) {
+      case SEARCH_TYPE.QUERY:
+      case SEARCH_TYPE.GRAPH:
+        const searchRequest = buildSearchRequest(formikValues);
+        _.set(monitorToExecute, 'inputs[0].search', searchRequest);
+        break;
+      default:
+        console.log(`Unsupported searchType found: ${JSON.stringify(searchType)}`, searchType);
     }
+
     httpClient
       .post('../api/alerting/monitors/_execute', { body: JSON.stringify(monitorToExecute) })
       .then((resp) => {
@@ -201,9 +224,74 @@ export default class CreateTrigger extends Component {
     monitor: monitor,
   });
 
+  openExpression = (expression) => {
+    this.setState({
+      openedStates: {
+        ...DEFAULT_CLOSED_STATES,
+        [expression]: true,
+      },
+    });
+  };
+
+  closeExpression = (expression) => {
+    const { madeChanges, openedStates } = this.state;
+    if (madeChanges && openedStates[expression]) {
+      // if made changes and close expression that was currently open => run query
+
+      // TODO: Re-enable once we have implementation to support
+      //  rendering visual graphs for bucket-level triggers.
+      // this.props.onRunQuery();
+
+      this.setState({ madeChanges: false });
+    }
+    this.setState({ openedStates: { ...openedStates, [expression]: false } });
+  };
+
+  onMadeChanges = () => {
+    this.setState({ madeChanges: true });
+  };
+
+  getExpressionProps = () => ({
+    openedStates: this.state.openedStates,
+    closeExpression: this.closeExpression,
+    openExpression: this.openExpression,
+    onMadeChanges: this.onMadeChanges,
+  });
+
+  async queryMappings(index) {
+    if (!index.length) {
+      return {};
+    }
+
+    try {
+      const response = await this.props.httpClient.post('../api/alerting/_mappings', {
+        body: JSON.stringify({ index }),
+      });
+      if (response.ok) {
+        return response.resp;
+      }
+      return {};
+    } catch (err) {
+      throw err;
+    }
+  }
+
+  async onQueryMappings() {
+    const indices = this.props.monitor.inputs[0].search.indices;
+    try {
+      const mappings = await this.queryMappings(indices);
+      const dataTypes = getPathsPerDataType(mappings);
+      this.setState({ dataTypes });
+    } catch (err) {
+      console.error('There was an error getting mappings for query', err);
+    }
+  }
+
   render() {
     const { monitor, onCloseTrigger, setFlyout, edit, httpClient, notifications } = this.props;
-    const { initialValues, executeResponse } = this.state;
+    const { dataTypes, initialValues, executeResponse } = this.state;
+    const isQueryLevelMonitor = _.get(monitor, 'monitor_type') === MONITOR_TYPE.QUERY_LEVEL;
+
     return (
       <div style={{ padding: '25px 50px' }}>
         {this.renderSuccessCallOut()}
@@ -214,16 +302,40 @@ export default class CreateTrigger extends Component {
                 <h1>{edit ? 'Edit' : 'Create'} trigger</h1>
               </EuiTitle>
               <EuiSpacer />
-              <DefineTrigger
-                context={this.getTriggerContext(executeResponse, monitor, values)}
-                executeResponse={executeResponse}
-                monitorValues={monitorToFormik(monitor)}
-                onRun={this.onRunExecute}
-                setFlyout={setFlyout}
-                triggers={monitor.triggers}
-                triggerValues={values}
-                isDarkMode={this.props.isDarkMode}
-              />
+              {isQueryLevelMonitor ? (
+                <DefineTrigger
+                  context={this.getTriggerContext(executeResponse, monitor, values)}
+                  executeResponse={executeResponse}
+                  monitorValues={monitorToFormik(monitor)}
+                  onRun={this.onRunExecute}
+                  setFlyout={setFlyout}
+                  triggers={monitor.triggers}
+                  triggerValues={values}
+                  isDarkMode={this.props.isDarkMode}
+                />
+              ) : (
+                <FieldArray name={'triggerConditions'} validateOnChange={true}>
+                  {(arrayHelpers) => (
+                    <DefineBucketLevelTrigger
+                      arrayHelpers={arrayHelpers}
+                      context={this.getTriggerContext(executeResponse, monitor, values)}
+                      executeResponse={executeResponse}
+                      monitor={monitor}
+                      monitorValues={monitorToFormik(monitor)}
+                      onRun={this.onRunExecute}
+                      setFlyout={setFlyout}
+                      triggers={monitor.triggers}
+                      triggerValues={values}
+                      isDarkMode={this.props.isDarkMode}
+                      openedStates={this.state.openedStates}
+                      closeExpression={this.closeExpression}
+                      openExpression={this.openExpression}
+                      onMadeChanges={this.onMadeChanges}
+                      dataTypes={dataTypes}
+                    />
+                  )}
+                </FieldArray>
+              )}
               <EuiSpacer />
               <FieldArray name="actions" validateOnChange={true}>
                 {(arrayHelpers) => (

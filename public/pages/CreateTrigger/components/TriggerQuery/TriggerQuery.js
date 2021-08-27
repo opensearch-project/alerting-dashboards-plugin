@@ -10,18 +10,18 @@
  */
 
 /*
- *   Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2021 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
- *   Licensed under the Apache License, Version 2.0 (the "License").
- *   You may not use this file except in compliance with the License.
- *   A copy of the License is located at
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- *   or in the "license" file accompanying this file. This file is distributed
- *   on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- *   express or implied. See the License for the specific language governing
- *   permissions and limitations under the License.
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
  */
 
 import React from 'react';
@@ -29,12 +29,13 @@ import { Field } from 'formik';
 import _ from 'lodash';
 import {
   EuiButton,
-  EuiButtonEmpty,
   EuiCodeEditor,
+  EuiFlexGrid,
   EuiFlexGroup,
   EuiFlexItem,
   EuiFormRow,
-  EuiSpacer,
+  EuiLink,
+  EuiText,
 } from '@elastic/eui';
 import 'brace/mode/json';
 import 'brace/mode/plain_text';
@@ -56,52 +57,60 @@ export const getExecuteMessage = (response) => {
 
 const TriggerQuery = ({
   context,
-  error,
   executeResponse,
   onRun,
-  response,
   triggerValues,
   setFlyout,
   isDarkMode,
+  fieldPath,
 }) => {
-  const trigger = { ...formikToTrigger(triggerValues), actions: [] };
-  const formattedResponse = JSON.stringify(response, null, 4);
+  const currentTrigger = _.isEmpty(fieldPath)
+    ? triggerValues
+    : _.get(triggerValues, `${fieldPath.slice(0, -1)}`, {});
+  const trigger = { ...formikToTrigger(currentTrigger), actions: [] };
+  const fieldName = `${fieldPath}script.source`;
   return (
     <div style={{ padding: '0px 10px', marginTop: '0px' }}>
-      <EuiFlexGroup direction="column">
+      <EuiFlexGrid columns={2} gutterSize={'s'}>
+        {/*// Grid slot for the trigger definition code editor header*/}
         <EuiFlexItem>
-          <EuiFormRow label="Extraction query response" fullWidth>
-            <EuiCodeEditor
-              mode="json"
-              theme={isDarkMode ? 'sense-dark' : 'github'}
-              width="100%"
-              value={error || formattedResponse}
-              readOnly
-            />
-          </EuiFormRow>
+          <EuiFlexGroup alignItems={'center'} gutterSize={'s'}>
+            <EuiFlexItem grow={false}>
+              <EuiText size={'s'}>
+                <h5>Trigger condition</h5>
+              </EuiText>
+            </EuiFlexItem>
+            <EuiFlexItem grow={false}>
+              <EuiText>
+                <EuiLink
+                  onClick={() => {
+                    setFlyout({ type: 'triggerCondition', payload: context });
+                  }}
+                >
+                  Info
+                </EuiLink>
+              </EuiText>
+            </EuiFlexItem>
+          </EuiFlexGroup>
         </EuiFlexItem>
+
+        {/*// Grid slot for the trigger condition response code editor header*/}
         <EuiFlexItem>
-          <Field name="script.source">
+          <EuiFlexGroup alignItems={'center'} gutterSize={'none'}>
+            <EuiText size={'s'}>
+              <h5>Trigger condition response:</h5>
+            </EuiText>
+          </EuiFlexGroup>
+        </EuiFlexItem>
+
+        {/*// Grid slot for the trigger condition code editor box*/}
+        <EuiFlexItem>
+          <Field name={fieldName}>
             {({ field: { value }, form: { errors, touched, setFieldValue, setFieldTouched } }) => (
               <EuiFormRow
-                label={
-                  <div>
-                    <span>Trigger condition</span>
-                    <EuiButtonEmpty
-                      size="s"
-                      onClick={() => {
-                        setFlyout({ type: 'triggerCondition', payload: context });
-                      }}
-                    >
-                      Info
-                    </EuiButtonEmpty>
-                  </div>
-                }
                 fullWidth
-                isInvalid={
-                  _.get(touched, 'script.source', false) && !!_.get(errors, 'script.source')
-                }
-                error={_.get(errors, 'script.source')}
+                isInvalid={_.get(touched, fieldName, false) && !!_.get(errors, fieldName)}
+                error={_.get(errors, fieldName)}
               >
                 <EuiCodeEditor
                   mode="plain_text"
@@ -109,36 +118,37 @@ const TriggerQuery = ({
                   height="200px"
                   width="100%"
                   onChange={(source) => {
-                    setFieldValue('script.source', source);
+                    setFieldValue(fieldName, source);
                   }}
-                  onBlur={() => setFieldTouched('script.source', true)}
+                  onBlur={() => setFieldTouched(fieldName, true)}
                   value={value}
                 />
               </EuiFormRow>
             )}
           </Field>
         </EuiFlexItem>
-        <EuiFlexItem grow={false}>
-          <EuiFormRow label="Trigger condition response:" fullWidth>
+
+        {/*// Grid slot for the trigger condition response code editor box*/}
+        <EuiFlexItem>
+          <EuiFormRow fullWidth>
             <EuiCodeEditor
               mode="plain_text"
               theme={isDarkMode ? 'sense-dark' : 'github'}
-              width="100%"
               height="200px"
+              width="100%"
               value={getExecuteMessage(executeResponse)}
               readOnly
             />
           </EuiFormRow>
         </EuiFlexItem>
-      </EuiFlexGroup>
 
-      <EuiSpacer size="s" />
-
-      <EuiFlexGroup justifyContent="spaceBetween" alignItems="center">
+        {/*// Grid slot for the execute trigger condition button*/}
         <EuiFlexItem grow={false}>
-          <EuiButton onClick={() => onRun([trigger])}>Run</EuiButton>
+          <EuiButton onClick={() => onRun([trigger])} size={'s'}>
+            Run for condition response
+          </EuiButton>
         </EuiFlexItem>
-      </EuiFlexGroup>
+      </EuiFlexGrid>
     </div>
   );
 };
