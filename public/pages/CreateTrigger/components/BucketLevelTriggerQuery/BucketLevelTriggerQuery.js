@@ -1,15 +1,4 @@
 /*
- * SPDX-License-Identifier: Apache-2.0
- *
- * The OpenSearch Contributors require contributions made to
- * this file be licensed under the Apache-2.0 license or a
- * compatible open source license.
- *
- * Modifications Copyright OpenSearch Contributors. See
- * GitHub history for details.
- */
-
-/*
  * Copyright 2021 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
@@ -42,6 +31,9 @@ import 'brace/mode/plain_text';
 import 'brace/snippets/javascript';
 import 'brace/ext/language_tools';
 import { formikToTrigger } from '../../containers/CreateTrigger/utils/formikToTrigger';
+import { validateExtractionQuery } from '../../../../utils/validate';
+import { TRIGGER_TYPE } from '../../containers/CreateTrigger/utils/constants';
+import { MONITOR_TYPE } from '../../../../utils/constants';
 
 export const getExecuteMessage = (response) => {
   if (!response) return 'No response';
@@ -51,26 +43,37 @@ export const getExecuteMessage = (response) => {
   if (!triggerId) return 'No trigger results';
   const executeResults = _.get(triggerResults, `${triggerId}`);
   if (!executeResults) return 'No execute results';
-  const { error, triggered } = executeResults;
-  return error || `${triggered}`;
+  const { error } = executeResults;
+  return error || getResultsBuckets(executeResults);
 };
 
-const TriggerQuery = ({
+export const getResultsBuckets = (executeResults) => {
+  const results = _.get(executeResults, 'agg_result_buckets', {});
+  const resultsKeys = _.keys(results);
+  if (_.isEmpty(resultsKeys)) return 'No execute results';
+  const displayResults = resultsKeys.map((key) =>
+    _.get(results, `${key}.agg_alert_content.bucket`, {})
+  );
+  return JSON.stringify(displayResults, null, 4);
+};
+
+const BucketLevelTriggerQuery = ({
   context,
   executeResponse,
   onRun,
-  triggerValues,
   setFlyout,
+  triggerValues,
   isDarkMode,
   fieldPath,
 }) => {
   const currentTrigger = _.isEmpty(fieldPath)
     ? triggerValues
     : _.get(triggerValues, `${fieldPath.slice(0, -1)}`, {});
-  const trigger = { ...formikToTrigger(currentTrigger), actions: [] };
-  const fieldName = `${fieldPath}script.source`;
+  const trigger = formikToTrigger(currentTrigger, { monitor_type: MONITOR_TYPE.AGGREGATION });
+  _.set(trigger, `${TRIGGER_TYPE.AGGREGATION}.actions`, []);
+  const fieldName = `${fieldPath}bucketSelector`;
   return (
-    <div style={{ padding: '0px 10px', marginTop: '0px' }}>
+    <div style={{ padding: '0px 20px', marginTop: '0px' }}>
       <EuiFlexGrid columns={2} gutterSize={'s'}>
         {/*// Grid slot for the trigger definition code editor header*/}
         <EuiFlexItem>
@@ -105,7 +108,7 @@ const TriggerQuery = ({
 
         {/*// Grid slot for the trigger condition code editor box*/}
         <EuiFlexItem>
-          <Field name={fieldName}>
+          <Field name={fieldName} validate={validateExtractionQuery}>
             {({ field: { value }, form: { errors, touched, setFieldValue, setFieldTouched } }) => (
               <EuiFormRow
                 fullWidth
@@ -113,7 +116,7 @@ const TriggerQuery = ({
                 error={_.get(errors, fieldName)}
               >
                 <EuiCodeEditor
-                  mode="plain_text"
+                  mode="json"
                   theme={isDarkMode ? 'sense-dark' : 'github'}
                   height="200px"
                   width="100%"
@@ -144,7 +147,7 @@ const TriggerQuery = ({
 
         {/*// Grid slot for the execute trigger condition button*/}
         <EuiFlexItem grow={false}>
-          <EuiButton onClick={() => onRun([trigger])} size={'s'}>
+          <EuiButton onClick={() => onRun(_.isArray(trigger) ? trigger : [trigger])} size={'s'}>
             Run for condition response
           </EuiButton>
         </EuiFlexItem>
@@ -153,4 +156,4 @@ const TriggerQuery = ({
   );
 };
 
-export default TriggerQuery;
+export default BucketLevelTriggerQuery;

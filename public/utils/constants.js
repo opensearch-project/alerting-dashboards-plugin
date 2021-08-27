@@ -10,7 +10,7 @@
  */
 
 /*
- *   Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ *   Copyright 2021 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  *   Licensed under the Apache License, Version 2.0 (the "License").
  *   You may not use this file except in compliance with the License.
@@ -43,6 +43,11 @@ export const SEARCH_TYPE = {
   GRAPH: 'graph',
   QUERY: 'query',
   AD: 'ad',
+};
+
+export const MONITOR_TYPE = {
+  QUERY_LEVEL: 'query_level_monitor',
+  BUCKET_LEVEL: 'bucket_level_monitor',
 };
 
 export const DESTINATION_ACTIONS = {
