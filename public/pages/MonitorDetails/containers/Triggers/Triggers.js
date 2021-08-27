@@ -10,28 +10,42 @@
  */
 
 /*
- *   Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2021 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
- *   Licensed under the Apache License, Version 2.0 (the "License").
- *   You may not use this file except in compliance with the License.
- *   A copy of the License is located at
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- *   or in the "license" file accompanying this file. This file is distributed
- *   on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- *   express or implied. See the License for the specific language governing
- *   permissions and limitations under the License.
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
  */
 
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import uuidv4 from 'uuid/v4';
-import { EuiButton, EuiInMemoryTable } from '@elastic/eui';
+import { EuiInMemoryTable } from '@elastic/eui';
 
 import ContentPanel from '../../../../components/ContentPanel';
+import { MONITOR_TYPE } from '../../../../utils/constants';
 
-const MAX_TRIGGERS = 10;
+export const MAX_TRIGGERS = 10;
+
+// TODO: For now, unwrapping all the Triggers since it's conflicting with the table
+//   retrieving the 'id' and causing it to behave strangely
+export function getUnwrappedTriggers(monitor) {
+  const isBucketLevelMonitor = monitor.monitor_type === MONITOR_TYPE.BUCKET_LEVEL;
+  return isBucketLevelMonitor
+    ? monitor.triggers.map((trigger) => {
+        return trigger.bucket_level_trigger;
+      })
+    : monitor.triggers.map((trigger) => {
+        return trigger.query_level_trigger;
+      });
+}
 
 export default class Triggers extends Component {
   constructor(props) {
@@ -64,16 +78,20 @@ export default class Triggers extends Component {
     const { selectedItems } = this.state;
     const { updateMonitor, monitor } = this.props;
     const triggersToDelete = selectedItems.reduce(
-      (map, item) => ({ ...map, [item.name]: true }),
+      (map, item) => ({
+        ...map,
+        [item.name]: true,
+      }),
       {}
     );
     const shouldKeepTrigger = (trigger) => !triggersToDelete[trigger.name];
-    const updatedTriggers = monitor.triggers.filter(shouldKeepTrigger);
+    const updatedTriggers = getUnwrappedTriggers(monitor).filter(shouldKeepTrigger);
     updateMonitor({ triggers: updatedTriggers });
   }
 
   onEdit() {
-    this.props.onEditTrigger(this.state.selectedItems[0]);
+    const { monitor } = this.props;
+    this.props.onEditTrigger(monitor.triggers);
   }
 
   onSelectionChange(selectedItems) {
@@ -85,8 +103,8 @@ export default class Triggers extends Component {
   }
 
   render() {
-    const { direction, field, selectedItems, tableKey } = this.state;
-    const { monitor, onCreateTrigger } = this.props;
+    const { direction, field, tableKey } = this.state;
+    const { monitor } = this.props;
 
     const columns = [
       {
@@ -112,37 +130,14 @@ export default class Triggers extends Component {
 
     const sorting = { sort: { field, direction } };
 
-    const selection = { onSelectionChange: this.onSelectionChange };
-
     return (
-      <ContentPanel
-        title="Triggers"
-        titleSize="s"
-        bodyStyles={{ padding: 'initial' }}
-        actions={[
-          <EuiButton onClick={this.onEdit} disabled={selectedItems.length !== 1}>
-            Edit
-          </EuiButton>,
-          <EuiButton onClick={this.onDelete} disabled={!selectedItems.length}>
-            Delete
-          </EuiButton>,
-          <EuiButton
-            onClick={onCreateTrigger}
-            disabled={monitor.triggers.length >= MAX_TRIGGERS}
-            fill
-          >
-            Create
-          </EuiButton>,
-        ]}
-      >
+      <ContentPanel title="Triggers" titleSize="s" bodyStyles={{ padding: 'initial' }}>
         <EuiInMemoryTable
-          items={monitor.triggers}
+          items={getUnwrappedTriggers(monitor)}
           itemId="id"
           key={tableKey}
           columns={columns}
           sorting={sorting}
-          isSelectable={true}
-          selection={selection}
           onTableChange={this.onTableChange}
         />
       </ContentPanel>
