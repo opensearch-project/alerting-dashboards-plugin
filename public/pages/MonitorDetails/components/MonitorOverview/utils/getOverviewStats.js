@@ -10,7 +10,7 @@
  */
 
 /*
- *   Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ *   Copyright 2021 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  *   Licensed under the Apache License, Version 2.0 (the "License").
  *   You may not use this file except in compliance with the License.
@@ -38,6 +38,17 @@ function getTime(time) {
   return DEFAULT_EMPTY_DATA;
 }
 
+function getMonitorType(searchType) {
+  switch (searchType) {
+    case SEARCH_TYPE.GRAPH:
+      return 'Visual Graph';
+    case SEARCH_TYPE.AD:
+      return 'Anomaly Detector';
+    default:
+      return 'Extraction Query';
+  }
+}
+
 export default function getOverviewStats(monitor, monitorId, monitorVersion, activeCount) {
   const searchType = _.get(monitor, 'ui_metadata.search.searchType', 'query');
   return [
@@ -47,7 +58,7 @@ export default function getOverviewStats(monitor, monitorId, monitorVersion, act
     },
     {
       header: 'Monitor definition type',
-      value: searchType === SEARCH_TYPE.QUERY ? 'Extraction Query' : 'Visual graph',
+      value: getMonitorType(searchType),
     },
     {
       header: 'Total active alerts',
@@ -77,7 +88,7 @@ export default function getOverviewStats(monitor, monitorId, monitorVersion, act
          (`monitor.user.name`, `monitor.user.roles` are empty )
       3. Monitors are created when security plugin is enabled, these will have an User object. */
       header: 'Last updated by',
-      value: monitor.user && monitor.user.name ? monitor.user.name : 'N/A',
+      value: monitor.user && monitor.user.name ? monitor.user.name : '-',
     },
   ];
 }
