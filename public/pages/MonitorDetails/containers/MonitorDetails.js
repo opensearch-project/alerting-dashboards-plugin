@@ -50,6 +50,7 @@ import {
   TRIGGER_ACTIONS,
   OPENSEARCH_DASHBOARDS_AD_PLUGIN,
   MONITOR_INPUT_DETECTOR_ID,
+  MONITOR_GROUP_BY,
 } from '../../../utils/constants';
 import { migrateTriggerMetadata } from './utils/helpers';
 import { backendErrorNotification } from '../../../utils/helpers';
@@ -245,6 +246,7 @@ export default class MonitorDetails extends Component {
     const { action } = queryString.parse(location.search);
     const updatingMonitor = action === MONITOR_ACTIONS.UPDATE_MONITOR;
     const detectorId = get(monitor, MONITOR_INPUT_DETECTOR_ID, undefined);
+    const groupBy = get(monitor, MONITOR_GROUP_BY);
     if (loading) {
       return (
         <EuiFlexGroup justifyContent="center" alignItems="center" style={{ marginTop: '100px' }}>
@@ -354,6 +356,9 @@ export default class MonitorDetails extends Component {
           location={location}
           history={history}
           notifications={notifications}
+          monitorType={monitor.monitor_type}
+          perAlertView={true}
+          groupBy={groupBy}
         />
       </div>
     );

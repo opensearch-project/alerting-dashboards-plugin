@@ -38,17 +38,7 @@ const renderTime = (time) => {
   return DEFAULT_EMPTY_DATA;
 };
 
-const renderAggAlertContent = (keys) => {
-  return keys.length
-    ? keys
-        .map((item) => {
-          return item;
-        })
-        .join(', ')
-    : '-';
-};
-
-export const columns = [
+export const queryColumns = [
   {
     field: 'start_time',
     name: 'Alert start time',
@@ -64,16 +54,6 @@ export const columns = [
     truncateText: false,
     render: renderTime,
     dataType: 'date',
-  },
-  {
-    field: 'monitor_name',
-    name: 'Monitor name',
-    sortable: true,
-    truncateText: true,
-    textOnly: true,
-    render: (name, alert) => (
-      <EuiLink href={`${PLUGIN_NAME}#/monitors/${alert.monitor_id}`}>{name}</EuiLink>
-    ),
   },
   {
     field: 'trigger_name',
@@ -107,12 +87,51 @@ export const columns = [
     render: renderTime,
     dataType: 'date',
   },
+];
+
+export const bucketColumns = [
   {
-    field: 'agg_alert_content',
-    name: 'Aggregation alert content',
+    field: 'start_time',
+    name: 'Alert start time',
     sortable: true,
     truncateText: false,
-    render: (content) => (content ? renderAggAlertContent(content.bucket_keys) : '-'),
+    render: renderTime,
+    dataType: 'date',
+  },
+  {
+    field: 'end_time',
+    name: 'Alert last updated',
+    sortable: true,
+    truncateText: false,
+    render: (endTime, alert) => {
+      const ackTime = alert.acknowledged_time;
+      return renderTime(Math.max(endTime, ackTime));
+    },
+    dataType: 'date',
+  },
+  {
+    field: 'state',
+    name: 'State',
+    sortable: false,
+    truncateText: false,
+    render: (state, alert) => {
+      const stateText =
+        typeof state !== 'string' ? DEFAULT_EMPTY_DATA : _.capitalize(state.toLowerCase());
+      return state === ALERT_STATE.ERROR ? `${stateText}: ${alert.error_message}` : stateText;
+    },
+  },
+  {
+    field: 'trigger_name',
+    name: 'Trigger name',
+    sortable: true,
+    truncateText: true,
+    textOnly: true,
+  },
+  {
+    field: 'severity',
+    name: 'Severity',
+    sortable: false,
+    truncateText: false,
   },
 ];
 

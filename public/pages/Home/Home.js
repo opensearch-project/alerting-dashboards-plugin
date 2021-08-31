@@ -110,7 +110,12 @@ export default class Home extends Component {
               exact
               path="/dashboard"
               render={(props) => (
-                <Dashboard {...props} httpClient={httpClient} notifications={notifications} />
+                <Dashboard
+                  {...props}
+                  httpClient={httpClient}
+                  notifications={notifications}
+                  perAlertView={false}
+                />
               )}
             />
             <Route

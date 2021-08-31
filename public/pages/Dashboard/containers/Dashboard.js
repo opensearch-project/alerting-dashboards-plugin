@@ -32,10 +32,10 @@ import { EuiBasicTable, EuiButton, EuiHorizontalRule, EuiIcon } from '@elastic/e
 import ContentPanel from '../../../components/ContentPanel';
 import DashboardEmptyPrompt from '../components/DashboardEmptyPrompt';
 import DashboardControls from '../components/DashboardControls';
-import { columns, alertColumns } from '../utils/tableUtils';
-import { OPENSEARCH_DASHBOARDS_AD_PLUGIN } from '../../../utils/constants';
+import { columns, alertColumns, bucketColumns, queryColumns } from '../utils/tableUtils';
+import { MONITOR_TYPE, OPENSEARCH_DASHBOARDS_AD_PLUGIN } from '../../../utils/constants';
 import { backendErrorNotification } from '../../../utils/helpers';
-import { groupAlertsByTrigger } from '../utils/helpers';
+import { groupAlertsByTrigger, insertGroupByColumn } from '../utils/helpers';
 
 const DEFAULT_PAGE_SIZE_OPTIONS = [5, 10, 20, 50];
 const DEFAULT_QUERY_PARAMS = {
@@ -196,7 +196,7 @@ export default class Dashboard extends Component {
       };
       const queryParamsString = queryString.stringify(params);
       location.search;
-      const { httpClient, history, notifications } = this.props;
+      const { httpClient, history, notifications, perAlertView } = this.props;
       history.replace({ ...this.props.location, search: queryParamsString });
       httpClient.get('../api/alerting/alerts', { query: params }).then((resp) => {
         if (resp.ok) {
@@ -208,6 +208,13 @@ export default class Dashboard extends Component {
             totalTriggers: alertsByTriggers.length,
             alertsByTriggers,
           });
+          if (!perAlertView) {
+            const alertsByTriggers = groupAlertsByTrigger(alerts);
+            this.setState({
+              totalTriggers: alertsByTriggers.length,
+              alertsByTriggers,
+            });
+          }
         } else {
           console.log('error getting alerts:', resp);
           backendErrorNotification(notifications, 'get', 'alerts', resp.err);
@@ -318,9 +325,23 @@ export default class Dashboard extends Component {
       totalAlerts,
       totalTriggers,
     } = this.state;
-    const { monitorIds, detectorIds, onCreateTrigger } = this.props;
-    const perAlertView = typeof onCreateTrigger === 'function';
+    const {
+      monitorIds,
+      detectorIds,
+      onCreateTrigger,
+      perAlertView,
+      monitorType,
+      groupBy,
+    } = this.props;
     const totalItems = perAlertView ? totalAlerts : totalTriggers;
+    const isBucketMonitor = monitorType === MONITOR_TYPE.BUCKET_LEVEL;
+
+    const columnType = perAlertView
+      ? isBucketMonitor
+        ? insertGroupByColumn(groupBy)
+        : queryColumns
+      : alertColumns;
+
     const pagination = {
       pageIndex: page,
       pageSize: size,
@@ -357,6 +378,11 @@ export default class Dashboard extends Component {
       return actions;
     };
 
+    const getItemId = (item) => {
+      if (perAlertView && isBucketMonitor) return item.id;
+      return `${item.triggerID}-${item.version}`;
+    };
+
     return (
       <ContentPanel
         title={perAlertView ? 'Alerts' : 'Alerts by triggers'}
@@ -385,8 +411,8 @@ export default class Dashboard extends Component {
            * because the next getAlerts have the same id
            * $id-$version will correctly remove selected items
            * */
-          itemId={(item) => `${item.triggerID}-${item.version}`}
-          columns={perAlertView ? columns : alertColumns}
+          itemId={getItemId}
+          columns={columnType}
           pagination={pagination}
           sorting={sorting}
           isSelectable={true}
