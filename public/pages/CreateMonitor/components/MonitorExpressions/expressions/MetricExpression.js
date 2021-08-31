@@ -34,17 +34,19 @@ class MetricExpression extends Component {
     } = this.props;
     return values.aggregations.map((aggregation, index) => {
       return (
-        <MetricItem
-          values={values}
-          onMadeChanges={onMadeChanges}
-          arrayHelpers={arrayHelpers}
-          fieldOptions={fieldOptions}
-          expressionWidth={expressionWidth}
-          aggregation={aggregation}
-          index={index}
-          openExpression={openExpression}
-          closeExpression={closeExpression}
-        />
+        <span style={{ paddingRight: '5px' }}>
+          <MetricItem
+            values={values}
+            onMadeChanges={onMadeChanges}
+            arrayHelpers={arrayHelpers}
+            fieldOptions={fieldOptions}
+            expressionWidth={expressionWidth}
+            aggregation={aggregation}
+            index={index}
+            openExpression={openExpression}
+            closeExpression={closeExpression}
+          />
+        </span>
       );
     });
   };

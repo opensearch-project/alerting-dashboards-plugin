@@ -25,15 +25,9 @@
  */
 
 import React, { Component } from 'react';
-import { EuiFlexGroup, EuiFlexItem, EuiSpacer, EuiText, EuiButtonEmpty } from '@elastic/eui';
+import { EuiSpacer } from '@elastic/eui';
 
-import {
-  ForExpression,
-  OfExpression,
-  OverExpression,
-  WhenExpression,
-  WhereExpression,
-} from './expressions';
+import { ForExpression, WhereExpression } from './expressions';
 import MetricExpression from './expressions/MetricExpression';
 import { FieldArray } from 'formik';
 import GroupByExpression from './expressions/GroupByExpression';
