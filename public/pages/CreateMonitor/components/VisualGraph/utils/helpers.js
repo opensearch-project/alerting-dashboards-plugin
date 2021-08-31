@@ -111,7 +111,9 @@ export function getDataFromResponse(response, fieldName, monitorType) {
   }
 }
 
-// Function for aggregation type monitors to get Map of data
+// Function for aggregation type monitors to get Map of data. 
+// The current response gives a large number of data aggregated in buckets, and this function returns the top n results with highest count of data points. 
+// The number n is based on the constant BAY_KEY_COUNT.  
 export function getMapDataFromResponse(response, fieldName, groupByFields) {
   if (!response) return [];
   const buckets = _.get(response, 'aggregations.composite_agg.buckets', []);
