@@ -237,14 +237,12 @@ class ConfigureActions extends React.Component {
     //TODO:: Handle loading Destinations inside the Action which will be more intuitive for customers.
     return (
       <div style={{ paddingLeft: '20px', paddingRight: '15px' }}>
-        <EuiFormRow
-          helpText={'Define actions when trigger conditions are met.'}
-          style={{ paddingBottom: '5px' }}
-        >
-          <EuiText>
-            <h4>{`Actions (${numOfActions})`}</h4>
-          </EuiText>
-        </EuiFormRow>
+        <EuiText>
+          <h4>{`Actions (${numOfActions})`}</h4>
+        </EuiText>
+        <EuiText color={'subdued'} size={'xs'} style={{ paddingBottom: '5px' }}>
+          Define actions when trigger conditions are met.
+        </EuiText>
         <EuiPanel style={{ backgroundColor: '#F7F7F7', padding: '20px' }}>
           {loadingDestinations ? (
             <div style={{ display: 'flex', justifyContent: 'center' }}>Loading Destinations...</div>
