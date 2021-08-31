@@ -27,7 +27,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
-import { EuiAccordion, EuiButton, EuiSpacer, EuiTitle } from '@elastic/eui';
+import { EuiAccordion, EuiButton, EuiSpacer, EuiText, EuiTitle } from '@elastic/eui';
 import 'brace/mode/plain_text';
 import { FormikFieldText, FormikSelect } from '../../../../components/FormControls';
 import { isInvalid, hasError } from '../../../../utils/validate';
@@ -112,6 +112,8 @@ class DefineTrigger extends Component {
         const searchRequest = buildSearchRequest(formikValues);
         _.set(monitorToExecute, 'inputs[0].search', searchRequest);
         break;
+      case SEARCH_TYPE.AD:
+        break;
       default:
         console.log(`Unsupported searchType found: ${JSON.stringify(searchType)}`, searchType);
     }
@@ -153,6 +155,7 @@ class DefineTrigger extends Component {
     const isAd = _.get(monitorValues, 'searchType') === SEARCH_TYPE.AD;
     const detectorId = _.get(monitorValues, 'detectorId');
     const response = _.get(executeResponse, 'input_results.results[0]');
+    const error = _.get(executeResponse, 'error') || _.get(executeResponse, 'input_results.error');
     const thresholdEnum = _.get(triggerValues, `${fieldPath}thresholdEnum`);
     const thresholdValue = _.get(triggerValues, `${fieldPath}thresholdValue`);
     const adTriggerType = _.get(triggerValues, `${fieldPath}anomalyDetector.triggerType`);
@@ -161,12 +164,15 @@ class DefineTrigger extends Component {
     let triggerContent = (
       <TriggerQuery
         context={context}
+        error={error}
         executeResponse={executeResponse}
         onRun={_.isEmpty(fieldPath) ? onRun : this.onRunExecute}
+        response={response}
         setFlyout={setFlyout}
         triggerValues={triggerValues}
         isDarkMode={isDarkMode}
         fieldPath={fieldPath}
+        isAd={isAd}
       />
     );
     if (isAd && adTriggerType === TRIGGER_TYPE.AD) {
@@ -208,7 +214,7 @@ class DefineTrigger extends Component {
           </EuiButton>
         }
       >
-        <div style={{ padding: '0px 20px' }}>
+        <div style={{ padding: '0px 20px', paddingTop: '20px' }}>
           <FormikFieldText
             name={`${fieldPath}name`}
             fieldProps={{ validate: validateTriggerName(triggers, triggerValues, fieldPath) }}
@@ -226,15 +232,17 @@ class DefineTrigger extends Component {
           />
           <EuiSpacer size={'m'} />
           {isAd ? (
-            <div>
+            <div style={{ paddingLeft: '10px', marginTop: '0px' }}>
+              <EuiText size={'xs'} style={{ paddingBottom: '0px', marginBottom: '0px' }}>
+                <h4>Trigger type</h4>
+              </EuiText>
+              <EuiText color={'subdued'} size={'xs'} style={{ paddingBottom: '5px' }}>
+                Define type of anomaly detector trigger
+              </EuiText>
               <FormikSelect
                 name={`${fieldPath}anomalyDetector.triggerType`}
                 formRow
-                rowProps={{
-                  label: 'Trigger type',
-                  helpText: 'Define type of trigger',
-                  style: { paddingLeft: '10px', marginTop: '0px' },
-                }}
+                rowProps={{ style: { paddingTop: '0px', marginTop: '0px' } }}
                 inputProps={{ options: triggerOptions }}
               />
               <EuiSpacer size={'m'} />
