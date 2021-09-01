@@ -28,53 +28,52 @@ import React, { Fragment } from 'react';
 import _ from 'lodash';
 import { EuiFlexGroup, EuiFlexItem, EuiSpacer, EuiText } from '@elastic/eui';
 
-import SubHeader from '../../../../components/SubHeader';
 import { DEFAULT_EMPTY_DATA } from '../../../../utils/constants';
 import { URL } from '../../../../../utils/constants';
+import ContentPanel from '../../../../components/ContentPanel';
 
-const QueryPerformance = ({ response }) => (
+const QueryPerformance = ({ response, actions }) => (
   <Fragment>
-    <SubHeader
-      title={<h4>Query performance</h4>}
+    <ContentPanel
+      title="Query performance"
+      titleSize="s"
+      panelStyles={{ paddingLeft: '10px' }}
       description={
         <span>
           Check the performance of your query and make sure to follow best practices.{' '}
           <a href={URL.DOCUMENTATION}>Learn more</a>
         </span>
       }
-    />
-    <EuiSpacer size="s" />
-    <EuiFlexGroup
-      style={{ padding: '0px 10px' }}
-      justifyContent="spaceBetween"
-      alignItems="center"
-      gutterSize="none"
+      actions={actions}
     >
-      <EuiFlexItem>
-        <EuiText size="xs">
-          <strong>Query duration</strong>
-          <span style={{ display: 'block' }}>
-            {`${_.get(response, 'took', DEFAULT_EMPTY_DATA)} ms`}
-          </span>
-        </EuiText>
-      </EuiFlexItem>
-      <EuiFlexItem>
-        <EuiText size="xs">
-          <strong>Request duration</strong>
-          <span style={{ display: 'block' }}>
-            {_.get(response, 'invalid.path', DEFAULT_EMPTY_DATA)}
-          </span>
-        </EuiText>
-      </EuiFlexItem>
-      <EuiFlexItem>
-        <EuiText size="xs">
-          <strong>Hits</strong>
-          <span style={{ display: 'block' }}>
-            {_.get(response, 'hits.total.value', DEFAULT_EMPTY_DATA)}
-          </span>
-        </EuiText>
-      </EuiFlexItem>
-    </EuiFlexGroup>
+      <EuiSpacer size="s" />
+      <EuiFlexGroup justifyContent="spaceBetween" alignItems="center" gutterSize="none">
+        <EuiFlexItem>
+          <EuiText size="xs">
+            <strong>Query duration</strong>
+            <span style={{ display: 'block' }}>
+              {`${_.get(response, 'took', DEFAULT_EMPTY_DATA)} ms`}
+            </span>
+          </EuiText>
+        </EuiFlexItem>
+        <EuiFlexItem>
+          <EuiText size="xs">
+            <strong>Request duration</strong>
+            <span style={{ display: 'block' }}>
+              {_.get(response, 'invalid.path', DEFAULT_EMPTY_DATA)}
+            </span>
+          </EuiText>
+        </EuiFlexItem>
+        <EuiFlexItem>
+          <EuiText size="xs">
+            <strong>Hits</strong>
+            <span style={{ display: 'block' }}>
+              {_.get(response, 'hits.total.value', DEFAULT_EMPTY_DATA)}
+            </span>
+          </EuiText>
+        </EuiFlexItem>
+      </EuiFlexGroup>
+    </ContentPanel>
   </Fragment>
 );
 

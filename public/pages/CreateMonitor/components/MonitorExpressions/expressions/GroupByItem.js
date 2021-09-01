@@ -12,13 +12,26 @@
 import React, { useState } from 'react';
 import { EuiPopover, EuiBadge } from '@elastic/eui';
 import { GroupByPopover } from './index';
+import { Expressions } from './utils/constants';
 
 export default function GroupByItem(
-  { values, onMadeChanges, arrayHelpers, fieldOptions, expressionWidth, groupByItem, index } = this
-    .props
+  {
+    values,
+    onMadeChanges,
+    arrayHelpers,
+    fieldOptions,
+    expressionWidth,
+    groupByItem,
+    index,
+    openExpression,
+    closeExpression,
+  } = this.props
 ) {
   const [isPopoverOpen, setIsPopoverOpen] = useState(groupByItem === '');
-  const closePopover = () => setIsPopoverOpen(false);
+  const closePopover = () => {
+    setIsPopoverOpen(false);
+    closeExpression(Expressions.GROUP_BY);
+  };
 
   return (
     <EuiPopover
@@ -28,9 +41,13 @@ export default function GroupByItem(
           <EuiBadge
             iconSide="right"
             iconType="cross"
-            iconOnClick={() => arrayHelpers.remove(index)}
+            iconOnClick={() => {
+              arrayHelpers.remove(index);
+              onMadeChanges();
+            }}
             iconOnClickAriaLabel="Remove group by"
             onClick={() => {
+              openExpression(Expressions.GROUP_BY);
               setIsPopoverOpen(true);
             }}
             onClickAriaLabel="Edit group by"
