@@ -27,7 +27,7 @@
 export const API_ROUTE_PREFIX = '/_plugins/_alerting';
 
 export const INDEX = {
-  OPENSEARCH_ALERTING_CONFIG: '.opendistro-alerting-config',
+  OPENSEARCH_ALERTING_CONFIG: '.opensearch-alerting-config',
 };
 
 export const API = {

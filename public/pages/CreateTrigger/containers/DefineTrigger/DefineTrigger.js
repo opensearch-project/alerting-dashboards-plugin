@@ -214,6 +214,7 @@ class DefineTrigger extends Component {
             Remove trigger
           </EuiButton>
         }
+        style={{ paddingBottom: '15px', paddingTop: '10px' }}
       >
         <div style={{ padding: '0px 20px', paddingTop: '20px' }}>
           <FormikFieldText
@@ -243,7 +244,7 @@ class DefineTrigger extends Component {
               <FormikSelect
                 name={`${fieldPath}anomalyDetector.triggerType`}
                 formRow
-                rowProps={{ style: { paddingTop: '0px', marginTop: '0px' } }}
+                rowProps={{ style: { paddingTop: '0px', marginTop: '0px', width: '390px' } }}
                 inputProps={{ options: triggerOptions }}
               />
               <EuiSpacer size={'m'} />
@@ -265,7 +266,6 @@ class DefineTrigger extends Component {
               />
             )}
           </FieldArray>
-          <EuiSpacer />
         </div>
       </EuiAccordion>
     );

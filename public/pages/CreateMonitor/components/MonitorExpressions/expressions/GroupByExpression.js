@@ -27,6 +27,8 @@ class GroupByExpression extends Component {
     const {
       formik: { values },
       onMadeChanges,
+      openExpression,
+      closeExpression,
     } = this.props;
     return values.groupBy.map((groupByItem, index) => {
       return (
@@ -39,6 +41,8 @@ class GroupByExpression extends Component {
             expressionWidth={expressionWidth}
             groupByItem={groupByItem}
             index={index}
+            openExpression={openExpression}
+            closeExpression={closeExpression}
           />
         </span>
       );

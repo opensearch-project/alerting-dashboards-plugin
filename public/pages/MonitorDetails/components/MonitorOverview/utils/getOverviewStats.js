@@ -28,7 +28,11 @@ import _ from 'lodash';
 import moment from 'moment-timezone';
 
 import getScheduleFromMonitor from './getScheduleFromMonitor';
-import { DEFAULT_EMPTY_DATA, SEARCH_TYPE } from '../../../../../utils/constants';
+import {
+   DEFAULT_EMPTY_DATA,
+   SEARCH_TYPE,
+   MONITOR_TYPE
+ } from '../../../../../utils/constants';
 
 // TODO: used in multiple places, move into helper
 export function getTime(time) {
@@ -49,12 +53,24 @@ function getMonitorType(searchType) {
   }
 }
 
+function getMonitorLevelType(monitorType) {
+  switch (monitorType) {
+    case  MONITOR_TYPE.QUERY_LEVEL:
+      return 'Per query monitor';
+    case MONITOR_TYPE.BUCKET_LEVEL:
+      return 'Per bucket monitor';
+    default:
+      return '-';
+  }
+}
+
 export default function getOverviewStats(monitor, monitorId, monitorVersion, activeCount) {
   const searchType = _.get(monitor, 'ui_metadata.search.searchType', 'query');
+  const monitorLevelType = _.get(monitor, 'ui_metadata.monitor_type', 'query_level_monitor');
   return [
     {
-      header: 'State',
-      value: monitor.enabled ? 'Enabled' : 'Disabled',
+      header: 'Monitor type',
+      value: getMonitorLevelType(monitorLevelType),
     },
     {
       header: 'Monitor definition type',

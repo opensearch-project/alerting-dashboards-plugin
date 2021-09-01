@@ -1,4 +1,15 @@
 /*
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * The OpenSearch Contributors require contributions made to
+ * this file be licensed under the Apache-2.0 license or a
+ * compatible open source license.
+ *
+ * Modifications Copyright OpenSearch Contributors. See
+ * GitHub history for details.
+ */
+
+/*
  * Copyright 2021 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
@@ -19,7 +30,6 @@ import _ from 'lodash';
 import {
   EuiButton,
   EuiCodeEditor,
-  EuiFlexGrid,
   EuiFlexGroup,
   EuiFlexItem,
   EuiFormRow,
@@ -73,86 +83,90 @@ const BucketLevelTriggerQuery = ({
   _.set(trigger, `${TRIGGER_TYPE.BUCKET_LEVEL}.actions`, []);
   const fieldName = `${fieldPath}bucketSelector`;
   return (
-    <div style={{ padding: '0px 20px', marginTop: '0px' }}>
-      <EuiFlexGrid columns={2} gutterSize={'s'}>
-        {/*// Grid slot for the trigger definition code editor header*/}
-        <EuiFlexItem>
-          <EuiFlexGroup alignItems={'center'} gutterSize={'s'}>
-            <EuiFlexItem grow={false}>
-              <EuiText size={'s'}>
-                <h5>Trigger condition</h5>
-              </EuiText>
-            </EuiFlexItem>
-            <EuiFlexItem grow={false}>
-              <EuiText>
-                <EuiLink
-                  onClick={() => {
-                    setFlyout({ type: 'triggerCondition', payload: context });
-                  }}
+    <EuiFlexGroup direction={'column'} style={{ paddingLeft: '20px', paddingRight: '20px' }}>
+      <EuiFlexItem style={{ marginBottom: '0px' }}>
+        <EuiFlexGroup alignItems={'flexEnd'} gutterSize={'m'}>
+          <EuiFlexItem grow={1}>
+            <Field name={fieldName} validate={validateExtractionQuery}>
+              {({
+                field: { value },
+                form: { errors, touched, setFieldValue, setFieldTouched },
+              }) => (
+                <EuiFormRow
+                  label={
+                    <EuiFlexGroup alignItems={'flexEnd'} gutterSize={'s'}>
+                      <EuiFlexItem grow={false}>
+                        <EuiText size={'xs'}>
+                          <strong>Trigger condition</strong>
+                        </EuiText>
+                      </EuiFlexItem>
+                      <EuiFlexItem>
+                        <EuiText>
+                          <EuiLink
+                            onClick={() => {
+                              setFlyout({ type: 'triggerCondition', payload: context });
+                            }}
+                          >
+                            Info
+                          </EuiLink>
+                        </EuiText>
+                      </EuiFlexItem>
+                    </EuiFlexGroup>
+                  }
+                  fullWidth={true}
+                  isInvalid={_.get(touched, fieldName, false) && !!_.get(errors, fieldName)}
+                  error={_.get(errors, fieldName)}
                 >
-                  Info
-                </EuiLink>
-              </EuiText>
-            </EuiFlexItem>
-          </EuiFlexGroup>
-        </EuiFlexItem>
+                  <EuiCodeEditor
+                    grow={true}
+                    mode="json"
+                    theme={isDarkMode ? 'sense-dark' : 'github'}
+                    height="200px"
+                    width="100%"
+                    onChange={(source) => {
+                      setFieldValue(fieldName, source);
+                    }}
+                    onBlur={() => setFieldTouched(fieldName, true)}
+                    value={value}
+                  />
+                </EuiFormRow>
+              )}
+            </Field>
+          </EuiFlexItem>
 
-        {/*// Grid slot for the trigger condition response code editor header*/}
-        <EuiFlexItem>
-          <EuiFlexGroup alignItems={'center'} gutterSize={'none'}>
-            <EuiText size={'s'}>
-              <h5>Trigger condition response:</h5>
-            </EuiText>
-          </EuiFlexGroup>
-        </EuiFlexItem>
+          <EuiFlexItem grow={1}>
+            <EuiFormRow
+              fullWidth={true}
+              label={
+                <EuiText size={'xs'}>
+                  <strong>Trigger condition response</strong>
+                </EuiText>
+              }
+            >
+              <EuiCodeEditor
+                grow={true}
+                mode="plain_text"
+                theme={isDarkMode ? 'sense-dark' : 'github'}
+                height="200px"
+                width="100%"
+                value={getExecuteMessage(executeResponse)}
+                readOnly
+              />
+            </EuiFormRow>
+          </EuiFlexItem>
+        </EuiFlexGroup>
+      </EuiFlexItem>
 
-        {/*// Grid slot for the trigger condition code editor box*/}
-        <EuiFlexItem>
-          <Field name={fieldName} validate={validateExtractionQuery}>
-            {({ field: { value }, form: { errors, touched, setFieldValue, setFieldTouched } }) => (
-              <EuiFormRow
-                fullWidth
-                isInvalid={_.get(touched, fieldName, false) && !!_.get(errors, fieldName)}
-                error={_.get(errors, fieldName)}
-              >
-                <EuiCodeEditor
-                  mode="json"
-                  theme={isDarkMode ? 'sense-dark' : 'github'}
-                  height="200px"
-                  width="100%"
-                  onChange={(source) => {
-                    setFieldValue(fieldName, source);
-                  }}
-                  onBlur={() => setFieldTouched(fieldName, true)}
-                  value={value}
-                />
-              </EuiFormRow>
-            )}
-          </Field>
-        </EuiFlexItem>
-
-        {/*// Grid slot for the trigger condition response code editor box*/}
-        <EuiFlexItem>
-          <EuiFormRow fullWidth>
-            <EuiCodeEditor
-              mode="plain_text"
-              theme={isDarkMode ? 'sense-dark' : 'github'}
-              height="200px"
-              width="100%"
-              value={getExecuteMessage(executeResponse)}
-              readOnly
-            />
-          </EuiFormRow>
-        </EuiFlexItem>
-
-        {/*// Grid slot for the execute trigger condition button*/}
-        <EuiFlexItem grow={false}>
-          <EuiButton onClick={() => onRun(_.isArray(trigger) ? trigger : [trigger])} size={'s'}>
-            Run for condition response
-          </EuiButton>
-        </EuiFlexItem>
-      </EuiFlexGrid>
-    </div>
+      <EuiFlexItem grow={false}>
+        <EuiButton
+          onClick={() => onRun(_.isArray(trigger) ? trigger : [trigger])}
+          size={'s'}
+          style={{ width: '250px' }}
+        >
+          Run for condition response
+        </EuiButton>
+      </EuiFlexItem>
+    </EuiFlexGroup>
   );
 };
 

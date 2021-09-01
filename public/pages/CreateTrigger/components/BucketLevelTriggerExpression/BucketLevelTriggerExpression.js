@@ -1,4 +1,15 @@
 /*
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * The OpenSearch Contributors require contributions made to
+ * this file be licensed under the Apache-2.0 license or a
+ * compatible open source license.
+ *
+ * Modifications Copyright OpenSearch Contributors. See
+ * GitHub history for details.
+ */
+
+/*
  * Copyright 2021 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
@@ -24,7 +35,6 @@ import {
   EuiSelect,
 } from '@elastic/eui';
 
-const DEFAULT_CLOSED_STATES = { THRESHOLD: false };
 export const Expressions = { THRESHOLD: 'THRESHOLD' };
 
 const THRESHOLD_ENUM_OPTIONS = [
@@ -47,22 +57,6 @@ const VALUE_FIELD_WIDTH = 200;
 class BucketLevelTriggerExpression extends Component {
   constructor(props) {
     super(props);
-
-    this.state = {
-      openedStates: { ...DEFAULT_CLOSED_STATES },
-    };
-
-    this.openExpression = this.openExpression.bind(this);
-    this.closeExpression = this.closeExpression.bind(this);
-  }
-
-  openExpression(expression) {
-    this.setState({ openedStates: { ...DEFAULT_CLOSED_STATES, [expression]: true } });
-  }
-
-  closeExpression(expression) {
-    const { openedStates } = this.state;
-    this.setState({ openedStates: { ...openedStates, [expression]: false } });
   }
 
   render() {

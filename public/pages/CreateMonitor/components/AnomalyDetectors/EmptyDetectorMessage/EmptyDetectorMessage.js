@@ -25,27 +25,35 @@
  */
 
 import React from 'react';
-import { EuiSpacer } from '@elastic/eui';
-import VisualGraph from '../../CreateMonitor/components/VisualGraph';
-import TriggerExpressions from './TriggerExpressions';
+import PropTypes from 'prop-types';
+import { EuiEmptyPrompt, EuiText } from '@elastic/eui';
 
-const TriggerGraph = ({ monitorValues, response, thresholdValue, thresholdEnum, fieldPath }) => (
-  <div style={{ padding: '0px 10px' }}>
-    <TriggerExpressions
-      thresholdValue={thresholdValue}
-      thresholdEnum={thresholdEnum}
-      keyFieldName={`${fieldPath}thresholdEnum`}
-      valueFieldName={`${fieldPath}thresholdValue`}
-      label="Trigger condition"
-    />
-    <EuiSpacer size="m" />
-    <VisualGraph
-      annotation
-      values={monitorValues}
-      thresholdValue={thresholdValue}
-      response={response}
+const EmptyDetectorMessage = (props) => (
+  <div
+    style={{
+      borderRadius: '5px',
+      padding: '10px',
+      border: '1px solid #D9D9D9',
+      height: '250px',
+      width: '100%',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      ...props.containerStyle,
+    }}
+  >
+    <EuiEmptyPrompt
+      style={{ maxWidth: '45em' }}
+      body={<EuiText>You must specify a detector.</EuiText>}
     />
   </div>
 );
 
-export default TriggerGraph;
+EmptyDetectorMessage.propTypes = {
+  containerStyle: PropTypes.object,
+};
+EmptyDetectorMessage.defaultProps = {
+  containerStyle: {},
+};
+
+export { EmptyDetectorMessage };
