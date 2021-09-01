@@ -28,14 +28,15 @@ import { validateDestinationName } from '../validations';
 
 describe('destinations Validations', () => {
   const httpClient = {
-    post: jest.fn(),
+    get: jest.fn(),
   };
   beforeEach(() => {
     jest.resetAllMocks();
   });
   describe('validateDestinationName', () => {
-    httpClient.post.mockResolvedValue({
-      resp: { hits: { total: { value: 0, relation: 'eq' } } },
+    httpClient.get.mockResolvedValue({
+      totalDestinations: 0,
+      relation: 'eq',
     });
     test('should be undefined if name is valid', () => {
       return expect(
@@ -46,23 +47,25 @@ describe('destinations Validations', () => {
       return expect(validateDestinationName(httpClient, null)('')).resolves.toEqual('Required');
     });
     test('should reject if name already is being in used', () => {
-      httpClient.post.mockResolvedValue({
-        resp: { hits: { total: { value: 1, relation: 'eq' } } },
+      httpClient.get.mockResolvedValue({
+        totalDestinations: 1,
+        relation: 'eq',
       });
       return expect(validateDestinationName(httpClient, null)('destinationName')).resolves.toEqual(
         'Destination name is already used'
       );
     });
     test('should reject if name already is being in used while editing destination', () => {
-      httpClient.post.mockResolvedValue({
-        resp: { hits: { total: { value: 1, relation: 'eq' } } },
+      httpClient.get.mockResolvedValue({
+        totalDestinations: 1,
+        relation: 'eq',
       });
       return expect(
         validateDestinationName(httpClient, { name: 'destinationName' })('destinationName Existing')
       ).resolves.toEqual('Destination name is already used');
     });
     test('should rejects if network request has some error', () => {
-      httpClient.post.mockRejectedValue({
+      httpClient.get.mockRejectedValue({
         resp: { ok: false, error: 'There was an issue' },
       });
       return expect(validateDestinationName(httpClient, null)('destinationName')).resolves.toEqual(
