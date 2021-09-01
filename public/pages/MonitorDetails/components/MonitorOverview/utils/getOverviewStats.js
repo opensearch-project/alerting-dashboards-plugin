@@ -54,7 +54,6 @@ function getMonitorType(searchType) {
 }
 
 function getMonitorLevelType(monitorType) {
-  console.log(monitorType);
   switch (monitorType) {
     case  MONITOR_TYPE.QUERY_LEVEL:
       return 'Per query monitor';
