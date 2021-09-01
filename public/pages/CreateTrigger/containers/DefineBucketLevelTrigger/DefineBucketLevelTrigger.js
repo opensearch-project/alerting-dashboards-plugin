@@ -29,6 +29,7 @@ import { validateTriggerName } from '../DefineTrigger/utils/validation';
 import WhereExpression from '../../../CreateMonitor/components/MonitorExpressions/expressions/WhereExpression';
 import { FieldArray } from 'formik';
 import ConfigureActions from '../ConfigureActions';
+import { SEVERITY_OPTIONS } from '../DefineTrigger/DefineTrigger';
 
 const defaultRowProps = {
   label: 'Trigger name',
@@ -51,16 +52,9 @@ const selectRowProps = {
   isInvalid,
   error: hasError,
 };
-const severityOptions = [
-  { value: '1', text: '1' },
-  { value: '2', text: '2' },
-  { value: '3', text: '3' },
-  { value: '4', text: '4' },
-  { value: '5', text: '5' },
-];
 
 const selectInputProps = {
-  options: severityOptions,
+  options: SEVERITY_OPTIONS,
 };
 
 const propTypes = {
