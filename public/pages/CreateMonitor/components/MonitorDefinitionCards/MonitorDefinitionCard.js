@@ -9,10 +9,30 @@
  * GitHub history for details.
  */
 
+/*
+ * Copyright 2021 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
+
 import React from 'react';
+import _ from 'lodash';
 import { EuiFlexGroup, EuiFlexItem, EuiSpacer } from '@elastic/eui';
 import FormikCheckableCard from '../../../../components/FormControls/FormikCheckableCard/FormikCheckableCard';
 import { OS_AD_PLUGIN, MONITOR_TYPE, SEARCH_TYPE } from '../../../../utils/constants';
+import { MONITOR_TYPE_CARD_WIDTH } from '../MonitorType/MonitorType';
+
+const MONITOR_DEFINITION_CARD_WIDTH =
+  (MONITOR_TYPE_CARD_WIDTH * _.keys(MONITOR_TYPE).length) / _.keys(SEARCH_TYPE).length;
 
 const onChangeDefinition = (e, form) => {
   const type = e.target.value;
@@ -22,17 +42,15 @@ const onChangeDefinition = (e, form) => {
 const MonitorDefinitionCard = ({ values, resetResponse, plugins }) => {
   const hasADPlugin = plugins.indexOf(OS_AD_PLUGIN) !== -1;
   const isBucketLevelMonitor = values.monitor_type === MONITOR_TYPE.BUCKET_LEVEL;
+
   return (
     <div>
-      <EuiFlexGroup>
-        <EuiFlexItem>
+      <EuiFlexGroup alignItems={'flexEnd'} gutterSize={'s'}>
+        <EuiFlexItem grow={false} style={{ width: `${MONITOR_DEFINITION_CARD_WIDTH}px` }}>
           <FormikCheckableCard
             name="searchTypeGraph"
             formRow
-            rowProps={{
-              label: 'Choose a monitor defining method',
-              style: { paddingLeft: '10px' },
-            }}
+            rowProps={{ label: 'Choose a monitor defining method' }}
             inputProps={{
               id: 'visualEditorRadioCard',
               label: 'Visual editor',
@@ -44,15 +62,11 @@ const MonitorDefinitionCard = ({ values, resetResponse, plugins }) => {
             }}
           />
         </EuiFlexItem>
-        <EuiFlexItem>
+        <EuiFlexItem grow={false} style={{ width: `${MONITOR_DEFINITION_CARD_WIDTH}px` }}>
           <EuiSpacer />
           <FormikCheckableCard
             name="searchTypeQuery"
             formRow
-            rowProps={{
-              label: '',
-              style: { paddingLeft: '10px' },
-            }}
             inputProps={{
               id: 'extractionQueryEditorRadioCard',
               label: 'Extraction query editor',
@@ -66,7 +80,7 @@ const MonitorDefinitionCard = ({ values, resetResponse, plugins }) => {
         </EuiFlexItem>
         {/*// Only show the anomaly detector option when anomaly detection plugin is present, but not for bucket-level monitors.*/}
         {hasADPlugin && !isBucketLevelMonitor && (
-          <EuiFlexItem>
+          <EuiFlexItem grow={false} style={{ width: `${MONITOR_DEFINITION_CARD_WIDTH}px` }}>
             <EuiSpacer />
             <FormikCheckableCard
               name="searchTypeAD"
