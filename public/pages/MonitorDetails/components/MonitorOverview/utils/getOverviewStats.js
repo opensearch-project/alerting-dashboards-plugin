@@ -24,15 +24,17 @@
  *   permissions and limitations under the License.
  */
 
+import React from 'react';
 import _ from 'lodash';
+import { EuiIcon, EuiLink } from '@elastic/eui';
 import moment from 'moment-timezone';
-
 import getScheduleFromMonitor from './getScheduleFromMonitor';
 import {
-   DEFAULT_EMPTY_DATA,
-   SEARCH_TYPE,
-   MONITOR_TYPE
- } from '../../../../../utils/constants';
+  DEFAULT_EMPTY_DATA,
+  MONITOR_TYPE,
+  OPENSEARCH_DASHBOARDS_AD_PLUGIN,
+  SEARCH_TYPE,
+} from '../../../../../utils/constants';
 
 // TODO: used in multiple places, move into helper
 export function getTime(time) {
@@ -55,7 +57,7 @@ function getMonitorType(searchType) {
 
 function getMonitorLevelType(monitorType) {
   switch (monitorType) {
-    case  MONITOR_TYPE.QUERY_LEVEL:
+    case MONITOR_TYPE.QUERY_LEVEL:
       return 'Per query monitor';
     case MONITOR_TYPE.BUCKET_LEVEL:
       return 'Per bucket monitor';
@@ -64,8 +66,30 @@ function getMonitorLevelType(monitorType) {
   }
 }
 
-export default function getOverviewStats(monitor, monitorId, monitorVersion, activeCount) {
+export default function getOverviewStats(
+  monitor,
+  monitorId,
+  monitorVersion,
+  activeCount,
+  detector,
+  detectorId
+) {
   const searchType = _.get(monitor, 'ui_metadata.search.searchType', 'query');
+  const detectorOverview = detector
+    ? [
+        {
+          header: 'Detector',
+          value: (
+            <EuiLink
+              href={`${OPENSEARCH_DASHBOARDS_AD_PLUGIN}#/detectors/${detectorId}`}
+              target="_blank"
+            >
+              {detector.name} <EuiIcon size="s" type="popout" />
+            </EuiLink>
+          ),
+        },
+      ]
+    : [];
   const monitorLevelType = _.get(monitor, 'ui_metadata.monitor_type', 'query_level_monitor');
   return [
     {
@@ -76,6 +100,7 @@ export default function getOverviewStats(monitor, monitorId, monitorVersion, act
       header: 'Monitor definition type',
       value: getMonitorType(searchType),
     },
+    ...detectorOverview,
     {
       header: 'Total active alerts',
       value: activeCount,

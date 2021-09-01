@@ -126,6 +126,7 @@ const alertsDashboard = (payload) => {
     flyoutProps: {
       'aria-labelledby': 'alertsDashboardFlyout',
       size: 'm',
+      hideCloseButton: true,
     },
     headerProps: { hasBorder: true },
     header: (
