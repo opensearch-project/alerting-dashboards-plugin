@@ -10,25 +10,24 @@
  */
 
 /*
- *   Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2021 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
- *   Licensed under the Apache License, Version 2.0 (the "License").
- *   You may not use this file except in compliance with the License.
- *   A copy of the License is located at
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- *   or in the "license" file accompanying this file. This file is distributed
- *   on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- *   express or implied. See the License for the specific language governing
- *   permissions and limitations under the License.
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
  */
 
 import React, { Fragment } from 'react';
 import { Field } from 'formik';
 import _ from 'lodash';
 import { EuiFormRow, EuiFlexGroup, EuiFlexItem, EuiCheckbox } from '@elastic/eui';
-
 import Daily from './Daily';
 
 const days = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'];
@@ -58,10 +57,10 @@ const Weekly = () => (
     <Field name="weekly" validate={validate}>
       {({ field: { value }, form: { touched, errors, setFieldValue, setFieldTouched } }) => (
         <EuiFormRow
-          label="Every"
+          label="Run every"
           isInvalid={touched.weekly && !!errors.weekly}
           error={errors.weekly}
-          style={{ paddingLeft: '10px', marginTop: '5px' }}
+          style={{ marginTop: '5px' }}
         >
           <EuiFlexGroup alignItems="center">
             {days.map((day) => checkboxFlexItem(day, value[day], setFieldValue, setFieldTouched))}

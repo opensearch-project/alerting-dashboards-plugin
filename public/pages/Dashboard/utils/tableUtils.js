@@ -38,7 +38,7 @@ const renderTime = (time) => {
   return DEFAULT_EMPTY_DATA;
 };
 
-export const columns = [
+export const queryColumns = [
   {
     field: 'start_time',
     name: 'Alert start time',
@@ -54,16 +54,6 @@ export const columns = [
     truncateText: false,
     render: renderTime,
     dataType: 'date',
-  },
-  {
-    field: 'monitor_name',
-    name: 'Monitor name',
-    sortable: true,
-    truncateText: true,
-    textOnly: true,
-    render: (name, alert) => (
-      <EuiLink href={`${PLUGIN_NAME}#/monitors/${alert.monitor_id}`}>{name}</EuiLink>
-    ),
   },
   {
     field: 'trigger_name',
@@ -96,5 +86,118 @@ export const columns = [
     truncateText: false,
     render: renderTime,
     dataType: 'date',
+  },
+];
+
+export const bucketColumns = [
+  {
+    field: 'start_time',
+    name: 'Alert start time',
+    sortable: true,
+    truncateText: false,
+    render: renderTime,
+    dataType: 'date',
+  },
+  {
+    field: 'end_time',
+    name: 'Alert last updated',
+    sortable: true,
+    truncateText: false,
+    render: (endTime, alert) => {
+      const ackTime = alert.acknowledged_time;
+      return renderTime(Math.max(endTime, ackTime));
+    },
+    dataType: 'date',
+  },
+  {
+    field: 'state',
+    name: 'State',
+    sortable: false,
+    truncateText: false,
+    render: (state, alert) => {
+      const stateText =
+        typeof state !== 'string' ? DEFAULT_EMPTY_DATA : _.capitalize(state.toLowerCase());
+      return state === ALERT_STATE.ERROR ? `${stateText}: ${alert.error_message}` : stateText;
+    },
+  },
+  {
+    field: 'trigger_name',
+    name: 'Trigger name',
+    sortable: true,
+    truncateText: true,
+    textOnly: true,
+  },
+  {
+    field: 'severity',
+    name: 'Severity',
+    sortable: false,
+    truncateText: false,
+  },
+];
+
+export const alertColumns = [
+  {
+    field: 'total',
+    name: 'Alerts',
+    sortable: true,
+    truncateText: false,
+    render: (total) => <EuiLink>{`${total} alerts`}</EuiLink>,
+  },
+  {
+    field: 'ACTIVE',
+    name: 'Active',
+    sortable: true,
+    truncateText: false,
+  },
+  {
+    field: 'ACKNOWLEDGED',
+    name: 'Acknowledged',
+    sortable: true,
+    truncateText: false,
+  },
+  {
+    field: 'ERROR',
+    name: 'Errors',
+    sortable: true,
+    truncateText: false,
+  },
+  {
+    field: 'trigger_name',
+    name: 'Trigger name',
+    sortable: true,
+    truncateText: true,
+    textOnly: true,
+  },
+  {
+    field: 'start_time',
+    name: 'Trigger start time',
+    sortable: true,
+    truncateText: false,
+    render: renderTime,
+    dataType: 'date',
+  },
+  {
+    field: 'last_notification_time',
+    name: 'Trigger last updated',
+    sortable: true,
+    truncateText: true,
+    render: renderTime,
+    dataType: 'date',
+  },
+  {
+    field: 'severity',
+    name: 'Severity',
+    sortable: false,
+    truncateText: false,
+  },
+  {
+    field: 'monitor_name',
+    name: 'Monitor name',
+    sortable: true,
+    truncateText: true,
+    textOnly: true,
+    render: (name, alert) => (
+      <EuiLink href={`${PLUGIN_NAME}#/monitors/${alert.monitor_id}`}>{name}</EuiLink>
+    ),
   },
 ];

@@ -25,20 +25,15 @@
  */
 
 import _ from 'lodash';
-import { INDEX } from '../../../../../../utils/constants';
 import { getAllowList } from '../../../utils/helpers';
 
 export const validateDestinationName = (httpClient, destinationToEdit) => async (value) => {
   try {
     if (!value) return 'Required';
-    const options = {
-      index: INDEX.SCHEDULED_JOBS,
-      query: { query: { term: { 'destination.name.keyword': value } } },
-    };
-    const response = await httpClient.post('../api/alerting/monitors/_search', {
-      body: JSON.stringify(options),
+    const response = await httpClient.get('../api/alerting/destinations', {
+      query: { search: value, sortField: 'destination.name.keyword' },
     });
-    if (_.get(response, 'resp.hits.total.value', 0)) {
+    if (_.get(response, 'totalDestinations', 0)) {
       if (!destinationToEdit) return 'Destination name is already used';
       if (destinationToEdit && destinationToEdit.name !== value) {
         return 'Destination name is already used';

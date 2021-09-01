@@ -63,4 +63,13 @@ export const staticColumns = [
       }
     },
   },
+  {
+    field: 'user',
+    name: 'Last updated by',
+    sortable: true,
+    truncateText: true,
+    textOnly: true,
+    width: '100px',
+    render: (value) => (value && value.name ? value.name : '-'),
+  },
 ];

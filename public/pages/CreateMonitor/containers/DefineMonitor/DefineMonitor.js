@@ -10,38 +10,35 @@
  */
 
 /*
- *   Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2021 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
- *   Licensed under the Apache License, Version 2.0 (the "License").
- *   You may not use this file except in compliance with the License.
- *   A copy of the License is located at
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- *   or in the "license" file accompanying this file. This file is distributed
- *   on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- *   express or implied. See the License for the specific language governing
- *   permissions and limitations under the License.
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
  */
 
 import React, { Component, Fragment } from 'react';
 import _ from 'lodash';
 import PropTypes from 'prop-types';
-import { EuiSpacer, EuiButton, EuiText, EuiCallOut } from '@elastic/eui';
+import { EuiSpacer, EuiButton, EuiCallOut } from '@elastic/eui';
 import ContentPanel from '../../../../components/ContentPanel';
 import VisualGraph from '../../components/VisualGraph';
 import ExtractionQuery from '../../components/ExtractionQuery';
 import MonitorExpressions from '../../components/MonitorExpressions';
 import QueryPerformance from '../../components/QueryPerformance';
-import MonitorDefinition from '../../components/MonitorDefinition';
-import MonitorIndex from '../MonitorIndex';
-import MonitorTimeField from '../../components/MonitorTimeField';
 import { formikToMonitor } from '../CreateMonitor/utils/formikToMonitor';
 import { getPathsPerDataType } from './utils/mappings';
 import { buildSearchRequest } from './utils/searchRequests';
-import { SEARCH_TYPE, OS_AD_PLUGIN } from '../../../../utils/constants';
-import AnomalyDetectors from '../AnomalyDetectors/AnomalyDetectors';
+import { SEARCH_TYPE, OS_AD_PLUGIN, MONITOR_TYPE } from '../../../../utils/constants';
 import { backendErrorNotification } from '../../../../utils/helpers';
+import DataSource from '../DataSource';
 
 function renderEmptyMessage(message) {
   return (
@@ -59,6 +56,8 @@ const propTypes = {
   values: PropTypes.object.isRequired,
   httpClient: PropTypes.object.isRequired,
   errors: PropTypes.object,
+  touched: PropTypes.object,
+  detectorId: PropTypes.object,
   notifications: PropTypes.object.isRequired,
 };
 const defaultProps = {
@@ -84,7 +83,6 @@ class DefineMonitor extends Component {
     this.queryMappings = this.queryMappings.bind(this);
     this.renderVisualMonitor = this.renderVisualMonitor.bind(this);
     this.renderExtractionQuery = this.renderExtractionQuery.bind(this);
-    this.renderAnomalyDetector = this.renderAnomalyDetector.bind(this);
     this.getMonitorContent = this.getMonitorContent.bind(this);
     this.getPlugins = this.getPlugins.bind(this);
     this.showPluginWarning = this.showPluginWarning.bind(this);
@@ -107,8 +105,9 @@ class DefineMonitor extends Component {
       searchType: prevSearchType,
       index: prevIndex,
       timeField: prevTimeField,
+      monitor_type: prevMonitorType,
     } = prevProps.values;
-    const { searchType, index, timeField } = this.props.values;
+    const { searchType, index, timeField, monitor_type } = this.props.values;
     const isGraph = searchType === SEARCH_TYPE.GRAPH;
     const hasIndices = !!index.length;
     // If customer is defining query through extraction query, then they are manually running their own queries
@@ -132,6 +131,8 @@ class DefineMonitor extends Component {
         if (wasQuery || diffIndices || diffTimeFields) this.onRunQuery();
       }
     }
+    // Reset response when monitor type or definition method is changed
+    if (prevSearchType !== searchType) this.resetResponse();
   }
 
   async getPlugins() {
@@ -149,25 +150,39 @@ class DefineMonitor extends Component {
   }
 
   renderGraph() {
-    const { errors } = this.props;
+    const { errors, touched, values } = this.props;
+    const isQueryLevelMonitor = _.get(values, 'monitor_type') === MONITOR_TYPE.QUERY_LEVEL;
+    const aggregations = _.get(values, 'aggregations');
+
+    // TODO: Implement different graph view for query-level and bucket-level monitor
+    // if (isQueryLevelMonitor)
     return (
       <Fragment>
-        <EuiText size="xs">
-          <strong>Create a monitor for</strong>
-        </EuiText>
         <EuiSpacer size="s" />
         <MonitorExpressions
+          errors={errors}
+          touched={touched}
           onRunQuery={this.onRunQuery}
           dataTypes={this.state.dataTypes}
-          ofEnabled={this.props.values.aggregationType !== 'count'}
         />
         <EuiSpacer size="s" />
         {errors.where ? (
           renderEmptyMessage('Invalid input in WHERE filter. Remove WHERE filter or adjust filter ')
+        ) : aggregations.length ? (
+          _.map(aggregations, (field) => {
+            return (
+              <VisualGraph
+                values={this.state.formikSnapshot}
+                fieldName={field.fieldName}
+                aggregationType={field.aggregationType}
+                response={this.state.response}
+              />
+            );
+          })
         ) : (
           <VisualGraph
             values={this.state.formikSnapshot}
-            fieldName={_.get(this.props.values, 'fieldName[0].label', 'Select a field')}
+            fieldName="Select a field"
             response={this.state.response}
           />
         )}
@@ -179,24 +194,41 @@ class DefineMonitor extends Component {
     const { httpClient, values, notifications } = this.props;
     const formikSnapshot = _.cloneDeep(values);
 
-    // If we are running a visual graph query, then we need to run two separate queries
-    // 1. The actual query that will be saved on the monitor, to get accurate query performance stats
-    // 2. The UI generated query that gets [BUCKET_COUNT] times the aggregated buckets to show past history of query
-    // If the query is an extraction query, we can use the same query for results and query performance
-    const searchRequests = [buildSearchRequest(values)];
-    if (values.searchType === SEARCH_TYPE.GRAPH) {
-      searchRequests.push(buildSearchRequest(values, false));
+    const searchType = values.searchType;
+    let requests;
+    switch (searchType) {
+      case SEARCH_TYPE.QUERY:
+        requests = [buildSearchRequest(values)];
+        break;
+      case SEARCH_TYPE.GRAPH:
+        // TODO: Might need to check if groupBy is defined if monitor_type === Graph, and prevent onRunQuery() if no group by defined to avoid errors.
+        // If we are running a visual graph query, then we need to run two separate queries
+        // 1. The actual query that will be saved on the monitor, to get accurate query performance stats
+        // 2. The UI generated query that gets [BUCKET_COUNT] times the aggregated buckets to show past history of query
+        // If the query is an extraction query, we can use the same query for results and query performance
+        requests = [buildSearchRequest(values)];
+        requests.push(buildSearchRequest(values, false));
+        break;
     }
 
     try {
-      const promises = searchRequests.map((searchRequest) => {
+      const promises = requests.map((request) => {
         // Fill in monitor name in case it's empty (in create workflow)
         // Set triggers to empty array so they are not executed (if in edit workflow)
         // Set input search to query/graph query and then use execute API to fill in period_start/period_end
         const monitor = formikToMonitor(values);
         _.set(monitor, 'name', 'TEMP_MONITOR');
         _.set(monitor, 'triggers', []);
-        _.set(monitor, 'inputs[0].search', searchRequest);
+
+        switch (searchType) {
+          case SEARCH_TYPE.QUERY:
+          case SEARCH_TYPE.GRAPH:
+            _.set(monitor, 'inputs[0].search', request);
+            break;
+          default:
+            console.log(`Unsupported searchType found: ${JSON.stringify(searchType)}`, searchType);
+        }
+
         return httpClient.post('../api/alerting/monitors/_execute', {
           body: JSON.stringify(monitor),
         });
@@ -254,9 +286,9 @@ class DefineMonitor extends Component {
     }
   }
   renderVisualMonitor() {
-    const { httpClient, values } = this.props;
+    const { values } = this.props;
     const { index, timeField } = values;
-    const { dataTypes, performanceResponse } = this.state;
+    const { performanceResponse } = this.state;
     let content = null;
     if (index.length) {
       content = timeField
@@ -269,8 +301,6 @@ class DefineMonitor extends Component {
       actions: [],
       content: (
         <React.Fragment>
-          <MonitorIndex httpClient={httpClient} />
-          <MonitorTimeField dataTypes={dataTypes} />
           <div style={{ padding: '0px 10px' }}>{content}</div>
           <EuiSpacer size="m" />
           <QueryPerformance response={performanceResponse} />
@@ -279,7 +309,7 @@ class DefineMonitor extends Component {
     };
   }
   renderExtractionQuery() {
-    const { httpClient, values, isDarkMode } = this.props;
+    const { values, isDarkMode } = this.props;
     const { response, performanceResponse } = this.state;
     let invalidJSON = false;
     try {
@@ -305,28 +335,9 @@ class DefineMonitor extends Component {
       ],
       content: (
         <React.Fragment>
-          <MonitorIndex httpClient={httpClient} />
           <div style={{ padding: '0px 10px' }}>{content}</div>
           <EuiSpacer size="m" />
           <QueryPerformance response={performanceResponse} />
-        </React.Fragment>
-      ),
-    };
-  }
-  renderAnomalyDetector() {
-    const { httpClient, values, detectorId } = this.props;
-    return {
-      actions: [],
-      content: (
-        <React.Fragment>
-          <div style={{ padding: '0px 10px' }}>
-            <AnomalyDetectors
-              httpClient={httpClient}
-              values={values}
-              renderEmptyMessage={renderEmptyMessage}
-              detectorId={detectorId}
-            />
-          </div>
         </React.Fragment>
       ),
     };
@@ -335,8 +346,6 @@ class DefineMonitor extends Component {
   getMonitorContent() {
     const { values } = this.props;
     switch (values.searchType) {
-      case SEARCH_TYPE.AD:
-        return this.renderAnomalyDetector();
       case SEARCH_TYPE.GRAPH:
         return this.renderVisualMonitor();
       default:
@@ -350,28 +359,48 @@ class DefineMonitor extends Component {
   }
 
   render() {
+    const { values, errors, httpClient, detectorId, notifications, isDarkMode } = this.props;
+    const { dataTypes } = this.state;
     const monitorContent = this.getMonitorContent();
+    const { searchType } = this.props.values;
+    const isGraphOrQuery = searchType === SEARCH_TYPE.GRAPH || searchType === SEARCH_TYPE.QUERY;
     return (
-      <ContentPanel
-        title="Define monitor"
-        titleSize="s"
-        bodyStyles={{ padding: 'initial' }}
-        actions={monitorContent.actions}
-      >
-        {this.showPluginWarning()
-          ? [
-              <EuiCallOut
-                color="warning"
-                title="Anomaly detector plugin is not installed on Opensearch, This monitor will not functional properly."
-                iconType="help"
-                size="s"
-              />,
-              <EuiSpacer size="s" />,
-            ]
-          : null}
-        <MonitorDefinition resetResponse={this.resetResponse} plugins={this.state.plugins} />
-        {monitorContent.content}
-      </ContentPanel>
+      <div>
+        {isGraphOrQuery && (
+          <div>
+            <DataSource
+              values={values}
+              dataTypes={dataTypes}
+              errors={errors}
+              httpClient={httpClient}
+              detectorId={detectorId}
+              notifications={notifications}
+              isDarkMode={isDarkMode}
+            />
+            <EuiSpacer />
+          </div>
+        )}
+
+        <ContentPanel
+          title="Query"
+          titleSize="s"
+          bodyStyles={{ padding: 'initial' }}
+          actions={monitorContent.actions}
+        >
+          {this.showPluginWarning()
+            ? [
+                <EuiCallOut
+                  color="warning"
+                  title="Anomaly detector plugin is not installed on Opensearch, This monitor will not functional properly."
+                  iconType="help"
+                  size="s"
+                />,
+                <EuiSpacer size="s" />,
+              ]
+            : null}
+          {monitorContent.content}
+        </ContentPanel>
+      </div>
     );
   }
 }

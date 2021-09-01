@@ -35,7 +35,7 @@ import DestinationsList from '../Destinations/containers/DestinationsList';
 const getSelectedTabId = (pathname) => {
   if (pathname.includes('monitors')) return 'monitors';
   if (pathname.includes('destinations')) return 'destinations';
-  return 'dashboard';
+  return 'alerts';
 };
 
 export default class Home extends Component {
@@ -49,8 +49,8 @@ export default class Home extends Component {
     this.state = { selectedTabId };
     this.tabs = [
       {
-        id: 'dashboard',
-        name: 'Dashboard',
+        id: 'alerts',
+        name: 'Alerts',
         route: 'dashboard',
       },
       {
@@ -110,7 +110,12 @@ export default class Home extends Component {
               exact
               path="/dashboard"
               render={(props) => (
-                <Dashboard {...props} httpClient={httpClient} notifications={notifications} />
+                <Dashboard
+                  {...props}
+                  httpClient={httpClient}
+                  notifications={notifications}
+                  perAlertView={false}
+                />
               )}
             />
             <Route

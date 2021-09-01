@@ -24,14 +24,6 @@
  *   permissions and limitations under the License.
  */
 
-import React from 'react';
-import ContentPanel from '../../../../components/ContentPanel';
-import Schedule from '../../components/Schedule';
+import MonitorType from './MonitorType';
 
-const MonitorSchedule = ({ httpClient, monitorToEdit, isAd }) => (
-  <ContentPanel title="Monitor schedule" titleSize="s" bodyStyles={{ padding: 'initial' }}>
-    <Schedule isAd={isAd} />
-  </ContentPanel>
-);
-
-export default MonitorSchedule;
+export default MonitorType;

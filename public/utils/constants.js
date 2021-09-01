@@ -10,7 +10,7 @@
  */
 
 /*
- *   Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ *   Copyright 2021 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  *   Licensed under the Apache License, Version 2.0 (the "License").
  *   You may not use this file except in compliance with the License.
@@ -45,6 +45,11 @@ export const SEARCH_TYPE = {
   AD: 'ad',
 };
 
+export const MONITOR_TYPE = {
+  QUERY_LEVEL: 'query_level_monitor',
+  BUCKET_LEVEL: 'bucket_level_monitor',
+};
+
 export const DESTINATION_ACTIONS = {
   UPDATE_DESTINATION: 'update-destination',
 };
@@ -75,3 +80,5 @@ export const MONITOR_INPUT_DETECTOR_ID = `inputs.${INPUTS_DETECTOR_ID}`;
 export const AD_PREVIEW_DAYS = 7;
 
 export const MAX_QUERY_RESULT_SIZE = 200;
+
+export const MONITOR_GROUP_BY = 'ui_metadata.search.groupBy';
