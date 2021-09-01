@@ -236,7 +236,7 @@ class ConfigureActions extends React.Component {
     const displayAddActionButton = numOfActions > 0;
     //TODO:: Handle loading Destinations inside the Action which will be more intuitive for customers.
     return (
-      <div style={{ paddingLeft: '20px', paddingRight: '15px' }}>
+      <div style={{ paddingLeft: '10px', paddingRight: '10px' }}>
         <EuiText>
           <h4>{`Actions (${numOfActions})`}</h4>
         </EuiText>

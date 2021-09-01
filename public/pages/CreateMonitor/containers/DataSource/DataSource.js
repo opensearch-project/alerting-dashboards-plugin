@@ -9,6 +9,21 @@
  * GitHub history for details.
  */
 
+/*
+ * Copyright 2021 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
+
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { EuiSpacer } from '@elastic/eui';
@@ -39,7 +54,16 @@ class DataSource extends Component {
     const { searchType } = this.props.values;
     const isGraph = searchType === SEARCH_TYPE.GRAPH;
     return (
-      <ContentPanel title="Data source" titleSize="s" bodyStyles={{ padding: 'initial' }}>
+      <ContentPanel
+        title="Data source"
+        titleSize="s"
+        bodyStyles={{
+          padding: 'initial',
+          paddingBottom: '10px',
+          paddingLeft: '20px',
+          paddingRight: '20px',
+        }}
+      >
         <MonitorIndex httpClient={this.props.httpClient} />
         <EuiSpacer size="s" />
         {isGraph && <MonitorTimeField dataTypes={this.props.dataTypes} />}
