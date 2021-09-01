@@ -30,7 +30,6 @@ import _ from 'lodash';
 import {
   EuiButton,
   EuiCodeEditor,
-  EuiFlexGrid,
   EuiFlexGroup,
   EuiFlexItem,
   EuiFormRow,
@@ -76,103 +75,106 @@ const TriggerQuery = ({
   const formattedResponse = JSON.stringify(responseToFormat, null, 4);
   const fieldName = `${fieldPath}script.source`;
   return (
-    <div style={{ padding: '0px 10px', marginTop: '0px' }}>
-      {isAd ? (
-        <div>
-          <EuiSpacer size={'s'} />
-          <EuiFormRow label="Response">
-            <EuiCodeEditor
-              mode="json"
-              theme={isDarkMode ? 'sense-dark' : 'github'}
-              height="300px"
-              width="90%"
-              value={error || formattedResponse}
-              readOnly
-            />
-          </EuiFormRow>
-          <EuiSpacer size={'l'} />
-        </div>
-      ) : null}
+    <EuiFlexGroup direction={'column'}>
+      <EuiFlexItem style={{ paddingLeft: '10px', paddingRight: '10px' }}>
+        <EuiFlexGroup alignItems={'flexEnd'} gutterSize={'m'}>
+          <EuiFlexItem grow={1} style={{ marginBottom: '0px' }}>
+            <div>
+              {isAd ? (
+                <div>
+                  <EuiSpacer size={'s'} />
+                  <EuiFormRow label="Response" fullWidth={true}>
+                    <EuiCodeEditor
+                      grow={true}
+                      mode="json"
+                      theme={isDarkMode ? 'sense-dark' : 'github'}
+                      height="200px"
+                      width="100%"
+                      value={error || formattedResponse}
+                      readOnly
+                    />
+                  </EuiFormRow>
+                  <EuiSpacer size={'l'} />
+                </div>
+              ) : null}
 
-      <EuiFlexGrid columns={2} gutterSize={'s'}>
-        {/*// Grid slot for the trigger definition code editor header*/}
-        <EuiFlexItem>
-          <EuiFlexGroup alignItems={'center'} gutterSize={'s'}>
-            <EuiFlexItem grow={false}>
-              <EuiText size={'s'}>
-                <h5>Trigger condition</h5>
-              </EuiText>
-            </EuiFlexItem>
-            <EuiFlexItem grow={false}>
-              <EuiText>
-                <EuiLink
-                  onClick={() => {
-                    setFlyout({ type: 'triggerCondition', payload: context });
-                  }}
-                >
-                  Info
-                </EuiLink>
-              </EuiText>
-            </EuiFlexItem>
-          </EuiFlexGroup>
-        </EuiFlexItem>
+              <Field name={fieldName}>
+                {({
+                  field: { value },
+                  form: { errors, touched, setFieldValue, setFieldTouched },
+                }) => (
+                  <EuiFormRow
+                    label={
+                      <EuiFlexGroup alignItems={'flexEnd'} gutterSize={'s'}>
+                        <EuiFlexItem grow={false}>
+                          <EuiText size={'xs'}>
+                            <strong>Trigger condition</strong>
+                          </EuiText>
+                        </EuiFlexItem>
+                        <EuiFlexItem>
+                          <EuiText>
+                            <EuiLink
+                              onClick={() => {
+                                setFlyout({ type: 'triggerCondition', payload: context });
+                              }}
+                            >
+                              Info
+                            </EuiLink>
+                          </EuiText>
+                        </EuiFlexItem>
+                      </EuiFlexGroup>
+                    }
+                    fullWidth={true}
+                    isInvalid={_.get(touched, fieldName, false) && !!_.get(errors, fieldName)}
+                    error={_.get(errors, fieldName)}
+                  >
+                    <EuiCodeEditor
+                      grow={true}
+                      mode="plain_text"
+                      theme={isDarkMode ? 'sense-dark' : 'github'}
+                      height="200px"
+                      width="100%"
+                      onChange={(source) => {
+                        setFieldValue(fieldName, source);
+                      }}
+                      onBlur={() => setFieldTouched(fieldName, true)}
+                      value={value}
+                    />
+                  </EuiFormRow>
+                )}
+              </Field>
+            </div>
+          </EuiFlexItem>
 
-        {/*// Grid slot for the trigger condition response code editor header*/}
-        <EuiFlexItem>
-          <EuiFlexGroup alignItems={'center'} gutterSize={'none'}>
-            <EuiText size={'s'}>
-              <h5>Trigger condition response</h5>
-            </EuiText>
-          </EuiFlexGroup>
-        </EuiFlexItem>
+          <EuiFlexItem grow={1} style={{ marginBottom: '0px' }}>
+            <EuiFormRow
+              fullWidth={true}
+              label={
+                <EuiText size={'xs'}>
+                  <strong>Trigger condition response</strong>
+                </EuiText>
+              }
+            >
+              <EuiCodeEditor
+                grow={true}
+                mode="plain_text"
+                theme={isDarkMode ? 'sense-dark' : 'github'}
+                height="200px"
+                width="100%"
+                value={getExecuteMessage(executeResponse)}
+                readOnly
+              />
+            </EuiFormRow>
+          </EuiFlexItem>
+        </EuiFlexGroup>
+      </EuiFlexItem>
 
-        {/*// Grid slot for the trigger condition code editor box*/}
-        <EuiFlexItem>
-          <Field name={fieldName}>
-            {({ field: { value }, form: { errors, touched, setFieldValue, setFieldTouched } }) => (
-              <EuiFormRow
-                fullWidth
-                isInvalid={_.get(touched, fieldName, false) && !!_.get(errors, fieldName)}
-                error={_.get(errors, fieldName)}
-              >
-                <EuiCodeEditor
-                  mode="plain_text"
-                  theme={isDarkMode ? 'sense-dark' : 'github'}
-                  height="200px"
-                  width="100%"
-                  onChange={(source) => {
-                    setFieldValue(fieldName, source);
-                  }}
-                  onBlur={() => setFieldTouched(fieldName, true)}
-                  value={value}
-                />
-              </EuiFormRow>
-            )}
-          </Field>
-        </EuiFlexItem>
-
-        {/*// Grid slot for the trigger condition response code editor box*/}
-        <EuiFlexItem>
-          <EuiFormRow fullWidth>
-            <EuiCodeEditor
-              mode="plain_text"
-              theme={isDarkMode ? 'sense-dark' : 'github'}
-              height="200px"
-              width="100%"
-              value={getExecuteMessage(executeResponse)}
-              readOnly
-            />
-          </EuiFormRow>
-        </EuiFlexItem>
-
-        {/*// Grid slot for the execute trigger condition button*/}
-        <EuiFlexItem grow={false}>
-          <EuiButton onClick={() => onRun([trigger])} size={'s'}>
-            Run for condition response
-          </EuiButton>
-        </EuiFlexItem>
-      </EuiFlexGrid>
-    </div>
+      <EuiFlexItem style={{ paddingLeft: '10px' }}>
+        <EuiButton onClick={() => onRun([trigger])} size={'s'} style={{ width: '250px' }}>
+          Run for condition response
+        </EuiButton>
+      </EuiFlexItem>
+    </EuiFlexGroup>
   );
 };
 

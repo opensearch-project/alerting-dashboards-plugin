@@ -25,26 +25,27 @@
  */
 
 import React from 'react';
-import { get } from 'lodash';
+import _ from 'lodash';
 import { EuiSpacer } from '@elastic/eui';
 import { AnomalyDetectorData } from '../../../CreateMonitor/containers/AnomalyDetectors/AnomalyDetectorData';
 import TriggerExpressions from '../../components/TriggerExpressions';
 import { AnomaliesChart } from '../../../CreateMonitor/components/AnomalyDetectors/AnomaliesChart';
 import { EmptyFeaturesMessage } from '../../../CreateMonitor/components/AnomalyDetectors/EmptyFeaturesMessage/EmptyFeaturesMessage';
+import { EmptyDetectorMessage } from '../../../CreateMonitor/components/AnomalyDetectors/EmptyDetectorMessage/EmptyDetectorMessage';
 
 class AnomalyDetectorTrigger extends React.Component {
   constructor(props) {
     super(props);
   }
   render() {
-    const { adValues, fieldPath } = this.props;
+    const { adValues, detectorId, fieldPath } = this.props;
     return (
       <div style={{ padding: '0px 10px' }}>
         <AnomalyDetectorData
-          detectorId={this.props.detectorId}
+          detectorId={detectorId}
           render={(anomalyData) => {
             // using lodash.get without worrying about whether an intermediate property is null or undefined.
-            if (get(anomalyData, 'anomalyResult.anomalies', []).length > 0) {
+            if (_.get(anomalyData, 'anomalyResult.anomalies', []).length > 0) {
               return (
                 <React.Fragment>
                   <TriggerExpressions
@@ -87,11 +88,10 @@ class AnomalyDetectorTrigger extends React.Component {
                 </React.Fragment>
               );
             } else {
-              return (
-                <EmptyFeaturesMessage
-                  detectorId={this.props.detectorId}
-                  isLoading={anomalyData.isLoading}
-                />
+              return _.isEmpty(detectorId) ? (
+                <EmptyDetectorMessage />
+              ) : (
+                <EmptyFeaturesMessage detectorId={detectorId} isLoading={anomalyData.isLoading} />
               );
             }
           }}
