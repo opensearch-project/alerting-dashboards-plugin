@@ -10,23 +10,23 @@
  */
 
 /*
- *   Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2021 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
- *   Licensed under the Apache License, Version 2.0 (the "License").
- *   You may not use this file except in compliance with the License.
- *   A copy of the License is located at
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- *   or in the "license" file accompanying this file. This file is distributed
- *   on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- *   express or implied. See the License for the specific language governing
- *   permissions and limitations under the License.
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
  */
 
 import React, { Fragment } from 'react';
 import _ from 'lodash';
-import { EuiFlexGroup, EuiFlexItem, EuiSpacer, EuiText } from '@elastic/eui';
+import { EuiFlexGroup, EuiFlexItem, EuiLink, EuiSpacer, EuiText } from '@elastic/eui';
 
 import { DEFAULT_EMPTY_DATA } from '../../../../utils/constants';
 import { URL } from '../../../../../utils/constants';
@@ -37,18 +37,20 @@ const QueryPerformance = ({ response, actions }) => (
     <ContentPanel
       title="Query performance"
       titleSize="s"
-      panelStyles={{ paddingLeft: '10px' }}
+      panelStyles={{ paddingLeft: '10px', paddingRight: '10px' }}
       description={
         <span>
           Check the performance of your query and make sure to follow best practices.{' '}
-          <a href={URL.DOCUMENTATION}>Learn more</a>
+          <EuiLink external href={URL.DOCUMENTATION} target="_blank">
+            Learn more
+          </EuiLink>
         </span>
       }
       actions={actions}
     >
       <EuiSpacer size="s" />
-      <EuiFlexGroup justifyContent="spaceBetween" alignItems="center" gutterSize="none">
-        <EuiFlexItem>
+      <EuiFlexGroup alignItems="flexStart" gutterSize="xl">
+        <EuiFlexItem grow={false}>
           <EuiText size="xs">
             <strong>Query duration</strong>
             <span style={{ display: 'block' }}>
@@ -56,7 +58,7 @@ const QueryPerformance = ({ response, actions }) => (
             </span>
           </EuiText>
         </EuiFlexItem>
-        <EuiFlexItem>
+        <EuiFlexItem grow={false}>
           <EuiText size="xs">
             <strong>Request duration</strong>
             <span style={{ display: 'block' }}>
@@ -64,7 +66,7 @@ const QueryPerformance = ({ response, actions }) => (
             </span>
           </EuiText>
         </EuiFlexItem>
-        <EuiFlexItem>
+        <EuiFlexItem grow={false}>
           <EuiText size="xs">
             <strong>Hits</strong>
             <span style={{ display: 'block' }}>

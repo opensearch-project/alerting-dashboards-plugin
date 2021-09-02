@@ -9,9 +9,23 @@
  * GitHub history for details.
  */
 
+/*
+ * Copyright 2021 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
+
 import React, { Component } from 'react';
 import { connect } from 'formik';
-
 import { EuiText, EuiButtonEmpty, EuiSpacer } from '@elastic/eui';
 import { getIndexFields } from './utils/dataTypes';
 import { getGroupByExpressionAllowedTypes } from './utils/helpers';
@@ -57,6 +71,7 @@ class GroupByExpression extends Component {
       arrayHelpers,
       dataTypes,
     } = this.props;
+    const { monitor_type: monitorType, groupBy } = values;
 
     const fieldOptions = getIndexFields(dataTypes, getGroupByExpressionAllowedTypes(values));
 
@@ -69,6 +84,8 @@ class GroupByExpression extends Component {
         8 +
       60;
 
+    const isBucketLevelMonitor = monitorType === MONITOR_TYPE.BUCKET_LEVEL;
+
     if (
       (this.state.addButtonTouched || touched.groupBy) &&
       !values.groupBy.length &&
@@ -76,25 +93,24 @@ class GroupByExpression extends Component {
     )
       errors.groupBy = GROUP_BY_ERROR;
 
-    const { monitor_type: monitorType, groupBy } = values;
-
     let showAddButtonFlag = false;
-    if (MONITOR_TYPE.QUERY_LEVEL === monitorType && groupBy.length < 1) {
+    if (!isBucketLevelMonitor && groupBy.length < 1) {
       showAddButtonFlag = true;
-    } else if (MONITOR_TYPE.BUCKET_LEVEL === monitorType && groupBy.length < 2) {
+    } else if (isBucketLevelMonitor && groupBy.length < 2) {
       showAddButtonFlag = true;
     }
 
     return (
       <div>
         <EuiText size="xs">
-          <h4>Group by</h4>
+          <strong>Group by</strong>
+          {!isBucketLevelMonitor ? <i> - optional</i> : null}
         </EuiText>
-        <EuiSpacer size="s" />
+        <EuiSpacer size={'s'} />
 
         {values.groupBy.length === 0 && (
-          <div style={{ padding: '10px 0px' }}>
-            <p>No group bys defined.</p>
+          <div>
+            <EuiText size={'xs'}>No group bys defined.</EuiText>
           </div>
         )}
 
