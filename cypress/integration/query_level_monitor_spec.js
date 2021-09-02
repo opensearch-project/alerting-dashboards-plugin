@@ -25,17 +25,17 @@
  */
 
 import { PLUGIN_NAME } from '../support/constants';
-import sampleMonitor from '../fixtures/sample_monitor';
-import sampleMonitorWithAlwaysTrueTrigger from '../fixtures/sample_monitor_with_always_true_trigger';
+import sampleQueryLevelMonitor from '../fixtures/sample_query_level_monitor';
+import sampleQueryLevelMonitorWithAlwaysTrueTrigger from '../fixtures/sample_query_level_monitor_with_always_true_trigger';
 import sampleDestination from '../fixtures/sample_destination_custom_webhook.json';
 
-const SAMPLE_MONITOR = 'sample_monitor';
-const UPDATED_MONITOR = 'updated_monitor';
-const SAMPLE_MONITOR_WITH_ANOTHER_NAME = 'sample_monitor_with_always_true_trigger';
+const SAMPLE_MONITOR = 'sample_query_level_monitor';
+const UPDATED_MONITOR = 'updated_query_level_monitor';
+const SAMPLE_MONITOR_WITH_ANOTHER_NAME = 'sample_query_level_monitor_with_always_true_trigger';
 const SAMPLE_TRIGGER = 'sample_trigger';
 const SAMPLE_ACTION = 'sample_action';
 
-describe('Monitors', () => {
+describe('Query-Level Monitors', () => {
   beforeEach(() => {
     // Set welcome screen tracking to false
     localStorage.setItem('home:welcome:show', 'false');
@@ -50,29 +50,53 @@ describe('Monitors', () => {
   describe('can be created', () => {
     before(() => {
       cy.deleteAllMonitors();
+      cy.createDestination(sampleDestination);
     });
 
-    it('defining by extraction query', () => {
+    it('by extraction query', () => {
       // Confirm we loaded empty monitor list
       cy.contains('There are no existing monitors');
 
       // Route us to create monitor page
       cy.contains('Create monitor').click({ force: true });
 
+      // Select the Query-Level Monitor type
+      cy.get('[data-test-subj="queryLevelMonitorRadioCard"]').click();
+
+      // Select extraction query for method of definition
+      cy.get('[data-test-subj="extractionQueryEditorRadioCard"]').click();
+
       // Wait for input to load and then type in the monitor name
       cy.get('input[name="name"]').type(SAMPLE_MONITOR, { force: true });
-
-      // Select the method of definition
-      cy.get('#searchType').select('query', { force: true });
 
       // Wait for input to load and then type in the index name
       cy.get('#index').type('*', { force: true });
 
+      // Add a trigger
+      cy.contains('Add trigger').click({ force: true });
+
+      // Type in the trigger name
+      cy.get('input[name="triggerDefinitions[0].name"]').type(SAMPLE_TRIGGER, { force: true });
+
+      // Type in the action name
+      cy.get('input[name="triggerDefinitions[0].actions.0.name"]').type(SAMPLE_ACTION, {
+        force: true,
+      });
+
+      // Click the combo box to list all the destinations
+      // Using key typing instead of clicking the menu option to avoid occasional failure
+      cy.get('div[name="triggerDefinitions[0].actions.0.destination_id"]')
+        .click({ force: true })
+        .type('{downarrow}{enter}');
+
       // Click the create button
       cy.get('button').contains('Create').click({ force: true });
 
-      // Confirm "monitor is created" shows
-      cy.contains(`Monitor ${SAMPLE_MONITOR} has been created`);
+      // Confirm we can see only one row in the trigger list by checking <caption> element
+      cy.contains('This table contains 1 row');
+
+      // Confirm we can see the new trigger
+      cy.contains(SAMPLE_TRIGGER);
 
       // Go back to the Monitors list
       cy.get('a').contains('Monitors').click({ force: true });
@@ -85,7 +109,7 @@ describe('Monitors', () => {
   describe('can be updated', () => {
     before(() => {
       cy.deleteAllMonitors();
-      cy.createMonitor(sampleMonitor);
+      cy.createMonitor(sampleQueryLevelMonitor);
     });
 
     it('by changing the name', () => {
@@ -121,7 +145,7 @@ describe('Monitors', () => {
   describe('can be deleted', () => {
     before(() => {
       cy.deleteAllMonitors();
-      cy.createMonitor(sampleMonitor);
+      cy.createMonitor(sampleQueryLevelMonitor);
     });
 
     it('from "Actions" menu', () => {
@@ -147,9 +171,9 @@ describe('Monitors', () => {
       cy.deleteAllMonitors();
       // Create 21 monitors so that a monitor will not appear in the first page
       for (let i = 0; i < 20; i++) {
-        cy.createMonitor(sampleMonitor);
+        cy.createMonitor(sampleQueryLevelMonitor);
       }
-      cy.createMonitor(sampleMonitorWithAlwaysTrueTrigger);
+      cy.createMonitor(sampleQueryLevelMonitorWithAlwaysTrueTrigger);
     });
 
     it('by name', () => {
@@ -167,89 +191,6 @@ describe('Monitors', () => {
         expect($tr, '1 row').to.have.length(1);
         expect($tr, 'item').to.contain(SAMPLE_MONITOR_WITH_ANOTHER_NAME);
       });
-    });
-  });
-
-  describe('can have triggers', () => {
-    before(() => {
-      cy.deleteAllMonitors();
-      cy.deleteAllDestinations();
-      cy.createMonitor(sampleMonitor);
-    });
-
-    it('a trigger can be created', () => {
-      // Confirm we can see the created monitor in the list
-      cy.contains(SAMPLE_MONITOR);
-
-      // Select the existing monitor
-      cy.get('a').contains(SAMPLE_MONITOR).click({ force: true });
-
-      // Click Create Trigger button
-      cy.contains('Create trigger').click({ force: true });
-
-      // Wait for input to load and then type in the trigger name
-      cy.get('input[name="name"]').type(SAMPLE_TRIGGER, { force: true });
-
-      // Click the create button
-      cy.get('button').contains('Create').click({ force: true });
-
-      // Confirm we can see only one row in the trigger list by checking <caption> element
-      cy.contains('This table contains 1 row');
-
-      // Confirm we can see the new trigger
-      cy.contains(SAMPLE_TRIGGER);
-    });
-
-    it('an action can be attached to the trigger', () => {
-      // Create a destination
-      cy.createDestination(sampleDestination);
-
-      // Confirm we can see the created monitor in the list
-      cy.contains(SAMPLE_MONITOR);
-
-      // Select the existing monitor
-      cy.get('a').contains(SAMPLE_MONITOR).click({ force: true });
-
-      // Select checkbox for the existing monitor
-      cy.get('input[data-test-subj^="checkboxSelectRow-"]').click({ force: true });
-
-      // Click the trigger Edit button
-      cy.get('.euiPanel').contains('Edit').click({ force: true });
-
-      // Click the Add Action button to configure trigger actions
-      cy.contains('Add action').click({ force: true });
-
-      // Wait for input to load and then type in the action name
-      cy.get('input[name="actions.0.name"]').type(SAMPLE_ACTION, { force: true });
-
-      // Click the combo box to list all the destinations
-      // Using key typing instead of clicking the menu option to avoid occasional failure
-      cy.get('div[data-test-subj="comboBoxInput"]')
-        .click({ force: true })
-        .type('{downarrow}{enter}');
-
-      // Click Update button to update the monitor
-      cy.get('button').contains('Update').click({ force: true });
-
-      // The following is used to validate the action has been added.
-      // Confirm the update process is done and the page loaded
-      cy.contains('Create trigger');
-
-      // This step is used to make the actions list of the trigger refresh
-      // Go to the Monitors list
-      cy.get('a').contains('Monitors').click({ force: true });
-
-      // Select the existing monitor
-      cy.get('span > a').contains(SAMPLE_MONITOR).click({ force: true });
-
-      // Select checkbox for the created trigger
-      cy.get('input[data-test-subj^="checkboxSelectRow-"]').click({ force: true });
-
-      // Click the trigger Edit button
-      cy.get('div.euiPanel').contains('Edit').click({ force: true });
-
-      // Confirm we can see the new action
-      cy.contains(SAMPLE_ACTION);
     });
   });
 

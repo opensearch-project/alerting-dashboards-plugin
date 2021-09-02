@@ -25,8 +25,8 @@
  */
 
 import { PLUGIN_NAME } from '../support/constants';
-import sampleMonitorWithAlwaysTrueTrigger from '../fixtures/sample_monitor_with_always_true_trigger';
-import sampleMonitorWorkflow from '../fixtures/sample_monitor_workflow';
+import sampleQueryLevelMonitorWithAlwaysTrueTrigger from '../fixtures/sample_query_level_monitor_with_always_true_trigger';
+import sampleQueryLevelMonitorWorkflow from '../fixtures/sample_query_level_monitor_workflow';
 
 const TESTING_INDEX = 'alerting_test';
 
@@ -48,8 +48,8 @@ describe('Alerts', () => {
       // Generate a unique number in every test by getting a unix timestamp in milliseconds
       Cypress.config('unique_number', `${Date.now()}`);
       // Modify the monitor name to be unique
-      sampleMonitorWithAlwaysTrueTrigger.name += `-${Cypress.config('unique_number')}`;
-      cy.createMonitor(sampleMonitorWithAlwaysTrueTrigger);
+      sampleQueryLevelMonitorWithAlwaysTrueTrigger.name += `-${Cypress.config('unique_number')}`;
+      cy.createMonitor(sampleQueryLevelMonitorWithAlwaysTrueTrigger);
     });
 
     it('after the monitor starts running', () => {
@@ -77,8 +77,8 @@ describe('Alerts', () => {
       cy.deleteAllMonitors();
       Cypress.config('unique_number', `${Date.now()}`);
       // Modify the monitor name to be unique
-      sampleMonitorWithAlwaysTrueTrigger.name += `-${Cypress.config('unique_number')}`;
-      cy.createAndExecuteMonitor(sampleMonitorWithAlwaysTrueTrigger);
+      sampleQueryLevelMonitorWithAlwaysTrueTrigger.name += `-${Cypress.config('unique_number')}`;
+      cy.createAndExecuteMonitor(sampleQueryLevelMonitorWithAlwaysTrueTrigger);
     });
 
     it('by clicking the button in Dashboard', () => {
@@ -109,8 +109,8 @@ describe('Alerts', () => {
       cy.deleteIndexByName('alerting*');
       Cypress.config('unique_number', `${Date.now()}`);
       // Modify the monitor name to be unique
-      sampleMonitorWorkflow.name += `-${Cypress.config('unique_number')}`;
-      cy.createAndExecuteMonitor(sampleMonitorWorkflow);
+      sampleQueryLevelMonitorWorkflow.name += `-${Cypress.config('unique_number')}`;
+      cy.createAndExecuteMonitor(sampleQueryLevelMonitorWorkflow);
     });
 
     it('when the trigger condition is not met after met once', () => {
@@ -155,13 +155,13 @@ describe('Alerts', () => {
     before(() => {
       cy.deleteAllMonitors();
       // modify the JSON object to make an error alert when executing the monitor
-      sampleMonitorWithAlwaysTrueTrigger.triggers[0].actions = [
+      sampleQueryLevelMonitorWithAlwaysTrueTrigger.triggers[0].actions = [
         { name: '', destination_id: '', message_template: { source: '' } },
       ];
       Cypress.config('unique_number', `${Date.now()}`);
       // Modify the monitor name to be unique
-      sampleMonitorWithAlwaysTrueTrigger.name += `-${Cypress.config('unique_number')}`;
-      cy.createAndExecuteMonitor(sampleMonitorWithAlwaysTrueTrigger);
+      sampleQueryLevelMonitorWithAlwaysTrueTrigger.name += `-${Cypress.config('unique_number')}`;
+      cy.createAndExecuteMonitor(sampleQueryLevelMonitorWithAlwaysTrueTrigger);
     });
 
     it('by using a wrong destination', () => {
@@ -180,8 +180,8 @@ describe('Alerts', () => {
       cy.deleteAllMonitors();
       Cypress.config('unique_number', `${Date.now()}`);
       // Modify the monitor name to be unique
-      sampleMonitorWithAlwaysTrueTrigger.name += `-${Cypress.config('unique_number')}`;
-      cy.createAndExecuteMonitor(sampleMonitorWithAlwaysTrueTrigger);
+      sampleQueryLevelMonitorWithAlwaysTrueTrigger.name += `-${Cypress.config('unique_number')}`;
+      cy.createAndExecuteMonitor(sampleQueryLevelMonitorWithAlwaysTrueTrigger);
     });
 
     it('by deleting the monitor', () => {
