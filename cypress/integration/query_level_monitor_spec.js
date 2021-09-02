@@ -132,7 +132,7 @@ describe('Query-Level Monitors', () => {
       cy.get('button').contains('Update').last().click({ force: true });
 
       // Confirm the update process is done and the page loaded
-      cy.contains('Create trigger');
+      cy.contains('Edit monitor');
 
       // Go back to the Monitors list
       cy.get('a').contains('Monitors').click({ force: true });
