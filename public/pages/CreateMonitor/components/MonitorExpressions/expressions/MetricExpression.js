@@ -33,6 +33,10 @@ import _ from 'lodash';
 import { FORMIK_INITIAL_AGG_VALUES } from '../../../containers/CreateMonitor/utils/constants';
 import { MetricItem } from './index';
 import { MONITOR_TYPE } from '../../../../../utils/constants';
+import { inputLimitText } from '../../../../../utils/helpers';
+
+export const MAX_NUM_QUERY_LEVEL_METRICS = 1;
+export const MAX_NUM_BUCKET_LEVEL_METRICS = 5;
 
 class MetricExpression extends Component {
   renderFieldItems = (arrayHelpers, fieldOptions, expressionWidth) => {
@@ -76,9 +80,24 @@ class MetricExpression extends Component {
     const { monitor_type: monitorType, aggregations } = values;
 
     let showAddButtonFlag = false;
-    if (MONITOR_TYPE.QUERY_LEVEL === monitorType && aggregations.length < 1) {
+    const limitText =
+      MONITOR_TYPE.BUCKET_LEVEL === monitorType
+        ? inputLimitText(aggregations.length, MAX_NUM_BUCKET_LEVEL_METRICS, 'metric', 'metrics', {
+            paddingLeft: '10px',
+          })
+        : inputLimitText(aggregations.length, MAX_NUM_QUERY_LEVEL_METRICS, 'metric', 'metrics', {
+            paddingLeft: '10px',
+          });
+
+    if (
+      MONITOR_TYPE.QUERY_LEVEL === monitorType &&
+      aggregations.length < MAX_NUM_QUERY_LEVEL_METRICS
+    ) {
       showAddButtonFlag = true;
-    } else if (MONITOR_TYPE.BUCKET_LEVEL === monitorType && aggregations.length < 5) {
+    } else if (
+      MONITOR_TYPE.BUCKET_LEVEL === monitorType &&
+      aggregations.length < MAX_NUM_BUCKET_LEVEL_METRICS
+    ) {
       showAddButtonFlag = true;
     }
 
@@ -119,10 +138,13 @@ class MetricExpression extends Component {
               arrayHelpers.push(_.cloneDeep(FORMIK_INITIAL_AGG_VALUES));
             }}
             data-test-subj="addMetricButton"
+            style={{ paddingTop: '5px' }}
           >
             + Add metric
           </EuiButtonEmpty>
         )}
+
+        {limitText}
       </div>
     );
   }

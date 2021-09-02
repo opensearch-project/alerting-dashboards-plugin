@@ -85,7 +85,7 @@ const BucketLevelTriggerQuery = ({
   return (
     <EuiFlexGroup direction={'column'} style={{ paddingLeft: '20px', paddingRight: '20px' }}>
       <EuiFlexItem style={{ marginBottom: '0px' }}>
-        <EuiFlexGroup alignItems={'flexEnd'} gutterSize={'m'}>
+        <EuiFlexGroup alignItems={'stretch'} gutterSize={'m'}>
           <EuiFlexItem grow={1}>
             <Field name={fieldName} validate={validateExtractionQuery}>
               {({
@@ -134,7 +134,7 @@ const BucketLevelTriggerQuery = ({
             </Field>
           </EuiFlexItem>
 
-          <EuiFlexItem grow={1}>
+          <EuiFlexItem grow={1} style={{ paddingTop: '6px' }}>
             <EuiFormRow
               fullWidth={true}
               label={

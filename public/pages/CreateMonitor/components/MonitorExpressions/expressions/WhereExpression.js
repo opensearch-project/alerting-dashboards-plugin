@@ -70,6 +70,7 @@ import {
   TRIGGER_OPERATORS_MAP,
 } from '../../../../CreateTrigger/containers/DefineBucketLevelTrigger/DefineBucketLevelTrigger';
 import { FORMIK_INITIAL_TRIGGER_VALUES } from '../../../../CreateTrigger/containers/CreateTrigger/utils/constants';
+import { inputLimitText } from '../../../../../utils/helpers';
 
 const propTypes = {
   formik: PropTypes.object.isRequired,
@@ -80,6 +81,8 @@ const propTypes = {
 };
 
 const ALLOWED_TYPES = ['number', 'text', 'keyword', 'boolean'];
+
+const MAX_NUM_WHERE_EXPRESSION = 1;
 
 class WhereExpression extends Component {
   constructor(props) {
@@ -252,7 +255,7 @@ class WhereExpression extends Component {
           <EuiPopover
             id={`${whereFilterHeader}-badge-popover`}
             button={
-              <div>
+              <div style={{ paddingBottom: '5px' }}>
                 <EuiBadge
                   color="hollow"
                   iconSide="right"
@@ -311,9 +314,18 @@ class WhereExpression extends Component {
             size="xs"
             data-test-subj={`${fieldPath}where.addFilterButton`}
             onClick={() => openExpression(Expressions.WHERE)}
+            style={{ paddingTop: '5px' }}
           >
             + Add filter
           </EuiButtonEmpty>
+        )}
+
+        {inputLimitText(
+          showAddButtonFlag ? 0 : 1,
+          MAX_NUM_WHERE_EXPRESSION,
+          _.lowerCase(whereFilterHeader),
+          _.lowerCase(`${whereFilterHeader}s`),
+          { paddingLeft: '10px' }
         )}
       </div>
     );
