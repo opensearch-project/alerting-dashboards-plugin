@@ -24,6 +24,10 @@
  *   permissions and limitations under the License.
  */
 
+import { htmlIdGenerator } from '@elastic/eui/lib/services';
+
+export const makeId = htmlIdGenerator();
+
 // A helper function that wraps an event handler and filters out ESCAPE keys
 export const ignoreEscape = (eventHandler) => (event) => {
   if (!(event.keyCode === 27)) {

@@ -36,7 +36,6 @@ class ForExpression extends Component {
   onChangeWrapper = (e, field) => {
     this.props.onMadeChanges();
     field.onChange(e);
-    this.props.onRunQuery();
   };
 
   render() {
@@ -67,7 +66,6 @@ class ForExpression extends Component {
 ForExpression.propTypes = {
   formik: PropTypes.object.isRequired,
   onMadeChanges: PropTypes.func.isRequired,
-  onRunQuery: PropTypes.func.isRequired,
 };
 
 export default connect(ForExpression);

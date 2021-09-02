@@ -263,10 +263,9 @@ export function formikToWhereClause({ where }) {
 }
 
 export function formikToWhenAggregation(values) {
-  const {
-    aggregationType,
-    fieldName: [{ label: field } = {}],
-  } = values;
+  const { aggregations } = values;
+  const aggregationType = aggregations[0]?.aggregationType;
+  const field = aggregations[0]?.fieldName;
   if (aggregationType === 'count' || !field) return {};
   return { when: { [aggregationType]: { field } } };
 }

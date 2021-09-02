@@ -161,7 +161,7 @@ export async function getBreadcrumb(route, routeState, httpClient) {
   return {
     '#': { text: 'Alerting', href: '/' },
     monitors: { text: 'Monitors', href: '/monitors' },
-    dashboard: { text: 'Dashboard', href: '/dashboard' },
+    dashboard: { text: 'Alerts', href: '/dashboard' },
     destinations: { text: 'Destinations', href: '/destinations' },
     'create-monitor': [
       { text: 'Monitors', href: '/monitors' },

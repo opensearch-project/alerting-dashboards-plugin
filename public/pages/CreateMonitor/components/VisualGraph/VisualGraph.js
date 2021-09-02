@@ -36,7 +36,6 @@ import {
   VerticalRectSeries,
   DiscreteColorLegend,
 } from 'react-vis';
-
 import { SIZE_RANGE, ANNOTATION_STYLES, HINT_STYLES, LINE_STYLES } from './utils/constants';
 import {
   getLeftPadding,
@@ -56,6 +55,10 @@ import {
   getBufferedXDomain,
 } from './utils/helpers';
 import { MONITOR_TYPE } from '../../../../utils/constants';
+import { URL } from '../../../../../utils/constants';
+import ContentPanel from '../../../../components/ContentPanel';
+import { selectOptionValueToText } from '../MonitorExpressions/expressions/utils/helpers';
+import { UNITS_OF_TIME } from '../MonitorExpressions/expressions/utils/constants';
 
 export default class VisualGraph extends Component {
   static defaultProps = { annotation: false };
@@ -130,45 +133,51 @@ export default class VisualGraph extends Component {
     const legends = groupedData.map((dataSeries) => dataSeries.key);
     return (
       <div>
-        <FlexibleXYPlot
-          height={400}
-          xType="time"
-          margin={{ top: 20, right: 20, bottom: 70, left: leftPadding }}
-          xDomain={xDomain}
-          yDomain={yDomain}
-          onMouseLeave={this.resetHint}
+        <ContentPanel
+          title={`${aggregationType?.toUpperCase()} OF ${fieldName}`}
+          titleSize="s"
+          panelStyles={{ paddingLeft: '10px' }}
+          description={
+            <span>
+              FOR THE LAST {values.bucketValue}{' '}
+              {selectOptionValueToText(values.bucketUnitOfTime, UNITS_OF_TIME)}, GROUP BY{' '}
+              {`${values.groupBy}`}, Showing top 3 buckets.
+            </span>
+          }
         >
-          <XAxis title={xTitle} />
-          <XAxis
-            title={aggregationTitle}
-            position="middle"
-            orientation="top"
-            tickTotal={0}
-            top={-25}
-            style={{ strokeWidth: '0px' }}
-          />
-          <YAxis title={yTitle} tickFormat={formatYAxisTick} />
-          <DiscreteColorLegend
-            style={{ position: 'absolute', right: '50px', top: '10px' }}
-            items={legends}
-          />
-          {groupedData.map((dataSeries, index, arr) => {
-            const rectData = getRectData(dataSeries.data, width, index, arr.length);
-            return (
-              <VerticalRectSeries
-                className={dataSeries.key}
-                data={rectData}
-                onValueMouseOver={(d) => this.onValueMouseOver(d, dataSeries.key)}
-              />
-            );
-          })}
-          {annotation && <LineSeries data={annotations} style={ANNOTATION_STYLES} />}
-          {hint && (
-            <Hint value={hint}>
-              <div style={HINT_STYLES}>{getAggregationGraphHint(hint)}</div>
-            </Hint>
-          )}
-        </FlexibleXYPlot>
+          <FlexibleXYPlot
+            height={400}
+            xType="time"
+            margin={{ top: 20, right: 20, bottom: 70, left: leftPadding }}
+            xDomain={xDomain}
+            yDomain={yDomain}
+            onMouseLeave={this.resetHint}
+          >
+            <XAxis title={xTitle} />
+            <YAxis title={yTitle} tickFormat={formatYAxisTick} />
+            <DiscreteColorLegend
+              style={{ position: 'absolute', right: '50px', top: '10px' }}
+              items={legends}
+            />
+            {groupedData.map((dataSeries, index, arr) => {
+              const rectData = getRectData(dataSeries.data, width, index, arr.length);
+              return (
+                <VerticalRectSeries
+                  key={`vertical-rect-${index}`}
+                  className={dataSeries.key}
+                  data={rectData}
+                  onValueMouseOver={(d) => this.onValueMouseOver(d, dataSeries.key)}
+                />
+              );
+            })}
+            {annotation && <LineSeries data={annotations} style={ANNOTATION_STYLES} />}
+            {hint && (
+              <Hint value={hint}>
+                <div style={HINT_STYLES}>{getAggregationGraphHint(hint)}</div>
+              </Hint>
+            )}
+          </FlexibleXYPlot>
+        </ContentPanel>
       </div>
     );
   };

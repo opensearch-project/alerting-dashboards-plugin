@@ -72,7 +72,12 @@ export function addAlert(alertList, newAlert) {
   alertList[state]++;
   alertList.total++;
   alertList.alerts.push(newAlert);
-  //Compare start time and last updated time
+
+  const { end_time, acknowledged_time } = newAlert;
+  const alertLastUpdateTime = end_time < acknowledged_time ? acknowledged_time : end_time;
+  if (alertList.last_notification_time < alertLastUpdateTime)
+    alertList.last_notification_time = alertLastUpdateTime;
+
   return alertList;
 }
 

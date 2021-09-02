@@ -61,7 +61,6 @@ export default class MonitorExpressions extends Component {
     const { madeChanges, openedStates } = this.state;
     if (madeChanges && openedStates[expression]) {
       // if made changes and close expression that was currently open => run query
-      this.props.onRunQuery();
       this.setState({ madeChanges: false });
     }
     this.setState({ openedStates: { ...openedStates, [expression]: false } });
@@ -76,18 +75,17 @@ export default class MonitorExpressions extends Component {
     closeExpression: this.closeExpression,
     openExpression: this.openExpression,
     onMadeChanges: this.onMadeChanges,
-    onRunQuery: this.props.onRunQuery,
   });
 
   render() {
     const { dataTypes, errors, touched, isBucketMonitor } = this.props;
     return (
       <div>
-        {/*TODO: run query when metrics or group by expression is changed*/}
         <FieldArray name="aggregations" validateOnChange={false}>
           {(arrayHelpers) => (
             <MetricExpression
               {...this.getExpressionProps()}
+              errors={errors}
               arrayHelpers={arrayHelpers}
               dataTypes={dataTypes}
             />
@@ -98,19 +96,17 @@ export default class MonitorExpressions extends Component {
         <EuiSpacer size="xs" />
         <WhereExpression {...this.getExpressionProps()} dataTypes={dataTypes} />
         <EuiSpacer size="s" />
-        {isBucketMonitor && (
-          <FieldArray name="groupBy" validateOnChange={false}>
-            {(arrayHelpers) => (
-              <GroupByExpression
-                {...this.getExpressionProps()}
-                errors={errors}
-                touched={touched}
-                arrayHelpers={arrayHelpers}
-                dataTypes={dataTypes}
-              />
-            )}
-          </FieldArray>
-        )}
+        <FieldArray name="groupBy" validateOnChange={false}>
+          {(arrayHelpers) => (
+            <GroupByExpression
+              {...this.getExpressionProps()}
+              errors={errors}
+              touched={touched}
+              arrayHelpers={arrayHelpers}
+              dataTypes={dataTypes}
+            />
+          )}
+        </FieldArray>
         <EuiSpacer size="xs" />
       </div>
     );
