@@ -10,7 +10,7 @@
  */
 
 import React, { useState } from 'react';
-import { EuiPopover, EuiBadge } from '@elastic/eui';
+import { EuiPopover, EuiBadge, EuiPopoverTitle } from '@elastic/eui';
 import { GroupByPopover } from './index';
 import { Expressions } from './utils/constants';
 
@@ -39,6 +39,7 @@ export default function GroupByItem(
       button={
         <div>
           <EuiBadge
+            color="hollow"
             iconSide="right"
             iconType="cross"
             iconOnClick={() => {
@@ -63,6 +64,7 @@ export default function GroupByItem(
       withTitle
       anchorPosition="downLeft"
     >
+      <EuiPopoverTitle> ADD GROUP BY </EuiPopoverTitle>
       <GroupByPopover
         values={values}
         onMadeChanges={onMadeChanges}
@@ -71,6 +73,7 @@ export default function GroupByItem(
         closePopover={closePopover}
         expressionWidth={expressionWidth}
         index={index}
+        groupByItem={groupByItem}
       />
     </EuiPopover>
   );
