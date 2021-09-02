@@ -57,12 +57,8 @@ class DataSource extends Component {
       <ContentPanel
         title="Data source"
         titleSize="s"
-        bodyStyles={{
-          padding: 'initial',
-          paddingBottom: '10px',
-          paddingLeft: '20px',
-          paddingRight: '20px',
-        }}
+        panelStyles={{ paddingLeft: '10px', paddingRight: '10px' }}
+        bodyStyles={{ padding: 'initial' }}
       >
         <MonitorIndex httpClient={this.props.httpClient} />
         <EuiSpacer size="s" />

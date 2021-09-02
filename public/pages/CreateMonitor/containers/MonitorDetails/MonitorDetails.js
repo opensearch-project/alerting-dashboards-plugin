@@ -77,7 +77,12 @@ const MonitorDetails = ({
     <ContentPanel
       title="Monitor details"
       titleSize="s"
-      panelStyles={{ padding: '20px', paddingBottom: '30px' }}
+      panelStyles={{
+        paddingBottom: '20px',
+        paddingLeft: '10px',
+        paddingRight: '10px',
+        paddingTop: '20px',
+      }}
       actions={anomalyDetectorContent.actions}
     >
       <EuiSpacer size="s" />
