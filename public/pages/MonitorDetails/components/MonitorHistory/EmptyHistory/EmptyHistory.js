@@ -34,14 +34,14 @@ const EmptyHistory = ({ onShowTrigger }) => (
     body={
       <EuiText>
         <p>
-          There are no Triggers. Create a trigger to start alerting. Once a alarm is triggered, the
+          There are no triggers. Create a trigger to start alerting. Once an alarm is triggered, the
           state will be displayed in time series.
         </p>
       </EuiText>
     }
     actions={
       <EuiButton fill onClick={onShowTrigger}>
-        Create trigger
+        Edit monitor
       </EuiButton>
     }
   />

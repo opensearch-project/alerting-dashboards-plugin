@@ -26,10 +26,11 @@
 
 import React from 'react';
 import _ from 'lodash';
-import { EuiFlexGroup, EuiFlexItem, EuiSpacer } from '@elastic/eui';
+import { EuiFlexGroup, EuiFlexItem, EuiLink, EuiText } from '@elastic/eui';
 import FormikCheckableCard from '../../../../components/FormControls/FormikCheckableCard/FormikCheckableCard';
 import { OS_AD_PLUGIN, MONITOR_TYPE, SEARCH_TYPE } from '../../../../utils/constants';
 import { MONITOR_TYPE_CARD_WIDTH } from '../MonitorType/MonitorType';
+import { URL } from '../../../../../utils/constants';
 
 const MONITOR_DEFINITION_CARD_WIDTH =
   (MONITOR_TYPE_CARD_WIDTH * _.keys(MONITOR_TYPE).length) / _.keys(SEARCH_TYPE).length;
@@ -45,12 +46,24 @@ const MonitorDefinitionCard = ({ values, resetResponse, plugins }) => {
 
   return (
     <div>
-      <EuiFlexGroup alignItems={'flexEnd'} gutterSize={'s'}>
+      <EuiText size={'xs'} style={{ paddingBottom: '0px', marginBottom: '0px' }}>
+        <h4>Monitor defining method</h4>
+      </EuiText>
+      <EuiText color={'subdued'} size={'xs'}>
+        Specify the way you want to define your query and triggers.{' '}
+        <EuiLink external href={URL.CREATE_MONITOR_DOCUMENTATION} target="_blank">
+          Learn more
+        </EuiLink>
+      </EuiText>
+      <EuiFlexGroup
+        alignItems={'flexStart'}
+        gutterSize={'s'}
+        style={{ paddingTop: '0px', marginTop: '0px' }}
+      >
         <EuiFlexItem grow={false} style={{ width: `${MONITOR_DEFINITION_CARD_WIDTH}px` }}>
           <FormikCheckableCard
             name="searchTypeGraph"
             formRow
-            rowProps={{ label: 'Choose a monitor defining method' }}
             inputProps={{
               id: 'visualEditorRadioCard',
               label: 'Visual editor',
@@ -64,7 +77,6 @@ const MonitorDefinitionCard = ({ values, resetResponse, plugins }) => {
           />
         </EuiFlexItem>
         <EuiFlexItem grow={false} style={{ width: `${MONITOR_DEFINITION_CARD_WIDTH}px` }}>
-          <EuiSpacer />
           <FormikCheckableCard
             name="searchTypeQuery"
             formRow
@@ -83,7 +95,6 @@ const MonitorDefinitionCard = ({ values, resetResponse, plugins }) => {
         {/*// Only show the anomaly detector option when anomaly detection plugin is present, but not for bucket-level monitors.*/}
         {hasADPlugin && !isBucketLevelMonitor && (
           <EuiFlexItem grow={false} style={{ width: `${MONITOR_DEFINITION_CARD_WIDTH}px` }}>
-            <EuiSpacer />
             <FormikCheckableCard
               name="searchTypeAD"
               inputProps={{
