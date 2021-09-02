@@ -194,7 +194,7 @@ export function getAggregationGraphHint(hint) {
 }
 
 export function getGraphDescription(bucketValue, bucketUnitOfTime, groupBy) {
-  const text = `FOR THE LAST ${bucketValue}  ${selectOptionValueToText(
+  const text = `FOR THE LAST ${bucketValue} ${selectOptionValueToText(
     bucketUnitOfTime,
     UNITS_OF_TIME
   )}`;
