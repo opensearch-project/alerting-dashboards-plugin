@@ -36,12 +36,18 @@ export function getOfExpressionAllowedTypes(values) {
 
 export function getMetricExpressionAllowedTypes(values) {
   const types = ['number'];
+
+  // Check if the aggregation types includes any of 'min', 'max', or 'count'.
+  // If so, add 'date' to the allowed type for metric expression field.
   if (
     values.aggregations.some((e) => {
       return ['min', 'max', 'count'].includes(e.aggregationType);
     })
   )
     types.push('date');
+
+  // Check if the aggregations types includes 'count'.
+  // If so, add 'keyword' to the allowed type for metric expression field.
   if (
     values.aggregations.some((e) => {
       return ['count'].includes(e.aggregationType);
