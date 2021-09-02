@@ -33,7 +33,7 @@ jobs:
           ref: '1.x'
       - name: Build OpenSearch
         working-directory: ./OpenSearch
-        run: ./gradlew publishToMavenLocal -Dbuild.snapshot=false
+        run: ./gradlew publishToMavenLocal
       # dependencies: common-utils
       - name: Checkout common-utils
         uses: actions/checkout@v2
@@ -48,7 +48,7 @@ jobs:
         with:
           path: alerting
           repository: opensearch-project/alerting
-          ref: '1.0'
+          ref: '1.x'
       - name: Run Opensearch with plugin
         run: |
           cd alerting
