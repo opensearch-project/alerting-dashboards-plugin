@@ -9,40 +9,49 @@
  * GitHub history for details.
  */
 
+/*
+ * Copyright 2021 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
+
 import React, { Component } from 'react';
 import { connect } from 'formik';
-
 import { EuiText, EuiButtonEmpty, EuiSpacer } from '@elastic/eui';
 import { getIndexFields } from './utils/dataTypes';
 import { getGroupByExpressionAllowedTypes } from './utils/helpers';
 import GroupByItem from './GroupByItem';
 import { GROUP_BY_ERROR } from './utils/constants';
 import { MONITOR_TYPE } from '../../../../../utils/constants';
+import { inputLimitText } from '../../../../../utils/helpers';
+
+export const MAX_NUM_QUERY_LEVEL_GROUP_BYS = 1;
+export const MAX_NUM_BUCKET_LEVEL_GROUP_BYS = 2;
 
 class GroupByExpression extends Component {
-  state = {
-    addButtonTouched: false,
-  };
   renderFieldItems = (arrayHelpers, fieldOptions, expressionWidth) => {
     const {
       formik: { values },
-      onMadeChanges,
-      openExpression,
-      closeExpression,
     } = this.props;
     return values.groupBy.map((groupByItem, index) => {
       return (
         <span style={{ paddingRight: '5px' }} key={`group-by-expr-${index}`}>
           <GroupByItem
             values={values}
-            onMadeChanges={onMadeChanges}
             arrayHelpers={arrayHelpers}
             fieldOptions={fieldOptions}
             expressionWidth={expressionWidth}
             groupByItem={groupByItem}
             index={index}
-            openExpression={openExpression}
-            closeExpression={closeExpression}
           />
         </span>
       );
@@ -53,10 +62,10 @@ class GroupByExpression extends Component {
     const {
       formik: { values },
       errors,
-      touched,
       arrayHelpers,
       dataTypes,
     } = this.props;
+    const { monitor_type: monitorType, groupBy } = values;
 
     const fieldOptions = getIndexFields(dataTypes, getGroupByExpressionAllowedTypes(values));
 
@@ -69,32 +78,39 @@ class GroupByExpression extends Component {
         8 +
       60;
 
-    if (
-      (this.state.addButtonTouched || touched.groupBy) &&
-      !values.groupBy.length &&
-      values.monitor_type === MONITOR_TYPE.BUCKET_LEVEL
-    )
+    const isBucketLevelMonitor = values.monitor_type === MONITOR_TYPE.BUCKET_LEVEL;
+    if (!values.groupBy.length && isBucketLevelMonitor) {
       errors.groupBy = GROUP_BY_ERROR;
-
-    const { monitor_type: monitorType, groupBy } = values;
+    } else {
+      delete errors.groupBy;
+    }
 
     let showAddButtonFlag = false;
-    if (MONITOR_TYPE.QUERY_LEVEL === monitorType && groupBy.length < 1) {
+    if (!isBucketLevelMonitor && groupBy.length < MAX_NUM_QUERY_LEVEL_GROUP_BYS) {
       showAddButtonFlag = true;
-    } else if (MONITOR_TYPE.BUCKET_LEVEL === monitorType && groupBy.length < 2) {
+    } else if (isBucketLevelMonitor && groupBy.length < MAX_NUM_BUCKET_LEVEL_GROUP_BYS) {
       showAddButtonFlag = true;
     }
 
+    const limitText = isBucketLevelMonitor
+      ? inputLimitText(groupBy.length, MAX_NUM_BUCKET_LEVEL_GROUP_BYS, 'group by', 'group bys', {
+          paddingLeft: '10px',
+        })
+      : inputLimitText(groupBy.length, MAX_NUM_QUERY_LEVEL_GROUP_BYS, 'group by', 'group bys', {
+          paddingLeft: '10px',
+        });
+
     return (
-      <div>
+      <div id="groupBy">
         <EuiText size="xs">
-          <h4>Group by</h4>
+          <strong>Group by</strong>
+          {!isBucketLevelMonitor ? <i> - optional</i> : null}
         </EuiText>
-        <EuiSpacer size="s" />
+        <EuiSpacer size={'s'} />
 
         {values.groupBy.length === 0 && (
-          <div style={{ padding: '10px 0px' }}>
-            <p>No group bys defined.</p>
+          <div>
+            <EuiText size={'xs'}>No group bys defined.</EuiText>
           </div>
         )}
 
@@ -105,10 +121,10 @@ class GroupByExpression extends Component {
           <EuiButtonEmpty
             size="xs"
             onClick={() => {
-              this.setState({ addButtonTouched: true });
               arrayHelpers.push('');
             }}
             data-test-subj="addGroupByButton"
+            style={{ paddingTop: '5px' }}
           >
             + Add group by
           </EuiButtonEmpty>
@@ -117,6 +133,8 @@ class GroupByExpression extends Component {
         <EuiText color="danger" size="xs">
           {errors.groupBy}
         </EuiText>
+
+        {limitText}
       </div>
     );
   }

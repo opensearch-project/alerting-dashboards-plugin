@@ -10,18 +10,18 @@
  */
 
 /*
- *   Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2021 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
- *   Licensed under the Apache License, Version 2.0 (the "License").
- *   You may not use this file except in compliance with the License.
- *   A copy of the License is located at
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- *   or in the "license" file accompanying this file. This file is distributed
- *   on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- *   express or implied. See the License for the specific language governing
- *   permissions and limitations under the License.
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
  */
 
 import React, { Component } from 'react';
@@ -33,13 +33,15 @@ import { FieldArray } from 'formik';
 import GroupByExpression from './expressions/GroupByExpression';
 
 export const DEFAULT_CLOSED_STATES = {
+  WHERE: false,
+  // not using
   METRICS: false,
-  WHEN: false,
-  OF_FIELD: false,
-  THRESHOLD: false,
+  GROUP_BY: false,
   OVER: false,
   FOR_THE_LAST: false,
-  WHERE: false,
+  THRESHOLD: false,
+  WHEN: false,
+  OF_FIELD: false,
 };
 
 export default class MonitorExpressions extends Component {
@@ -78,33 +80,22 @@ export default class MonitorExpressions extends Component {
   });
 
   render() {
-    const { dataTypes, errors, touched, isBucketMonitor } = this.props;
+    const { dataTypes, errors } = this.props;
     return (
       <div>
         <FieldArray name="aggregations" validateOnChange={false}>
           {(arrayHelpers) => (
-            <MetricExpression
-              {...this.getExpressionProps()}
-              errors={errors}
-              arrayHelpers={arrayHelpers}
-              dataTypes={dataTypes}
-            />
+            <MetricExpression errors={errors} arrayHelpers={arrayHelpers} dataTypes={dataTypes} />
           )}
         </FieldArray>
-        <EuiSpacer size="xs" />
-        <ForExpression {...this.getExpressionProps()} />
-        <EuiSpacer size="xs" />
+        <EuiSpacer size="m" />
+        <ForExpression />
+        <EuiSpacer size="l" />
         <WhereExpression {...this.getExpressionProps()} dataTypes={dataTypes} />
-        <EuiSpacer size="s" />
+        <EuiSpacer size="m" />
         <FieldArray name="groupBy" validateOnChange={false}>
           {(arrayHelpers) => (
-            <GroupByExpression
-              {...this.getExpressionProps()}
-              errors={errors}
-              touched={touched}
-              arrayHelpers={arrayHelpers}
-              dataTypes={dataTypes}
-            />
+            <GroupByExpression errors={errors} arrayHelpers={arrayHelpers} dataTypes={dataTypes} />
           )}
         </FieldArray>
         <EuiSpacer size="xs" />

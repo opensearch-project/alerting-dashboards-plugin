@@ -189,10 +189,11 @@ class ConfigureActions extends React.Component {
       if (response.ok) {
         error = checkForError(response, error);
         if (!_.isEmpty(action.destination_id)) {
-          const sentTo = _.isEmpty(action.name)
-            ? _.get(_.find(destinations, { value: action.destination_id }), 'label')
-            : action.name;
-          notifications.toasts.addSuccess(`Test message sent to "${sentTo}."`);
+          const destinationName = _.get(
+            _.find(destinations, { value: action.destination_id }),
+            'label'
+          );
+          notifications.toasts.addSuccess(`Test message sent to "${destinationName}."`);
         }
       }
       if (error || !response.ok) {

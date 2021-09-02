@@ -9,38 +9,49 @@
  * GitHub history for details.
  */
 
+/*
+ * Copyright 2021 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
+
 import React, { Component } from 'react';
 import { connect } from 'formik';
-
 import { EuiText, EuiButtonEmpty, EuiSpacer, EuiBadge } from '@elastic/eui';
 import { getIndexFields } from './utils/dataTypes';
-import { getMetricExpressionAllowedTypes } from './utils/helpers';
+import { getMetricExpressionAllowedTypes, validateAggregationsDuplicates } from './utils/helpers';
 import _ from 'lodash';
 import { FORMIK_INITIAL_AGG_VALUES } from '../../../containers/CreateMonitor/utils/constants';
 import { MetricItem } from './index';
 import { MONITOR_TYPE } from '../../../../../utils/constants';
+import { inputLimitText } from '../../../../../utils/helpers';
+
+export const MAX_NUM_QUERY_LEVEL_METRICS = 1;
+export const MAX_NUM_BUCKET_LEVEL_METRICS = 5;
 
 class MetricExpression extends Component {
   renderFieldItems = (arrayHelpers, fieldOptions, expressionWidth) => {
     const {
       formik: { values },
-      onMadeChanges,
-      openExpression,
-      closeExpression,
     } = this.props;
     return values.aggregations.map((aggregation, index) => {
       return (
         <span style={{ paddingRight: '5px' }} key={`metric-expr-${index}`}>
           <MetricItem
-            values={values}
-            onMadeChanges={onMadeChanges}
             arrayHelpers={arrayHelpers}
             fieldOptions={fieldOptions}
             expressionWidth={expressionWidth}
             aggregation={aggregation}
             index={index}
-            openExpression={openExpression}
-            closeExpression={closeExpression}
           />
         </span>
       );
@@ -69,39 +80,49 @@ class MetricExpression extends Component {
     const { monitor_type: monitorType, aggregations } = values;
 
     let showAddButtonFlag = false;
-    if (MONITOR_TYPE.QUERY_LEVEL === monitorType && aggregations.length < 1) {
+    const limitText =
+      MONITOR_TYPE.BUCKET_LEVEL === monitorType
+        ? inputLimitText(aggregations.length, MAX_NUM_BUCKET_LEVEL_METRICS, 'metric', 'metrics', {
+            paddingLeft: '10px',
+          })
+        : inputLimitText(aggregations.length, MAX_NUM_QUERY_LEVEL_METRICS, 'metric', 'metrics', {
+            paddingLeft: '10px',
+          });
+
+    if (
+      MONITOR_TYPE.QUERY_LEVEL === monitorType &&
+      aggregations.length < MAX_NUM_QUERY_LEVEL_METRICS
+    ) {
       showAddButtonFlag = true;
-    } else if (MONITOR_TYPE.BUCKET_LEVEL === monitorType && aggregations.length < 5) {
+    } else if (
+      MONITOR_TYPE.BUCKET_LEVEL === monitorType &&
+      aggregations.length < MAX_NUM_BUCKET_LEVEL_METRICS
+    ) {
       showAddButtonFlag = true;
     }
 
-    let duplicates = new Set();
-    aggregations.forEach((e1, index) => {
-      aggregations.slice(index + 1).forEach((e2) => {
-        if (e1.aggregationType === e2.aggregationType && e1.fieldName === e2.fieldName) {
-          duplicates.add(`${e1.aggregationType} of ${e1.fieldName}`);
-        }
-      });
-    });
-
-    if (duplicates.size > 0) {
-      errors.aggregations = `You have defined duplicated metrics: ${[...duplicates]}.`;
+    if (validateAggregationsDuplicates(aggregations)) {
+      errors.aggregations = `You have defined duplicated metrics.`;
     } else {
-      errors.aggregations = undefined;
+      delete errors.aggregations;
     }
 
     return (
-      <div>
+      <div id="aggregations">
         <EuiText size="xs">
-          <h4>Metrics</h4>
+          <strong>Metrics</strong>
+          <i> - optional</i>
         </EuiText>
         <EuiSpacer size="s" />
 
-        <span style={{ paddingRight: '5px' }}>
-          <EuiBadge color="hollow" style={{ paddingRight: '5px' }}>
-            COUNT OF documents
-          </EuiBadge>
-        </span>
+        {/*For query monitor, if user choose a metric, then don't show this*/}
+        {!(MONITOR_TYPE.QUERY_LEVEL === monitorType && aggregations.length > 0) && (
+          <span style={{ paddingRight: '5px' }}>
+            <EuiBadge color="hollow" style={{ paddingRight: '5px' }}>
+              COUNT OF documents
+            </EuiBadge>
+          </span>
+        )}
 
         {this.renderFieldItems(arrayHelpers, fieldOptions, expressionWidth)}
         <EuiSpacer size="xs" />
@@ -117,10 +138,13 @@ class MetricExpression extends Component {
               arrayHelpers.push(_.cloneDeep(FORMIK_INITIAL_AGG_VALUES));
             }}
             data-test-subj="addMetricButton"
+            style={{ paddingTop: '5px' }}
           >
-            + Add another metric
+            + Add metric
           </EuiButtonEmpty>
         )}
+
+        {limitText}
       </div>
     );
   }

@@ -58,6 +58,7 @@ const ExtractionQuery = ({ isDarkMode, response }) => (
           onBlur: (e, field, form) => {
             form.setFieldTouched('query', true);
           },
+          'data-test-subj': 'extractionQueryCodeEditor',
         }}
       />
     </EuiFlexItem>

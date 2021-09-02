@@ -48,7 +48,7 @@ const BucketLevelTriggerGraph = ({
   const thresholdValue = _.get(triggerValues, `${fieldNamePath}thresholdValue`);
 
   return (
-    <div style={{ padding: '0px 10px', paddingBottom: '20px' }}>
+    <div style={{ padding: '0px 10px' }}>
       <BucketLevelTriggerExpression
         arrayHelpers={arrayHelpers}
         index={index}

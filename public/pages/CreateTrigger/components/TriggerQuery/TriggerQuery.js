@@ -74,10 +74,11 @@ const TriggerQuery = ({
   const responseToFormat = _.isEmpty(response) && isAd ? onRun([trigger]) : response;
   const formattedResponse = JSON.stringify(responseToFormat, null, 4);
   const fieldName = `${fieldPath}script.source`;
+
   return (
     <EuiFlexGroup direction={'column'}>
       <EuiFlexItem style={{ paddingLeft: '10px', paddingRight: '10px' }}>
-        <EuiFlexGroup alignItems={'flexEnd'} gutterSize={'m'}>
+        <EuiFlexGroup alignItems={'stretch'} gutterSize={'m'}>
           <EuiFlexItem grow={1} style={{ marginBottom: '0px' }}>
             <div>
               {isAd ? (
@@ -146,7 +147,7 @@ const TriggerQuery = ({
             </div>
           </EuiFlexItem>
 
-          <EuiFlexItem grow={1} style={{ marginBottom: '0px' }}>
+          <EuiFlexItem grow={1} style={{ marginBottom: '0px', paddingTop: '6px' }}>
             <EuiFormRow
               fullWidth={true}
               label={

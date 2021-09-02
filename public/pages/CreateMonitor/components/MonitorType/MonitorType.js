@@ -63,7 +63,7 @@ const MonitorType = ({ values }) => (
         name="monitorTypeQueryLevel"
         formRow
         rowProps={{
-          label: 'Choose a monitor type',
+          label: 'Monitor type',
           style: { width: `${MONITOR_TYPE_CARD_WIDTH}px` },
         }}
         inputProps={{
@@ -75,6 +75,7 @@ const MonitorType = ({ values }) => (
             onChangeDefinition(e, form);
           },
           children: queryLevelDescription,
+          'data-test-subj': 'queryLevelMonitorRadioCard',
         }}
       />
     </EuiFlexItem>
@@ -97,6 +98,7 @@ const MonitorType = ({ values }) => (
             onChangeDefinition(e, form);
           },
           children: bucketLevelDescription,
+          'data-test-subj': 'bucketLevelMonitorRadioCard',
         }}
       />
     </EuiFlexItem>

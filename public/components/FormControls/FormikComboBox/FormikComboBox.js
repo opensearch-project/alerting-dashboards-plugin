@@ -37,7 +37,6 @@ const FormikComboBox = ({
   fieldProps = {},
   rowProps = {},
   inputProps = {},
-  selectedOption = undefined,
 }) => (
   <FormikInputWrapper
     name={name}
@@ -48,13 +47,7 @@ const FormikComboBox = ({
           <ComboBox name={name} form={form} field={field} inputProps={inputProps} />
         </FormikFormRow>
       ) : (
-        <ComboBox
-          name={name}
-          form={form}
-          field={field}
-          inputProps={inputProps}
-          selectedOption={selectedOption}
-        />
+        <ComboBox name={name} form={form} field={field} inputProps={inputProps} />
       )
     }
   />
@@ -65,7 +58,6 @@ const ComboBox = ({
   form,
   field,
   inputProps: { onBlur, onChange, onCreateOption, ...rest },
-  selectedOption,
 }) => (
   <EuiComboBox
     name={name}
@@ -91,7 +83,13 @@ const ComboBox = ({
           }
         : onBlur
     }
-    selectedOptions={selectedOption ? [selectedOption] : field.value}
+    selectedOptions={
+      typeof field.value === 'string'
+        ? field.value === ''
+          ? undefined
+          : [{ label: field.value }]
+        : field.value
+    }
     {...rest}
   />
 );

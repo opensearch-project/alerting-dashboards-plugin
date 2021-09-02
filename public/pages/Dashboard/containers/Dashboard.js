@@ -28,7 +28,6 @@ import React, { Component } from 'react';
 import _ from 'lodash';
 import queryString from 'query-string';
 import { EuiBasicTable, EuiButton, EuiHorizontalRule, EuiIcon } from '@elastic/eui';
-
 import ContentPanel from '../../../components/ContentPanel';
 import DashboardEmptyPrompt from '../components/DashboardEmptyPrompt';
 import DashboardControls from '../components/DashboardControls';
@@ -255,11 +254,13 @@ export default class Dashboard extends Component {
   // TODO: exists in both Dashboard and Monitors, should be moved to redux when implemented
   acknowledgeAlert = async () => {
     const { selectedItems } = this.state;
-    const { httpClient, notifications } = this.props;
+    const { httpClient, notifications, perAlertView } = this.props;
 
     if (!selectedItems.length) return;
 
-    const monitorAlerts = selectedItems.reduce((monitorAlerts, alert) => {
+    const selectedAlerts = perAlertView ? selectedItems : _.get(selectedItems, '0.alerts', []);
+
+    const monitorAlerts = selectedAlerts.reduce((monitorAlerts, alert) => {
       const { id, monitor_id: monitorId } = alert;
       if (monitorAlerts[monitorId]) monitorAlerts[monitorId].push(id);
       else monitorAlerts[monitorId] = [id];
@@ -347,6 +348,7 @@ export default class Dashboard extends Component {
       monitors,
       page,
       search,
+      selectedItems,
       severityLevel,
       size,
       sortDirection,
@@ -404,9 +406,11 @@ export default class Dashboard extends Component {
 
     const selection = {
       onSelectionChange: this.onSelectionChange,
-      selectable: (item) => item.state === 'ACTIVE',
-      selectableMessage: (selectable) =>
-        selectable ? undefined : 'Only Active Alerts are Acknowledgeable',
+      selectable: perAlertView ? (item) => item.state === 'ACTIVE' : (item) => item.ACTIVE > 0,
+      selectableMessage: perAlertView
+        ? (selectable) => (selectable ? undefined : 'Only Active Alerts are Acknowledgeable')
+        : (selectable) =>
+            selectable ? undefined : 'Only Triggers with Active Alerts are Acknowledgeable',
     };
 
     const triggerSelection = {
@@ -417,9 +421,38 @@ export default class Dashboard extends Component {
     };
 
     const actions = () => {
-      //TODO: Hiding acknowledge button for now since acknowledge alerts by triggers is not supported. Remove this line once supported
-      if (!perAlertView) return [];
-      const actions = [<EuiButton onClick={this.acknowledgeAlert}>Acknowledge</EuiButton>];
+      const actions = [
+        <EuiButton onClick={this.acknowledgeAlert} disabled={selectedItems.length !== 1}>
+          Acknowledge
+        </EuiButton>,
+      ];
+
+      if (!perAlertView) {
+        const alert = selectedItems[0];
+        actions.unshift(
+          <EuiButton
+            onClick={() => {
+              setFlyout({
+                type: 'alertsDashboard',
+                payload: {
+                  ...alert,
+                  history,
+                  httpClient,
+                  loadingMonitors,
+                  location,
+                  monitors,
+                  notifications,
+                  setFlyout,
+                },
+              });
+            }}
+            disabled={selectedItems.length !== 1}
+          >
+            View alert details
+          </EuiButton>
+        );
+      }
+
       if (detectorIds.length) {
         actions.unshift(
           <EuiButton

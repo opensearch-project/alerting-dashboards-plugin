@@ -56,8 +56,12 @@ const getBucketLevelGraphConditions = (trigger) => {
   conditions = _.replace(conditions, ' && ', '&AND&');
   conditions = _.replace(conditions, ' || ', '&OR&');
   conditions = conditions.split(/&/);
-  return conditions.map((condition) => {
-    return <p style={{ marginBottom: '0px' }}>{condition}</p>;
+  return conditions.map((condition, index) => {
+    return (
+      <p style={{ marginBottom: '0px' }} key={`alerts-dashboard-condition-${index}`}>
+        {condition}
+      </p>
+    );
   });
 };
 
@@ -142,7 +146,7 @@ const alertsDashboard = (payload) => {
     footer: (
       <EuiButtonEmpty
         iconType={'cross'}
-        onClick={setFlyout}
+        onClick={() => setFlyout(null)}
         style={{ paddingLeft: '0px', marginLeft: '0px' }}
       >
         Close
