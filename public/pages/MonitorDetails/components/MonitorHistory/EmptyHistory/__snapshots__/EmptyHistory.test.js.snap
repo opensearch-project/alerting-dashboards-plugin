@@ -15,7 +15,7 @@ exports[`<EmptyHistory/> renders 1`] = `
         class="euiText euiText--medium"
       >
         <p>
-          There are no Triggers. Create a trigger to start alerting. Once a alarm is triggered, the state will be displayed in time series.
+          There are no triggers. Create a trigger to start alerting. Once an alarm is triggered, the state will be displayed in time series.
         </p>
       </div>
     </div>
@@ -36,7 +36,7 @@ exports[`<EmptyHistory/> renders 1`] = `
       <span
         class="euiButton__text"
       >
-        Create trigger
+        Edit monitor
       </span>
     </span>
   </button>
