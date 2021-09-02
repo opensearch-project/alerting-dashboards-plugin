@@ -43,7 +43,7 @@ export function getFieldsFromProperties(properties, dataTypes, path) {
 }
 
 export function getTypeFromMappings(mappings, dataTypes, path = '') {
-  // Possible structure of index mappings:
+  // Example structures of index mappings:
   // properties: { "field_name":{"properties": ...} }
   // properties: { "field_name":{"type": "text"} }
   if (shouldSkip(mappings)) return dataTypes;
