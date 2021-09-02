@@ -501,7 +501,7 @@ export default class Dashboard extends Component {
            * */
           itemId={getItemId}
           columns={columnType}
-          pagination={pagination}
+          pagination={perAlertView ? pagination : undefined}
           sorting={sorting}
           isSelectable={true}
           selection={selection}
