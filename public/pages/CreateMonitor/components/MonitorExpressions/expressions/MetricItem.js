@@ -12,35 +12,14 @@
 import React, { useState } from 'react';
 import { EuiPopover, EuiBadge, EuiPopoverTitle } from '@elastic/eui';
 import MetricPopover from './MetricPopover';
-import { Expressions } from './utils/constants';
 
 export default function MetricItem(
-  {
-    values,
-    onMadeChanges,
-    arrayHelpers,
-    fieldOptions,
-    expressionWidth,
-    aggregation,
-    index,
-    openExpression,
-    closeExpression,
-  } = this.props
+  { arrayHelpers, fieldOptions, expressionWidth, aggregation, index } = this.props
 ) {
   const [isPopoverOpen, setIsPopoverOpen] = useState(aggregation.fieldName === '');
   const closePopover = () => {
     setIsPopoverOpen(false);
-    closeExpression(Expressions.METRICS);
   };
-
-  // TODO: Commenting this out for now since the 'count_of_all_documents` metric is malformed
-  //The first metric is read only
-  // if (index == 0)
-  //   return (
-  //     <EuiBadge>
-  //       {aggregation.aggregationType} of {aggregation.fieldName}
-  //     </EuiBadge>
-  //   );
 
   return (
     <EuiPopover
@@ -54,8 +33,6 @@ export default function MetricItem(
             iconOnClick={() => arrayHelpers.remove(index)}
             iconOnClickAriaLabel="Remove metric"
             onClick={() => {
-              //TODO: Set options to the current agg values
-              openExpression(Expressions.METRICS);
               setIsPopoverOpen(true);
             }}
             onClickAriaLabel="Edit metric"
@@ -73,13 +50,9 @@ export default function MetricItem(
     >
       <EuiPopoverTitle> ADD METRIC </EuiPopoverTitle>
       <MetricPopover
-        values={values}
-        onMadeChanges={onMadeChanges}
-        arrayHelpers={arrayHelpers}
         options={fieldOptions}
         closePopover={closePopover}
         expressionWidth={expressionWidth}
-        aggregation={aggregation}
         index={index}
       />
     </EuiPopover>

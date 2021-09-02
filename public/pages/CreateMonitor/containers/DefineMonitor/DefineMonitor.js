@@ -178,54 +178,57 @@ class DefineMonitor extends Component {
     }
   }
 
+  getBucketMonitorGraphs = (aggregations, formikSnapshot, response) => {
+    // Default `count of documents` graph when using Bucket-level monitor
+    let graphs = [
+      <Fragment key={`multi-visual-graph-0`}>
+        <VisualGraph values={formikSnapshot} fieldName="doc_count" response={response} />,
+      </Fragment>,
+    ];
+
+    aggregations.map((field, index) => {
+      graphs.push(
+        <Fragment key={`multi-visual-graph-${index + 1}`}>
+          <EuiSpacer size="m" />
+          <VisualGraph
+            values={formikSnapshot}
+            fieldName={field.fieldName}
+            aggregationType={field.aggregationType}
+            response={response}
+          />
+        </Fragment>
+      );
+    });
+
+    return graphs;
+  };
+
   renderGraph() {
-    const { errors, touched, values } = this.props;
-    const { response, performanceResponse } = this.state;
-    const { index, timeField } = values;
-    const isBucketMonitor = _.get(values, 'monitor_type') === MONITOR_TYPE.BUCKET_LEVEL;
+    const { errors, values } = this.props;
+    const { response, performanceResponse, formikSnapshot } = this.state;
     const aggregations = _.get(values, 'aggregations');
-    const runIsDisabled = !index.length || !timeField;
+    const isBucketLevel = values.monitor_type === MONITOR_TYPE.BUCKET_LEVEL;
+
     return (
       <Fragment>
         <EuiSpacer size="s" />
-        <MonitorExpressions
-          errors={errors}
-          touched={touched}
-          dataTypes={this.state.dataTypes}
-          isBucketMonitor={isBucketMonitor}
-        />
+        <MonitorExpressions errors={errors} dataTypes={this.state.dataTypes} />
         <EuiSpacer size="xl" />
+
         <EuiAccordion
           id="preview-query-performance-accordion"
           buttonContent="Preview query and performance"
         >
           <EuiSpacer size="s" />
           <QueryPerformance response={performanceResponse} />
+          <EuiSpacer size="m" />
+
           {errors.where ? (
             renderEmptyMessage('Invalid input in data filter. Remove data filter or adjust filter ')
-          ) : aggregations.length ? (
-            aggregations.map((field, index) => {
-              return (
-                <Fragment key={`multi-visual-graph-${index}`}>
-                  <EuiSpacer size="m" />
-                  <VisualGraph
-                    values={this.state.formikSnapshot}
-                    fieldName={field.fieldName}
-                    aggregationType={field.aggregationType}
-                    response={response}
-                  />
-                </Fragment>
-              );
-            })
+          ) : isBucketLevel ? (
+            this.getBucketMonitorGraphs(aggregations, formikSnapshot, response)
           ) : (
-            <div>
-              <EuiSpacer size="m" />
-              <VisualGraph
-                values={this.state.formikSnapshot}
-                fieldName="Select a field"
-                response={this.state.response}
-              />
-            </div>
+            <VisualGraph values={formikSnapshot} response={response} />
           )}
         </EuiAccordion>
         <EuiSpacer size="m" />
@@ -361,6 +364,7 @@ class DefineMonitor extends Component {
     }
     const runIsDisabled = invalidJSON || !values.index.length;
     let content = renderEmptyMessage('You must specify an index.');
+
     if (values.index.length) {
       content = (
         <ExtractionQuery
@@ -407,6 +411,7 @@ class DefineMonitor extends Component {
     const monitorContent = this.getMonitorContent();
     const { searchType } = this.props.values;
     const isGraphOrQuery = searchType === SEARCH_TYPE.GRAPH || searchType === SEARCH_TYPE.QUERY;
+
     return (
       <div>
         {isGraphOrQuery && (
@@ -445,6 +450,7 @@ class DefineMonitor extends Component {
                 <EuiSpacer size="s" />,
               ]
             : null}
+
           {monitorContent.content}
         </ContentPanel>
       </div>

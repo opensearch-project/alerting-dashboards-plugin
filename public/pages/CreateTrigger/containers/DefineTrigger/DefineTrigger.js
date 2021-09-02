@@ -100,6 +100,13 @@ class DefineTrigger extends Component {
     this.state = {};
   }
 
+  // TODO query-level monitor trigger graph only get the input
+  //  when this component mount (new trigger added)
+  //  see how to subscribe the formik related value change
+  componentDidMount() {
+    this.onRunExecute();
+  }
+
   onRunExecute = (triggers = []) => {
     const { httpClient, monitor, notifications } = this.props;
     const formikValues = monitorToFormik(monitor);
@@ -233,6 +240,7 @@ class DefineTrigger extends Component {
             inputProps={selectInputProps}
           />
           <EuiSpacer size={'m'} />
+
           {isAd ? (
             <div style={{ paddingLeft: '10px', marginTop: '0px' }}>
               <EuiText size={'xs'} style={{ paddingBottom: '0px', marginBottom: '0px' }}>
@@ -250,7 +258,9 @@ class DefineTrigger extends Component {
               <EuiSpacer size={'m'} />
             </div>
           ) : null}
+
           {triggerContent}
+
           <EuiSpacer size={'l'} />
           <FieldArray name={`${fieldPath}actions`} validateOnChange={true}>
             {(arrayHelpers) => (

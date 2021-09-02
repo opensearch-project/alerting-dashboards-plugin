@@ -377,7 +377,7 @@ class MonitorHistory extends PureComponent {
 MonitorHistory.propTypes = {
   triggers: PropTypes.array.isRequired,
   onShowTrigger: PropTypes.func.isRequired,
-  isDarkMode: PropTypes.object.isRequired,
+  isDarkMode: PropTypes.bool.isRequired,
   notifications: PropTypes.object.isRequired,
   monitorType: PropTypes.string.isRequired,
 };
