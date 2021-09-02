@@ -62,6 +62,8 @@ function getMonitorLevelType(monitorType) {
     case MONITOR_TYPE.BUCKET_LEVEL:
       return 'Per bucket monitor';
     default:
+      // TODO: May be valuable to implement a toast that displays in this case.
+      console.log('Unexpected monitor type:', monitorType);
       return '-';
   }
 }

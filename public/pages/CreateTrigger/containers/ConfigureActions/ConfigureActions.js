@@ -26,7 +26,7 @@
 
 import React from 'react';
 import _ from 'lodash';
-import { EuiFormRow, EuiPanel, EuiText } from '@elastic/eui';
+import { EuiPanel, EuiText } from '@elastic/eui';
 import Action from '../../components/Action';
 import ActionEmptyPrompt from '../../components/ActionEmptyPrompt';
 import AddActionButton from '../../components/AddActionButton';
@@ -147,6 +147,7 @@ class ConfigureActions extends React.Component {
       triggerIndex,
       values,
     } = this.props;
+    const { destinations } = this.state;
     // TODO: For bucket-level triggers, sendTestMessage will only send a test message if there is
     //  at least one bucket of data from the monitor input query.
     let testTrigger = _.cloneDeep(formikToTrigger(values, monitor.ui_metadata)[triggerIndex]);
@@ -187,6 +188,12 @@ class ConfigureActions extends React.Component {
       let error = null;
       if (response.ok) {
         error = checkForError(response, error);
+        if (!_.isEmpty(action.destination_id)) {
+          const sentTo = _.isEmpty(action.name)
+            ? _.get(_.find(destinations, { value: action.destination_id }), 'label')
+            : action.name;
+          notifications.toasts.addSuccess(`Test message sent to "${sentTo}."`);
+        }
       }
       if (error || !response.ok) {
         const errorMessage = error == null ? response.resp : error;
