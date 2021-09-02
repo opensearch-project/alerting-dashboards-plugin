@@ -25,7 +25,6 @@ exports[`WhereExpression renders 1`] = `
   <button
     class="euiButtonEmpty euiButtonEmpty--primary euiButtonEmpty--xSmall"
     data-test-subj="where.addFilterButton"
-    style="padding-top:5px"
     type="button"
   >
     <span
@@ -38,15 +37,5 @@ exports[`WhereExpression renders 1`] = `
       </span>
     </span>
   </button>
-  <div
-    class="euiText euiText--extraSmall"
-    style="padding-left:10px"
-  >
-    <div
-      class="euiTextColor euiTextColor--subdued"
-    >
-      You can add up to 1  data filter.
-    </div>
-  </div>
 </div>
 `;
