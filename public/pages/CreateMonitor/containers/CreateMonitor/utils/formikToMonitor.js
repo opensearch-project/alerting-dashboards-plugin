@@ -118,28 +118,18 @@ export function formikToAd(values) {
 export function formikToUiSearch(values) {
   const {
     searchType,
-    aggregationType,
     timeField,
-    fieldName: [{ label: fieldName = '' } = {}],
     aggregations,
     groupBy,
-    overDocuments,
-    groupedOverTop,
-    groupedOverFieldName,
     bucketValue,
     bucketUnitOfTime,
     where,
   } = values;
   return {
     searchType,
-    aggregationType,
     timeField,
-    fieldName,
     aggregations,
     groupBy,
-    overDocuments,
-    groupedOverTop,
-    groupedOverFieldName,
     bucketValue,
     bucketUnitOfTime,
     where,
@@ -200,6 +190,60 @@ export function formikToGraphQuery(values) {
   };
 }
 
+export function formikToCompositeAggregation(values) {
+  const { aggregations, groupBy } = values;
+
+  let aggs = {};
+  aggregations.map((aggItem) => {
+    // TODO: Changing any occurrence of '.' in the fieldName to '_' since the
+    //  bucketSelector uses the '.' syntax to resolve aggregation paths.
+    //  Should revisit this as replacing with `_` could cause collisions with fields named like that.
+    const name = `${aggItem.aggregationType}_${aggItem.fieldName.replace(/\./g, '_')}`;
+    const type = aggItem.aggregationType === 'count' ? 'value_count' : aggItem.aggregationType;
+    aggs[name] = {
+      [type]: { field: aggItem.fieldName },
+    };
+  });
+  let sources = [];
+  groupBy.map((groupByItem) =>
+    sources.push({
+      [groupByItem]: {
+        terms: {
+          field: groupByItem,
+        },
+      },
+    })
+  );
+  return {
+    composite_agg: {
+      composite: { sources },
+      aggs,
+    },
+  };
+}
+
+// For aggregations of query-level monitor
+export function formikToAggregation(values) {
+  const { aggregations, groupBy } = values;
+
+  let aggs = {};
+  aggregations.map((aggItem) => {
+    const type = aggItem.aggregationType === 'count' ? 'value_count' : aggItem.aggregationType;
+    aggs['metric'] = {
+      [type]: { field: aggItem.fieldName },
+    };
+  });
+  if (groupBy.length)
+    aggs.terms_agg = {
+      terms: {
+        field: groupBy[0],
+      },
+    };
+  return aggs;
+}
+
+/////////// Build Graph UI Search Request ///////////////
+
 export function formikToUiGraphQuery(values) {
   const { bucketValue, bucketUnitOfTime, monitor_type } = values;
   const useComposite = monitor_type === MONITOR_TYPE.BUCKET_LEVEL;
@@ -234,19 +278,19 @@ export function formikToUiGraphQuery(values) {
 }
 
 export function formikToUiOverAggregation(values) {
-  const whenAggregation = formikToWhenAggregation(values);
+  const metricAggregation = formikToMetricAggregation(values);
   const { bucketValue, bucketUnitOfTime, groupBy } = values;
   const timeField = values.timeField;
   const aggregations = groupBy.length
     ? {
-        ...whenAggregation,
+        ...metricAggregation,
         terms_agg: {
           terms: {
             field: groupBy[0],
           },
         },
       }
-    : whenAggregation;
+    : metricAggregation;
 
   return {
     over: {
@@ -271,12 +315,14 @@ export function formikToWhereClause({ where }) {
   }
 }
 
-export function formikToWhenAggregation(values) {
+// For query-level monitor single metric selection
+export function formikToMetricAggregation(values) {
   const { aggregations } = values;
-  const aggregationType = aggregations[0]?.aggregationType;
+  let aggregationType = aggregations[0]?.aggregationType;
   const field = aggregations[0]?.fieldName;
-  if (aggregationType === 'count' || !field) return {};
-  return { when: { [aggregationType]: { field } } };
+  if (!field) return {};
+  if (aggregationType === 'count') aggregationType = 'value_count';
+  return { metric: { [aggregationType]: { field } } };
 }
 
 export function formikToUiCompositeAggregation(values) {
@@ -329,58 +375,6 @@ export function formikToUiCompositeAggregation(values) {
       aggs,
     },
   };
-}
-
-export function formikToCompositeAggregation(values) {
-  const { aggregations, groupBy } = values;
-
-  let aggs = {};
-  aggregations.map((aggItem) => {
-    // TODO: Changing any occurrence of '.' in the fieldName to '_' since the
-    //  bucketSelector uses the '.' syntax to resolve aggregation paths.
-    //  Should revisit this as replacing with `_` could cause collisions with fields named like that.
-    const name = `${aggItem.aggregationType}_${aggItem.fieldName.replace(/\./g, '_')}`;
-    const type = aggItem.aggregationType === 'count' ? 'value_count' : aggItem.aggregationType;
-    aggs[name] = {
-      [type]: { field: aggItem.fieldName },
-    };
-  });
-  let sources = [];
-  groupBy.map((groupByItem) =>
-    sources.push({
-      [groupByItem]: {
-        terms: {
-          field: groupByItem,
-        },
-      },
-    })
-  );
-  return {
-    composite_agg: {
-      composite: { sources },
-      aggs,
-    },
-  };
-}
-
-export function formikToAggregation(values) {
-  const { aggregations, groupBy } = values;
-
-  let aggs = {};
-  aggregations.map((aggItem) => {
-    const name = `${aggItem.aggregationType}_${aggItem.fieldName}`;
-    const type = aggItem.aggregationType === 'count' ? 'value_count' : aggItem.aggregationType;
-    aggs[name] = {
-      [type]: { field: aggItem.fieldName },
-    };
-  });
-  if (groupBy.length)
-    aggs.terms_agg = {
-      terms: {
-        field: groupBy[0],
-      },
-    };
-  return aggs;
 }
 
 export function formikToUiSchedule(values) {

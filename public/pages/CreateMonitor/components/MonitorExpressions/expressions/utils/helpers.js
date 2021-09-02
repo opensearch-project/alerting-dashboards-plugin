@@ -36,13 +36,39 @@ export function getOfExpressionAllowedTypes(values) {
 
 export function getMetricExpressionAllowedTypes(values) {
   const types = ['number'];
-  if (['min', 'max', 'count'].includes(values.aggregationType)) types.push('date');
-  if (['count'].includes(values.aggregationType)) types.push('keyword');
 
+  // Check if the aggregation types includes any of 'min', 'max', or 'count'.
+  // If so, add 'date' to the allowed type for metric expression field.
+  if (
+    values.aggregations.some((e) => {
+      return ['min', 'max', 'count'].includes(e.aggregationType);
+    })
+  )
+    types.push('date');
+
+  // Check if the aggregations types includes 'count'.
+  // If so, add 'keyword' to the allowed type for metric expression field.
+  if (
+    values.aggregations.some((e) => {
+      return ['count'].includes(e.aggregationType);
+    })
+  )
+    types.push('keyword');
   return types;
 }
 
 export function getGroupByExpressionAllowedTypes() {
-  const types = ['keyword'];
-  return types;
+  return ['keyword'];
 }
+
+export const validateAggregationsDuplicates = (aggregations) => {
+  let duplicates = 0;
+  aggregations.forEach((e1, index) => {
+    aggregations.slice(index + 1).forEach((e2) => {
+      if (e1.aggregationType === e2.aggregationType && e1.fieldName === e2.fieldName) {
+        duplicates++;
+      }
+    });
+  });
+  return duplicates > 0;
+};

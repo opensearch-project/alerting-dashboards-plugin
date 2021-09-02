@@ -43,6 +43,7 @@ class TriggerExpressions extends Component {
 
   render() {
     const { label, keyFieldName, valueFieldName } = this.props;
+
     return (
       <EuiFormRow label={label} style={{ width: '390px' }}>
         <EuiFlexGroup alignItems={'flexStart'} gutterSize={'m'}>

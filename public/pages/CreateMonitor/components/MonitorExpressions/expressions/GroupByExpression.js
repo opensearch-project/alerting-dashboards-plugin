@@ -34,29 +34,20 @@ import { GROUP_BY_ERROR } from './utils/constants';
 import { MONITOR_TYPE } from '../../../../../utils/constants';
 
 class GroupByExpression extends Component {
-  state = {
-    addButtonTouched: false,
-  };
   renderFieldItems = (arrayHelpers, fieldOptions, expressionWidth) => {
     const {
       formik: { values },
-      onMadeChanges,
-      openExpression,
-      closeExpression,
     } = this.props;
     return values.groupBy.map((groupByItem, index) => {
       return (
         <span style={{ paddingRight: '5px' }} key={`group-by-expr-${index}`}>
           <GroupByItem
             values={values}
-            onMadeChanges={onMadeChanges}
             arrayHelpers={arrayHelpers}
             fieldOptions={fieldOptions}
             expressionWidth={expressionWidth}
             groupByItem={groupByItem}
             index={index}
-            openExpression={openExpression}
-            closeExpression={closeExpression}
           />
         </span>
       );
@@ -67,7 +58,6 @@ class GroupByExpression extends Component {
     const {
       formik: { values },
       errors,
-      touched,
       arrayHelpers,
       dataTypes,
     } = this.props;
@@ -84,14 +74,12 @@ class GroupByExpression extends Component {
         8 +
       60;
 
-    const isBucketLevelMonitor = monitorType === MONITOR_TYPE.BUCKET_LEVEL;
-
-    if (
-      (this.state.addButtonTouched || touched.groupBy) &&
-      !values.groupBy.length &&
-      values.monitor_type === MONITOR_TYPE.BUCKET_LEVEL
-    )
+    const isBucketLevelMonitor = values.monitor_type === MONITOR_TYPE.BUCKET_LEVEL;
+    if (!values.groupBy.length && !isBucketLevelMonitor) {
       errors.groupBy = GROUP_BY_ERROR;
+    } else {
+      delete errors.groupBy;
+    }
 
     let showAddButtonFlag = false;
     if (!isBucketLevelMonitor && groupBy.length < 1) {
@@ -101,7 +89,7 @@ class GroupByExpression extends Component {
     }
 
     return (
-      <div>
+      <div id="groupBy">
         <EuiText size="xs">
           <strong>Group by</strong>
           {!isBucketLevelMonitor ? <i> - optional</i> : null}
@@ -121,7 +109,6 @@ class GroupByExpression extends Component {
           <EuiButtonEmpty
             size="xs"
             onClick={() => {
-              this.setState({ addButtonTouched: true });
               arrayHelpers.push('');
             }}
             data-test-subj="addGroupByButton"

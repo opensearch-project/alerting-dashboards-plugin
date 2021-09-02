@@ -150,6 +150,7 @@ class ConfigureTriggers extends React.Component {
       httpClient,
       notifications,
     } = this.props;
+
     const { dataTypes, executeResponse, isBucketLevelMonitor } = this.state;
     const hasTriggers = !_.isEmpty(_.get(triggerValues, 'triggerDefinitions'));
     return hasTriggers ? (
