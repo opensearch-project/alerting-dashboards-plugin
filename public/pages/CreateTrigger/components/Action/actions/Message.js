@@ -162,9 +162,10 @@ export default function Message(
   const isBucketLevelMonitor =
     _.get(context, 'ctx.monitor.monitor_type', MONITOR_TYPE.QUERY_LEVEL) ===
     MONITOR_TYPE.BUCKET_LEVEL;
+  const actionPath = `${fieldPath}actions.${index}`;
   const actionExecutionPolicyPath = isBucketLevelMonitor
-    ? `${fieldPath}actions.${index}.action_execution_policy`
-    : `${fieldPath}actions.${index}`;
+    ? `${actionPath}.action_execution_policy`
+    : actionPath;
 
   let actionExecutionScopeId = isBucketLevelMonitor
     ? _.get(
@@ -182,8 +183,8 @@ export default function Message(
   );
 
   if (actionExecutionScopeId === NOTIFY_OPTIONS_VALUES.PER_ALERT) {
-    if (_.get(values, `${actionExecutionPolicyPath}.throttle.value`) === undefined) {
-      _.set(values, `${actionExecutionPolicyPath}.throttle.value`, 10);
+    if (_.get(values, `${actionPath}.throttle.value`) === undefined) {
+      _.set(values, `${actionPath}.throttle.value`, 10);
     }
 
     if (actionableAlertsSelections === undefined) {
@@ -390,7 +391,7 @@ export default function Message(
               <EuiFlexItem grow={false} style={{ marginRight: '0px' }}>
                 <EuiFormRow label="Throttle actions to only trigger every">
                   <FormikFieldNumber
-                    name={`${actionExecutionPolicyPath}.throttle.value`}
+                    name={`${actionPath}.throttle.value`}
                     fieldProps={{ validate: validateActionThrottle(action) }}
                     formRow={true}
                     rowProps={{

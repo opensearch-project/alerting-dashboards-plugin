@@ -109,17 +109,10 @@ export function formikToBucketLevelTriggerAction(values) {
 
       switch (formattedAction.throttle_enabled) {
         case true:
-          _.set(
-            formattedAction,
-            'action_execution_policy.throttle.unit',
-            FORMIK_INITIAL_ACTION_VALUES.throttle.unit
-          );
+          _.set(formattedAction, 'throttle.unit', FORMIK_INITIAL_ACTION_VALUES.throttle.unit);
           break;
         case false:
-          formattedAction = _.omit(formattedAction, [
-            'throttle',
-            `${executionPolicyPath}.throttle`,
-          ]);
+          formattedAction = _.omit(formattedAction, ['throttle']);
           break;
       }
 
