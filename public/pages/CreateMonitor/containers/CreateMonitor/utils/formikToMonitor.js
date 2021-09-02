@@ -169,8 +169,8 @@ export function formikToExtractionQuery(values) {
 
 export function formikToGraphQuery(values) {
   const { bucketValue, bucketUnitOfTime, monitor_type } = values;
-  const hasGroupBy = monitor_type === MONITOR_TYPE.BUCKET_LEVEL;
-  const aggregation = hasGroupBy
+  const useComposite = monitor_type === MONITOR_TYPE.BUCKET_LEVEL;
+  const aggregation = useComposite
     ? formikToCompositeAggregation(values)
     : formikToAggregation(values);
   const timeField = values.timeField;
@@ -202,9 +202,8 @@ export function formikToGraphQuery(values) {
 
 export function formikToUiGraphQuery(values) {
   const { bucketValue, bucketUnitOfTime, monitor_type } = values;
-  const hasGroupBy = monitor_type === MONITOR_TYPE.BUCKET_LEVEL;
-  //TODO: Check whether the condition should be using group by or monitor_type
-  const aggregation = hasGroupBy
+  const useComposite = monitor_type === MONITOR_TYPE.BUCKET_LEVEL;
+  const aggregation = useComposite
     ? formikToUiCompositeAggregation(values)
     : formikToUiOverAggregation(values);
   const timeField = values.timeField;
@@ -236,8 +235,18 @@ export function formikToUiGraphQuery(values) {
 
 export function formikToUiOverAggregation(values) {
   const whenAggregation = formikToWhenAggregation(values);
-  const { bucketValue, bucketUnitOfTime } = values;
+  const { bucketValue, bucketUnitOfTime, groupBy } = values;
   const timeField = values.timeField;
+  const aggregations = groupBy.length
+    ? {
+        ...whenAggregation,
+        terms_agg: {
+          terms: {
+            field: groupBy[0],
+          },
+        },
+      }
+    : whenAggregation;
 
   return {
     over: {
@@ -251,7 +260,7 @@ export function formikToUiOverAggregation(values) {
           max: 'now',
         },
       },
-      aggregations: whenAggregation,
+      aggregations,
     },
   };
 }
@@ -271,7 +280,14 @@ export function formikToWhenAggregation(values) {
 }
 
 export function formikToUiCompositeAggregation(values) {
-  const { aggregations, groupBy, timeField, bucketValue, bucketUnitOfTime } = values;
+  const {
+    aggregations,
+    groupBy,
+    timeField,
+    bucketValue,
+    bucketUnitOfTime,
+    monitor_type: monitorType,
+  } = values;
 
   let aggs = {};
   aggregations.map((aggItem) => {
@@ -348,7 +364,7 @@ export function formikToCompositeAggregation(values) {
 }
 
 export function formikToAggregation(values) {
-  const { aggregations } = values;
+  const { aggregations, groupBy } = values;
 
   let aggs = {};
   aggregations.map((aggItem) => {
@@ -358,6 +374,12 @@ export function formikToAggregation(values) {
       [type]: { field: aggItem.fieldName },
     };
   });
+  if (groupBy.length)
+    aggs.terms_agg = {
+      terms: {
+        field: groupBy[0],
+      },
+    };
   return aggs;
 }
 
