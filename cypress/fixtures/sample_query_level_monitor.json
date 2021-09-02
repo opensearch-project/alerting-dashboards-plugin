@@ -1,5 +1,5 @@
 {
-  "name": "sample_monitor",
+  "name": "sample_query_level_monitor",
   "enabled": true,
   "schedule": {
     "period": {

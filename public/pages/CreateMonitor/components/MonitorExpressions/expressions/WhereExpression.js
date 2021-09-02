@@ -303,7 +303,7 @@ class WhereExpression extends Component {
         {showAddButtonFlag && (
           <EuiButtonEmpty
             size="xs"
-            data-test-subj="addFilterButton"
+            data-test-subj={`${fieldPath}where.addFilterButton`}
             onClick={() => openExpression(Expressions.WHERE)}
           >
             + Add filter
