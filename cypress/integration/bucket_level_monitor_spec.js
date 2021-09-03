@@ -207,7 +207,7 @@ describe('Bucket-Level Monitors', () => {
       cy.get('#index').type(`${INDEX.SAMPLE_DATA_ECOMMERCE}{enter}`, { force: true });
 
       // Select 'order_date' as the timeField for the data source index
-      cy.get('#timeField').select(`${TIME_FIELD}`);
+      cy.get('#timeField').type(`${TIME_FIELD}{enter}`, { force: true });
 
       // Add a metric for the query
       cy.get('[data-test-subj="addMetricButton"]').click();
