@@ -25,8 +25,9 @@
  */
 
 import _ from 'lodash';
-import { EMPTY_ALERT_LIST } from './constants';
+import { EMPTY_ALERT_LIST, MAX_ALERT_COUNT } from './constants';
 import { bucketColumns } from './tableUtils';
+import { DEFAULT_NUM_FLYOUT_ROWS } from '../../../components/Flyout/flyouts/alertsDashboard';
 import { DEFAULT_EMPTY_DATA } from '../../../utils/constants';
 
 export function groupAlertsByTrigger(alerts) {
@@ -104,4 +105,10 @@ export function removeColumns(columnFieldNames = [], allColumns) {
   return allColumns.filter((column) => {
     return !_.includes(columnFieldNames, column.field);
   });
+}
+
+export function getInitialSize(isAlertsFlyout, perAlertView, defaultSize) {
+  if (!perAlertView) return MAX_ALERT_COUNT;
+  if (isAlertsFlyout) return DEFAULT_NUM_FLYOUT_ROWS;
+  return defaultSize;
 }
