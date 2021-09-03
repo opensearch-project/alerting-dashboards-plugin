@@ -9,6 +9,7 @@
  * GitHub history for details.
  */
 
+// Keeping index prefix as 'opendistro' as migrating the system index is currently difficult to complete
 export const OPEN_SEARCH_PREFIX = 'opendistro';
 
 export const PLUGIN_NAME = `alerting`;
