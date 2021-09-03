@@ -2,29 +2,6 @@
 
 exports[`Triggers renders 1`] = `
 <ContentPanel
-  actions={
-    Array [
-      <EuiButton
-        disabled={true}
-        onClick={[Function]}
-      >
-        Edit
-      </EuiButton>,
-      <EuiButton
-        disabled={true}
-        onClick={[Function]}
-      >
-        Delete
-      </EuiButton>,
-      <EuiButton
-        disabled={false}
-        fill={true}
-        onClick={[MockFunction]}
-      >
-        Create
-      </EuiButton>,
-    ]
-  }
   bodyStyles={
     Object {
       "padding": "initial",
@@ -57,29 +34,15 @@ exports[`Triggers renders 1`] = `
         },
       ]
     }
-    isSelectable={true}
     itemId="id"
     items={
       Array [
-        Object {
-          "actions": Array [
-            Object {
-              "name": "Random Action",
-            },
-          ],
-          "name": "Random Trigger",
-          "severity": 1,
-        },
+        undefined,
       ]
     }
     key="0"
     onTableChange={[Function]}
     responsive={true}
-    selection={
-      Object {
-        "onSelectionChange": [Function],
-      }
-    }
     sorting={
       Object {
         "sort": Object {

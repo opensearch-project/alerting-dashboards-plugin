@@ -270,7 +270,7 @@ exports[`Message renders 1`] = `
                       class="euiFormHelpText euiFormRow__text"
                       id="undefinedactions.0.throttle.value-form-row-help"
                     >
-                      Throttle value must be greater than 0 and less than 1440.
+                      Throttle value must be greater than 0 and less than 1440
                     </div>
                   </div>
                 </div>

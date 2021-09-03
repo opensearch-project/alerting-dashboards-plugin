@@ -13,7 +13,7 @@ exports[`TriggerQuery renders 1`] = `
     }
   >
     <EuiFlexGroup
-      alignItems="stretch"
+      alignItems="flexEnd"
       gutterSize="m"
     >
       <EuiFlexItem
@@ -37,7 +37,6 @@ exports[`TriggerQuery renders 1`] = `
         style={
           Object {
             "marginBottom": "0px",
-            "paddingTop": "6px",
           }
         }
       >
