@@ -27,6 +27,7 @@
 import _ from 'lodash';
 import { EMPTY_ALERT_LIST } from './constants';
 import { bucketColumns } from './tableUtils';
+import { DEFAULT_EMPTY_DATA } from '../../../utils/constants';
 
 export function groupAlertsByTrigger(alerts) {
   let alertsByTriggers = new Map();
@@ -81,12 +82,17 @@ export function addAlert(alertList, newAlert) {
   return alertList;
 }
 
+export const renderEmptyValue = (value) => {
+  return value === undefined ? DEFAULT_EMPTY_DATA : value;
+};
+
 export function insertGroupByColumn(groupBy) {
   let result = _.cloneDeep(bucketColumns);
   groupBy.map((fieldName) =>
     result.splice(0, 0, {
       field: `agg_alert_content.bucket.key.${fieldName}`,
       name: fieldName,
+      render: renderEmptyValue,
       sortable: false,
       truncateText: false,
     })

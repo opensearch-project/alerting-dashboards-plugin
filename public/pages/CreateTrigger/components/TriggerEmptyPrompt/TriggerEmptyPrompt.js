@@ -1,4 +1,15 @@
 /*
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * The OpenSearch Contributors require contributions made to
+ * this file be licensed under the Apache-2.0 license or a
+ * compatible open source license.
+ *
+ * Modifications Copyright OpenSearch Contributors. See
+ * GitHub history for details.
+ */
+
+/*
  * Copyright 2021 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
@@ -25,7 +36,7 @@ const TriggerEmptyPrompt = ({ arrayHelpers }) => (
     body={
       <EuiText>
         <h4>No triggers</h4>
-        <p>Add a trigger to define conditions and actions</p>
+        <p>Add a trigger to define conditions and actions.</p>
       </EuiText>
     }
     actions={addTriggerButton(arrayHelpers)}
