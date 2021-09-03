@@ -32,31 +32,26 @@ import { getGroupByExpressionAllowedTypes } from './utils/helpers';
 import GroupByItem from './GroupByItem';
 import { GROUP_BY_ERROR } from './utils/constants';
 import { MONITOR_TYPE } from '../../../../../utils/constants';
+import { inputLimitText } from '../../../../../utils/helpers';
+
+export const MAX_NUM_QUERY_LEVEL_GROUP_BYS = 1;
+export const MAX_NUM_BUCKET_LEVEL_GROUP_BYS = 2;
 
 class GroupByExpression extends Component {
-  state = {
-    addButtonTouched: false,
-  };
   renderFieldItems = (arrayHelpers, fieldOptions, expressionWidth) => {
     const {
       formik: { values },
-      onMadeChanges,
-      openExpression,
-      closeExpression,
     } = this.props;
     return values.groupBy.map((groupByItem, index) => {
       return (
         <span style={{ paddingRight: '5px' }} key={`group-by-expr-${index}`}>
           <GroupByItem
             values={values}
-            onMadeChanges={onMadeChanges}
             arrayHelpers={arrayHelpers}
             fieldOptions={fieldOptions}
             expressionWidth={expressionWidth}
             groupByItem={groupByItem}
             index={index}
-            openExpression={openExpression}
-            closeExpression={closeExpression}
           />
         </span>
       );
@@ -67,7 +62,6 @@ class GroupByExpression extends Component {
     const {
       formik: { values },
       errors,
-      touched,
       arrayHelpers,
       dataTypes,
     } = this.props;
@@ -84,24 +78,30 @@ class GroupByExpression extends Component {
         8 +
       60;
 
-    const isBucketLevelMonitor = monitorType === MONITOR_TYPE.BUCKET_LEVEL;
-
-    if (
-      (this.state.addButtonTouched || touched.groupBy) &&
-      !values.groupBy.length &&
-      values.monitor_type === MONITOR_TYPE.BUCKET_LEVEL
-    )
+    const isBucketLevelMonitor = values.monitor_type === MONITOR_TYPE.BUCKET_LEVEL;
+    if (!values.groupBy.length && isBucketLevelMonitor) {
       errors.groupBy = GROUP_BY_ERROR;
+    } else {
+      delete errors.groupBy;
+    }
 
     let showAddButtonFlag = false;
-    if (!isBucketLevelMonitor && groupBy.length < 1) {
+    if (!isBucketLevelMonitor && groupBy.length < MAX_NUM_QUERY_LEVEL_GROUP_BYS) {
       showAddButtonFlag = true;
-    } else if (isBucketLevelMonitor && groupBy.length < 2) {
+    } else if (isBucketLevelMonitor && groupBy.length < MAX_NUM_BUCKET_LEVEL_GROUP_BYS) {
       showAddButtonFlag = true;
     }
 
+    const limitText = isBucketLevelMonitor
+      ? inputLimitText(groupBy.length, MAX_NUM_BUCKET_LEVEL_GROUP_BYS, 'group by', 'group bys', {
+          paddingLeft: '10px',
+        })
+      : inputLimitText(groupBy.length, MAX_NUM_QUERY_LEVEL_GROUP_BYS, 'group by', 'group bys', {
+          paddingLeft: '10px',
+        });
+
     return (
-      <div>
+      <div id="groupBy">
         <EuiText size="xs">
           <strong>Group by</strong>
           {!isBucketLevelMonitor ? <i> - optional</i> : null}
@@ -121,10 +121,10 @@ class GroupByExpression extends Component {
           <EuiButtonEmpty
             size="xs"
             onClick={() => {
-              this.setState({ addButtonTouched: true });
               arrayHelpers.push('');
             }}
             data-test-subj="addGroupByButton"
+            style={{ paddingTop: '5px' }}
           >
             + Add group by
           </EuiButtonEmpty>
@@ -133,6 +133,8 @@ class GroupByExpression extends Component {
         <EuiText color="danger" size="xs">
           {errors.groupBy}
         </EuiText>
+
+        {limitText}
       </div>
     );
   }

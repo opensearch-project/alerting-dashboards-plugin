@@ -34,7 +34,7 @@ import {
   formikToGraphQuery,
   formikToUiGraphQuery,
   formikToUiOverAggregation,
-  formikToWhenAggregation,
+  formikToMetricAggregation,
   formikToUiSchedule,
   buildSchedule,
   formikToWhereClause,
@@ -153,13 +153,13 @@ describe('formikToWhenAggregation', () => {
   const formikValues = _.cloneDeep(FORMIK_INITIAL_VALUES);
 
   test('can build when (count) aggregation', () => {
-    expect(formikToWhenAggregation(formikValues)).toMatchSnapshot();
+    expect(formikToMetricAggregation(formikValues)).toMatchSnapshot();
   });
 
   test('can build when aggregation', () => {
     formikValues.aggregationType = 'avg';
     formikValues.fieldName = [{ label: 'bytes' }];
-    expect(formikToWhenAggregation(formikValues)).toMatchSnapshot();
+    expect(formikToMetricAggregation(formikValues)).toMatchSnapshot();
   });
 });
 

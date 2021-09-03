@@ -41,7 +41,7 @@ import {
 import { MONITOR_TYPE } from '../../../../../utils/constants';
 
 export function getYTitle(values) {
-  return _.get(values, 'fieldName[0].label', 'count');
+  return _.get(values, `aggregations[0].fieldName`, 'doc_count');
 }
 
 export function getLeftPadding(yDomain) {
@@ -148,7 +148,7 @@ export function getXYValuesByFieldName(bucket, fieldName) {
 
 export function getXYValues(bucket) {
   const x = new Date(bucket.key_as_string);
-  const path = bucket.when ? 'when.value' : 'doc_count';
+  const path = bucket.metric ? 'metric.value' : 'doc_count';
   const y = _.get(bucket, path, null);
   return { x, y };
 }
