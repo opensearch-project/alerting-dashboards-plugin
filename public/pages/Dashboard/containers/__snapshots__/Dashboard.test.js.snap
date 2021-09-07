@@ -25,7 +25,7 @@ exports[`Dashboard renders 1`] = `
           Array [
             Object {
               "hash": "",
-              "search": "alertState=ALL&from=0&search=&severityLevel=ALL&size=20&sortDirection=desc&sortField=start_time",
+              "search": "alertState=ALL&from=0&search=&severityLevel=ALL&size=10000&sortDirection=desc&sortField=start_time",
               "state": undefined,
             },
           ],
@@ -925,19 +925,6 @@ exports[`Dashboard renders 1`] = `
             items={Array []}
             noItemsMessage={<DashboardEmptyPrompt />}
             onChange={[Function]}
-            pagination={
-              Object {
-                "pageIndex": 0,
-                "pageSize": 20,
-                "pageSizeOptions": Array [
-                  5,
-                  10,
-                  20,
-                  50,
-                ],
-                "totalItemCount": 0,
-              }
-            }
             responsive={true}
             selection={
               Object {
