@@ -105,6 +105,7 @@ export default class Triggers extends Component {
   render() {
     const { direction, field, tableKey } = this.state;
     const { monitor } = this.props;
+    const numOfTriggers = _.get(monitor, 'triggers', []).length;
 
     const columns = [
       {
@@ -112,6 +113,7 @@ export default class Triggers extends Component {
         name: 'Name',
         sortable: true,
         truncateText: true,
+        width: '25%',
       },
       {
         field: 'actions',
@@ -119,19 +121,25 @@ export default class Triggers extends Component {
         sortable: true,
         truncateText: false,
         render: (actions) => actions.length,
+        width: '25%',
       },
       {
         field: 'severity',
         name: 'Severity',
         sortable: true,
         truncateText: false,
+        width: '50%',
       },
     ];
 
     const sorting = { sort: { field, direction } };
 
     return (
-      <ContentPanel title="Triggers" titleSize="s" bodyStyles={{ padding: 'initial' }}>
+      <ContentPanel
+        title={`Triggers (${numOfTriggers})`}
+        titleSize="s"
+        bodyStyles={{ padding: 'initial' }}
+      >
         <EuiInMemoryTable
           items={getUnwrappedTriggers(monitor)}
           itemId="id"
@@ -139,6 +147,7 @@ export default class Triggers extends Component {
           columns={columns}
           sorting={sorting}
           onTableChange={this.onTableChange}
+          noItemsMessage={'There are no triggers.'}
         />
       </ContentPanel>
     );

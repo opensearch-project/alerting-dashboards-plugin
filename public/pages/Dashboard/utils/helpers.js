@@ -25,8 +25,10 @@
  */
 
 import _ from 'lodash';
-import { EMPTY_ALERT_LIST } from './constants';
+import { EMPTY_ALERT_LIST, MAX_ALERT_COUNT } from './constants';
 import { bucketColumns } from './tableUtils';
+import { DEFAULT_NUM_FLYOUT_ROWS } from '../../../components/Flyout/flyouts/alertsDashboard';
+import { DEFAULT_EMPTY_DATA } from '../../../utils/constants';
 
 export function groupAlertsByTrigger(alerts) {
   let alertsByTriggers = new Map();
@@ -81,12 +83,17 @@ export function addAlert(alertList, newAlert) {
   return alertList;
 }
 
+export const renderEmptyValue = (value) => {
+  return value === undefined ? DEFAULT_EMPTY_DATA : value;
+};
+
 export function insertGroupByColumn(groupBy) {
   let result = _.cloneDeep(bucketColumns);
   groupBy.map((fieldName) =>
     result.splice(0, 0, {
       field: `agg_alert_content.bucket.key.${fieldName}`,
       name: fieldName,
+      render: renderEmptyValue,
       sortable: false,
       truncateText: false,
     })
@@ -98,4 +105,10 @@ export function removeColumns(columnFieldNames = [], allColumns) {
   return allColumns.filter((column) => {
     return !_.includes(columnFieldNames, column.field);
   });
+}
+
+export function getInitialSize(isAlertsFlyout, perAlertView, defaultSize) {
+  if (!perAlertView) return MAX_ALERT_COUNT;
+  if (isAlertsFlyout) return DEFAULT_NUM_FLYOUT_ROWS;
+  return defaultSize;
 }

@@ -34,21 +34,14 @@ import DashboardControls from '../components/DashboardControls';
 import { alertColumns, queryColumns } from '../utils/tableUtils';
 import { MONITOR_TYPE, OPENSEARCH_DASHBOARDS_AD_PLUGIN } from '../../../utils/constants';
 import { backendErrorNotification } from '../../../utils/helpers';
-import { groupAlertsByTrigger, insertGroupByColumn, removeColumns } from '../utils/helpers';
-import { DEFAULT_NUM_FLYOUT_ROWS } from '../../../components/Flyout/flyouts/alertsDashboard';
-
-const DEFAULT_PAGE_SIZE_OPTIONS = [5, 10, 20, 50];
-const DEFAULT_GET_ALERTS_QUERY_PARAMS = {
-  alertState: 'ALL',
-  from: 0,
-  search: '',
-  severityLevel: 'ALL',
-  size: 20,
-  sortDirection: 'desc',
-  sortField: 'start_time',
-};
-
-const MAX_ALERT_COUNT = 10000;
+import {
+  getInitialSize,
+  groupAlertsByTrigger,
+  insertGroupByColumn,
+  removeColumns,
+} from '../utils/helpers';
+import { DEFAULT_PAGE_SIZE_OPTIONS } from '../../Monitors/containers/Monitors/utils/constants';
+import { MAX_ALERT_COUNT, DEFAULT_GET_ALERTS_QUERY_PARAMS } from '../utils/constants';
 
 // TODO: Abstract out a Table component to be used in both Dashboard and Monitors
 
@@ -56,7 +49,7 @@ export default class Dashboard extends Component {
   constructor(props) {
     super(props);
 
-    const { isAlertsFlyout = false } = props;
+    const { isAlertsFlyout = false, perAlertView } = props;
 
     const {
       alertState,
@@ -79,7 +72,7 @@ export default class Dashboard extends Component {
       search,
       selectedItems: [],
       severityLevel,
-      size: isAlertsFlyout ? DEFAULT_NUM_FLYOUT_ROWS : size,
+      size: getInitialSize(isAlertsFlyout, perAlertView, size),
       sortDirection,
       sortField,
       totalAlerts: 0,
@@ -501,7 +494,7 @@ export default class Dashboard extends Component {
            * */
           itemId={getItemId}
           columns={columnType}
-          pagination={pagination}
+          pagination={perAlertView ? pagination : undefined}
           sorting={sorting}
           isSelectable={true}
           selection={selection}
