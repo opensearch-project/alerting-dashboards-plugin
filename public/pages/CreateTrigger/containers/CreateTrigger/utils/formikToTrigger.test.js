@@ -129,7 +129,7 @@ describe('formikToCondition', () => {
     ).toEqual({
       script: {
         lang: 'painless',
-        source: `return ctx.results[0].aggregations.when.value == null ? false : ctx.results[0].aggregations.when.value > 10000`,
+        source: 'ctx.results[0].hits.total.value > 10000',
       },
     });
   });
