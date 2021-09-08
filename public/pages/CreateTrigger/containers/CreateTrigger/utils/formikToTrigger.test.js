@@ -75,13 +75,17 @@ describe('formikToTriggerUiMetadata', () => {
   });
 
   test('can create metadata', () => {
-    const formikValues = _.cloneDeep(FORMIK_INITIAL_TRIGGER_VALUES);
+    let formikValues = _.cloneDeep(FORMIK_INITIAL_VALUES);
+    _.set(formikValues, 'triggerDefinitions', [FORMIK_INITIAL_TRIGGER_VALUES]);
     expect(
-      formikToTriggerUiMetadata(formikValues, { search: { searchType: SEARCH_TYPE.QUERY } })
+      formikToTriggerUiMetadata(formikValues, {
+        search: { searchType: SEARCH_TYPE.QUERY },
+        monitor_type: MONITOR_TYPE.QUERY_LEVEL,
+      })
     ).toEqual({
       [formikValues.name]: {
-        value: formikValues.thresholdValue,
-        enum: formikValues.thresholdEnum,
+        value: formikValues.triggerDefinitions[0].thresholdValue,
+        enum: formikValues.triggerDefinitions[0].thresholdEnum,
       },
     });
   });
