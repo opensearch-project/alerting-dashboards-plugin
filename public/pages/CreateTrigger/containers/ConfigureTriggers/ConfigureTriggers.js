@@ -1,4 +1,15 @@
 /*
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * The OpenSearch Contributors require contributions made to
+ * this file be licensed under the Apache-2.0 license or a
+ * compatible open source license.
+ *
+ * Modifications Copyright OpenSearch Contributors. See
+ * GitHub history for details.
+ */
+
+/*
  * Copyright 2021 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
@@ -14,7 +25,7 @@
  */
 
 import React from 'react';
-import { EuiHorizontalRule } from '@elastic/eui';
+import { EuiHorizontalRule, EuiSpacer } from '@elastic/eui';
 import ContentPanel from '../../../../components/ContentPanel';
 import _ from 'lodash';
 import DefineBucketLevelTrigger from '../DefineBucketLevelTrigger';
@@ -26,7 +37,7 @@ import { MONITOR_TYPE, SEARCH_TYPE } from '../../../../utils/constants';
 import { getPathsPerDataType } from '../../../CreateMonitor/containers/DefineMonitor/utils/mappings';
 import monitorToFormik from '../../../CreateMonitor/containers/CreateMonitor/utils/monitorToFormik';
 import { buildSearchRequest } from '../../../CreateMonitor/containers/DefineMonitor/utils/searchRequests';
-import { backendErrorNotification } from '../../../../utils/helpers';
+import { backendErrorNotification, inputLimitText } from '../../../../utils/helpers';
 import moment from 'moment';
 import { formikToTrigger } from '../CreateTrigger/utils/formikToTrigger';
 
@@ -224,6 +235,8 @@ class ConfigureTriggers extends React.Component {
               arrayHelpers={triggerArrayHelpers}
               disabled={disableAddTriggerButton}
             />
+            <EuiSpacer size={'s'} />
+            {inputLimitText(numOfTriggers, MAX_TRIGGERS, 'trigger', 'triggers')}
           </div>
         ) : null}
       </ContentPanel>

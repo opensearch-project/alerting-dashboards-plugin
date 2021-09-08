@@ -32,6 +32,10 @@ import { getGroupByExpressionAllowedTypes } from './utils/helpers';
 import GroupByItem from './GroupByItem';
 import { GROUP_BY_ERROR } from './utils/constants';
 import { MONITOR_TYPE } from '../../../../../utils/constants';
+import { inputLimitText } from '../../../../../utils/helpers';
+
+export const MAX_NUM_QUERY_LEVEL_GROUP_BYS = 1;
+export const MAX_NUM_BUCKET_LEVEL_GROUP_BYS = 2;
 
 class GroupByExpression extends Component {
   renderFieldItems = (arrayHelpers, fieldOptions, expressionWidth) => {
@@ -75,18 +79,26 @@ class GroupByExpression extends Component {
       60;
 
     const isBucketLevelMonitor = values.monitor_type === MONITOR_TYPE.BUCKET_LEVEL;
-    if (!values.groupBy.length && !isBucketLevelMonitor) {
+    if (!values.groupBy.length && isBucketLevelMonitor) {
       errors.groupBy = GROUP_BY_ERROR;
     } else {
       delete errors.groupBy;
     }
 
     let showAddButtonFlag = false;
-    if (!isBucketLevelMonitor && groupBy.length < 1) {
+    if (!isBucketLevelMonitor && groupBy.length < MAX_NUM_QUERY_LEVEL_GROUP_BYS) {
       showAddButtonFlag = true;
-    } else if (isBucketLevelMonitor && groupBy.length < 2) {
+    } else if (isBucketLevelMonitor && groupBy.length < MAX_NUM_BUCKET_LEVEL_GROUP_BYS) {
       showAddButtonFlag = true;
     }
+
+    const limitText = isBucketLevelMonitor
+      ? inputLimitText(groupBy.length, MAX_NUM_BUCKET_LEVEL_GROUP_BYS, 'group by', 'group bys', {
+          paddingLeft: '10px',
+        })
+      : inputLimitText(groupBy.length, MAX_NUM_QUERY_LEVEL_GROUP_BYS, 'group by', 'group bys', {
+          paddingLeft: '10px',
+        });
 
     return (
       <div id="groupBy">
@@ -112,6 +124,7 @@ class GroupByExpression extends Component {
               arrayHelpers.push('');
             }}
             data-test-subj="addGroupByButton"
+            style={{ paddingTop: '5px' }}
           >
             + Add group by
           </EuiButtonEmpty>
@@ -120,6 +133,8 @@ class GroupByExpression extends Component {
         <EuiText color="danger" size="xs">
           {errors.groupBy}
         </EuiText>
+
+        {limitText}
       </div>
     );
   }

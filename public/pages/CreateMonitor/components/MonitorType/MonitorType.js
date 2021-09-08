@@ -63,7 +63,7 @@ const MonitorType = ({ values }) => (
         name="monitorTypeQueryLevel"
         formRow
         rowProps={{
-          label: 'Choose a monitor type',
+          label: 'Monitor type',
           style: { width: `${MONITOR_TYPE_CARD_WIDTH}px` },
         }}
         inputProps={{

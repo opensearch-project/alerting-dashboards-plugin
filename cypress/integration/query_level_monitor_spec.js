@@ -10,7 +10,7 @@
  */
 
 /*
- * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2021 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -132,7 +132,7 @@ describe('Query-Level Monitors', () => {
       cy.get('button').contains('Update').last().click({ force: true });
 
       // Confirm the update process is done and the page loaded
-      cy.contains('Create trigger');
+      cy.contains('Edit monitor');
 
       // Go back to the Monitors list
       cy.get('a').contains('Monitors').click({ force: true });
