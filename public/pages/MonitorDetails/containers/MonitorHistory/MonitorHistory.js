@@ -185,7 +185,7 @@ class MonitorHistory extends PureComponent {
     /*
       brushAreaStart Duration is to defined the start point for smaller window over zoomer
       on which time line will be displayed. Duration will default to what interval has been
-      computed to ES bucket in case it is too small,
+      computed to OpenSearch bucket in case it is too small,
       just scale it so that customer can have better experience
     */
     const {
