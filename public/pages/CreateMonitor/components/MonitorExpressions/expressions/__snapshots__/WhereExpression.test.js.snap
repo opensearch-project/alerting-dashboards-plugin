@@ -9,8 +9,15 @@ exports[`WhereExpression renders 1`] = `
       Data filter
     </strong>
     <i>
-       - optional
+       - optional 
     </i>
+    <span
+      class="euiToolTipAnchor"
+    >
+      <div>
+        EuiIconMock
+      </div>
+    </span>
   </div>
   <div
     class="euiSpacer euiSpacer--s"

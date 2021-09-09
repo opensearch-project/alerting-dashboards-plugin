@@ -6,8 +6,15 @@ exports[`ForExpression renders 1`] = `
     class="euiText euiText--extraSmall"
   >
     <strong>
-      Time range for the last
+      Time range for the last 
     </strong>
+    <span
+      class="euiToolTipAnchor"
+    >
+      <div>
+        EuiIconMock
+      </div>
+    </span>
   </div>
   <div
     class="euiSpacer euiSpacer--s"
