@@ -29,13 +29,16 @@ import { EuiText, EuiFlexGroup, EuiFlexItem, EuiSpacer } from '@elastic/eui';
 import { UNITS_OF_TIME } from './utils/constants';
 import { FormikFieldNumber, FormikSelect } from '../../../../../components/FormControls';
 import { hasError, isInvalid, validatePositiveInteger } from '../../../../../utils/validate';
+import IconToolTip from '../../../../../components/IconToolTip';
+import { TIME_RANGE_TOOLTIP_TEXT } from '../../../containers/CreateMonitor/utils/constants';
 
 class ForExpression extends Component {
   render() {
     return (
       <div>
         <EuiText size="xs">
-          <strong>Time range for the last</strong>
+          <strong>Time range for the last </strong>
+          <IconToolTip content={TIME_RANGE_TOOLTIP_TEXT} iconType="questionInCircle" />
         </EuiText>
         <EuiSpacer size={'s'} />
         <EuiFlexGroup style={{ maxWidth: 600 }}>
