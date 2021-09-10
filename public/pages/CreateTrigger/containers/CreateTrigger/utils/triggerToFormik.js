@@ -58,6 +58,9 @@ export function triggerDefinitionToFormik(trigger, monitor) {
 }
 
 export function queryLevelTriggerToFormik(trigger, monitor) {
+  //Debug use
+  // console.log("###monitor: "+ JSON.stringify(monitor));
+  // console.log("###trigger: "+ JSON.stringify(trigger));
   const {
     id,
     name,
