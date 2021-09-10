@@ -63,7 +63,11 @@ import {
   FormikFieldText,
 } from '../../../../../components/FormControls';
 import { getFilteredIndexFields, getIndexFields } from './utils/dataTypes';
-import { FORMIK_INITIAL_VALUES } from '../../../containers/CreateMonitor/utils/constants';
+import {
+  FILTERS_TOOLTIP_TEXT,
+  FORMIK_INITIAL_VALUES,
+  TIME_RANGE_TOOLTIP_TEXT,
+} from '../../../containers/CreateMonitor/utils/constants';
 import { DATA_TYPES } from '../../../../../utils/constants';
 import {
   TRIGGER_COMPARISON_OPERATORS,
@@ -71,6 +75,7 @@ import {
 } from '../../../../CreateTrigger/containers/DefineBucketLevelTrigger/DefineBucketLevelTrigger';
 import { FORMIK_INITIAL_TRIGGER_VALUES } from '../../../../CreateTrigger/containers/CreateTrigger/utils/constants';
 import { inputLimitText } from '../../../../../utils/helpers';
+import IconToolTip from '../../../../../components/IconToolTip';
 
 const propTypes = {
   formik: PropTypes.object.isRequired,
@@ -243,7 +248,8 @@ class WhereExpression extends Component {
       <div>
         <EuiText size="xs">
           <strong>{whereFilterHeader}</strong>
-          <i> - optional</i>
+          <i> - optional </i>
+          <IconToolTip content={FILTERS_TOOLTIP_TEXT} iconType="questionInCircle" />
         </EuiText>
         <EuiSpacer size={'s'} />
 

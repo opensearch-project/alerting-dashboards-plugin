@@ -44,14 +44,14 @@ const onChangeDefinition = (e, form) => {
 
 const queryLevelDescription = (
   <EuiText color={'subdued'} size={'xs'} style={{ paddingBottom: '10px', paddingTop: '0px' }}>
-    Per query monitors run a specified query and allow you to define triggers based on the result of
-    that query.
+    Per query monitors run a specified query and define triggers that check the results of that
+    query.
   </EuiText>
 );
 
 const bucketLevelDescription = (
   <EuiText color={'subdued'} size={'xs'} style={{ paddingBottom: '10px', paddingTop: '0px' }}>
-    Per bucket monitors allow you to group results into buckets and define triggers that run per
+    Per bucket monitors allow you to group results into buckets and define triggers that check each
     bucket.
   </EuiText>
 );

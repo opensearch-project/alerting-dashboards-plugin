@@ -26,14 +26,18 @@
 
 import React, { Component } from 'react';
 import { connect } from 'formik';
-import { EuiText, EuiButtonEmpty, EuiSpacer, EuiBadge } from '@elastic/eui';
+import { EuiText, EuiButtonEmpty, EuiSpacer, EuiBadge, EuiToolTip, EuiIcon } from '@elastic/eui';
 import { getIndexFields } from './utils/dataTypes';
 import { getMetricExpressionAllowedTypes, validateAggregationsDuplicates } from './utils/helpers';
 import _ from 'lodash';
-import { FORMIK_INITIAL_AGG_VALUES } from '../../../containers/CreateMonitor/utils/constants';
+import {
+  FORMIK_INITIAL_AGG_VALUES,
+  METRIC_TOOLTIP_TEXT,
+} from '../../../containers/CreateMonitor/utils/constants';
 import { MetricItem } from './index';
 import { MONITOR_TYPE } from '../../../../../utils/constants';
 import { inputLimitText } from '../../../../../utils/helpers';
+import IconToolTip from '../../../../../components/IconToolTip';
 
 export const MAX_NUM_QUERY_LEVEL_METRICS = 1;
 export const MAX_NUM_BUCKET_LEVEL_METRICS = 5;
@@ -111,7 +115,8 @@ class MetricExpression extends Component {
       <div id="aggregations">
         <EuiText size="xs">
           <strong>Metrics</strong>
-          <i> - optional</i>
+          <i> - optional </i>
+          <IconToolTip content={METRIC_TOOLTIP_TEXT} iconType="questionInCircle" />
         </EuiText>
         <EuiSpacer size="s" />
 
