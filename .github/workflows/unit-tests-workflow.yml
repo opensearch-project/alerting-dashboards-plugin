@@ -45,4 +45,6 @@ jobs:
       - name: Run tests
         run: |
           cd OpenSearch-Dashboards/plugins/alerting-dashboards-plugin
-          yarn run test:jest
+          yarn run test:jest --coverage
+      - name: Uploads coverage
+        uses: codecov/codecov-action@v1
