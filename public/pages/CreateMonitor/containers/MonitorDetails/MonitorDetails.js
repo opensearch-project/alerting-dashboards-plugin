@@ -30,7 +30,7 @@ import ContentPanel from '../../../../components/ContentPanel';
 import FormikFieldText from '../../../../components/FormControls/FormikFieldText';
 import { hasError, isInvalid, required, validateMonitorName } from '../../../../utils/validate';
 import Schedule from '../../components/Schedule';
-import MonitorDefinitionCard from '../../components/MonitorDefinitionCards';
+import MonitorDefinitionCard from '../../components/MonitorDefinitionCard';
 import MonitorType from '../../components/MonitorType';
 import AnomalyDetectors from '../AnomalyDetectors/AnomalyDetectors';
 
@@ -62,7 +62,6 @@ function renderEmptyMessage(message) {
   );
 }
 
-// TODO: Make sure that resetResponse is defined in Query and passed to MonitorDetails
 const MonitorDetails = ({
   values,
   errors,

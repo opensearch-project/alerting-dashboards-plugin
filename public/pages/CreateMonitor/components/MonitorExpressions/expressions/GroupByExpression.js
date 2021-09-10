@@ -33,6 +33,11 @@ import GroupByItem from './GroupByItem';
 import { GROUP_BY_ERROR } from './utils/constants';
 import { MONITOR_TYPE } from '../../../../../utils/constants';
 import { inputLimitText } from '../../../../../utils/helpers';
+import {
+  GROUP_BY_TOOLTIP_TEXT,
+  TIME_RANGE_TOOLTIP_TEXT,
+} from '../../../containers/CreateMonitor/utils/constants';
+import IconToolTip from '../../../../../components/IconToolTip';
 
 export const MAX_NUM_QUERY_LEVEL_GROUP_BYS = 1;
 export const MAX_NUM_BUCKET_LEVEL_GROUP_BYS = 2;
@@ -103,8 +108,9 @@ class GroupByExpression extends Component {
     return (
       <div id="groupBy">
         <EuiText size="xs">
-          <strong>Group by</strong>
-          {!isBucketLevelMonitor ? <i> - optional</i> : null}
+          <strong>Group by </strong>
+          {!isBucketLevelMonitor ? <i>- optional </i> : null}
+          <IconToolTip content={GROUP_BY_TOOLTIP_TEXT} iconType="questionInCircle" />
         </EuiText>
         <EuiSpacer size={'s'} />
 
