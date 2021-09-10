@@ -38,9 +38,9 @@ const Schedule = ({ isAd }) => (
     {isAd ? (
       <EuiText color={'subdued'} size={'xs'} style={{ maxWidth: '400px' }}>
         <p>
-          Define how often the monitor collects data and determines how often you may receive
-          alerts. We recommend scheduling the monitor at least twice the detector interval to avoid
-          missing anomaly results.
+          Define how often the monitor collects data and how often you may receive alerts. We
+          recommend setting this frequency to two times the detector interval to avoid missing
+          anomalous results from delayed processing time.
         </p>
       </EuiText>
     ) : null}
