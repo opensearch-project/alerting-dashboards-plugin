@@ -38,6 +38,7 @@ Compatible with OpenSearch Dashboards 1.1.0
 
 * Show Error Toast Message whenever action execution fails from backend due to incorrect configurations ([#22](https://github.com/opensearch-project/alerting-dashboards-plugin/pull/22))
 * Bucket level alerting dev UX review feedback ([#93](https://github.com/opensearch-project/alerting-dashboards-plugin/pull/93))
+* Text updates ([#105](https://github.com/opensearch-project/alerting-dashboards-plugin/pull/105))
 
 ### Maintenance
 
