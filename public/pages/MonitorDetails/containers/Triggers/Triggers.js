@@ -28,6 +28,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import uuidv4 from 'uuid/v4';
 import { EuiInMemoryTable } from '@elastic/eui';
+import _ from 'lodash';
 
 import ContentPanel from '../../../../components/ContentPanel';
 import { MONITOR_TYPE } from '../../../../utils/constants';
