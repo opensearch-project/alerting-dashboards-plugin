@@ -41,44 +41,4 @@ describe('TriggerExpressions', () => {
     const wrapper = shallow(<TriggerExpressions {...props} />);
     expect(wrapper).toMatchSnapshot();
   });
-
-  test('calls openExpression when clicking expression', () => {
-    const wrapper = mount(<Formik children={() => <TriggerExpressions {...props} />} />);
-    const openExpression = jest.spyOn(
-      wrapper.find(TriggerExpressions).instance(),
-      'openExpression'
-    );
-    const button = wrapper.find(EuiExpression);
-    expect(wrapper.find(TriggerExpressions).state().openedStates[Expressions.THRESHOLD]).toBe(
-      false
-    );
-    button.simulate('click');
-    wrapper.update();
-    expect(openExpression).toHaveBeenCalled();
-    expect(wrapper.find(TriggerExpressions).state().openedStates[Expressions.THRESHOLD]).toBe(true);
-  });
-
-  test('calls closeExpression when closing popover', async () => {
-    const wrapper = mount(<Formik children={() => <TriggerExpressions {...props} />} />);
-    const openExpression = jest.spyOn(
-      wrapper.find(TriggerExpressions).instance(),
-      'openExpression'
-    );
-    const closeExpression = jest.spyOn(
-      wrapper.find(TriggerExpressions).instance(),
-      'closeExpression'
-    );
-    const button = wrapper.find(EuiExpression);
-    button.simulate('click');
-    wrapper.update();
-    expect(openExpression).toHaveBeenCalled();
-    expect(wrapper.find(TriggerExpressions).state().openedStates[Expressions.THRESHOLD]).toBe(true);
-    await new Promise((res) => setTimeout(() => res()));
-    button.simulate('keyDown', { keyCode: 27 });
-    wrapper.update();
-    expect(closeExpression).toHaveBeenCalled();
-    expect(wrapper.find(TriggerExpressions).state().openedStates[Expressions.THRESHOLD]).toBe(
-      false
-    );
-  });
 });
