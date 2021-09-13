@@ -75,3 +75,9 @@ export const FORMIK_INITIAL_AGG_VALUES = {
 };
 
 export const DEFAULT_COMPOSITE_AGG_SIZE = 50;
+
+export const METRIC_TOOLTIP_TEXT = 'Extracted statistics such as simple calculations of data.';
+export const TIME_RANGE_TOOLTIP_TEXT = 'The time frame of data the plugin should monitor.';
+export const FILTERS_TOOLTIP_TEXT =
+  'Use a filter to retrieve a subset of the original data source.';
+export const GROUP_BY_TOOLTIP_TEXT = 'Specify a field whose every unique value can trigger alerts.';
