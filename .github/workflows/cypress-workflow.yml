@@ -40,7 +40,7 @@ jobs:
         with:
           repository: opensearch-project/common-utils
           path: common-utils
-          ref: 'main'
+          ref: '1.x'
       - name: Build common-utils
         working-directory: ./common-utils
         run: ./gradlew publishToMavenLocal -Dopensearch.version=${{ env.OPENSEARCH_VERSION }}
