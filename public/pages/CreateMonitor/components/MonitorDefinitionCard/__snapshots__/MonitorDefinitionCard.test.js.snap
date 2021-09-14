@@ -208,6 +208,8 @@ exports[`MonitorDefinitionCard renders without AD plugin 2`] = `
               >
                 Visual editor
               </label>
+            </div>
+          </div>
         </div>
       </div>
     </div>
