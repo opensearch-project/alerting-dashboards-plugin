@@ -33,6 +33,7 @@ class AlertingFakes {
     this.randomInputs = this.randomInputs.bind(this);
     this.randomMonitorEnabled = this.randomMonitorEnabled.bind(this);
     this.randomMonitor = this.randomMonitor.bind(this);
+    this.randomTime = this.randomTime.bind(this);
   }
 
   randomEmailDestination() {
@@ -187,6 +188,10 @@ class AlertingFakes {
         .fill(null)
         .map(() => this.randomTrigger()),
     };
+  }
+
+  randomTime() {
+    return this.chance.timestamp();
   }
 }
 
