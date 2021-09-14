@@ -335,6 +335,7 @@ exports[`DestinationsList renders 1`] = `
                 "chime",
                 "slack",
                 "custom_webhook",
+                "webhook",
                 "email",
               ]
             }
@@ -455,6 +456,10 @@ exports[`DestinationsList renders 1`] = `
                             "value": "custom_webhook",
                           },
                           Object {
+                            "text": "Custom webhook",
+                            "value": "webhook",
+                          },
+                          Object {
                             "text": "Email",
                             "value": "email",
                           },
@@ -512,6 +517,12 @@ exports[`DestinationsList renders 1`] = `
                                 </option>
                                 <option
                                   key="4"
+                                  value="webhook"
+                                >
+                                  Custom webhook
+                                </option>
+                                <option
+                                  key="5"
                                   value="email"
                                 >
                                   Email

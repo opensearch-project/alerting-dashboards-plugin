@@ -68,6 +68,11 @@ exports[`<DestinationsControls /> should render DestinationsControls 1`] = `
             Custom webhook
           </option>
           <option
+            value="webhook"
+          >
+            Custom webhook
+          </option>
+          <option
             value="email"
           >
             Email
