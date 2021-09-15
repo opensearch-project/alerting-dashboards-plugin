@@ -5,6 +5,7 @@ exports[`AnomalyDetectors renders 1`] = `
   initialValues={
     Object {
       "aggregationType": "count",
+      "aggregations": Array [],
       "bucketUnitOfTime": "h",
       "bucketValue": 1,
       "cronExpression": "0 */1 * * *",
@@ -13,9 +14,16 @@ exports[`AnomalyDetectors renders 1`] = `
       "disabled": false,
       "fieldName": Array [],
       "frequency": "interval",
+      "groupBy": Array [],
+      "groupByField": Array [
+        Object {
+          "label": "",
+        },
+      ],
       "groupedOverFieldName": "bytes",
       "groupedOverTop": 5,
       "index": Array [],
+      "monitor_type": "query_level_monitor",
       "monthly": Object {
         "day": 1,
         "type": "day",
@@ -59,6 +67,7 @@ exports[`AnomalyDetectors renders 1`] = `
     values={
       Object {
         "aggregationType": "count",
+        "aggregations": Array [],
         "bucketUnitOfTime": "h",
         "bucketValue": 1,
         "cronExpression": "0 */1 * * *",
@@ -67,9 +76,16 @@ exports[`AnomalyDetectors renders 1`] = `
         "disabled": false,
         "fieldName": Array [],
         "frequency": "interval",
+        "groupBy": Array [],
+        "groupByField": Array [
+          Object {
+            "label": "",
+          },
+        ],
         "groupedOverFieldName": "bytes",
         "groupedOverTop": 5,
         "index": Array [],
+        "monitor_type": "query_level_monitor",
         "monthly": Object {
           "day": 1,
           "type": "day",
@@ -174,6 +190,7 @@ exports[`AnomalyDetectors renders 1`] = `
                   "initialTouched": Object {},
                   "initialValues": Object {
                     "aggregationType": "count",
+                    "aggregations": Array [],
                     "bucketUnitOfTime": "h",
                     "bucketValue": 1,
                     "cronExpression": "0 */1 * * *",
@@ -182,9 +199,16 @@ exports[`AnomalyDetectors renders 1`] = `
                     "disabled": false,
                     "fieldName": Array [],
                     "frequency": "interval",
+                    "groupBy": Array [],
+                    "groupByField": Array [
+                      Object {
+                        "label": "",
+                      },
+                    ],
                     "groupedOverFieldName": "bytes",
                     "groupedOverTop": 5,
                     "index": Array [],
+                    "monitor_type": "query_level_monitor",
                     "monthly": Object {
                       "day": 1,
                       "type": "day",
@@ -247,6 +271,7 @@ exports[`AnomalyDetectors renders 1`] = `
                   "validateOnMount": false,
                   "values": Object {
                     "aggregationType": "count",
+                    "aggregations": Array [],
                     "bucketUnitOfTime": "h",
                     "bucketValue": 1,
                     "cronExpression": "0 */1 * * *",
@@ -255,9 +280,16 @@ exports[`AnomalyDetectors renders 1`] = `
                     "disabled": false,
                     "fieldName": Array [],
                     "frequency": "interval",
+                    "groupBy": Array [],
+                    "groupByField": Array [
+                      Object {
+                        "label": "",
+                      },
+                    ],
                     "groupedOverFieldName": "bytes",
                     "groupedOverTop": 5,
                     "index": Array [],
+                    "monitor_type": "query_level_monitor",
                     "monthly": Object {
                       "day": 1,
                       "type": "day",
@@ -368,6 +400,7 @@ exports[`AnomalyDetectors renders 1`] = `
                           "initialTouched": Object {},
                           "initialValues": Object {
                             "aggregationType": "count",
+                            "aggregations": Array [],
                             "bucketUnitOfTime": "h",
                             "bucketValue": 1,
                             "cronExpression": "0 */1 * * *",
@@ -376,9 +409,16 @@ exports[`AnomalyDetectors renders 1`] = `
                             "disabled": false,
                             "fieldName": Array [],
                             "frequency": "interval",
+                            "groupBy": Array [],
+                            "groupByField": Array [
+                              Object {
+                                "label": "",
+                              },
+                            ],
                             "groupedOverFieldName": "bytes",
                             "groupedOverTop": 5,
                             "index": Array [],
+                            "monitor_type": "query_level_monitor",
                             "monthly": Object {
                               "day": 1,
                               "type": "day",
@@ -441,6 +481,7 @@ exports[`AnomalyDetectors renders 1`] = `
                           "validateOnMount": false,
                           "values": Object {
                             "aggregationType": "count",
+                            "aggregations": Array [],
                             "bucketUnitOfTime": "h",
                             "bucketValue": 1,
                             "cronExpression": "0 */1 * * *",
@@ -449,9 +490,16 @@ exports[`AnomalyDetectors renders 1`] = `
                             "disabled": false,
                             "fieldName": Array [],
                             "frequency": "interval",
+                            "groupBy": Array [],
+                            "groupByField": Array [
+                              Object {
+                                "label": "",
+                              },
+                            ],
                             "groupedOverFieldName": "bytes",
                             "groupedOverTop": 5,
                             "index": Array [],
+                            "monitor_type": "query_level_monitor",
                             "monthly": Object {
                               "day": 1,
                               "type": "day",

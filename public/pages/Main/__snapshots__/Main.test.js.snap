@@ -23,7 +23,7 @@ exports[`Main renders 1`] = `
         <span
           class="euiTab__content"
         >
-          Dashboard
+          Alerts
         </span>
       </button>
       <button

@@ -9,6 +9,8 @@
  * GitHub history for details.
  */
 
+import { TRIGGER_TYPE } from '../../public/pages/CreateTrigger/containers/CreateTrigger/utils/constants';
+
 const Chance = require('chance');
 
 class AlertingFakes {
@@ -31,6 +33,7 @@ class AlertingFakes {
     this.randomInputs = this.randomInputs.bind(this);
     this.randomMonitorEnabled = this.randomMonitorEnabled.bind(this);
     this.randomMonitor = this.randomMonitor.bind(this);
+    this.randomTime = this.randomTime.bind(this);
   }
 
   randomEmailDestination() {
@@ -106,20 +109,22 @@ class AlertingFakes {
     };
   }
 
-  randomTrigger() {
+  randomTrigger(type = TRIGGER_TYPE.QUERY_LEVEL) {
     return {
-      id: this.chance.guid().slice(0, 20),
-      name: this.chance.word(),
-      severity: this.chance.string({ length: 1, pool: '12345' }),
-      condition: {
-        script: {
-          lang: 'painless',
-          source: `return ${this.chance.bool()}`,
+      [type]: {
+        id: this.chance.guid().slice(0, 20),
+        name: this.chance.word(),
+        severity: this.chance.string({ length: 1, pool: '12345' }),
+        condition: {
+          script: {
+            lang: 'painless',
+            source: `return ${this.chance.bool()}`,
+          },
         },
+        actions: new Array(this.chance.natural({ max: 10 }))
+          .fill(null)
+          .map(() => this.randomAction()),
       },
-      actions: new Array(this.chance.natural({ max: 10 }))
-        .fill(null)
-        .map(() => this.randomAction()),
     };
   }
 
@@ -183,6 +188,10 @@ class AlertingFakes {
         .fill(null)
         .map(() => this.randomTrigger()),
     };
+  }
+
+  randomTime() {
+    return this.chance.timestamp();
   }
 }
 

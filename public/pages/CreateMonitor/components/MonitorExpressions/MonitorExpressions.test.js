@@ -35,7 +35,7 @@ describe('MonitorExpressions', () => {
   test('renders', () => {
     const component = (
       <Formik initialValues={FORMIK_INITIAL_VALUES}>
-        {() => <MonitorExpressions onRunQuery={() => {}} dataTypes={[]} ofEnabled={false} />}
+        {() => <MonitorExpressions onRunQuery={() => {}} dataTypes={[]} errors={{}} />}
       </Formik>
     );
 
