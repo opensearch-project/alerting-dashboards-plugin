@@ -40,7 +40,7 @@ const onChangeDefinition = (e, form) => {
   form.setFieldValue('searchType', type, false);
 };
 
-const MonitorDefinitionCard = ({ values, resetResponse, plugins }) => {
+const MonitorDefinitionCard = ({ values, plugins }) => {
   const hasADPlugin = plugins.indexOf(OS_AD_PLUGIN) !== -1;
   const isBucketLevelMonitor = values.monitor_type === MONITOR_TYPE.BUCKET_LEVEL;
 

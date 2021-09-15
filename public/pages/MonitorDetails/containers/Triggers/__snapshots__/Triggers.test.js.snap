@@ -2,35 +2,12 @@
 
 exports[`Triggers renders 1`] = `
 <ContentPanel
-  actions={
-    Array [
-      <EuiButton
-        disabled={true}
-        onClick={[Function]}
-      >
-        Edit
-      </EuiButton>,
-      <EuiButton
-        disabled={true}
-        onClick={[Function]}
-      >
-        Delete
-      </EuiButton>,
-      <EuiButton
-        disabled={false}
-        fill={true}
-        onClick={[MockFunction]}
-      >
-        Create
-      </EuiButton>,
-    ]
-  }
   bodyStyles={
     Object {
       "padding": "initial",
     }
   }
-  title="Triggers"
+  title="Triggers (1)"
   titleSize="s"
 >
   <EuiInMemoryTable
@@ -41,6 +18,7 @@ exports[`Triggers renders 1`] = `
           "name": "Name",
           "sortable": true,
           "truncateText": true,
+          "width": "25%",
         },
         Object {
           "field": "actions",
@@ -48,38 +26,27 @@ exports[`Triggers renders 1`] = `
           "render": [Function],
           "sortable": true,
           "truncateText": false,
+          "width": "25%",
         },
         Object {
           "field": "severity",
           "name": "Severity",
           "sortable": true,
           "truncateText": false,
+          "width": "50%",
         },
       ]
     }
-    isSelectable={true}
     itemId="id"
     items={
       Array [
-        Object {
-          "actions": Array [
-            Object {
-              "name": "Random Action",
-            },
-          ],
-          "name": "Random Trigger",
-          "severity": 1,
-        },
+        undefined,
       ]
     }
     key="0"
+    noItemsMessage="There are no triggers."
     onTableChange={[Function]}
     responsive={true}
-    selection={
-      Object {
-        "onSelectionChange": [Function],
-      }
-    }
     sorting={
       Object {
         "sort": Object {
