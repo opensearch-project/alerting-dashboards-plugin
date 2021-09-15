@@ -31,7 +31,7 @@ import { Formik } from 'formik';
 import MonitorTimeField from './MonitorTimeField';
 
 describe('MonitorTimeField', () => {
-  test.skip('renders', () => {
+  test('renders', () => {
     const component = (
       <Formik initialValues={{}} onSubmit={() => {}}>
         <MonitorTimeField dataTypes={{}} />

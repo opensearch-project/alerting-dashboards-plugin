@@ -1,28 +1,103 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`ForExpression renders 1`] = `
-<div
-  class="euiPopover euiPopover--anchorDownLeft euiPopover--withTitle"
-  id="for-popover"
->
+<div>
   <div
-    class="euiPopover__anchor"
+    class="euiText euiText--extraSmall"
   >
-    <button
-      class="euiExpression euiExpression-isClickable euiExpression-isUppercase euiExpression--secondary"
+    <strong>
+      Time range for the last 
+    </strong>
+    <span
+      class="euiToolTipAnchor"
     >
-      <span
-        class="euiExpression__description"
+      <div>
+        EuiIconMock
+      </div>
+    </span>
+  </div>
+  <div
+    class="euiSpacer euiSpacer--s"
+  />
+  <div
+    class="euiFlexGroup euiFlexGroup--gutterLarge euiFlexGroup--directionRow euiFlexGroup--responsive"
+    style="max-width:600px"
+  >
+    <div
+      class="euiFlexItem euiFlexItem--flexGrowZero"
+      style="width:150px"
+    >
+      <div
+        class="euiFormRow"
+        id="bucketValue-form-row-row"
       >
-        for the last
-      </span>
-       
-      <span
-        class="euiExpression__value"
+        <div
+          class="euiFormRow__fieldWrapper"
+        >
+          <div
+            class="euiFormControlLayout"
+          >
+            <div
+              class="euiFormControlLayout__childrenWrapper"
+            >
+              <input
+                class="euiFieldNumber"
+                min="1"
+                name="bucketValue"
+                type="number"
+                value="1"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div
+      class="euiFlexItem euiFlexItem--flexGrowZero"
+      style="width:150px"
+    >
+      <div
+        class="euiFormControlLayout"
       >
-        1 hour(s)
-      </span>
-    </button>
+        <div
+          class="euiFormControlLayout__childrenWrapper"
+        >
+          <select
+            class="euiSelect"
+            id="bucketUnitOfTime"
+            name="bucketUnitOfTime"
+          >
+            <option
+              value="m"
+            >
+              minute(s)
+            </option>
+            <option
+              selected=""
+              value="h"
+            >
+              hour(s)
+            </option>
+            <option
+              value="d"
+            >
+              day(s)
+            </option>
+          </select>
+          <div
+            class="euiFormControlLayoutIcons euiFormControlLayoutIcons--right"
+          >
+            <span
+              class="euiFormControlLayoutCustomIcon"
+            >
+              <div>
+                EuiIconMock
+              </div>
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 `;

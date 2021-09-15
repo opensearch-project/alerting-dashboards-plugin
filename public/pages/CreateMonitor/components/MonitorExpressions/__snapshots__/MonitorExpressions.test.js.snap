@@ -1,120 +1,317 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`MonitorExpressions renders 1`] = `
-<div
-  class="euiFlexGroup euiFlexGroup--gutterLarge euiFlexGroup--alignItemsCenter euiFlexGroup--directionRow euiFlexGroup--responsive"
->
+<div>
   <div
-    class="euiFlexItem euiFlexItem--flexGrowZero"
+    id="aggregations"
   >
     <div
-      class="euiPopover euiPopover--anchorDownLeft euiPopover--withTitle"
-      id="when-popover"
+      class="euiText euiText--extraSmall"
     >
-      <div
-        class="euiPopover__anchor"
+      <strong>
+        Metrics
+      </strong>
+      <i>
+         - optional 
+      </i>
+      <span
+        class="euiToolTipAnchor"
       >
-        <button
-          class="euiExpression euiExpression-isClickable euiExpression-isUppercase euiExpression--secondary"
+        <div>
+          EuiIconMock
+        </div>
+      </span>
+    </div>
+    <div
+      class="euiSpacer euiSpacer--s"
+    />
+    <span
+      style="padding-right:5px"
+    >
+      <span
+        class="euiBadge euiBadge--hollow euiBadge--iconLeft"
+        style="padding-right:5px"
+      >
+        <span
+          class="euiBadge__content"
         >
           <span
-            class="euiExpression__description"
+            class="euiBadge__text"
           >
-            when
+            COUNT OF documents
           </span>
-           
-          <span
-            class="euiExpression__value"
-          >
-            count()
-          </span>
-        </button>
+        </span>
+      </span>
+    </span>
+    <div
+      class="euiSpacer euiSpacer--xs"
+    />
+    <div
+      class="euiText euiText--extraSmall"
+    >
+      <div
+        class="euiTextColor euiTextColor--danger"
+      />
+    </div>
+    <button
+      class="euiButtonEmpty euiButtonEmpty--primary euiButtonEmpty--xSmall"
+      data-test-subj="addMetricButton"
+      style="padding-top:5px"
+      type="button"
+    >
+      <span
+        class="euiButtonContent euiButtonEmpty__content"
+      >
+        <span
+          class="euiButtonEmpty__text"
+        >
+          + Add metric
+        </span>
+      </span>
+    </button>
+    <div
+      class="euiText euiText--extraSmall"
+      style="padding-left:10px"
+    >
+      <div
+        class="euiTextColor euiTextColor--subdued"
+      >
+        You can add up to 1  metric.
       </div>
     </div>
   </div>
   <div
-    class="euiFlexItem euiFlexItem--flexGrowZero"
-  >
+    class="euiSpacer euiSpacer--m"
+  />
+  <div>
     <div
-      class="euiPopover euiPopover--anchorDownLeft euiPopover--withTitle"
-      id="over-popover"
+      class="euiText euiText--extraSmall"
+    >
+      <strong>
+        Time range for the last 
+      </strong>
+      <span
+        class="euiToolTipAnchor"
+      >
+        <div>
+          EuiIconMock
+        </div>
+      </span>
+    </div>
+    <div
+      class="euiSpacer euiSpacer--s"
+    />
+    <div
+      class="euiFlexGroup euiFlexGroup--gutterLarge euiFlexGroup--directionRow euiFlexGroup--responsive"
+      style="max-width:600px"
     >
       <div
-        class="euiPopover__anchor"
+        class="euiFlexItem euiFlexItem--flexGrowZero"
+        style="width:150px"
       >
-        <button
-          class="euiExpression euiExpression-isClickable euiExpression-isUppercase euiExpression--secondary"
+        <div
+          class="euiFormRow"
+          id="bucketValue-form-row-row"
         >
-          <span
-            class="euiExpression__description"
+          <div
+            class="euiFormRow__fieldWrapper"
           >
-            over
-          </span>
-           
-          <span
-            class="euiExpression__value"
+            <div
+              class="euiFormControlLayout"
+            >
+              <div
+                class="euiFormControlLayout__childrenWrapper"
+              >
+                <input
+                  class="euiFieldNumber"
+                  min="1"
+                  name="bucketValue"
+                  type="number"
+                  value="1"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div
+        class="euiFlexItem euiFlexItem--flexGrowZero"
+        style="width:150px"
+      >
+        <div
+          class="euiFormControlLayout"
+        >
+          <div
+            class="euiFormControlLayout__childrenWrapper"
           >
-            all documents
-          </span>
-        </button>
+            <select
+              class="euiSelect"
+              id="bucketUnitOfTime"
+              name="bucketUnitOfTime"
+            >
+              <option
+                value="m"
+              >
+                minute(s)
+              </option>
+              <option
+                selected=""
+                value="h"
+              >
+                hour(s)
+              </option>
+              <option
+                value="d"
+              >
+                day(s)
+              </option>
+            </select>
+            <div
+              class="euiFormControlLayoutIcons euiFormControlLayoutIcons--right"
+            >
+              <span
+                class="euiFormControlLayoutCustomIcon"
+              >
+                <div>
+                  EuiIconMock
+                </div>
+              </span>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
   <div
-    class="euiFlexItem euiFlexItem--flexGrowZero"
-  >
+    class="euiSpacer euiSpacer--l"
+  />
+  <div>
     <div
-      class="euiPopover euiPopover--anchorDownLeft euiPopover--withTitle"
-      id="for-popover"
+      class="euiText euiText--extraSmall"
+    >
+      <strong>
+        Data filter
+      </strong>
+      <i>
+         - optional 
+      </i>
+      <span
+        class="euiToolTipAnchor"
+      >
+        <div>
+          EuiIconMock
+        </div>
+      </span>
+    </div>
+    <div
+      class="euiSpacer euiSpacer--s"
+    />
+    <div>
+      <div
+        class="euiText euiText--extraSmall"
+      >
+        No filters defined.
+      </div>
+    </div>
+    <button
+      class="euiButtonEmpty euiButtonEmpty--primary euiButtonEmpty--xSmall"
+      data-test-subj="where.addFilterButton"
+      style="padding-top:5px"
+      type="button"
+    >
+      <span
+        class="euiButtonContent euiButtonEmpty__content"
+      >
+        <span
+          class="euiButtonEmpty__text"
+        >
+          + Add filter
+        </span>
+      </span>
+    </button>
+    <div
+      class="euiText euiText--extraSmall"
+      style="padding-left:10px"
     >
       <div
-        class="euiPopover__anchor"
+        class="euiTextColor euiTextColor--subdued"
       >
-        <button
-          class="euiExpression euiExpression-isClickable euiExpression-isUppercase euiExpression--secondary"
-        >
-          <span
-            class="euiExpression__description"
-          >
-            for the last
-          </span>
-           
-          <span
-            class="euiExpression__value"
-          >
-            1 hour(s)
-          </span>
-        </button>
+        You can add up to 1  data filter.
       </div>
     </div>
   </div>
   <div
-    class="euiFlexItem euiFlexItem--flexGrowZero"
+    class="euiSpacer euiSpacer--m"
+  />
+  <div
+    id="groupBy"
   >
     <div
-      class="euiPopover euiPopover--anchorDownLeft euiPopover--withTitle"
-      id="where-popover"
+      class="euiText euiText--extraSmall"
+    >
+      <strong>
+        Group by 
+      </strong>
+      <i>
+        - optional 
+      </i>
+      <span
+        class="euiToolTipAnchor"
+      >
+        <div>
+          EuiIconMock
+        </div>
+      </span>
+    </div>
+    <div
+      class="euiSpacer euiSpacer--s"
+    />
+    <div>
+      <div
+        class="euiText euiText--extraSmall"
+      >
+        No group bys defined.
+      </div>
+    </div>
+    <div
+      class="euiSpacer euiSpacer--xs"
+    />
+    <button
+      class="euiButtonEmpty euiButtonEmpty--primary euiButtonEmpty--xSmall"
+      data-test-subj="addGroupByButton"
+      style="padding-top:5px"
+      type="button"
+    >
+      <span
+        class="euiButtonContent euiButtonEmpty__content"
+      >
+        <span
+          class="euiButtonEmpty__text"
+        >
+          + Add group by
+        </span>
+      </span>
+    </button>
+    <div
+      class="euiText euiText--extraSmall"
     >
       <div
-        class="euiPopover__anchor"
+        class="euiTextColor euiTextColor--danger"
+      />
+    </div>
+    <div
+      class="euiText euiText--extraSmall"
+      style="padding-left:10px"
+    >
+      <div
+        class="euiTextColor euiTextColor--subdued"
       >
-        <button
-          class="euiExpression euiExpression-isClickable euiExpression-isUppercase euiExpression--secondary"
-        >
-          <span
-            class="euiExpression__description"
-          >
-            where
-          </span>
-           
-          <span
-            class="euiExpression__value"
-          >
-            all fields are included
-          </span>
-        </button>
+        You can add up to 1  group by.
       </div>
     </div>
   </div>
+  <div
+    class="euiSpacer euiSpacer--xs"
+  />
 </div>
 `;
