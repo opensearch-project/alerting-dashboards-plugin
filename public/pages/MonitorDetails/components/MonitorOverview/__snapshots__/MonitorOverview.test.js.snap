@@ -30,6 +30,14 @@ exports[`MonitorOverview renders 1`] = `
       </div>
     </div>
   </div>
+  <div
+    class="euiText euiText--extraSmall"
+    style="padding:0px 10px"
+  >
+    <div
+      class="euiTextColor euiTextColor--subdued"
+    />
+  </div>
   <hr
     class="euiHorizontalRule euiHorizontalRule--full euiHorizontalRule--marginXSmall"
   />
@@ -46,10 +54,10 @@ exports[`MonitorOverview renders 1`] = `
           class="euiText euiText--extraSmall"
         >
           <strong>
-            State
+            Monitor type
           </strong>
           <div>
-            Enabled
+            Per query monitor
           </div>
         </div>
       </div>
@@ -145,7 +153,7 @@ exports[`MonitorOverview renders 1`] = `
             Last updated by
           </strong>
           <div>
-            N/A
+            -
           </div>
         </div>
       </div>

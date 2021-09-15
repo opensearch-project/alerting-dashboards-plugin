@@ -40,12 +40,13 @@ import {
 } from './helpers';
 import { DEFAULT_MARK_SIZE } from './constants';
 import { FORMIK_INITIAL_VALUES } from '../../../containers/CreateMonitor/utils/constants';
+import { MONITOR_TYPE } from '../../../../../utils/constants';
 
 describe('getYTitle', () => {
   test('returns count when empty array, undefined, or null', () => {
-    expect(getYTitle([])).toBe('count');
-    expect(getYTitle(undefined)).toBe('count');
-    expect(getYTitle(null)).toBe('count');
+    expect(getYTitle([])).toBe('doc_count');
+    expect(getYTitle(undefined)).toBe('doc_count');
+    expect(getYTitle(null)).toBe('doc_count');
   });
 });
 
@@ -154,24 +155,6 @@ describe('getMarkData', () => {
   });
 });
 
-describe('getAggregationTitle', () => {
-  test('gets count aggregation type title', () => {
-    const formikValues = _.cloneDeep(FORMIK_INITIAL_VALUES);
-    expect(getAggregationTitle(formikValues)).toBe(
-      'WHEN count() OVER all documents FOR THE LAST 1 hour(s)'
-    );
-  });
-
-  test('gets avg aggregation type title', () => {
-    const formikValues = _.cloneDeep(FORMIK_INITIAL_VALUES);
-    formikValues.aggregationType = 'avg';
-    formikValues.fieldName = [{ label: 'bytes' }];
-    expect(getAggregationTitle(formikValues)).toBe(
-      'WHEN average() OF bytes OVER all documents FOR THE LAST 1 hour(s)'
-    );
-  });
-});
-
 describe('getDataFromResponse', () => {
   test('gets empty array when no response', () => {
     expect(getDataFromResponse(null)).toEqual([]);
@@ -188,67 +171,67 @@ describe('getDataFromResponse', () => {
               from_as_string: '2018-10-31T18:00:00.000-07:00',
               key: 1541034000000,
               doc_count: 32,
-              when: { value: 5705.40625 },
+              metric: { value: 5705.40625 },
             },
             {
               key_as_string: '2018-10-31T19:00:00.000-07:00',
               from_as_string: '2018-10-31T19:00:00.000-07:00',
               key: 1541037600000,
               doc_count: 67,
-              when: { value: 6185.373134328358 },
+              metric: { value: 6185.373134328358 },
             },
             {
               key_as_string: '2018-10-31T20:00:00.000-07:00',
               from_as_string: '2018-10-31T20:00:00.000-07:00',
               key: 1541041200000,
               doc_count: 79,
-              when: { value: -2439.9367088607596 },
+              metric: { value: -2439.9367088607596 },
             },
             {
               key_as_string: '2018-10-31T21:00:00.000-07:00',
               from_as_string: '2018-10-31T21:00:00.000-07:00',
               key: 1541044800000,
               doc_count: 31,
-              when: { value: null },
+              metric: { value: null },
             },
             {
               key_as_string: '2018-10-31T22:00:00.000-07:00',
               from_as_string: '2018-10-31T22:00:00.000-07:00',
               key: 1541048400000,
               doc_count: 18,
-              when: { value: 4651.5 },
+              metric: { value: 4651.5 },
             },
             {
               key_as_string: '2018-10-31T23:00:00.000-07:00',
               from_as_string: '2018-10-31T23:00:00.000-07:00',
               key: 1541052000000,
               doc_count: 3,
-              when: { value: 4410.666666666667 },
+              metric: { value: 4410.666666666667 },
             },
           ],
         },
       },
     };
-    expect(getDataFromResponse(response)).toEqual([
+    expect(getDataFromResponse(response, 'metric', MONITOR_TYPE.QUERY_LEVEL)).toEqual([
       {
         x: new Date(response.aggregations.over.buckets[0].from_as_string),
-        y: response.aggregations.over.buckets[0].when.value,
+        y: response.aggregations.over.buckets[0].metric.value,
       },
       {
         x: new Date(response.aggregations.over.buckets[1].from_as_string),
-        y: response.aggregations.over.buckets[1].when.value,
+        y: response.aggregations.over.buckets[1].metric.value,
       },
       {
         x: new Date(response.aggregations.over.buckets[2].from_as_string),
-        y: response.aggregations.over.buckets[2].when.value,
+        y: response.aggregations.over.buckets[2].metric.value,
       },
       {
         x: new Date(response.aggregations.over.buckets[4].from_as_string),
-        y: response.aggregations.over.buckets[4].when.value,
+        y: response.aggregations.over.buckets[4].metric.value,
       },
       {
         x: new Date(response.aggregations.over.buckets[5].from_as_string),
-        y: response.aggregations.over.buckets[5].when.value,
+        y: response.aggregations.over.buckets[5].metric.value,
       },
     ]);
   });
@@ -261,11 +244,11 @@ describe('getXYValues', () => {
       from_as_string: '2018-10-31T18:00:00.000-07:00',
       key: 1541034000000,
       doc_count: 32,
-      when: { value: 5705.40625 },
+      metric: { value: 5705.40625 },
     };
     expect(getXYValues(whenBucket)).toEqual({
       x: new Date(whenBucket.from_as_string),
-      y: whenBucket.when.value,
+      y: whenBucket.metric.value,
     });
   });
 

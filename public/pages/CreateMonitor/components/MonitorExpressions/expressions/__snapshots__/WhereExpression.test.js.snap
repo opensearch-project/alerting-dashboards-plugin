@@ -1,28 +1,59 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`WhereExpression renders 1`] = `
-<div
-  class="euiPopover euiPopover--anchorDownLeft euiPopover--withTitle"
-  id="where-popover"
->
+<div>
   <div
-    class="euiPopover__anchor"
+    class="euiText euiText--extraSmall"
   >
-    <button
-      class="euiExpression euiExpression-isClickable euiExpression-isUppercase euiExpression--secondary"
+    <strong>
+      Data filter
+    </strong>
+    <i>
+       - optional 
+    </i>
+    <span
+      class="euiToolTipAnchor"
+    >
+      <div>
+        EuiIconMock
+      </div>
+    </span>
+  </div>
+  <div
+    class="euiSpacer euiSpacer--s"
+  />
+  <div>
+    <div
+      class="euiText euiText--extraSmall"
+    >
+      No filters defined.
+    </div>
+  </div>
+  <button
+    class="euiButtonEmpty euiButtonEmpty--primary euiButtonEmpty--xSmall"
+    data-test-subj="where.addFilterButton"
+    style="padding-top:5px"
+    type="button"
+  >
+    <span
+      class="euiButtonContent euiButtonEmpty__content"
     >
       <span
-        class="euiExpression__description"
+        class="euiButtonEmpty__text"
       >
-        where
+        + Add filter
       </span>
-       
-      <span
-        class="euiExpression__value"
-      >
-        all fields are included
-      </span>
-    </button>
+    </span>
+  </button>
+  <div
+    class="euiText euiText--extraSmall"
+    style="padding-left:10px"
+  >
+    <div
+      class="euiTextColor euiTextColor--subdued"
+    >
+      You can add up to 1  data filter.
+    </div>
   </div>
 </div>
 `;

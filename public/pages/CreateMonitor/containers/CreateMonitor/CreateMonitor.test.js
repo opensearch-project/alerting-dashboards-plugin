@@ -32,6 +32,7 @@ import { historyMock, httpClientMock } from '../../../../../test/mocks';
 import { FORMIK_INITIAL_VALUES } from './utils/constants';
 import AlertingFakes from '../../../../../test/utils/helpers';
 import { SEARCH_TYPE } from '../../../../utils/constants';
+import { TRIGGER_TYPE } from '../../../CreateTrigger/containers/CreateTrigger/utils/constants';
 
 const alertingFakes = new AlertingFakes('CreateMonitor random seed');
 
@@ -179,9 +180,10 @@ describe('CreateMonitor', () => {
   });
 
   describe('onUpdate', () => {
-    test('calls updateMonitor with monitor with no triggers key', () => {
+    // Query-level monitor
+    test('calls updateMonitor with monitor', () => {
       const monitor = alertingFakes.randomMonitor();
-      const trigger = alertingFakes.randomTrigger();
+      const trigger = alertingFakes.randomTrigger(TRIGGER_TYPE.QUERY_LEVEL);
       monitor.triggers = [trigger];
       const wrapper = shallow(
         <CreateMonitor
@@ -197,10 +199,7 @@ describe('CreateMonitor', () => {
       );
       wrapper.instance().onUpdate(monitor, formikBag);
       expect(updateMonitor).toHaveBeenCalledTimes(1);
-      // The updatedMonitor that is passed in should NOT have the trigger key
-      const updatedMonitor = { ...monitor };
-      delete updatedMonitor.triggers;
-      expect(updateMonitor).toHaveBeenCalledWith(updatedMonitor);
+      expect(updateMonitor).toHaveBeenCalledWith(monitor);
     });
 
     test('logs error when updateMonitor rejects', async () => {
