@@ -54,7 +54,6 @@ import {
   getGraphDescription,
 } from './utils/helpers';
 import { MONITOR_TYPE } from '../../../../utils/constants';
-import { URL } from '../../../../../utils/constants';
 import ContentPanel from '../../../../components/ContentPanel';
 import { selectOptionValueToText } from '../MonitorExpressions/expressions/utils/helpers';
 import { UNITS_OF_TIME } from '../MonitorExpressions/expressions/utils/constants';
