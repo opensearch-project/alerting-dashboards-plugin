@@ -18,6 +18,7 @@ Object {
     <ul>
       <li>
         <EuiLink
+          external={true}
           href="https://mustache.github.io/mustache.5.html"
           target="_blank"
         >

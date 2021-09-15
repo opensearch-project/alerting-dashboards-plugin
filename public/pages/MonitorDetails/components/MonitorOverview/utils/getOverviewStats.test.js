@@ -40,8 +40,8 @@ describe('getOverviewStats', () => {
     const activeCount = 17;
     expect(getOverviewStats(monitor, monitorId, monitorVersion, activeCount)).toEqual([
       {
-        header: 'State',
-        value: 'Enabled',
+        header: 'Monitor type',
+        value: 'Per query monitor',
       },
       {
         header: 'Monitor definition type',

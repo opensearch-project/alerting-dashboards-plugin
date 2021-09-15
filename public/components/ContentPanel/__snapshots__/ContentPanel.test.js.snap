@@ -30,6 +30,14 @@ exports[`ContentPanel renders 1`] = `
       </div>
     </div>
   </div>
+  <div
+    class="euiText euiText--extraSmall"
+    style="padding:0px 10px"
+  >
+    <div
+      class="euiTextColor euiTextColor--subdued"
+    />
+  </div>
   <hr
     class="euiHorizontalRule euiHorizontalRule--full euiHorizontalRule--marginXSmall"
   />
