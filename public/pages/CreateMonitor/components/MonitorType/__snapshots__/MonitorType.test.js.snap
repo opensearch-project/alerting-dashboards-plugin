@@ -1,0 +1,158 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`MonitorType renders 1`] = `
+<div
+  class="euiFlexGroup euiFlexGroup--gutterMedium euiFlexGroup--alignItemsFlexEnd euiFlexGroup--directionRow euiFlexGroup--responsive"
+>
+  <div
+    class="euiFlexItem euiFlexItem--flexGrowZero"
+  >
+    <div
+      class="euiFormRow"
+      id="monitorTypeQueryLevel-form-row-row"
+      style="width:400px"
+    >
+      <div
+        class="euiFormRow__labelWrapper"
+      >
+        <label
+          class="euiFormLabel euiFormRow__label"
+          for="monitorTypeQueryLevel-form-row"
+        >
+          Monitor type
+        </label>
+      </div>
+      <div
+        class="euiFormRow__fieldWrapper"
+      >
+        <div
+          class="euiCheckableCard"
+        >
+          <div
+            class="euiCheckableCard__row"
+          >
+            <div
+              class="euiCheckableCard__control"
+            >
+              <div
+                class="euiRadio euiRadio--noLabel"
+                data-test-subj="queryLevelMonitorRadioCard"
+              >
+                <input
+                  class="euiRadio__input"
+                  id="queryLevelMonitorRadioCard"
+                  name="monitorTypeQueryLevel"
+                  type="radio"
+                  value="query_level_monitor"
+                />
+                <div
+                  class="euiRadio__circle"
+                />
+              </div>
+            </div>
+            <label
+              aria-describedby="queryLevelMonitorRadioCard-details"
+              class="euiCheckableCard__label"
+              for="queryLevelMonitorRadioCard"
+            >
+              Per query monitor
+            </label>
+          </div>
+          <div
+            class="euiCheckableCard__row"
+          >
+            <div
+              class="euiCheckableCard__control"
+            />
+            <div
+              class="euiCheckableCard__children"
+              id="queryLevelMonitorRadioCard-details"
+            >
+              <div
+                class="euiText euiText--extraSmall"
+                style="padding-bottom:10px;padding-top:0px"
+              >
+                <div
+                  class="euiTextColor euiTextColor--subdued"
+                >
+                  Per query monitors run a specified query and define triggers that check the results of that query.
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div
+    class="euiFlexItem euiFlexItem--flexGrowZero"
+  >
+    <div
+      class="euiFormRow"
+      id="monitorTypeBucketLevel-form-row-row"
+      style="width:400px"
+    >
+      <div
+        class="euiFormRow__fieldWrapper"
+      >
+        <div
+          class="euiCheckableCard"
+        >
+          <div
+            class="euiCheckableCard__row"
+          >
+            <div
+              class="euiCheckableCard__control"
+            >
+              <div
+                class="euiRadio euiRadio--noLabel"
+                data-test-subj="bucketLevelMonitorRadioCard"
+              >
+                <input
+                  class="euiRadio__input"
+                  id="bucketLevelMonitorRadioCard"
+                  name="monitorTypeBucketLevel"
+                  type="radio"
+                  value="bucket_level_monitor"
+                />
+                <div
+                  class="euiRadio__circle"
+                />
+              </div>
+            </div>
+            <label
+              aria-describedby="bucketLevelMonitorRadioCard-details"
+              class="euiCheckableCard__label"
+              for="bucketLevelMonitorRadioCard"
+            >
+              Per bucket monitor
+            </label>
+          </div>
+          <div
+            class="euiCheckableCard__row"
+          >
+            <div
+              class="euiCheckableCard__control"
+            />
+            <div
+              class="euiCheckableCard__children"
+              id="bucketLevelMonitorRadioCard-details"
+            >
+              <div
+                class="euiText euiText--extraSmall"
+                style="padding-bottom:10px;padding-top:0px"
+              >
+                <div
+                  class="euiTextColor euiTextColor--subdued"
+                >
+                  Per bucket monitors allow you to group results into buckets and define triggers that check each bucket.
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;

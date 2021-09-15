@@ -1,0 +1,70 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`FormikCodeEditor render formRow 1`] = `
+<div
+  class="euiFormRow"
+  id="testing-form-row-row"
+>
+  <div
+    class="euiFormRow__fieldWrapper"
+  >
+    <div
+      class="euiCodeEditorWrapper"
+      data-test-subj="codeEditorContainer"
+    >
+      <div
+        class="euiCodeEditorKeyboardHint"
+        data-test-subj="codeEditorHint"
+        id="generated-id"
+        role="button"
+        tabindex="0"
+      >
+        <p
+          class="euiText"
+        >
+          Press Enter to start editing.
+        </p>
+        <p
+          class="euiText"
+        >
+          When you're done, press Escape to stop editing.
+        </p>
+      </div>
+      <div
+        id="generated-id"
+        style="width:500px;height:500px"
+      />
+    </div>
+  </div>
+</div>
+`;
+
+exports[`FormikCodeEditor renders 1`] = `
+<div
+  class="euiCodeEditorWrapper"
+  data-test-subj="codeEditorContainer"
+>
+  <div
+    class="euiCodeEditorKeyboardHint"
+    data-test-subj="codeEditorHint"
+    id="generated-id"
+    role="button"
+    tabindex="0"
+  >
+    <p
+      class="euiText"
+    >
+      Press Enter to start editing.
+    </p>
+    <p
+      class="euiText"
+    >
+      When you're done, press Escape to stop editing.
+    </p>
+  </div>
+  <div
+    id="generated-id"
+    style="width:500px;height:500px"
+  />
+</div>
+`;

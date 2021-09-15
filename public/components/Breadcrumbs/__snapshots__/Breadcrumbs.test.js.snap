@@ -38,7 +38,7 @@ Object {
 exports[`getBreadcrumb returns correct constant breadcrumbs 3`] = `
 Object {
   "href": "/dashboard",
-  "text": "Dashboard",
+  "text": "Alerts",
 }
 `;
 
