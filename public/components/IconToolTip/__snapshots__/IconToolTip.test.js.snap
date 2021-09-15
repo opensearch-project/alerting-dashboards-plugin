@@ -1,0 +1,11 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`IconToolTip renders 1`] = `
+<span
+  class="euiToolTipAnchor"
+>
+  <div>
+    EuiIconMock
+  </div>
+</span>
+`;

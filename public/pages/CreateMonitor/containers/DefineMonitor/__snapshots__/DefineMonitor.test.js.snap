@@ -1,104 +1,16 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`DefineMonitor renders 1`] = `
-<ContentPanel
-  actions={Array []}
-  bodyStyles={
-    Object {
-      "padding": "initial",
-    }
-  }
-  title="Define monitor"
-  titleSize="s"
->
-  <MonitorDefinition
-    plugins={Array []}
-    resetResponse={[Function]}
-  />
-  <MonitorIndex
-    httpClient={[MockFunction]}
-  />
-  <MonitorTimeField
-    dataTypes={Object {}}
-  />
-  <div
-    style={
-      Object {
-        "padding": "0px 10px",
-      }
-    }
-  >
-    <div
-      style={
-        Object {
-          "border": "1px solid #D9D9D9",
-          "borderRadius": "5px",
-          "padding": "20px",
-        }
-      }
-    >
-      <div
-        style={
-          Object {
-            "alignItems": "center",
-            "display": "flex",
-            "height": "450px",
-            "justifyContent": "center",
-          }
-        }
-      >
-        <div>
-          You must specify an index.
-        </div>
-      </div>
-    </div>
-  </div>
-  <EuiSpacer
-    size="m"
-  />
-  <QueryPerformance
-    response={null}
-  />
-</ContentPanel>
-`;
-
-exports[`DefineMonitor should show warning in case of Ad monitor and plugin is not installed 1`] = `
-<ContentPanel
-  actions={Array []}
-  bodyStyles={
-    Object {
-      "padding": "initial",
-    }
-  }
-  title="Define monitor"
-  titleSize="s"
->
-  <EuiCallOut
-    color="warning"
-    iconType="help"
-    size="s"
-    title="Anomaly detector plugin is not installed on Opensearch, This monitor will not functional properly."
-  />
-  <EuiSpacer
-    size="s"
-  />
-  <MonitorDefinition
-    plugins={Array []}
-    resetResponse={[Function]}
-  />
-  <div
-    style={
-      Object {
-        "padding": "0px 10px",
-      }
-    }
-  >
-    <AnomalyDetectors
+<div>
+  <div>
+    <DataSource
+      dataTypes={Object {}}
+      errors={Object {}}
       httpClient={[MockFunction]}
-      renderEmptyMessage={[Function]}
       values={
         Object {
           "aggregationType": "count",
+          "aggregations": Array [],
           "bucketUnitOfTime": "h",
           "bucketValue": 1,
           "cronExpression": "0 */1 * * *",
@@ -107,9 +19,16 @@ exports[`DefineMonitor should show warning in case of Ad monitor and plugin is n
           "disabled": false,
           "fieldName": Array [],
           "frequency": "interval",
+          "groupBy": Array [],
+          "groupByField": Array [
+            Object {
+              "label": "",
+            },
+          ],
           "groupedOverFieldName": "bytes",
           "groupedOverTop": 5,
           "index": Array [],
+          "monitor_type": "query_level_monitor",
           "monthly": Object {
             "day": 1,
             "type": "day",
@@ -126,7 +45,7 @@ exports[`DefineMonitor should show warning in case of Ad monitor and plugin is n
         \\"match_all\\": {}
     }
 }",
-          "searchType": "ad",
+          "searchType": "graph",
           "timeField": "",
           "timezone": Array [],
           "weekly": Object {
@@ -148,6 +67,134 @@ exports[`DefineMonitor should show warning in case of Ad monitor and plugin is n
         }
       }
     />
+    <EuiSpacer />
   </div>
-</ContentPanel>
+  <ContentPanel
+    actions={Array []}
+    bodyStyles={
+      Object {
+        "padding": "initial",
+      }
+    }
+    panelStyles={
+      Object {
+        "paddingLeft": "10px",
+        "paddingRight": "10px",
+      }
+    }
+    title="Query"
+    titleSize="s"
+  >
+    <div
+      style={
+        Object {
+          "padding": "0px 10px",
+        }
+      }
+    >
+      <div
+        style={
+          Object {
+            "border": "1px solid #D9D9D9",
+            "borderRadius": "5px",
+            "padding": "20px",
+          }
+        }
+      >
+        <div
+          style={
+            Object {
+              "alignItems": "center",
+              "display": "flex",
+              "height": "450px",
+              "justifyContent": "center",
+            }
+          }
+        >
+          <div>
+            You must specify an index.
+          </div>
+        </div>
+      </div>
+    </div>
+  </ContentPanel>
+</div>
+`;
+
+exports[`DefineMonitor should show warning in case of Ad monitor and plugin is not installed 1`] = `
+<div>
+  <ContentPanel
+    actions={
+      Array [
+        <EuiButton
+          disabled={true}
+          onClick={[Function]}
+        >
+          Run
+        </EuiButton>,
+      ]
+    }
+    bodyStyles={
+      Object {
+        "padding": "initial",
+      }
+    }
+    panelStyles={
+      Object {
+        "paddingLeft": "10px",
+        "paddingRight": "10px",
+      }
+    }
+    title="Query"
+    titleSize="s"
+  >
+    <EuiCallOut
+      color="warning"
+      iconType="help"
+      size="s"
+      title="Anomaly detector plugin is not installed on Opensearch, This monitor will not functional properly."
+    />
+    <EuiSpacer
+      size="s"
+    />
+    <div
+      style={
+        Object {
+          "padding": "0px 10px",
+        }
+      }
+    >
+      <div
+        style={
+          Object {
+            "border": "1px solid #D9D9D9",
+            "borderRadius": "5px",
+            "padding": "20px",
+          }
+        }
+      >
+        <div
+          style={
+            Object {
+              "alignItems": "center",
+              "display": "flex",
+              "height": "450px",
+              "justifyContent": "center",
+            }
+          }
+        >
+          <div>
+            You must specify an index.
+          </div>
+        </div>
+      </div>
+    </div>
+    <EuiSpacer
+      size="m"
+    />
+    <QueryPerformance
+      response={null}
+    />
+  </ContentPanel>
+</div>
 `;
