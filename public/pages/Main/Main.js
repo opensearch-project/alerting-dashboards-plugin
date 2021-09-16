@@ -78,6 +78,7 @@ class Main extends Component {
                             setFlyout={this.setFlyout}
                             notifications={core.notifications}
                             isDarkMode={core.isDarkMode}
+                            notificationService={services.notificationService}
                             {...props}
                           />
                         )}

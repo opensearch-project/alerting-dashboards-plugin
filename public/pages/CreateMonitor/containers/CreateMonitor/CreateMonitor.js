@@ -255,7 +255,14 @@ export default class CreateMonitor extends Component {
 
   render() {
     const { initialValues, plugins } = this.state;
-    const { edit, httpClient, monitorToEdit, notifications, isDarkMode } = this.props;
+    const {
+      edit,
+      httpClient,
+      monitorToEdit,
+      notifications,
+      isDarkMode,
+      notificationService,
+    } = this.props;
 
     return (
       <div style={{ padding: '25px 50px' }}>
@@ -275,6 +282,7 @@ export default class CreateMonitor extends Component {
                 plugins={plugins}
                 isAd={values.searchType === SEARCH_TYPE.AD}
                 detectorId={this.props.detectorId}
+                notificationService={notificationService}
               />
               <EuiSpacer />
 
@@ -306,6 +314,7 @@ export default class CreateMonitor extends Component {
                     isDarkMode={this.props.isDarkMode}
                     httpClient={httpClient}
                     notifications={notifications}
+                    notificationService={notificationService}
                   />
                 )}
               </FieldArray>

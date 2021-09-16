@@ -156,6 +156,7 @@ class DefineTrigger extends Component {
       triggerIndex,
       httpClient,
       notifications,
+      notificationService,
     } = this.props;
     const executeResponse = _.get(this.state, 'executeResponse', this.props.executeResponse);
     const fieldPath = triggerIndex !== undefined ? `triggerDefinitions[${triggerIndex}].` : '';
@@ -273,6 +274,7 @@ class DefineTrigger extends Component {
                 notifications={notifications}
                 fieldPath={fieldPath}
                 triggerIndex={triggerIndex}
+                notificationService={notificationService}
               />
             )}
           </FieldArray>

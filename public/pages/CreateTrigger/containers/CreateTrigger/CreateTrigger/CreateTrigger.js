@@ -320,6 +320,7 @@ export default class CreateTrigger extends Component {
                   triggers={monitor.triggers}
                   triggerValues={values}
                   isDarkMode={this.props.isDarkMode}
+                  notificationService={notificationService}
                 />
               ) : (
                 <FieldArray name={'triggerConditions'} validateOnChange={true}>
@@ -340,6 +341,7 @@ export default class CreateTrigger extends Component {
                       openExpression={this.openExpression}
                       onMadeChanges={this.onMadeChanges}
                       dataTypes={dataTypes}
+                      notificationService={notificationService}
                     />
                   )}
                 </FieldArray>

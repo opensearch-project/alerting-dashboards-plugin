@@ -160,6 +160,7 @@ class ConfigureTriggers extends React.Component {
       isDarkMode,
       httpClient,
       notifications,
+      notificationService,
     } = this.props;
 
     const { dataTypes, executeResponse, isBucketLevelMonitor } = this.state;
@@ -185,6 +186,7 @@ class ConfigureTriggers extends React.Component {
                 triggerIndex={index}
                 httpClient={httpClient}
                 notifications={notifications}
+                notificationService={notificationService}
               />
             ) : (
               <DefineTrigger
@@ -202,6 +204,7 @@ class ConfigureTriggers extends React.Component {
                 triggerIndex={index}
                 httpClient={httpClient}
                 notifications={notifications}
+                notificationService={notificationService}
               />
             )}
             <EuiHorizontalRule margin={'s'} />
