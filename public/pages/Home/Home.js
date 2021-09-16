@@ -10,18 +10,18 @@
  */
 
 /*
- *   Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2021 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
- *   Licensed under the Apache License, Version 2.0 (the "License").
- *   You may not use this file except in compliance with the License.
- *   A copy of the License is located at
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- *   or in the "license" file accompanying this file. This file is distributed
- *   on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- *   express or implied. See the License for the specific language governing
- *   permissions and limitations under the License.
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
  */
 
 import React, { Component } from 'react';
@@ -35,7 +35,7 @@ import DestinationsList from '../Destinations/containers/DestinationsList';
 const getSelectedTabId = (pathname) => {
   if (pathname.includes('monitors')) return 'monitors';
   if (pathname.includes('destinations')) return 'destinations';
-  return 'dashboard';
+  return 'alerts';
 };
 
 export default class Home extends Component {
@@ -49,8 +49,8 @@ export default class Home extends Component {
     this.state = { selectedTabId };
     this.tabs = [
       {
-        id: 'dashboard',
-        name: 'Dashboard',
+        id: 'alerts',
+        name: 'Alerts',
         route: 'dashboard',
       },
       {
@@ -100,7 +100,7 @@ export default class Home extends Component {
   );
 
   render() {
-    const { httpClient, notifications } = this.props;
+    const { httpClient, notifications, setFlyout } = this.props;
     return (
       <div>
         <EuiTabs>{this.tabs.map(this.renderTab)}</EuiTabs>
@@ -110,7 +110,13 @@ export default class Home extends Component {
               exact
               path="/dashboard"
               render={(props) => (
-                <Dashboard {...props} httpClient={httpClient} notifications={notifications} />
+                <Dashboard
+                  {...props}
+                  httpClient={httpClient}
+                  notifications={notifications}
+                  perAlertView={false}
+                  setFlyout={setFlyout}
+                />
               )}
             />
             <Route

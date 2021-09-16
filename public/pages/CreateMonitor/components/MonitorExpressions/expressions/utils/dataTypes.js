@@ -44,3 +44,11 @@ export const getIndexFields = (dataTypes, allowedTypes) =>
     label: type,
     options: getFieldsForType(dataTypes, type).map((field) => ({ label: field, type })),
   }));
+
+export const getFilteredIndexFields = (dataTypes, allowedTypes, fieldsToInclude) =>
+  allowedTypes.map((type) => ({
+    label: type,
+    options: getFieldsForType(dataTypes, type)
+      .filter((field) => fieldsToInclude.includes(field))
+      .map((field) => ({ label: field, type })),
+  }));

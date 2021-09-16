@@ -1,5 +1,5 @@
 {
-  "name": "sample_monitor_workflow",
+  "name": "sample_query_level_monitor_workflow",
   "enabled": true,
   "schedule": {
     "period": {

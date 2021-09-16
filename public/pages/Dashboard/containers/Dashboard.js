@@ -10,50 +10,46 @@
  */
 
 /*
- *   Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2021 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
- *   Licensed under the Apache License, Version 2.0 (the "License").
- *   You may not use this file except in compliance with the License.
- *   A copy of the License is located at
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- *   or in the "license" file accompanying this file. This file is distributed
- *   on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- *   express or implied. See the License for the specific language governing
- *   permissions and limitations under the License.
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
  */
 
 import React, { Component } from 'react';
 import _ from 'lodash';
 import queryString from 'query-string';
 import { EuiBasicTable, EuiButton, EuiHorizontalRule, EuiIcon } from '@elastic/eui';
-
 import ContentPanel from '../../../components/ContentPanel';
 import DashboardEmptyPrompt from '../components/DashboardEmptyPrompt';
 import DashboardControls from '../components/DashboardControls';
-import { columns } from '../utils/tableUtils';
-import { OPENSEARCH_DASHBOARDS_AD_PLUGIN } from '../../../utils/constants';
+import { alertColumns, queryColumns } from '../utils/tableUtils';
+import { MONITOR_TYPE, OPENSEARCH_DASHBOARDS_AD_PLUGIN } from '../../../utils/constants';
 import { backendErrorNotification } from '../../../utils/helpers';
-
-const DEFAULT_PAGE_SIZE_OPTIONS = [5, 10, 20, 50];
-const DEFAULT_QUERY_PARAMS = {
-  alertState: 'ALL',
-  from: 0,
-  search: '',
-  severityLevel: 'ALL',
-  size: 20,
-  sortDirection: 'desc',
-  sortField: 'start_time',
-};
-
-const MAX_ALERT_COUNT = 10000;
+import {
+  getInitialSize,
+  groupAlertsByTrigger,
+  insertGroupByColumn,
+  removeColumns,
+} from '../utils/helpers';
+import { DEFAULT_PAGE_SIZE_OPTIONS } from '../../Monitors/containers/Monitors/utils/constants';
+import { MAX_ALERT_COUNT, DEFAULT_GET_ALERTS_QUERY_PARAMS } from '../utils/constants';
 
 // TODO: Abstract out a Table component to be used in both Dashboard and Monitors
 
 export default class Dashboard extends Component {
   constructor(props) {
     super(props);
+
+    const { isAlertsFlyout = false, perAlertView } = props;
 
     const {
       alertState,
@@ -67,16 +63,20 @@ export default class Dashboard extends Component {
 
     this.state = {
       alerts: [],
+      alertsByTriggers: [],
       alertState,
+      loadingMonitors: true,
+      monitors: [],
       monitorIds: this.props.monitorIds,
       page: Math.floor(from / size),
       search,
       selectedItems: [],
       severityLevel,
-      size,
+      size: getInitialSize(isAlertsFlyout, perAlertView, size),
       sortDirection,
       sortField,
       totalAlerts: 0,
+      totalTriggers: 0,
     };
   }
 
@@ -157,19 +157,19 @@ export default class Dashboard extends Component {
 
   getURLQueryParams = () => {
     const {
-      from = DEFAULT_QUERY_PARAMS.from,
-      size = DEFAULT_QUERY_PARAMS.size,
-      search = DEFAULT_QUERY_PARAMS.search,
-      sortField = DEFAULT_QUERY_PARAMS.sortField,
-      sortDirection = DEFAULT_QUERY_PARAMS.sortDirection,
-      severityLevel = DEFAULT_QUERY_PARAMS.severityLevel,
-      alertState = DEFAULT_QUERY_PARAMS.alertState,
+      from = DEFAULT_GET_ALERTS_QUERY_PARAMS.from,
+      size = DEFAULT_GET_ALERTS_QUERY_PARAMS.size,
+      search = DEFAULT_GET_ALERTS_QUERY_PARAMS.search,
+      sortField = DEFAULT_GET_ALERTS_QUERY_PARAMS.sortField,
+      sortDirection = DEFAULT_GET_ALERTS_QUERY_PARAMS.sortDirection,
+      severityLevel = DEFAULT_GET_ALERTS_QUERY_PARAMS.severityLevel,
+      alertState = DEFAULT_GET_ALERTS_QUERY_PARAMS.alertState,
       monitorIds = this.props.monitorIds,
     } = queryString.parse(this.props.location.search);
 
     return {
-      from: isNaN(parseInt(from, 10)) ? DEFAULT_QUERY_PARAMS.from : parseInt(from, 10),
-      size: isNaN(parseInt(size, 10)) ? DEFAULT_QUERY_PARAMS.size : parseInt(size, 10),
+      from: isNaN(parseInt(from, 10)) ? DEFAULT_GET_ALERTS_QUERY_PARAMS.from : parseInt(from, 10),
+      size: isNaN(parseInt(size, 10)) ? DEFAULT_GET_ALERTS_QUERY_PARAMS.size : parseInt(size, 10),
       search,
       sortField,
       sortDirection,
@@ -193,7 +193,7 @@ export default class Dashboard extends Component {
       };
       const queryParamsString = queryString.stringify(params);
       location.search;
-      const { httpClient, history, notifications } = this.props;
+      const { httpClient, history, notifications, perAlertView } = this.props;
       history.replace({ ...this.props.location, search: queryParamsString });
       httpClient.get('../api/alerting/alerts', { query: params }).then((resp) => {
         if (resp.ok) {
@@ -202,6 +202,15 @@ export default class Dashboard extends Component {
             alerts,
             totalAlerts,
           });
+
+          if (!perAlertView) {
+            const alertsByTriggers = groupAlertsByTrigger(alerts);
+            this.setState({
+              totalTriggers: alertsByTriggers.length,
+              alertsByTriggers,
+            });
+            this.getMonitors();
+          }
         } else {
           console.log('error getting alerts:', resp);
           backendErrorNotification(notifications, 'get', 'alerts', resp.err);
@@ -212,14 +221,46 @@ export default class Dashboard extends Component {
     { leading: true }
   );
 
+  async getMonitors() {
+    const { httpClient } = this.props;
+    const { alertsByTriggers } = this.state;
+    this.setState({ ...this.state, loadingMonitors: true });
+    const monitorIds = alertsByTriggers.map((alert) => alert.monitor_id);
+    let monitors;
+    try {
+      const params = {
+        query: {
+          query: {
+            ids: {
+              values: monitorIds,
+            },
+          },
+        },
+      };
+      const response = await httpClient.post('../api/alerting/monitors/_search', {
+        body: JSON.stringify(params),
+      });
+      if (response.ok) {
+        monitors = _.get(response, 'resp.hits.hits', []);
+      } else {
+        console.log('error getting monitors:', response);
+      }
+    } catch (err) {
+      console.error(err);
+    }
+    this.setState({ ...this.state, loadingMonitors: false, monitors: monitors });
+  }
+
   // TODO: exists in both Dashboard and Monitors, should be moved to redux when implemented
   acknowledgeAlert = async () => {
     const { selectedItems } = this.state;
-    const { httpClient, notifications } = this.props;
+    const { httpClient, notifications, perAlertView } = this.props;
 
     if (!selectedItems.length) return;
 
-    const monitorAlerts = selectedItems.reduce((monitorAlerts, alert) => {
+    const selectedAlerts = perAlertView ? selectedItems : _.get(selectedItems, '0.alerts', []);
+
+    const monitorAlerts = selectedAlerts.reduce((monitorAlerts, alert) => {
       const { id, monitor_id: monitorId } = alert;
       if (monitorAlerts[monitorId]) monitorAlerts[monitorId].push(id);
       else monitorAlerts[monitorId] = [id];
@@ -301,21 +342,57 @@ export default class Dashboard extends Component {
   render() {
     const {
       alerts,
+      alertsByTriggers,
       alertState,
+      loadingMonitors,
+      monitors,
       page,
       search,
+      selectedItems,
       severityLevel,
       size,
       sortDirection,
       sortField,
       totalAlerts,
+      totalTriggers,
     } = this.state;
-    const { monitorIds, detectorIds, onCreateTrigger } = this.props;
+    const {
+      monitorIds,
+      detectorIds,
+      onCreateTrigger,
+      perAlertView,
+      monitorType,
+      groupBy,
+      setFlyout,
+      httpClient,
+      location,
+      history,
+      notifications,
+      isAlertsFlyout = false,
+    } = this.props;
+    const totalItems = perAlertView ? totalAlerts : totalTriggers;
+    const isBucketMonitor = monitorType === MONITOR_TYPE.BUCKET_LEVEL;
+
+    let columnType = perAlertView
+      ? isBucketMonitor
+        ? insertGroupByColumn(groupBy)
+        : queryColumns
+      : alertColumns(
+          history,
+          httpClient,
+          loadingMonitors,
+          location,
+          monitors,
+          notifications,
+          setFlyout
+        );
+
+    if (isAlertsFlyout) columnType = removeColumns(['severity', 'trigger_name'], columnType);
 
     const pagination = {
       pageIndex: page,
       pageSize: size,
-      totalItemCount: Math.min(MAX_ALERT_COUNT, totalAlerts),
+      totalItemCount: Math.min(MAX_ALERT_COUNT, totalItems),
       pageSizeOptions: DEFAULT_PAGE_SIZE_OPTIONS,
     };
 
@@ -328,13 +405,46 @@ export default class Dashboard extends Component {
 
     const selection = {
       onSelectionChange: this.onSelectionChange,
-      selectable: (item) => item.state === 'ACTIVE',
-      selectableMessage: (selectable) =>
-        selectable ? undefined : 'Only Active Alerts are Acknowledgeable',
+      selectable: perAlertView ? (item) => item.state === 'ACTIVE' : (item) => item.ACTIVE > 0,
+      selectableMessage: perAlertView
+        ? (selectable) => (selectable ? undefined : 'Only Active Alerts are Acknowledgeable')
+        : (selectable) =>
+            selectable ? undefined : 'Only Triggers with Active Alerts are Acknowledgeable',
     };
 
     const actions = () => {
-      const actions = [<EuiButton onClick={this.acknowledgeAlert}>Acknowledge</EuiButton>];
+      const actions = [
+        <EuiButton onClick={this.acknowledgeAlert} disabled={selectedItems.length !== 1}>
+          Acknowledge
+        </EuiButton>,
+      ];
+
+      if (!perAlertView) {
+        const alert = selectedItems[0];
+        actions.unshift(
+          <EuiButton
+            onClick={() => {
+              setFlyout({
+                type: 'alertsDashboard',
+                payload: {
+                  ...alert,
+                  history,
+                  httpClient,
+                  loadingMonitors,
+                  location,
+                  monitors,
+                  notifications,
+                  setFlyout,
+                },
+              });
+            }}
+            disabled={selectedItems.length !== 1}
+          >
+            View alert details
+          </EuiButton>
+        );
+      }
+
       if (detectorIds.length) {
         actions.unshift(
           <EuiButton
@@ -348,16 +458,21 @@ export default class Dashboard extends Component {
       return actions;
     };
 
+    const getItemId = (item) => {
+      if (perAlertView && isBucketMonitor) return item.id;
+      return `${item.triggerID}-${item.version}`;
+    };
+
     return (
       <ContentPanel
-        title="Alerts"
+        title={perAlertView ? 'Alerts' : 'Alerts by triggers'}
         titleSize={monitorIds.length ? 's' : 'l'}
         bodyStyles={{ padding: 'initial' }}
         actions={actions()}
       >
         <DashboardControls
           activePage={page}
-          pageCount={Math.ceil(totalAlerts / size) || 1}
+          pageCount={Math.ceil(totalItems / size) || 1}
           search={search}
           severity={severityLevel}
           state={alertState}
@@ -365,20 +480,21 @@ export default class Dashboard extends Component {
           onSeverityChange={this.onSeverityLevelChange}
           onStateChange={this.onAlertStateChange}
           onPageChange={this.onPageClick}
+          isAlertsFlyout={isAlertsFlyout}
         />
 
         <EuiHorizontalRule margin="xs" />
 
         <EuiBasicTable
-          items={alerts}
+          items={perAlertView ? alerts : alertsByTriggers}
           /*
            * If using just ID, doesn't update selectedItems when doing acknowledge
            * because the next getAlerts have the same id
            * $id-$version will correctly remove selected items
            * */
-          itemId={(item) => `${item.id}-${item.version}`}
-          columns={columns}
-          pagination={pagination}
+          itemId={getItemId}
+          columns={columnType}
+          pagination={perAlertView ? pagination : undefined}
           sorting={sorting}
           isSelectable={true}
           selection={selection}

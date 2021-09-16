@@ -10,24 +10,32 @@
  */
 
 /*
- *   Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2021 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
- *   Licensed under the Apache License, Version 2.0 (the "License").
- *   You may not use this file except in compliance with the License.
- *   A copy of the License is located at
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- *   or in the "license" file accompanying this file. This file is distributed
- *   on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- *   express or implied. See the License for the specific language governing
- *   permissions and limitations under the License.
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
  */
 
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'formik';
-import { EuiFlexGroup, EuiFlexItem, EuiPopover, EuiExpression, EuiText } from '@elastic/eui';
+import {
+  EuiFlexGroup,
+  EuiFlexItem,
+  EuiPopover,
+  EuiButtonEmpty,
+  EuiText,
+  EuiBadge,
+  EuiSpacer,
+} from '@elastic/eui';
 import _ from 'lodash';
 import {
   Expressions,
@@ -42,16 +50,32 @@ import {
   isNullOperator,
   isRangeOperator,
 } from './utils/whereHelpers';
-import { isInvalid, required } from '../../../../../utils/validate';
+import {
+  hasError,
+  isInvalid,
+  required,
+  validateRequiredNumber,
+} from '../../../../../utils/validate';
 import {
   FormikComboBox,
   FormikSelect,
   FormikFieldNumber,
   FormikFieldText,
 } from '../../../../../components/FormControls';
-import { getIndexFields } from './utils/dataTypes';
-import { FORMIK_INITIAL_VALUES } from '../../../containers/CreateMonitor/utils/constants';
+import { getFilteredIndexFields, getIndexFields } from './utils/dataTypes';
+import {
+  FILTERS_TOOLTIP_TEXT,
+  FORMIK_INITIAL_VALUES,
+  TIME_RANGE_TOOLTIP_TEXT,
+} from '../../../containers/CreateMonitor/utils/constants';
 import { DATA_TYPES } from '../../../../../utils/constants';
+import {
+  TRIGGER_COMPARISON_OPERATORS,
+  TRIGGER_OPERATORS_MAP,
+} from '../../../../CreateTrigger/containers/DefineBucketLevelTrigger/DefineBucketLevelTrigger';
+import { FORMIK_INITIAL_TRIGGER_VALUES } from '../../../../CreateTrigger/containers/CreateTrigger/utils/constants';
+import { inputLimitText } from '../../../../../utils/helpers';
+import IconToolTip from '../../../../../components/IconToolTip';
 
 const propTypes = {
   formik: PropTypes.object.isRequired,
@@ -60,6 +84,10 @@ const propTypes = {
   openedStates: PropTypes.object.isRequired,
   openExpression: PropTypes.func.isRequired,
 };
+
+const ALLOWED_TYPES = ['number', 'text', 'keyword', 'boolean'];
+
+const MAX_NUM_WHERE_EXPRESSION = 1;
 
 class WhereExpression extends Component {
   constructor(props) {
@@ -91,33 +119,41 @@ class WhereExpression extends Component {
     const {
       formik: { values },
       closeExpression,
+      fieldPath = '',
     } = this.props;
     // Explicitly invoking validation, this component unmount after it closes.
-    if (values.where.fieldName.length > 0) {
+    const fieldName = _.get(values, `${fieldPath}where.fieldName`, '');
+    if (fieldName > 0) {
       await this.props.formik.validateForm();
     }
     closeExpression(Expressions.WHERE);
   };
 
   resetValues = () => {
-    const { formik } = this.props;
-    formik.setValues({
-      ...formik.values,
-      where: { ...FORMIK_INITIAL_VALUES.where },
-    });
+    const { fieldPath, formik, useTriggerFieldOperators = false } = this.props;
+    if (useTriggerFieldOperators) {
+      _.set(formik, `values.${fieldPath}where`, FORMIK_INITIAL_TRIGGER_VALUES.where);
+      formik.setValues({ ...formik.values });
+    } else {
+      formik.setValues({
+        ...formik.values,
+        where: { ...FORMIK_INITIAL_VALUES.where },
+      });
+    }
   };
 
   renderBetweenAnd = () => {
     const {
       formik: { values },
+      fieldPath = '',
     } = this.props;
     return (
       <EuiFlexGroup alignItems="center">
         <EuiFlexItem>
           <FormikFieldNumber
-            name="where.fieldRangeStart"
+            name={`${fieldPath}where.fieldRangeStart`}
             fieldProps={{
-              validate: (value) => validateRange(value, values.where),
+              validate: (value) => validateRange(value, _.get(values, `${fieldPath}where`)),
             }}
             inputProps={{ onChange: this.handleChangeWrapper, isInvalid }}
           />
@@ -127,9 +163,9 @@ class WhereExpression extends Component {
         </EuiFlexItem>
         <EuiFlexItem>
           <FormikFieldNumber
-            name="where.fieldRangeEnd"
+            name={`${fieldPath}where.fieldRangeEnd`}
             fieldProps={{
-              validate: (value) => validateRange(value, values.where),
+              validate: (value) => validateRange(value, _.get(values, `${fieldPath}where`)),
             }}
             inputProps={{ onChange: this.handleChangeWrapper, isInvalid }}
           />
@@ -139,20 +175,23 @@ class WhereExpression extends Component {
   };
 
   renderValueField = (fieldType, fieldOperator) => {
-    if (fieldType == DATA_TYPES.NUMBER) {
+    const { fieldPath = '' } = this.props;
+    if (fieldType === DATA_TYPES.NUMBER) {
       return isRangeOperator(fieldOperator) ? (
         this.renderBetweenAnd()
       ) : (
         <FormikFieldNumber
-          name="where.fieldValue"
-          fieldProps={{ validate: required }}
-          inputProps={{ onChange: this.handleChangeWrapper, isInvalid }}
+          name={`${fieldPath}where.fieldValue`}
+          fieldProps={{ validate: validateRequiredNumber }}
+          inputProps={{ onChange: this.handleChangeWrapper }}
+          formRow
+          rowProps={{ isInvalid, error: hasError }}
         />
       );
-    } else if (fieldType == DATA_TYPES.BOOLEAN) {
+    } else if (fieldType === DATA_TYPES.BOOLEAN) {
       return (
         <FormikSelect
-          name="where.fieldValue"
+          name={`${fieldPath}where.fieldValue`}
           fieldProps={{ validate: required }}
           inputProps={{
             onChange: this.handleChangeWrapper,
@@ -164,7 +203,7 @@ class WhereExpression extends Component {
     } else {
       return (
         <FormikFieldText
-          name="where.fieldValue"
+          name={`${fieldPath}where.fieldValue`}
           fieldProps={{ validate: required }}
           inputProps={{ onChange: this.handleChangeWrapper, isInvalid }}
         />
@@ -178,58 +217,123 @@ class WhereExpression extends Component {
       openedStates,
       openExpression,
       dataTypes,
+      indexFieldFilters,
+      useTriggerFieldOperators = false,
+      fieldPath = '',
     } = this.props;
-    const indexFields = getIndexFields(dataTypes, ['number', 'text', 'keyword', 'boolean']);
-    const fieldType = _.get(values, 'where.fieldName[0].type', 'number');
-    const fieldOperator = _.get(values, 'where.operator', 'is');
+
+    const indexFields =
+      indexFieldFilters !== undefined
+        ? getFilteredIndexFields(dataTypes, ALLOWED_TYPES, indexFieldFilters)
+        : getIndexFields(dataTypes, ALLOWED_TYPES);
+    const fieldType = _.get(values, `${fieldPath}where.fieldName[0].type`, 'number');
+    let fieldOperator = _.get(values, `${fieldPath}where.operator`, 'is');
+    if (useTriggerFieldOperators && !_.includes(_.values(TRIGGER_OPERATORS_MAP), fieldOperator)) {
+      fieldOperator = TRIGGER_OPERATORS_MAP.INCLUDE;
+      _.set(values, `${fieldPath}where.operator`, fieldOperator);
+    }
+
+    const fieldOperators = useTriggerFieldOperators
+      ? TRIGGER_COMPARISON_OPERATORS
+      : getOperators(fieldType);
+
+    const whereFilterHeader = useTriggerFieldOperators ? 'Keyword filter' : 'Data filter';
+
+    const whereValues = _.get(values, `${fieldPath}where`);
+    const whereFieldName = _.get(whereValues, 'fieldName[0].label', undefined);
+
+    const showAddButtonFlag = !openedStates[Expressions.WHERE] && !whereFieldName;
 
     return (
-      <EuiPopover
-        id="where-popover"
-        button={
-          <EuiExpression
-            description="where"
-            value={displayText(values.where)}
-            isActive={openedStates.WHERE}
+      <div>
+        <EuiText size="xs">
+          <strong>{whereFilterHeader}</strong>
+          <i> - optional </i>
+          <IconToolTip content={FILTERS_TOOLTIP_TEXT} iconType="questionInCircle" />
+        </EuiText>
+        <EuiSpacer size={'s'} />
+
+        {showAddButtonFlag ? (
+          <div>
+            <EuiText size={'xs'}>No filters defined.</EuiText>
+          </div>
+        ) : (
+          <EuiPopover
+            id={`${whereFilterHeader}-badge-popover`}
+            button={
+              <div style={{ paddingBottom: '5px' }}>
+                <EuiBadge
+                  color="hollow"
+                  iconSide="right"
+                  iconType="cross"
+                  iconOnClick={() => this.resetValues()}
+                  iconOnClickAriaLabel="Remove where filter"
+                  onClick={() => {
+                    openExpression(Expressions.WHERE);
+                  }}
+                  onClickAriaLabel="Edit where filter"
+                >
+                  {displayText(_.get(values, `${fieldPath}where`))}
+                </EuiBadge>
+              </div>
+            }
+            isOpen={openedStates.WHERE}
+            closePopover={this.handleClosePopOver}
+            panelPaddingSize="none"
+            ownFocus
+            withTitle
+            anchorPosition="downLeft"
+          >
+            <div style={POPOVER_STYLE}>
+              <EuiFlexGroup style={{ ...EXPRESSION_STYLE }}>
+                <EuiFlexItem grow={false} style={{ width: 200 }}>
+                  <FormikComboBox
+                    name={`${fieldPath}where.fieldName`}
+                    inputProps={{
+                      placeholder: 'Select a field',
+                      options: indexFields,
+                      onChange: this.handleFieldChange,
+                      isClearable: false,
+                      singleSelection: { asPlainText: true },
+                    }}
+                  />
+                </EuiFlexItem>
+                <EuiFlexItem grow={false}>
+                  <FormikSelect
+                    name={`${fieldPath}where.operator`}
+                    inputProps={{
+                      onChange: this.handleOperatorChange,
+                      options: fieldOperators,
+                    }}
+                  />
+                </EuiFlexItem>
+                {!isNullOperator(fieldOperator) && (
+                  <EuiFlexItem>{this.renderValueField(fieldType, fieldOperator)}</EuiFlexItem>
+                )}
+              </EuiFlexGroup>
+            </div>
+          </EuiPopover>
+        )}
+
+        {showAddButtonFlag && (
+          <EuiButtonEmpty
+            size="xs"
+            data-test-subj={`${fieldPath}where.addFilterButton`}
             onClick={() => openExpression(Expressions.WHERE)}
-          />
-        }
-        isOpen={openedStates.WHERE}
-        closePopover={this.handleClosePopOver}
-        panelPaddingSize="none"
-        ownFocus
-        withTitle
-        anchorPosition="downLeft"
-      >
-        <div style={POPOVER_STYLE}>
-          <EuiFlexGroup style={{ ...EXPRESSION_STYLE }}>
-            <EuiFlexItem grow={false} style={{ width: 200 }}>
-              <FormikComboBox
-                name="where.fieldName"
-                inputProps={{
-                  placeholder: 'Select a field',
-                  options: indexFields,
-                  onChange: this.handleFieldChange,
-                  isClearable: false,
-                  singleSelection: { asPlainText: true },
-                }}
-              />
-            </EuiFlexItem>
-            <EuiFlexItem grow={false}>
-              <FormikSelect
-                name="where.operator"
-                inputProps={{
-                  onChange: this.handleOperatorChange,
-                  options: getOperators(fieldType),
-                }}
-              />
-            </EuiFlexItem>
-            {!isNullOperator(fieldOperator) && (
-              <EuiFlexItem>{this.renderValueField(fieldType, fieldOperator)}</EuiFlexItem>
-            )}
-          </EuiFlexGroup>
-        </div>
-      </EuiPopover>
+            style={{ paddingTop: '5px' }}
+          >
+            + Add filter
+          </EuiButtonEmpty>
+        )}
+
+        {inputLimitText(
+          showAddButtonFlag ? 0 : 1,
+          MAX_NUM_WHERE_EXPRESSION,
+          _.lowerCase(whereFilterHeader),
+          _.lowerCase(`${whereFilterHeader}s`),
+          { paddingLeft: '10px' }
+        )}
+      </div>
     );
   }
 }

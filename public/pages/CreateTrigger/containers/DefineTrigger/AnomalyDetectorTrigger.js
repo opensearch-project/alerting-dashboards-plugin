@@ -10,49 +10,49 @@
  */
 
 /*
- *   Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2021 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
- *   Licensed under the Apache License, Version 2.0 (the "License").
- *   You may not use this file except in compliance with the License.
- *   A copy of the License is located at
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- *   or in the "license" file accompanying this file. This file is distributed
- *   on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- *   express or implied. See the License for the specific language governing
- *   permissions and limitations under the License.
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
  */
 
 import React from 'react';
-import { get } from 'lodash';
-import { EuiSpacer, EuiLoadingChart } from '@elastic/eui';
+import _ from 'lodash';
+import { EuiSpacer } from '@elastic/eui';
 import { AnomalyDetectorData } from '../../../CreateMonitor/containers/AnomalyDetectors/AnomalyDetectorData';
 import TriggerExpressions from '../../components/TriggerExpressions';
 import { AnomaliesChart } from '../../../CreateMonitor/components/AnomalyDetectors/AnomaliesChart';
-import { FeatureChart } from '../../../CreateMonitor/components/AnomalyDetectors/FeatureChart/FeatureChart';
 import { EmptyFeaturesMessage } from '../../../CreateMonitor/components/AnomalyDetectors/EmptyFeaturesMessage/EmptyFeaturesMessage';
+import { EmptyDetectorMessage } from '../../../CreateMonitor/components/AnomalyDetectors/EmptyDetectorMessage/EmptyDetectorMessage';
 
 class AnomalyDetectorTrigger extends React.Component {
   constructor(props) {
     super(props);
   }
   render() {
-    const { adValues } = this.props;
+    const { adValues, detectorId, fieldPath } = this.props;
     return (
       <div style={{ padding: '0px 10px' }}>
         <AnomalyDetectorData
-          detectorId={this.props.detectorId}
+          detectorId={detectorId}
           render={(anomalyData) => {
             // using lodash.get without worrying about whether an intermediate property is null or undefined.
-            if (get(anomalyData, 'anomalyResult.anomalies', []).length > 0) {
+            if (_.get(anomalyData, 'anomalyResult.anomalies', []).length > 0) {
               return (
                 <React.Fragment>
                   <TriggerExpressions
                     thresholdValue={adValues.anomalyGradeThresholdValue}
                     thresholdEnum={adValues.anomalyGradeThresholdEnum}
-                    keyFieldName="anomalyDetector.anomalyGradeThresholdEnum"
-                    valueFieldName="anomalyDetector.anomalyGradeThresholdValue"
+                    keyFieldName={`${fieldPath}anomalyDetector.anomalyGradeThresholdEnum`}
+                    valueFieldName={`${fieldPath}anomalyDetector.anomalyGradeThresholdValue`}
                     label="Anomaly grade threshold"
                   />
                   <EuiSpacer size="xs" />
@@ -70,8 +70,8 @@ class AnomalyDetectorTrigger extends React.Component {
                   <TriggerExpressions
                     thresholdValue={adValues.anomalyConfidenceThresholdValue}
                     thresholdEnum={adValues.anomalyConfidenceThresholdEnum}
-                    keyFieldName="anomalyDetector.anomalyConfidenceThresholdEnum"
-                    valueFieldName="anomalyDetector.anomalyConfidenceThresholdValue"
+                    keyFieldName={`${fieldPath}anomalyDetector.anomalyConfidenceThresholdEnum`}
+                    valueFieldName={`${fieldPath}anomalyDetector.anomalyConfidenceThresholdValue`}
                     label="Anomaly confidence threshold"
                   />
                   <EuiSpacer size="xs" />
@@ -88,11 +88,10 @@ class AnomalyDetectorTrigger extends React.Component {
                 </React.Fragment>
               );
             } else {
-              return (
-                <EmptyFeaturesMessage
-                  detectorId={this.props.detectorId}
-                  isLoading={anomalyData.isLoading}
-                />
+              return _.isEmpty(detectorId) ? (
+                <EmptyDetectorMessage />
+              ) : (
+                <EmptyFeaturesMessage detectorId={detectorId} isLoading={anomalyData.isLoading} />
               );
             }
           }}

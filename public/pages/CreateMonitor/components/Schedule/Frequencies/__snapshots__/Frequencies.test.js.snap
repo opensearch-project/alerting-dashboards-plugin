@@ -3,7 +3,7 @@
 exports[`Frequencies renders CustomCron 1`] = `
 <div
   class="euiFlexGroup euiFlexGroup--gutterLarge euiFlexGroup--directionColumn euiFlexGroup--responsive"
-  style="padding-left:10px;margin-top:5px"
+  style="margin-top:5px"
 >
   <div
     class="euiFlexItem"
@@ -22,7 +22,7 @@ exports[`Frequencies renders CustomCron 1`] = `
           class="euiFormLabel euiFormRow__label"
           for="cronExpression-form-row"
         >
-          Every
+          Run every
         </label>
       </div>
       <div
@@ -50,6 +50,9 @@ exports[`Frequencies renders CustomCron 1`] = `
               target="_blank"
             >
               cron expressions
+              <div>
+                EuiIconMock
+              </div>
             </a>
              for complex schedules
           </div>
@@ -137,7 +140,6 @@ exports[`Frequencies renders Frequency 1`] = `
 <div
   class="euiFormRow"
   id="frequency-form-row-row"
-  style="padding-left:10px"
 >
   <div
     class="euiFormRow__labelWrapper"
@@ -210,12 +212,10 @@ exports[`Frequencies renders Frequency 1`] = `
 
 exports[`Frequencies renders FrequencyPicker 1`] = `
 <div
-  class="euiFlexGroup euiFlexGroup--alignItemsFlexStart euiFlexGroup--directionRow euiFlexGroup--responsive"
-  style="padding-left:10px;margin-top:5px"
+  class="euiFlexGroup euiFlexGroup--gutterMedium euiFlexGroup--alignItemsFlexStart euiFlexGroup--directionRow euiFlexGroup--responsive"
 >
   <div
     class="euiFlexItem"
-    style="margin:0px 10px 0px 0px"
   >
     <div
       class="euiFormRow"
@@ -229,7 +229,7 @@ exports[`Frequencies renders FrequencyPicker 1`] = `
           class="euiFormLabel euiFormRow__label"
           for="period.interval-form-row"
         >
-          Every
+          Run every
         </label>
       </div>
       <div
@@ -266,7 +266,6 @@ exports[`Frequencies renders FrequencyPicker 1`] = `
   </div>
   <div
     class="euiFlexItem"
-    style="margin:2px"
   >
     <div
       class="euiFormRow euiFormRow--hasEmptyLabelSpace"
@@ -324,12 +323,10 @@ exports[`Frequencies renders FrequencyPicker 1`] = `
 
 exports[`Frequencies renders Interval 1`] = `
 <div
-  class="euiFlexGroup euiFlexGroup--alignItemsFlexStart euiFlexGroup--directionRow euiFlexGroup--responsive"
-  style="padding-left:10px;margin-top:5px"
+  class="euiFlexGroup euiFlexGroup--gutterMedium euiFlexGroup--alignItemsFlexStart euiFlexGroup--directionRow euiFlexGroup--responsive"
 >
   <div
     class="euiFlexItem"
-    style="margin:0px 10px 0px 0px"
   >
     <div
       class="euiFormRow"
@@ -343,7 +340,7 @@ exports[`Frequencies renders Interval 1`] = `
           class="euiFormLabel euiFormRow__label"
           for="period.interval-form-row"
         >
-          Every
+          Run every
         </label>
       </div>
       <div
@@ -380,7 +377,6 @@ exports[`Frequencies renders Interval 1`] = `
   </div>
   <div
     class="euiFlexItem"
-    style="margin:2px"
   >
     <div
       class="euiFormRow euiFormRow--hasEmptyLabelSpace"

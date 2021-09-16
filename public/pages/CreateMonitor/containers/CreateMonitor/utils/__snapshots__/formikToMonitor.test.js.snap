@@ -123,6 +123,7 @@ Object {
       },
     },
   ],
+  "monitor_type": "query_level_monitor",
   "name": "random_name",
   "schedule": Object {
     "period": Object {
@@ -133,6 +134,7 @@ Object {
   "triggers": Array [],
   "type": "monitor",
   "ui_metadata": Object {
+    "monitor_type": "query_level_monitor",
     "schedule": Object {
       "cronExpression": "0 */1 * * *",
       "daily": 0,
@@ -157,13 +159,10 @@ Object {
       },
     },
     "search": Object {
-      "aggregationType": "count",
+      "aggregations": Array [],
       "bucketUnitOfTime": "h",
       "bucketValue": 1,
-      "fieldName": "bytes",
-      "groupedOverFieldName": "bytes",
-      "groupedOverTop": 5,
-      "overDocuments": "all documents",
+      "groupBy": Array [],
       "searchType": "graph",
       "timeField": "",
       "where": Object {
@@ -290,13 +289,10 @@ Object {
 
 exports[`formikToUiSearch can build ui search 1`] = `
 Object {
-  "aggregationType": "count",
+  "aggregations": Array [],
   "bucketUnitOfTime": "h",
   "bucketValue": 1,
-  "fieldName": "bytes",
-  "groupedOverFieldName": "bytes",
-  "groupedOverTop": 5,
-  "overDocuments": "all documents",
+  "groupBy": Array [],
   "searchType": "graph",
   "timeField": "@timestamp",
   "where": Object {
@@ -311,13 +307,10 @@ Object {
 
 exports[`formikToUiSearch can build ui search with range where field 1`] = `
 Object {
-  "aggregationType": "count",
+  "aggregations": Array [],
   "bucketUnitOfTime": "h",
   "bucketValue": 1,
-  "fieldName": "bytes",
-  "groupedOverFieldName": "bytes",
-  "groupedOverTop": 5,
-  "overDocuments": "all documents",
+  "groupBy": Array [],
   "searchType": "graph",
   "timeField": "@timestamp",
   "where": Object {
@@ -336,13 +329,10 @@ Object {
 
 exports[`formikToUiSearch can build ui search with term where field 1`] = `
 Object {
-  "aggregationType": "count",
+  "aggregations": Array [],
   "bucketUnitOfTime": "h",
   "bucketValue": 1,
-  "fieldName": "bytes",
-  "groupedOverFieldName": "bytes",
-  "groupedOverTop": 5,
-  "overDocuments": "all documents",
+  "groupBy": Array [],
   "searchType": "graph",
   "timeField": "@timestamp",
   "where": Object {
@@ -360,12 +350,4 @@ Object {
 
 exports[`formikToWhenAggregation can build when (count) aggregation 1`] = `Object {}`;
 
-exports[`formikToWhenAggregation can build when aggregation 1`] = `
-Object {
-  "when": Object {
-    "avg": Object {
-      "field": "bytes",
-    },
-  },
-}
-`;
+exports[`formikToWhenAggregation can build when aggregation 1`] = `Object {}`;

@@ -10,18 +10,18 @@
  */
 
 /*
- *   Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2021 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
- *   Licensed under the Apache License, Version 2.0 (the "License").
- *   You may not use this file except in compliance with the License.
- *   A copy of the License is located at
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- *   or in the "license" file accompanying this file. This file is distributed
- *   on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- *   express or implied. See the License for the specific language governing
- *   permissions and limitations under the License.
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
  */
 
 import React from 'react';
@@ -33,6 +33,7 @@ import {
   EuiSpacer,
   EuiFlexGroup,
   EuiFlexItem,
+  EuiPanel,
   EuiText,
 } from '@elastic/eui';
 import { FormikFieldText, FormikComboBox } from '../../../../components/FormControls';
@@ -52,6 +53,8 @@ const Action = ({
   sendTestMessage,
   setFlyout,
   httpClient,
+  fieldPath,
+  values,
 }) => {
   const selectedDestination = flattenDestinations.filter(
     (item) => item.value === action.destination_id
@@ -61,98 +64,112 @@ const Action = ({
   const ActionComponent = ActionsMap[type].component;
   const actionLabel = ActionsMap[type].label;
   const manageChannelsUrl = httpClient.basePath.prepend(MANAGE_CHANNELS_PATH);
+  const isFirstAction = index !== undefined && index === 0;
   return (
-    <EuiAccordion
-      id={name}
-      initialIsOpen={!name}
-      className="accordion-action"
-      buttonContent={
-        !_.get(selectedDestination, '0.type', undefined)
-          ? 'Notification'
-          : `${actionLabel}: ${name}`
-      }
-      extraAction={
-        <div style={{ paddingRight: '10px' }}>
-          <EuiButton onClick={onDelete}>Delete</EuiButton>
-        </div>
-      }
-    >
-      <EuiHorizontalRule margin="xs" />
-      <div style={{ padding: '0px 12px' }}>
-        <FormikFieldText
-          name={`actions.${index}.name`}
-          formRow
-          fieldProps={{ validate: validateActionName(context.ctx.trigger) }}
-          rowProps={{
-            label: 'Action name',
-            helpText: 'Names can only contain letters, numbers, and special characters',
-            isInvalid,
-            error: hasError,
-          }}
-          inputProps={{ isInvalid }}
-        />
-        <EuiSpacer size="m" />
-        <EuiFlexGroup wrap>
-          <EuiFlexItem style={{ maxWidth: 400 }}>
-            <FormikComboBox
-              name={`actions.${index}.destination_id`}
+    <div style={{ paddingTop: isFirstAction ? undefined : '20px' }}>
+      <EuiPanel styles={{ backgroundColor: '#FFFFFF' }}>
+        <EuiAccordion
+          id={name}
+          initialIsOpen={!name}
+          className="accordion-action"
+          buttonContent={
+            <EuiText>
+              {!_.get(selectedDestination, '0.type', undefined)
+                ? 'Notification'
+                : `${actionLabel}: ${name}`}
+            </EuiText>
+          }
+          extraAction={
+            <EuiButton color={'danger'} onClick={onDelete} size={'s'}>
+              Remove action
+            </EuiButton>
+          }
+          paddingSize={'s'}
+        >
+          <EuiHorizontalRule margin="s" />
+          <div style={{ paddingLeft: '20px', paddingRight: '20px', paddingTop: '10px' }}>
+            <FormikFieldText
+              name={`${fieldPath}actions.${index}.name`}
               formRow
-              fieldProps={{ validate: validateDestination(flattenDestinations) }}
+              fieldProps={{
+                validate: validateActionName(context.ctx.monitor, context.ctx.trigger),
+              }}
               rowProps={{
-                label: 'Channels',
+                label: 'Action name',
+                helpText: 'Names can only contain letters, numbers, and special characters',
                 isInvalid,
                 error: hasError,
               }}
               inputProps={{
-                placeholder: 'Select channels to notify',
-                options: destinations,
-                selectedOptions: selectedDestination,
-                onChange: (options) => {
-                  // Just a swap correct fields.
-                  arrayHelpers.replace(index, {
-                    ...action,
-                    destination_id: options[0].value,
-                  });
-                },
-                onBlur: (e, field, form) => {
-                  form.setFieldTouched(`actions.${index}.destination_id`, true);
-                },
-                singleSelection: { asPlainText: true },
-                isClearable: false,
-                renderOption: (option) => (
-                  <React.Fragment>
-                    <EuiText size="s">{option.label}</EuiText>
-                    <EuiText size="xs" color="subdued">
-                      {option.description}
-                    </EuiText>
-                  </React.Fragment>
-                ),
-                rowHeight: 45,
+                placeholder: 'Enter action name',
+                isInvalid,
               }}
             />
-          </EuiFlexItem>
-          <EuiFlexItem grow={false}>
-            <EuiSpacer size="l" />
-            <EuiButton
-              iconType="popout"
-              iconSide="right"
-              onClick={() => window.open(manageChannelsUrl)}
-            >
-              Manage channels
-            </EuiButton>
-          </EuiFlexItem>
-        </EuiFlexGroup>
-        <EuiSpacer size="m" />
-        <ActionComponent
-          action={action}
-          context={context}
-          index={index}
-          sendTestMessage={sendTestMessage}
-          setFlyout={setFlyout}
-        />
-      </div>
-      <EuiSpacer />
-    </EuiAccordion>
+            <EuiSpacer size="m" />
+            <EuiFlexGroup wrap>
+              <EuiFlexItem style={{ maxWidth: 400 }}>
+                <FormikComboBox
+                  name={`${fieldPath}actions.${index}.destination_id`}
+                  formRow
+                  fieldProps={{ validate: validateDestination(flattenDestinations) }}
+                  rowProps={{
+                    label: 'Channels',
+                    isInvalid,
+                    error: hasError,
+                  }}
+                  inputProps={{
+                    placeholder: 'Select channels to notify',
+                    options: destinations,
+                    selectedOptions: selectedDestination,
+                    onChange: (options) => {
+                      // Just a swap correct fields.
+                      arrayHelpers.replace(index, {
+                        ...action,
+                        destination_id: options[0].value,
+                      });
+                    },
+                    onBlur: (e, field, form) => {
+                      form.setFieldTouched(`${fieldPath}actions.${index}.destination_id`, true);
+                    },
+                    singleSelection: { asPlainText: true },
+                    isClearable: false,
+                    renderOption: (option) => (
+                      <React.Fragment>
+                        <EuiText size="s">{option.label}</EuiText>
+                        <EuiText size="xs" color="subdued">
+                          {option.description}
+                        </EuiText>
+                      </React.Fragment>
+                    ),
+                    rowHeight: 45,
+                  }}
+                />
+              </EuiFlexItem>
+              <EuiFlexItem grow={false}>
+                <EuiSpacer size="l" />
+                <EuiButton
+                  iconType="popout"
+                  iconSide="right"
+                  onClick={() => window.open(manageChannelsUrl)}
+                >
+                  Manage channels
+                </EuiButton>
+              </EuiFlexItem>
+            </EuiFlexGroup>
+            <EuiSpacer size="m" />
+            <ActionComponent
+              action={action}
+              context={context}
+              index={index}
+              sendTestMessage={sendTestMessage}
+              setFlyout={setFlyout}
+              fieldPath={fieldPath}
+              values={values}
+            />
+          </div>
+        </EuiAccordion>
+      </EuiPanel>
+    </div>
   );
 };
 

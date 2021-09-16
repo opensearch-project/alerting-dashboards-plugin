@@ -10,18 +10,18 @@
  */
 
 /*
- *   Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2021 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
- *   Licensed under the Apache License, Version 2.0 (the "License").
- *   You may not use this file except in compliance with the License.
- *   A copy of the License is located at
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- *   or in the "license" file accompanying this file. This file is distributed
- *   on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- *   express or implied. See the License for the specific language governing
- *   permissions and limitations under the License.
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
  */
 
 import React, { Component, Fragment } from 'react';
@@ -29,31 +29,39 @@ import { get } from 'lodash';
 import queryString from 'query-string';
 import {
   EuiButton,
+  EuiButtonEmpty,
   EuiCallOut,
+  EuiCodeBlock,
   EuiFlexGroup,
   EuiFlexItem,
+  EuiHealth,
   EuiLink,
   EuiLoadingSpinner,
+  EuiModal,
+  EuiModalBody,
+  EuiModalFooter,
+  EuiModalHeader,
+  EuiModalHeaderTitle,
+  EuiOverlayMask,
   EuiSpacer,
-  EuiText,
   EuiTitle,
-  EuiIcon,
 } from '@elastic/eui';
-
 import CreateMonitor from '../../CreateMonitor';
-import CreateTrigger from '../../CreateTrigger';
 import MonitorOverview from '../components/MonitorOverview';
 import MonitorHistory from './MonitorHistory';
 import Dashboard from '../../Dashboard/containers/Dashboard';
 import Triggers from './Triggers';
 import {
   MONITOR_ACTIONS,
-  TRIGGER_ACTIONS,
-  OPENSEARCH_DASHBOARDS_AD_PLUGIN,
+  MONITOR_GROUP_BY,
   MONITOR_INPUT_DETECTOR_ID,
+  TRIGGER_ACTIONS,
 } from '../../../utils/constants';
 import { migrateTriggerMetadata } from './utils/helpers';
 import { backendErrorNotification } from '../../../utils/helpers';
+import { getUnwrappedTriggers } from './Triggers/Triggers';
+import { formikToMonitor } from '../../CreateMonitor/containers/CreateMonitor/utils/formikToMonitor';
+import monitorToFormik from '../../CreateMonitor/containers/CreateMonitor/utils/monitorToFormik';
 
 export default class MonitorDetails extends Component {
   constructor(props) {
@@ -69,6 +77,13 @@ export default class MonitorDetails extends Component {
       updating: false,
       error: null,
       triggerToEdit: null,
+      editMonitor: () => {
+        this.props.history.push({
+          ...this.props.location,
+          search: `?action=${MONITOR_ACTIONS.UPDATE_MONITOR}`,
+        });
+      },
+      isJsonModalOpen: false,
     };
   }
 
@@ -202,7 +217,7 @@ export default class MonitorDetails extends Component {
   };
 
   renderNoTriggersCallOut = () => {
-    const { monitor } = this.state;
+    const { monitor, editMonitor } = this.state;
     if (!monitor.triggers.length) {
       return (
         <Fragment>
@@ -210,13 +225,12 @@ export default class MonitorDetails extends Component {
             title={
               <span>
                 This monitor has no triggers configured. To receive alerts from this monitor you
-                must first{' '}
+                must first create a trigger.{' '}
                 {
-                  <EuiLink style={{ textDecoration: 'underline' }} onClick={this.onCreateTrigger}>
-                    create at trigger
+                  <EuiLink style={{ textDecoration: 'underline' }} onClick={editMonitor}>
+                    Edit monitor
                   </EuiLink>
                 }
-                .
               </span>
             }
             iconType="alert"
@@ -230,6 +244,20 @@ export default class MonitorDetails extends Component {
     return null;
   };
 
+  showJsonModal = () => {
+    this.setState({ isJsonModalOpen: true });
+  };
+
+  closeJsonModal = () => {
+    this.setState({ isJsonModalOpen: false });
+  };
+
+  getJsonForExport = (monitor) => {
+    const monitorValues = monitorToFormik(monitor);
+    const triggers = _.get(monitor, 'triggers', []);
+    return { ...formikToMonitor(monitorValues), triggers };
+  };
+
   render() {
     const {
       monitor,
@@ -238,7 +266,8 @@ export default class MonitorDetails extends Component {
       activeCount,
       updating,
       loading,
-      triggerToEdit,
+      editMonitor,
+      isJsonModalOpen,
     } = this.state;
     const {
       location,
@@ -251,11 +280,10 @@ export default class MonitorDetails extends Component {
       isDarkMode,
       notificationService,
     } = this.props;
-    const { action, success: showSuccessCallOut = false } = queryString.parse(location.search);
+    const { action } = queryString.parse(location.search);
     const updatingMonitor = action === MONITOR_ACTIONS.UPDATE_MONITOR;
-    const creatingTrigger = action === TRIGGER_ACTIONS.CREATE_TRIGGER;
-    const updatingTrigger = action === TRIGGER_ACTIONS.UPDATE_TRIGGER && triggerToEdit;
     const detectorId = get(monitor, MONITOR_INPUT_DETECTOR_ID, undefined);
+    const groupBy = get(monitor, MONITOR_GROUP_BY);
     if (loading) {
       return (
         <EuiFlexGroup justifyContent="center" alignItems="center" style={{ marginTop: '100px' }}>
@@ -276,7 +304,6 @@ export default class MonitorDetails extends Component {
         />
       );
     }
-
     if (creatingTrigger || updatingTrigger) {
       return (
         <CreateTrigger
@@ -295,12 +322,11 @@ export default class MonitorDetails extends Component {
         />
       );
     }
-
     return (
       <div style={{ padding: '25px 50px' }}>
         {this.renderNoTriggersCallOut()}
-        <EuiFlexGroup alignItems="center">
-          <EuiFlexItem>
+        <EuiFlexGroup alignItems="flexEnd">
+          <EuiFlexItem grow={false}>
             <EuiTitle size="l" style={{ whiteSpace: 'nowrap', overflow: 'hidden' }}>
               <h1
                 style={{
@@ -313,33 +339,16 @@ export default class MonitorDetails extends Component {
                 {monitor.name}
               </h1>
             </EuiTitle>
-
-            {detector ? (
-              <EuiFlexItem grow={false}>
-                <EuiText size="s">
-                  Created from detector:{' '}
-                  <EuiLink
-                    href={`${OPENSEARCH_DASHBOARDS_AD_PLUGIN}#/detectors/${detectorId}`}
-                    target="_blank"
-                  >
-                    {detector.name} <EuiIcon size="s" type="popout" />
-                  </EuiLink>
-                </EuiText>
-              </EuiFlexItem>
-            ) : null}
           </EuiFlexItem>
-
+          <EuiFlexItem style={{ paddingBottom: '5px', marginLeft: '0px' }}>
+            {monitor.enabled ? (
+              <EuiHealth color="success">Enabled</EuiHealth>
+            ) : (
+              <EuiHealth color="subdued">Disabled</EuiHealth>
+            )}
+          </EuiFlexItem>
           <EuiFlexItem grow={false}>
-            <EuiButton
-              onClick={() => {
-                this.props.history.push({
-                  ...this.props.location,
-                  search: `?action=${MONITOR_ACTIONS.UPDATE_MONITOR}`,
-                });
-              }}
-            >
-              Edit
-            </EuiButton>
+            <EuiButton onClick={editMonitor}>Edit</EuiButton>
           </EuiFlexItem>
           <EuiFlexItem grow={false}>
             <EuiButton
@@ -349,6 +358,9 @@ export default class MonitorDetails extends Component {
               {monitor.enabled ? 'Disable' : 'Enable'}
             </EuiButton>
           </EuiFlexItem>
+          <EuiFlexItem grow={false}>
+            <EuiButton onClick={this.showJsonModal}>Export as JSON</EuiButton>
+          </EuiFlexItem>
         </EuiFlexGroup>
         <EuiSpacer />
         <MonitorOverview
@@ -356,6 +368,8 @@ export default class MonitorDetails extends Component {
           monitorId={monitorId}
           monitorVersion={monitorVersion}
           activeCount={activeCount}
+          detector={detector}
+          detectorId={detectorId}
         />
         <EuiSpacer />
         <Triggers
@@ -369,22 +383,52 @@ export default class MonitorDetails extends Component {
           <MonitorHistory
             httpClient={httpClient}
             monitorId={monitorId}
-            onShowTrigger={this.onCreateTrigger}
-            triggers={monitor.triggers}
+            onShowTrigger={editMonitor}
+            triggers={getUnwrappedTriggers(monitor)}
             isDarkMode={isDarkMode}
             notifications={notifications}
+            monitorType={monitor.monitor_type}
           />
         </div>
         <EuiSpacer />
         <Dashboard
           monitorIds={[monitorId]}
           detectorIds={detectorId ? [detectorId] : []}
-          onCreateTrigger={this.onCreateTrigger}
+          onCreateTrigger={editMonitor}
           httpClient={httpClient}
           location={location}
           history={history}
           notifications={notifications}
+          monitorType={monitor.monitor_type}
+          perAlertView={true}
+          groupBy={groupBy}
         />
+        {isJsonModalOpen && (
+          <EuiOverlayMask>
+            <EuiModal onClose={this.closeJsonModal} style={{ padding: '5px 30px' }}>
+              <EuiModalHeader>
+                <EuiModalHeaderTitle>{'View JSON of ' + monitor.name} </EuiModalHeaderTitle>
+              </EuiModalHeader>
+
+              <EuiModalBody>
+                <EuiCodeBlock
+                  language="json"
+                  fontSize="m"
+                  paddingSize="m"
+                  overflowHeight={600}
+                  inline={false}
+                  isCopyable
+                >
+                  {JSON.stringify(this.getJsonForExport(monitor), null, 3)}
+                </EuiCodeBlock>
+              </EuiModalBody>
+
+              <EuiModalFooter>
+                <EuiButtonEmpty onClick={this.closeJsonModal}>Close</EuiButtonEmpty>
+              </EuiModalFooter>
+            </EuiModal>
+          </EuiOverlayMask>
+        )}
       </div>
     );
   }

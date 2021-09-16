@@ -10,7 +10,7 @@
  */
 
 /*
- *   Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ *   Copyright 2021 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  *   Licensed under the Apache License, Version 2.0 (the "License").
  *   You may not use this file except in compliance with the License.
@@ -26,8 +26,8 @@
 
 import _ from 'lodash';
 import moment from 'moment-timezone';
-import { BUCKET_COUNT } from './constants';
-import { SEARCH_TYPE } from '../../../../../utils/constants';
+import { BUCKET_COUNT, DEFAULT_COMPOSITE_AGG_SIZE, FORMIK_INITIAL_VALUES } from './constants';
+import { MONITOR_TYPE, SEARCH_TYPE } from '../../../../../utils/constants';
 import { OPERATORS_QUERY_MAP } from './whereFilters';
 
 export function formikToMonitor(values) {
@@ -37,20 +37,24 @@ export function formikToMonitor(values) {
   return {
     name: values.name,
     type: 'monitor',
+    monitor_type: values.monitor_type,
     enabled: !values.disabled,
     schedule,
-    inputs: [formikToSearch(values)],
+    inputs: [formikToInputs(values)],
     triggers: [],
     ui_metadata: {
       schedule: uiSchedule,
       search: uiSearch,
+      monitor_type: values.monitor_type,
     },
   };
 }
 
 export function formikToInputs(values) {
-  const isAD = values.searchType === SEARCH_TYPE.AD;
-  return [isAD ? formikToAd(values) : formikToSearch(values)];
+  switch (values.searchType) {
+    default:
+      return formikToSearch(values);
+  }
 }
 
 export function formikToSearch(values) {
@@ -110,27 +114,22 @@ export function formikToAd(values) {
     },
   };
 }
+
 export function formikToUiSearch(values) {
   const {
     searchType,
-    aggregationType,
     timeField,
-    fieldName: [{ label: fieldName = '' } = {}],
-    overDocuments,
-    groupedOverTop,
-    groupedOverFieldName,
+    aggregations,
+    groupBy,
     bucketValue,
     bucketUnitOfTime,
     where,
   } = values;
   return {
     searchType,
-    aggregationType,
     timeField,
-    fieldName,
-    overDocuments,
-    groupedOverTop,
-    groupedOverFieldName,
+    aggregations,
+    groupBy,
     bucketValue,
     bucketUnitOfTime,
     where,
@@ -147,12 +146,23 @@ export function formikToQuery(values) {
 }
 
 export function formikToExtractionQuery(values) {
-  return JSON.parse(values.query);
+  let query = _.get(values, 'query', FORMIK_INITIAL_VALUES.query);
+  try {
+    // JSON.parse() throws an exception when the argument is a malformed JSON string.
+    // This caused exceptions when tinkering with the JSON in the code editor.
+    // This try/catch block will only parse the JSON string if it is not malformed.
+    // It will otherwise store the JSON as a string for continued editing.
+    query = JSON.parse(query);
+  } catch (err) {}
+  return query;
 }
 
 export function formikToGraphQuery(values) {
-  const { bucketValue, bucketUnitOfTime } = values;
-  const whenAggregation = formikToWhenAggregation(values);
+  const { bucketValue, bucketUnitOfTime, monitor_type } = values;
+  const useComposite = monitor_type === MONITOR_TYPE.BUCKET_LEVEL;
+  const aggregation = useComposite
+    ? formikToCompositeAggregation(values)
+    : formikToAggregation(values);
   const timeField = values.timeField;
   const filters = [
     {
@@ -171,7 +181,7 @@ export function formikToGraphQuery(values) {
   }
   return {
     size: 0,
-    aggregations: whenAggregation,
+    aggregations: aggregation,
     query: {
       bool: {
         filter: filters,
@@ -180,9 +190,66 @@ export function formikToGraphQuery(values) {
   };
 }
 
+export function formikToCompositeAggregation(values) {
+  const { aggregations, groupBy } = values;
+
+  let aggs = {};
+  aggregations.map((aggItem) => {
+    // TODO: Changing any occurrence of '.' in the fieldName to '_' since the
+    //  bucketSelector uses the '.' syntax to resolve aggregation paths.
+    //  Should revisit this as replacing with `_` could cause collisions with fields named like that.
+    const name = `${aggItem.aggregationType}_${aggItem.fieldName.replace(/\./g, '_')}`;
+    const type = aggItem.aggregationType === 'count' ? 'value_count' : aggItem.aggregationType;
+    aggs[name] = {
+      [type]: { field: aggItem.fieldName },
+    };
+  });
+  let sources = [];
+  groupBy.map((groupByItem) =>
+    sources.push({
+      [groupByItem]: {
+        terms: {
+          field: groupByItem,
+        },
+      },
+    })
+  );
+  return {
+    composite_agg: {
+      composite: { sources },
+      aggs,
+    },
+  };
+}
+
+// For aggregations of query-level monitor
+export function formikToAggregation(values) {
+  const { aggregations, groupBy } = values;
+
+  let aggs = {};
+  aggregations.map((aggItem) => {
+    const type = aggItem.aggregationType === 'count' ? 'value_count' : aggItem.aggregationType;
+    aggs['metric'] = {
+      [type]: { field: aggItem.fieldName },
+    };
+  });
+  if (groupBy.length)
+    aggs.terms_agg = {
+      terms: {
+        field: groupBy[0],
+      },
+    };
+  return aggs;
+}
+
+/////////// Build Graph UI Search Request ///////////////
+
 export function formikToUiGraphQuery(values) {
-  const { bucketValue, bucketUnitOfTime } = values;
-  const overAggregation = formikToUiOverAggregation(values);
+  const { bucketValue, bucketUnitOfTime, monitor_type } = values;
+  const useComposite = monitor_type === MONITOR_TYPE.BUCKET_LEVEL;
+  const aggregation = useComposite
+    ? formikToUiCompositeAggregation(values)
+    : formikToUiOverAggregation(values);
   const timeField = values.timeField;
   const filters = [
     {
@@ -201,7 +268,7 @@ export function formikToUiGraphQuery(values) {
   }
   return {
     size: 0,
-    aggregations: overAggregation,
+    aggregations: aggregation,
     query: {
       bool: {
         filter: filters,
@@ -211,9 +278,19 @@ export function formikToUiGraphQuery(values) {
 }
 
 export function formikToUiOverAggregation(values) {
-  const whenAggregation = formikToWhenAggregation(values);
-  const { bucketValue, bucketUnitOfTime } = values;
+  const metricAggregation = formikToMetricAggregation(values);
+  const { bucketValue, bucketUnitOfTime, groupBy } = values;
   const timeField = values.timeField;
+  const aggregations = groupBy.length
+    ? {
+        ...metricAggregation,
+        terms_agg: {
+          terms: {
+            field: groupBy[0],
+          },
+        },
+      }
+    : metricAggregation;
 
   return {
     over: {
@@ -227,7 +304,7 @@ export function formikToUiOverAggregation(values) {
           max: 'now',
         },
       },
-      aggregations: whenAggregation,
+      aggregations,
     },
   };
 }
@@ -238,13 +315,66 @@ export function formikToWhereClause({ where }) {
   }
 }
 
-export function formikToWhenAggregation(values) {
+// For query-level monitor single metric selection
+export function formikToMetricAggregation(values) {
+  const { aggregations } = values;
+  let aggregationType = aggregations[0]?.aggregationType;
+  const field = aggregations[0]?.fieldName;
+  if (!field) return {};
+  if (aggregationType === 'count') aggregationType = 'value_count';
+  return { metric: { [aggregationType]: { field } } };
+}
+
+export function formikToUiCompositeAggregation(values) {
   const {
-    aggregationType,
-    fieldName: [{ label: field } = {}],
+    aggregations,
+    groupBy,
+    timeField,
+    bucketValue,
+    bucketUnitOfTime,
+    monitor_type: monitorType,
   } = values;
-  if (aggregationType === 'count' || !field) return {};
-  return { when: { [aggregationType]: { field } } };
+
+  let aggs = {};
+  aggregations.map((aggItem) => {
+    // TODO: Changing any occurrence of '.' in the fieldName to '_' since the
+    //  bucketSelector uses the '.' syntax to resolve aggregation paths.
+    //  Should revisit this as replacing with `_` could cause collisions with fields named like that.
+    const name = `${aggItem.aggregationType}_${aggItem.fieldName.replace(/\./g, '_')}`;
+    const type = aggItem.aggregationType === 'count' ? 'value_count' : aggItem.aggregationType;
+    aggs[name] = {
+      [type]: { field: aggItem.fieldName },
+    };
+  });
+
+  let sources = [];
+  groupBy.map((groupByItem) =>
+    sources.push({
+      [groupByItem]: {
+        terms: {
+          field: groupByItem,
+        },
+      },
+    })
+  );
+  sources.push({
+    date: {
+      date_histogram: {
+        field: timeField,
+        interval: `${bucketValue}${bucketUnitOfTime}`,
+        time_zone: moment.tz.guess(),
+      },
+    },
+  });
+  return {
+    composite_agg: {
+      composite: {
+        sources,
+        size: DEFAULT_COMPOSITE_AGG_SIZE,
+      },
+      aggs,
+    },
+  };
 }
 
 export function formikToUiSchedule(values) {

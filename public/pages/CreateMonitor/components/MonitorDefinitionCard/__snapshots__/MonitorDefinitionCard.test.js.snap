@@ -1,0 +1,303 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`MonitorDefinitionCard renders without AD plugin 1`] = `
+<div>
+  <div
+    class="euiText euiText--extraSmall"
+    style="padding-bottom:0px;margin-bottom:0px"
+  >
+    <h4>
+      Monitor defining method
+    </h4>
+  </div>
+  <div
+    class="euiText euiText--extraSmall"
+  >
+    <div
+      class="euiTextColor euiTextColor--subdued"
+    >
+      Specify the way you want to define your query and triggers. 
+      <a
+        class="euiLink euiLink--primary"
+        href="https://opensearch.org/docs/monitoring-plugins/alerting/monitors/#create-monitors"
+        rel="noopener noreferrer"
+        target="_blank"
+      >
+        Learn more
+        <div>
+          EuiIconMock
+        </div>
+      </a>
+    </div>
+  </div>
+  <div
+    class="euiFlexGroup euiFlexGroup--gutterSmall euiFlexGroup--alignItemsFlexStart euiFlexGroup--directionRow euiFlexGroup--responsive"
+    style="padding-top:0px;margin-top:0px"
+  >
+    <div
+      class="euiFlexItem euiFlexItem--flexGrowZero"
+      style="width:266.6666666666667px"
+    >
+      <div
+        class="euiFormRow"
+        id="searchTypeGraph-form-row-row"
+      >
+        <div
+          class="euiFormRow__fieldWrapper"
+        >
+          <div
+            class="euiCheckableCard"
+          >
+            <div
+              class="euiCheckableCard__row"
+            >
+              <div
+                class="euiCheckableCard__control"
+              >
+                <div
+                  class="euiRadio euiRadio--noLabel"
+                  data-test-subj="visualEditorRadioCard"
+                >
+                  <input
+                    class="euiRadio__input"
+                    id="visualEditorRadioCard"
+                    name="searchTypeGraph"
+                    type="radio"
+                    value="graph"
+                  />
+                  <div
+                    class="euiRadio__circle"
+                  />
+                </div>
+              </div>
+              <label
+                class="euiCheckableCard__label"
+                for="visualEditorRadioCard"
+              >
+                Visual editor
+              </label>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div
+      class="euiFlexItem euiFlexItem--flexGrowZero"
+      style="width:266.6666666666667px"
+    >
+      <div
+        class="euiFormRow"
+        id="searchTypeQuery-form-row-row"
+      >
+        <div
+          class="euiFormRow__fieldWrapper"
+        >
+          <div
+            class="euiCheckableCard"
+          >
+            <div
+              class="euiCheckableCard__row"
+            >
+              <div
+                class="euiCheckableCard__control"
+              >
+                <div
+                  class="euiRadio euiRadio--noLabel"
+                  data-test-subj="extractionQueryEditorRadioCard"
+                >
+                  <input
+                    class="euiRadio__input"
+                    id="extractionQueryEditorRadioCard"
+                    name="searchTypeQuery"
+                    type="radio"
+                    value="query"
+                  />
+                  <div
+                    class="euiRadio__circle"
+                  />
+                </div>
+              </div>
+              <label
+                class="euiCheckableCard__label"
+                for="extractionQueryEditorRadioCard"
+              >
+                Extraction query editor
+              </label>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`MonitorDefinitionCard renders without AD plugin 2`] = `
+<div>
+  <div
+    class="euiText euiText--extraSmall"
+    style="padding-bottom:0px;margin-bottom:0px"
+  >
+    <h4>
+      Monitor defining method
+    </h4>
+  </div>
+  <div
+    class="euiText euiText--extraSmall"
+  >
+    <div
+      class="euiTextColor euiTextColor--subdued"
+    >
+      Specify the way you want to define your query and triggers. 
+      <a
+        class="euiLink euiLink--primary"
+        href="https://opensearch.org/docs/monitoring-plugins/alerting/monitors/#create-monitors"
+        rel="noopener noreferrer"
+        target="_blank"
+      >
+        Learn more
+        <div>
+          EuiIconMock
+        </div>
+      </a>
+    </div>
+  </div>
+  <div
+    class="euiFlexGroup euiFlexGroup--gutterSmall euiFlexGroup--alignItemsFlexStart euiFlexGroup--directionRow euiFlexGroup--responsive"
+    style="padding-top:0px;margin-top:0px"
+  >
+    <div
+      class="euiFlexItem euiFlexItem--flexGrowZero"
+      style="width:266.6666666666667px"
+    >
+      <div
+        class="euiFormRow"
+        id="searchTypeGraph-form-row-row"
+      >
+        <div
+          class="euiFormRow__fieldWrapper"
+        >
+          <div
+            class="euiCheckableCard"
+          >
+            <div
+              class="euiCheckableCard__row"
+            >
+              <div
+                class="euiCheckableCard__control"
+              >
+                <div
+                  class="euiRadio euiRadio--noLabel"
+                  data-test-subj="visualEditorRadioCard"
+                >
+                  <input
+                    class="euiRadio__input"
+                    id="visualEditorRadioCard"
+                    name="searchTypeGraph"
+                    type="radio"
+                    value="graph"
+                  />
+                  <div
+                    class="euiRadio__circle"
+                  />
+                </div>
+              </div>
+              <label
+                class="euiCheckableCard__label"
+                for="visualEditorRadioCard"
+              >
+                Visual editor
+              </label>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div
+      class="euiFlexItem euiFlexItem--flexGrowZero"
+      style="width:266.6666666666667px"
+    >
+      <div
+        class="euiFormRow"
+        id="searchTypeQuery-form-row-row"
+      >
+        <div
+          class="euiFormRow__fieldWrapper"
+        >
+          <div
+            class="euiCheckableCard"
+          >
+            <div
+              class="euiCheckableCard__row"
+            >
+              <div
+                class="euiCheckableCard__control"
+              >
+                <div
+                  class="euiRadio euiRadio--noLabel"
+                  data-test-subj="extractionQueryEditorRadioCard"
+                >
+                  <input
+                    class="euiRadio__input"
+                    id="extractionQueryEditorRadioCard"
+                    name="searchTypeQuery"
+                    type="radio"
+                    value="query"
+                  />
+                  <div
+                    class="euiRadio__circle"
+                  />
+                </div>
+              </div>
+              <label
+                class="euiCheckableCard__label"
+                for="extractionQueryEditorRadioCard"
+              >
+                Extraction query editor
+              </label>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div
+      class="euiFlexItem euiFlexItem--flexGrowZero"
+      style="width:266.6666666666667px"
+    >
+      <div
+        class="euiCheckableCard"
+      >
+        <div
+          class="euiCheckableCard__row"
+        >
+          <div
+            class="euiCheckableCard__control"
+          >
+            <div
+              class="euiRadio euiRadio--noLabel"
+              data-test-subj="anomalyDetectorRadioCard"
+            >
+              <input
+                class="euiRadio__input"
+                id="anomalyDetectorRadioCard"
+                name="searchTypeAD"
+                type="radio"
+                value="ad"
+              />
+              <div
+                class="euiRadio__circle"
+              />
+            </div>
+          </div>
+          <label
+            class="euiCheckableCard__label"
+            for="anomalyDetectorRadioCard"
+          >
+            Anomaly detector
+          </label>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;

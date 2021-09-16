@@ -83,7 +83,13 @@ const ComboBox = ({
           }
         : onBlur
     }
-    selectedOptions={field.value}
+    selectedOptions={
+      typeof field.value === 'string'
+        ? field.value === ''
+          ? undefined
+          : [{ label: field.value }]
+        : field.value
+    }
     {...rest}
   />
 );

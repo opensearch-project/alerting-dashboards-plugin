@@ -1,0 +1,127 @@
+{
+  "name": "sample_visual_editor_bucket_level_monitor",
+  "monitor_type": "bucket_level_monitor",
+  "enabled": true,
+  "schedule": {
+    "period": {
+      "interval": 1,
+      "unit": "MINUTES"
+    }
+  },
+  "inputs": [
+    {
+      "search": {
+        "indices": ["*"],
+        "query": {
+          "size": 0,
+          "query": {
+            "bool": {
+              "filter": [
+                {
+                  "range": {
+                    "order_date": {
+                      "from": "{{period_end}}||-1h",
+                      "to": "{{period_end}}",
+                      "include_lower": true,
+                      "include_upper": true,
+                      "format": "epoch_millis",
+                      "boost": 1.0
+                    }
+                  }
+                }
+              ],
+              "adjust_pure_negative": true,
+              "boost": 1.0
+            }
+          },
+          "aggregations": {
+            "composite_agg": {
+              "composite": {
+                "size": 10,
+                "sources": [
+                  {
+                    "user": {
+                      "terms": {
+                        "field": "user",
+                        "missing_bucket": false,
+                        "order": "asc"
+                      }
+                    }
+                  }
+                ]
+              },
+              "aggregations": {
+                "count_products_quantity": {
+                  "value_count": {
+                    "field": "products.quantity"
+                  }
+                },
+                "avg_products_base_price": {
+                  "avg": {
+                    "field": "products.base_price"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  ],
+  "triggers": [],
+  "ui_metadata": {
+    "schedule": {
+      "cronExpression": "0 */1 * * *",
+      "period": {
+        "unit": "MINUTES",
+        "interval": 1
+      },
+      "timezone": null,
+      "daily": 0,
+      "monthly": {
+        "type": "day",
+        "day": 1
+      },
+      "weekly": {
+        "tue": false,
+        "wed": false,
+        "thur": false,
+        "sat": false,
+        "fri": false,
+        "mon": false,
+        "sun": false
+      },
+      "frequency": "interval"
+    },
+    "search": {
+      "aggregationType": "avg",
+      "fieldName": "products.base_price",
+      "overDocuments": "all documents",
+      "searchType": "graph",
+      "bucketValue": 1,
+      "timeField": "order_date",
+      "groupedOverTop": 5,
+      "bucketUnitOfTime": "h",
+      "where": {
+        "fieldName": [],
+        "fieldRangeEnd": 0,
+        "fieldRangeStart": 0,
+        "fieldValue": "",
+        "operator": "is"
+      },
+      "groupBy": ["user"],
+      "aggregations": [
+        {
+          "aggregationType": "count",
+          "fieldName": "products.quantity"
+        },
+        {
+          "aggregationType": "avg",
+          "fieldName": "products.base_price"
+        }
+      ],
+      "groupedOverFieldName": "bytes"
+    },
+    "monitor_type": "bucket_level_monitor"
+  }
+}

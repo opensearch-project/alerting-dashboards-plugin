@@ -7,7 +7,7 @@ on:
     branches:
       - main
 env:
-  OPENSEARCH_DASHBOARDS_VERSION: '1.0'
+  OPENSEARCH_DASHBOARDS_VERSION: '1.x'
 jobs:
   tests:
     name: Run unit tests
@@ -45,4 +45,6 @@ jobs:
       - name: Run tests
         run: |
           cd OpenSearch-Dashboards/plugins/alerting-dashboards-plugin
-          yarn run test:jest
+          yarn run test:jest --coverage
+      - name: Uploads coverage
+        uses: codecov/codecov-action@v1
