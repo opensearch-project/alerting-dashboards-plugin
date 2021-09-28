@@ -76,6 +76,7 @@ class ConfigureActions extends React.Component {
       flattenDestinations: [],
       allowList: [],
       loadingDestinations: true,
+      hasNotificationPlugin: false,
     };
   }
 
@@ -86,8 +87,10 @@ class ConfigureActions extends React.Component {
     this.setState({ allowList });
 
     // Check if notification plugin is present
-    if (plugins !== undefined || plugins.indexOf(OS_NOTIFICATION_PLUGIN) !== -1)
+    if (plugins.indexOf(OS_NOTIFICATION_PLUGIN) !== -1) {
+      this.setState({ hasNotificationPlugin: true });
       this.loadDestinations();
+    } else this.setState({ loadingDestinations: false });
   }
 
   loadDestinations = async (searchText = '') => {
