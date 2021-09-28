@@ -242,6 +242,7 @@ class DefineBucketLevelTrigger extends Component {
       httpClient,
       notifications,
       notificationService,
+      plugins,
     } = this.props;
     const fieldPath = triggerIndex !== undefined ? `triggerDefinitions[${triggerIndex}].` : '';
     const isGraph = _.get(monitorValues, 'searchType') === SEARCH_TYPE.GRAPH;
@@ -362,6 +363,7 @@ class DefineBucketLevelTrigger extends Component {
                   fieldPath={fieldPath}
                   triggerIndex={triggerIndex}
                   notificationService={notificationService}
+                  plugins={plugins}
                 />
               )}
             </FieldArray>

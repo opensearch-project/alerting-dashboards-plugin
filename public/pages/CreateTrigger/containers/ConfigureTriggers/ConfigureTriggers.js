@@ -161,6 +161,7 @@ class ConfigureTriggers extends React.Component {
       httpClient,
       notifications,
       notificationService,
+      plugins,
     } = this.props;
 
     const { dataTypes, executeResponse, isBucketLevelMonitor } = this.state;
@@ -187,6 +188,7 @@ class ConfigureTriggers extends React.Component {
                 httpClient={httpClient}
                 notifications={notifications}
                 notificationService={notificationService}
+                plugins={plugins}
               />
             ) : (
               <DefineTrigger
@@ -205,6 +207,7 @@ class ConfigureTriggers extends React.Component {
                 httpClient={httpClient}
                 notifications={notifications}
                 notificationService={notificationService}
+                plugins={plugins}
               />
             )}
             <EuiHorizontalRule margin={'s'} />

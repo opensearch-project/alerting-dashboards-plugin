@@ -296,6 +296,7 @@ export default class CreateTrigger extends Component {
       httpClient,
       notifications,
       notificationService,
+      plugins,
     } = this.props;
     const { dataTypes, initialValues, executeResponse } = this.state;
     const isQueryLevelMonitor = _.get(monitor, 'monitor_type') === MONITOR_TYPE.QUERY_LEVEL;
@@ -321,6 +322,7 @@ export default class CreateTrigger extends Component {
                   triggerValues={values}
                   isDarkMode={this.props.isDarkMode}
                   notificationService={notificationService}
+                  plugins={plugins}
                 />
               ) : (
                 <FieldArray name={'triggerConditions'} validateOnChange={true}>
@@ -357,6 +359,7 @@ export default class CreateTrigger extends Component {
                     values={values}
                     notifications={notifications}
                     notificationService={notificationService}
+                    plugins={plugins}
                   />
                 )}
               </FieldArray>

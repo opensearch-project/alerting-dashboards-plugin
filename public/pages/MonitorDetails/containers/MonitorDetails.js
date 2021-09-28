@@ -279,6 +279,7 @@ export default class MonitorDetails extends Component {
       notifications,
       isDarkMode,
       notificationService,
+      plugins,
     } = this.props;
     const { action } = queryString.parse(location.search);
     const updatingMonitor = action === MONITOR_ACTIONS.UPDATE_MONITOR;
@@ -319,6 +320,7 @@ export default class MonitorDetails extends Component {
           notifications={notifications}
           isDarkMode={isDarkMode}
           notificationService={notificationService}
+          plugins={plugins}
         />
       );
     }

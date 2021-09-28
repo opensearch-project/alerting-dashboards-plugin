@@ -157,6 +157,7 @@ class DefineTrigger extends Component {
       httpClient,
       notifications,
       notificationService,
+      plugins,
     } = this.props;
     const executeResponse = _.get(this.state, 'executeResponse', this.props.executeResponse);
     const fieldPath = triggerIndex !== undefined ? `triggerDefinitions[${triggerIndex}].` : '';
@@ -256,7 +257,7 @@ class DefineTrigger extends Component {
                 rowProps={{ style: { paddingTop: '0px', marginTop: '0px', width: '390px' } }}
                 inputProps={{ options: triggerOptions }}
               />
-              <EuiSpacer size={'m'} />
+              <EuiSpacer siDEFze={'m'} />
             </div>
           ) : null}
 
@@ -275,6 +276,7 @@ class DefineTrigger extends Component {
                 fieldPath={fieldPath}
                 triggerIndex={triggerIndex}
                 notificationService={notificationService}
+                plugins={plugins}
               />
             )}
           </FieldArray>

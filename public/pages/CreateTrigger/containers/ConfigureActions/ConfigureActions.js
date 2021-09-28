@@ -36,7 +36,11 @@ import {
   FORMIK_INITIAL_ACTION_VALUES,
 } from '../../utils/constants';
 import { getAllowList } from '../../../Destinations/utils/helpers';
-import { MAX_QUERY_RESULT_SIZE, MONITOR_TYPE } from '../../../../utils/constants';
+import {
+  MAX_QUERY_RESULT_SIZE,
+  MONITOR_TYPE,
+  OS_NOTIFICATION_PLUGIN,
+} from '../../../../utils/constants';
 import { backendErrorNotification } from '../../../../utils/helpers';
 import { getChannelOptions } from '../../utils/helper';
 import { TRIGGER_TYPE } from '../CreateTrigger/utils/constants';
@@ -76,12 +80,14 @@ class ConfigureActions extends React.Component {
   }
 
   async componentDidMount() {
-    const { httpClient } = this.props;
+    const { httpClient, plugins } = this.props;
 
     const allowList = await getAllowList(httpClient);
     this.setState({ allowList });
 
-    this.loadDestinations();
+    // Check if notification plugin is present
+    if (plugins !== undefined || plugins.indexOf(OS_NOTIFICATION_PLUGIN) !== -1)
+      this.loadDestinations();
   }
 
   loadDestinations = async (searchText = '') => {

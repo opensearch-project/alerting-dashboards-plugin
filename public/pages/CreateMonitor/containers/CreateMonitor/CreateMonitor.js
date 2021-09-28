@@ -315,6 +315,7 @@ export default class CreateMonitor extends Component {
                     httpClient={httpClient}
                     notifications={notifications}
                     notificationService={notificationService}
+                    plugins={plugins}
                   />
                 )}
               </FieldArray>
