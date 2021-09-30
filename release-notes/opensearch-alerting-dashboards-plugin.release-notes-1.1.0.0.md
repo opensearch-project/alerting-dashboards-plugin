@@ -50,3 +50,6 @@ Compatible with OpenSearch Dashboards 1.1.0
 * Create opensearch-alerting-dashboards-plugin.release-notes-1.1.0.0.md ([#101](https://github.com/opensearch-project/alerting-dashboards-plugin/pull/101))
 * Update version in package.json ([#102](https://github.com/opensearch-project/alerting-dashboards-plugin/pull/102)) 
 * Update jest unit tests ([#112](https://github.com/opensearch-project/alerting-dashboards-plugin/pull/112))
+
+### Bug Fixes
+* A few bug fix for create monitor ([#121](https://github.com/opensearch-project/alerting-dashboards-plugin/pull/121)) 
