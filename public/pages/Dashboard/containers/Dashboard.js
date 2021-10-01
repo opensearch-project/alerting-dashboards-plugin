@@ -96,6 +96,7 @@ export default class Dashboard extends Component {
       sortField,
       monitorIds,
     } = this.state;
+    console.info(`hurneyt componentDidMount::monitorIds = ${JSON.stringify(monitorIds)}`);
     this.getAlerts(
       page * size,
       size,
@@ -122,6 +123,7 @@ export default class Dashboard extends Component {
         alertState,
         monitorIds,
       } = this.state;
+      console.info(`hurneyt componentDidUpdate::monitorIds = ${JSON.stringify(monitorIds)}`);
       this.getAlerts(
         page * size,
         size,
@@ -191,6 +193,7 @@ export default class Dashboard extends Component {
         alertState,
         monitorIds,
       };
+      console.info(`hurneyt getAlerts::monitorIds = ${JSON.stringify(monitorIds)}`);
       const queryParamsString = queryString.stringify(params);
       location.search;
       const { httpClient, history, notifications, perAlertView } = this.props;
@@ -198,6 +201,8 @@ export default class Dashboard extends Component {
       httpClient.get('../api/alerting/alerts', { query: params }).then((resp) => {
         if (resp.ok) {
           const { alerts, totalAlerts } = resp;
+          console.info(`hurneyt alerts = ${JSON.stringify(resp, null, 4)}`);
+          console.info(`hurneyt Dashboard::alertState = ${JSON.stringify(alertState)}`);
           this.setState({
             alerts,
             totalAlerts,
@@ -293,6 +298,7 @@ export default class Dashboard extends Component {
       alertState,
       monitorIds,
     } = this.state;
+    console.info(`hurneyt acknowledgeAlert::monitorIds = ${JSON.stringify(monitorIds)}`);
     this.getAlerts(
       page * size,
       size,

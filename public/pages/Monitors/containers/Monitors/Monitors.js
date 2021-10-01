@@ -69,6 +69,7 @@ export default class Monitors extends Component {
     };
 
     this.getMonitors = _.debounce(this.getMonitors.bind(this), 500, { leading: true });
+    // this.getAlerts = _.debounce(this.getAlerts.bind(this), 500, { loading: true });
     this.onTableChange = this.onTableChange.bind(this);
     this.onMonitorStateChange = this.onMonitorStateChange.bind(this);
     this.onSelectionChange = this.onSelectionChange.bind(this);
@@ -158,6 +159,10 @@ export default class Monitors extends Component {
       const response = await httpClient.get('../api/alerting/monitors', { query: params });
       if (response.ok) {
         const { monitors, totalMonitors } = response;
+        console.info(`hurneyt monitors = ${JSON.stringify(monitors)}`);
+        monitors.map((monitor) =>
+          this.getAlerts(from, size, '', sortField, sortDirection, 'ALL', 'ALL', monitor.id)
+        );
         this.setState({ monitors, totalMonitors });
       } else {
         console.log('error getting monitors:', response);
@@ -169,6 +174,46 @@ export default class Monitors extends Component {
     }
     this.setState({ loadingMonitors: false });
   }
+
+  getAlerts = _.debounce(
+    (from, size, search, sortField, sortDirection, severityLevel, alertState, monitorId) => {
+      console.info(`hurneyt from = ${JSON.stringify(from)}`);
+      console.info(`hurneyt size = ${JSON.stringify(size)}`);
+      console.info(`hurneyt search = ${JSON.stringify(search)}`);
+      console.info(`hurneyt sortField = ${JSON.stringify(sortField)}`);
+      console.info(`hurneyt sortDirection = ${JSON.stringify(sortDirection)}`);
+      console.info(`hurneyt severityLevel = ${JSON.stringify(severityLevel)}`);
+      console.info(`hurneyt alertState = ${JSON.stringify(alertState)}`);
+      console.info(`hurneyt monitorId = ${JSON.stringify(monitorId)}`);
+      this.setState({ loadingMonitors: true });
+      try {
+        const { httpClient, history } = this.props;
+        const params = {
+          from,
+          size,
+          search,
+          sortField,
+          sortDirection,
+          severityLevel,
+          alertState,
+          monitorId,
+        };
+
+        const queryParamsString = queryString.stringify(params);
+        history.replace({ ...this.props.location, search: queryParamsString });
+        httpClient.get('../api/alerting/alerts', { query: params }).then((resp) => {
+          if (resp.ok) {
+            console.info(`hurneyt resp = ${JSON.stringify(resp)}`);
+          }
+        });
+      } catch (err) {
+        console.info(`hurneyt resp ERROR = ${JSON.stringify(resp)}`);
+      }
+      this.setState({ loadingMonitors: false });
+    },
+    500,
+    { leading: true }
+  );
 
   onTableChange({ page: tablePage = {}, sort = {} }) {
     const { index: page, size } = tablePage;
@@ -398,6 +443,7 @@ export default class Monitors extends Component {
       selectableMessage: (selectable) => (selectable ? undefined : undefined),
     };
 
+    console.info(`hurneyt monitors = ${JSON.stringify(monitors)}`);
     return (
       <ContentPanel
         actions={
