@@ -43,6 +43,8 @@ export default class MonitorActions extends Component {
   };
 
   getActions = () => {
+    // TODO: Support bulk acknowledge alerts across multiple monitors after figuring out the correct parameter for getAlerts API.
+    // Disabling the acknowledge button for now when more than 1 monitors selected.
     const { isEditDisabled } = this.props;
     const actions = [
       <EuiContextMenuItem
