@@ -18,6 +18,7 @@ export default function GroupByItem(
 ) {
   const [isPopoverOpen, setIsPopoverOpen] = useState(groupByItem === '');
   const closePopover = () => {
+    if (groupByItem === '') arrayHelpers.remove(index);
     setIsPopoverOpen(false);
   };
 

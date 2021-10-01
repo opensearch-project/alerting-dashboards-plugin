@@ -43,7 +43,8 @@ export default class MonitorActions extends Component {
   };
 
   getActions = () => {
-    return [
+    const { isEditDisabled } = this.props;
+    const actions = [
       <EuiContextMenuItem
         key="acknowledge"
         data-test-subj="acknowledgeItem"
@@ -85,6 +86,8 @@ export default class MonitorActions extends Component {
         Delete
       </EuiContextMenuItem>,
     ];
+    if (isEditDisabled) actions.splice(0, 1);
+    return actions;
   };
 
   onCloseActions = () => {

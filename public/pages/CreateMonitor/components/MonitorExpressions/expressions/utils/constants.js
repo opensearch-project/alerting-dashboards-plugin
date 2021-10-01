@@ -114,3 +114,4 @@ export const AGGREGATION_TYPES = [
 ];
 
 export const GROUP_BY_ERROR = 'Must specify at least 1 group by expression.';
+export const QUERY_TYPE_GROUP_BY_ERROR = 'Can have a maximum of 1 group by selections.';
