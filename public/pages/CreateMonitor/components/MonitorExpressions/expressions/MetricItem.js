@@ -18,6 +18,7 @@ export default function MetricItem(
 ) {
   const [isPopoverOpen, setIsPopoverOpen] = useState(aggregation.fieldName === '');
   const closePopover = () => {
+    if (aggregation.fieldName === '') arrayHelpers.remove(index);
     setIsPopoverOpen(false);
   };
 
