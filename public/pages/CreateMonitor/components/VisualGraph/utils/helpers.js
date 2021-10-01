@@ -25,6 +25,7 @@
  */
 
 import _ from 'lodash';
+import moment from 'moment';
 
 import { selectOptionValueToText } from '../../MonitorExpressions/expressions/utils/helpers';
 import {
@@ -61,10 +62,14 @@ export function getXDomain(data) {
   return [minDate.x, maxDate.x];
 }
 
-export function getBufferedXDomain(data) {
+export function getBufferedXDomain(data, values) {
+  const { bucketValue, bucketUnitOfTime } = values;
   const minDate = data[0].x;
   const maxDate = data[data.length - 1].x;
-  const timeRange = maxDate - minDate;
+  // If minDate equals to maxDate, then use bucketValue and bucketUnitOfTime as timeRange.
+  let timeRange = maxDate - minDate;
+  if (!timeRange) timeRange = moment.duration(bucketValue, bucketUnitOfTime);
+
   const minDateBuffer = minDate - timeRange * X_DOMAIN_BUFFER;
   const maxDateBuffer = maxDate.getTime() + timeRange * X_DOMAIN_BUFFER;
   return [minDateBuffer, maxDateBuffer];
@@ -111,13 +116,13 @@ export function getDataFromResponse(response, fieldName, monitorType) {
   }
 }
 
-// Function for aggregation type monitors to get Map of data. 
-// The current response gives a large number of data aggregated in buckets, and this function returns the top n results with highest count of data points. 
-// The number n is based on the constant BAY_KEY_COUNT.  
+// Function for aggregation type monitors to get Map of data.
+// The current response gives a large number of data aggregated in buckets, and this function returns the top n results with highest count of data points.
+// The number n is based on the constant BAY_KEY_COUNT.
 export function getMapDataFromResponse(response, fieldName, groupByFields) {
   if (!response) return [];
   const buckets = _.get(response, 'aggregations.composite_agg.buckets', []);
-  let allData = new Map();
+  const allData = new Map();
   buckets.map((bucket) => {
     const dataPoint = getXYValuesByFieldName(bucket, fieldName);
     // Key of object is the string concat by group by field values
@@ -126,7 +131,7 @@ export function getMapDataFromResponse(response, fieldName, groupByFields) {
       ? allData.set(key, [dataPoint, ...allData.get(key)])
       : allData.set(key, [dataPoint]);
   });
-  let entryLength = [];
+  const entryLength = [];
   for (const [key, value] of allData.entries()) {
     allData.set(key, _.filter(value, filterInvalidYValues));
     entryLength.push({ key, length: value.length });
@@ -141,7 +146,9 @@ export function getMapDataFromResponse(response, fieldName, groupByFields) {
 
 export function getXYValuesByFieldName(bucket, fieldName) {
   const x = new Date(bucket.key.date);
-  const path = bucket[fieldName] ? `${fieldName}.value` : 'doc_count';
+  // Parse the fieldName containing "." to "_"
+  const parsedFieldName = fieldName.replace(/\./g, '_');
+  const path = bucket[parsedFieldName] ? `${parsedFieldName}.value` : 'doc_count';
   const y = _.get(bucket, path, null);
   return { x, y };
 }

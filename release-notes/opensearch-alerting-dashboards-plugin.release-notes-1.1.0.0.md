@@ -52,4 +52,5 @@ Compatible with OpenSearch Dashboards 1.1.0
 * Update jest unit tests ([#112](https://github.com/opensearch-project/alerting-dashboards-plugin/pull/112))
 
 ### Bug Fixes
+* A few bug fix for create monitor ([#121](https://github.com/opensearch-project/alerting-dashboards-plugin/pull/121)) 
 * Fixed a bug that displayed all alerts for a monitor on individual triggers' flyouts. Fixed a bug that displayed incorrect source for the condition field on the alerts flyout. Fixed a bug that displayed incorrect severity on the alerts flyout.([#122](https://github.com/opensearch-project/alerting-dashboards-plugin/pull/122))
