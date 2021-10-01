@@ -127,7 +127,7 @@ class WhereExpression extends Component {
     if (fieldName > 0) {
       await this.props.formik.validateForm();
     }
-    if (_.isEmpty(fieldName) || _.isEmpty(fieldValue)) this.resetValues();
+    if (_.isEmpty(fieldName) || _.isEmpty(fieldValue.toString())) this.resetValues();
     closeExpression(Expressions.WHERE);
   };
 
