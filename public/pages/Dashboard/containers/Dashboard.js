@@ -486,7 +486,9 @@ export default class Dashboard extends Component {
         <EuiHorizontalRule margin="xs" />
 
         <EuiBasicTable
-          items={perAlertView ? alerts : alertsByTriggers}
+          items={
+            perAlertView ? (isAlertsFlyout ? this.props.flyoutAlerts : alerts) : alertsByTriggers
+          }
           /*
            * If using just ID, doesn't update selectedItems when doing acknowledge
            * because the next getAlerts have the same id
