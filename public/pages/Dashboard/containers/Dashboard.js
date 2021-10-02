@@ -419,8 +419,12 @@ export default class Dashboard extends Component {
     };
 
     const actions = () => {
+      // The acknowledge button is disabled when viewing by per alerts, and no item selected or per trigger view and item selected is not 1.
       const actions = [
-        <EuiButton onClick={this.acknowledgeAlert} disabled={selectedItems.length !== 1}>
+        <EuiButton
+          onClick={this.acknowledgeAlert}
+          disabled={perAlertView ? !selectedItems.length : selectedItems.length !== 1}
+        >
           Acknowledge
         </EuiButton>,
       ];

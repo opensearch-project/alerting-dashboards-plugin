@@ -123,9 +123,11 @@ class WhereExpression extends Component {
     } = this.props;
     // Explicitly invoking validation, this component unmount after it closes.
     const fieldName = _.get(values, `${fieldPath}where.fieldName`, '');
+    const fieldValue = _.get(values, `${fieldPath}where.fieldValue`, '');
     if (fieldName > 0) {
       await this.props.formik.validateForm();
     }
+    if (_.isEmpty(fieldName) || _.isEmpty(fieldValue.toString())) this.resetValues();
     closeExpression(Expressions.WHERE);
   };
 
@@ -267,7 +269,7 @@ class WhereExpression extends Component {
                   iconSide="right"
                   iconType="cross"
                   iconOnClick={() => this.resetValues()}
-                  iconOnClickAriaLabel="Remove where filter"
+                  iconOnClickAriaLabel="Remove filter"
                   onClick={() => {
                     openExpression(Expressions.WHERE);
                   }}
