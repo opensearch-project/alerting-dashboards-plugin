@@ -310,7 +310,8 @@ export default class Dashboard extends Component {
     const { index: page, size } = tablePage;
 
     const { field: sortField, direction: sortDirection } = sort;
-
+    //debug use
+    console.log('page: ' + page + ' size: ' + size);
     this.setState({
       page,
       size,
@@ -370,7 +371,7 @@ export default class Dashboard extends Component {
       notifications,
       isAlertsFlyout = false,
     } = this.props;
-    const totalItems = perAlertView ? totalAlerts : totalTriggers;
+    let totalItems = perAlertView ? totalAlerts : totalTriggers;
     const isBucketMonitor = monitorType === MONITOR_TYPE.BUCKET_LEVEL;
 
     let columnType = perAlertView
@@ -387,7 +388,10 @@ export default class Dashboard extends Component {
           setFlyout
         );
 
-    if (isAlertsFlyout) columnType = removeColumns(['severity', 'trigger_name'], columnType);
+    if (isAlertsFlyout) {
+      totalItems = this.props.flyoutAlerts.length;
+      columnType = removeColumns(['severity', 'trigger_name'], columnType);
+    }
 
     const pagination = {
       pageIndex: page,
@@ -490,7 +494,9 @@ export default class Dashboard extends Component {
         <EuiHorizontalRule margin="xs" />
 
         <EuiBasicTable
-          items={perAlertView ? alerts : alertsByTriggers}
+          items={
+            perAlertView ? (isAlertsFlyout ? this.props.flyoutAlerts : alerts) : alertsByTriggers
+          }
           /*
            * If using just ID, doesn't update selectedItems when doing acknowledge
            * because the next getAlerts have the same id
