@@ -77,6 +77,7 @@ export default class Dashboard extends Component {
       sortField,
       totalAlerts: 0,
       totalTriggers: 0,
+      trimmedFlyoutAlerts: this.props.flyoutAlerts ? this.props.flyoutAlerts.slice(0, 10) : [],
     };
   }
 
@@ -307,17 +308,23 @@ export default class Dashboard extends Component {
   };
 
   onTableChange = ({ page: tablePage = {}, sort = {} }) => {
+    const { isAlertsFlyout } = this.props;
     const { index: page, size } = tablePage;
 
     const { field: sortField, direction: sortDirection } = sort;
-    //debug use
-    console.log('page: ' + page + ' size: ' + size);
     this.setState({
       page,
       size,
       sortField,
       sortDirection,
     });
+
+    // If the table is in flyout, return the trimmed array of alerts.
+    if (isAlertsFlyout) {
+      const { flyoutAlerts } = this.props;
+      const trimmedFlyoutAlerts = flyoutAlerts.slice(page * size, page * size + size);
+      this.setState({ trimmedFlyoutAlerts });
+    }
   };
 
   onSeverityLevelChange = (e) => {
@@ -356,6 +363,7 @@ export default class Dashboard extends Component {
       sortField,
       totalAlerts,
       totalTriggers,
+      trimmedFlyoutAlerts,
     } = this.state;
     const {
       monitorIds,
@@ -494,9 +502,7 @@ export default class Dashboard extends Component {
         <EuiHorizontalRule margin="xs" />
 
         <EuiBasicTable
-          items={
-            perAlertView ? (isAlertsFlyout ? this.props.flyoutAlerts : alerts) : alertsByTriggers
-          }
+          items={perAlertView ? (isAlertsFlyout ? trimmedFlyoutAlerts : alerts) : alertsByTriggers}
           /*
            * If using just ID, doesn't update selectedItems when doing acknowledge
            * because the next getAlerts have the same id
