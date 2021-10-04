@@ -158,9 +158,6 @@ export default class Monitors extends Component {
       const response = await httpClient.get('../api/alerting/monitors', { query: params });
       if (response.ok) {
         const { monitors, totalMonitors } = response;
-        monitors.map((monitor) =>
-          this.getAlerts(from, size, '', sortField, sortDirection, 'ALL', 'ALL', monitor.id)
-        );
         this.setState({ monitors, totalMonitors });
       } else {
         console.log('error getting monitors:', response);
