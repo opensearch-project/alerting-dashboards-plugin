@@ -27,9 +27,9 @@
 import React, { Component } from 'react';
 import { connect } from 'formik';
 import { EuiText, EuiButtonEmpty, EuiSpacer, EuiBadge, EuiToolTip, EuiIcon } from '@elastic/eui';
+import _ from 'lodash';
 import { getIndexFields } from './utils/dataTypes';
 import { getMetricExpressionAllowedTypes, validateAggregationsDuplicates } from './utils/helpers';
-import _ from 'lodash';
 import {
   FORMIK_INITIAL_AGG_VALUES,
   METRIC_TOOLTIP_TEXT,
@@ -38,6 +38,7 @@ import { MetricItem } from './index';
 import { MONITOR_TYPE } from '../../../../../utils/constants';
 import { inputLimitText } from '../../../../../utils/helpers';
 import IconToolTip from '../../../../../components/IconToolTip';
+import { QUERY_TYPE_METRIC_ERROR } from './utils/constants';
 
 export const MAX_NUM_QUERY_LEVEL_METRICS = 1;
 export const MAX_NUM_BUCKET_LEVEL_METRICS = 5;
@@ -107,6 +108,11 @@ class MetricExpression extends Component {
 
     if (validateAggregationsDuplicates(aggregations)) {
       errors.aggregations = `You have defined duplicated metrics.`;
+    } else if (
+      MONITOR_TYPE.QUERY_LEVEL === monitorType &&
+      aggregations.length > MAX_NUM_QUERY_LEVEL_METRICS
+    ) {
+      errors.aggregations = QUERY_TYPE_METRIC_ERROR;
     } else {
       delete errors.aggregations;
     }

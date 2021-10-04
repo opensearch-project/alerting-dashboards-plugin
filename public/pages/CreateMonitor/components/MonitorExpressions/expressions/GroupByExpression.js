@@ -30,7 +30,7 @@ import { EuiText, EuiButtonEmpty, EuiSpacer } from '@elastic/eui';
 import { getIndexFields } from './utils/dataTypes';
 import { getGroupByExpressionAllowedTypes } from './utils/helpers';
 import GroupByItem from './GroupByItem';
-import { GROUP_BY_ERROR } from './utils/constants';
+import { GROUP_BY_ERROR, QUERY_TYPE_GROUP_BY_ERROR } from './utils/constants';
 import { MONITOR_TYPE } from '../../../../../utils/constants';
 import { inputLimitText } from '../../../../../utils/helpers';
 import {
@@ -86,6 +86,8 @@ class GroupByExpression extends Component {
     const isBucketLevelMonitor = values.monitor_type === MONITOR_TYPE.BUCKET_LEVEL;
     if (!values.groupBy.length && isBucketLevelMonitor) {
       errors.groupBy = GROUP_BY_ERROR;
+    } else if (!isBucketLevelMonitor && values.groupBy.length > MAX_NUM_QUERY_LEVEL_GROUP_BYS) {
+      errors.groupBy = QUERY_TYPE_GROUP_BY_ERROR;
     } else {
       delete errors.groupBy;
     }

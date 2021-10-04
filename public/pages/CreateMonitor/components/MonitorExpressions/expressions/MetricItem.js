@@ -10,6 +10,7 @@
  */
 
 import React, { useState } from 'react';
+import _ from 'lodash';
 import { EuiPopover, EuiBadge, EuiPopoverTitle } from '@elastic/eui';
 import MetricPopover from './MetricPopover';
 
@@ -18,6 +19,7 @@ export default function MetricItem(
 ) {
   const [isPopoverOpen, setIsPopoverOpen] = useState(aggregation.fieldName === '');
   const closePopover = () => {
+    if (_.isEmpty(aggregation.fieldName)) arrayHelpers.remove(index);
     setIsPopoverOpen(false);
   };
 
