@@ -177,7 +177,11 @@ class WhereExpression extends Component {
   };
 
   renderValueField = (fieldType, fieldOperator) => {
-    const { fieldPath = '' } = this.props;
+    const {
+      fieldPath = '',
+      formik: { values },
+    } = this.props;
+    const fieldNameValue = _.get(values, `${fieldPath}where.fieldName`);
     if (fieldType === DATA_TYPES.NUMBER) {
       return isRangeOperator(fieldOperator) ? (
         this.renderBetweenAnd()
