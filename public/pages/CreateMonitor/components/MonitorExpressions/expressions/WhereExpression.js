@@ -105,9 +105,10 @@ class WhereExpression extends Component {
     }
   };
 
-  handleOperatorChange = (e, field) => {
+  handleOperatorChange = (e, field, form) => {
     this.props.onMadeChanges();
     field.onChange(e);
+    form.setFieldError('where', undefined);
   };
 
   handleChangeWrapper = (e, field) => {
@@ -117,17 +118,22 @@ class WhereExpression extends Component {
 
   handleClosePopOver = async () => {
     const {
-      formik: { values },
+      formik: { values, errors, touched },
       closeExpression,
       fieldPath = '',
     } = this.props;
     // Explicitly invoking validation, this component unmount after it closes.
     const fieldName = _.get(values, `${fieldPath}where.fieldName`, '');
     const fieldValue = _.get(values, `${fieldPath}where.fieldValue`, '');
+    const fieldOperator = _.get(values, `${fieldPath}where.operator`, 'is');
     if (fieldName > 0) {
       await this.props.formik.validateForm();
     }
-    if (_.isEmpty(fieldName) || _.isEmpty(fieldValue.toString())) this.resetValues();
+    if (
+      _.isEmpty(fieldName) ||
+      (!isNullOperator(fieldOperator) && _.isEmpty(fieldValue.toString()))
+    )
+      this.resetValues();
     closeExpression(Expressions.WHERE);
   };
 
