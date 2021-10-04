@@ -118,7 +118,6 @@ class WhereExpression extends Component {
     } = this.props;
     // Explicitly invoking validation, this component unmount after it closes.
     const fieldName = _.get(values, `${fieldPath}where.fieldName`, '');
-    const fieldOperator = _.get(values, `${fieldPath}where.operator`, 'is');
     const fieldValue = _.get(values, `${fieldPath}where.fieldValue`, '');
     const fieldOperator = _.get(values, `${fieldPath}where.operator`, 'is');
     if (fieldName > 0) {
