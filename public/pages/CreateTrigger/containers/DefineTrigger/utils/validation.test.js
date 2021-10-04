@@ -33,13 +33,13 @@ describe('validateTriggerName', () => {
   });
 
   test('returns Required string if falsy value', () => {
-    expect(validateTriggerName([], {})()).toBe('Required');
-    expect(validateTriggerName([], {})('')).toBe('Required');
+    expect(validateTriggerName([], {})()).toBe('Required.');
+    expect(validateTriggerName([], {})('')).toBe('Required.');
   });
   test('returns false if name already exists in monitor while creates new trigger', () => {
     const triggers = [{ [TRIGGER_TYPE.QUERY_LEVEL]: { id: '123', name: 'Test' } }];
     expect(validateTriggerName(triggers, { [TRIGGER_TYPE.QUERY_LEVEL]: {} })('Test')).toBe(
-      'Trigger name already used'
+      'Trigger name already used.'
     );
   });
 
