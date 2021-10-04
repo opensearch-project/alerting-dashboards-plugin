@@ -50,12 +50,7 @@ import {
   isNullOperator,
   isRangeOperator,
 } from './utils/whereHelpers';
-import {
-  hasError,
-  isInvalid,
-  required,
-  validateRequiredNumber,
-} from '../../../../../utils/validate';
+import { hasError, isInvalid } from '../../../../../utils/validate';
 import {
   FormikComboBox,
   FormikSelect,
@@ -66,7 +61,6 @@ import { getFilteredIndexFields, getIndexFields } from './utils/dataTypes';
 import {
   FILTERS_TOOLTIP_TEXT,
   FORMIK_INITIAL_VALUES,
-  TIME_RANGE_TOOLTIP_TEXT,
 } from '../../../containers/CreateMonitor/utils/constants';
 import { DATA_TYPES } from '../../../../../utils/constants';
 import {
@@ -124,6 +118,7 @@ class WhereExpression extends Component {
     } = this.props;
     // Explicitly invoking validation, this component unmount after it closes.
     const fieldName = _.get(values, `${fieldPath}where.fieldName`, '');
+    const fieldOperator = _.get(values, `${fieldPath}where.operator`, 'is');
     const fieldValue = _.get(values, `${fieldPath}where.fieldValue`, '');
     const fieldOperator = _.get(values, `${fieldPath}where.operator`, 'is');
     if (fieldName > 0) {
@@ -183,14 +178,17 @@ class WhereExpression extends Component {
   };
 
   renderValueField = (fieldType, fieldOperator) => {
-    const { fieldPath = '' } = this.props;
+    const {
+      fieldPath = '',
+      formik: { values },
+    } = this.props;
+    const fieldNameValue = _.get(values, `${fieldPath}where.fieldName`);
     if (fieldType === DATA_TYPES.NUMBER) {
       return isRangeOperator(fieldOperator) ? (
         this.renderBetweenAnd()
       ) : (
         <FormikFieldNumber
           name={`${fieldPath}where.fieldValue`}
-          fieldProps={{ validate: validateRequiredNumber }}
           inputProps={{ onChange: this.handleChangeWrapper }}
           formRow
           rowProps={{ isInvalid, error: hasError }}
@@ -200,7 +198,6 @@ class WhereExpression extends Component {
       return (
         <FormikSelect
           name={`${fieldPath}where.fieldValue`}
-          fieldProps={{ validate: required }}
           inputProps={{
             onChange: this.handleChangeWrapper,
             options: WHERE_BOOLEAN_FILTERS,
@@ -212,7 +209,6 @@ class WhereExpression extends Component {
       return (
         <FormikFieldText
           name={`${fieldPath}where.fieldValue`}
-          fieldProps={{ validate: required }}
           inputProps={{ onChange: this.handleChangeWrapper, isInvalid }}
         />
       );
