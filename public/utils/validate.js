@@ -74,7 +74,7 @@ export const required = (value) => {
 };
 
 export const validateRequiredNumber = (value) => {
-  if (value === undefined || typeof value == 'string') return 'Provide a value.';
+  if (value === undefined || typeof value === 'string') return 'Provide a value.';
 };
 
 export const validateMonitorName = (httpClient, monitorToEdit) => async (value) => {
