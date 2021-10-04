@@ -118,7 +118,7 @@ class WhereExpression extends Component {
 
   handleClosePopOver = async () => {
     const {
-      formik: { values, errors, touched },
+      formik: { values },
       closeExpression,
       fieldPath = '',
     } = this.props;
