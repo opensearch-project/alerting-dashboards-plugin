@@ -112,7 +112,7 @@ class MetricExpression extends Component {
       MONITOR_TYPE.QUERY_LEVEL === monitorType &&
       aggregations.length > MAX_NUM_QUERY_LEVEL_METRICS
     ) {
-      errors.groupBy = QUERY_TYPE_METRIC_ERROR;
+      errors.aggregations = QUERY_TYPE_METRIC_ERROR;
     } else {
       delete errors.aggregations;
     }
