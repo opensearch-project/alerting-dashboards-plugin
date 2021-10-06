@@ -1,0 +1,70 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`FormikCheckableCard render 1`] = `
+<div
+  class="euiCheckableCard"
+>
+  <div
+    class="euiCheckableCard__row"
+  >
+    <div
+      class="euiCheckableCard__control"
+    >
+      <div
+        class="euiRadio euiRadio--noLabel"
+      >
+        <input
+          class="euiRadio__input"
+          name="testing"
+          type="radio"
+        />
+        <div
+          class="euiRadio__circle"
+        />
+      </div>
+    </div>
+    <label
+      class="euiCheckableCard__label"
+    />
+  </div>
+</div>
+`;
+
+exports[`FormikCheckableCard render formRow 1`] = `
+<div
+  class="euiFormRow"
+  id="testing-form-row-row"
+>
+  <div
+    class="euiFormRow__fieldWrapper"
+  >
+    <div
+      class="euiCheckableCard"
+    >
+      <div
+        class="euiCheckableCard__row"
+      >
+        <div
+          class="euiCheckableCard__control"
+        >
+          <div
+            class="euiRadio euiRadio--noLabel"
+          >
+            <input
+              class="euiRadio__input"
+              name="testing"
+              type="radio"
+            />
+            <div
+              class="euiRadio__circle"
+            />
+          </div>
+        </div>
+        <label
+          class="euiCheckableCard__label"
+        />
+      </div>
+    </div>
+  </div>
+</div>
+`;

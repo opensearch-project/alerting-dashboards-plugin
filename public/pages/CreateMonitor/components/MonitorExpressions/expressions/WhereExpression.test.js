@@ -27,7 +27,7 @@
 import React from 'react';
 import { Formik } from 'formik';
 import { render, mount } from 'enzyme';
-import { EuiExpression } from '@elastic/eui';
+import { EuiPopover } from '@elastic/eui';
 
 import { FORMIK_INITIAL_VALUES } from '../../../containers/CreateMonitor/utils/constants';
 import WhereExpression from './WhereExpression';
@@ -65,7 +65,7 @@ describe('WhereExpression', () => {
   });
   test('calls openExpression when clicking expression', () => {
     const wrapper = mount(getMountWrapper());
-    const button = wrapper.find(EuiExpression);
+    const button = wrapper.find('[data-test-subj="where.addFilterButton"]').first();
     button.simulate('click');
     wrapper.update();
     expect(openExpression).toHaveBeenCalled();
@@ -73,8 +73,7 @@ describe('WhereExpression', () => {
 
   test('calls closeExpression when closing popover', () => {
     const wrapper = mount(getMountWrapper(true));
-    const button = wrapper.find(EuiExpression);
-    button.simulate('keyDown', { keyCode: 27 });
+    wrapper.find(EuiPopover).simulate('keyDown', { keyCode: 27 });
     expect(closeExpression).toHaveBeenCalled();
   });
   test('should render text input for the text data types', async () => {

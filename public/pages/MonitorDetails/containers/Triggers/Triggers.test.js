@@ -28,6 +28,8 @@ import React from 'react';
 import { shallow } from 'enzyme';
 
 import Triggers from './Triggers';
+import { MONITOR_TYPE } from '../../../../utils/constants';
+import { TRIGGER_TYPE } from '../../../CreateTrigger/containers/CreateTrigger/utils/constants';
 
 const props = {
   monitor: {
@@ -79,16 +81,31 @@ describe('Triggers', () => {
   test('onDelete calls updateMonitor with triggers to keep', () => {
     const onDelete = jest.spyOn(Triggers.prototype, 'onDelete');
     const monitor = {
+      monitor_type: MONITOR_TYPE.QUERY_LEVEL,
       triggers: [
-        { name: 'one', severity: 1, actions: [{ name: 'one action' }] },
-        { name: 'two', severity: 2, actions: [{ name: 'two action' }] },
+        {
+          [TRIGGER_TYPE.QUERY_LEVEL]: {
+            name: 'one',
+            severity: 1,
+            actions: [{ name: 'one action' }],
+          },
+        },
+        {
+          [TRIGGER_TYPE.QUERY_LEVEL]: {
+            name: 'two',
+            severity: 2,
+            actions: [{ name: 'two action' }],
+          },
+        },
       ],
     };
     const wrapper = getShallowWrapper({ monitor });
-    wrapper.setState({ selectedItems: [monitor.triggers[0]] });
+    wrapper.setState({ selectedItems: [monitor.triggers[0][TRIGGER_TYPE.QUERY_LEVEL]] });
     wrapper.instance().onDelete();
     expect(onDelete).toHaveBeenCalled();
     expect(props.updateMonitor).toHaveBeenCalled();
-    expect(props.updateMonitor).toHaveBeenCalledWith({ triggers: [monitor.triggers[1]] });
+    expect(props.updateMonitor).toHaveBeenCalledWith({
+      triggers: [monitor.triggers[1][TRIGGER_TYPE.QUERY_LEVEL]],
+    });
   });
 });

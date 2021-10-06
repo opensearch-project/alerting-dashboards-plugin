@@ -48,6 +48,7 @@ exports[`Flyout renders 1`] = `
       <ul>
         <li>
           <EuiLink
+            external={true}
             href="https://mustache.github.io/mustache.5.html"
             target="_blank"
           >

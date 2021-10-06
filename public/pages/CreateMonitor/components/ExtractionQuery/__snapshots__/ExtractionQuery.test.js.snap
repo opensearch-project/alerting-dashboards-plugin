@@ -1,0 +1,111 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ExtractionQuery renders 1`] = `
+<div
+  class="euiFlexGroup euiFlexGroup--gutterLarge euiFlexGroup--directionRow euiFlexGroup--responsive"
+>
+  <div
+    class="euiFlexItem"
+  >
+    <div
+      class="euiFormRow euiFormRow--fullWidth"
+      id="query-form-row-row"
+    >
+      <div
+        class="euiFormRow__labelWrapper"
+      >
+        <label
+          aria-invalid="false"
+          class="euiFormLabel euiFormRow__label"
+          for="query-form-row"
+        >
+          Define extraction query
+        </label>
+      </div>
+      <div
+        class="euiFormRow__fieldWrapper"
+      >
+        <div
+          class="euiCodeEditorWrapper"
+          data-test-subj="extractionQueryCodeEditor"
+          style="width:100%;height:500px"
+        >
+          <div
+            class="euiCodeEditorKeyboardHint"
+            data-test-subj="codeEditorHint"
+            id="generated-id"
+            role="button"
+            tabindex="0"
+          >
+            <p
+              class="euiText"
+            >
+              Press Enter to start editing.
+            </p>
+            <p
+              class="euiText"
+            >
+              When you're done, press Escape to stop editing.
+            </p>
+          </div>
+          <div
+            id="generated-id"
+            style="width:100%;height:500px"
+          />
+        </div>
+      </div>
+    </div>
+  </div>
+  <div
+    class="euiFlexItem"
+  >
+    <div
+      class="euiFormRow euiFormRow--fullWidth"
+      id="generated-id-row"
+    >
+      <div
+        class="euiFormRow__labelWrapper"
+      >
+        <label
+          class="euiFormLabel euiFormRow__label"
+          for="generated-id"
+        >
+          Extraction query response
+        </label>
+      </div>
+      <div
+        class="euiFormRow__fieldWrapper"
+      >
+        <div
+          class="euiCodeEditorWrapper"
+          data-test-subj="codeEditorContainer"
+          style="width:100%;height:500px"
+        >
+          <div
+            class="euiCodeEditorKeyboardHint"
+            data-test-subj="codeEditorHint"
+            id="generated-id"
+            role="button"
+            tabindex="0"
+          >
+            <p
+              class="euiText"
+            >
+              Press Enter to start editing.
+            </p>
+            <p
+              class="euiText"
+            >
+              When you're done, press Escape to stop editing.
+            </p>
+          </div>
+          <div
+            id="generated-id"
+            style="width:100%;height:500px"
+          />
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;

@@ -1,84 +1,119 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`QueryPerformance renders 1`] = `
-Array [
-  <h4
-    class="euiTitle euiTitle--xsmall"
-    style="padding-left:10px"
-  >
-    Query performance
-  </h4>,
-  <hr
-    class="euiHorizontalRule euiHorizontalRule--full euiHorizontalRule--marginXSmall"
-  />,
+<div
+  class="euiPanel euiPanel--paddingMedium"
+  style="padding-left:10px;padding-right:10px"
+>
   <div
-    class="euiText euiText--extraSmall"
-    style="padding-left:10px"
-  >
-    <span>
-      Check the performance of your query and make sure to follow best practices. 
-      <a
-        href="https://docs-beta.opensearch.org/monitoring-plugins/alerting/"
-      >
-        Learn more
-      </a>
-    </span>
-  </div>,
-  <div
-    class="euiSpacer euiSpacer--s"
-  />,
-  <div
-    class="euiFlexGroup euiFlexGroup--alignItemsCenter euiFlexGroup--justifyContentSpaceBetween euiFlexGroup--directionRow euiFlexGroup--responsive"
+    class="euiFlexGroup euiFlexGroup--gutterLarge euiFlexGroup--alignItemsCenter euiFlexGroup--justifyContentSpaceBetween euiFlexGroup--directionRow euiFlexGroup--responsive"
     style="padding:0px 10px"
   >
     <div
       class="euiFlexItem"
     >
-      <div
-        class="euiText euiText--extraSmall"
+      <h3
+        class="euiTitle euiTitle--small"
       >
-        <strong>
-          Query duration
-        </strong>
-        <span
-          style="display:block"
-        >
-          5 ms
-        </span>
-      </div>
+        Query performance
+      </h3>
     </div>
     <div
-      class="euiFlexItem"
+      class="euiFlexItem euiFlexItem--flexGrowZero"
     >
       <div
-        class="euiText euiText--extraSmall"
+        class="euiFlexGroup euiFlexGroup--gutterLarge euiFlexGroup--alignItemsCenter euiFlexGroup--justifyContentSpaceBetween euiFlexGroup--directionRow euiFlexGroup--responsive"
       >
-        <strong>
-          Request duration
-        </strong>
-        <span
-          style="display:block"
-        >
-          -
-        </span>
+        <div
+          class="euiFlexItem"
+        />
       </div>
     </div>
+  </div>
+  <div
+    class="euiText euiText--extraSmall"
+    style="padding:0px 10px"
+  >
     <div
-      class="euiFlexItem"
+      class="euiTextColor euiTextColor--subdued"
+    >
+      <span>
+        Check the performance of your query and make sure to follow best practices. 
+        <a
+          class="euiLink euiLink--primary"
+          href="https://docs-beta.opensearch.org/monitoring-plugins/alerting/"
+          rel="noopener noreferrer"
+          target="_blank"
+        >
+          Learn more
+          <div>
+            EuiIconMock
+          </div>
+        </a>
+      </span>
+    </div>
+  </div>
+  <hr
+    class="euiHorizontalRule euiHorizontalRule--full euiHorizontalRule--marginXSmall"
+  />
+  <div
+    style="padding:0px 10px"
+  >
+    <div
+      class="euiSpacer euiSpacer--s"
+    />
+    <div
+      class="euiFlexGroup euiFlexGroup--gutterExtraLarge euiFlexGroup--alignItemsFlexStart euiFlexGroup--directionRow euiFlexGroup--responsive"
     >
       <div
-        class="euiText euiText--extraSmall"
+        class="euiFlexItem euiFlexItem--flexGrowZero"
       >
-        <strong>
-          Hits
-        </strong>
-        <span
-          style="display:block"
+        <div
+          class="euiText euiText--extraSmall"
         >
-          15
-        </span>
+          <strong>
+            Query duration
+          </strong>
+          <span
+            style="display:block"
+          >
+            5 ms
+          </span>
+        </div>
+      </div>
+      <div
+        class="euiFlexItem euiFlexItem--flexGrowZero"
+      >
+        <div
+          class="euiText euiText--extraSmall"
+        >
+          <strong>
+            Request duration
+          </strong>
+          <span
+            style="display:block"
+          >
+            -
+          </span>
+        </div>
+      </div>
+      <div
+        class="euiFlexItem euiFlexItem--flexGrowZero"
+      >
+        <div
+          class="euiText euiText--extraSmall"
+        >
+          <strong>
+            Hits
+          </strong>
+          <span
+            style="display:block"
+          >
+            15
+          </span>
+        </div>
       </div>
     </div>
-  </div>,
-]
+  </div>
+</div>
 `;
