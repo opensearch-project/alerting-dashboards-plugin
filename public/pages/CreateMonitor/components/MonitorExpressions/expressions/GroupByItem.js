@@ -10,6 +10,7 @@
  */
 
 import React, { useState } from 'react';
+import _ from 'lodash';
 import { EuiPopover, EuiBadge, EuiPopoverTitle } from '@elastic/eui';
 import { GroupByPopover } from './index';
 
@@ -18,6 +19,7 @@ export default function GroupByItem(
 ) {
   const [isPopoverOpen, setIsPopoverOpen] = useState(groupByItem === '');
   const closePopover = () => {
+    if (_.isEmpty(groupByItem)) arrayHelpers.remove(index);
     setIsPopoverOpen(false);
   };
 

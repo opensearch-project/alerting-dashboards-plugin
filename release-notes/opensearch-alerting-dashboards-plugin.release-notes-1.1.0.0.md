@@ -50,3 +50,6 @@ Compatible with OpenSearch Dashboards 1.1.0
 * Create opensearch-alerting-dashboards-plugin.release-notes-1.1.0.0.md ([#101](https://github.com/opensearch-project/alerting-dashboards-plugin/pull/101))
 * Update version in package.json ([#102](https://github.com/opensearch-project/alerting-dashboards-plugin/pull/102)) 
 * Update jest unit tests ([#112](https://github.com/opensearch-project/alerting-dashboards-plugin/pull/112))
+
+### Bug Fixes
+* Fixed a bug that displayed all alerts for a monitor on individual triggers' flyouts. Fixed a bug that displayed incorrect source for the condition field on the alerts flyout. Fixed a bug that displayed incorrect severity on the alerts flyout. Fixed a bug that prevented selecting query-level monitor alerts 1 by 1. Consolidates bug fixes from PR 121 and 122 ([#123](https://github.com/opensearch-project/alerting-dashboards-plugin/pull/123))
