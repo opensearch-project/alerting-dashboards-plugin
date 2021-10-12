@@ -8,7 +8,7 @@ on:
       - main
 env:
   OPENSEARCH_DASHBOARDS_VERSION: '1.x'
-  OPENSEARCH_VERSION: '1.1.0-SNAPSHOT'
+  OPENSEARCH_VERSION: '1.2.0-SNAPSHOT'
 jobs:
   tests:
     name: Run Cypress E2E tests
@@ -30,7 +30,7 @@ jobs:
         with:
           repository: opensearch-project/OpenSearch
           path: OpenSearch
-          ref: '1.1'
+          ref: '1.x'
       - name: Build OpenSearch
         working-directory: ./OpenSearch
         run: ./gradlew publishToMavenLocal
@@ -40,7 +40,7 @@ jobs:
         with:
           repository: opensearch-project/common-utils
           path: common-utils
-          ref: '1.1'
+          ref: 'main'
       - name: Build common-utils
         working-directory: ./common-utils
         run: ./gradlew publishToMavenLocal -Dopensearch.version=${{ env.OPENSEARCH_VERSION }}
