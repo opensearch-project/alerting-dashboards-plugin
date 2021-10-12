@@ -80,6 +80,7 @@ const getBucketLevelGraphFilter = (trigger) => {
 
 const alertsDashboard = (payload) => {
   const {
+    alerts,
     history,
     httpClient,
     last_notification_time,
@@ -90,9 +91,8 @@ const alertsDashboard = (payload) => {
     monitor_name,
     notifications,
     setFlyout,
-    severity,
     start_time,
-    triggerId,
+    triggerID,
     trigger_name,
   } = payload;
   const monitor = _.get(_.find(monitors, { _id: monitor_id }), '_source');
@@ -104,10 +104,11 @@ const alertsDashboard = (payload) => {
     monitorType === MONITOR_TYPE.QUERY_LEVEL ? TRIGGER_TYPE.QUERY_LEVEL : TRIGGER_TYPE.BUCKET_LEVEL;
 
   let trigger = _.get(monitor, 'triggers', []).find((trigger) => {
-    return trigger[triggerType].triggerId === triggerId;
+    return trigger[triggerType].id === triggerID;
   });
   trigger = _.get(trigger, triggerType);
 
+  const severity = _.get(trigger, 'severity');
   const groupBy = _.get(monitor, MONITOR_GROUP_BY);
 
   const condition =
@@ -260,6 +261,7 @@ const alertsDashboard = (payload) => {
               monitorType={monitorType}
               perAlertView={true}
               groupBy={groupBy}
+              flyoutAlerts={alerts}
             />
           </EuiFlexItem>
         </EuiFlexGroup>
