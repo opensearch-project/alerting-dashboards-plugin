@@ -49,7 +49,7 @@ export default class Dashboard extends Component {
   constructor(props) {
     super(props);
 
-    const { isAlertsFlyout = false, perAlertView } = props;
+    const { flyoutAlerts, isAlertsFlyout = false, perAlertView } = props;
 
     const {
       alertState,
@@ -77,6 +77,7 @@ export default class Dashboard extends Component {
       sortField,
       totalAlerts: 0,
       totalTriggers: 0,
+      trimmedFlyoutAlerts: flyoutAlerts ? flyoutAlerts.slice(0, 10) : [],
     };
   }
 
@@ -307,16 +308,23 @@ export default class Dashboard extends Component {
   };
 
   onTableChange = ({ page: tablePage = {}, sort = {} }) => {
+    const { isAlertsFlyout } = this.props;
     const { index: page, size } = tablePage;
 
     const { field: sortField, direction: sortDirection } = sort;
-
     this.setState({
       page,
       size,
       sortField,
       sortDirection,
     });
+
+    // If the table is in flyout, return the trimmed array of alerts.
+    if (isAlertsFlyout) {
+      const { flyoutAlerts } = this.props;
+      const trimmedFlyoutAlerts = flyoutAlerts.slice(page * size, page * size + size);
+      this.setState({ trimmedFlyoutAlerts });
+    }
   };
 
   onSeverityLevelChange = (e) => {
@@ -355,6 +363,7 @@ export default class Dashboard extends Component {
       sortField,
       totalAlerts,
       totalTriggers,
+      trimmedFlyoutAlerts,
     } = this.state;
     const {
       monitorIds,
@@ -370,7 +379,7 @@ export default class Dashboard extends Component {
       notifications,
       isAlertsFlyout = false,
     } = this.props;
-    const totalItems = perAlertView ? totalAlerts : totalTriggers;
+    let totalItems = perAlertView ? totalAlerts : totalTriggers;
     const isBucketMonitor = monitorType === MONITOR_TYPE.BUCKET_LEVEL;
 
     let columnType = perAlertView
@@ -387,7 +396,10 @@ export default class Dashboard extends Component {
           setFlyout
         );
 
-    if (isAlertsFlyout) columnType = removeColumns(['severity', 'trigger_name'], columnType);
+    if (isAlertsFlyout) {
+      totalItems = this.props.flyoutAlerts.length;
+      columnType = removeColumns(['severity', 'trigger_name'], columnType);
+    }
 
     const pagination = {
       pageIndex: page,
@@ -413,8 +425,12 @@ export default class Dashboard extends Component {
     };
 
     const actions = () => {
+      // The acknowledge button is disabled when viewing by per alerts, and no item selected or per trigger view and item selected is not 1.
       const actions = [
-        <EuiButton onClick={this.acknowledgeAlert} disabled={selectedItems.length !== 1}>
+        <EuiButton
+          onClick={this.acknowledgeAlert}
+          disabled={perAlertView ? !selectedItems.length : selectedItems.length !== 1}
+        >
           Acknowledge
         </EuiButton>,
       ];
@@ -459,7 +475,7 @@ export default class Dashboard extends Component {
     };
 
     const getItemId = (item) => {
-      if (perAlertView && isBucketMonitor) return item.id;
+      if (perAlertView) return isBucketMonitor ? item.id : `${item.id}-${item.version}`;
       return `${item.triggerID}-${item.version}`;
     };
 
@@ -486,7 +502,7 @@ export default class Dashboard extends Component {
         <EuiHorizontalRule margin="xs" />
 
         <EuiBasicTable
-          items={perAlertView ? alerts : alertsByTriggers}
+          items={perAlertView ? (isAlertsFlyout ? trimmedFlyoutAlerts : alerts) : alertsByTriggers}
           /*
            * If using just ID, doesn't update selectedItems when doing acknowledge
            * because the next getAlerts have the same id

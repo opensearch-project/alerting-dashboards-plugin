@@ -182,7 +182,7 @@ class DefineMonitor extends Component {
     // Default `count of documents` graph when using Bucket-level monitor
     let graphs = [
       <Fragment key={`multi-visual-graph-0`}>
-        <VisualGraph values={formikSnapshot} fieldName="doc_count" response={response} />,
+        <VisualGraph values={formikSnapshot} fieldName="doc_count" response={response} />
       </Fragment>,
     ];
 
