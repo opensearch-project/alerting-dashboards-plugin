@@ -28,7 +28,7 @@ import _ from 'lodash';
 import { FORMIK_INITIAL_TRIGGER_VALUES, TRIGGER_TYPE } from '../../CreateTrigger/utils/constants';
 
 export const validateTriggerName = (triggers, triggerToEdit, fieldPath) => (value) => {
-  if (!value) return 'Required';
+  if (!value) return 'Required.';
   const nameExists = triggers.filter((trigger) => {
     const triggerId = _.get(
       trigger,
@@ -44,7 +44,7 @@ export const validateTriggerName = (triggers, triggerToEdit, fieldPath) => (valu
     return triggerToEditId !== triggerId && triggerName.toLowerCase() === value.toLowerCase();
   });
   if (nameExists.length > 0) {
-    return 'Trigger name already used';
+    return 'Trigger name already used.';
   }
   // TODO: character restrictions
   // TODO: character limits

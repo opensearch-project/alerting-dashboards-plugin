@@ -43,7 +43,10 @@ export default class MonitorActions extends Component {
   };
 
   getActions = () => {
-    return [
+    // TODO: Support bulk acknowledge alerts across multiple monitors after figuring out the correct parameter for getAlerts API.
+    // Disabling the acknowledge button for now when more than 1 monitors selected.
+    const { isEditDisabled } = this.props;
+    const actions = [
       <EuiContextMenuItem
         key="acknowledge"
         data-test-subj="acknowledgeItem"
@@ -85,6 +88,8 @@ export default class MonitorActions extends Component {
         Delete
       </EuiContextMenuItem>,
     ];
+    if (isEditDisabled) actions.splice(0, 1);
+    return actions;
   };
 
   onCloseActions = () => {

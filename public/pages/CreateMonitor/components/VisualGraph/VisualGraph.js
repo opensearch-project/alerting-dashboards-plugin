@@ -128,7 +128,7 @@ export default class VisualGraph extends Component {
   renderAggregationXYPlot = (data, groupedData) => {
     const { annotation, thresholdValue, values, fieldName, aggregationType } = this.props;
     const { hint } = this.state;
-    const xDomain = getBufferedXDomain(data);
+    const xDomain = getBufferedXDomain(data, values);
     const yDomain = getYDomain(data);
     const annotations = getAnnotationData(xDomain, yDomain, thresholdValue);
     const xTitle = values.timeField;
