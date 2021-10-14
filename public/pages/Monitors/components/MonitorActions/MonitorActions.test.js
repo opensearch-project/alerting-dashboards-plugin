@@ -86,7 +86,7 @@ describe('MonitorActions', () => {
     expect(wrapper.state('isActionsOpen')).toBe(false);
   });
 
-  test('calls onCloseActions and onBulkAcknowledge when clicking Acknowledge item', () => {
+  test.skip('calls onCloseActions and onBulkAcknowledge when clicking Acknowledge item', () => {
     const instance = wrapper.instance();
     jest.spyOn(instance, 'onCloseActions');
     wrapper.find('[data-test-subj="actionsButton"]').hostNodes().simulate('click');
