@@ -35,6 +35,7 @@ import {
   DEFAULT_MESSAGE_SOURCE,
   FORMIK_INITIAL_ACTION_VALUES,
 } from '../../utils/constants';
+import { DESTINATION_OPTIONS } from '../../../Destinations/utils/constants';
 import { getAllowList } from '../../../Destinations/utils/helpers';
 import {
   MAX_QUERY_RESULT_SIZE,

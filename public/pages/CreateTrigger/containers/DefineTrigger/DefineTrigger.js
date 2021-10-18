@@ -257,7 +257,7 @@ class DefineTrigger extends Component {
                 rowProps={{ style: { paddingTop: '0px', marginTop: '0px', width: '390px' } }}
                 inputProps={{ options: triggerOptions }}
               />
-              <EuiSpacer siDEFze={'m'} />
+              <EuiSpacer size={'m'} />
             </div>
           ) : null}
 
