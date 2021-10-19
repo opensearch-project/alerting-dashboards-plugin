@@ -430,7 +430,7 @@ export default class AlertsDashboardFlyoutComponent extends Component {
       onSelectionChange: this.onSelectionChange,
       selectable: (item) => item.state === ALERT_STATE.ACTIVE,
       selectableMessage: (selectable) =>
-        selectable ? undefined : 'Only Active Alerts are Acknowledgeable',
+        selectable ? undefined : 'Only active alerts can be acknowledged.',
     };
 
     const sorting = {
