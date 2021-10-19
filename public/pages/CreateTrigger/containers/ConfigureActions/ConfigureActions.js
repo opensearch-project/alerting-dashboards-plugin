@@ -35,7 +35,6 @@ import {
   DEFAULT_MESSAGE_SOURCE,
   FORMIK_INITIAL_ACTION_VALUES,
 } from '../../utils/constants';
-import { DESTINATION_OPTIONS } from '../../../Destinations/utils/constants';
 import { getAllowList } from '../../../Destinations/utils/helpers';
 import {
   MAX_QUERY_RESULT_SIZE,
@@ -243,9 +242,8 @@ class ConfigureActions extends React.Component {
     const { destinations, flattenDestinations } = this.state;
     const hasDestinations = !_.isEmpty(destinations);
     const hasActions = !_.isEmpty(_.get(values, `${fieldPath}actions`));
-    const shouldRenderActions = hasActions || (hasDestinations && hasActions);
 
-    return shouldRenderActions ? (
+    return hasActions ? (
       _.get(values, `${fieldPath}actions`).map((action, index) => (
         <Action
           key={index}
