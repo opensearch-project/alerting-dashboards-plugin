@@ -55,6 +55,7 @@ const Action = ({
   httpClient,
   fieldPath,
   values,
+  hasNotificationPlugin,
 }) => {
   const selectedDestination = flattenDestinations.filter(
     (item) => item.value === action.destination_id
@@ -65,6 +66,66 @@ const Action = ({
   const actionLabel = ActionsMap[type].label;
   const manageChannelsUrl = httpClient.basePath.prepend(MANAGE_CHANNELS_PATH);
   const isFirstAction = index !== undefined && index === 0;
+
+  const renderChannels = () => {
+    return (
+      <div>
+        <EuiFlexGroup wrap>
+          <EuiFlexItem style={{ maxWidth: 400 }}>
+            <FormikComboBox
+              name={`${fieldPath}actions.${index}.destination_id`}
+              formRow
+              fieldProps={{ validate: validateDestination(flattenDestinations) }}
+              rowProps={{
+                label: 'Channels',
+                isInvalid,
+                error: hasError,
+              }}
+              inputProps={{
+                placeholder: 'Select channels to notify',
+                options: destinations,
+                selectedOptions: selectedDestination,
+                isDisabled: !hasNotificationPlugin,
+                onChange: (options) => {
+                  // Just a swap correct fields.
+                  arrayHelpers.replace(index, {
+                    ...action,
+                    destination_id: options[0].value,
+                  });
+                },
+                onBlur: (e, field, form) => {
+                  form.setFieldTouched(`${fieldPath}actions.${index}.destination_id`, true);
+                },
+                singleSelection: { asPlainText: true },
+                isClearable: false,
+                renderOption: (option) => (
+                  <React.Fragment>
+                    <EuiText size="s">{option.label}</EuiText>
+                    <EuiText size="xs" color="subdued">
+                      {option.description}
+                    </EuiText>
+                  </React.Fragment>
+                ),
+                rowHeight: 45,
+              }}
+            />
+          </EuiFlexItem>
+          <EuiFlexItem grow={false}>
+            <EuiSpacer size="l" />
+            <EuiButton
+              disabled={!hasNotificationPlugin}
+              iconType="popout"
+              iconSide="right"
+              onClick={() => window.open(manageChannelsUrl)}
+            >
+              Manage channels
+            </EuiButton>
+          </EuiFlexItem>
+        </EuiFlexGroup>
+      </div>
+    );
+  };
+
   return (
     <div style={{ paddingTop: isFirstAction ? undefined : '20px' }}>
       <EuiPanel styles={{ backgroundColor: '#FFFFFF' }}>
@@ -106,56 +167,7 @@ const Action = ({
               }}
             />
             <EuiSpacer size="m" />
-            <EuiFlexGroup wrap>
-              <EuiFlexItem style={{ maxWidth: 400 }}>
-                <FormikComboBox
-                  name={`${fieldPath}actions.${index}.destination_id`}
-                  formRow
-                  fieldProps={{ validate: validateDestination(flattenDestinations) }}
-                  rowProps={{
-                    label: 'Channels',
-                    isInvalid,
-                    error: hasError,
-                  }}
-                  inputProps={{
-                    placeholder: 'Select channels to notify',
-                    options: destinations,
-                    selectedOptions: selectedDestination,
-                    onChange: (options) => {
-                      // Just a swap correct fields.
-                      arrayHelpers.replace(index, {
-                        ...action,
-                        destination_id: options[0].value,
-                      });
-                    },
-                    onBlur: (e, field, form) => {
-                      form.setFieldTouched(`${fieldPath}actions.${index}.destination_id`, true);
-                    },
-                    singleSelection: { asPlainText: true },
-                    isClearable: false,
-                    renderOption: (option) => (
-                      <React.Fragment>
-                        <EuiText size="s">{option.label}</EuiText>
-                        <EuiText size="xs" color="subdued">
-                          {option.description}
-                        </EuiText>
-                      </React.Fragment>
-                    ),
-                    rowHeight: 45,
-                  }}
-                />
-              </EuiFlexItem>
-              <EuiFlexItem grow={false}>
-                <EuiSpacer size="l" />
-                <EuiButton
-                  iconType="popout"
-                  iconSide="right"
-                  onClick={() => window.open(manageChannelsUrl)}
-                >
-                  Manage channels
-                </EuiButton>
-              </EuiFlexItem>
-            </EuiFlexGroup>
+            {renderChannels()}
             <EuiSpacer size="m" />
             <ActionComponent
               action={action}

@@ -238,10 +238,11 @@ class ConfigureActions extends React.Component {
   };
 
   renderActions = (arrayHelpers) => {
-    const { context, setFlyout, values, fieldPath, httpClient } = this.props;
+    const { context, setFlyout, values, fieldPath, httpClient, plugins } = this.props;
     const { destinations, flattenDestinations } = this.state;
     const hasDestinations = !_.isEmpty(destinations);
     const hasActions = !_.isEmpty(_.get(values, `${fieldPath}actions`));
+    const hasNotificationPlugin = plugins.indexOf(OS_NOTIFICATION_PLUGIN) !== -1;
 
     return hasActions ? (
       _.get(values, `${fieldPath}actions`).map((action, index) => (
@@ -262,6 +263,7 @@ class ConfigureActions extends React.Component {
           httpClient={httpClient}
           fieldPath={fieldPath}
           values={values}
+          hasNotificationPlugin={hasNotificationPlugin}
         />
       ))
     ) : (
