@@ -28,7 +28,6 @@ import React from 'react';
 import _ from 'lodash';
 import { EuiLink } from '@elastic/eui';
 import moment from 'moment';
-
 import { ALERT_STATE, DEFAULT_EMPTY_DATA } from '../../../utils/constants';
 import { PLUGIN_NAME } from '../../../../utils/constants';
 
@@ -142,19 +141,21 @@ export const alertColumns = (
   location,
   monitors,
   notifications,
-  setFlyout
+  setFlyout,
+  openFlyout,
+  closeFlyout,
+  refreshDashboard
 ) => [
   {
     field: 'total',
     name: 'Alerts',
     sortable: true,
     truncateText: false,
-    render: (total, alert) => (
-      <EuiLink
-        onClick={() => {
-          setFlyout({
-            type: 'alertsDashboard',
-            payload: {
+    render: (total, alert) => {
+      return (
+        <EuiLink
+          onClick={() => {
+            openFlyout({
               ...alert,
               history,
               httpClient,
@@ -163,13 +164,15 @@ export const alertColumns = (
               monitors,
               notifications,
               setFlyout,
-            },
-          });
-        }}
-      >
-        {`${total} alerts`}
-      </EuiLink>
-    ),
+              closeFlyout,
+              refreshDashboard,
+            });
+          }}
+        >
+          {`${total} alerts`}
+        </EuiLink>
+      );
+    },
   },
   {
     field: 'ACTIVE',

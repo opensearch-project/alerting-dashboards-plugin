@@ -25,10 +25,10 @@
  */
 
 import _ from 'lodash';
-import { EMPTY_ALERT_LIST, MAX_ALERT_COUNT } from './constants';
+import { DEFAULT_GET_ALERTS_QUERY_PARAMS, EMPTY_ALERT_LIST, MAX_ALERT_COUNT } from './constants';
 import { bucketColumns } from './tableUtils';
-import { DEFAULT_NUM_FLYOUT_ROWS } from '../../../components/Flyout/flyouts/alertsDashboard';
-import { DEFAULT_EMPTY_DATA } from '../../../utils/constants';
+import { ALERT_STATE, DEFAULT_EMPTY_DATA } from '../../../utils/constants';
+import queryString from 'query-string';
 
 export function groupAlertsByTrigger(alerts) {
   let alertsByTriggers = new Map();
@@ -107,8 +107,63 @@ export function removeColumns(columnFieldNames = [], allColumns) {
   });
 }
 
-export function getInitialSize(isAlertsFlyout, perAlertView, defaultSize) {
-  if (!perAlertView) return MAX_ALERT_COUNT;
-  if (isAlertsFlyout) return DEFAULT_NUM_FLYOUT_ROWS;
-  return defaultSize;
+export function getInitialSize(perAlertView, defaultSize) {
+  return perAlertView ? defaultSize : MAX_ALERT_COUNT;
+}
+
+export function displayAcknowledgedAlertsToast(notifications, successfulCount) {
+  const successfulText = `Successfully acknowledged ${successfulCount} ${
+    successfulCount === 1 ? 'alert' : 'alerts'
+  }.`;
+  if (successfulCount > 0) notifications.toasts.addSuccess(successfulText);
+}
+
+export function filterActiveAlerts(alerts) {
+  return _.filter(alerts, { state: ALERT_STATE.ACTIVE });
+}
+
+export function getQueryObjectFromState({
+  page,
+  size,
+  search,
+  sortField,
+  sortDirection,
+  severityLevel,
+  alertState,
+  monitorIds,
+  flyoutIsOpen,
+}) {
+  return {
+    page,
+    size,
+    search,
+    sortField,
+    sortDirection,
+    severityLevel,
+    alertState,
+    monitorIds,
+    flyoutIsOpen,
+  };
+}
+
+export function getURLQueryParams(location) {
+  const {
+    from = DEFAULT_GET_ALERTS_QUERY_PARAMS.from,
+    size = DEFAULT_GET_ALERTS_QUERY_PARAMS.size,
+    search = DEFAULT_GET_ALERTS_QUERY_PARAMS.search,
+    sortField = DEFAULT_GET_ALERTS_QUERY_PARAMS.sortField,
+    sortDirection = DEFAULT_GET_ALERTS_QUERY_PARAMS.sortDirection,
+    severityLevel = DEFAULT_GET_ALERTS_QUERY_PARAMS.severityLevel,
+    alertState = DEFAULT_GET_ALERTS_QUERY_PARAMS.alertState,
+  } = queryString.parse(location.search);
+
+  return {
+    from: isNaN(parseInt(from, 10)) ? DEFAULT_GET_ALERTS_QUERY_PARAMS.from : parseInt(from, 10),
+    size: isNaN(parseInt(size, 10)) ? DEFAULT_GET_ALERTS_QUERY_PARAMS.size : parseInt(size, 10),
+    search,
+    sortField,
+    sortDirection,
+    severityLevel,
+    alertState,
+  };
 }

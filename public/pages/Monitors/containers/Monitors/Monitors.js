@@ -10,25 +10,24 @@
  */
 
 /*
- *   Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2021 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
- *   Licensed under the Apache License, Version 2.0 (the "License").
- *   You may not use this file except in compliance with the License.
- *   A copy of the License is located at
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- *   or in the "license" file accompanying this file. This file is distributed
- *   on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- *   express or implied. See the License for the specific language governing
- *   permissions and limitations under the License.
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
  */
 
 import React, { Component } from 'react';
 import _ from 'lodash';
 import queryString from 'query-string';
 import { EuiBasicTable, EuiHorizontalRule } from '@elastic/eui';
-
 import AcknowledgeModal from '../../components/AcknowledgeModal';
 import ContentPanel from '../../../../components/ContentPanel';
 import MonitorActions from '../../components/MonitorActions';
@@ -39,6 +38,7 @@ import { getURLQueryParams } from './utils/helpers';
 import { columns as staticColumns } from './utils/tableUtils';
 import { MONITOR_ACTIONS } from '../../../../utils/constants';
 import { backendErrorNotification } from '../../../../utils/helpers';
+import { displayAcknowledgedAlertsToast } from '../../../Dashboard/utils/helpers';
 
 const MAX_MONITOR_COUNT = 1000;
 
@@ -265,6 +265,9 @@ export default class Monitors extends Component {
         .then((resp) => {
           if (!resp.ok) {
             backendErrorNotification(notifications, 'acknowledge', 'alert', resp.resp);
+          } else {
+            const successfulCount = _.get(resp, 'resp.success', []).length;
+            displayAcknowledgedAlertsToast(notifications, successfulCount);
           }
         })
         .catch((error) => error)
