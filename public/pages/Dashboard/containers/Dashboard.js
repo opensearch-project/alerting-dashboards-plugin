@@ -408,7 +408,8 @@ export default class Dashboard extends Component {
         : (item) => item.ACTIVE > 0,
       selectableMessage: perAlertView
         ? (selectable) => (selectable ? undefined : 'Only active alerts can be acknowledged.')
-        : (selectable) => (selectable ? undefined : 'Only active alerts can be acknowledged.'),
+        : (selectable) =>
+            selectable ? undefined : 'Only triggers with active alerts can be acknowledged.',
     };
 
     const actions = () => {
