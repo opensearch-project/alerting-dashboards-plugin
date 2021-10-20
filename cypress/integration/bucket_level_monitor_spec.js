@@ -160,6 +160,7 @@ describe('Bucket-Level Monitors', () => {
       cy.get('[data-test-subj="extractionQueryCodeEditor"]').within(() => {
         // If possible, a data-test-subj attribute should be added to access the code editor input directly
         cy.get('.ace_text-input')
+          .focus()
           .clear({ force: true })
           .type(JSON.stringify(sampleAggregationQuery), {
             force: true,
