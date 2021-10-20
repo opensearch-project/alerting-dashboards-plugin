@@ -33,7 +33,12 @@ import { PLUGIN_NAME } from '../../../../../../utils/constants';
 
 const filterText =
   'There are no destinations matching your applied filters. Reset your filters to view all destinations.';
-const emptyText = 'There are no existing destinations.';
+const emptyText = 'There are no existing destinations. Add a destination.';
+const createDestinationButton = (
+  <EuiButton fill href={`${PLUGIN_NAME}#${APP_PATH.CREATE_DESTINATION}`}>
+    Add destination
+  </EuiButton>
+);
 
 const resetFiltersButton = (resetFilters) => (
   <EuiButton fill onClick={resetFilters}>
@@ -54,7 +59,7 @@ const EmptyDestinations = ({ isFilterApplied, onResetFilters }) => (
         <p>{isFilterApplied ? filterText : emptyText}</p>
       </EuiText>
     }
-    actions={isFilterApplied ? resetFiltersButton(onResetFilters) : undefined}
+    actions={isFilterApplied ? resetFiltersButton(onResetFilters) : createDestinationButton}
   />
 );
 

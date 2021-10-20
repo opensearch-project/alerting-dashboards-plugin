@@ -40,7 +40,7 @@ import { staticColumns, MAX_DESTINATIONS } from './utils/constants';
 import { getURLQueryParams } from './utils/helpers';
 import { isDeleteAllowedQuery } from './utils/deleteHelpers';
 import { INDEX } from '../../../../../utils/constants';
-import { DESTINATION_ACTIONS } from '../../../../utils/constants';
+import { DESTINATION_ACTIONS, OS_NOTIFICATION_PLUGIN } from '../../../../utils/constants';
 import ManageSenders from '../CreateDestination/ManageSenders';
 import ManageEmailGroups from '../CreateDestination/ManageEmailGroups';
 import { getAllowList } from '../../utils/helpers';
@@ -74,6 +74,7 @@ class DestinationsList extends React.Component {
       allowList: [],
       showManageSenders: false,
       showManageEmailGroups: false,
+      hasNotificationPlugin: false,
     };
 
     this.columns = [
@@ -91,6 +92,7 @@ class DestinationsList extends React.Component {
           {
             name: 'Delete',
             description: 'Delete this destination.',
+            enabled: this.isDeleteEnabled,
             onClick: this.handleDeleteAction,
           },
         ],
@@ -117,6 +119,22 @@ class DestinationsList extends React.Component {
 
     const { page, queryParams } = this.state;
     this.getDestinations(page * queryParams.size, queryParams);
+  }
+
+  async getPlugins() {
+    const { httpClient } = this.props;
+    try {
+      const pluginsResponse = await httpClient.get('../api/alerting/_plugins');
+      if (pluginsResponse.ok) {
+        const plugins = pluginsResponse.resp.map((plugin) => plugin.component);
+        const hasNotificationPlugin = plugins.indexOf(OS_NOTIFICATION_PLUGIN) !== -1;
+        this.setState({ hasNotificationPlugin });
+      } else {
+        console.error('There was a problem getting plugins list');
+      }
+    } catch (e) {
+      console.error('There was a problem getting plugins list', e);
+    }
   }
 
   isEmailAllowed = () => {
@@ -181,10 +199,21 @@ class DestinationsList extends React.Component {
   };
 
   isEditEnabled = (destination) => {
-    const { allowList } = this.state;
+    const { allowList, hasNotificationPlugin } = this.state;
     // Prevent editing disallowed Destination types since dependent API (like in the case of Email)
     // may be blocked in this case, not making it possible to load the Edit page
+
+    // Allow edit only when notifications plugin is installed
+    // return allowList.includes(destination.type) && hasNotificationPlugin;
+    //TODO: uncomment above and remove this line once create destination page is updated.
     return allowList.includes(destination.type);
+  };
+
+  isDeleteEnabled = () => {
+    const { hasNotificationPlugin } = this.state;
+
+    // Allow delete only when notifications plugin is installed
+    return hasNotificationPlugin;
   };
 
   handleEditDestination = (destinationToEdit) => {
@@ -297,6 +326,7 @@ class DestinationsList extends React.Component {
       isDestinationLoading,
       destinationConsumedByOthers,
       allowList,
+      hasNotificationPlugin,
     } = this.state;
     const isFilterApplied = !!search || type !== 'ALL';
     const pagination = {
@@ -321,7 +351,23 @@ class DestinationsList extends React.Component {
           />
         ) : null}
         <NotificationsInfoCallOut />
-        <ContentPanel bodyStyles={{ padding: 'initial' }} title="Destinations (deprecated)">
+        <ContentPanel
+          bodyStyles={{ padding: 'initial' }}
+          title="Destinations (deprecated)"
+          actions={
+            hasNotificationPlugin && (
+              <DestinationsActions
+                isEmailAllowed={this.isEmailAllowed()}
+                onClickManageSenders={() => {
+                  this.setState({ showManageSenders: true });
+                }}
+                onClickManageEmailGroups={() => {
+                  this.setState({ showManageEmailGroups: true });
+                }}
+              />
+            )
+          }
+        >
           <DeleteConfirmation
             isVisible={this.state.showDeleteConfirmation}
             onCancel={() => {
