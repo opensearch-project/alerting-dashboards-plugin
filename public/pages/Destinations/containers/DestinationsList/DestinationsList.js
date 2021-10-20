@@ -319,21 +319,7 @@ class DestinationsList extends React.Component {
             color="danger"
           />
         ) : null}
-        <ContentPanel
-          bodyStyles={{ padding: 'initial' }}
-          title="Destinations"
-          actions={
-            <DestinationsActions
-              isEmailAllowed={this.isEmailAllowed()}
-              onClickManageSenders={() => {
-                this.setState({ showManageSenders: true });
-              }}
-              onClickManageEmailGroups={() => {
-                this.setState({ showManageEmailGroups: true });
-              }}
-            />
-          }
-        >
+        <ContentPanel bodyStyles={{ padding: 'initial' }} title="Destinations (Deprecated)">
           <DeleteConfirmation
             isVisible={this.state.showDeleteConfirmation}
             onCancel={() => {
