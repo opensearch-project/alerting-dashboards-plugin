@@ -46,6 +46,7 @@ import ManageEmailGroups from '../CreateDestination/ManageEmailGroups';
 import { getAllowList } from '../../utils/helpers';
 import { DESTINATION_TYPE } from '../../utils/constants';
 import { backendErrorNotification } from '../../../../utils/helpers';
+import NotificationsInfoCallOut from '../../components/NotificationsInfoCallOut';
 
 class DestinationsList extends React.Component {
   constructor(props) {
@@ -319,7 +320,8 @@ class DestinationsList extends React.Component {
             color="danger"
           />
         ) : null}
-        <ContentPanel bodyStyles={{ padding: 'initial' }} title="Destinations (Deprecated)">
+        <NotificationsInfoCallOut />
+        <ContentPanel bodyStyles={{ padding: 'initial' }} title="Destinations (deprecated)">
           <DeleteConfirmation
             isVisible={this.state.showDeleteConfirmation}
             onCancel={() => {
