@@ -98,6 +98,8 @@ class DestinationsList extends React.Component {
         ],
       },
     ];
+
+    this.getPlugins = this.getPlugins.bind(this);
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -113,6 +115,7 @@ class DestinationsList extends React.Component {
   }
 
   async componentDidMount() {
+    this.getPlugins();
     const { httpClient } = this.props;
     const allowList = await getAllowList(httpClient);
     this.setState({ allowList });

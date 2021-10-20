@@ -65,9 +65,11 @@ class CreateDestination extends React.Component {
       allowList: [],
       plugins: [],
     };
+    this.getPlugins = this.getPlugins.bind(this);
   }
 
   async componentDidMount() {
+    this.getPlugins();
     const { httpClient, location, edit, history } = this.props;
 
     const allowList = await getAllowList(httpClient);
