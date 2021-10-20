@@ -35,12 +35,15 @@ import {
   EuiFlexItem,
   EuiPanel,
   EuiText,
+  EuiLink,
+  EuiCallOut,
 } from '@elastic/eui';
 import { FormikFieldText, FormikComboBox } from '../../../../components/FormControls';
 import { isInvalid, hasError, validateActionName } from '../../../../utils/validate';
 import { ActionsMap } from './utils/constants';
 import { validateDestination } from './utils/validate';
 import { DEFAULT_ACTION_TYPE, MANAGE_CHANNELS_PATH } from '../../utils/constants';
+import NotificationsCallOut from '../NotificationsCallout';
 
 const Action = ({
   action,
@@ -122,6 +125,8 @@ const Action = ({
             </EuiButton>
           </EuiFlexItem>
         </EuiFlexGroup>
+        <EuiSpacer size="m" />
+        {!hasNotificationPlugin && <NotificationsCallOut />}
       </div>
     );
   };
@@ -168,7 +173,6 @@ const Action = ({
             />
             <EuiSpacer size="m" />
             {renderChannels()}
-            <EuiSpacer size="m" />
             <ActionComponent
               action={action}
               context={context}
