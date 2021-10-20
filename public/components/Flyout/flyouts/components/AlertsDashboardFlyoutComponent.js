@@ -573,7 +573,7 @@ export default class AlertsDashboardFlyoutComponent extends Component {
                 isSelectable={selectable}
                 selection={selection}
                 onChange={this.onTableChange}
-                noItemsMessage={'Loading alerts...'}
+                noItemsMessage={'No alerts.'}
               />
             </ContentPanel>
           </EuiFlexItem>
