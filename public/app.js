@@ -36,12 +36,12 @@ import { CoreContext } from './utils/CoreContext';
 import { ServicesContext, NotificationService } from './services';
 
 export function renderApp(coreStart, params) {
+  const isDarkMode = coreStart.uiSettings.get('theme:darkMode') || false;
   const http = coreStart.http;
   coreStart.chrome.setBreadcrumbs([{ text: 'Alerting' }]); // Set Breadcrumbs for the plugin
   const notificationService = new NotificationService(http);
   const services = { notificationService };
 
-  const isDarkMode = coreStart.uiSettings.get('theme:darkMode') || false;
   // Load Chart's dark mode CSS
   if (isDarkMode) {
     require('@elastic/charts/dist/theme_only_dark.css');
