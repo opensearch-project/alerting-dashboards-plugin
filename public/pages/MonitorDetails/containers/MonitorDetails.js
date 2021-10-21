@@ -278,8 +278,6 @@ export default class MonitorDetails extends Component {
       httpClient,
       notifications,
       isDarkMode,
-      notificationService,
-      plugins,
     } = this.props;
     const { action } = queryString.parse(location.search);
     const updatingMonitor = action === MONITOR_ACTIONS.UPDATE_MONITOR;
@@ -302,25 +300,6 @@ export default class MonitorDetails extends Component {
           detectorId={detectorId}
           notifications={notifications}
           {...this.props}
-        />
-      );
-    }
-    if (creatingTrigger || updatingTrigger) {
-      return (
-        <CreateTrigger
-          edit={updatingTrigger}
-          triggerToEdit={triggerToEdit}
-          monitor={monitor}
-          showSuccessCallOut={showSuccessCallOut}
-          httpClient={this.props.httpClient}
-          setFlyout={this.props.setFlyout}
-          onCloseTrigger={this.onCloseTrigger}
-          onMonitorFieldChange={() => {}}
-          updateMonitor={this.updateMonitor}
-          notifications={notifications}
-          isDarkMode={isDarkMode}
-          notificationService={notificationService}
-          plugins={plugins}
         />
       );
     }

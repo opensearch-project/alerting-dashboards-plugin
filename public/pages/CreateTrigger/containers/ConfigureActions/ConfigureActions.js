@@ -76,6 +76,7 @@ class ConfigureActions extends React.Component {
       flattenDestinations: [],
       allowList: [],
       loadingDestinations: true,
+      actionDeleted: false,
       hasNotificationPlugin: false,
     };
   }
@@ -242,9 +243,10 @@ class ConfigureActions extends React.Component {
     const { destinations, flattenDestinations } = this.state;
     const hasDestinations = !_.isEmpty(destinations);
     const hasActions = !_.isEmpty(_.get(values, `${fieldPath}actions`));
+    const shouldRenderActions = hasActions || (hasDestinations && hasActions);
     const hasNotificationPlugin = plugins.indexOf(OS_NOTIFICATION_PLUGIN) !== -1;
 
-    return hasActions ? (
+    return shouldRenderActions ? (
       _.get(values, `${fieldPath}actions`).map((action, index) => (
         <Action
           key={index}

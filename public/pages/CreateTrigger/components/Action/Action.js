@@ -30,13 +30,11 @@ import {
   EuiAccordion,
   EuiButton,
   EuiHorizontalRule,
+  EuiPanel,
   EuiSpacer,
   EuiFlexGroup,
   EuiFlexItem,
-  EuiPanel,
   EuiText,
-  EuiLink,
-  EuiCallOut,
 } from '@elastic/eui';
 import { FormikFieldText, FormikComboBox } from '../../../../components/FormControls';
 import { isInvalid, hasError, validateActionName } from '../../../../utils/validate';
