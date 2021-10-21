@@ -47,20 +47,96 @@ exports[`DestinationsList renders 1`] = `
     }
   }
 >
+  <NotificationsInfoCallOut>
+    <div>
+      <EuiCallOut
+        title="Destinations have become channels in Notifications."
+      >
+        <div
+          className="euiCallOut euiCallOut--primary"
+        >
+          <div
+            className="euiCallOutHeader"
+          >
+            <span
+              className="euiCallOutHeader__title"
+            >
+              Destinations have become channels in Notifications.
+            </span>
+          </div>
+          <EuiText
+            size="s"
+          >
+            <div
+              className="euiText euiText--small"
+            >
+              <p>
+                Your destinations have been migrated to Notifications, a new centralized place to manage your notification channels. Destinations will be deprecated going forward.
+                <EuiSpacer
+                  size="l"
+                >
+                  <div
+                    className="euiSpacer euiSpacer--l"
+                  />
+                </EuiSpacer>
+                <EuiButton
+                  href="/app/notifications-dashboards#/channels"
+                >
+                  <EuiButtonDisplay
+                    element="a"
+                    href="/app/notifications-dashboards#/channels"
+                    isDisabled={false}
+                    rel="noreferrer"
+                  >
+                    <a
+                      className="euiButton euiButton--primary"
+                      href="/app/notifications-dashboards#/channels"
+                      rel="noreferrer"
+                    >
+                      <EuiButtonContent
+                        className="euiButton__content"
+                        iconSide="left"
+                        textProps={
+                          Object {
+                            "className": "euiButton__text",
+                          }
+                        }
+                      >
+                        <span
+                          className="euiButtonContent euiButton__content"
+                        >
+                          <span
+                            className="euiButton__text"
+                          >
+                            View Notifications
+                          </span>
+                        </span>
+                      </EuiButtonContent>
+                    </a>
+                  </EuiButtonDisplay>
+                </EuiButton>
+              </p>
+            </div>
+          </EuiText>
+        </div>
+      </EuiCallOut>
+      <EuiSpacer
+        size="l"
+      >
+        <div
+          className="euiSpacer euiSpacer--l"
+        />
+      </EuiSpacer>
+    </div>
+  </NotificationsInfoCallOut>
   <ContentPanel
-    actions={
-      <DestinationsActions
-        isEmailAllowed={true}
-        onClickManageEmailGroups={[Function]}
-        onClickManageSenders={[Function]}
-      />
-    }
+    actions={false}
     bodyStyles={
       Object {
         "padding": "initial",
       }
     }
-    title="Destinations"
+    title="Destinations (deprecated)"
   >
     <EuiPanel
       style={
@@ -106,7 +182,7 @@ exports[`DestinationsList renders 1`] = `
                   <h3
                     className="euiTitle euiTitle--large"
                   >
-                    Destinations
+                    Destinations (deprecated)
                   </h3>
                 </EuiTitle>
               </div>
@@ -127,166 +203,7 @@ exports[`DestinationsList renders 1`] = `
                     <EuiFlexItem>
                       <div
                         className="euiFlexItem"
-                      >
-                        <DestinationsActions
-                          isEmailAllowed={true}
-                          onClickManageEmailGroups={[Function]}
-                          onClickManageSenders={[Function]}
-                        >
-                          <EuiFlexGroup
-                            alignItems="center"
-                            justifyContent="spaceBetween"
-                          >
-                            <div
-                              className="euiFlexGroup euiFlexGroup--gutterLarge euiFlexGroup--alignItemsCenter euiFlexGroup--justifyContentSpaceBetween euiFlexGroup--directionRow euiFlexGroup--responsive"
-                            >
-                              <EuiFlexItem>
-                                <div
-                                  className="euiFlexItem"
-                                >
-                                  <EuiPopover
-                                    anchorPosition="downLeft"
-                                    button={
-                                      <EuiButton
-                                        iconSide="right"
-                                        iconType="arrowDown"
-                                        onClick={[Function]}
-                                      >
-                                        Actions
-                                      </EuiButton>
-                                    }
-                                    closePopover={[Function]}
-                                    display="inlineBlock"
-                                    hasArrow={true}
-                                    id="destinationActionsPopover"
-                                    isOpen={false}
-                                    ownFocus={false}
-                                    panelPaddingSize="none"
-                                  >
-                                    <EuiOutsideClickDetector
-                                      isDisabled={true}
-                                      onOutsideClick={[Function]}
-                                    >
-                                      <div
-                                        className="euiPopover euiPopover--anchorDownLeft"
-                                        id="destinationActionsPopover"
-                                        onKeyDown={[Function]}
-                                        onMouseDown={[Function]}
-                                        onMouseUp={[Function]}
-                                        onTouchEnd={[Function]}
-                                        onTouchStart={[Function]}
-                                      >
-                                        <div
-                                          className="euiPopover__anchor"
-                                        >
-                                          <EuiButton
-                                            iconSide="right"
-                                            iconType="arrowDown"
-                                            onClick={[Function]}
-                                          >
-                                            <EuiButtonDisplay
-                                              disabled={false}
-                                              element="button"
-                                              iconSide="right"
-                                              iconType="arrowDown"
-                                              isDisabled={false}
-                                              onClick={[Function]}
-                                              type="button"
-                                            >
-                                              <button
-                                                className="euiButton euiButton--primary"
-                                                disabled={false}
-                                                onClick={[Function]}
-                                                type="button"
-                                              >
-                                                <EuiButtonContent
-                                                  className="euiButton__content"
-                                                  iconSide="right"
-                                                  iconType="arrowDown"
-                                                  textProps={
-                                                    Object {
-                                                      "className": "euiButton__text",
-                                                    }
-                                                  }
-                                                >
-                                                  <span
-                                                    className="euiButtonContent euiButtonContent--iconRight euiButton__content"
-                                                  >
-                                                    <EuiIcon
-                                                      className="euiButtonContent__icon"
-                                                      size="m"
-                                                      type="arrowDown"
-                                                    >
-                                                      <div>
-                                                        EuiIconMock
-                                                      </div>
-                                                    </EuiIcon>
-                                                    <span
-                                                      className="euiButton__text"
-                                                    >
-                                                      Actions
-                                                    </span>
-                                                  </span>
-                                                </EuiButtonContent>
-                                              </button>
-                                            </EuiButtonDisplay>
-                                          </EuiButton>
-                                        </div>
-                                      </div>
-                                    </EuiOutsideClickDetector>
-                                  </EuiPopover>
-                                </div>
-                              </EuiFlexItem>
-                              <EuiFlexItem
-                                grow={false}
-                              >
-                                <div
-                                  className="euiFlexItem euiFlexItem--flexGrowZero"
-                                >
-                                  <EuiButton
-                                    fill={true}
-                                    href="alerting#/create-destination"
-                                  >
-                                    <EuiButtonDisplay
-                                      element="a"
-                                      fill={true}
-                                      href="alerting#/create-destination"
-                                      isDisabled={false}
-                                      rel="noreferrer"
-                                    >
-                                      <a
-                                        className="euiButton euiButton--primary euiButton--fill"
-                                        href="alerting#/create-destination"
-                                        rel="noreferrer"
-                                      >
-                                        <EuiButtonContent
-                                          className="euiButton__content"
-                                          iconSide="left"
-                                          textProps={
-                                            Object {
-                                              "className": "euiButton__text",
-                                            }
-                                          }
-                                        >
-                                          <span
-                                            className="euiButtonContent euiButton__content"
-                                          >
-                                            <span
-                                              className="euiButton__text"
-                                            >
-                                              Add destination
-                                            </span>
-                                          </span>
-                                        </EuiButtonContent>
-                                      </a>
-                                    </EuiButtonDisplay>
-                                  </EuiButton>
-                                </div>
-                              </EuiFlexItem>
-                            </div>
-                          </EuiFlexGroup>
-                        </DestinationsActions>
-                      </div>
+                      />
                     </EuiFlexItem>
                   </div>
                 </EuiFlexGroup>
@@ -343,29 +260,21 @@ exports[`DestinationsList renders 1`] = `
           />
           <ManageSenders
             httpClient={[MockFunction]}
-            isEmailAllowed={true}
+            isEmailAllowed={false}
             isVisible={false}
             onClickCancel={[Function]}
             onClickSave={[Function]}
           />
           <ManageEmailGroups
             httpClient={[MockFunction]}
-            isEmailAllowed={true}
+            isEmailAllowed={false}
             isVisible={false}
             onClickCancel={[Function]}
             onClickSave={[Function]}
           />
           <DestinationsControls
             activePage={0}
-            allowList={
-              Array [
-                "chime",
-                "slack",
-                "custom_webhook",
-                "webhook",
-                "email",
-              ]
-            }
+            allowList={Array []}
             onPageClick={[Function]}
             onSearchChange={[Function]}
             onTypeChange={[Function]}
@@ -470,26 +379,6 @@ exports[`DestinationsList renders 1`] = `
                             "text": "All type",
                             "value": "ALL",
                           },
-                          Object {
-                            "text": "Amazon Chime",
-                            "value": "chime",
-                          },
-                          Object {
-                            "text": "Slack",
-                            "value": "slack",
-                          },
-                          Object {
-                            "text": "Custom webhook",
-                            "value": "custom_webhook",
-                          },
-                          Object {
-                            "text": "Custom webhook",
-                            "value": "webhook",
-                          },
-                          Object {
-                            "text": "Email",
-                            "value": "email",
-                          },
                         ]
                       }
                       value="ALL"
@@ -523,36 +412,6 @@ exports[`DestinationsList renders 1`] = `
                                   value="ALL"
                                 >
                                   All type
-                                </option>
-                                <option
-                                  key="1"
-                                  value="chime"
-                                >
-                                  Amazon Chime
-                                </option>
-                                <option
-                                  key="2"
-                                  value="slack"
-                                >
-                                  Slack
-                                </option>
-                                <option
-                                  key="3"
-                                  value="custom_webhook"
-                                >
-                                  Custom webhook
-                                </option>
-                                <option
-                                  key="4"
-                                  value="webhook"
-                                >
-                                  Custom webhook
-                                </option>
-                                <option
-                                  key="5"
-                                  value="email"
-                                >
-                                  Email
                                 </option>
                               </select>
                             </EuiValidatableControl>
@@ -838,6 +697,7 @@ exports[`DestinationsList renders 1`] = `
                     },
                     Object {
                       "description": "Delete this destination.",
+                      "enabled": [Function],
                       "name": "Delete",
                       "onClick": [Function],
                     },
