@@ -49,6 +49,7 @@ import { Webhook, CustomWebhook, Email } from '../../components/createDestinatio
 import { SubmitErrorHandler } from '../../../../utils/SubmitErrorHandler';
 import { getAllowList } from '../../utils/helpers';
 import { backendErrorNotification } from '../../../../utils/helpers';
+import { OS_NOTIFICATION_PLUGIN } from '../../../../utils/constants';
 
 const destinationType = {
   [DESTINATION_TYPE.SLACK]: (props) => <Webhook {...props} />,
@@ -63,7 +64,7 @@ class CreateDestination extends React.Component {
     this.state = {
       initialValues: formikInitialValues,
       allowList: [],
-      plugins: [],
+      hasNotificationPlugin: false,
     };
     this.getPlugins = this.getPlugins.bind(this);
   }
@@ -100,7 +101,9 @@ class CreateDestination extends React.Component {
     try {
       const pluginsResponse = await httpClient.get('../api/alerting/_plugins');
       if (pluginsResponse.ok) {
-        this.setState({ plugins: pluginsResponse.resp.map((plugin) => plugin.component) });
+        const plugins = pluginsResponse.resp.map((plugin) => plugin.component);
+        const hasNotificationPlugin = plugins.indexOf(OS_NOTIFICATION_PLUGIN) !== -1;
+        this.setState({ hasNotificationPlugin });
       } else {
         console.error('There was a problem getting plugins list');
       }
@@ -183,6 +186,18 @@ class CreateDestination extends React.Component {
   };
   // Handle Submit
   handleSubmit = (values, formikBag) => {
+    const { history, notifications } = this.props;
+    const { hasNotificationPlugin } = this.state;
+    const { setSubmitting } = formikBag;
+
+    if (!hasNotificationPlugin) {
+      setSubmitting(false);
+      notifications.toasts.addDanger({
+        title: 'Failed to update this destination',
+        text: 'Make sure the Notification plugin is installed in order to update this destination.',
+      });
+      return;
+    }
     const destinationRequest = formikToDestination(values);
     if (this.props.edit) {
       this.handleUpdate(destinationRequest, formikBag);

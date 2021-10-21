@@ -207,9 +207,7 @@ class DestinationsList extends React.Component {
     // may be blocked in this case, not making it possible to load the Edit page
 
     // Allow edit only when notifications plugin is installed
-    // return allowList.includes(destination.type) && hasNotificationPlugin;
-    //TODO: uncomment above and remove this line once create destination page is updated.
-    return allowList.includes(destination.type);
+    return allowList.includes(destination.type) && hasNotificationPlugin;
   };
 
   isDeleteEnabled = () => {
