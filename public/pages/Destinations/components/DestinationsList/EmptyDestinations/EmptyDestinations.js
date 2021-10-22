@@ -34,6 +34,7 @@ import { PLUGIN_NAME } from '../../../../../../utils/constants';
 const filterText =
   'There are no destinations matching your applied filters. Reset your filters to view all destinations.';
 const emptyText = 'There are no existing destinations. Add a destination.';
+const emptyTextWithoutNotifications = 'There are no existing destinations.';
 const createDestinationButton = (
   <EuiButton fill href={`${PLUGIN_NAME}#${APP_PATH.CREATE_DESTINATION}`}>
     Add destination
@@ -51,23 +52,31 @@ const propTypes = {
   onResetFilters: PropTypes.func.isRequired,
 };
 
-const EmptyDestinations = ({ isFilterApplied, onResetFilters, hasNotificationPlugin }) => (
-  <EuiEmptyPrompt
-    style={{ maxWidth: '45em' }}
-    body={
-      <EuiText>
-        <p>{isFilterApplied ? filterText : emptyText}</p>
-      </EuiText>
-    }
-    actions={
-      isFilterApplied
-        ? resetFiltersButton(onResetFilters)
-        : hasNotificationPlugin
-        ? createDestinationButton
-        : undefined
-    }
-  />
-);
+const EmptyDestinations = ({ isFilterApplied, onResetFilters, hasNotificationPlugin }) => {
+  let text;
+  let actions;
+  if (isFilterApplied) {
+    text = filterText;
+    actions = resetFiltersButton(onResetFilters);
+  } else if (hasNotificationPlugin) {
+    text = emptyText;
+    actions = createDestinationButton;
+  } else {
+    text = emptyTextWithoutNotifications;
+  }
+
+  return (
+    <EuiEmptyPrompt
+      style={{ maxWidth: '45em' }}
+      body={
+        <EuiText>
+          <p>{text}</p>
+        </EuiText>
+      }
+      actions={actions}
+    />
+  );
+};
 
 EmptyDestinations.propTypes = propTypes;
 
