@@ -41,7 +41,7 @@ import { isInvalid, hasError, validateActionName } from '../../../../utils/valid
 import { ActionsMap } from './utils/constants';
 import { validateDestination } from './utils/validate';
 import { DEFAULT_ACTION_TYPE, MANAGE_CHANNELS_PATH } from '../../utils/constants';
-import NotificationsCallOut from '../NotificationsCallout';
+import NotificationsCallOut from '../NotificationsCallOut';
 
 const Action = ({
   action,

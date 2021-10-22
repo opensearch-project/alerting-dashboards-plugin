@@ -15,7 +15,7 @@ exports[`<EmptyDestinations /> should render empty destinations message 1`] = `
         class="euiText euiText--medium"
       >
         <p>
-          There are no existing destinations. Add a destination.
+          There are no existing destinations.
         </p>
       </div>
     </div>

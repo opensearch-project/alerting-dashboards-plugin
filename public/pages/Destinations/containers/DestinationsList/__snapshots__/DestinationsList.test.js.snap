@@ -1265,7 +1265,7 @@ exports[`DestinationsList renders when Notification plugin is installed 1`] = `
                                         body={
                                           <EuiText>
                                             <p>
-                                              There are no existing destinations. Add a destination.
+                                              There are no existing destinations.
                                             </p>
                                           </EuiText>
                                         }
@@ -1298,7 +1298,7 @@ exports[`DestinationsList renders when Notification plugin is installed 1`] = `
                                                       className="euiText euiText--medium"
                                                     >
                                                       <p>
-                                                        There are no existing destinations. Add a destination.
+                                                        There are no existing destinations.
                                                       </p>
                                                     </div>
                                                   </EuiText>
@@ -2536,7 +2536,7 @@ exports[`DestinationsList renders when Notification plugin is not installed 1`] 
                                         body={
                                           <EuiText>
                                             <p>
-                                              There are no existing destinations. Add a destination.
+                                              There are no existing destinations.
                                             </p>
                                           </EuiText>
                                         }
@@ -2569,7 +2569,7 @@ exports[`DestinationsList renders when Notification plugin is not installed 1`] 
                                                       className="euiText euiText--medium"
                                                     >
                                                       <p>
-                                                        There are no existing destinations. Add a destination.
+                                                        There are no existing destinations.
                                                       </p>
                                                     </div>
                                                   </EuiText>
@@ -3843,7 +3843,7 @@ exports[`DestinationsList renders when email is disallowed 1`] = `
                                         body={
                                           <EuiText>
                                             <p>
-                                              There are no existing destinations. Add a destination.
+                                              There are no existing destinations.
                                             </p>
                                           </EuiText>
                                         }
@@ -3876,7 +3876,7 @@ exports[`DestinationsList renders when email is disallowed 1`] = `
                                                       className="euiText euiText--medium"
                                                     >
                                                       <p>
-                                                        There are no existing destinations. Add a destination.
+                                                        There are no existing destinations.
                                                       </p>
                                                     </div>
                                                   </EuiText>

@@ -9,6 +9,6 @@
  * GitHub history for details.
  */
 
-import NotificationsCallOut from './NotificationsCallout';
+import NotificationsCallOut from './NotificationsCallOut';
 
 export default NotificationsCallOut;
