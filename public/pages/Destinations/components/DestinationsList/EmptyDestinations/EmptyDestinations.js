@@ -51,7 +51,7 @@ const propTypes = {
   onResetFilters: PropTypes.func.isRequired,
 };
 
-const EmptyDestinations = ({ isFilterApplied, onResetFilters }) => (
+const EmptyDestinations = ({ isFilterApplied, onResetFilters, hasNotificationPlugin }) => (
   <EuiEmptyPrompt
     style={{ maxWidth: '45em' }}
     body={
@@ -59,7 +59,13 @@ const EmptyDestinations = ({ isFilterApplied, onResetFilters }) => (
         <p>{isFilterApplied ? filterText : emptyText}</p>
       </EuiText>
     }
-    actions={isFilterApplied ? resetFiltersButton(onResetFilters) : createDestinationButton}
+    actions={
+      isFilterApplied
+        ? resetFiltersButton(onResetFilters)
+        : hasNotificationPlugin
+        ? createDestinationButton
+        : undefined
+    }
   />
 );
 

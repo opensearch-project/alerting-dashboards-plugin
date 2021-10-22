@@ -351,7 +351,7 @@ class DestinationsList extends React.Component {
             color="danger"
           />
         ) : null}
-        <NotificationsInfoCallOut />
+        <NotificationsInfoCallOut hasNotificationPlugin={hasNotificationPlugin} />
         <ContentPanel
           bodyStyles={{ padding: 'initial' }}
           title="Destinations (deprecated)"
@@ -419,6 +419,7 @@ class DestinationsList extends React.Component {
                 <EmptyDestinations
                   isFilterApplied={isFilterApplied}
                   onResetFilters={this.handleResetFilter}
+                  hasNotificationPlugin={hasNotificationPlugin}
                 />
               )
             }

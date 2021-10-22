@@ -1,0 +1,95 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`NotificationsInfoCallOut renders when Notifications plugin is installed 1`] = `
+<div>
+  <div
+    class="euiCallOut euiCallOut--primary"
+  >
+    <div
+      class="euiCallOutHeader"
+    >
+      <span
+        class="euiCallOutHeader__title"
+      >
+        Destinations have become channels in Notifications.
+      </span>
+    </div>
+    <div
+      class="euiText euiText--small"
+    >
+      <p>
+        Your destinations have been migrated to Notifications, a new centralized place to manage your notification channels. Destinations will be deprecated going forward.
+      </p>
+      <div
+        class="euiSpacer euiSpacer--l"
+      />
+      <a
+        class="euiButton euiButton--primary"
+        href="/app/notifications-dashboards#/channels"
+        rel="noreferrer"
+      >
+        <span
+          class="euiButtonContent euiButton__content"
+        >
+          <span
+            class="euiButton__text"
+          >
+            View Notifications
+          </span>
+        </span>
+      </a>
+      <p />
+    </div>
+  </div>
+  <div
+    class="euiSpacer euiSpacer--l"
+  />
+</div>
+`;
+
+exports[`NotificationsInfoCallOut renders when Notifications plugin is not installed 1`] = `
+<div>
+  <div
+    class="euiCallOut euiCallOut--primary"
+  >
+    <div
+      class="euiCallOutHeader"
+    >
+      <span
+        class="euiCallOutHeader__title"
+      >
+        Destinations have become channels in Notifications.
+      </span>
+    </div>
+    <div
+      class="euiText euiText--small"
+    >
+      <p>
+        Your destinations have been migrated to Notifications, a new centralized place to manage your notification channels. Destinations will be deprecated going forward.
+      </p>
+      <div
+        class="euiSpacer euiSpacer--l"
+      />
+      <a
+        class="euiButton euiButton--primary"
+        href="/app/notifications-dashboards#/channels"
+        rel="noreferrer"
+      >
+        <span
+          class="euiButtonContent euiButton__content"
+        >
+          <span
+            class="euiButton__text"
+          >
+            View Notifications
+          </span>
+        </span>
+      </a>
+      <p />
+    </div>
+  </div>
+  <div
+    class="euiSpacer euiSpacer--l"
+  />
+</div>
+`;

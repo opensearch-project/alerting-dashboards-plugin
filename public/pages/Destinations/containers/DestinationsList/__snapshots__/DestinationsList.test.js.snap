@@ -47,7 +47,9 @@ exports[`DestinationsList renders 1`] = `
     }
   }
 >
-  <NotificationsInfoCallOut>
+  <NotificationsInfoCallOut
+    hasNotificationPlugin={false}
+  >
     <div>
       <EuiCallOut
         title="Destinations have become channels in Notifications."
@@ -712,6 +714,7 @@ exports[`DestinationsList renders 1`] = `
             items={Array []}
             noItemsMessage={
               <EmptyDestinations
+                hasNotificationPlugin={false}
                 isFilterApplied={false}
                 onResetFilters={[Function]}
               />
@@ -1196,18 +1199,11 @@ exports[`DestinationsList renders 1`] = `
                                     className="euiTableCellContent__text"
                                   >
                                     <EmptyDestinations
+                                      hasNotificationPlugin={false}
                                       isFilterApplied={false}
                                       onResetFilters={[Function]}
                                     >
                                       <EuiEmptyPrompt
-                                        actions={
-                                          <EuiButton
-                                            fill={true}
-                                            href="alerting#/create-destination"
-                                          >
-                                            Add destination
-                                          </EuiButton>
-                                        }
                                         body={
                                           <EuiText>
                                             <p>
@@ -1252,58 +1248,6 @@ exports[`DestinationsList renders 1`] = `
                                               </EuiText>
                                             </span>
                                           </EuiTextColor>
-                                          <EuiSpacer
-                                            size="l"
-                                          >
-                                            <div
-                                              className="euiSpacer euiSpacer--l"
-                                            />
-                                          </EuiSpacer>
-                                          <EuiSpacer
-                                            size="s"
-                                          >
-                                            <div
-                                              className="euiSpacer euiSpacer--s"
-                                            />
-                                          </EuiSpacer>
-                                          <EuiButton
-                                            fill={true}
-                                            href="alerting#/create-destination"
-                                          >
-                                            <EuiButtonDisplay
-                                              element="a"
-                                              fill={true}
-                                              href="alerting#/create-destination"
-                                              isDisabled={false}
-                                              rel="noreferrer"
-                                            >
-                                              <a
-                                                className="euiButton euiButton--primary euiButton--fill"
-                                                href="alerting#/create-destination"
-                                                rel="noreferrer"
-                                              >
-                                                <EuiButtonContent
-                                                  className="euiButton__content"
-                                                  iconSide="left"
-                                                  textProps={
-                                                    Object {
-                                                      "className": "euiButton__text",
-                                                    }
-                                                  }
-                                                >
-                                                  <span
-                                                    className="euiButtonContent euiButton__content"
-                                                  >
-                                                    <span
-                                                      className="euiButton__text"
-                                                    >
-                                                      Add destination
-                                                    </span>
-                                                  </span>
-                                                </EuiButtonContent>
-                                              </a>
-                                            </EuiButtonDisplay>
-                                          </EuiButton>
                                         </div>
                                       </EuiEmptyPrompt>
                                     </EmptyDestinations>
