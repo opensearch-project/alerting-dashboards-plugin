@@ -173,7 +173,7 @@ export default class DestinationsService {
     params.startIndex = from;
     params.size = size;
     params.searchString = search;
-    if (search.trim()) params.searchString = `*${search.trim().split(' ').join('* *')}*`;
+    if (search.trim()) params.searchString = `${search.trim()}`;
     params.destinationType = type;
 
     try {
