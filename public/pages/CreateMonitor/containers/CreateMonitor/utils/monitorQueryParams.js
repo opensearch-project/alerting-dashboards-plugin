@@ -35,5 +35,6 @@ export const initializeFromQueryParams = (queryParams) => {
       queryParams.interval && queryParams.unit
         ? { interval: parseInt(queryParams.interval), unit: queryParams.unit }
         : undefined,
+    adResultIndex: queryParams.adResultIndex || undefined,
   };
 };

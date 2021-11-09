@@ -66,6 +66,7 @@ export default function monitorToFormik(monitor) {
 
     detectorId: isAD ? _.get(inputs, INPUTS_DETECTOR_ID) : undefined,
     index: inputs[0].search.indices.map((index) => ({ label: index })),
+    adResultIndex: isAD ? _.get(inputs, '0.search.indices.0') : undefined,
     query: JSON.stringify(inputs[0].search.query, null, 4),
   };
 }
