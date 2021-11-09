@@ -11,6 +11,7 @@ exports[`CreateMonitor renders 1`] = `
   <Formik
     initialValues={
       Object {
+        "adResultIndex": undefined,
         "aggregationType": "count",
         "aggregations": Array [],
         "bucketUnitOfTime": "h",
