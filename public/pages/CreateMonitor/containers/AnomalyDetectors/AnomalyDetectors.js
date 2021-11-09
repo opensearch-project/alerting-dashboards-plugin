@@ -58,6 +58,7 @@ class AnomalyDetectors extends React.Component {
             value: detector.id,
             features: detector.featureAttributes,
             interval: detector.detectionInterval,
+            resultIndex: detector.resultIndex,
           }));
         this.setState({ detectorOptions });
       } else {
@@ -111,6 +112,7 @@ class AnomalyDetectors extends React.Component {
                 interval: 2 * get(options, '0.interval.period.interval'),
                 unit: get(options, '0.interval.period.unit', 'MINUTES').toUpperCase(),
               });
+              form.setFieldValue('adResultIndex', get(options, '0.resultIndex'));
             },
             singleSelection: { asPlaintext: true },
             isClearable: false,
