@@ -2,6 +2,9 @@
 
 Compatible with OpenSearch Dashboards 1.2.0
 
+### Features
+* support creating monitor for anomaly detector with custom result index ([#143](https://github.com/opensearch-project/alerting-dashboards-plugin/pull/143))
+
 ### Maintenance
 * Bumps version to 1.2 ([#128](https://github.com/opensearch-project/alerting-dashboards-plugin/pull/128))
 * Added 1.2 release notes. ([#141](https://github.com/opensearch-project/alerting-dashboards-plugin/pull/141))
