@@ -36,6 +36,45 @@ const location = {
   state: undefined,
 };
 
+const sampleAlerts = [
+  {
+    id: 'Ciw2DH0B3-v9t8HD4m3Q',
+    monitor_id: '7SwkDH0B3-v9t8HDk2zN',
+    schema_version: 3,
+    monitor_version: 2,
+    monitor_name: 'test-query-monitor',
+    trigger_id: '7CwkDH0B3-v9t8HDk2w_',
+    trigger_name: 'test-query-trigger',
+    state: 'ACTIVE',
+    error_message: null,
+    alert_history: [],
+    severity: '1',
+    action_execution_results: [],
+    start_time: 1636587463371,
+    last_notification_time: 1636587523369,
+    end_time: null,
+    acknowledged_time: null,
+  },
+  {
+    id: 'Cyw2DH0B3-v9t8HD4m3Q',
+    monitor_id: '7SwkDH0B3-v9t8HDk2zN',
+    schema_version: 3,
+    monitor_version: 2,
+    monitor_name: 'test-query-monitor',
+    trigger_id: '_iw2DH0B3-v9t8HDNWwE',
+    trigger_name: 'test-query-trigger2',
+    state: 'ACTIVE',
+    error_message: null,
+    alert_history: [],
+    severity: '1',
+    action_execution_results: [],
+    start_time: 1636587463371,
+    last_notification_time: 1636587523370,
+    end_time: null,
+    acknowledged_time: null,
+  },
+];
+
 const runAllPromises = () => new Promise(setImmediate);
 
 describe('Dashboard', () => {
@@ -54,6 +93,28 @@ describe('Dashboard', () => {
 
     const wrapper = mount(
       <Dashboard httpClient={httpClientMock} history={historyMock} location={location} />
+    );
+
+    expect(wrapper).toMatchSnapshot();
+  });
+
+  test('renders in flyout', () => {
+    const resp = {
+      ok: true,
+      alerts: [],
+      totalAlerts: 0,
+    };
+
+    httpClientMock.get = jest.fn().mockImplementation(() => Promise.resolve(resp));
+
+    const wrapper = mount(
+      <Dashboard
+        httpClient={httpClientMock}
+        history={historyMock}
+        location={location}
+        isAlertsFlyout={true}
+        flyoutAlerts={sampleAlerts}
+      />
     );
 
     expect(wrapper).toMatchSnapshot();
