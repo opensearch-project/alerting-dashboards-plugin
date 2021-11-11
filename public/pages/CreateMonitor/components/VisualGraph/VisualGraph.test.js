@@ -29,10 +29,18 @@ import { render } from 'enzyme';
 
 import VisualGraph from './VisualGraph';
 import { FORMIK_INITIAL_VALUES } from '../../containers/CreateMonitor/utils/constants';
+import { MONITOR_TYPE } from '../../../../utils/constants';
 
 describe('VisualGraph', () => {
   test('renders', () => {
     const component = <VisualGraph values={FORMIK_INITIAL_VALUES} />;
+    expect(render(component)).toMatchSnapshot();
+  });
+
+  test('renders with bucket level monitor', () => {
+    const values = FORMIK_INITIAL_VALUES;
+    values.monitor_type = MONITOR_TYPE.BUCKET_LEVEL;
+    const component = <VisualGraph values={values} />;
     expect(render(component)).toMatchSnapshot();
   });
 });

@@ -1,11 +1,5 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`VisualGraph renders 1`] = `
-<div
-  style="display:flex;align-items:center;justify-content:center;height:450px"
->
-  <div>
-    There is no data for the current selections.
-  </div>
-</div>
-`;
+exports[`VisualGraph renders 1`] = `null`;
+
+exports[`VisualGraph renders with bucket level monitor 1`] = `null`;
