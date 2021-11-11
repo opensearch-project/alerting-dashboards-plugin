@@ -36,7 +36,7 @@ const location = {
   state: undefined,
 };
 
-const sampleAlerts = [
+const sampleQueryAlerts = [
   {
     id: 'Ciw2DH0B3-v9t8HD4m3Q',
     monitor_id: '7SwkDH0B3-v9t8HDk2zN',
@@ -82,7 +82,7 @@ describe('Dashboard', () => {
     jest.clearAllMocks();
   });
 
-  test('renders', () => {
+  test('renders with per alert view', () => {
     const resp = {
       ok: true,
       alerts: [],
@@ -92,7 +92,33 @@ describe('Dashboard', () => {
     httpClientMock.get = jest.fn().mockImplementation(() => Promise.resolve(resp));
 
     const wrapper = mount(
-      <Dashboard httpClient={httpClientMock} history={historyMock} location={location} />
+      <Dashboard
+        httpClient={httpClientMock}
+        history={historyMock}
+        location={location}
+        perAlertView={true}
+      />
+    );
+
+    expect(wrapper).toMatchSnapshot();
+  });
+
+  test('renders with alert by triggers view', () => {
+    const resp = {
+      ok: true,
+      alerts: [],
+      totalAlerts: 0,
+    };
+
+    httpClientMock.get = jest.fn().mockImplementation(() => Promise.resolve(resp));
+
+    const wrapper = mount(
+      <Dashboard
+        httpClient={httpClientMock}
+        history={historyMock}
+        location={location}
+        perAlertView={false}
+      />
     );
 
     expect(wrapper).toMatchSnapshot();
@@ -113,7 +139,8 @@ describe('Dashboard', () => {
         history={historyMock}
         location={location}
         isAlertsFlyout={true}
-        flyoutAlerts={sampleAlerts}
+        flyoutAlerts={sampleQueryAlerts}
+        perAlertView={true}
       />
     );
 
@@ -164,5 +191,27 @@ describe('Dashboard', () => {
     expect(wrapper.instance().state.alerts[0].action_execution_results).toStrictEqual([]);
     expect(wrapper.instance().state.alerts[0].alert_history).toStrictEqual([]);
     expect(wrapper.instance().state.alerts[0].error_message).toBe('');
+  });
+
+  test('able to select single alert in flyout', () => {
+    const resp = {
+      ok: true,
+      alerts: [],
+      totalAlerts: 0,
+    };
+
+    httpClientMock.get = jest.fn().mockImplementation(() => Promise.resolve(resp));
+
+    const wrapper = mount(
+      <Dashboard
+        httpClient={httpClientMock}
+        history={historyMock}
+        location={location}
+        isAlertsFlyout={true}
+        flyoutAlerts={sampleQueryAlerts}
+      />
+    );
+
+    expect(wrapper).toMatchSnapshot();
   });
 });
