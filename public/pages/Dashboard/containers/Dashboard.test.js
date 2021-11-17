@@ -26,6 +26,7 @@
 
 import React from 'react';
 import { mount } from 'enzyme';
+import moment from 'moment';
 
 import Dashboard from './Dashboard';
 import { historyMock, httpClientMock } from '../../../../test/mocks';
@@ -50,7 +51,7 @@ const sampleQueryAlerts = [
     alert_history: [],
     severity: '1',
     action_execution_results: [],
-    start_time: 1636587463371,
+    start_time: moment('20211110T1537'),
     last_notification_time: 1636587523369,
     end_time: null,
     acknowledged_time: null,
@@ -68,7 +69,7 @@ const sampleQueryAlerts = [
     alert_history: [],
     severity: '1',
     action_execution_results: [],
-    start_time: 1636587463371,
+    start_time: moment('20211110T1537'),
     last_notification_time: 1636587523370,
     end_time: null,
     acknowledged_time: null,
