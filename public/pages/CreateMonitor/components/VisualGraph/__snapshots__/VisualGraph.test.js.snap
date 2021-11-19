@@ -90,7 +90,7 @@ exports[`VisualGraph renders 1`] = `
                   text-anchor="middle"
                   transform="translate(0, 14)"
                 >
-                  07 AM
+                  03 PM
                 </text>
               </g>
               <g
@@ -110,7 +110,7 @@ exports[`VisualGraph renders 1`] = `
                   text-anchor="middle"
                   transform="translate(0, 14)"
                 >
-                  08 AM
+                  04 PM
                 </text>
               </g>
               <g
@@ -130,7 +130,7 @@ exports[`VisualGraph renders 1`] = `
                   text-anchor="middle"
                   transform="translate(0, 14)"
                 >
-                  09 AM
+                  05 PM
                 </text>
               </g>
               <g
@@ -150,7 +150,7 @@ exports[`VisualGraph renders 1`] = `
                   text-anchor="middle"
                   transform="translate(0, 14)"
                 >
-                  10 AM
+                  06 PM
                 </text>
               </g>
               <g
@@ -170,7 +170,7 @@ exports[`VisualGraph renders 1`] = `
                   text-anchor="middle"
                   transform="translate(0, 14)"
                 >
-                  11 AM
+                  07 PM
                 </text>
               </g>
               <g
@@ -190,7 +190,7 @@ exports[`VisualGraph renders 1`] = `
                   text-anchor="middle"
                   transform="translate(0, 14)"
                 >
-                  12 PM
+                  08 PM
                 </text>
               </g>
             </g>
@@ -631,7 +631,7 @@ exports[`VisualGraph renders with bucket level monitor 1`] = `
                   text-anchor="middle"
                   transform="translate(0, 14)"
                 >
-                  08 AM
+                  04 PM
                 </text>
               </g>
               <g
@@ -651,7 +651,7 @@ exports[`VisualGraph renders with bucket level monitor 1`] = `
                   text-anchor="middle"
                   transform="translate(0, 14)"
                 >
-                  09 AM
+                  05 PM
                 </text>
               </g>
               <g
@@ -671,7 +671,7 @@ exports[`VisualGraph renders with bucket level monitor 1`] = `
                   text-anchor="middle"
                   transform="translate(0, 14)"
                 >
-                  10 AM
+                  06 PM
                 </text>
               </g>
               <g
@@ -691,7 +691,7 @@ exports[`VisualGraph renders with bucket level monitor 1`] = `
                   text-anchor="middle"
                   transform="translate(0, 14)"
                 >
-                  11 AM
+                  07 PM
                 </text>
               </g>
               <g
@@ -711,7 +711,7 @@ exports[`VisualGraph renders with bucket level monitor 1`] = `
                   text-anchor="middle"
                   transform="translate(0, 14)"
                 >
-                  12 PM
+                  08 PM
                 </text>
               </g>
             </g>
