@@ -60,7 +60,8 @@ export function formikToInputs(values) {
 export function formikToSearch(values) {
   const isAD = values.searchType === SEARCH_TYPE.AD;
   let query = isAD ? formikToAdQuery(values) : formikToQuery(values);
-  const indices = isAD ? ['.opendistro-anomaly-results*'] : formikToIndices(values);
+  const adResultIndex = _.get(values, 'adResultIndex', '.opendistro-anomaly-results*');
+  const indices = isAD ? [adResultIndex] : formikToIndices(values);
 
   return {
     search: {
