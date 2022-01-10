@@ -232,7 +232,7 @@ export default class Dashboard extends Component {
       return monitorAlerts;
     }, {});
 
-    const promises = Object.entries(monitorAlerts).map(([monitorId, alerts]) =>
+    Object.entries(monitorAlerts).map(([monitorId, alerts]) =>
       httpClient
         .post(`../api/alerting/monitors/${monitorId}/_acknowledge/alerts`, {
           body: JSON.stringify({ alerts }),
@@ -248,9 +248,6 @@ export default class Dashboard extends Component {
         .catch((error) => error)
     );
 
-    const values = await Promise.all(promises);
-    console.log('values:', values);
-    // // TODO: Show which values failed, succeeded, etc.
     const {
       page,
       size,
