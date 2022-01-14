@@ -1,5 +1,45 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`Flyouts.alertsDashboard generates message JSON 1`] = `
+Object {
+  "body": <AlertsDashboardFlyoutComponent />,
+  "flyoutProps": Object {
+    "aria-labelledby": "alertsDashboardFlyout",
+    "data-test-subj": "alertsDashboardFlyout_undefined",
+    "hideCloseButton": true,
+    "size": "m",
+  },
+  "footer": <EuiButtonEmpty
+    data-test-subj="alertsDashboardFlyout_closeButton_undefined"
+    iconType="cross"
+    onClick={[Function]}
+    style={
+      Object {
+        "marginLeft": "0px",
+        "paddingLeft": "0px",
+      }
+    }
+  >
+    Close
+  </EuiButtonEmpty>,
+  "footerProps": Object {
+    "style": Object {
+      "backgroundColor": "#F5F7FA",
+    },
+  },
+  "header": <EuiText
+    data-test-subj="alertsDashboardFlyout_header_undefined"
+  >
+    <h2>
+      Alerts by undefined
+    </h2>
+  </EuiText>,
+  "headerProps": Object {
+    "hasBorder": true,
+  },
+}
+`;
+
 exports[`Flyouts.message generates message JSON 1`] = `
 Object {
   "body": <EuiText
