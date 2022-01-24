@@ -62,27 +62,14 @@ describe('Alerts by trigger flyout', () => {
   beforeEach(() => {
     // Reloading the page to close any flyouts that were not closed by other tests that had failures.
     cy.visit(`${Cypress.env('opensearch_dashboards')}/app/${PLUGIN_NAME}#/dashboard`);
-    // cy.wait(5000);
+
+    // Waiting 5 seconds for alerts to finish loading.
+    // This short wait period alleviates flakiness observed during these tests.
+    cy.wait(5000);
 
     // Confirm dashboard is displaying rows for the test monitors.
     cy.contains(BUCKET_MONITOR, { timeout: TWENTY_SECONDS });
     cy.contains(QUERY_MONITOR, { timeout: TWENTY_SECONDS });
-
-    cy.contains('[data-test-subj="globalLoadingIndicator-hidden"]', { timeout: TWENTY_SECONDS });
-    // .should('not.exist');
-    // cy.contains('[class="euiLoadingSpinner"]', { timeout: TWENTY_SECONDS }).should('not.exist');
-
-    // cy.contains(EuiLoadingSpinner);
-
-    // console.log(`hurneyt CONSOLE TEST`)
-    // cy.get('tbody > tr', { timeout: TWENTY_SECONDS }).should(($tr) => {
-    //     expect($tr).to.have.length.greaterThan(0);
-    //     // console.log(`hurneyt tr = ${JSON.stringify($tr)}`)
-    //     $tr.each(($el) => {
-    //       if ($el.trigger_name === BUCKET_TRIGGER || $el.trigger_name === QUERY_TRIGGER)
-    //         expect($el.ACTIVE).to.be.greaterThan(0);
-    //     });
-    // });
   });
 
   it('Bucket-level monitor flyout test', () => {
