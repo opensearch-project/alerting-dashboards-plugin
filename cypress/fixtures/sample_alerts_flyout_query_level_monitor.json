@@ -1,0 +1,101 @@
+{
+  "name": "sample_alerts_flyout_query_level_monitor",
+  "type": "monitor",
+  "monitor_type": "query_level_monitor",
+  "enabled": true,
+  "schedule": {
+    "period": {
+      "unit": "MINUTES",
+      "interval": 1
+    }
+  },
+  "inputs": [
+    {
+      "search": {
+        "indices": ["opensearch_dashboards_sample_data_ecommerce"],
+        "query": {
+          "size": 0,
+          "aggregations": {
+            "terms_agg": {
+              "terms": {
+                "field": "user"
+              }
+            }
+          },
+          "query": {
+            "bool": {
+              "filter": [
+                {
+                  "range": {
+                    "order_date": {
+                      "gte": "{{period_end}}||-10d",
+                      "lte": "{{period_end}}",
+                      "format": "epoch_millis"
+                    }
+                  }
+                }
+              ]
+            }
+          }
+        }
+      }
+    }
+  ],
+  "triggers": [
+    {
+      "query_level_trigger": {
+        "id": "YHpufH0BYHgJ26-yhJm-",
+        "name": "sample_alerts_flyout_query_level_trigger",
+        "severity": "2",
+        "condition": {
+          "script": {
+            "source": "ctx.results[0].hits.total.value < 10000",
+            "lang": "painless"
+          }
+        },
+        "actions": []
+      }
+    }
+  ],
+  "ui_metadata": {
+    "schedule": {
+      "timezone": null,
+      "frequency": "interval",
+      "period": {
+        "unit": "MINUTES",
+        "interval": 1
+      },
+      "daily": 0,
+      "weekly": {
+        "tue": false,
+        "wed": false,
+        "thur": false,
+        "sat": false,
+        "fri": false,
+        "mon": false,
+        "sun": false
+      },
+      "monthly": {
+        "type": "day",
+        "day": 1
+      },
+      "cronExpression": "0 */1 * * *"
+    },
+    "search": {
+      "searchType": "graph",
+      "timeField": "order_date",
+      "aggregations": [],
+      "groupBy": ["user"],
+      "bucketValue": 10,
+      "bucketUnitOfTime": "d",
+      "where": {
+        "fieldName": [],
+        "fieldRangeEnd": 0,
+        "fieldRangeStart": 0,
+        "fieldValue": "",
+        "operator": "is"
+      }
+    },
+    "monitor_type": "query_level_monitor"
+  }
+}

@@ -47,3 +47,10 @@ describe('Flyouts.triggerCondition', () => {
     expect(json).toMatchSnapshot();
   });
 });
+
+describe('Flyouts.alertsDashboard', () => {
+  test('generates message JSON', () => {
+    const json = Flyouts.alertsDashboard({});
+    expect(json).toMatchSnapshot();
+  });
+});
