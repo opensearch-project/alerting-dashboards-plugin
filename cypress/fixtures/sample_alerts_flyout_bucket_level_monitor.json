@@ -1,0 +1,134 @@
+{
+  "name": "sample_alerts_flyout_bucket_level_monitor",
+  "type": "monitor",
+  "monitor_type": "bucket_level_monitor",
+  "enabled": true,
+  "schedule": {
+    "period": {
+      "unit": "MINUTES",
+      "interval": 1
+    }
+  },
+  "inputs": [
+    {
+      "search": {
+        "indices": ["opensearch_dashboards_sample_data_ecommerce"],
+        "query": {
+          "size": 0,
+          "aggregations": {
+            "composite_agg": {
+              "composite": {
+                "sources": [
+                  {
+                    "customer_gender": {
+                      "terms": {
+                        "field": "customer_gender"
+                      }
+                    }
+                  },
+                  {
+                    "user": {
+                      "terms": {
+                        "field": "user"
+                      }
+                    }
+                  }
+                ]
+              },
+              "aggs": {
+                "avg_products_price": {
+                  "avg": {
+                    "field": "products.price"
+                  }
+                }
+              }
+            }
+          },
+          "query": {
+            "bool": {
+              "filter": [
+                {
+                  "range": {
+                    "order_date": {
+                      "gte": "{{period_end}}||-10d",
+                      "lte": "{{period_end}}",
+                      "format": "epoch_millis"
+                    }
+                  }
+                }
+              ]
+            }
+          }
+        }
+      }
+    }
+  ],
+  "triggers": [
+    {
+      "bucket_level_trigger": {
+        "id": "JHpsfH0BYHgJ26-yS5n7",
+        "name": "sample_alerts_flyout_bucket_level_trigger",
+        "severity": "4",
+        "condition": {
+          "buckets_path": {
+            "_count": "_count",
+            "avg_products_price": "avg_products_price"
+          },
+          "parent_bucket_path": "composite_agg",
+          "script": {
+            "source": "params._count < 10000 || params.avg_products_price == 10",
+            "lang": "painless"
+          },
+          "gap_policy": "skip"
+        },
+        "actions": []
+      }
+    }
+  ],
+  "ui_metadata": {
+    "schedule": {
+      "timezone": null,
+      "frequency": "interval",
+      "period": {
+        "unit": "MINUTES",
+        "interval": 1
+      },
+      "daily": 0,
+      "weekly": {
+        "tue": false,
+        "wed": false,
+        "thur": false,
+        "sat": false,
+        "fri": false,
+        "mon": false,
+        "sun": false
+      },
+      "monthly": {
+        "type": "day",
+        "day": 1
+      },
+      "cronExpression": "0 */1 * * *"
+    },
+    "search": {
+      "searchType": "graph",
+      "timeField": "order_date",
+      "aggregations": [
+        {
+          "aggregationType": "avg",
+          "fieldName": "products.price"
+        }
+      ],
+      "groupBy": ["customer_gender", "user"],
+      "bucketValue": 10,
+      "bucketUnitOfTime": "d",
+      "where": {
+        "fieldName": [],
+        "fieldRangeEnd": 0,
+        "fieldRangeStart": 0,
+        "fieldValue": "",
+        "operator": "is"
+      }
+    },
+    "monitor_type": "bucket_level_monitor"
+  }
+}
