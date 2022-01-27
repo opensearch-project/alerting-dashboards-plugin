@@ -103,6 +103,7 @@ exports[`DashboardControls renders 1`] = `
       >
         <select
           class="euiSelect"
+          data-test-subj="dashboardAlertStateFilter"
         >
           <option
             selected=""

@@ -59,6 +59,7 @@ exports[`Dashboard renders 1`] = `
           View alert details
         </EuiButton>,
         <EuiButton
+          data-test-subj="acknowledgeAlertsButton"
           disabled={true}
           onClick={[Function]}
         >
@@ -190,10 +191,12 @@ exports[`Dashboard renders 1`] = `
                         className="euiFlexItem"
                       >
                         <EuiButton
+                          data-test-subj="acknowledgeAlertsButton"
                           disabled={true}
                           onClick={[Function]}
                         >
                           <EuiButtonDisplay
+                            data-test-subj="acknowledgeAlertsButton"
                             disabled={true}
                             element="button"
                             isDisabled={true}
@@ -202,6 +205,7 @@ exports[`Dashboard renders 1`] = `
                           >
                             <button
                               className="euiButton euiButton--primary euiButton-isDisabled"
+                              data-test-subj="acknowledgeAlertsButton"
                               disabled={true}
                               onClick={[Function]}
                               type="button"
@@ -517,6 +521,7 @@ exports[`Dashboard renders 1`] = `
                     className="euiFlexItem euiFlexItem--flexGrowZero"
                   >
                     <EuiSelect
+                      data-test-subj="dashboardAlertStateFilter"
                       onChange={[Function]}
                       options={
                         Array [
@@ -568,6 +573,7 @@ exports[`Dashboard renders 1`] = `
                             <EuiValidatableControl>
                               <select
                                 className="euiSelect"
+                                data-test-subj="dashboardAlertStateFilter"
                                 onChange={[Function]}
                                 onMouseUp={[Function]}
                                 value="ALL"

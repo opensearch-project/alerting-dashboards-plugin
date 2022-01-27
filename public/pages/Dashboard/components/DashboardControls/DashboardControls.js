@@ -75,7 +75,12 @@ const DashboardControls = ({
     )}
 
     <EuiFlexItem grow={false}>
-      <EuiSelect options={stateOptions} value={state} onChange={onStateChange} />
+      <EuiSelect
+        options={stateOptions}
+        value={state}
+        onChange={onStateChange}
+        data-test-subj={'dashboardAlertStateFilter'}
+      />
     </EuiFlexItem>
     <EuiFlexItem grow={false} style={{ justifyContent: 'center' }}>
       <EuiPagination pageCount={pageCount} activePage={activePage} onPageClick={onPageChange} />
