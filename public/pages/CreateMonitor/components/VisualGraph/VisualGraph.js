@@ -208,18 +208,11 @@ export default class VisualGraph extends Component {
       ? null
       : getMapDataFromResponse(response, aggTypeFieldName, values.groupBy);
     // Show empty graph view when data is empty or aggregation monitor does not have group by defined.
-    const showEmpty =
-      !data.length || (monitorType == MONITOR_TYPE.BUCKET_LEVEL && !values.groupBy.length);
+    const showEmpty = !data.length || (!isQueryMonitor && !values.groupBy.length);
 
-    return (
-      <>
-        {showEmpty
-          ? this.renderEmptyData()
-          : isQueryMonitor
-          ? this.renderXYPlot(data)
-          : this.renderAggregationXYPlot(data, groupedData)}
-      </>
-    );
+    if (showEmpty) return <>{this.renderEmptyData()}</>;
+    else if (isQueryMonitor) return <>{this.renderXYPlot(data)}</>;
+    else return <>{this.renderAggregationXYPlot(data, groupedData)}</>;
   }
 }
 
