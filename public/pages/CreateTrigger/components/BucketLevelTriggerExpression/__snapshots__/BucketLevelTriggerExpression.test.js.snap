@@ -1,0 +1,79 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`BucketLevelTriggerExpression renders 1`] = `
+<EuiFlexGroup
+  alignItems="flexStart"
+  gutterSize="m"
+  style={
+    Object {
+      "maxWidth": 1200,
+      "paddingLeft": "10px",
+      "paddingTop": "10px",
+      "whiteSpace": "nowrap",
+    }
+  }
+>
+  <EuiFlexItem
+    grow={false}
+    style={
+      Object {
+        "width": "90px",
+      }
+    }
+  >
+    <Field>
+      <Component />
+    </Field>
+  </EuiFlexItem>
+  <EuiFlexItem
+    grow={false}
+    style={
+      Object {
+        "minWidth": "300px",
+      }
+    }
+  >
+    <Field
+      fullWidth={true}
+    >
+      <Component />
+    </Field>
+  </EuiFlexItem>
+  <EuiFlexItem
+    grow={false}
+    style={
+      Object {
+        "width": "200px",
+      }
+    }
+  >
+    <Field
+      fullWidth={true}
+    >
+      <Component />
+    </Field>
+  </EuiFlexItem>
+  <EuiFlexItem
+    grow={false}
+    style={
+      Object {
+        "width": "200px",
+      }
+    }
+  >
+    <Field>
+      <Component />
+    </Field>
+  </EuiFlexItem>
+  <EuiFlexItem
+    grow={false}
+  >
+    <EuiButton
+      color="danger"
+      onClick={[Function]}
+    >
+      Remove condition
+    </EuiButton>
+  </EuiFlexItem>
+</EuiFlexGroup>
+`;

@@ -402,7 +402,7 @@ class DefineMonitor extends Component {
   showPluginWarning() {
     const { values } = this.props;
     const { plugins } = this.state;
-    return values.searchType == SEARCH_TYPE.AD && plugins.indexOf(OS_AD_PLUGIN) == -1;
+    return values.searchType === SEARCH_TYPE.AD && plugins.indexOf(OS_AD_PLUGIN) === -1;
   }
 
   render() {

@@ -1,0 +1,23 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`TriggerGraph renders 1`] = `
+<div
+  style={
+    Object {
+      "padding": "0px 10px",
+    }
+  }
+>
+  <TriggerExpressions
+    keyFieldName="undefinedthresholdEnum"
+    label="Trigger condition"
+    valueFieldName="undefinedthresholdValue"
+  />
+  <EuiSpacer
+    size="m"
+  />
+  <VisualGraph
+    annotation={true}
+  />
+</div>
+`;

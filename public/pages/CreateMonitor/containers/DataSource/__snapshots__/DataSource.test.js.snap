@@ -1,0 +1,27 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`DataSource renders 1`] = `
+<ContentPanel
+  bodyStyles={
+    Object {
+      "padding": "initial",
+    }
+  }
+  panelStyles={
+    Object {
+      "paddingLeft": "10px",
+      "paddingRight": "10px",
+    }
+  }
+  title="Data source"
+  titleSize="s"
+>
+  <MonitorIndex
+    httpClient={[MockFunction]}
+  />
+  <EuiSpacer
+    size="s"
+  />
+  <MonitorTimeField />
+</ContentPanel>
+`;
