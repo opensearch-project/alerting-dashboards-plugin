@@ -1,0 +1,20 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`BucketLevelTriggerGraph renders 1`] = `
+<div
+  style={
+    Object {
+      "padding": "0px 10px",
+    }
+  }
+>
+  <BucketLevelTriggerExpression
+    andOrConditionFieldName="undefinedtriggerConditions[undefined].andOrCondition"
+    enumFieldName="undefinedtriggerConditions[undefined].thresholdEnum"
+    label="Trigger conditions"
+    queryMetric="_count"
+    queryMetricFieldName="undefinedtriggerConditions[undefined].queryMetric"
+    valueFieldName="undefinedtriggerConditions[undefined].thresholdValue"
+  />
+</div>
+`;

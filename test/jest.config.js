@@ -45,6 +45,7 @@ module.exports = {
     '**/*.js',
     '!**/node_modules/**',
     '!**/index.js',
+    '!<rootDir>/public/app.js',
     '!<rootDir>/public/actions/**',
     '!<rootDir>/public/components/Charts/Highlight/Highlight.js',
     '!<rootDir>/public/reducers/**',
@@ -55,6 +56,10 @@ module.exports = {
     '!<rootDir>/scripts/**',
     '!<rootDir>/build/**',
     '!<rootDir>/gather-info.js',
+    '!<rootDir>/cypress/**',
     '!**/vendor/**',
   ],
+  clearMocks: true,
+  testPathIgnorePatterns: ['<rootDir>/build/', '<rootDir>/node_modules/'],
+  modulePathIgnorePatterns: ['alertingDashboards'],
 };
