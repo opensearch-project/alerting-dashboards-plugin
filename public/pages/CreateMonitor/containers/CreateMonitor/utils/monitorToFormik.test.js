@@ -129,6 +129,7 @@ describe('monitorToFormik', () => {
       const formikValues = monitorToFormik(localExampleMonitor);
       expect(formikValues.cronExpression).toBe(FORMIK_INITIAL_VALUES.cronExpression);
     });
+
     test('can build AD monitor', () => {
       const adMonitor = _.cloneDeep(exampleMonitor);
       adMonitor.ui_metadata.search.searchType = 'ad';
@@ -170,6 +171,37 @@ describe('monitorToFormik', () => {
       const formikValues = monitorToFormik(adMonitor);
       expect(formikValues.detectorId).toBe('zIqG0nABwoJjo1UZKHnL');
       expect(formikValues.query).toContain('zIqG0nABwoJjo1UZKHnL');
+    });
+  });
+
+  describe('can build LocalUriInput monitor', () => {
+    test('with path params', () => {
+      const localUriMonitor = _.cloneDeep(exampleMonitor);
+      localUriMonitor.ui_metadata.search.searchType = 'localUri';
+      localUriMonitor.inputs = [
+        {
+          uri: {
+            path: '/_cluster/health',
+            path_params: 'params',
+          },
+        },
+      ];
+      const formikValues = monitorToFormik(localUriMonitor);
+      expect(formikValues.uri.path).toBe('/_cluster/health');
+      expect(formikValues.uri.path_params).toBe('params');
+    });
+    test('without path params', () => {
+      const localUriMonitor = _.cloneDeep(exampleMonitor);
+      localUriMonitor.ui_metadata.search.searchType = 'localUri';
+      localUriMonitor.inputs = [
+        {
+          uri: {
+            path: '/_cluster/health',
+          },
+        },
+      ];
+      const formikValues = monitorToFormik(localUriMonitor);
+      expect(formikValues.uri.path).toBe('/_cluster/health');
     });
   });
 });

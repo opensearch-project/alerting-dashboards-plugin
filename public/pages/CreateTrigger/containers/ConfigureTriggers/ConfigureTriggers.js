@@ -40,6 +40,11 @@ import { buildSearchRequest } from '../../../CreateMonitor/containers/DefineMoni
 import { backendErrorNotification, inputLimitText } from '../../../../utils/helpers';
 import moment from 'moment';
 import { formikToTrigger } from '../CreateTrigger/utils/formikToTrigger';
+import {
+  buildLocalUriRequest,
+  canExecuteLocalUriMonitor,
+  getDefaultScript,
+} from '../../../CreateMonitor/components/LocalUriInput/utils/localUriHelpers';
 
 class ConfigureTriggers extends React.Component {
   constructor(props) {
@@ -59,7 +64,12 @@ class ConfigureTriggers extends React.Component {
   }
 
   componentDidMount() {
-    if (this.state.isBucketLevelMonitor) this.onQueryMappings();
+    const {
+      monitorValues: { searchType, uri },
+    } = this.props;
+    const { isBucketLevelMonitor } = this.state;
+    if (searchType === SEARCH_TYPE.LOCAL_URI && canExecuteLocalUriMonitor(uri)) this.onRunExecute();
+    if (isBucketLevelMonitor) this.onQueryMappings();
   }
 
   componentDidUpdate(prevProps) {
@@ -71,7 +81,8 @@ class ConfigureTriggers extends React.Component {
     const prevInputs = prevProps.monitor.inputs[0];
     const currInputs = this.props.monitor.inputs[0];
     if (!_.isEqual(prevInputs, currInputs)) {
-      if (this.state.isBucketLevelMonitor) this.onQueryMappings();
+      const { isBucketLevelMonitor } = this.state;
+      if (isBucketLevelMonitor) this.onQueryMappings();
     }
   }
 
@@ -87,6 +98,10 @@ class ConfigureTriggers extends React.Component {
       case SEARCH_TYPE.GRAPH:
         const searchRequest = buildSearchRequest(formikValues);
         _.set(monitorToExecute, 'inputs[0].search', searchRequest);
+        break;
+      case SEARCH_TYPE.LOCAL_URI:
+        const localUriRequest = buildLocalUriRequest(formikValues);
+        _.set(monitorToExecute, 'inputs[0].uri', localUriRequest);
         break;
       default:
         console.log(`Unsupported searchType found: ${JSON.stringify(searchType)}`, searchType);
@@ -209,12 +224,20 @@ class ConfigureTriggers extends React.Component {
         );
       })
     ) : (
-      <TriggerEmptyPrompt arrayHelpers={triggerArrayHelpers} />
+      <TriggerEmptyPrompt
+        arrayHelpers={triggerArrayHelpers}
+        script={getDefaultScript(executeResponse, monitorValues.searchType)}
+      />
     );
   };
 
   render() {
-    const { triggerArrayHelpers, triggerValues } = this.props;
+    const {
+      monitorValues: { searchType },
+      triggerArrayHelpers,
+      triggerValues,
+    } = this.props;
+    const { executeResponse } = this.state;
     const disableAddTriggerButton =
       _.get(triggerValues, 'triggerDefinitions', []).length >= MAX_TRIGGERS;
     const numOfTriggers = _.get(triggerValues, 'triggerDefinitions', []).length;
@@ -234,6 +257,7 @@ class ConfigureTriggers extends React.Component {
             <AddTriggerButton
               arrayHelpers={triggerArrayHelpers}
               disabled={disableAddTriggerButton}
+              script={getDefaultScript(executeResponse, searchType)}
             />
             <EuiSpacer size={'s'} />
             {inputLimitText(numOfTriggers, MAX_TRIGGERS, 'trigger', 'triggers')}

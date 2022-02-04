@@ -1,4 +1,15 @@
 /*
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * The OpenSearch Contributors require contributions made to
+ * this file be licensed under the Apache-2.0 license or a
+ * compatible open source license.
+ *
+ * Modifications Copyright OpenSearch Contributors. See
+ * GitHub history for details.
+ */
+
+/*
  * Copyright 2021 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
@@ -45,6 +56,7 @@ import { backendErrorNotification } from '../../../../../utils/helpers';
 import DefineBucketLevelTrigger from '../../DefineBucketLevelTrigger';
 import { getPathsPerDataType } from '../../../../CreateMonitor/containers/DefineMonitor/utils/mappings';
 import { MONITOR_TYPE } from '../../../../../utils/constants';
+import { buildLocalUriRequest } from '../../../../CreateMonitor/components/LocalUriInput/utils/localUriHelpers';
 
 export const DEFAULT_CLOSED_STATES = {
   WHEN: false,
@@ -156,6 +168,10 @@ export default class CreateTrigger extends Component {
       case SEARCH_TYPE.GRAPH:
         const searchRequest = buildSearchRequest(formikValues);
         _.set(monitorToExecute, 'inputs[0].search', searchRequest);
+        break;
+      case SEARCH_TYPE.LOCAL_URI:
+        const localUriRequest = buildLocalUriRequest(formikValues);
+        _.set(monitorToExecute, 'inputs[0].uri', localUriRequest);
         break;
       default:
         console.log(`Unsupported searchType found: ${JSON.stringify(searchType)}`, searchType);

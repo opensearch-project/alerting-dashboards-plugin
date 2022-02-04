@@ -50,6 +50,8 @@ function getMonitorType(searchType) {
       return 'Visual Graph';
     case SEARCH_TYPE.AD:
       return 'Anomaly Detector';
+    case SEARCH_TYPE.LOCAL_URI:
+      return 'Local URI';
     default:
       return 'Extraction Query';
   }
@@ -76,7 +78,10 @@ export default function getOverviewStats(
   detector,
   detectorId
 ) {
-  const searchType = _.get(monitor, 'ui_metadata.search.searchType', 'query');
+  const searchType = _.has(monitor, 'inputs[0].uri')
+    ? SEARCH_TYPE.LOCAL_URI
+    : _.get(monitor, 'ui_metadata.search.searchType', 'query');
+
   const detectorOverview = detector
     ? [
         {
