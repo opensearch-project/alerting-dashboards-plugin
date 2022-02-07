@@ -32,8 +32,10 @@ import { OS_AD_PLUGIN, MONITOR_TYPE, SEARCH_TYPE } from '../../../../utils/const
 import { MONITOR_TYPE_CARD_WIDTH } from '../MonitorType/MonitorType';
 import { URL } from '../../../../../utils/constants';
 
-const MONITOR_DEFINITION_CARD_WIDTH =
-  (MONITOR_TYPE_CARD_WIDTH * _.keys(MONITOR_TYPE).length) / _.keys(SEARCH_TYPE).length;
+const monitorDefinitionCardWidth = (hasADPlugin = false) => {
+  const numSearchTypes = hasADPlugin ? _.keys(SEARCH_TYPE).length : _.keys(SEARCH_TYPE).length - 1;
+  return (MONITOR_TYPE_CARD_WIDTH * _.keys(MONITOR_TYPE).length) / numSearchTypes;
+};
 
 const onChangeDefinition = (e, form) => {
   const type = e.target.value;
@@ -60,7 +62,7 @@ const MonitorDefinitionCard = ({ values, plugins }) => {
         gutterSize={'s'}
         style={{ paddingTop: '0px', marginTop: '0px' }}
       >
-        <EuiFlexItem grow={false} style={{ width: `${MONITOR_DEFINITION_CARD_WIDTH}px` }}>
+        <EuiFlexItem grow={false} style={{ width: `${monitorDefinitionCardWidth(hasADPlugin)}px` }}>
           <FormikCheckableCard
             name="searchTypeGraph"
             formRow
@@ -76,7 +78,7 @@ const MonitorDefinitionCard = ({ values, plugins }) => {
             }}
           />
         </EuiFlexItem>
-        <EuiFlexItem grow={false} style={{ width: `${MONITOR_DEFINITION_CARD_WIDTH}px` }}>
+        <EuiFlexItem grow={false} style={{ width: `${monitorDefinitionCardWidth(hasADPlugin)}px` }}>
           <FormikCheckableCard
             name="searchTypeQuery"
             formRow
@@ -92,9 +94,34 @@ const MonitorDefinitionCard = ({ values, plugins }) => {
             }}
           />
         </EuiFlexItem>
+        {/*// Do not display the local uri option for bucket-level monitors.*/}
+        {!isBucketLevelMonitor && (
+          <EuiFlexItem
+            grow={false}
+            style={{ width: `${monitorDefinitionCardWidth(hasADPlugin)}px` }}
+          >
+            <FormikCheckableCard
+              name="searchTypeLocalUri"
+              formRow
+              inputProps={{
+                id: 'localUriRadioCard',
+                label: 'Local URI',
+                checked: values.searchType === SEARCH_TYPE.LOCAL_URI,
+                value: SEARCH_TYPE.LOCAL_URI,
+                onChange: (e, field, form) => {
+                  onChangeDefinition(e, form);
+                },
+                'data-test-subj': 'localUriRadioCard',
+              }}
+            />
+          </EuiFlexItem>
+        )}
         {/*// Only show the anomaly detector option when anomaly detection plugin is present, but not for bucket-level monitors.*/}
         {hasADPlugin && !isBucketLevelMonitor && (
-          <EuiFlexItem grow={false} style={{ width: `${MONITOR_DEFINITION_CARD_WIDTH}px` }}>
+          <EuiFlexItem
+            grow={false}
+            style={{ width: `${monitorDefinitionCardWidth(hasADPlugin)}px` }}
+          >
             <FormikCheckableCard
               name="searchTypeAD"
               inputProps={{

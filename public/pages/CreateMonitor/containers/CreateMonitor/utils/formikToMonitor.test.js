@@ -40,6 +40,7 @@ import {
   formikToWhereClause,
   formikToAd,
   formikToInputs,
+  formikToLocalUri,
 } from './formikToMonitor';
 
 import { FORMIK_INITIAL_VALUES } from './constants';
@@ -63,11 +64,33 @@ describe('formikToMonitor', () => {
   });
 });
 
+describe('formikToInputs', () => {
+  const formikValues = _.cloneDeep(FORMIK_INITIAL_VALUES);
+  test('can call formikToLocalUri', () => {
+    formikValues.searchType = 'localUri';
+    expect(formikToInputs(formikValues)).toMatchSnapshot();
+  });
+});
+
 describe('formikToDetector', () => {
   const formikValues = _.cloneDeep(FORMIK_INITIAL_VALUES);
   formikValues.detectorId = 'temp_detector';
   test('can build detector', () => {
     expect(formikToAd(formikValues)).toMatchSnapshot();
+  });
+});
+
+describe('formikToLocalUri', () => {
+  test('can build a LocalUriInput request with path params', () => {
+    const formikValues = _.cloneDeep(FORMIK_INITIAL_VALUES);
+    formikValues.uri.path = '_cluster/health';
+    formikValues.uri.path = 'params';
+    expect(formikToLocalUri(formikValues)).toMatchSnapshot();
+  });
+  test('can build a LocalUriInput request without path params', () => {
+    const formikValues = _.cloneDeep(FORMIK_INITIAL_VALUES);
+    formikValues.uri.path = '_cluster/health';
+    expect(formikToLocalUri(formikValues)).toMatchSnapshot();
   });
 });
 

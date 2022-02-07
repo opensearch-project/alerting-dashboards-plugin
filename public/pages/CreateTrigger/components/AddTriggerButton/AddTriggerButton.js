@@ -1,4 +1,15 @@
 /*
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * The OpenSearch Contributors require contributions made to
+ * this file be licensed under the Apache-2.0 license or a
+ * compatible open source license.
+ *
+ * Modifications Copyright OpenSearch Contributors. See
+ * GitHub history for details.
+ */
+
+/*
  * Copyright 2021 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
@@ -18,17 +29,21 @@ import _ from 'lodash';
 import { EuiButton } from '@elastic/eui';
 import { FORMIK_INITIAL_TRIGGER_VALUES } from '../../containers/CreateTrigger/utils/constants';
 
-const AddTriggerButton = ({ arrayHelpers, disabled }) => {
+const AddTriggerButton = ({
+  arrayHelpers,
+  disabled,
+  script = FORMIK_INITIAL_TRIGGER_VALUES.script,
+}) => {
   const buttonText =
     _.get(arrayHelpers, 'form.values.triggerDefinitions', []).length === 0
       ? 'Add trigger'
       : 'Add another trigger';
-
+  const values = _.cloneDeep({ ...FORMIK_INITIAL_TRIGGER_VALUES, script });
   return (
     <EuiButton
       fill={false}
       size={'s'}
-      onClick={() => arrayHelpers.push(_.cloneDeep(FORMIK_INITIAL_TRIGGER_VALUES))}
+      onClick={() => arrayHelpers.push(values)}
       disabled={disabled}
     >
       {buttonText}

@@ -140,6 +140,7 @@ const TriggerQuery = ({
                       }}
                       onBlur={() => setFieldTouched(fieldName, true)}
                       value={value}
+                      data-test-subj={'triggerQueryCodeEditor'}
                     />
                   </EuiFormRow>
                 )}

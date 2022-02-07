@@ -191,7 +191,8 @@ export function formikToCondition(values, monitorUiMetadata = {}) {
   const searchType = _.get(monitorUiMetadata, 'search.searchType', 'query');
   const aggregationType = _.get(monitorUiMetadata, 'search.aggregations.0.aggregationType');
 
-  if (searchType === SEARCH_TYPE.QUERY) return { script: values.script };
+  if (searchType === SEARCH_TYPE.QUERY || searchType === SEARCH_TYPE.LOCAL_URI)
+    return { script: values.script };
   if (searchType === SEARCH_TYPE.AD) return getADCondition(values);
 
   // If no aggregation type defined, default to count of documents situation

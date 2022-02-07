@@ -91,6 +91,39 @@ Array [
 ]
 `;
 
+exports[`formikToInputs can call formikToLocalUri 1`] = `
+Object {
+  "uri": Object {
+    "api_type": "",
+    "path": "",
+    "path_params": "",
+    "url": "",
+  },
+}
+`;
+
+exports[`formikToLocalUri can build a LocalUriInput request with path params 1`] = `
+Object {
+  "uri": Object {
+    "api_type": "",
+    "path": "params",
+    "path_params": "",
+    "url": "",
+  },
+}
+`;
+
+exports[`formikToLocalUri can build a LocalUriInput request without path params 1`] = `
+Object {
+  "uri": Object {
+    "api_type": "CLUSTER_HEALTH",
+    "path": "_cluster/health",
+    "path_params": "",
+    "url": "http://localhost:9200/_cluster/health",
+  },
+}
+`;
+
 exports[`formikToMonitor can build monitor 1`] = `
 Object {
   "enabled": false,
