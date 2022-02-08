@@ -45,6 +45,7 @@ import {
   canExecuteLocalUriMonitor,
   getDefaultScript,
 } from '../../../CreateMonitor/components/LocalUriInput/utils/localUriHelpers';
+import { FORMIK_INITIAL_VALUES } from '../../../CreateMonitor/containers/CreateMonitor/utils/constants';
 
 class ConfigureTriggers extends React.Component {
   constructor(props) {
@@ -57,10 +58,14 @@ class ConfigureTriggers extends React.Component {
         _.get(props, 'monitor.monitor_type', MONITOR_TYPE.QUERY_LEVEL) ===
         MONITOR_TYPE.BUCKET_LEVEL,
       triggerDeleted: false,
+      addTriggerButton: this.prepareAddTriggerButton(),
+      triggerEmptyPrompt: this.prepareTriggerEmptyPrompt(),
     };
 
     this.onQueryMappings = this.onQueryMappings.bind(this);
     this.onRunExecute = this.onRunExecute.bind(this);
+    this.prepareAddTriggerButton = this.prepareAddTriggerButton.bind(this);
+    this.prepareTriggerEmptyPrompt = this.prepareTriggerEmptyPrompt.bind(this);
   }
 
   componentDidMount() {
@@ -78,6 +83,35 @@ class ConfigureTriggers extends React.Component {
     if (prevMonitorType !== currMonitorType)
       _.set(this.state, 'isBucketLevelMonitor', currMonitorType === MONITOR_TYPE.BUCKET_LEVEL);
 
+    const prevSearchType = _.get(
+      prevProps,
+      'monitorValues.searchType',
+      FORMIK_INITIAL_VALUES.searchType
+    );
+    const currSearchType = _.get(
+      this.props,
+      'monitorValues.searchType',
+      FORMIK_INITIAL_VALUES.searchType
+    );
+    const prevApiType = _.get(
+      prevProps,
+      'monitorValues.uri.api_type',
+      FORMIK_INITIAL_VALUES.uri.api_type
+    );
+    const currApiType = _.get(
+      this.props,
+      'monitorValues.uri.api_type',
+      FORMIK_INITIAL_VALUES.uri.api_type
+    );
+    if (prevSearchType !== currSearchType || prevApiType !== currApiType) {
+      switch (currSearchType) {
+        case SEARCH_TYPE.LOCAL_URI:
+          _.set(this.state, 'addTriggerButton', this.prepareAddTriggerButton());
+          _.set(this.state, 'triggerEmptyPrompt', this.prepareTriggerEmptyPrompt());
+          break;
+      }
+    }
+
     const prevInputs = prevProps.monitor.inputs[0];
     const currInputs = this.props.monitor.inputs[0];
     if (!_.isEqual(prevInputs, currInputs)) {
@@ -85,6 +119,29 @@ class ConfigureTriggers extends React.Component {
       if (isBucketLevelMonitor) this.onQueryMappings();
     }
   }
+
+  prepareAddTriggerButton = () => {
+    const { monitorValues, triggerArrayHelpers, triggerValues } = this.props;
+    const disableAddTriggerButton =
+      _.get(triggerValues, 'triggerDefinitions', []).length >= MAX_TRIGGERS;
+    return (
+      <AddTriggerButton
+        arrayHelpers={triggerArrayHelpers}
+        disabled={disableAddTriggerButton}
+        script={getDefaultScript(monitorValues)}
+      />
+    );
+  };
+
+  prepareTriggerEmptyPrompt = () => {
+    const { monitorValues, triggerArrayHelpers } = this.props;
+    return (
+      <TriggerEmptyPrompt
+        arrayHelpers={triggerArrayHelpers}
+        script={getDefaultScript(monitorValues)}
+      />
+    );
+  };
 
   onRunExecute = (triggers = []) => {
     const { httpClient, monitor, notifications } = this.props;
@@ -176,70 +233,58 @@ class ConfigureTriggers extends React.Component {
       httpClient,
       notifications,
     } = this.props;
-
-    const { dataTypes, executeResponse, isBucketLevelMonitor } = this.state;
+    const { dataTypes, executeResponse, isBucketLevelMonitor, triggerEmptyPrompt } = this.state;
     const hasTriggers = !_.isEmpty(_.get(triggerValues, 'triggerDefinitions'));
-    return hasTriggers ? (
-      triggerValues.triggerDefinitions.map((trigger, index) => {
-        return (
-          <div key={index}>
-            {isBucketLevelMonitor ? (
-              <DefineBucketLevelTrigger
-                edit={edit}
-                triggerArrayHelpers={triggerArrayHelpers}
-                context={this.getTriggerContext(executeResponse, monitor, triggerValues)}
-                executeResponse={executeResponse}
-                monitor={monitor}
-                monitorValues={monitorValues}
-                onRun={this.onRunExecute}
-                setFlyout={setFlyout}
-                triggers={triggers}
-                triggerValues={triggerValues}
-                isDarkMode={isDarkMode}
-                dataTypes={dataTypes}
-                triggerIndex={index}
-                httpClient={httpClient}
-                notifications={notifications}
-              />
-            ) : (
-              <DefineTrigger
-                edit={edit}
-                triggerArrayHelpers={triggerArrayHelpers}
-                context={this.getTriggerContext(executeResponse, monitor, triggerValues)}
-                executeResponse={executeResponse}
-                monitor={monitor}
-                monitorValues={monitorValues}
-                onRun={this.onRunExecute}
-                setFlyout={setFlyout}
-                triggers={triggers}
-                triggerValues={triggerValues}
-                isDarkMode={isDarkMode}
-                triggerIndex={index}
-                httpClient={httpClient}
-                notifications={notifications}
-              />
-            )}
-            <EuiHorizontalRule margin={'s'} />
-          </div>
-        );
-      })
-    ) : (
-      <TriggerEmptyPrompt
-        arrayHelpers={triggerArrayHelpers}
-        script={getDefaultScript(executeResponse, monitorValues.searchType)}
-      />
-    );
+    return hasTriggers
+      ? triggerValues.triggerDefinitions.map((trigger, index) => {
+          return (
+            <div key={index}>
+              {isBucketLevelMonitor ? (
+                <DefineBucketLevelTrigger
+                  edit={edit}
+                  triggerArrayHelpers={triggerArrayHelpers}
+                  context={this.getTriggerContext(executeResponse, monitor, triggerValues)}
+                  executeResponse={executeResponse}
+                  monitor={monitor}
+                  monitorValues={monitorValues}
+                  onRun={this.onRunExecute}
+                  setFlyout={setFlyout}
+                  triggers={triggers}
+                  triggerValues={triggerValues}
+                  isDarkMode={isDarkMode}
+                  dataTypes={dataTypes}
+                  triggerIndex={index}
+                  httpClient={httpClient}
+                  notifications={notifications}
+                />
+              ) : (
+                <DefineTrigger
+                  edit={edit}
+                  triggerArrayHelpers={triggerArrayHelpers}
+                  context={this.getTriggerContext(executeResponse, monitor, triggerValues)}
+                  executeResponse={executeResponse}
+                  monitor={monitor}
+                  monitorValues={monitorValues}
+                  onRun={this.onRunExecute}
+                  setFlyout={setFlyout}
+                  triggers={triggers}
+                  triggerValues={triggerValues}
+                  isDarkMode={isDarkMode}
+                  triggerIndex={index}
+                  httpClient={httpClient}
+                  notifications={notifications}
+                />
+              )}
+              <EuiHorizontalRule margin={'s'} />
+            </div>
+          );
+        })
+      : triggerEmptyPrompt;
   };
 
   render() {
-    const {
-      monitorValues: { searchType },
-      triggerArrayHelpers,
-      triggerValues,
-    } = this.props;
-    const { executeResponse } = this.state;
-    const disableAddTriggerButton =
-      _.get(triggerValues, 'triggerDefinitions', []).length >= MAX_TRIGGERS;
+    const { triggerArrayHelpers, triggerValues } = this.props;
+    const { addTriggerButton } = this.state;
     const numOfTriggers = _.get(triggerValues, 'triggerDefinitions', []).length;
     const displayAddTriggerButton = numOfTriggers > 0;
     return (
@@ -254,11 +299,7 @@ class ConfigureTriggers extends React.Component {
 
         {displayAddTriggerButton ? (
           <div style={{ paddingBottom: '20px', paddingTop: '15px' }}>
-            <AddTriggerButton
-              arrayHelpers={triggerArrayHelpers}
-              disabled={disableAddTriggerButton}
-              script={getDefaultScript(executeResponse, searchType)}
-            />
+            {addTriggerButton}
             <EuiSpacer size={'s'} />
             {inputLimitText(numOfTriggers, MAX_TRIGGERS, 'trigger', 'triggers')}
           </div>

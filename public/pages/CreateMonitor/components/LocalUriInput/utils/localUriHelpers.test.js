@@ -295,58 +295,57 @@ describe('localUriHelpers', () => {
   });
 
   describe('getDefaultScript', () => {
-    test('when searchType is not localUri', () => {
-      const executeResponse = {};
-      _.keys(SEARCH_TYPE).forEach((searchType) => {
-        if (SEARCH_TYPE[searchType] !== SEARCH_TYPE.LOCAL_URI)
-          expect(getDefaultScript(executeResponse, SEARCH_TYPE[searchType])).toEqual(
-            FORMIK_INITIAL_TRIGGER_VALUES.script
-          );
+    test('when searchType is undefined', () => {
+      const monitorValues = undefined;
+      expect(getDefaultScript(monitorValues)).toEqual(FORMIK_INITIAL_TRIGGER_VALUES.script);
+    });
+    test('when searchType is localUri and api_type is undefined', () => {
+      const monitorValues = {
+        searchType: SEARCH_TYPE.LOCAL_URI,
+        uri: undefined,
+      };
+      expect(getDefaultScript(monitorValues)).toEqual(DEFAULT_LOCAL_URI_SCRIPT);
+    });
+    test('when searchType is localUri and api_type is empty', () => {
+      const monitorValues = {
+        searchType: SEARCH_TYPE.LOCAL_URI,
+        uri: {
+          api_type: '',
+        },
+      };
+      expect(getDefaultScript(monitorValues)).toEqual(DEFAULT_LOCAL_URI_SCRIPT);
+    });
+    test('when searchType is localUri and api_type does not have a default condition', () => {
+      const monitorValues = {
+        searchType: SEARCH_TYPE.LOCAL_URI,
+        uri: {
+          api_type: 'unknownApi',
+        },
+      };
+      expect(getDefaultScript(monitorValues)).toEqual(DEFAULT_LOCAL_URI_SCRIPT);
+    });
+
+    _.keys(SEARCH_TYPE).forEach((searchType) => {
+      test(`when searchType is ${searchType}`, () => {
+        if (SEARCH_TYPE[searchType] !== SEARCH_TYPE.LOCAL_URI) {
+          const monitorValues = { searchType: searchType };
+          expect(getDefaultScript(monitorValues)).toEqual(FORMIK_INITIAL_TRIGGER_VALUES.script);
+        }
       });
     });
-    test('when searchType is localUri and executeResponse is empty', () => {
-      const executeResponse = {};
-      expect(getDefaultScript(executeResponse, SEARCH_TYPE.LOCAL_URI)).toEqual(
-        DEFAULT_LOCAL_URI_SCRIPT
-      );
-    });
-    test('when searchType is localUri and executeResponse is undefined', () => {
-      const executeResponse = undefined;
-      expect(getDefaultScript(executeResponse, SEARCH_TYPE.LOCAL_URI)).toEqual(
-        DEFAULT_LOCAL_URI_SCRIPT
-      );
-    });
-    test('when searchType is localUri and results[0] has values', () => {
-      const expectedScript = {
-        ...DEFAULT_LOCAL_URI_SCRIPT,
-        source: 'ctx.results[0].someField != null',
-      };
-      const executeResponse = {
-        input_results: {
-          results: [{ someField: 'someValue' }],
-        },
-      };
-      expect(getDefaultScript(executeResponse, SEARCH_TYPE.LOCAL_URI)).toEqual(expectedScript);
-    });
-    test('when searchType is localUri and results[0] is empty', () => {
-      const executeResponse = {
-        input_results: {
-          results: '',
-        },
-      };
-      expect(getDefaultScript(executeResponse, SEARCH_TYPE.LOCAL_URI)).toEqual(
-        DEFAULT_LOCAL_URI_SCRIPT
-      );
-    });
-    test('when searchType is localUri and results[0] is undefined', () => {
-      const executeResponse = {
-        input_results: {
-          results: undefined,
-        },
-      };
-      expect(getDefaultScript(executeResponse, SEARCH_TYPE.LOCAL_URI)).toEqual(
-        DEFAULT_LOCAL_URI_SCRIPT
-      );
+
+    _.keys(API_TYPES).forEach((apiType) => {
+      test(`when searchType is localUri and api_type is ${apiType}`, () => {
+        const monitorValues = {
+          searchType: SEARCH_TYPE.LOCAL_URI,
+          uri: {
+            api_type: apiType,
+          },
+        };
+        const expectedOutput = _.get(API_TYPES, `${apiType}.defaultCondition`);
+        if (!_.isEmpty(expectedOutput))
+          expect(getDefaultScript(monitorValues)).toEqual(expectedOutput);
+      });
     });
   });
 

@@ -87,15 +87,15 @@ export const getApiTypesRequiringPathParams = () => {
   return apiList;
 };
 
-export const getDefaultScript = (executeResponse, searchType) => {
-  if (searchType === SEARCH_TYPE.LOCAL_URI) {
-    if (_.isEmpty(executeResponse)) return DEFAULT_LOCAL_URI_SCRIPT;
-    const response = _.get(executeResponse, 'input_results.results[0]');
-    return _.isEmpty(response)
-      ? DEFAULT_LOCAL_URI_SCRIPT
-      : { ...DEFAULT_LOCAL_URI_SCRIPT, source: `ctx.results[0].${_.keys(response)[0]} != null` };
+export const getDefaultScript = (monitorValues) => {
+  const searchType = _.get(monitorValues, 'searchType', FORMIK_INITIAL_VALUES.searchType);
+  switch (searchType) {
+    case SEARCH_TYPE.LOCAL_URI:
+      const apiType = _.get(monitorValues, 'uri.api_type');
+      return _.get(API_TYPES, `${apiType}.defaultCondition`, DEFAULT_LOCAL_URI_SCRIPT);
+    default:
+      return FORMIK_INITIAL_TRIGGER_VALUES.script;
   }
-  return FORMIK_INITIAL_TRIGGER_VALUES.script;
 };
 
 export const getExamplePathParams = (apiType) => {

@@ -35,7 +35,8 @@ exports[`LocalUriInput renders 1`] = `
               <a
                 class="euiLink euiLink--primary"
                 href="https://opensearch.org/docs/latest/opensearch/rest-api/index/"
-                rel="noreferrer"
+                rel="noopener noreferrer"
+                target="_blank"
               >
                 Learn more
                 <div>

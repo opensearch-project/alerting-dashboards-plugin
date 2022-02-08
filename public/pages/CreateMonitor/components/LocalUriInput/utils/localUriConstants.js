@@ -62,6 +62,10 @@ export const API_TYPES = {
       return this.paths.withPathParams || this.paths.withoutPathParams;
     },
     appendText: '',
+    defaultCondition: {
+      ...DEFAULT_LOCAL_URI_SCRIPT,
+      source: 'ctx.results[0].status != "green"',
+    },
   },
   CLUSTER_STATS: {
     type: 'CLUSTER_STATS',
@@ -76,6 +80,10 @@ export const API_TYPES = {
       return this.paths.withPathParams || this.paths.withoutPathParams;
     },
     appendText: '',
+    defaultCondition: {
+      ...DEFAULT_LOCAL_URI_SCRIPT,
+      source: 'ctx.results[0].indices.count <= 0',
+    },
   },
   CLUSTER_SETTINGS: {
     type: 'CLUSTER_SETTINGS',
@@ -90,6 +98,10 @@ export const API_TYPES = {
       return this.paths.withPathParams || this.paths.withoutPathParams;
     },
     appendText: '',
+    defaultCondition: {
+      ...DEFAULT_LOCAL_URI_SCRIPT,
+      source: 'ctx.results[0].transient != null',
+    },
   },
   NODES_STATS: {
     type: 'NODES_STATS',
@@ -104,6 +116,10 @@ export const API_TYPES = {
       return this.paths.withPathParams || this.paths.withoutPathParams;
     },
     appendText: '',
+    defaultCondition: {
+      ...DEFAULT_LOCAL_URI_SCRIPT,
+      source: 'ctx.results[0].nodes[0].jvm.mem.heap_used_percent > 60',
+    },
   },
   CAT_PENDING_TASKS: {
     type: 'CAT_PENDING_TASKS',
@@ -118,6 +134,10 @@ export const API_TYPES = {
       return this.paths.withPathParams || this.paths.withoutPathParams;
     },
     appendText: '',
+    defaultCondition: {
+      ...DEFAULT_LOCAL_URI_SCRIPT,
+      source: 'ctx.results[0].nodes[0].jvm.mem.heap_used_percent > 60',
+    },
   },
   CAT_RECOVERY: {
     type: 'CAT_RECOVERY',
@@ -132,6 +152,10 @@ export const API_TYPES = {
       return this.paths.withPathParams || this.paths.withoutPathParams;
     },
     appendText: '',
+    defaultCondition: {
+      ...DEFAULT_LOCAL_URI_SCRIPT,
+      source: 'ctx.results[0].INDEX_NAME.shards.length <= 0',
+    },
   },
   CAT_REPOSITORIES: {
     type: 'CAT_REPOSITORIES',
@@ -146,6 +170,10 @@ export const API_TYPES = {
       return this.paths.withPathParams || this.paths.withoutPathParams;
     },
     appendText: '',
+    defaultCondition: {
+      ...DEFAULT_LOCAL_URI_SCRIPT,
+      source: 'ctx.results[0].REPOSITORY_NAME != null',
+    },
   },
   CAT_SNAPSHOTS: {
     type: 'CAT_SNAPSHOTS',
@@ -160,6 +188,10 @@ export const API_TYPES = {
       return this.paths.withPathParams || this.paths.withoutPathParams;
     },
     appendText: '',
+    defaultCondition: {
+      ...DEFAULT_LOCAL_URI_SCRIPT,
+      source: 'ctx.results[0].SNAPSHOT_ID.status == "FAILED"',
+    },
   },
   CAT_TASKS: {
     type: 'CAT_TASKS',
@@ -174,5 +206,9 @@ export const API_TYPES = {
       return this.paths.withPathParams || this.paths.withoutPathParams;
     },
     appendText: '',
+    defaultCondition: {
+      ...DEFAULT_LOCAL_URI_SCRIPT,
+      source: 'ctx.results[0].tasks.length > 0',
+    },
   },
 };
