@@ -77,7 +77,7 @@ const LocalUriInput = ({
               <EuiText color={'subdued'} size={'xs'}>
                 Specify a request type to monitor cluster metrics such as health, JVM, and CPU
                 usage.{' '}
-                <EuiLink external href={REST_API_REFERENCE}>
+                <EuiLink external href={REST_API_REFERENCE} target={'_blank'}>
                   Learn more
                 </EuiLink>
               </EuiText>
