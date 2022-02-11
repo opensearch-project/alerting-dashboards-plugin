@@ -24,7 +24,7 @@
  *   permissions and limitations under the License.
  */
 
-import { map, mapKeys, mapValues, isPlainObject, snakeCase, camelCase } from 'lodash';
+import { get, map, mapKeys, mapValues, isPlainObject, snakeCase, camelCase } from 'lodash';
 
 export function mapKeysDeep(obj, fn) {
   if (Array.isArray(obj)) {
@@ -39,3 +39,11 @@ export function mapKeysDeep(obj, fn) {
 export const toSnake = (value, key) => snakeCase(key);
 
 export const toCamel = (value, key) => camelCase(key);
+
+export const isIndexNotFoundError = (err) => {
+  return (
+    err.statusCode === 404 &&
+    get(err, 'body.error.reason', '') ===
+      'Configured indices are not found: [.opendistro-alerting-config]'
+  );
+};
