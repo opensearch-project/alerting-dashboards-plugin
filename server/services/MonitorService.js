@@ -27,6 +27,7 @@
 import _ from 'lodash';
 
 import { INDEX } from '../../utils/constants';
+import { isIndexNotFoundError } from './utils/helpers';
 
 export default class MonitorService {
   constructor(esDriver) {
@@ -350,6 +351,11 @@ export default class MonitorService {
       });
     } catch (err) {
       console.error('Alerting - MonitorService - getMonitors', err);
+      if (isIndexNotFoundError(err)) {
+        return res.ok({
+          body: { ok: false, resp: { totalMonitors: 0, monitors: [] } },
+        });
+      }
       return res.ok({
         body: {
           ok: false,
