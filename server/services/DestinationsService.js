@@ -25,6 +25,7 @@
  */
 
 import _ from 'lodash';
+import { isIndexNotFoundError } from './utils/helpers';
 
 export default class DestinationsService {
   constructor(esDriver) {
@@ -198,6 +199,11 @@ export default class DestinationsService {
         },
       });
     } catch (err) {
+      if (isIndexNotFoundError(err)) {
+        return res.ok({
+          body: { ok: true, resp: { totalDestinations: 0, destinations: [] } },
+        });
+      }
       return res.ok({
         body: {
           ok: false,
