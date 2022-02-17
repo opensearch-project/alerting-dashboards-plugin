@@ -14,6 +14,9 @@ const createMonitorText =
   'There are no existing alerts. Create a monitor to add triggers and actions. Once an alarm is triggered, the state will show in this table.';
 const createTriggerText =
   'There are no existing alerts. Create a trigger to start alerting. Once an alarm is triggered, the state will show in this table.';
+const editTriggerConditionsText =
+  'There are no existing alerts. Adjust trigger conditions to start alerting. Once an alarm is triggered, the state will show in this table.';
+
 const createMonitorButton = (
   <EuiButton fill href={`${PLUGIN_NAME}#${APP_PATH.CREATE_MONITOR}`}>
     Create monitor
@@ -25,17 +28,24 @@ const editMonitorButton = (onCreateTrigger) => (
   </EuiButton>
 );
 
-const DashboardEmptyPrompt = ({ onCreateTrigger }) => {
+const DashboardEmptyPrompt = ({ onCreateTrigger, isModal = false }) => {
   const inMonitorDetails = typeof onCreateTrigger === 'function';
+  const displayText = isModal
+    ? editTriggerConditionsText
+    : inMonitorDetails
+    ? createTriggerText
+    : createMonitorText;
   return (
     <EuiEmptyPrompt
       style={{ maxWidth: '45em' }}
       body={
         <EuiText>
-          <p>{inMonitorDetails ? createTriggerText : createMonitorText}</p>
+          <p>{displayText}</p>
         </EuiText>
       }
-      actions={inMonitorDetails ? editMonitorButton(onCreateTrigger) : createMonitorButton}
+      actions={
+        inMonitorDetails || isModal ? editMonitorButton(onCreateTrigger) : createMonitorButton
+      }
     />
   );
 };
