@@ -760,6 +760,7 @@ exports[`Dashboard renders in flyout 1`] = `
                 },
               ]
             }
+            data-test-subj="alertsDashboard_table"
             isSelectable={true}
             itemId={[Function]}
             items={Array []}
@@ -798,6 +799,7 @@ exports[`Dashboard renders in flyout 1`] = `
           >
             <div
               className="euiBasicTable"
+              data-test-subj="alertsDashboard_table"
             >
               <div>
                 <EuiTableHeaderMobile>
@@ -2497,6 +2499,7 @@ exports[`Dashboard renders with alert by triggers view 1`] = `
                 },
               ]
             }
+            data-test-subj="alertsDashboard_table"
             isSelectable={true}
             itemId={[Function]}
             items={Array []}
@@ -2522,6 +2525,7 @@ exports[`Dashboard renders with alert by triggers view 1`] = `
           >
             <div
               className="euiBasicTable"
+              data-test-subj="alertsDashboard_table"
             >
               <div>
                 <EuiTableHeaderMobile>
@@ -4404,6 +4408,7 @@ exports[`Dashboard renders with per alert view 1`] = `
                 },
               ]
             }
+            data-test-subj="alertsDashboard_table"
             isSelectable={true}
             itemId={[Function]}
             items={Array []}
@@ -4442,6 +4447,7 @@ exports[`Dashboard renders with per alert view 1`] = `
           >
             <div
               className="euiBasicTable"
+              data-test-subj="alertsDashboard_table"
             >
               <div>
                 <EuiTableHeaderMobile>

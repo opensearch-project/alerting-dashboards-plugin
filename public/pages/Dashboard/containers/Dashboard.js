@@ -18,8 +18,6 @@ import {
 } from '../../../utils/constants';
 import { backendErrorNotification } from '../../../utils/helpers';
 import {
-  displayAcknowledgedAlertsToast,
-  filterActiveAlerts,
   getInitialSize,
   getQueryObjectFromState,
   getURLQueryParams,
@@ -28,8 +26,7 @@ import {
 } from '../utils/helpers';
 import { DEFAULT_PAGE_SIZE_OPTIONS } from '../../Monitors/containers/Monitors/utils/constants';
 import { MAX_ALERT_COUNT } from '../utils/constants';
-
-// TODO: Abstract out a Table component to be used in both Dashboard and Monitors
+import AcknowledgeAlertsModal from '../components/AcknowledgeAlertsModal';
 
 export default class Dashboard extends Component {
   constructor(props) {
@@ -59,6 +56,7 @@ export default class Dashboard extends Component {
       search,
       selectedItems: [],
       severityLevel,
+      showAlertsModal: false,
       size: getInitialSize(perAlertView, size),
       sortDirection,
       sortField,
@@ -141,10 +139,7 @@ export default class Dashboard extends Component {
       httpClient.get('../api/alerting/alerts', { query: params }).then((resp) => {
         if (resp.ok) {
           const { alerts, totalAlerts } = resp;
-          this.setState({
-            alerts,
-            totalAlerts,
-          });
+          this.setState({ alerts, totalAlerts });
 
           if (!perAlertView) {
             const alertsByTriggers = groupAlertsByTrigger(alerts);
@@ -193,62 +188,6 @@ export default class Dashboard extends Component {
     }
     this.setState({ ...this.state, loadingMonitors: false, monitors: monitors });
   }
-
-  // TODO: exists in both Dashboard and Monitors, should be moved to redux when implemented
-  acknowledgeAlert = async () => {
-    const { selectedItems } = this.state;
-    const { httpClient, notifications, perAlertView } = this.props;
-
-    if (!selectedItems.length) return;
-
-    let selectedAlerts = perAlertView ? selectedItems : _.get(selectedItems, '0.alerts', []);
-    selectedAlerts = filterActiveAlerts(selectedAlerts);
-
-    const monitorAlerts = selectedAlerts.reduce((monitorAlerts, alert) => {
-      const { id, monitor_id: monitorId } = alert;
-      if (monitorAlerts[monitorId]) monitorAlerts[monitorId].push(id);
-      else monitorAlerts[monitorId] = [id];
-      return monitorAlerts;
-    }, {});
-
-    Object.entries(monitorAlerts).map(([monitorId, alerts]) =>
-      httpClient
-        .post(`../api/alerting/monitors/${monitorId}/_acknowledge/alerts`, {
-          body: JSON.stringify({ alerts }),
-        })
-        .then((resp) => {
-          if (!resp.ok) {
-            backendErrorNotification(notifications, 'acknowledge', 'alert', resp.resp);
-          } else {
-            const successfulCount = _.get(resp, 'resp.success', []).length;
-            displayAcknowledgedAlertsToast(notifications, successfulCount);
-          }
-        })
-        .catch((error) => error)
-    );
-
-    const {
-      page,
-      size,
-      search,
-      sortField,
-      sortDirection,
-      severityLevel,
-      alertState,
-      monitorIds,
-    } = this.state;
-    this.getAlerts(
-      page * size,
-      size,
-      search,
-      sortField,
-      sortDirection,
-      severityLevel,
-      alertState,
-      monitorIds
-    );
-    this.setState({ selectedItems: [] });
-  };
 
   onTableChange = ({ page: tablePage = {}, sort = {} }) => {
     const { index: page, size } = tablePage;
@@ -309,6 +248,35 @@ export default class Dashboard extends Component {
       severityLevel,
       alertState,
       monitorIds
+    );
+  };
+
+  openModal = () => {
+    this.setState({ ...this.state, showAlertsModal: true });
+  };
+
+  closeModal = () => {
+    this.setState({ ...this.state, search: '', showAlertsModal: false });
+    this.refreshDashboard();
+  };
+
+  renderModal = () => {
+    const { history, httpClient, location, notifications } = this.props;
+    const { monitors, selectedItems } = this.state;
+    const { monitor_id, triggerID, trigger_name } = selectedItems[0];
+    const monitor = _.get(_.find(monitors, { _id: monitor_id }), '_source');
+    return (
+      <AcknowledgeAlertsModal
+        history={history}
+        httpClient={httpClient}
+        location={location}
+        monitor={monitor}
+        monitorId={monitor_id}
+        notifications={notifications}
+        onClose={this.closeModal}
+        triggerId={triggerID}
+        triggerName={trigger_name}
+      />
     );
   };
 
@@ -392,7 +360,7 @@ export default class Dashboard extends Component {
       // The acknowledge button is disabled when viewing by per alerts, and no item selected or per trigger view and item selected is not 1.
       const actions = [
         <EuiButton
-          onClick={this.acknowledgeAlert}
+          onClick={this.openModal}
           disabled={perAlertView ? !selectedItems.length : selectedItems.length !== 1}
           data-test-subj={'acknowledgeAlertsButton'}
         >
@@ -480,7 +448,10 @@ export default class Dashboard extends Component {
           selection={selection}
           onChange={this.onTableChange}
           noItemsMessage={<DashboardEmptyPrompt onCreateTrigger={onCreateTrigger} />}
+          data-test-subj={'alertsDashboard_table'}
         />
+
+        {this.state.showAlertsModal && this.renderModal()}
       </ContentPanel>
     );
   }
