@@ -119,8 +119,8 @@ describe('LocalUriInput Monitors', () => {
       // Wait for the API types to load and then type in the Cluster Health API
       cy.get('[data-test-subj="localUriApiTypeComboBox"]').type('cluster health{enter}');
 
-      // Confirm the path parameters field is present and described as "optional"
-      cy.contains('Path parameters - optional');
+      // Confirm the Query parameters field is present and described as "optional"
+      cy.contains('Query parameters - optional');
       cy.get('[data-test-subj="localUriPathParamsFieldText"]');
 
       // Press the 'Run for response' button
@@ -176,8 +176,8 @@ describe('LocalUriInput Monitors', () => {
       // Wait for the API types to load and then type in the Cluster Health API
       cy.get('[data-test-subj="localUriApiTypeComboBox"]').type('nodes stats{enter}');
 
-      // Confirm the path parameters field is not present
-      cy.contains('Path parameters').should('not.exist');
+      // Confirm the Query parameters field is not present
+      cy.contains('Query parameters').should('not.exist');
       cy.get('[data-test-subj="localUriPathParamsFieldText"]').should('not.exist');
 
       // Press the 'Run for response' button
@@ -215,7 +215,7 @@ describe('LocalUriInput Monitors', () => {
     });
   });
 
-  describe('displays path parameters field appropriately', () => {
+  describe('displays Query parameters field appropriately', () => {
     beforeEach(() => {
       cy.deleteAllMonitors();
       cy.reload();
@@ -240,9 +240,9 @@ describe('LocalUriInput Monitors', () => {
       // Wait for the API types to load and then type in the Cluster Health API
       cy.get('[data-test-subj="localUriApiTypeComboBox"]').type('cat snapshots{enter}');
 
-      // Confirm the path parameters field is present and is not described as "optional"
-      cy.contains('Path parameters - optional').should('not.exist');
-      cy.contains('Path parameters');
+      // Confirm the Query parameters field is present and is not described as "optional"
+      cy.contains('Query parameters - optional').should('not.exist');
+      cy.contains('Query parameters');
       cy.get('[data-test-subj="localUriPathParamsFieldText"]');
     });
   });

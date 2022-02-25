@@ -24,9 +24,18 @@
  *   permissions and limitations under the License.
  */
 
-import React from 'react';
+import React, { useState } from 'react';
 import _ from 'lodash';
-import { EuiButton, EuiCodeEditor, EuiFormRow, EuiLink, EuiSpacer, EuiText } from '@elastic/eui';
+import {
+  EuiButton,
+  EuiCodeEditor,
+  EuiConfirmModal,
+  EuiFormRow,
+  EuiLink,
+  EuiOverlayMask,
+  EuiSpacer,
+  EuiText,
+} from '@elastic/eui';
 import { isInvalidApiPath } from '../../../../utils/validate';
 import { FormikComboBox, FormikFieldText } from '../../../../components/FormControls';
 import {
@@ -43,6 +52,31 @@ import {
 } from './utils/localUriHelpers';
 import { FORMIK_INITIAL_VALUES } from '../../containers/CreateMonitor/utils/constants';
 
+const renderModal = (closeModal, prevApiType, currApiType, values) => {
+  const onConfirm = () => {
+    _.set(values, 'triggerDefinitions', []);
+    closeModal();
+  };
+  const prevApiLabel = _.get(API_TYPES, `${prevApiType}.label`, prevApiType);
+  const currApiLabel = _.get(API_TYPES, `${currApiType}.label`, currApiType);
+  const message = _.isEmpty(currApiType)
+    ? `You are clearing the request type "${prevApiLabel}".`
+    : `You are changing the request type from "${prevApiLabel}" to "${currApiLabel}".`;
+  return (
+    <EuiOverlayMask onClick={closeModal}>
+      <EuiConfirmModal
+        onCancel={closeModal}
+        onConfirm={onConfirm}
+        confirmButtonText={'Clear all trigger conditions?'}
+        cancelButtonText={'Keep current trigger conditions?'}
+        defaultFocusedButton={'cancel'}
+        buttonColor={'danger'}
+        title={message}
+      ></EuiConfirmModal>
+    </EuiOverlayMask>
+  );
+};
+
 const LocalUriInput = ({
   isDarkMode,
   loadingResponse = false,
@@ -53,6 +87,16 @@ const LocalUriInput = ({
   supportedApiList = [],
   values,
 }) => {
+  const [displayingModal, setDisplayingModal] = useState(false);
+  const [modal, setModal] = useState(undefined);
+  const closeModal = () => {
+    setDisplayingModal(false);
+    setModal(undefined);
+  };
+  const openModal = (prevApiType, currApiType) => {
+    setDisplayingModal(true);
+    setModal(renderModal(closeModal, prevApiType, currApiType, values));
+  };
   const apiType = _.get(values, 'uri.api_type');
   const path = _.get(values, 'uri.path');
   const pathIsEmpty = _.isEmpty(path);
@@ -61,6 +105,7 @@ const LocalUriInput = ({
   const requirePathParams = _.isEmpty(_.get(API_TYPES, `${apiType}.paths.withoutPathParams`));
   const hidePathParams = pathIsEmpty || loadingSupportedApiList || !supportsPathParams;
   const disableRunButton = pathIsEmpty || (_.isEmpty(pathParams) && requirePathParams);
+  const hasTriggers = _.get(values, 'triggerDefinitions', []).length > 0;
   return (
     <div>
       <EuiSpacer size={'m'} />
@@ -72,7 +117,7 @@ const LocalUriInput = ({
           label: (
             <div>
               <EuiText size={'xs'}>
-                <strong>API request type</strong>
+                <strong>Request type</strong>
               </EuiText>
               <EuiText color={'subdued'} size={'xs'}>
                 Specify a request type to monitor cluster metrics such as health, JVM, and CPU
@@ -102,6 +147,7 @@ const LocalUriInput = ({
                 form.setFieldValue('uri.path_params', FORMIK_INITIAL_VALUES.uri.path_params);
               resetResponse();
               form.setFieldTouched('uri.path_params', false);
+              if (hasTriggers && !_.isEmpty(apiType)) openModal(apiType, selectedApiType);
             }
             form.setFieldValue('uri.api_type', selectedApiType);
             form.setFieldValue('uri.path', getApiPath(_.isEmpty(pathParams), selectedApiType));
@@ -122,6 +168,7 @@ const LocalUriInput = ({
         }}
       />
 
+      {displayingModal && modal}
       <EuiSpacer size={'l'} />
 
       {!hidePathParams ? (
@@ -137,7 +184,7 @@ const LocalUriInput = ({
               label: (
                 <div>
                   <EuiText size={'xs'}>
-                    <strong>Path parameters</strong>
+                    <strong>Query parameters</strong>
                     {!requirePathParams && <i> - optional </i>}
                   </EuiText>
                   <EuiText color={'subdued'} size={'xs'}>
@@ -196,16 +243,17 @@ const LocalUriInput = ({
         size={'s'}
         data-test-subj={'localUriRunButton'}
       >
-        Run for response
+        Preview query
       </EuiButton>
 
       <EuiSpacer size={'l'} />
 
-      <EuiFormRow label={'Response'}>
+      <EuiFormRow label={'Response'} fullWidth={true}>
         <EuiCodeEditor
           mode={'json'}
           theme={isDarkMode ? 'sense-dark' : 'github'}
           height={'500px'}
+          width={'100%'}
           value={pathIsEmpty || loadingResponse ? undefined : response}
           readOnly
           data-test-subj={'localUriRunResponseBox'}
