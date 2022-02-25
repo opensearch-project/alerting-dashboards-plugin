@@ -69,7 +69,7 @@ export const API_TYPES = {
   },
   CLUSTER_STATS: {
     type: 'CLUSTER_STATS',
-    documentation: undefined,
+    documentation: 'https://opensearch.org/docs/latest/opensearch/rest-api/cluster-stats/',
     exampleText: 'nodeFilter1,nodeFilter2...',
     label: 'Cluster Stats',
     paths: {
