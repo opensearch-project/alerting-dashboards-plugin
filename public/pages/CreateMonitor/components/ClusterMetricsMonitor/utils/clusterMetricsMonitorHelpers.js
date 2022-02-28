@@ -25,25 +25,25 @@
  */
 
 import _ from 'lodash';
-import { formikToLocalUri } from '../../../containers/CreateMonitor/utils/formikToMonitor';
+import { formikToClusterMetricsInput } from '../../../containers/CreateMonitor/utils/formikToMonitor';
 import {
-  DEFAULT_LOCAL_URI_SCRIPT,
+  DEFAULT_CLUSTER_METRICS_SCRIPT,
   ILLEGAL_PATH_PARAMETER_CHARACTERS,
   PATH_PARAMETER_ILLEGAL_CHARACTER_TEXT,
   PATH_PARAMETERS_REQUIRED_TEXT,
   API_TYPES,
   NO_PATH_PARAMS_PLACEHOLDER_TEXT,
   GET_API_TYPE_DEBUG_TEXT,
-} from './localUriConstants';
+} from './clusterMetricsMonitorConstants';
 import { SEARCH_TYPE } from '../../../../../utils/constants';
 import { FORMIK_INITIAL_TRIGGER_VALUES } from '../../../../CreateTrigger/containers/CreateTrigger/utils/constants';
 import { FORMIK_INITIAL_VALUES } from '../../../containers/CreateMonitor/utils/constants';
 
-export function buildLocalUriRequest(values) {
-  return _.get(formikToLocalUri(values), 'uri');
+export function buildClusterMetricsRequest(values) {
+  return _.get(formikToClusterMetricsInput(values), 'uri');
 }
 
-export const canExecuteLocalUriMonitor = (uri = {}) => {
+export const canExecuteClusterMetricsMonitor = (uri = {}) => {
   const {
     api_type = FORMIK_INITIAL_VALUES.uri.api_type,
     path_params = FORMIK_INITIAL_VALUES.uri.path_params,
@@ -90,9 +90,9 @@ export const getApiTypesRequiringPathParams = () => {
 export const getDefaultScript = (monitorValues) => {
   const searchType = _.get(monitorValues, 'searchType', FORMIK_INITIAL_VALUES.searchType);
   switch (searchType) {
-    case SEARCH_TYPE.LOCAL_URI:
+    case SEARCH_TYPE.CLUSTER_METRICS:
       const apiType = _.get(monitorValues, 'uri.api_type');
-      return _.get(API_TYPES, `${apiType}.defaultCondition`, DEFAULT_LOCAL_URI_SCRIPT);
+      return _.get(API_TYPES, `${apiType}.defaultCondition`, DEFAULT_CLUSTER_METRICS_SCRIPT);
     default:
       return FORMIK_INITIAL_TRIGGER_VALUES.script;
   }

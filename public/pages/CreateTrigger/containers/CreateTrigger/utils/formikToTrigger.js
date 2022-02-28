@@ -191,7 +191,7 @@ export function formikToCondition(values, monitorUiMetadata = {}) {
   const searchType = _.get(monitorUiMetadata, 'search.searchType', 'query');
   const aggregationType = _.get(monitorUiMetadata, 'search.aggregations.0.aggregationType');
 
-  if (searchType === SEARCH_TYPE.QUERY || searchType === SEARCH_TYPE.LOCAL_URI)
+  if (searchType === SEARCH_TYPE.QUERY || searchType === SEARCH_TYPE.CLUSTER_METRICS)
     return { script: values.script };
   if (searchType === SEARCH_TYPE.AD) return getADCondition(values);
 

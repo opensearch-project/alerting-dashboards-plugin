@@ -134,7 +134,7 @@ exports[`MonitorDefinitionCard renders without AD plugin 1`] = `
     >
       <div
         class="euiFormRow"
-        id="searchTypeLocalUri-form-row-row"
+        id="searchTypeClusterMetrics-form-row-row"
       >
         <div
           class="euiFormRow__fieldWrapper"
@@ -150,14 +150,14 @@ exports[`MonitorDefinitionCard renders without AD plugin 1`] = `
               >
                 <div
                   class="euiRadio euiRadio--noLabel"
-                  data-test-subj="localUriRadioCard"
+                  data-test-subj="clusterMetricsRadioCard"
                 >
                   <input
                     class="euiRadio__input"
-                    id="localUriRadioCard"
-                    name="searchTypeLocalUri"
+                    id="clusterMetricsRadioCard"
+                    name="searchTypeClusterMetrics"
                     type="radio"
-                    value="localUri"
+                    value="clusterMetrics"
                   />
                   <div
                     class="euiRadio__circle"
@@ -166,9 +166,9 @@ exports[`MonitorDefinitionCard renders without AD plugin 1`] = `
               </div>
               <label
                 class="euiCheckableCard__label"
-                for="localUriRadioCard"
+                for="clusterMetricsRadioCard"
               >
-                Local URI
+                Cluster metrics
               </label>
             </div>
           </div>
@@ -313,7 +313,7 @@ exports[`MonitorDefinitionCard renders without AD plugin 2`] = `
     >
       <div
         class="euiFormRow"
-        id="searchTypeLocalUri-form-row-row"
+        id="searchTypeClusterMetrics-form-row-row"
       >
         <div
           class="euiFormRow__fieldWrapper"
@@ -329,14 +329,14 @@ exports[`MonitorDefinitionCard renders without AD plugin 2`] = `
               >
                 <div
                   class="euiRadio euiRadio--noLabel"
-                  data-test-subj="localUriRadioCard"
+                  data-test-subj="clusterMetricsRadioCard"
                 >
                   <input
                     class="euiRadio__input"
-                    id="localUriRadioCard"
-                    name="searchTypeLocalUri"
+                    id="clusterMetricsRadioCard"
+                    name="searchTypeClusterMetrics"
                     type="radio"
-                    value="localUri"
+                    value="clusterMetrics"
                   />
                   <div
                     class="euiRadio__circle"
@@ -345,9 +345,9 @@ exports[`MonitorDefinitionCard renders without AD plugin 2`] = `
               </div>
               <label
                 class="euiCheckableCard__label"
-                for="localUriRadioCard"
+                for="clusterMetricsRadioCard"
               >
-                Local URI
+                Cluster metrics
               </label>
             </div>
           </div>

@@ -27,16 +27,16 @@
 import _ from 'lodash';
 import {
   API_TYPES,
-  DEFAULT_LOCAL_URI_SCRIPT,
+  DEFAULT_CLUSTER_METRICS_SCRIPT,
   GET_API_TYPE_DEBUG_TEXT,
   ILLEGAL_PATH_PARAMETER_CHARACTERS,
   NO_PATH_PARAMS_PLACEHOLDER_TEXT,
   PATH_PARAMETER_ILLEGAL_CHARACTER_TEXT,
   PATH_PARAMETERS_REQUIRED_TEXT,
-} from './localUriConstants';
+} from './clusterMetricsMonitorConstants';
 import {
-  buildLocalUriRequest,
-  canExecuteLocalUriMonitor,
+  buildClusterMetricsRequest,
+  canExecuteClusterMetricsMonitor,
   getApiPath,
   getApiType,
   getApiTypesRequiringPathParams,
@@ -45,13 +45,13 @@ import {
   isInvalidApiPathParameter,
   pathParamsContainIllegalCharacters,
   validateApiPathParameter,
-} from './localUriHelpers';
+} from './clusterMetricsMonitorHelpers';
 import { FORMIK_INITIAL_VALUES } from '../../../containers/CreateMonitor/utils/constants';
 import { SEARCH_TYPE } from '../../../../../utils/constants';
 import { FORMIK_INITIAL_TRIGGER_VALUES } from '../../../../CreateTrigger/containers/CreateTrigger/utils/constants';
 
-describe('localUriHelpers', () => {
-  describe('buildLocalUriRequest', () => {
+describe('clusterMetricsMonitorHelpers', () => {
+  describe('buildClusterMetricsRequest', () => {
     test('when all fields are blank', () => {
       const values = {
         uri: {
@@ -61,7 +61,7 @@ describe('localUriHelpers', () => {
           url: '',
         },
       };
-      expect(buildLocalUriRequest(values)).toEqual(FORMIK_INITIAL_VALUES.uri);
+      expect(buildClusterMetricsRequest(values)).toEqual(FORMIK_INITIAL_VALUES.uri);
     });
 
     test('when all fields are undefined', () => {
@@ -73,7 +73,7 @@ describe('localUriHelpers', () => {
           url: undefined,
         },
       };
-      expect(buildLocalUriRequest(values)).toEqual(FORMIK_INITIAL_VALUES.uri);
+      expect(buildClusterMetricsRequest(values)).toEqual(FORMIK_INITIAL_VALUES.uri);
     });
 
     describe('when api_type is blank', () => {
@@ -95,7 +95,7 @@ describe('localUriHelpers', () => {
             url: `http://localhost:9200/${path}`,
           },
         };
-        expect(buildLocalUriRequest(values)).toEqual(expectedResult.uri);
+        expect(buildClusterMetricsRequest(values)).toEqual(expectedResult.uri);
       });
 
       test('path and path_params are provided', () => {
@@ -117,12 +117,12 @@ describe('localUriHelpers', () => {
             url: `http://localhost:9200/${path}${pathParams}`,
           },
         };
-        expect(buildLocalUriRequest(values)).toEqual(expectedResult.uri);
+        expect(buildClusterMetricsRequest(values)).toEqual(expectedResult.uri);
       });
     });
   });
 
-  describe('canExecuteLocalUriMonitor', () => {
+  describe('canExecuteClusterMetricsMonitor', () => {
     test('with blank apiType and other fields defined', () => {
       const testUri = {
         ...FORMIK_INITIAL_VALUES.uri,
@@ -130,14 +130,14 @@ describe('localUriHelpers', () => {
         path: '_cluster/health/',
         path_params: 'params',
       };
-      expect(canExecuteLocalUriMonitor(testUri)).toEqual(false);
+      expect(canExecuteClusterMetricsMonitor(testUri)).toEqual(false);
     });
     test('with blank apiType and other fields empty', () => {
       const testUri = {
         ...FORMIK_INITIAL_VALUES.uri,
         api_type: '',
       };
-      expect(canExecuteLocalUriMonitor(testUri)).toEqual(false);
+      expect(canExecuteClusterMetricsMonitor(testUri)).toEqual(false);
     });
     test('with undefined apiType and other fields defined', () => {
       const testUri = {
@@ -146,14 +146,14 @@ describe('localUriHelpers', () => {
         path: '_cluster/health/',
         path_params: 'params',
       };
-      expect(canExecuteLocalUriMonitor(testUri)).toEqual(false);
+      expect(canExecuteClusterMetricsMonitor(testUri)).toEqual(false);
     });
     test('with undefined apiType and other fields empty', () => {
       const testUri = {
         ...FORMIK_INITIAL_VALUES.uri,
         api_type: undefined,
       };
-      expect(canExecuteLocalUriMonitor(testUri)).toEqual(false);
+      expect(canExecuteClusterMetricsMonitor(testUri)).toEqual(false);
     });
     test('with pathParams when apiType requires pathParams', () => {
       const testUri = {
@@ -161,7 +161,7 @@ describe('localUriHelpers', () => {
         api_type: 'CAT_SNAPSHOTS',
         path_params: 'params',
       };
-      expect(canExecuteLocalUriMonitor(testUri)).toEqual(true);
+      expect(canExecuteClusterMetricsMonitor(testUri)).toEqual(true);
     });
     test('with pathParams containing illegal characters when apiType requires pathParams', () => {
       const testUri = {
@@ -169,7 +169,7 @@ describe('localUriHelpers', () => {
         api_type: 'CAT_SNAPSHOTS',
         path_params: 'par?ams',
       };
-      expect(canExecuteLocalUriMonitor(testUri)).toEqual(false);
+      expect(canExecuteClusterMetricsMonitor(testUri)).toEqual(false);
     });
     test('with blank pathParams when apiType requires pathParams', () => {
       const testUri = {
@@ -177,7 +177,7 @@ describe('localUriHelpers', () => {
         api_type: 'CAT_SNAPSHOTS',
         path_params: '',
       };
-      expect(canExecuteLocalUriMonitor(testUri)).toEqual(false);
+      expect(canExecuteClusterMetricsMonitor(testUri)).toEqual(false);
     });
     test('with undefined pathParams when apiType requires pathParams', () => {
       const testUri = {
@@ -185,7 +185,7 @@ describe('localUriHelpers', () => {
         api_type: 'CAT_SNAPSHOTS',
         path_params: undefined,
       };
-      expect(canExecuteLocalUriMonitor(testUri)).toEqual(false);
+      expect(canExecuteClusterMetricsMonitor(testUri)).toEqual(false);
     });
 
     test('with pathParams when apiType supports pathParams', () => {
@@ -194,7 +194,7 @@ describe('localUriHelpers', () => {
         api_type: 'CLUSTER_HEALTH',
         path_params: 'params',
       };
-      expect(canExecuteLocalUriMonitor(testUri)).toEqual(true);
+      expect(canExecuteClusterMetricsMonitor(testUri)).toEqual(true);
     });
     test('with pathParams containing illegal characters when apiType supports pathParams', () => {
       const testUri = {
@@ -202,7 +202,7 @@ describe('localUriHelpers', () => {
         api_type: 'CLUSTER_HEALTH',
         path_params: 'par?ams',
       };
-      expect(canExecuteLocalUriMonitor(testUri)).toEqual(false);
+      expect(canExecuteClusterMetricsMonitor(testUri)).toEqual(false);
     });
     test('with blank pathParams when apiType supports pathParams', () => {
       const testUri = {
@@ -210,7 +210,7 @@ describe('localUriHelpers', () => {
         api_type: 'CLUSTER_HEALTH',
         path_params: '',
       };
-      expect(canExecuteLocalUriMonitor(testUri)).toEqual(true);
+      expect(canExecuteClusterMetricsMonitor(testUri)).toEqual(true);
     });
     test('with undefined pathParams when apiType supports pathParams', () => {
       const testUri = {
@@ -218,7 +218,7 @@ describe('localUriHelpers', () => {
         api_type: 'CLUSTER_HEALTH',
         path_params: undefined,
       };
-      expect(canExecuteLocalUriMonitor(testUri)).toEqual(true);
+      expect(canExecuteClusterMetricsMonitor(testUri)).toEqual(true);
     });
   });
 
@@ -299,35 +299,35 @@ describe('localUriHelpers', () => {
       const monitorValues = undefined;
       expect(getDefaultScript(monitorValues)).toEqual(FORMIK_INITIAL_TRIGGER_VALUES.script);
     });
-    test('when searchType is localUri and api_type is undefined', () => {
+    test('when searchType is clusterMetrics and api_type is undefined', () => {
       const monitorValues = {
-        searchType: SEARCH_TYPE.LOCAL_URI,
+        searchType: SEARCH_TYPE.CLUSTER_METRICS,
         uri: undefined,
       };
-      expect(getDefaultScript(monitorValues)).toEqual(DEFAULT_LOCAL_URI_SCRIPT);
+      expect(getDefaultScript(monitorValues)).toEqual(DEFAULT_CLUSTER_METRICS_SCRIPT);
     });
-    test('when searchType is localUri and api_type is empty', () => {
+    test('when searchType is clusterMetrics and api_type is empty', () => {
       const monitorValues = {
-        searchType: SEARCH_TYPE.LOCAL_URI,
+        searchType: SEARCH_TYPE.CLUSTER_METRICS,
         uri: {
           api_type: '',
         },
       };
-      expect(getDefaultScript(monitorValues)).toEqual(DEFAULT_LOCAL_URI_SCRIPT);
+      expect(getDefaultScript(monitorValues)).toEqual(DEFAULT_CLUSTER_METRICS_SCRIPT);
     });
-    test('when searchType is localUri and api_type does not have a default condition', () => {
+    test('when searchType is clusterMetrics and api_type does not have a default condition', () => {
       const monitorValues = {
-        searchType: SEARCH_TYPE.LOCAL_URI,
+        searchType: SEARCH_TYPE.CLUSTER_METRICS,
         uri: {
           api_type: 'unknownApi',
         },
       };
-      expect(getDefaultScript(monitorValues)).toEqual(DEFAULT_LOCAL_URI_SCRIPT);
+      expect(getDefaultScript(monitorValues)).toEqual(DEFAULT_CLUSTER_METRICS_SCRIPT);
     });
 
     _.keys(SEARCH_TYPE).forEach((searchType) => {
       test(`when searchType is ${searchType}`, () => {
-        if (SEARCH_TYPE[searchType] !== SEARCH_TYPE.LOCAL_URI) {
+        if (SEARCH_TYPE[searchType] !== SEARCH_TYPE.CLUSTER_METRICS) {
           const monitorValues = { searchType: searchType };
           expect(getDefaultScript(monitorValues)).toEqual(FORMIK_INITIAL_TRIGGER_VALUES.script);
         }
@@ -335,9 +335,9 @@ describe('localUriHelpers', () => {
     });
 
     _.keys(API_TYPES).forEach((apiType) => {
-      test(`when searchType is localUri and api_type is ${apiType}`, () => {
+      test(`when searchType is clusterMetrics and api_type is ${apiType}`, () => {
         const monitorValues = {
-          searchType: SEARCH_TYPE.LOCAL_URI,
+          searchType: SEARCH_TYPE.CLUSTER_METRICS,
           uri: {
             api_type: apiType,
           },

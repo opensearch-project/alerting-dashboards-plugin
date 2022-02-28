@@ -25,16 +25,16 @@
  */
 
 import sampleDestination from '../fixtures/sample_destination_custom_webhook';
-import sampleLocalUriMonitor from '../fixtures/sample_local_uri_cluster_health_monitor';
+import sampleClusterMetricsMonitor from '../fixtures/sample_cluster_metrics_monitor.json';
 import { INDEX, PLUGIN_NAME } from '../../cypress/support/constants';
 
-const SAMPLE_LOCAL_URI_CLUSTER_HEALTH_MONITOR = 'sample_local_uri_cluster_health_monitor';
-const SAMPLE_LOCAL_URI_NODES_STATS_MONITOR = 'sample_local_uri_nodes_stats_monitor';
-const SAMPLE_LOCAL_URI_CAT_SNAPSHOTS_MONITOR = 'sample_local_uri_cat_snapshots_monitor';
+const SAMPLE_CLUSTER_METRICS_HEALTH_MONITOR = 'sample_cluster_metrics_health_monitor';
+const SAMPLE_CLUSTER_METRICS_NODES_STATS_MONITOR = 'sample_cluster_metrics_nodes_stats_monitor';
+const SAMPLE_CLUSTER_METRICS_CAT_SNAPSHOTS_MONITOR = 'sample_cluster_metrics_cat_snapshots_monitor';
 const SAMPLE_TRIGGER = 'sample_trigger';
 const SAMPLE_ACTION = 'sample_action';
 
-const addLocalUriTrigger = (triggerName, triggerIndex, actionName, isEdit, source) => {
+const addClusterMetricsTrigger = (triggerName, triggerIndex, actionName, isEdit, source) => {
   // Click 'Add trigger' button
   cy.contains('Add trigger').click({ force: true });
 
@@ -75,7 +75,7 @@ const addLocalUriTrigger = (triggerName, triggerIndex, actionName, isEdit, sourc
     .type('{downarrow}{enter}');
 };
 
-describe('LocalUriInput Monitors', () => {
+describe('ClusterMetricsMonitor', () => {
   before(() => {
     cy.createDestination(sampleDestination);
 
@@ -110,21 +110,21 @@ describe('LocalUriInput Monitors', () => {
       // Ensure the Query-level monitor type is selected
       cy.get('[data-test-subj="queryLevelMonitorRadioCard"]').click();
 
-      // Select LocalUri radio card
-      cy.get('[data-test-subj="localUriRadioCard"]').click();
+      // Select ClusterMetrics radio card
+      cy.get('[data-test-subj="clusterMetricsRadioCard"]').click();
 
       // Wait for input to load and then type in the monitor name
-      cy.get('input[name="name"]').type(SAMPLE_LOCAL_URI_CLUSTER_HEALTH_MONITOR);
+      cy.get('input[name="name"]').type(SAMPLE_CLUSTER_METRICS_HEALTH_MONITOR);
 
       // Wait for the API types to load and then type in the Cluster Health API
-      cy.get('[data-test-subj="localUriApiTypeComboBox"]').type('cluster health{enter}');
+      cy.get('[data-test-subj="clusterMetricsApiTypeComboBox"]').type('cluster health{enter}');
 
       // Confirm the Query parameters field is present and described as "optional"
       cy.contains('Query parameters - optional');
-      cy.get('[data-test-subj="localUriPathParamsFieldText"]');
+      cy.get('[data-test-subj="clusterMetricsParamsFieldText"]');
 
       // Press the 'Run for response' button
-      cy.get('[data-test-subj="localUriRunButton"]').click();
+      cy.get('[data-test-subj="clusterMetricsPreviewButton"]').click();
 
       // Add a trigger
       cy.contains('Add trigger').click({ force: true });
@@ -154,7 +154,7 @@ describe('LocalUriInput Monitors', () => {
       cy.get('a').contains('Monitors').click();
 
       // Confirm we can see the created monitor in the list
-      cy.contains(SAMPLE_LOCAL_URI_CLUSTER_HEALTH_MONITOR);
+      cy.contains(SAMPLE_CLUSTER_METRICS_HEALTH_MONITOR);
     });
 
     it('for the Nodes Stats API', () => {
@@ -167,21 +167,21 @@ describe('LocalUriInput Monitors', () => {
       // Ensure the Query-level monitor type is selected
       cy.get('[data-test-subj="queryLevelMonitorRadioCard"]').click();
 
-      // Select LocalUri radio card
-      cy.get('[data-test-subj="localUriRadioCard"]').click();
+      // Select ClusterMetrics radio card
+      cy.get('[data-test-subj="clusterMetricsRadioCard"]').click();
 
       // Wait for input to load and then type in the monitor name
-      cy.get('input[name="name"]').type(SAMPLE_LOCAL_URI_NODES_STATS_MONITOR);
+      cy.get('input[name="name"]').type(SAMPLE_CLUSTER_METRICS_NODES_STATS_MONITOR);
 
       // Wait for the API types to load and then type in the Cluster Health API
-      cy.get('[data-test-subj="localUriApiTypeComboBox"]').type('nodes stats{enter}');
+      cy.get('[data-test-subj="clusterMetricsApiTypeComboBox"]').type('nodes stats{enter}');
 
       // Confirm the Query parameters field is not present
       cy.contains('Query parameters').should('not.exist');
-      cy.get('[data-test-subj="localUriPathParamsFieldText"]').should('not.exist');
+      cy.get('[data-test-subj="clusterMetricsParamsFieldText"]').should('not.exist');
 
       // Press the 'Run for response' button
-      cy.get('[data-test-subj="localUriRunButton"]').click();
+      cy.get('[data-test-subj="clusterMetricsPreviewButton"]').click();
 
       // Add a trigger
       cy.contains('Add trigger').click({ force: true });
@@ -211,7 +211,7 @@ describe('LocalUriInput Monitors', () => {
       cy.get('a').contains('Monitors').click();
 
       // Confirm we can see the created monitor in the list
-      cy.contains(SAMPLE_LOCAL_URI_NODES_STATS_MONITOR);
+      cy.contains(SAMPLE_CLUSTER_METRICS_NODES_STATS_MONITOR);
     });
   });
 
@@ -231,19 +231,19 @@ describe('LocalUriInput Monitors', () => {
       // Ensure the Query-level monitor type is selected
       cy.get('[data-test-subj="queryLevelMonitorRadioCard"]').click();
 
-      // Select LocalUri radio card
-      cy.get('[data-test-subj="localUriRadioCard"]').click();
+      // Select ClusterMetrics radio card
+      cy.get('[data-test-subj="clusterMetricsRadioCard"]').click();
 
       // Wait for input to load and then type in the monitor name
-      cy.get('input[name="name"]').type(SAMPLE_LOCAL_URI_CAT_SNAPSHOTS_MONITOR);
+      cy.get('input[name="name"]').type(SAMPLE_CLUSTER_METRICS_CAT_SNAPSHOTS_MONITOR);
 
       // Wait for the API types to load and then type in the Cluster Health API
-      cy.get('[data-test-subj="localUriApiTypeComboBox"]').type('cat snapshots{enter}');
+      cy.get('[data-test-subj="clusterMetricsApiTypeComboBox"]').type('cat snapshots{enter}');
 
       // Confirm the Query parameters field is present and is not described as "optional"
       cy.contains('Query parameters - optional').should('not.exist');
       cy.contains('Query parameters');
-      cy.get('[data-test-subj="localUriPathParamsFieldText"]');
+      cy.get('[data-test-subj="clusterMetricsParamsFieldText"]');
     });
   });
 
@@ -255,20 +255,20 @@ describe('LocalUriInput Monitors', () => {
     describe('Cluster Health API monitor', () => {
       it('with a new trigger', () => {
         // Create the sample monitor
-        cy.createMonitor(sampleLocalUriMonitor);
+        cy.createMonitor(sampleClusterMetricsMonitor);
         cy.reload();
 
         // Confirm the created monitor can be seen
-        cy.contains(SAMPLE_LOCAL_URI_CLUSTER_HEALTH_MONITOR);
+        cy.contains(SAMPLE_CLUSTER_METRICS_HEALTH_MONITOR);
 
         // Select the monitor
-        cy.get('a').contains(SAMPLE_LOCAL_URI_CLUSTER_HEALTH_MONITOR).click({ force: true });
+        cy.get('a').contains(SAMPLE_CLUSTER_METRICS_HEALTH_MONITOR).click({ force: true });
 
         // Click Edit button
         cy.contains('Edit').click({ force: true });
 
         // Add a trigger
-        addLocalUriTrigger(
+        addClusterMetricsTrigger(
           SAMPLE_TRIGGER,
           0,
           SAMPLE_ACTION,

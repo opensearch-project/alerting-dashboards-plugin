@@ -40,13 +40,13 @@ import { SEARCH_TYPE, OS_AD_PLUGIN, MONITOR_TYPE } from '../../../../utils/const
 import { backendErrorNotification } from '../../../../utils/helpers';
 import DataSource from '../DataSource';
 import {
-  buildLocalUriRequest,
+  buildClusterMetricsRequest,
   getApiType,
   getApiTypesRequiringPathParams,
-} from '../../components/LocalUriInput/utils/localUriHelpers';
-import LocalUriInput from '../../components/LocalUriInput';
+} from '../../components/ClusterMetricsMonitor/utils/clusterMetricsMonitorHelpers';
+import ClusterMetricsMonitor from '../../components/ClusterMetricsMonitor';
 import { FORMIK_INITIAL_VALUES } from '../CreateMonitor/utils/constants';
-import { API_TYPES } from '../../components/LocalUriInput/utils/localUriConstants';
+import { API_TYPES } from '../../components/ClusterMetricsMonitor/utils/clusterMetricsMonitorConstants';
 
 function renderEmptyMessage(message) {
   return (
@@ -92,7 +92,7 @@ class DefineMonitor extends Component {
     this.queryMappings = this.queryMappings.bind(this);
     this.renderVisualMonitor = this.renderVisualMonitor.bind(this);
     this.renderExtractionQuery = this.renderExtractionQuery.bind(this);
-    this.renderLocalUriInput = this.renderLocalUriInput.bind(this);
+    this.renderClusterMetricsMonitor = this.renderClusterMetricsMonitor.bind(this);
     this.getMonitorContent = this.getMonitorContent.bind(this);
     this.getPlugins = this.getPlugins.bind(this);
     this.getSupportedApiList = this.getSupportedApiList.bind(this);
@@ -109,7 +109,7 @@ class DefineMonitor extends Component {
       this.onQueryMappings();
       if (hasTimeField) this.onRunQuery();
     }
-    if (searchType === SEARCH_TYPE.LOCAL_URI) this.getSupportedApiList();
+    if (searchType === SEARCH_TYPE.CLUSTER_METRICS) this.getSupportedApiList();
   }
 
   componentDidUpdate(prevProps) {
@@ -174,7 +174,7 @@ class DefineMonitor extends Component {
     // Reset response when monitor type or definition method is changed
     if (prevSearchType !== searchType || prevMonitorType !== monitor_type || groupByCleared) {
       this.resetResponse();
-      if (searchType === SEARCH_TYPE.LOCAL_URI) this.getSupportedApiList();
+      if (searchType === SEARCH_TYPE.CLUSTER_METRICS) this.getSupportedApiList();
     }
   }
 
@@ -270,8 +270,8 @@ class DefineMonitor extends Component {
         requests = [buildSearchRequest(values)];
         requests.push(buildSearchRequest(values, false));
         break;
-      case SEARCH_TYPE.LOCAL_URI:
-        requests = [buildLocalUriRequest(values)];
+      case SEARCH_TYPE.CLUSTER_METRICS:
+        requests = [buildClusterMetricsRequest(values)];
         break;
     }
 
@@ -289,7 +289,7 @@ class DefineMonitor extends Component {
           case SEARCH_TYPE.GRAPH:
             _.set(monitor, 'inputs[0].search', request);
             break;
-          case SEARCH_TYPE.LOCAL_URI:
+          case SEARCH_TYPE.CLUSTER_METRICS:
             _.set(monitor, 'inputs[0].uri', request);
             break;
           default:
@@ -411,7 +411,7 @@ class DefineMonitor extends Component {
     };
   }
 
-  renderLocalUriInput() {
+  renderClusterMetricsMonitor() {
     const { values } = this.props;
     const {
       loadingResponse,
@@ -422,7 +422,7 @@ class DefineMonitor extends Component {
     return {
       content: (
         <div style={{ padding: '0px 10px' }}>
-          <LocalUriInput
+          <ClusterMetricsMonitor
             isDarkMode={this.isDarkMode}
             loadingResponse={loadingResponse}
             loadingSupportedApiList={loadingSupportedApiList}
@@ -447,7 +447,7 @@ class DefineMonitor extends Component {
       if (!requiresPathParams) {
         const path = _.get(API_TYPES, `${apiKey}.paths.withoutPathParams`);
         const values = { uri: { ...FORMIK_INITIAL_VALUES.uri, path } };
-        requests.push(buildLocalUriRequest(values));
+        requests.push(buildClusterMetricsRequest(values));
       }
     });
 
@@ -497,8 +497,8 @@ class DefineMonitor extends Component {
     switch (values.searchType) {
       case SEARCH_TYPE.GRAPH:
         return this.renderVisualMonitor();
-      case SEARCH_TYPE.LOCAL_URI:
-        return this.renderLocalUriInput();
+      case SEARCH_TYPE.CLUSTER_METRICS:
+        return this.renderClusterMetricsMonitor();
       default:
         return this.renderExtractionQuery();
     }

@@ -41,10 +41,10 @@ import { backendErrorNotification, inputLimitText } from '../../../../utils/help
 import moment from 'moment';
 import { formikToTrigger } from '../CreateTrigger/utils/formikToTrigger';
 import {
-  buildLocalUriRequest,
-  canExecuteLocalUriMonitor,
+  buildClusterMetricsRequest,
+  canExecuteClusterMetricsMonitor,
   getDefaultScript,
-} from '../../../CreateMonitor/components/LocalUriInput/utils/localUriHelpers';
+} from '../../../CreateMonitor/components/ClusterMetricsMonitor/utils/clusterMetricsMonitorHelpers';
 import { FORMIK_INITIAL_VALUES } from '../../../CreateMonitor/containers/CreateMonitor/utils/constants';
 
 class ConfigureTriggers extends React.Component {
@@ -73,7 +73,8 @@ class ConfigureTriggers extends React.Component {
       monitorValues: { searchType, uri },
     } = this.props;
     const { isBucketLevelMonitor } = this.state;
-    if (searchType === SEARCH_TYPE.LOCAL_URI && canExecuteLocalUriMonitor(uri)) this.onRunExecute();
+    if (searchType === SEARCH_TYPE.CLUSTER_METRICS && canExecuteClusterMetricsMonitor(uri))
+      this.onRunExecute();
     if (isBucketLevelMonitor) this.onQueryMappings();
   }
 
@@ -105,7 +106,7 @@ class ConfigureTriggers extends React.Component {
     );
     if (prevSearchType !== currSearchType || prevApiType !== currApiType) {
       switch (currSearchType) {
-        case SEARCH_TYPE.LOCAL_URI:
+        case SEARCH_TYPE.CLUSTER_METRICS:
           _.set(this.state, 'addTriggerButton', this.prepareAddTriggerButton());
           _.set(this.state, 'triggerEmptyPrompt', this.prepareTriggerEmptyPrompt());
           break;
@@ -156,9 +157,9 @@ class ConfigureTriggers extends React.Component {
         const searchRequest = buildSearchRequest(formikValues);
         _.set(monitorToExecute, 'inputs[0].search', searchRequest);
         break;
-      case SEARCH_TYPE.LOCAL_URI:
-        const localUriRequest = buildLocalUriRequest(formikValues);
-        _.set(monitorToExecute, 'inputs[0].uri', localUriRequest);
+      case SEARCH_TYPE.CLUSTER_METRICS:
+        const clusterMetricsRequest = buildClusterMetricsRequest(formikValues);
+        _.set(monitorToExecute, 'inputs[0].uri', clusterMetricsRequest);
         break;
       default:
         console.log(`Unsupported searchType found: ${JSON.stringify(searchType)}`, searchType);

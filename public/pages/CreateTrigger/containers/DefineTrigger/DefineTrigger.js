@@ -43,9 +43,9 @@ import monitorToFormik from '../../../CreateMonitor/containers/CreateMonitor/uti
 import { buildSearchRequest } from '../../../CreateMonitor/containers/DefineMonitor/utils/searchRequests';
 import { backendErrorNotification } from '../../../../utils/helpers';
 import {
-  buildLocalUriRequest,
-  canExecuteLocalUriMonitor,
-} from '../../../CreateMonitor/components/LocalUriInput/utils/localUriHelpers';
+  buildClusterMetricsRequest,
+  canExecuteClusterMetricsMonitor,
+} from '../../../CreateMonitor/components/ClusterMetricsMonitor/utils/clusterMetricsMonitorHelpers';
 
 const defaultRowProps = {
   label: 'Trigger name',
@@ -112,8 +112,8 @@ class DefineTrigger extends Component {
       monitorValues: { searchType, uri },
     } = this.props;
     switch (searchType) {
-      case SEARCH_TYPE.LOCAL_URI:
-        if (canExecuteLocalUriMonitor(uri)) this.onRunExecute();
+      case SEARCH_TYPE.CLUSTER_METRICS:
+        if (canExecuteClusterMetricsMonitor(uri)) this.onRunExecute();
         break;
       default:
         this.onRunExecute();
@@ -135,9 +135,9 @@ class DefineTrigger extends Component {
         break;
       case SEARCH_TYPE.AD:
         break;
-      case SEARCH_TYPE.LOCAL_URI:
-        const localUriRequest = buildLocalUriRequest(formikValues);
-        _.set(monitorToExecute, 'inputs[0].uri', localUriRequest);
+      case SEARCH_TYPE.CLUSTER_METRICS:
+        const clusterMetricsRequest = buildClusterMetricsRequest(formikValues);
+        _.set(monitorToExecute, 'inputs[0].uri', clusterMetricsRequest);
         break;
       default:
         console.log(`Unsupported searchType found: ${JSON.stringify(searchType)}`, searchType);

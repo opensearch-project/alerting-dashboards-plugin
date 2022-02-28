@@ -174,11 +174,11 @@ describe('monitorToFormik', () => {
     });
   });
 
-  describe('can build LocalUriInput monitor', () => {
+  describe('can build ClusterMetricsMonitor', () => {
     test('with path params', () => {
-      const localUriMonitor = _.cloneDeep(exampleMonitor);
-      localUriMonitor.ui_metadata.search.searchType = 'localUri';
-      localUriMonitor.inputs = [
+      const clusterMetricsMonitor = _.cloneDeep(exampleMonitor);
+      clusterMetricsMonitor.ui_metadata.search.searchType = 'clusterMetrics';
+      clusterMetricsMonitor.inputs = [
         {
           uri: {
             path: '/_cluster/health',
@@ -186,21 +186,21 @@ describe('monitorToFormik', () => {
           },
         },
       ];
-      const formikValues = monitorToFormik(localUriMonitor);
+      const formikValues = monitorToFormik(clusterMetricsMonitor);
       expect(formikValues.uri.path).toBe('/_cluster/health');
       expect(formikValues.uri.path_params).toBe('params');
     });
     test('without path params', () => {
-      const localUriMonitor = _.cloneDeep(exampleMonitor);
-      localUriMonitor.ui_metadata.search.searchType = 'localUri';
-      localUriMonitor.inputs = [
+      const clusterMetricsMonitor = _.cloneDeep(exampleMonitor);
+      clusterMetricsMonitor.ui_metadata.search.searchType = 'clusterMetrics';
+      clusterMetricsMonitor.inputs = [
         {
           uri: {
             path: '/_cluster/health',
           },
         },
       ];
-      const formikValues = monitorToFormik(localUriMonitor);
+      const formikValues = monitorToFormik(clusterMetricsMonitor);
       expect(formikValues.uri.path).toBe('/_cluster/health');
     });
   });

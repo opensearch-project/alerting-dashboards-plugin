@@ -94,24 +94,24 @@ const MonitorDefinitionCard = ({ values, plugins }) => {
             }}
           />
         </EuiFlexItem>
-        {/*// Do not display the local uri option for bucket-level monitors.*/}
+        {/*// Do not display the clusterMetrics option for bucket-level monitors.*/}
         {!isBucketLevelMonitor && (
           <EuiFlexItem
             grow={false}
             style={{ width: `${monitorDefinitionCardWidth(hasADPlugin)}px` }}
           >
             <FormikCheckableCard
-              name="searchTypeLocalUri"
+              name="searchTypeClusterMetrics"
               formRow
               inputProps={{
-                id: 'localUriRadioCard',
-                label: 'Local URI',
-                checked: values.searchType === SEARCH_TYPE.LOCAL_URI,
-                value: SEARCH_TYPE.LOCAL_URI,
+                id: 'clusterMetricsRadioCard',
+                label: 'Cluster metrics',
+                checked: values.searchType === SEARCH_TYPE.CLUSTER_METRICS,
+                value: SEARCH_TYPE.CLUSTER_METRICS,
                 onChange: (e, field, form) => {
                   onChangeDefinition(e, form);
                 },
-                'data-test-subj': 'localUriRadioCard',
+                'data-test-subj': 'clusterMetricsRadioCard',
               }}
             />
           </EuiFlexItem>

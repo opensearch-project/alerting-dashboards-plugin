@@ -27,7 +27,7 @@
 export const API_PATH_REQUIRED_PLACEHOLDER_TEXT = 'Select an API.';
 export const EMPTY_PATH_PARAMS_TEXT = 'Enter remaining path components and path parameters';
 export const GET_API_TYPE_DEBUG_TEXT =
-  'Cannot determine ApiType in localUriHelpers::getSelectedApiType.';
+  'Cannot determine ApiType in clusterMetricsMonitorHelpers::getSelectedApiType.';
 export const ILLEGAL_PATH_PARAMETER_CHARACTERS = [
   ':',
   '"',
@@ -46,7 +46,10 @@ export const PATH_PARAMETER_ILLEGAL_CHARACTER_TEXT = `The provided path paramete
 )}`;
 export const PATH_PARAMETERS_REQUIRED_TEXT = 'Path parameters are required for this API.';
 export const REST_API_REFERENCE = 'https://opensearch.org/docs/latest/opensearch/rest-api/index/';
-export const DEFAULT_LOCAL_URI_SCRIPT = { lang: 'painless', source: 'ctx.results[0] != null' };
+export const DEFAULT_CLUSTER_METRICS_SCRIPT = {
+  lang: 'painless',
+  source: 'ctx.results[0] != null',
+};
 
 export const API_TYPES = {
   CLUSTER_HEALTH: {
@@ -63,7 +66,7 @@ export const API_TYPES = {
     },
     appendText: '',
     defaultCondition: {
-      ...DEFAULT_LOCAL_URI_SCRIPT,
+      ...DEFAULT_CLUSTER_METRICS_SCRIPT,
       source: 'ctx.results[0].status != "green"',
     },
   },
@@ -81,7 +84,7 @@ export const API_TYPES = {
     },
     appendText: '',
     defaultCondition: {
-      ...DEFAULT_LOCAL_URI_SCRIPT,
+      ...DEFAULT_CLUSTER_METRICS_SCRIPT,
       source: 'ctx.results[0].indices.count <= 0',
     },
   },
@@ -99,7 +102,7 @@ export const API_TYPES = {
     },
     appendText: '',
     defaultCondition: {
-      ...DEFAULT_LOCAL_URI_SCRIPT,
+      ...DEFAULT_CLUSTER_METRICS_SCRIPT,
       source: 'ctx.results[0].transient != null',
     },
   },
@@ -117,7 +120,7 @@ export const API_TYPES = {
     },
     appendText: '',
     defaultCondition: {
-      ...DEFAULT_LOCAL_URI_SCRIPT,
+      ...DEFAULT_CLUSTER_METRICS_SCRIPT,
       source: 'ctx.results[0].nodes[0].jvm.mem.heap_used_percent > 60',
     },
   },
@@ -135,7 +138,7 @@ export const API_TYPES = {
     },
     appendText: '',
     defaultCondition: {
-      ...DEFAULT_LOCAL_URI_SCRIPT,
+      ...DEFAULT_CLUSTER_METRICS_SCRIPT,
       source: 'ctx.results[0].nodes[0].jvm.mem.heap_used_percent > 60',
     },
   },
@@ -153,7 +156,7 @@ export const API_TYPES = {
     },
     appendText: '',
     defaultCondition: {
-      ...DEFAULT_LOCAL_URI_SCRIPT,
+      ...DEFAULT_CLUSTER_METRICS_SCRIPT,
       source: 'ctx.results[0].INDEX_NAME.shards.length <= 0',
     },
   },
@@ -171,7 +174,7 @@ export const API_TYPES = {
     },
     appendText: '',
     defaultCondition: {
-      ...DEFAULT_LOCAL_URI_SCRIPT,
+      ...DEFAULT_CLUSTER_METRICS_SCRIPT,
       source: 'ctx.results[0].REPOSITORY_NAME != null',
     },
   },
@@ -189,7 +192,7 @@ export const API_TYPES = {
     },
     appendText: '',
     defaultCondition: {
-      ...DEFAULT_LOCAL_URI_SCRIPT,
+      ...DEFAULT_CLUSTER_METRICS_SCRIPT,
       source: 'ctx.results[0].SNAPSHOT_ID.status == "FAILED"',
     },
   },
@@ -207,7 +210,7 @@ export const API_TYPES = {
     },
     appendText: '',
     defaultCondition: {
-      ...DEFAULT_LOCAL_URI_SCRIPT,
+      ...DEFAULT_CLUSTER_METRICS_SCRIPT,
       source: 'ctx.results[0].tasks.length > 0',
     },
   },

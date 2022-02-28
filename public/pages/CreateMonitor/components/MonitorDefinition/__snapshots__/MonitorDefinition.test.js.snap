@@ -42,9 +42,9 @@ exports[`MonitorDefinition renders 1`] = `
               Define using extraction query
             </option>
             <option
-              value="localUri"
+              value="clusterMetrics"
             >
-              Define using Local URI endpoint
+              Define for cluster metrics
             </option>
           </select>
           <div

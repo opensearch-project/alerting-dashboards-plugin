@@ -56,7 +56,7 @@ import { backendErrorNotification } from '../../../../../utils/helpers';
 import DefineBucketLevelTrigger from '../../DefineBucketLevelTrigger';
 import { getPathsPerDataType } from '../../../../CreateMonitor/containers/DefineMonitor/utils/mappings';
 import { MONITOR_TYPE } from '../../../../../utils/constants';
-import { buildLocalUriRequest } from '../../../../CreateMonitor/components/LocalUriInput/utils/localUriHelpers';
+import { buildClusterMetricsRequest } from '../../../../CreateMonitor/components/ClusterMetricsMonitor/utils/clusterMetricsMonitorHelpers';
 
 export const DEFAULT_CLOSED_STATES = {
   WHEN: false,
@@ -169,9 +169,9 @@ export default class CreateTrigger extends Component {
         const searchRequest = buildSearchRequest(formikValues);
         _.set(monitorToExecute, 'inputs[0].search', searchRequest);
         break;
-      case SEARCH_TYPE.LOCAL_URI:
-        const localUriRequest = buildLocalUriRequest(formikValues);
-        _.set(monitorToExecute, 'inputs[0].uri', localUriRequest);
+      case SEARCH_TYPE.CLUSTER_METRICS:
+        const clusterMetricsRequest = buildClusterMetricsRequest(formikValues);
+        _.set(monitorToExecute, 'inputs[0].uri', clusterMetricsRequest);
         break;
       default:
         console.log(`Unsupported searchType found: ${JSON.stringify(searchType)}`, searchType);

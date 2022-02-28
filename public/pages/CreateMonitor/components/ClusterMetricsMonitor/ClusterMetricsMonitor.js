@@ -43,13 +43,13 @@ import {
   EMPTY_PATH_PARAMS_TEXT,
   REST_API_REFERENCE,
   API_TYPES,
-} from './utils/localUriConstants';
+} from './utils/clusterMetricsMonitorConstants';
 import {
   getApiPath,
   getExamplePathParams,
   isInvalidApiPathParameter,
   validateApiPathParameter,
-} from './utils/localUriHelpers';
+} from './utils/clusterMetricsMonitorHelpers';
 import { FORMIK_INITIAL_VALUES } from '../../containers/CreateMonitor/utils/constants';
 
 const renderModal = (closeModal, prevApiType, currApiType, values) => {
@@ -72,12 +72,12 @@ const renderModal = (closeModal, prevApiType, currApiType, values) => {
         defaultFocusedButton={'cancel'}
         buttonColor={'danger'}
         title={message}
-      ></EuiConfirmModal>
+      />
     </EuiOverlayMask>
   );
 };
 
-const LocalUriInput = ({
+const ClusterMetricsMonitor = ({
   isDarkMode,
   loadingResponse = false,
   loadingSupportedApiList = false,
@@ -164,7 +164,7 @@ const LocalUriInput = ({
             : undefined,
           isDisabled: loadingSupportedApiList,
           isLoading: loadingSupportedApiList,
-          'data-test-subj': 'localUriApiTypeComboBox',
+          'data-test-subj': 'clusterMetricsApiTypeComboBox',
         }}
       />
 
@@ -227,7 +227,7 @@ const LocalUriInput = ({
                   {_.get(API_TYPES, `${apiType}.appendText`)}
                 </EuiText>
               ),
-              'data-test-subj': 'localUriPathParamsFieldText',
+              'data-test-subj': 'clusterMetricsParamsFieldText',
             }}
           />
 
@@ -241,7 +241,7 @@ const LocalUriInput = ({
         isLoading={loadingResponse}
         onClick={onRunQuery}
         size={'s'}
-        data-test-subj={'localUriRunButton'}
+        data-test-subj={'clusterMetricsPreviewButton'}
       >
         Preview query
       </EuiButton>
@@ -256,11 +256,11 @@ const LocalUriInput = ({
           width={'100%'}
           value={pathIsEmpty || loadingResponse ? undefined : response}
           readOnly
-          data-test-subj={'localUriRunResponseBox'}
+          data-test-subj={'clusterMetricsRunResponseBox'}
         />
       </EuiFormRow>
     </div>
   );
 };
 
-export default LocalUriInput;
+export default ClusterMetricsMonitor;

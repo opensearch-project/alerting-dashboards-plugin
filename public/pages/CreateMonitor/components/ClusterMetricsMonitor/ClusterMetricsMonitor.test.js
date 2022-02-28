@@ -23,7 +23,19 @@
  *   express or implied. See the License for the specific language governing
  *   permissions and limitations under the License.
  */
+import React from 'react';
+import { render } from 'enzyme';
+import { Formik } from 'formik';
 
-import LocalUriImport from './LocalUriInput';
+import ClusterMetricsMonitor from './ClusterMetricsMonitor';
 
-export default LocalUriImport;
+describe('ClusterMetricsMonitor', () => {
+  test('renders', () => {
+    const component = (
+      <Formik>
+        <ClusterMetricsMonitor values={{ searchType: 'clusterMetrics' }} />
+      </Formik>
+    );
+    expect(render(component)).toMatchSnapshot();
+  });
+});

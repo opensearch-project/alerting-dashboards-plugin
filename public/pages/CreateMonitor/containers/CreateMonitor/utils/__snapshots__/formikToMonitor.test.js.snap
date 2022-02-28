@@ -45,6 +45,28 @@ Object {
 }
 `;
 
+exports[`formikToClusterMetricsUri can build a ClusterMetricsMonitor request with path params 1`] = `
+Object {
+  "uri": Object {
+    "api_type": "",
+    "path": "params",
+    "path_params": "",
+    "url": "",
+  },
+}
+`;
+
+exports[`formikToClusterMetricsUri can build a ClusterMetricsMonitor request without path params 1`] = `
+Object {
+  "uri": Object {
+    "api_type": "CLUSTER_HEALTH",
+    "path": "_cluster/health",
+    "path_params": "",
+    "url": "http://localhost:9200/_cluster/health",
+  },
+}
+`;
+
 exports[`formikToDetector can build detector 1`] = `
 Object {
   "anomaly_detector": Object {
@@ -91,35 +113,13 @@ Array [
 ]
 `;
 
-exports[`formikToInputs can call formikToLocalUri 1`] = `
+exports[`formikToInputs can call formikToClusterMetricsUri 1`] = `
 Object {
   "uri": Object {
     "api_type": "",
     "path": "",
     "path_params": "",
     "url": "",
-  },
-}
-`;
-
-exports[`formikToLocalUri can build a LocalUriInput request with path params 1`] = `
-Object {
-  "uri": Object {
-    "api_type": "",
-    "path": "params",
-    "path_params": "",
-    "url": "",
-  },
-}
-`;
-
-exports[`formikToLocalUri can build a LocalUriInput request without path params 1`] = `
-Object {
-  "uri": Object {
-    "api_type": "CLUSTER_HEALTH",
-    "path": "_cluster/health",
-    "path_params": "",
-    "url": "http://localhost:9200/_cluster/health",
   },
 }
 `;

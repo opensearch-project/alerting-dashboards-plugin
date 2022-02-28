@@ -29,8 +29,11 @@ import moment from 'moment-timezone';
 import { BUCKET_COUNT, DEFAULT_COMPOSITE_AGG_SIZE, FORMIK_INITIAL_VALUES } from './constants';
 import { MONITOR_TYPE, SEARCH_TYPE } from '../../../../../utils/constants';
 import { OPERATORS_QUERY_MAP } from './whereFilters';
-import { API_TYPES } from '../../../components/LocalUriInput/utils/localUriConstants';
-import { getApiPath, getApiType } from '../../../components/LocalUriInput/utils/localUriHelpers';
+import { API_TYPES } from '../../../components/ClusterMetricsMonitor/utils/clusterMetricsMonitorConstants';
+import {
+  getApiPath,
+  getApiType,
+} from '../../../components/ClusterMetricsMonitor/utils/clusterMetricsMonitorHelpers';
 
 export function formikToMonitor(values) {
   const uiSchedule = formikToUiSchedule(values);
@@ -54,8 +57,8 @@ export function formikToMonitor(values) {
 
 export function formikToInputs(values) {
   switch (values.searchType) {
-    case SEARCH_TYPE.LOCAL_URI:
-      return formikToLocalUri(values);
+    case SEARCH_TYPE.CLUSTER_METRICS:
+      return formikToClusterMetricsInput(values);
     default:
       return formikToSearch(values);
   }
@@ -112,7 +115,7 @@ export function formikToAdQuery(values) {
   };
 }
 
-export function formikToLocalUri(values) {
+export function formikToClusterMetricsInput(values) {
   let apiType = _.get(values, 'uri.api_type', FORMIK_INITIAL_VALUES.uri.api_type);
   if (_.isEmpty(apiType)) apiType = getApiType(_.get(values, 'uri'));
   let pathParams = _.get(values, 'uri.path_params', FORMIK_INITIAL_VALUES.uri.path_params);

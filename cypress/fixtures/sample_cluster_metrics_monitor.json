@@ -1,5 +1,5 @@
 {
-  "name": "sample_local_uri_cluster_health_monitor",
+  "name": "sample_cluster_metrics_health_monitor",
   "type": "monitor",
   "monitor_type": "query_level_monitor",
   "enabled": true,
@@ -45,7 +45,7 @@
       "cronExpression": "0 */1 * * *"
     },
     "search": {
-      "searchType": "localUri",
+      "searchType": "clusterMetrics",
       "timeField": "",
       "aggregations": [],
       "groupBy": [],
