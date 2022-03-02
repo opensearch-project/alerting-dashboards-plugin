@@ -28,10 +28,17 @@ import React, { useState } from 'react';
 import _ from 'lodash';
 import {
   EuiButton,
+  EuiButtonEmpty,
   EuiCodeEditor,
-  EuiConfirmModal,
+  EuiFlexGroup,
+  EuiFlexItem,
   EuiFormRow,
   EuiLink,
+  EuiModal,
+  EuiModalBody,
+  EuiModalFooter,
+  EuiModalHeader,
+  EuiModalHeaderTitle,
   EuiOverlayMask,
   EuiSpacer,
   EuiText,
@@ -52,27 +59,70 @@ import {
 } from './utils/clusterMetricsMonitorHelpers';
 import { FORMIK_INITIAL_VALUES } from '../../containers/CreateMonitor/utils/constants';
 
-const renderModal = (closeModal, prevApiType, currApiType, values) => {
-  const onConfirm = () => {
-    _.set(values, 'triggerDefinitions', []);
+const setApiType = (form, apiType) => {
+  const pathParams = _.get(form, 'uri.path_params', FORMIK_INITIAL_VALUES.uri.path_params);
+  form.setFieldValue('uri.api_type', apiType);
+  form.setFieldValue('uri.path', getApiPath(_.isEmpty(pathParams), apiType));
+};
+
+const renderModal = (closeModal, prevApiType, selectedApiType, form) => {
+  const onClear = () => {
+    setApiType(form, selectedApiType);
+    form.setFieldValue('triggerDefinitions', []);
     closeModal();
   };
-  const prevApiLabel = _.get(API_TYPES, `${prevApiType}.label`, prevApiType);
-  const currApiLabel = _.get(API_TYPES, `${currApiType}.label`, currApiType);
-  const message = _.isEmpty(currApiType)
-    ? `You are clearing the request type "${prevApiLabel}".`
-    : `You are changing the request type from "${prevApiLabel}" to "${currApiLabel}".`;
+  const onKeep = () => {
+    setApiType(form, selectedApiType);
+    closeModal();
+  };
+  const onClose = () => {
+    setApiType(form, prevApiType);
+    closeModal();
+  };
+  const apiTypeLabel = _.get(API_TYPES, `${selectedApiType}.label`);
+  const modalTextBody = _.isEmpty(selectedApiType)
+    ? 'You are about to clear the selected request type. Would you like to clear the existing trigger conditions?'
+    : `The existing trigger conditions may not be supported by request type "${apiTypeLabel}". Would you like to clear them?`;
+
   return (
-    <EuiOverlayMask onClick={closeModal}>
-      <EuiConfirmModal
-        onCancel={closeModal}
-        onConfirm={onConfirm}
-        confirmButtonText={'Clear all trigger conditions?'}
-        cancelButtonText={'Keep current trigger conditions?'}
-        defaultFocusedButton={'cancel'}
-        buttonColor={'danger'}
-        title={message}
-      />
+    <EuiOverlayMask>
+      <EuiModal
+        onClose={onClose}
+        style={{ width: 500 }}
+        data-test-subj={'clusterMetricsClearTriggersModal'}
+      >
+        <EuiModalHeader>
+          <EuiModalHeaderTitle>Clear all trigger conditions?</EuiModalHeaderTitle>
+        </EuiModalHeader>
+
+        <EuiModalBody>{modalTextBody}</EuiModalBody>
+
+        <EuiModalFooter>
+          <EuiFlexGroup justifyContent={'flexEnd'}>
+            <EuiFlexItem grow={false}>
+              <EuiButtonEmpty
+                fullWidth={false}
+                onClick={onKeep}
+                data-test-subj={'clusterMetricsClearTriggersModalKeepButton'}
+              >
+                Keep
+              </EuiButtonEmpty>
+            </EuiFlexItem>
+
+            <EuiFlexItem grow={false}>
+              <EuiButton
+                color={'danger'}
+                fill={true}
+                fullWidth={false}
+                onClick={onClear}
+                data-test-subj={'clusterMetricsClearTriggersModalClearButton'}
+              >
+                Clear
+              </EuiButton>
+            </EuiFlexItem>
+          </EuiFlexGroup>
+        </EuiModalFooter>
+      </EuiModal>
     </EuiOverlayMask>
   );
 };
@@ -87,16 +137,6 @@ const ClusterMetricsMonitor = ({
   supportedApiList = [],
   values,
 }) => {
-  const [displayingModal, setDisplayingModal] = useState(false);
-  const [modal, setModal] = useState(undefined);
-  const closeModal = () => {
-    setDisplayingModal(false);
-    setModal(undefined);
-  };
-  const openModal = (prevApiType, currApiType) => {
-    setDisplayingModal(true);
-    setModal(renderModal(closeModal, prevApiType, currApiType, values));
-  };
   const apiType = _.get(values, 'uri.api_type');
   const path = _.get(values, 'uri.path');
   const pathIsEmpty = _.isEmpty(path);
@@ -106,6 +146,18 @@ const ClusterMetricsMonitor = ({
   const hidePathParams = pathIsEmpty || loadingSupportedApiList || !supportsPathParams;
   const disableRunButton = pathIsEmpty || (_.isEmpty(pathParams) && requirePathParams);
   const hasTriggers = _.get(values, 'triggerDefinitions', []).length > 0;
+
+  const [displayingModal, setDisplayingModal] = useState(false);
+  const [clearTriggersModal, setClearTriggersModal] = useState(undefined);
+  const closeModal = () => {
+    setDisplayingModal(false);
+    setClearTriggersModal(undefined);
+  };
+  const openModal = (prevApiType, selectedApiType, form) => {
+    setDisplayingModal(true);
+    setClearTriggersModal(renderModal(closeModal, prevApiType, selectedApiType, form));
+  };
+
   return (
     <div>
       <EuiSpacer size={'m'} />
@@ -139,18 +191,21 @@ const ClusterMetricsMonitor = ({
           },
           onChange: (options, field, form) => {
             const selectedApiType = _.get(options, '0.value');
+            let changingApiType = true;
             if (selectedApiType !== apiType) {
               const doesNotUsePathParams = _.isEmpty(
                 _.get(API_TYPES, `${selectedApiType}.paths.withPathParams`)
               );
               if (doesNotUsePathParams)
                 form.setFieldValue('uri.path_params', FORMIK_INITIAL_VALUES.uri.path_params);
+              if (hasTriggers && !_.isEmpty(apiType)) {
+                changingApiType = false;
+                openModal(apiType, selectedApiType, form);
+              }
               resetResponse();
               form.setFieldTouched('uri.path_params', false);
-              if (hasTriggers && !_.isEmpty(apiType)) openModal(apiType, selectedApiType);
             }
-            form.setFieldValue('uri.api_type', selectedApiType);
-            form.setFieldValue('uri.path', getApiPath(_.isEmpty(pathParams), selectedApiType));
+            if (changingApiType) setApiType(form, selectedApiType);
           },
           isClearable: true,
           singleSelection: { asPlainText: true },
@@ -168,7 +223,7 @@ const ClusterMetricsMonitor = ({
         }}
       />
 
-      {displayingModal && modal}
+      {displayingModal && clearTriggersModal}
       <EuiSpacer size={'l'} />
 
       {!hidePathParams ? (

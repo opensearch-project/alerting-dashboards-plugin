@@ -36,7 +36,7 @@ const SAMPLE_ACTION = 'sample_action';
 
 const addClusterMetricsTrigger = (triggerName, triggerIndex, actionName, isEdit, source) => {
   // Click 'Add trigger' button
-  cy.contains('Add trigger').click({ force: true });
+  cy.contains('Add trigger', { timeout: 20000 }).click({ force: true });
 
   if (isEdit === true) {
     // TODO: Passing button props in EUI accordion was added in newer versions (31.7.0+).
@@ -244,6 +244,135 @@ describe('ClusterMetricsMonitor', () => {
       cy.contains('Query parameters - optional').should('not.exist');
       cy.contains('Query parameters');
       cy.get('[data-test-subj="clusterMetricsParamsFieldText"]');
+    });
+  });
+
+  describe('clearTriggersModal renders and behaves as expected', () => {
+    beforeEach(() => {
+      // Create the sample monitor
+      cy.createMonitor(sampleClusterMetricsMonitor);
+      cy.reload();
+
+      // Confirm the created monitor can be seen
+      cy.contains(SAMPLE_CLUSTER_METRICS_HEALTH_MONITOR);
+
+      // Select the monitor
+      cy.get('a').contains(SAMPLE_CLUSTER_METRICS_HEALTH_MONITOR).click({ force: true });
+
+      // Click Edit button
+      cy.contains('Edit').click({ force: true });
+    });
+
+    it('when no triggers exist', () => {
+      // Confirm there are 0 triggers defined
+      cy.contains('Triggers (0)');
+
+      describe('API is cleared', () => {
+        // Clear existing API type
+        cy.get('[data-test-subj="clusterMetricsApiTypeComboBox"]').type('{backspace}');
+
+        // Confirm clearTriggersModal is not displayed
+        cy.get('[data-test-subj="clusterMetricsClearTriggersModal"]').should('not.exist');
+      });
+
+      describe('blank API type is defined', () => {
+        // Select the Cluster Health API
+        cy.get('[data-test-subj="clusterMetricsApiTypeComboBox"]').type('cluster health{enter}');
+
+        // Confirm clearTriggersModal is not displayed
+        cy.get('[data-test-subj="clusterMetricsClearTriggersModal"]').should('not.exist');
+      });
+
+      describe('API type is changed', () => {
+        cy.get('[data-test-subj="clusterMetricsApiTypeComboBox"]').type('cluster stats{enter}');
+
+        // Confirm clearTriggersModal is not displayed
+        cy.get('[data-test-subj="clusterMetricsClearTriggersModal"]').should('not.exist');
+      });
+    });
+
+    it('when triggers exist', () => {
+      // Add a trigger for testing purposes
+      addClusterMetricsTrigger(
+        SAMPLE_TRIGGER,
+        0,
+        SAMPLE_ACTION,
+        true,
+        'ctx.results[0].number_of_pending_tasks >= 0'
+      );
+
+      // Confirm there is 1 trigger defined
+      cy.contains('Triggers (1)');
+
+      describe('API is cleared', () => {
+        // Clear existing API type
+        cy.get('[data-test-subj="clusterMetricsApiTypeComboBox"]').type('{backspace}');
+
+        // Confirm clearTriggersModal displays appropriate text
+        cy.contains(
+          'You are about to clear the selected request type. Would you like to clear the existing trigger conditions?'
+        );
+      });
+
+      describe('the modal KEEP button is clicked', () => {
+        // Click the KEEP button
+        cy.get('[data-test-subj="clusterMetricsClearTriggersModalKeepButton"]').click();
+
+        // Confirm clearTriggersModal closed
+        cy.get('[data-test-subj="clusterMetricsClearTriggersModal"]').should('not.exist');
+
+        // Confirm there is 1 trigger defined
+        cy.contains('Triggers (1)');
+      });
+
+      describe('blank API type is defined', () => {
+        // Select the Cluster Health API
+        cy.get('[data-test-subj="clusterMetricsApiTypeComboBox"]').type('cluster health{enter}');
+
+        // Confirm clearTriggersModal did not open
+        cy.get('[data-test-subj="clusterMetricsClearTriggersModal"]').should('not.exist');
+      });
+
+      describe('API type is changed', () => {
+        // Change the API type to Cluster Stats
+        cy.get('[data-test-subj="clusterMetricsApiTypeComboBox"]').type('cluster stats{enter}');
+
+        // Confirm clearTriggersModal displays appropriate text
+        cy.contains(
+          'The existing trigger conditions may not be supported by request type "Cluster Stats". Would you like to clear them?'
+        );
+      });
+
+      describe('the modal CLOSE (i.e., the X button) button is clicked', () => {
+        // Click the CLOSE button
+        cy.get('[class="euiButtonIcon euiButtonIcon--text euiModal__closeIcon"]').click();
+
+        // Confirm clearTriggersModal closed
+        cy.get('[data-test-subj="clusterMetricsClearTriggersModal"]').should('not.exist');
+
+        // Confirm API type reverted back to Cluster Health
+        cy.get('[data-test-subj="clusterMetricsApiTypeComboBox"]').contains('Cluster Health');
+
+        // Confirm there is 1 trigger defined
+        cy.contains('Triggers (1)');
+      });
+
+      describe('the modal CLEAR button is clicked', () => {
+        // Change the API type to Cluster Stats
+        cy.get('[data-test-subj="clusterMetricsApiTypeComboBox"]').type('cluster stats{enter}');
+
+        // Click the CLEAR button
+        cy.get('[data-test-subj="clusterMetricsClearTriggersModalClearButton"]').click();
+
+        // Confirm clearTriggersModal closed
+        cy.get('[data-test-subj="clusterMetricsClearTriggersModal"]').should('not.exist');
+
+        // Confirm API type changed to Cluster Stats
+        cy.get('[data-test-subj="clusterMetricsApiTypeComboBox"]').contains('Cluster Stats');
+
+        // Confirm there are 0 triggers defined
+        cy.contains('Triggers (0)', { timeout: 20000 });
+      });
     });
   });
 
