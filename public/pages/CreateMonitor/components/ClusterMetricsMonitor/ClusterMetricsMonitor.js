@@ -86,11 +86,7 @@ const renderModal = (closeModal, prevApiType, selectedApiType, form) => {
 
   return (
     <EuiOverlayMask>
-      <EuiModal
-        onClose={onClose}
-        style={{ width: 500 }}
-        data-test-subj={'clusterMetricsClearTriggersModal'}
-      >
+      <EuiModal onClose={onClose} data-test-subj={'clusterMetricsClearTriggersModal'}>
         <EuiModalHeader>
           <EuiModalHeaderTitle>Clear all trigger conditions?</EuiModalHeaderTitle>
         </EuiModalHeader>
