@@ -1,7 +1,7 @@
 {
   "name": "sample_cluster_metrics_health_monitor",
   "type": "monitor",
-  "monitor_type": "query_level_monitor",
+  "monitor_type": "cluster_metrics_monitor",
   "enabled": true,
   "schedule": {
     "period": {
@@ -59,6 +59,6 @@
         "operator": "is"
       }
     },
-    "monitor_type": "query_level_monitor"
+    "monitor_type": "cluster_metrics_monitor"
   }
 }

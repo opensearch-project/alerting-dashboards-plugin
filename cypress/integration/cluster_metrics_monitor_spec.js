@@ -33,6 +33,7 @@ const SAMPLE_CLUSTER_METRICS_NODES_STATS_MONITOR = 'sample_cluster_metrics_nodes
 const SAMPLE_CLUSTER_METRICS_CAT_SNAPSHOTS_MONITOR = 'sample_cluster_metrics_cat_snapshots_monitor';
 const SAMPLE_TRIGGER = 'sample_trigger';
 const SAMPLE_ACTION = 'sample_action';
+const SAMPLE_DESTINATION = 'sample_destination';
 
 const addClusterMetricsTrigger = (triggerName, triggerIndex, actionName, isEdit, source) => {
   // Click 'Add trigger' button
@@ -70,9 +71,9 @@ const addClusterMetricsTrigger = (triggerName, triggerIndex, actionName, isEdit,
 
   // Click the combo box to list all the destinations
   // Using key typing instead of clicking the menu option to avoid occasional failure
-  cy.get(`div[name="triggerDefinitions[${triggerIndex}].actions.0.destination_id"]`)
+  cy.get(`[data-test-subj="triggerDefinitions[${triggerIndex}].actions.0_actionDestination"]`)
     .click({ force: true })
-    .type('{downarrow}{enter}');
+    .type(`${SAMPLE_DESTINATION}{downarrow}{enter}`);
 };
 
 describe('ClusterMetricsMonitor', () => {
@@ -107,11 +108,8 @@ describe('ClusterMetricsMonitor', () => {
       // Go to create monitor page
       cy.contains('Create monitor').click();
 
-      // Ensure the Query-level monitor type is selected
-      cy.get('[data-test-subj="queryLevelMonitorRadioCard"]').click();
-
       // Select ClusterMetrics radio card
-      cy.get('[data-test-subj="clusterMetricsRadioCard"]').click();
+      cy.get('[data-test-subj="clusterMetricsMonitorRadioCard"]').click();
 
       // Wait for input to load and then type in the monitor name
       cy.get('input[name="name"]').type(SAMPLE_CLUSTER_METRICS_HEALTH_MONITOR);
@@ -164,11 +162,8 @@ describe('ClusterMetricsMonitor', () => {
       // Go to create monitor page
       cy.contains('Create monitor').click();
 
-      // Ensure the Query-level monitor type is selected
-      cy.get('[data-test-subj="queryLevelMonitorRadioCard"]').click();
-
       // Select ClusterMetrics radio card
-      cy.get('[data-test-subj="clusterMetricsRadioCard"]').click();
+      cy.get('[data-test-subj="clusterMetricsMonitorRadioCard"]').click();
 
       // Wait for input to load and then type in the monitor name
       cy.get('input[name="name"]').type(SAMPLE_CLUSTER_METRICS_NODES_STATS_MONITOR);
@@ -228,11 +223,8 @@ describe('ClusterMetricsMonitor', () => {
       // Go to create monitor page
       cy.contains('Create monitor').click();
 
-      // Ensure the Query-level monitor type is selected
-      cy.get('[data-test-subj="queryLevelMonitorRadioCard"]').click();
-
       // Select ClusterMetrics radio card
-      cy.get('[data-test-subj="clusterMetricsRadioCard"]').click();
+      cy.get('[data-test-subj="clusterMetricsMonitorRadioCard"]').click();
 
       // Wait for input to load and then type in the monitor name
       cy.get('input[name="name"]').type(SAMPLE_CLUSTER_METRICS_CAT_SNAPSHOTS_MONITOR);
@@ -249,31 +241,26 @@ describe('ClusterMetricsMonitor', () => {
 
   describe('clearTriggersModal renders and behaves as expected', () => {
     beforeEach(() => {
-      // Create the sample monitor
-      cy.createMonitor(sampleClusterMetricsMonitor);
-      cy.reload();
+      // Visit Alerting OpenSearch Dashboards
+      cy.visit(`${Cypress.env('opensearch_dashboards')}/app/${PLUGIN_NAME}#/monitors`);
 
-      // Confirm the created monitor can be seen
-      cy.contains(SAMPLE_CLUSTER_METRICS_HEALTH_MONITOR);
+      // Begin monitor creation
+      // Confirm empty monitor list is loaded
+      cy.contains('There are no existing monitors');
 
-      // Select the monitor
-      cy.get('a').contains(SAMPLE_CLUSTER_METRICS_HEALTH_MONITOR).click({ force: true });
+      // Go to create monitor page
+      cy.contains('Create monitor').click();
 
-      // Click Edit button
-      cy.contains('Edit').click({ force: true });
+      // Select ClusterMetrics radio card
+      cy.get('[data-test-subj="clusterMetricsMonitorRadioCard"]').click();
+
+      // Wait for input to load and then type in the monitor name
+      cy.get('input[name="name"]').type(SAMPLE_CLUSTER_METRICS_HEALTH_MONITOR);
     });
 
     it('when no triggers exist', () => {
       // Confirm there are 0 triggers defined
       cy.contains('Triggers (0)');
-
-      describe('API is cleared', () => {
-        // Clear existing API type
-        cy.get('[data-test-subj="clusterMetricsApiTypeComboBox"]').type('{backspace}');
-
-        // Confirm clearTriggersModal is not displayed
-        cy.get('[data-test-subj="clusterMetricsClearTriggersModal"]').should('not.exist');
-      });
 
       describe('blank API type is defined', () => {
         // Select the Cluster Health API
@@ -284,6 +271,7 @@ describe('ClusterMetricsMonitor', () => {
       });
 
       describe('API type is changed', () => {
+        // Change the API type to Cluster Stats
         cy.get('[data-test-subj="clusterMetricsApiTypeComboBox"]').type('cluster stats{enter}');
 
         // Confirm clearTriggersModal is not displayed
@@ -297,33 +285,12 @@ describe('ClusterMetricsMonitor', () => {
         SAMPLE_TRIGGER,
         0,
         SAMPLE_ACTION,
-        true,
+        false,
         'ctx.results[0].number_of_pending_tasks >= 0'
       );
 
       // Confirm there is 1 trigger defined
       cy.contains('Triggers (1)');
-
-      describe('API is cleared', () => {
-        // Clear existing API type
-        cy.get('[data-test-subj="clusterMetricsApiTypeComboBox"]').type('{backspace}');
-
-        // Confirm clearTriggersModal displays appropriate text
-        cy.contains(
-          'You are about to clear the selected request type. Would you like to clear the existing trigger conditions?'
-        );
-      });
-
-      describe('the modal KEEP button is clicked', () => {
-        // Click the KEEP button
-        cy.get('[data-test-subj="clusterMetricsClearTriggersModalKeepButton"]').click();
-
-        // Confirm clearTriggersModal closed
-        cy.get('[data-test-subj="clusterMetricsClearTriggersModal"]').should('not.exist');
-
-        // Confirm there is 1 trigger defined
-        cy.contains('Triggers (1)');
-      });
 
       describe('blank API type is defined', () => {
         // Select the Cluster Health API
@@ -339,7 +306,7 @@ describe('ClusterMetricsMonitor', () => {
 
         // Confirm clearTriggersModal displays appropriate text
         cy.contains(
-          'The existing trigger conditions may not be supported by request type "Cluster Stats". Would you like to clear them?'
+          'You are about to change the request type. The existing trigger conditions may not be supported. Would you like to clear the existing trigger conditions?'
         );
       });
 
@@ -357,9 +324,23 @@ describe('ClusterMetricsMonitor', () => {
         cy.contains('Triggers (1)');
       });
 
-      describe('the modal CLEAR button is clicked', () => {
+      describe('the modal KEEP button is clicked', () => {
         // Change the API type to Cluster Stats
         cy.get('[data-test-subj="clusterMetricsApiTypeComboBox"]').type('cluster stats{enter}');
+
+        // Click the KEEP button
+        cy.get('[data-test-subj="clusterMetricsClearTriggersModalKeepButton"]').click();
+
+        // Confirm clearTriggersModal closed
+        cy.get('[data-test-subj="clusterMetricsClearTriggersModal"]').should('not.exist');
+
+        // Confirm there is 1 trigger defined
+        cy.contains('Triggers (1)');
+      });
+
+      describe('the modal CLEAR button is clicked', () => {
+        // Change the API type to Cluster Settings
+        cy.get('[data-test-subj="clusterMetricsApiTypeComboBox"]').type('cluster settings{enter}');
 
         // Click the CLEAR button
         cy.get('[data-test-subj="clusterMetricsClearTriggersModalClearButton"]').click();
@@ -368,7 +349,7 @@ describe('ClusterMetricsMonitor', () => {
         cy.get('[data-test-subj="clusterMetricsClearTriggersModal"]').should('not.exist');
 
         // Confirm API type changed to Cluster Stats
-        cy.get('[data-test-subj="clusterMetricsApiTypeComboBox"]').contains('Cluster Stats');
+        cy.get('[data-test-subj="clusterMetricsApiTypeComboBox"]').contains('Cluster Settings');
 
         // Confirm there are 0 triggers defined
         cy.contains('Triggers (0)', { timeout: 20000 });

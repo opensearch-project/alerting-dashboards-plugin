@@ -50,11 +50,12 @@ export function formikToTriggerDefinitions(values, monitorUiMetadata) {
 }
 
 export function formikToTriggerDefinition(values, monitorUiMetadata) {
-  const isQueryLevelMonitor =
-    _.get(monitorUiMetadata, 'monitor_type', MONITOR_TYPE.QUERY_LEVEL) === MONITOR_TYPE.QUERY_LEVEL;
-  return isQueryLevelMonitor
-    ? formikToQueryLevelTrigger(values, monitorUiMetadata)
-    : formikToBucketLevelTrigger(values, monitorUiMetadata);
+  const isBucketLevelMonitor =
+    _.get(monitorUiMetadata, 'monitor_type', MONITOR_TYPE.QUERY_LEVEL) ===
+    MONITOR_TYPE.BUCKET_LEVEL;
+  return isBucketLevelMonitor
+    ? formikToBucketLevelTrigger(values, monitorUiMetadata)
+    : formikToQueryLevelTrigger(values, monitorUiMetadata);
 }
 
 export function formikToQueryLevelTrigger(values, monitorUiMetadata) {

@@ -25,17 +25,12 @@
  */
 
 import React from 'react';
-import _ from 'lodash';
 import { EuiFlexGroup, EuiFlexItem, EuiLink, EuiText } from '@elastic/eui';
 import FormikCheckableCard from '../../../../components/FormControls/FormikCheckableCard/FormikCheckableCard';
 import { OS_AD_PLUGIN, MONITOR_TYPE, SEARCH_TYPE } from '../../../../utils/constants';
-import { MONITOR_TYPE_CARD_WIDTH } from '../MonitorType/MonitorType';
 import { URL } from '../../../../../utils/constants';
 
-const monitorDefinitionCardWidth = (hasADPlugin = false) => {
-  const numSearchTypes = hasADPlugin ? _.keys(SEARCH_TYPE).length : _.keys(SEARCH_TYPE).length - 1;
-  return (MONITOR_TYPE_CARD_WIDTH * _.keys(MONITOR_TYPE).length) / numSearchTypes;
-};
+const MONITOR_DEFINITION_CARD_WIDTH = '275';
 
 const onChangeDefinition = (e, form) => {
   const type = e.target.value;
@@ -62,7 +57,7 @@ const MonitorDefinitionCard = ({ values, plugins }) => {
         gutterSize={'s'}
         style={{ paddingTop: '0px', marginTop: '0px' }}
       >
-        <EuiFlexItem grow={false} style={{ width: `${monitorDefinitionCardWidth(hasADPlugin)}px` }}>
+        <EuiFlexItem grow={false} style={{ width: `${MONITOR_DEFINITION_CARD_WIDTH}px` }}>
           <FormikCheckableCard
             name="searchTypeGraph"
             formRow
@@ -78,7 +73,7 @@ const MonitorDefinitionCard = ({ values, plugins }) => {
             }}
           />
         </EuiFlexItem>
-        <EuiFlexItem grow={false} style={{ width: `${monitorDefinitionCardWidth(hasADPlugin)}px` }}>
+        <EuiFlexItem grow={false} style={{ width: `${MONITOR_DEFINITION_CARD_WIDTH}px` }}>
           <FormikCheckableCard
             name="searchTypeQuery"
             formRow
@@ -94,34 +89,9 @@ const MonitorDefinitionCard = ({ values, plugins }) => {
             }}
           />
         </EuiFlexItem>
-        {/*// Do not display the clusterMetrics option for bucket-level monitors.*/}
-        {!isBucketLevelMonitor && (
-          <EuiFlexItem
-            grow={false}
-            style={{ width: `${monitorDefinitionCardWidth(hasADPlugin)}px` }}
-          >
-            <FormikCheckableCard
-              name="searchTypeClusterMetrics"
-              formRow
-              inputProps={{
-                id: 'clusterMetricsRadioCard',
-                label: 'Cluster metrics',
-                checked: values.searchType === SEARCH_TYPE.CLUSTER_METRICS,
-                value: SEARCH_TYPE.CLUSTER_METRICS,
-                onChange: (e, field, form) => {
-                  onChangeDefinition(e, form);
-                },
-                'data-test-subj': 'clusterMetricsRadioCard',
-              }}
-            />
-          </EuiFlexItem>
-        )}
         {/*// Only show the anomaly detector option when anomaly detection plugin is present, but not for bucket-level monitors.*/}
         {hasADPlugin && !isBucketLevelMonitor && (
-          <EuiFlexItem
-            grow={false}
-            style={{ width: `${monitorDefinitionCardWidth(hasADPlugin)}px` }}
-          >
+          <EuiFlexItem grow={false} style={{ width: `${MONITOR_DEFINITION_CARD_WIDTH}px` }}>
             <FormikCheckableCard
               name="searchTypeAD"
               inputProps={{

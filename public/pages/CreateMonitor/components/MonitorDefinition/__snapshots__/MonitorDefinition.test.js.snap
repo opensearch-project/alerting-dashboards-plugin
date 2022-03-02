@@ -41,11 +41,6 @@ exports[`MonitorDefinition renders 1`] = `
             >
               Define using extraction query
             </option>
-            <option
-              value="clusterMetrics"
-            >
-              Define for cluster metrics
-            </option>
           </select>
           <div
             class="euiFormControlLayoutIcons euiFormControlLayoutIcons--right"

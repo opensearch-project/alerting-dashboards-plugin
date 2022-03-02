@@ -36,7 +36,7 @@ exports[`MonitorDefinitionCard renders without AD plugin 1`] = `
   >
     <div
       class="euiFlexItem euiFlexItem--flexGrowZero"
-      style="width:266.6666666666667px"
+      style="width:275px"
     >
       <div
         class="euiFormRow"
@@ -83,7 +83,7 @@ exports[`MonitorDefinitionCard renders without AD plugin 1`] = `
     </div>
     <div
       class="euiFlexItem euiFlexItem--flexGrowZero"
-      style="width:266.6666666666667px"
+      style="width:275px"
     >
       <div
         class="euiFormRow"
@@ -122,53 +122,6 @@ exports[`MonitorDefinitionCard renders without AD plugin 1`] = `
                 for="extractionQueryEditorRadioCard"
               >
                 Extraction query editor
-              </label>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div
-      class="euiFlexItem euiFlexItem--flexGrowZero"
-      style="width:266.6666666666667px"
-    >
-      <div
-        class="euiFormRow"
-        id="searchTypeClusterMetrics-form-row-row"
-      >
-        <div
-          class="euiFormRow__fieldWrapper"
-        >
-          <div
-            class="euiCheckableCard"
-          >
-            <div
-              class="euiCheckableCard__row"
-            >
-              <div
-                class="euiCheckableCard__control"
-              >
-                <div
-                  class="euiRadio euiRadio--noLabel"
-                  data-test-subj="clusterMetricsRadioCard"
-                >
-                  <input
-                    class="euiRadio__input"
-                    id="clusterMetricsRadioCard"
-                    name="searchTypeClusterMetrics"
-                    type="radio"
-                    value="clusterMetrics"
-                  />
-                  <div
-                    class="euiRadio__circle"
-                  />
-                </div>
-              </div>
-              <label
-                class="euiCheckableCard__label"
-                for="clusterMetricsRadioCard"
-              >
-                Cluster metrics
               </label>
             </div>
           </div>
@@ -215,7 +168,7 @@ exports[`MonitorDefinitionCard renders without AD plugin 2`] = `
   >
     <div
       class="euiFlexItem euiFlexItem--flexGrowZero"
-      style="width:200px"
+      style="width:275px"
     >
       <div
         class="euiFormRow"
@@ -262,7 +215,7 @@ exports[`MonitorDefinitionCard renders without AD plugin 2`] = `
     </div>
     <div
       class="euiFlexItem euiFlexItem--flexGrowZero"
-      style="width:200px"
+      style="width:275px"
     >
       <div
         class="euiFormRow"
@@ -309,54 +262,7 @@ exports[`MonitorDefinitionCard renders without AD plugin 2`] = `
     </div>
     <div
       class="euiFlexItem euiFlexItem--flexGrowZero"
-      style="width:200px"
-    >
-      <div
-        class="euiFormRow"
-        id="searchTypeClusterMetrics-form-row-row"
-      >
-        <div
-          class="euiFormRow__fieldWrapper"
-        >
-          <div
-            class="euiCheckableCard"
-          >
-            <div
-              class="euiCheckableCard__row"
-            >
-              <div
-                class="euiCheckableCard__control"
-              >
-                <div
-                  class="euiRadio euiRadio--noLabel"
-                  data-test-subj="clusterMetricsRadioCard"
-                >
-                  <input
-                    class="euiRadio__input"
-                    id="clusterMetricsRadioCard"
-                    name="searchTypeClusterMetrics"
-                    type="radio"
-                    value="clusterMetrics"
-                  />
-                  <div
-                    class="euiRadio__circle"
-                  />
-                </div>
-              </div>
-              <label
-                class="euiCheckableCard__label"
-                for="clusterMetricsRadioCard"
-              >
-                Cluster metrics
-              </label>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div
-      class="euiFlexItem euiFlexItem--flexGrowZero"
-      style="width:200px"
+      style="width:275px"
     >
       <div
         class="euiCheckableCard"

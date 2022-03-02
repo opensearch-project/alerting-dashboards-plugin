@@ -49,6 +49,7 @@ export const SEARCH_TYPE = {
 export const MONITOR_TYPE = {
   QUERY_LEVEL: 'query_level_monitor',
   BUCKET_LEVEL: 'bucket_level_monitor',
+  CLUSTER_METRICS: 'cluster_metrics_monitor',
 };
 
 export const DESTINATION_ACTIONS = {

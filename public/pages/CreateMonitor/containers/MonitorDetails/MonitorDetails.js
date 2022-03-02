@@ -33,6 +33,7 @@ import Schedule from '../../components/Schedule';
 import MonitorDefinitionCard from '../../components/MonitorDefinitionCard';
 import MonitorType from '../../components/MonitorType';
 import AnomalyDetectors from '../AnomalyDetectors/AnomalyDetectors';
+import { MONITOR_TYPE } from '../../../../utils/constants';
 
 const renderAnomalyDetector = (httpClient, values, detectorId) => {
   return {
@@ -72,6 +73,7 @@ const MonitorDetails = ({
   detectorId,
 }) => {
   const anomalyDetectorContent = isAd && renderAnomalyDetector(httpClient, values, detectorId);
+  const displayMonitorDefinitionCards = values.monitor_type !== MONITOR_TYPE.CLUSTER_METRICS;
   return (
     <ContentPanel
       title="Monitor details"
@@ -107,8 +109,13 @@ const MonitorDetails = ({
       />
       <EuiSpacer size="m" />
       <MonitorType values={values} />
-      <EuiSpacer size="m" />
-      <MonitorDefinitionCard values={values} plugins={plugins} />
+
+      {displayMonitorDefinitionCards ? (
+        <div>
+          <EuiSpacer size="m" />
+          <MonitorDefinitionCard values={values} plugins={plugins} />
+        </div>
+      ) : null}
 
       {isAd ? (
         <div>

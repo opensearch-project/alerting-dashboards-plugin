@@ -66,7 +66,7 @@ exports[`ClusterMetricsMonitor renders 1`] = `
             class="euiFormControlLayout__childrenWrapper"
           >
             <div
-              class="euiComboBox__inputWrap euiComboBox__inputWrap--noWrap euiComboBox__inputWrap-isClearable"
+              class="euiComboBox__inputWrap euiComboBox__inputWrap--noWrap"
               data-test-subj="comboBoxInput"
               tabindex="-1"
             >

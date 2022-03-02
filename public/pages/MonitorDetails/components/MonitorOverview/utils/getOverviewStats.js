@@ -35,6 +35,8 @@ import {
   OPENSEARCH_DASHBOARDS_AD_PLUGIN,
   SEARCH_TYPE,
 } from '../../../../../utils/constants';
+import { API_TYPES } from '../../../../CreateMonitor/components/ClusterMetricsMonitor/utils/clusterMetricsMonitorConstants';
+import { getApiType } from '../../../../CreateMonitor/components/ClusterMetricsMonitor/utils/clusterMetricsMonitorHelpers';
 
 // TODO: used in multiple places, move into helper
 export function getTime(time) {
@@ -44,14 +46,17 @@ export function getTime(time) {
   return DEFAULT_EMPTY_DATA;
 }
 
-function getMonitorType(searchType) {
+function getMonitorType(searchType, monitor) {
   switch (searchType) {
     case SEARCH_TYPE.GRAPH:
       return 'Visual Graph';
     case SEARCH_TYPE.AD:
       return 'Anomaly Detector';
     case SEARCH_TYPE.CLUSTER_METRICS:
-      return 'Cluster Metrics';
+      const uri = _.get(monitor, 'inputs.0.uri');
+      const apiType = getApiType(uri);
+      const apiTypeLabel = _.get(API_TYPES, `${apiType}.label`);
+      return apiTypeLabel;
     default:
       return 'Extraction Query';
   }
@@ -63,6 +68,8 @@ function getMonitorLevelType(monitorType) {
       return 'Per query monitor';
     case MONITOR_TYPE.BUCKET_LEVEL:
       return 'Per bucket monitor';
+    case MONITOR_TYPE.CLUSTER_METRICS:
+      return 'Per cluster metrics monitor';
     default:
       // TODO: May be valuable to implement a toast that displays in this case.
       console.log('Unexpected monitor type:', monitorType);
@@ -105,7 +112,7 @@ export default function getOverviewStats(
     },
     {
       header: 'Monitor definition type',
-      value: getMonitorType(searchType),
+      value: getMonitorType(searchType, monitor),
     },
     ...detectorOverview,
     {

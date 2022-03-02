@@ -79,19 +79,16 @@ const renderModal = (closeModal, prevApiType, selectedApiType, form) => {
     setApiType(form, prevApiType);
     closeModal();
   };
-  const apiTypeLabel = _.get(API_TYPES, `${selectedApiType}.label`);
-  const modalTextBody = _.isEmpty(selectedApiType)
-    ? 'You are about to clear the selected request type. Would you like to clear the existing trigger conditions?'
-    : `The existing trigger conditions may not be supported by request type "${apiTypeLabel}". Would you like to clear them?`;
-
   return (
     <EuiOverlayMask>
       <EuiModal onClose={onClose} data-test-subj={'clusterMetricsClearTriggersModal'}>
         <EuiModalHeader>
           <EuiModalHeaderTitle>Clear all trigger conditions?</EuiModalHeaderTitle>
         </EuiModalHeader>
-
-        <EuiModalBody>{modalTextBody}</EuiModalBody>
+        <EuiModalBody>
+          You are about to change the request type. The existing trigger conditions may not be
+          supported. Would you like to clear the existing trigger conditions?
+        </EuiModalBody>
 
         <EuiModalFooter>
           <EuiFlexGroup justifyContent={'flexEnd'}>
@@ -203,7 +200,7 @@ const ClusterMetricsMonitor = ({
             }
             if (changingApiType) setApiType(form, selectedApiType);
           },
-          isClearable: true,
+          isClearable: false,
           singleSelection: { asPlainText: true },
           selectedOptions: !_.isEmpty(apiType)
             ? [

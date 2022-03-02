@@ -16,7 +16,6 @@ import { OS_AD_PLUGIN } from '../../../../utils/constants';
 const defaultSelectDefinitions = [
   { value: 'graph', text: 'Define using visual graph' },
   { value: 'query', text: 'Define using extraction query' },
-  { value: 'clusterMetrics', text: 'Define for cluster metrics' },
 ];
 
 const bucketLevelMonitorDefinitions = [
