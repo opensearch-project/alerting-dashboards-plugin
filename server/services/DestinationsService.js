@@ -180,7 +180,7 @@ export default class DestinationsService {
     } catch (err) {
       if (isIndexNotFoundError(err)) {
         return res.ok({
-          body: { ok: true, resp: { totalDestinations: 0, destinations: [] } },
+          body: { ok: false, resp: {} },
         });
       }
       return res.ok({
