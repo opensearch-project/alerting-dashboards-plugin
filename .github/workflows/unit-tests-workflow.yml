@@ -3,9 +3,11 @@ on:
   push:
     branches:
       - main
+      - 1.x
   pull_request:
     branches:
       - main
+      - 1.x
 env:
   OPENSEARCH_DASHBOARDS_VERSION: '1.x'
 jobs:
