@@ -1,0 +1,11 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`AddActionButton renders 1`] = `
+<EuiButton
+  fill={false}
+  onClick={[Function]}
+  size="s"
+>
+  Add action
+</EuiButton>
+`;

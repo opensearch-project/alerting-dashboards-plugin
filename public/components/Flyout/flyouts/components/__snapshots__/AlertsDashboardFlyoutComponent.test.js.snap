@@ -1,0 +1,268 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`AlertsDashboardFlyoutComponent renders 1`] = `
+<div>
+  <EuiFlexGroup>
+    <EuiFlexItem>
+      <EuiText
+        data-test-subj="alertsDashboardFlyout_triggerName_undefined"
+        size="m"
+      >
+        <strong>
+          Trigger name
+        </strong>
+        <p />
+      </EuiText>
+    </EuiFlexItem>
+    <EuiFlexItem>
+      <EuiText
+        data-test-subj="alertsDashboardFlyout_severity_undefined"
+        size="m"
+      >
+        <strong>
+          Severity
+        </strong>
+        <p>
+          -
+        </p>
+      </EuiText>
+    </EuiFlexItem>
+  </EuiFlexGroup>
+  <EuiSpacer
+    size="xxl"
+  />
+  <EuiFlexGroup>
+    <EuiFlexItem>
+      <EuiText
+        size="m"
+      >
+        <strong>
+          Trigger start time
+        </strong>
+        <p>
+          -
+        </p>
+      </EuiText>
+    </EuiFlexItem>
+    <EuiFlexItem>
+      <EuiText
+        size="m"
+      >
+        <strong>
+          Trigger last updated
+        </strong>
+        <p>
+          -
+        </p>
+      </EuiText>
+    </EuiFlexItem>
+  </EuiFlexGroup>
+  <EuiSpacer
+    size="xxl"
+  />
+  <EuiFlexGroup>
+    <EuiFlexItem>
+      <EuiText
+        data-test-subj="alertsDashboardFlyout_monitor_undefined"
+        size="m"
+      >
+        <strong>
+          Monitor
+        </strong>
+        <p>
+          <EuiLink
+            href="alerting#/monitors/undefined"
+          />
+        </p>
+      </EuiText>
+    </EuiFlexItem>
+  </EuiFlexGroup>
+  <EuiHorizontalRule
+    margin="xxl"
+  />
+  <EuiFlexGroup>
+    <EuiFlexItem>
+      <EuiText
+        data-test-subj="alertsDashboardFlyout_conditions_undefined"
+        size="m"
+      >
+        <strong>
+          Condition
+        </strong>
+        <p
+          style={
+            Object {
+              "whiteSpace": "pre-wrap",
+            }
+          }
+        >
+          Loading conditions...
+        </p>
+      </EuiText>
+    </EuiFlexItem>
+    <EuiFlexItem>
+      <EuiText
+        data-test-subj="alertsDashboardFlyout_timeRange_undefined"
+        size="m"
+      >
+        <strong>
+          Time range for the last
+        </strong>
+        <p>
+          -
+        </p>
+      </EuiText>
+    </EuiFlexItem>
+  </EuiFlexGroup>
+  <EuiSpacer
+    size="xxl"
+  />
+  <EuiFlexGroup>
+    <EuiFlexItem>
+      <EuiText
+        data-test-subj="alertsDashboardFlyout_filters_undefined"
+        size="m"
+      >
+        <strong>
+          Filters
+        </strong>
+        <p>
+          Loading filters...
+        </p>
+      </EuiText>
+    </EuiFlexItem>
+    <EuiFlexItem>
+      <EuiText
+        data-test-subj="alertsDashboardFlyout_groupBy_undefined"
+        size="m"
+      >
+        <strong>
+          Group by
+        </strong>
+        <p>
+          Loading groups...
+        </p>
+      </EuiText>
+    </EuiFlexItem>
+  </EuiFlexGroup>
+  <EuiHorizontalRule
+    margin="xxl"
+  />
+  <EuiFlexGroup>
+    <EuiFlexItem>
+      <ContentPanel
+        actions={
+          Array [
+            <EuiButton
+              data-test-subj="flyoutAcknowledgeAlertsButton"
+              disabled={true}
+              onClick={[Function]}
+            >
+              Acknowledge
+            </EuiButton>,
+          ]
+        }
+        bodyStyles={
+          Object {
+            "padding": "initial",
+          }
+        }
+        title="Alerts"
+        titleSize="s"
+      >
+        <DashboardControls
+          activePage={0}
+          isAlertsFlyout={true}
+          onPageChange={[Function]}
+          onSearchChange={[Function]}
+          onStateChange={[Function]}
+          pageCount={1}
+          search=""
+          severity="ALL"
+          state="ALL"
+        />
+        <EuiHorizontalRule
+          margin="xs"
+        />
+        <EuiBasicTable
+          columns={
+            Array [
+              Object {
+                "dataType": "date",
+                "field": "start_time",
+                "name": "Alert start time",
+                "render": [Function],
+                "sortable": true,
+                "truncateText": false,
+              },
+              Object {
+                "dataType": "date",
+                "field": "end_time",
+                "name": "Alert end time",
+                "render": [Function],
+                "sortable": true,
+                "truncateText": false,
+              },
+              Object {
+                "field": "state",
+                "name": "State",
+                "render": [Function],
+                "sortable": false,
+                "truncateText": false,
+              },
+              Object {
+                "dataType": "date",
+                "field": "acknowledged_time",
+                "name": "Time acknowledged",
+                "render": [Function],
+                "sortable": true,
+                "truncateText": false,
+              },
+            ]
+          }
+          data-test-subj="alertsDashboardFlyout_table_undefined"
+          isSelectable={true}
+          itemId={[Function]}
+          items={Array []}
+          loading={true}
+          noItemsMessage="Loading alerts..."
+          onChange={[Function]}
+          pagination={
+            Object {
+              "pageIndex": 0,
+              "pageSize": 10,
+              "pageSizeOptions": Array [
+                5,
+                10,
+                20,
+                50,
+              ],
+              "totalItemCount": 0,
+            }
+          }
+          responsive={true}
+          selection={
+            Object {
+              "onSelectionChange": [Function],
+              "selectable": [Function],
+              "selectableMessage": [Function],
+            }
+          }
+          sorting={
+            Object {
+              "sort": Object {
+                "direction": "desc",
+                "field": "start_time",
+              },
+            }
+          }
+          tableLayout="fixed"
+        />
+      </ContentPanel>
+    </EuiFlexItem>
+  </EuiFlexGroup>
+  <EuiSpacer
+    size="l"
+  />
+</div>
+`;

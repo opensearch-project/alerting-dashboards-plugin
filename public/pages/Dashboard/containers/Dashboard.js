@@ -1,27 +1,6 @@
 /*
+ * Copyright OpenSearch Contributors
  * SPDX-License-Identifier: Apache-2.0
- *
- * The OpenSearch Contributors require contributions made to
- * this file be licensed under the Apache-2.0 license or a
- * compatible open source license.
- *
- * Modifications Copyright OpenSearch Contributors. See
- * GitHub history for details.
- */
-
-/*
- * Copyright 2021 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
  */
 
 import React, { Component } from 'react';
@@ -32,24 +11,28 @@ import ContentPanel from '../../../components/ContentPanel';
 import DashboardEmptyPrompt from '../components/DashboardEmptyPrompt';
 import DashboardControls from '../components/DashboardControls';
 import { alertColumns, queryColumns } from '../utils/tableUtils';
-import { MONITOR_TYPE, OPENSEARCH_DASHBOARDS_AD_PLUGIN } from '../../../utils/constants';
+import {
+  ALERT_STATE,
+  MONITOR_TYPE,
+  OPENSEARCH_DASHBOARDS_AD_PLUGIN,
+} from '../../../utils/constants';
 import { backendErrorNotification } from '../../../utils/helpers';
 import {
   getInitialSize,
+  getQueryObjectFromState,
+  getURLQueryParams,
   groupAlertsByTrigger,
   insertGroupByColumn,
-  removeColumns,
 } from '../utils/helpers';
 import { DEFAULT_PAGE_SIZE_OPTIONS } from '../../Monitors/containers/Monitors/utils/constants';
-import { MAX_ALERT_COUNT, DEFAULT_GET_ALERTS_QUERY_PARAMS } from '../utils/constants';
-
-// TODO: Abstract out a Table component to be used in both Dashboard and Monitors
+import { MAX_ALERT_COUNT } from '../utils/constants';
+import AcknowledgeAlertsModal from '../components/AcknowledgeAlertsModal';
 
 export default class Dashboard extends Component {
   constructor(props) {
     super(props);
 
-    const { flyoutAlerts, isAlertsFlyout = false, perAlertView } = props;
+    const { location, perAlertView } = props;
 
     const {
       alertState,
@@ -59,12 +42,13 @@ export default class Dashboard extends Component {
       size,
       sortDirection,
       sortField,
-    } = this.getURLQueryParams();
+    } = getURLQueryParams(location);
 
     this.state = {
       alerts: [],
       alertsByTriggers: [],
       alertState,
+      flyoutIsOpen: false,
       loadingMonitors: true,
       monitors: [],
       monitorIds: this.props.monitorIds,
@@ -72,12 +56,12 @@ export default class Dashboard extends Component {
       search,
       selectedItems: [],
       severityLevel,
-      size: getInitialSize(isAlertsFlyout, perAlertView, size),
+      showAlertsModal: false,
+      size: getInitialSize(perAlertView, size),
       sortDirection,
       sortField,
       totalAlerts: 0,
       totalTriggers: 0,
-      trimmedFlyoutAlerts: flyoutAlerts ? flyoutAlerts.slice(0, 10) : [],
     };
   }
 
@@ -110,8 +94,8 @@ export default class Dashboard extends Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
-    const prevQuery = this.getQueryObjectFromState(prevState);
-    const currQuery = this.getQueryObjectFromState(this.state);
+    const prevQuery = getQueryObjectFromState(prevState);
+    const currQuery = getQueryObjectFromState(this.state);
     if (!_.isEqual(prevQuery, currQuery)) {
       const {
         page,
@@ -136,50 +120,6 @@ export default class Dashboard extends Component {
     }
   }
 
-  getQueryObjectFromState = ({
-    page,
-    size,
-    search,
-    sortField,
-    sortDirection,
-    severityLevel,
-    alertState,
-    monitorIds,
-  }) => ({
-    page,
-    size,
-    search,
-    sortField,
-    sortDirection,
-    severityLevel,
-    alertState,
-    monitorIds,
-  });
-
-  getURLQueryParams = () => {
-    const {
-      from = DEFAULT_GET_ALERTS_QUERY_PARAMS.from,
-      size = DEFAULT_GET_ALERTS_QUERY_PARAMS.size,
-      search = DEFAULT_GET_ALERTS_QUERY_PARAMS.search,
-      sortField = DEFAULT_GET_ALERTS_QUERY_PARAMS.sortField,
-      sortDirection = DEFAULT_GET_ALERTS_QUERY_PARAMS.sortDirection,
-      severityLevel = DEFAULT_GET_ALERTS_QUERY_PARAMS.severityLevel,
-      alertState = DEFAULT_GET_ALERTS_QUERY_PARAMS.alertState,
-      monitorIds = this.props.monitorIds,
-    } = queryString.parse(this.props.location.search);
-
-    return {
-      from: isNaN(parseInt(from, 10)) ? DEFAULT_GET_ALERTS_QUERY_PARAMS.from : parseInt(from, 10),
-      size: isNaN(parseInt(size, 10)) ? DEFAULT_GET_ALERTS_QUERY_PARAMS.size : parseInt(size, 10),
-      search,
-      sortField,
-      sortDirection,
-      severityLevel,
-      alertState,
-      monitorIds,
-    };
-  };
-
   getAlerts = _.debounce(
     (from, size, search, sortField, sortDirection, severityLevel, alertState, monitorIds) => {
       const params = {
@@ -199,10 +139,7 @@ export default class Dashboard extends Component {
       httpClient.get('../api/alerting/alerts', { query: params }).then((resp) => {
         if (resp.ok) {
           const { alerts, totalAlerts } = resp;
-          this.setState({
-            alerts,
-            totalAlerts,
-          });
+          this.setState({ alerts, totalAlerts });
 
           if (!perAlertView) {
             const alertsByTriggers = groupAlertsByTrigger(alerts);
@@ -252,79 +189,10 @@ export default class Dashboard extends Component {
     this.setState({ ...this.state, loadingMonitors: false, monitors: monitors });
   }
 
-  // TODO: exists in both Dashboard and Monitors, should be moved to redux when implemented
-  acknowledgeAlert = async () => {
-    const { selectedItems } = this.state;
-    const { httpClient, notifications, perAlertView } = this.props;
-
-    if (!selectedItems.length) return;
-
-    const selectedAlerts = perAlertView ? selectedItems : _.get(selectedItems, '0.alerts', []);
-
-    const monitorAlerts = selectedAlerts.reduce((monitorAlerts, alert) => {
-      const { id, monitor_id: monitorId } = alert;
-      if (monitorAlerts[monitorId]) monitorAlerts[monitorId].push(id);
-      else monitorAlerts[monitorId] = [id];
-      return monitorAlerts;
-    }, {});
-
-    const promises = Object.entries(monitorAlerts).map(([monitorId, alerts]) =>
-      httpClient
-        .post(`../api/alerting/monitors/${monitorId}/_acknowledge/alerts`, {
-          body: JSON.stringify({ alerts }),
-        })
-        .then((resp) => {
-          if (!resp.ok) {
-            backendErrorNotification(notifications, 'acknowledge', 'alert', resp.resp);
-          }
-        })
-        .catch((error) => error)
-    );
-
-    const values = await Promise.all(promises);
-    console.log('values:', values);
-    // // TODO: Show which values failed, succeeded, etc.
-    const {
-      page,
-      size,
-      search,
-      sortField,
-      sortDirection,
-      severityLevel,
-      alertState,
-      monitorIds,
-    } = this.state;
-    this.getAlerts(
-      page * size,
-      size,
-      search,
-      sortField,
-      sortDirection,
-      severityLevel,
-      alertState,
-      monitorIds
-    );
-    this.setState({ selectedItems: [] });
-  };
-
   onTableChange = ({ page: tablePage = {}, sort = {} }) => {
-    const { isAlertsFlyout } = this.props;
     const { index: page, size } = tablePage;
-
     const { field: sortField, direction: sortDirection } = sort;
-    this.setState({
-      page,
-      size,
-      sortField,
-      sortDirection,
-    });
-
-    // If the table is in flyout, return the trimmed array of alerts.
-    if (isAlertsFlyout) {
-      const { flyoutAlerts } = this.props;
-      const trimmedFlyoutAlerts = flyoutAlerts.slice(page * size, page * size + size);
-      this.setState({ trimmedFlyoutAlerts });
-    }
+    this.setState({ page, size, sortField, sortDirection });
   };
 
   onSeverityLevelChange = (e) => {
@@ -347,6 +215,71 @@ export default class Dashboard extends Component {
     this.setState({ page });
   };
 
+  openFlyout = (payload) => {
+    this.setState({ ...this.state, flyoutIsOpen: true });
+    this.props.setFlyout({
+      type: 'alertsDashboard',
+      payload: { ...payload },
+    });
+  };
+
+  closeFlyout = () => {
+    this.props.setFlyout(null);
+    this.setState({ ...this.state, flyoutIsOpen: false });
+  };
+
+  refreshDashboard = () => {
+    const {
+      page,
+      size,
+      search,
+      sortField,
+      sortDirection,
+      severityLevel,
+      alertState,
+      monitorIds,
+    } = this.state;
+    this.getAlerts(
+      page * size,
+      size,
+      search,
+      sortField,
+      sortDirection,
+      severityLevel,
+      alertState,
+      monitorIds
+    );
+  };
+
+  openModal = () => {
+    this.setState({ ...this.state, showAlertsModal: true });
+  };
+
+  closeModal = () => {
+    this.setState({ ...this.state, search: '', showAlertsModal: false });
+    this.refreshDashboard();
+  };
+
+  renderModal = () => {
+    const { history, httpClient, location, notifications } = this.props;
+    const { monitors, selectedItems } = this.state;
+    const { monitor_id, triggerID, trigger_name } = selectedItems[0];
+    const monitor = _.get(_.find(monitors, { _id: monitor_id }), '_source');
+    return (
+      <AcknowledgeAlertsModal
+        history={history}
+        httpClient={httpClient}
+        location={location}
+        monitor={monitor}
+        monitorId={monitor_id}
+        notifications={notifications}
+        onClose={this.closeModal}
+        triggerId={triggerID}
+        triggerName={trigger_name}
+      />
+    );
+  };
+
   render() {
     const {
       alerts,
@@ -363,7 +296,6 @@ export default class Dashboard extends Component {
       sortField,
       totalAlerts,
       totalTriggers,
-      trimmedFlyoutAlerts,
     } = this.state;
     const {
       monitorIds,
@@ -393,13 +325,11 @@ export default class Dashboard extends Component {
           location,
           monitors,
           notifications,
-          setFlyout
+          setFlyout,
+          this.openFlyout,
+          this.closeFlyout,
+          this.refreshDashboard
         );
-
-    if (isAlertsFlyout) {
-      totalItems = this.props.flyoutAlerts.length;
-      columnType = removeColumns(['severity', 'trigger_name'], columnType);
-    }
 
     const pagination = {
       pageIndex: page,
@@ -417,19 +347,22 @@ export default class Dashboard extends Component {
 
     const selection = {
       onSelectionChange: this.onSelectionChange,
-      selectable: perAlertView ? (item) => item.state === 'ACTIVE' : (item) => item.ACTIVE > 0,
+      selectable: perAlertView
+        ? (item) => item.state === ALERT_STATE.ACTIVE
+        : (item) => item.ACTIVE > 0,
       selectableMessage: perAlertView
-        ? (selectable) => (selectable ? undefined : 'Only Active Alerts are Acknowledgeable')
+        ? (selectable) => (selectable ? undefined : 'Only active alerts can be acknowledged.')
         : (selectable) =>
-            selectable ? undefined : 'Only Triggers with Active Alerts are Acknowledgeable',
+            selectable ? undefined : 'Only triggers with active alerts can be acknowledged.',
     };
 
     const actions = () => {
       // The acknowledge button is disabled when viewing by per alerts, and no item selected or per trigger view and item selected is not 1.
       const actions = [
         <EuiButton
-          onClick={this.acknowledgeAlert}
+          onClick={this.openModal}
           disabled={perAlertView ? !selectedItems.length : selectedItems.length !== 1}
+          data-test-subj={'acknowledgeAlertsButton'}
         >
           Acknowledge
         </EuiButton>,
@@ -440,18 +373,17 @@ export default class Dashboard extends Component {
         actions.unshift(
           <EuiButton
             onClick={() => {
-              setFlyout({
-                type: 'alertsDashboard',
-                payload: {
-                  ...alert,
-                  history,
-                  httpClient,
-                  loadingMonitors,
-                  location,
-                  monitors,
-                  notifications,
-                  setFlyout,
-                },
+              this.openFlyout({
+                ...alert,
+                history,
+                httpClient,
+                loadingMonitors,
+                location,
+                monitors,
+                notifications,
+                setFlyout,
+                closeFlyout: this.closeFlyout,
+                refreshDashboard: this.refreshDashboard,
               });
             }}
             disabled={selectedItems.length !== 1}
@@ -502,7 +434,7 @@ export default class Dashboard extends Component {
         <EuiHorizontalRule margin="xs" />
 
         <EuiBasicTable
-          items={perAlertView ? (isAlertsFlyout ? trimmedFlyoutAlerts : alerts) : alertsByTriggers}
+          items={perAlertView ? alerts : alertsByTriggers}
           /*
            * If using just ID, doesn't update selectedItems when doing acknowledge
            * because the next getAlerts have the same id
@@ -516,7 +448,10 @@ export default class Dashboard extends Component {
           selection={selection}
           onChange={this.onTableChange}
           noItemsMessage={<DashboardEmptyPrompt onCreateTrigger={onCreateTrigger} />}
+          data-test-subj={'alertsDashboard_table'}
         />
+
+        {this.state.showAlertsModal && this.renderModal()}
       </ContentPanel>
     );
   }
