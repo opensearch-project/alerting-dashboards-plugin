@@ -28,7 +28,7 @@ import monitorToFormik from '../../../../CreateMonitor/containers/CreateMonitor/
 import { buildSearchRequest } from '../../../../CreateMonitor/containers/DefineMonitor/utils/searchRequests';
 import { formikToTrigger, formikToTriggerUiMetadata } from '../utils/formikToTrigger';
 import { triggerToFormik } from '../utils/triggerToFormik';
-import { FORMIK_INITIAL_TRIGGER_VALUES } from '../utils/constants';
+import { FORMIK_INITIAL_TRIGGER_VALUES, TRIGGER_TYPE } from '../utils/constants';
 import { SEARCH_TYPE } from '../../../../../utils/constants';
 import { SubmitErrorHandler } from '../../../../../utils/SubmitErrorHandler';
 import { backendErrorNotification } from '../../../../../utils/helpers';
@@ -100,10 +100,11 @@ export default class CreateTrigger extends Component {
   onEdit = (trigger, triggerMetadata, { setSubmitting, setErrors }) => {
     const { monitor, updateMonitor, onCloseTrigger, triggerToEdit } = this.props;
     const { ui_metadata: uiMetadata = {}, triggers, monitor_type } = monitor;
-    const { name } =
-      monitor_type === MONITOR_TYPE.QUERY_LEVEL
-        ? triggerToEdit.query_level_trigger
-        : triggerToEdit.bucket_level_trigger;
+    const triggerType =
+      monitor_type === MONITOR_TYPE.BUCKET_LEVEL
+        ? TRIGGER_TYPE.BUCKET_LEVEL
+        : TRIGGER_TYPE.QUERY_LEVEL;
+    const { name } = triggerToEdit[triggerType];
     const updatedTriggersMetadata = _.cloneDeep(uiMetadata.triggers || {});
     delete updatedTriggersMetadata[name];
     const updatedUiMetadata = {
@@ -111,11 +112,7 @@ export default class CreateTrigger extends Component {
       triggers: { ...updatedTriggersMetadata, ...triggerMetadata },
     };
 
-    const findTriggerName = (element) => {
-      return monitor_type === MONITOR_TYPE.QUERY_LEVEL
-        ? name === element.query_level_trigger.name
-        : name === element.bucket_level_trigger.name;
-    };
+    const findTriggerName = (element) => element[triggerType].name;
 
     const indexToUpdate = _.findIndex(triggers, findTriggerName);
     const updatedTriggers = triggers.slice();
@@ -285,7 +282,7 @@ export default class CreateTrigger extends Component {
   render() {
     const { monitor, onCloseTrigger, setFlyout, edit, httpClient, notifications } = this.props;
     const { dataTypes, initialValues, executeResponse } = this.state;
-    const isQueryLevelMonitor = _.get(monitor, 'monitor_type') === MONITOR_TYPE.QUERY_LEVEL;
+    const isBucketLevelMonitor = _.get(monitor, 'monitor_type') === MONITOR_TYPE.BUCKET_LEVEL;
 
     return (
       <div style={{ padding: '25px 50px' }}>
@@ -297,18 +294,7 @@ export default class CreateTrigger extends Component {
                 <h1>{edit ? 'Edit' : 'Create'} trigger</h1>
               </EuiTitle>
               <EuiSpacer />
-              {isQueryLevelMonitor ? (
-                <DefineTrigger
-                  context={this.getTriggerContext(executeResponse, monitor, values)}
-                  executeResponse={executeResponse}
-                  monitorValues={monitorToFormik(monitor)}
-                  onRun={this.onRunExecute}
-                  setFlyout={setFlyout}
-                  triggers={monitor.triggers}
-                  triggerValues={values}
-                  isDarkMode={this.props.isDarkMode}
-                />
-              ) : (
+              {isBucketLevelMonitor ? (
                 <FieldArray name={'triggerConditions'} validateOnChange={true}>
                   {(arrayHelpers) => (
                     <DefineBucketLevelTrigger
@@ -330,6 +316,17 @@ export default class CreateTrigger extends Component {
                     />
                   )}
                 </FieldArray>
+              ) : (
+                <DefineTrigger
+                  context={this.getTriggerContext(executeResponse, monitor, values)}
+                  executeResponse={executeResponse}
+                  monitorValues={monitorToFormik(monitor)}
+                  onRun={this.onRunExecute}
+                  setFlyout={setFlyout}
+                  triggers={monitor.triggers}
+                  triggerValues={values}
+                  isDarkMode={this.props.isDarkMode}
+                />
               )}
               <EuiSpacer />
               <FieldArray name="actions" validateOnChange={true}>

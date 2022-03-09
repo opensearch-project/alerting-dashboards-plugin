@@ -128,6 +128,7 @@ export function formikToBucketLevelTriggerAction(values) {
 export function formikToTriggerUiMetadata(values, monitorUiMetadata) {
   switch (monitorUiMetadata.monitor_type) {
     case MONITOR_TYPE.QUERY_LEVEL:
+    case MONITOR_TYPE.CLUSTER_METRICS:
       const searchType = _.get(monitorUiMetadata, 'search.searchType', 'query');
       const queryLevelTriggersUiMetadata = {};
       _.get(values, 'triggerDefinitions', []).forEach((trigger) => {
