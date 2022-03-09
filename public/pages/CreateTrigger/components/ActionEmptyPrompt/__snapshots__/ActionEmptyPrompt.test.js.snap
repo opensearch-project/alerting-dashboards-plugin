@@ -1,0 +1,26 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ActionEmptyPrompt renders 1`] = `
+<EuiEmptyPrompt
+  actions={
+    <EuiButton
+      fill={true}
+      href="alerting#/create-destination"
+    >
+      Add destination
+    </EuiButton>
+  }
+  body={
+    <EuiText>
+      <p>
+        There are no existing destinations. Add a destinations to create an action.
+      </p>
+    </EuiText>
+  }
+  style={
+    Object {
+      "maxWidth": "45em",
+    }
+  }
+/>
+`;
