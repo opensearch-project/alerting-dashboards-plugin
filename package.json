@@ -16,7 +16,7 @@
     "osd": "node ../../scripts/osd",
     "opensearch": "node ../../scripts/opensearch",
     "lint": "../../node_modules/.bin/eslint '**/*.js' -c .eslintrc --ignore-path .gitignore",
-    "test:jest": "../../node_modules/.bin/jest --config ./test/jest.config.js",
+    "test:jest": "TZ=UTC ../../node_modules/.bin/jest --config ./test/jest.config.js",
     "build": "yarn plugin-helpers build",
     "plugin-helpers": "node ../../scripts/plugin_helpers",
     "postbuild": "echo Renaming build artifact to [$npm_package_config_id-$npm_package_version.zip] && mv build/$npm_package_config_id*.zip build/$npm_package_config_id-$npm_package_version.zip"
@@ -38,7 +38,6 @@
     "formik": "^2.2.6",
     "lodash": "^4.17.21",
     "query-string": "^6.13.2",
-    "react-router-dom": "^5.2.0",
     "react-vis": "^1.8.1"
   },
   "resolutions": {
@@ -46,7 +45,6 @@
     "glob-parent": "^5.1.2"
   },
   "engines": {
-    "node": "10.24.1",
     "yarn": "^1.21.1"
   }
 }

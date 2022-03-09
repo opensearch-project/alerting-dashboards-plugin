@@ -1,27 +1,6 @@
 /*
+ * Copyright OpenSearch Contributors
  * SPDX-License-Identifier: Apache-2.0
- *
- * The OpenSearch Contributors require contributions made to
- * this file be licensed under the Apache-2.0 license or a
- * compatible open source license.
- *
- * Modifications Copyright OpenSearch Contributors. See
- * GitHub history for details.
- */
-
-/*
- * Copyright 2021 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
  */
 
 import React from 'react';
@@ -35,6 +14,9 @@ const createMonitorText =
   'There are no existing alerts. Create a monitor to add triggers and actions. Once an alarm is triggered, the state will show in this table.';
 const createTriggerText =
   'There are no existing alerts. Create a trigger to start alerting. Once an alarm is triggered, the state will show in this table.';
+const editTriggerConditionsText =
+  'There are no existing alerts. Adjust trigger conditions to start alerting. Once an alarm is triggered, the state will show in this table.';
+
 const createMonitorButton = (
   <EuiButton fill href={`${PLUGIN_NAME}#${APP_PATH.CREATE_MONITOR}`}>
     Create monitor
@@ -46,17 +28,24 @@ const editMonitorButton = (onCreateTrigger) => (
   </EuiButton>
 );
 
-const DashboardEmptyPrompt = ({ onCreateTrigger }) => {
+const DashboardEmptyPrompt = ({ onCreateTrigger, isModal = false }) => {
   const inMonitorDetails = typeof onCreateTrigger === 'function';
+  const displayText = isModal
+    ? editTriggerConditionsText
+    : inMonitorDetails
+    ? createTriggerText
+    : createMonitorText;
   return (
     <EuiEmptyPrompt
       style={{ maxWidth: '45em' }}
       body={
         <EuiText>
-          <p>{inMonitorDetails ? createTriggerText : createMonitorText}</p>
+          <p>{displayText}</p>
         </EuiText>
       }
-      actions={inMonitorDetails ? editMonitorButton(onCreateTrigger) : createMonitorButton}
+      actions={
+        inMonitorDetails || isModal ? editMonitorButton(onCreateTrigger) : createMonitorButton
+      }
     />
   );
 };

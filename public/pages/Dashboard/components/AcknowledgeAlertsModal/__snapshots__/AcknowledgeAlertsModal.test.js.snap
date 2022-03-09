@@ -1,0 +1,106 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`AcknowledgeAlertsModal renders 1`] = `
+<AcknowledgeAlertsModal
+  history={
+    Object {
+      "action": "REPLACE",
+      "block": [MockFunction],
+      "createHref": [MockFunction],
+      "go": [MockFunction],
+      "goBack": [MockFunction],
+      "goForward": [MockFunction],
+      "length": 0,
+      "listen": [MockFunction],
+      "location": Object {
+        "hash": "",
+        "pathname": "",
+        "search": "",
+        "state": undefined,
+      },
+      "push": [MockFunction],
+      "replace": [MockFunction],
+    }
+  }
+  httpClient={[MockFunction]}
+  location={
+    Object {
+      "hash": "",
+      "pathname": "/dashboard",
+      "search": "",
+      "state": undefined,
+    }
+  }
+  monitor={
+    Object {
+      "aggregationType": "count",
+      "aggregations": Array [],
+      "bucketUnitOfTime": "h",
+      "bucketValue": 1,
+      "cronExpression": "0 */1 * * *",
+      "daily": 0,
+      "detectorId": "",
+      "disabled": false,
+      "fieldName": Array [],
+      "frequency": "interval",
+      "groupBy": Array [],
+      "groupByField": Array [
+        Object {
+          "label": "",
+        },
+      ],
+      "groupedOverFieldName": "bytes",
+      "groupedOverTop": 5,
+      "index": Array [],
+      "monitor_type": "query_level_monitor",
+      "monthly": Object {
+        "day": 1,
+        "type": "day",
+      },
+      "name": "",
+      "overDocuments": "all documents",
+      "period": Object {
+        "interval": 1,
+        "unit": "MINUTES",
+      },
+      "query": "{
+    \\"size\\": 0,
+    \\"query\\": {
+        \\"match_all\\": {}
+    }
+}",
+      "searchType": "graph",
+      "timeField": "",
+      "timezone": Array [],
+      "weekly": Object {
+        "fri": false,
+        "mon": false,
+        "sat": false,
+        "sun": false,
+        "thur": false,
+        "tue": false,
+        "wed": false,
+      },
+      "where": Object {
+        "fieldName": Array [],
+        "fieldRangeEnd": 0,
+        "fieldRangeStart": 0,
+        "fieldValue": "",
+        "operator": "is",
+      },
+    }
+  }
+  monitorId="fake_monitor_id"
+  notifications={
+    Object {
+      "toasts": Object {
+        "addDanger": [MockFunction addDanger],
+        "addSuccess": [MockFunction addSuccess],
+      },
+    }
+  }
+  onClose={[Function]}
+  triggerId="fake_trigger_id"
+  triggerName="fake_trigger_name"
+/>
+`;
