@@ -139,24 +139,6 @@ export const API_TYPES = {
       source: 'ctx.results[0].INDEX_NAME.shards.length <= 0',
     },
   },
-  CAT_REPOSITORIES: {
-    type: 'CAT_REPOSITORIES',
-    documentation: 'https://opensearch.org/docs/latest/opensearch/rest-api/cat/cat-repositories/',
-    exampleText: undefined,
-    label: 'CAT Repositories',
-    paths: {
-      withPathParams: undefined,
-      withoutPathParams: '_cat/repositories',
-    },
-    get prependText() {
-      return this.paths.withPathParams || this.paths.withoutPathParams;
-    },
-    appendText: '',
-    defaultCondition: {
-      ...DEFAULT_CLUSTER_METRICS_SCRIPT,
-      source: 'ctx.results[0].REPOSITORY_NAME != null',
-    },
-  },
   CAT_SNAPSHOTS: {
     type: 'CAT_SNAPSHOTS',
     documentation: 'https://opensearch.org/docs/latest/opensearch/rest-api/cat/cat-snapshots/',
