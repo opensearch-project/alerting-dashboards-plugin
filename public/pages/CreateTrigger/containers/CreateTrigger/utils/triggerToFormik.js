@@ -29,11 +29,11 @@ export function triggerDefinitionsToFormik(triggers, monitor) {
 }
 
 export function triggerDefinitionToFormik(trigger, monitor) {
-  const isQueryLevelMonitor =
-    _.get(monitor, 'monitor_type', MONITOR_TYPE.QUERY_LEVEL) === MONITOR_TYPE.QUERY_LEVEL;
-  return isQueryLevelMonitor
-    ? queryLevelTriggerToFormik(trigger, monitor)
-    : bucketLevelTriggerToFormik(trigger, monitor);
+  const isBucketLevelMonitor =
+    _.get(monitor, 'monitor_type', MONITOR_TYPE.QUERY_LEVEL) === MONITOR_TYPE.BUCKET_LEVEL;
+  return isBucketLevelMonitor
+    ? bucketLevelTriggerToFormik(trigger, monitor)
+    : queryLevelTriggerToFormik(trigger, monitor);
 }
 
 export function queryLevelTriggerToFormik(trigger, monitor) {
