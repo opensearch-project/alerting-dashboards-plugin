@@ -209,7 +209,7 @@ describe('ClusterMetricsMonitor', () => {
       cy.get('input[name="name"]').type(SAMPLE_CLUSTER_METRICS_CAT_SNAPSHOTS_MONITOR);
 
       // Wait for the API types to load and then type in the Cluster Health API
-      cy.get('[data-test-subj="clusterMetricsApiTypeComboBox"]').type('cat snapshots{enter}');
+      cy.get('[data-test-subj="clusterMetricsApiTypeComboBox"]').type('list snapshots{enter}');
 
       // Confirm the Query parameters field is present and is not described as "optional"
       cy.contains('Query parameters - optional').should('not.exist');
@@ -297,7 +297,7 @@ describe('ClusterMetricsMonitor', () => {
         cy.get('[data-test-subj="clusterMetricsClearTriggersModal"]').should('not.exist');
 
         // Confirm API type reverted back to Cluster Health
-        cy.get('[data-test-subj="clusterMetricsApiTypeComboBox"]').contains('Cluster Health');
+        cy.get('[data-test-subj="clusterMetricsApiTypeComboBox"]').contains('Cluster health');
 
         // Confirm there is 1 trigger defined
         cy.contains('Triggers (1)');
@@ -328,7 +328,7 @@ describe('ClusterMetricsMonitor', () => {
         cy.get('[data-test-subj="clusterMetricsClearTriggersModal"]').should('not.exist');
 
         // Confirm API type changed to Cluster Stats
-        cy.get('[data-test-subj="clusterMetricsApiTypeComboBox"]').contains('Cluster Settings');
+        cy.get('[data-test-subj="clusterMetricsApiTypeComboBox"]').contains('Cluster settings');
 
         // Confirm there are 0 triggers defined
         cy.contains('Triggers (0)', { timeout: 20000 });

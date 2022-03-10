@@ -35,7 +35,7 @@ export const API_TYPES = {
     type: 'CLUSTER_HEALTH',
     documentation: 'https://opensearch.org/docs/latest/opensearch/rest-api/cluster-health/',
     exampleText: 'indexAlias1,indexAlias2...',
-    label: 'Cluster Health',
+    label: 'Cluster health',
     paths: {
       withPathParams: '_cluster/health/',
       withoutPathParams: '_cluster/health',
@@ -53,7 +53,7 @@ export const API_TYPES = {
     type: 'CLUSTER_STATS',
     documentation: 'https://opensearch.org/docs/latest/opensearch/rest-api/cluster-stats/',
     exampleText: 'nodeFilter1,nodeFilter2...',
-    label: 'Cluster Stats',
+    label: 'Cluster stats',
     paths: {
       withPathParams: '_cluster/stats/nodes/',
       withoutPathParams: '_cluster/stats',
@@ -71,7 +71,7 @@ export const API_TYPES = {
     type: 'CLUSTER_SETTINGS',
     documentation: 'https://opensearch.org/docs/latest/opensearch/rest-api/cluster-settings/',
     exampleText: undefined,
-    label: 'Cluster Settings',
+    label: 'Cluster settings',
     paths: {
       withPathParams: undefined,
       withoutPathParams: '_cluster/settings',
@@ -89,7 +89,7 @@ export const API_TYPES = {
     type: 'NODES_STATS',
     documentation: 'https://opensearch.org/docs/latest/opensearch/popular-api/#get-node-statistics',
     exampleText: undefined,
-    label: 'Nodes Stats',
+    label: 'Nodes stats',
     paths: {
       withPathParams: undefined,
       withoutPathParams: '_nodes/stats',
@@ -107,7 +107,7 @@ export const API_TYPES = {
     type: 'CAT_PENDING_TASKS',
     documentation: 'https://opensearch.org/docs/latest/opensearch/rest-api/cat/cat-pending-tasks/',
     exampleText: undefined,
-    label: 'CAT Pending Tasks',
+    label: 'List pending tasks',
     paths: {
       withPathParams: undefined,
       withoutPathParams: '_cat/pending_tasks',
@@ -125,7 +125,7 @@ export const API_TYPES = {
     type: 'CAT_RECOVERY',
     documentation: 'https://opensearch.org/docs/latest/opensearch/rest-api/cat/cat-recovery/',
     exampleText: 'index1,index2...',
-    label: 'CAT Recovery',
+    label: 'Recovery',
     paths: {
       withPathParams: '_cat/recovery/',
       withoutPathParams: '_cat/recovery',
@@ -143,7 +143,7 @@ export const API_TYPES = {
     type: 'CAT_SNAPSHOTS',
     documentation: 'https://opensearch.org/docs/latest/opensearch/rest-api/cat/cat-snapshots/',
     exampleText: 'repositoryName',
-    label: 'CAT Snapshots',
+    label: 'List snapshots',
     paths: {
       withPathParams: '_cat/snapshots/',
       withoutPathParams: undefined,
@@ -161,7 +161,7 @@ export const API_TYPES = {
     type: 'CAT_TASKS',
     documentation: 'https://opensearch.org/docs/latest/opensearch/rest-api/cat/cat-tasks/',
     exampleText: undefined,
-    label: 'CAT Tasks',
+    label: 'List tasks',
     paths: {
       withPathParams: undefined,
       withoutPathParams: '_cat/tasks',
