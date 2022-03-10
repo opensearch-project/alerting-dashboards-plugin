@@ -100,7 +100,7 @@ export const API_TYPES = {
     appendText: '',
     defaultCondition: {
       ...DEFAULT_CLUSTER_METRICS_SCRIPT,
-      source: 'ctx.results[0].nodes[0].jvm.mem.heap_used_percent > 60',
+      source: 'ctx.results[0].nodes.NODE_ID.jvm.mem.heap_used_percent > 60',
     },
   },
   CAT_PENDING_TASKS: {
@@ -118,7 +118,7 @@ export const API_TYPES = {
     appendText: '',
     defaultCondition: {
       ...DEFAULT_CLUSTER_METRICS_SCRIPT,
-      source: 'ctx.results[0].nodes[0].jvm.mem.heap_used_percent > 60',
+      source: 'ctx.results[0].tasks.size() >= 0',
     },
   },
   CAT_RECOVERY: {
