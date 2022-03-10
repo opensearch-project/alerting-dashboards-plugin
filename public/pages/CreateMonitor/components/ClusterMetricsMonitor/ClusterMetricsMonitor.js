@@ -216,7 +216,7 @@ const ClusterMetricsMonitor = ({
                   </EuiText>
                   <EuiText color={'subdued'} size={'xs'}>
                     Filter responses by providing path parameters for the{' '}
-                    {_.get(API_TYPES, `${apiType}.label`) || 'selected'} API.{' '}
+                    {_.lowerCase(_.get(API_TYPES, `${apiType}.label`)) || 'selected'} API.{' '}
                     {!pathIsEmpty && !_.isEmpty(_.get(API_TYPES, `${apiType}.documentation`)) && (
                       <EuiLink
                         external
