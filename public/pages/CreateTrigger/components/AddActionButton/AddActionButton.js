@@ -24,6 +24,7 @@ const AddActionButton = ({ arrayHelpers, type = 'slack', numOfActions }) => {
       );
       break;
     case MONITOR_TYPE.QUERY_LEVEL:
+    case MONITOR_TYPE.CLUSTER_METRICS:
       _.set(
         initialActionValues,
         'message_template.source',

@@ -35,6 +35,12 @@ const bucketLevelDescription = (
   </EuiText>
 );
 
+const clusterMetricsDescription = (
+  <EuiText color={'subdued'} size={'xs'} style={{ paddingBottom: '10px', paddingTop: '0px' }}>
+    Per cluster metrics monitors allow you to alert based on responses to common REST APIs.
+  </EuiText>
+);
+
 const MonitorType = ({ values }) => (
   <EuiFlexGroup alignItems={'flexEnd'} gutterSize={'m'}>
     <EuiFlexItem grow={false}>
@@ -43,7 +49,6 @@ const MonitorType = ({ values }) => (
         formRow
         rowProps={{
           label: 'Monitor type',
-          style: { width: `${MONITOR_TYPE_CARD_WIDTH}px` },
         }}
         inputProps={{
           id: 'queryLevelMonitorRadioCard',
@@ -62,7 +67,6 @@ const MonitorType = ({ values }) => (
       <FormikCheckableCard
         name="monitorTypeBucketLevel"
         formRow
-        rowProps={{ style: { width: '400px' } }}
         inputProps={{
           id: 'bucketLevelMonitorRadioCard',
           label: 'Per bucket monitor',
@@ -78,6 +82,24 @@ const MonitorType = ({ values }) => (
           },
           children: bucketLevelDescription,
           'data-test-subj': 'bucketLevelMonitorRadioCard',
+        }}
+      />
+    </EuiFlexItem>
+    <EuiFlexItem grow={false}>
+      <FormikCheckableCard
+        name="monitorTypeClusterMetrics"
+        formRow
+        inputProps={{
+          id: 'clusterMetricsMonitorRadioCard',
+          label: 'Per cluster metrics monitor',
+          checked: values.monitor_type === MONITOR_TYPE.CLUSTER_METRICS,
+          value: MONITOR_TYPE.CLUSTER_METRICS,
+          onChange: (e, field, form) => {
+            form.setFieldValue('searchType', SEARCH_TYPE.CLUSTER_METRICS);
+            onChangeDefinition(e, form);
+          },
+          children: clusterMetricsDescription,
+          'data-test-subj': 'clusterMetricsMonitorRadioCard',
         }}
       />
     </EuiFlexItem>

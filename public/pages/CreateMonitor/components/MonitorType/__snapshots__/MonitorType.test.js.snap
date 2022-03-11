@@ -10,7 +10,6 @@ exports[`MonitorType renders 1`] = `
     <div
       class="euiFormRow"
       id="monitorTypeQueryLevel-form-row-row"
-      style="width:400px"
     >
       <div
         class="euiFormRow__labelWrapper"
@@ -90,7 +89,6 @@ exports[`MonitorType renders 1`] = `
     <div
       class="euiFormRow"
       id="monitorTypeBucketLevel-form-row-row"
-      style="width:400px"
     >
       <div
         class="euiFormRow__fieldWrapper"
@@ -146,6 +144,75 @@ exports[`MonitorType renders 1`] = `
                   class="euiTextColor euiTextColor--subdued"
                 >
                   Per bucket monitors allow you to group results into buckets and define triggers that check each bucket.
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div
+    class="euiFlexItem euiFlexItem--flexGrowZero"
+  >
+    <div
+      class="euiFormRow"
+      id="monitorTypeClusterMetrics-form-row-row"
+    >
+      <div
+        class="euiFormRow__fieldWrapper"
+      >
+        <div
+          class="euiCheckableCard"
+        >
+          <div
+            class="euiCheckableCard__row"
+          >
+            <div
+              class="euiCheckableCard__control"
+            >
+              <div
+                class="euiRadio euiRadio--noLabel"
+                data-test-subj="clusterMetricsMonitorRadioCard"
+              >
+                <input
+                  class="euiRadio__input"
+                  id="clusterMetricsMonitorRadioCard"
+                  name="monitorTypeClusterMetrics"
+                  type="radio"
+                  value="cluster_metrics_monitor"
+                />
+                <div
+                  class="euiRadio__circle"
+                />
+              </div>
+            </div>
+            <label
+              aria-describedby="clusterMetricsMonitorRadioCard-details"
+              class="euiCheckableCard__label"
+              for="clusterMetricsMonitorRadioCard"
+            >
+              Per cluster metrics monitor
+            </label>
+          </div>
+          <div
+            class="euiCheckableCard__row"
+          >
+            <div
+              class="euiCheckableCard__control"
+            />
+            <div
+              class="euiCheckableCard__children"
+              id="clusterMetricsMonitorRadioCard-details"
+            >
+              <div
+                class="euiText euiText--extraSmall"
+                style="padding-bottom:10px;padding-top:0px"
+              >
+                <div
+                  class="euiTextColor euiTextColor--subdued"
+                >
+                  Per cluster metrics monitors allow you to alert based on responses to common REST APIs.
                 </div>
               </div>
             </div>

@@ -1,95 +1,89 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`TriggerQuery renders 1`] = `
-<EuiFlexGroup
-  direction="column"
->
-  <EuiFlexItem
-    style={
-      Object {
-        "paddingLeft": "10px",
-        "paddingRight": "10px",
-      }
-    }
+<div>
+  <EuiFlexGroup
+    direction="column"
   >
-    <EuiFlexGroup
-      alignItems="stretch"
-      gutterSize="m"
-    >
-      <EuiFlexItem
-        grow={1}
-        style={
-          Object {
-            "marginBottom": "0px",
-          }
-        }
-      >
-        <div>
-          <Field
-            name="undefinedscript.source"
-          >
-            <Component />
-          </Field>
-        </div>
-      </EuiFlexItem>
-      <EuiFlexItem
-        grow={1}
-        style={
-          Object {
-            "marginBottom": "0px",
-            "paddingTop": "6px",
-          }
-        }
-      >
-        <EuiFormRow
-          describedByIds={Array []}
-          display="row"
-          fullWidth={true}
-          hasChildLabel={true}
-          hasEmptyLabelSpace={false}
-          label={
-            <EuiText
-              size="xs"
-            >
-              <strong>
-                Trigger condition response
-              </strong>
-            </EuiText>
-          }
-          labelType="label"
-        >
-          <EuiCodeEditor
-            grow={true}
-            height="200px"
-            mode="plain_text"
-            readOnly={true}
-            setOptions={Object {}}
-            theme="github"
-            value="No response"
-            width="100%"
-          />
-        </EuiFormRow>
-      </EuiFlexItem>
-    </EuiFlexGroup>
-  </EuiFlexItem>
-  <EuiFlexItem
-    style={
-      Object {
-        "paddingLeft": "10px",
-      }
-    }
-  >
-    <EuiButton
-      onClick={[Function]}
-      size="s"
+    <EuiFlexItem
       style={
         Object {
-          "width": "250px",
+          "paddingLeft": "10px",
+          "paddingRight": "10px",
         }
       }
     >
-      Run for condition response
-    </EuiButton>
-  </EuiFlexItem>
-</EuiFlexGroup>
+      <EuiFlexGroup
+        alignItems="stretch"
+        gutterSize="m"
+      >
+        <EuiFlexItem
+          grow={1}
+          style={
+            Object {
+              "marginBottom": "20px",
+            }
+          }
+        >
+          <div>
+            <Field
+              name="undefinedscript.source"
+            >
+              <Component />
+            </Field>
+          </div>
+        </EuiFlexItem>
+        <EuiFlexItem
+          grow={1}
+          style={
+            Object {
+              "marginBottom": "0px",
+              "paddingTop": "6px",
+            }
+          }
+        >
+          <EuiFormRow
+            describedByIds={Array []}
+            display="row"
+            fullWidth={true}
+            hasChildLabel={true}
+            hasEmptyLabelSpace={false}
+            label={
+              <EuiText
+                size="xs"
+              >
+                <strong>
+                  Trigger condition response
+                </strong>
+              </EuiText>
+            }
+            labelType="label"
+          >
+            <EuiCodeEditor
+              grow={true}
+              height="200px"
+              mode="plain_text"
+              readOnly={true}
+              setOptions={Object {}}
+              theme="github"
+              value="No response"
+              width="100%"
+            />
+          </EuiFormRow>
+        </EuiFlexItem>
+      </EuiFlexGroup>
+    </EuiFlexItem>
+  </EuiFlexGroup>
+  <EuiButton
+    onClick={[Function]}
+    size="s"
+    style={
+      Object {
+        "marginLeft": "10px",
+      }
+    }
+  >
+    Preview condition response
+  </EuiButton>
+</div>
 `;

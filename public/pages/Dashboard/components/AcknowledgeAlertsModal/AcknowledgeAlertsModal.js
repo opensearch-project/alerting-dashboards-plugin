@@ -303,6 +303,7 @@ export default class AcknowledgeAlertsModal extends Component {
     const getItemId = (item) => {
       switch (monitorType) {
         case MONITOR_TYPE.QUERY_LEVEL:
+        case MONITOR_TYPE.CLUSTER_METRICS:
           return `${item.id}-${item.version}`;
         case MONITOR_TYPE.BUCKET_LEVEL:
           return item.id;
@@ -328,6 +329,7 @@ export default class AcknowledgeAlertsModal extends Component {
       let columns = [];
       switch (monitorType) {
         case MONITOR_TYPE.QUERY_LEVEL:
+        case MONITOR_TYPE.CLUSTER_METRICS:
           columns = queryColumns;
           break;
         case MONITOR_TYPE.BUCKET_LEVEL:

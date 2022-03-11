@@ -1,0 +1,64 @@
+{
+  "name": "sample_cluster_metrics_health_monitor",
+  "type": "monitor",
+  "monitor_type": "cluster_metrics_monitor",
+  "enabled": true,
+  "schedule": {
+    "period": {
+      "unit": "MINUTES",
+      "interval": 1
+    }
+  },
+  "inputs": [
+    {
+      "uri": {
+        "api_type": "CLUSTER_HEALTH",
+        "path": "_cluster/health/",
+        "path_params": "",
+        "url": "http://localhost:9200/_cluster/health/"
+      }
+    }
+  ],
+  "triggers": [],
+  "ui_metadata": {
+    "schedule": {
+      "timezone": null,
+      "frequency": "interval",
+      "period": {
+        "unit": "MINUTES",
+        "interval": 1
+      },
+      "daily": 0,
+      "weekly": {
+        "tue": false,
+        "wed": false,
+        "thur": false,
+        "sat": false,
+        "fri": false,
+        "mon": false,
+        "sun": false
+      },
+      "monthly": {
+        "type": "day",
+        "day": 1
+      },
+      "cronExpression": "0 */1 * * *"
+    },
+    "search": {
+      "searchType": "clusterMetrics",
+      "timeField": "",
+      "aggregations": [],
+      "groupBy": [],
+      "bucketValue": 1,
+      "bucketUnitOfTime": "h",
+      "where": {
+        "fieldName": [],
+        "fieldRangeEnd": 0,
+        "fieldRangeStart": 0,
+        "fieldValue": "",
+        "operator": "is"
+      }
+    },
+    "monitor_type": "cluster_metrics_monitor"
+  }
+}

@@ -1,0 +1,184 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ClusterMetricsMonitor renders 1`] = `
+<div>
+  <div
+    class="euiSpacer euiSpacer--m"
+  />
+  <div
+    class="euiFormRow"
+    id="uri.api_type-form-row-row"
+  >
+    <div
+      class="euiFormRow__labelWrapper"
+    >
+      <label
+        aria-invalid="false"
+        class="euiFormLabel euiFormRow__label"
+        for="uri.api_type-form-row"
+      >
+        <div>
+          <div
+            class="euiText euiText--extraSmall"
+          >
+            <strong>
+              Request type
+            </strong>
+          </div>
+          <div
+            class="euiText euiText--extraSmall"
+          >
+            <div
+              class="euiTextColor euiTextColor--subdued"
+            >
+              Specify a request type to monitor cluster metrics such as health, JVM, and CPU usage. 
+              <a
+                class="euiLink euiLink--primary"
+                href="https://opensearch.org/docs/latest/opensearch/rest-api/index/"
+                rel="noopener noreferrer"
+                target="_blank"
+              >
+                Learn more
+                <div>
+                  EuiIconMock
+                </div>
+              </a>
+            </div>
+          </div>
+        </div>
+      </label>
+    </div>
+    <div
+      class="euiFormRow__fieldWrapper"
+    >
+      <div
+        aria-expanded="false"
+        aria-haspopup="listbox"
+        class="euiComboBox"
+        data-test-subj="clusterMetricsApiTypeComboBox"
+        name="uri.api_type"
+        role="combobox"
+      >
+        <div
+          class="euiFormControlLayout"
+        >
+          <div
+            class="euiFormControlLayout__childrenWrapper"
+          >
+            <div
+              class="euiComboBox__inputWrap euiComboBox__inputWrap--noWrap"
+              data-test-subj="comboBoxInput"
+              tabindex="-1"
+            >
+              <p
+                class="euiComboBoxPlaceholder"
+              >
+                Select an API
+              </p>
+              <div
+                class="euiComboBox__input"
+                style="font-size:14px;display:inline-block"
+              >
+                <input
+                  aria-controls=""
+                  data-test-subj="comboBoxSearchInput"
+                  id="uri.api_type"
+                  role="textbox"
+                  style="box-sizing:content-box;width:1px"
+                  value=""
+                />
+                <div
+                  style="position:absolute;top:0;left:0;visibility:hidden;height:0;overflow:scroll;white-space:pre"
+                />
+              </div>
+            </div>
+            <div
+              class="euiFormControlLayoutIcons euiFormControlLayoutIcons--right"
+            >
+              <button
+                aria-label="Open list of options"
+                class="euiFormControlLayoutCustomIcon euiFormControlLayoutCustomIcon--clickable"
+                data-test-subj="comboBoxToggleListButton"
+                type="button"
+              >
+                <div>
+                  EuiIconMock
+                </div>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div
+    class="euiSpacer euiSpacer--l"
+  />
+  <button
+    class="euiButton euiButton--primary euiButton--small euiButton-isDisabled"
+    data-test-subj="clusterMetricsPreviewButton"
+    disabled=""
+    type="button"
+  >
+    <span
+      class="euiButtonContent euiButton__content"
+    >
+      <span
+        class="euiButton__text"
+      >
+        Preview query
+      </span>
+    </span>
+  </button>
+  <div
+    class="euiSpacer euiSpacer--l"
+  />
+  <div
+    class="euiFormRow euiFormRow--fullWidth"
+    id="generated-id-row"
+  >
+    <div
+      class="euiFormRow__labelWrapper"
+    >
+      <label
+        class="euiFormLabel euiFormRow__label"
+        for="generated-id"
+      >
+        Response
+      </label>
+    </div>
+    <div
+      class="euiFormRow__fieldWrapper"
+    >
+      <div
+        class="euiCodeEditorWrapper"
+        data-test-subj="clusterMetricsRunResponseBox"
+        style="width:100%;height:500px"
+      >
+        <div
+          class="euiCodeEditorKeyboardHint"
+          data-test-subj="codeEditorHint"
+          id="generated-id"
+          role="button"
+          tabindex="0"
+        >
+          <p
+            class="euiText"
+          >
+            Press Enter to start editing.
+          </p>
+          <p
+            class="euiText"
+          >
+            When you're done, press Escape to stop editing.
+          </p>
+        </div>
+        <div
+          id="generated-id"
+          style="width:100%;height:500px"
+        />
+      </div>
+    </div>
+  </div>
+</div>
+`;

@@ -22,11 +22,13 @@ export const SEARCH_TYPE = {
   GRAPH: 'graph',
   QUERY: 'query',
   AD: 'ad',
+  CLUSTER_METRICS: 'clusterMetrics',
 };
 
 export const MONITOR_TYPE = {
   QUERY_LEVEL: 'query_level_monitor',
   BUCKET_LEVEL: 'bucket_level_monitor',
+  CLUSTER_METRICS: 'cluster_metrics_monitor',
 };
 
 export const DESTINATION_ACTIONS = {

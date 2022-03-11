@@ -29,11 +29,12 @@ export function formikToTriggerDefinitions(values, monitorUiMetadata) {
 }
 
 export function formikToTriggerDefinition(values, monitorUiMetadata) {
-  const isQueryLevelMonitor =
-    _.get(monitorUiMetadata, 'monitor_type', MONITOR_TYPE.QUERY_LEVEL) === MONITOR_TYPE.QUERY_LEVEL;
-  return isQueryLevelMonitor
-    ? formikToQueryLevelTrigger(values, monitorUiMetadata)
-    : formikToBucketLevelTrigger(values, monitorUiMetadata);
+  const isBucketLevelMonitor =
+    _.get(monitorUiMetadata, 'monitor_type', MONITOR_TYPE.QUERY_LEVEL) ===
+    MONITOR_TYPE.BUCKET_LEVEL;
+  return isBucketLevelMonitor
+    ? formikToBucketLevelTrigger(values, monitorUiMetadata)
+    : formikToQueryLevelTrigger(values, monitorUiMetadata);
 }
 
 export function formikToQueryLevelTrigger(values, monitorUiMetadata) {
@@ -127,6 +128,7 @@ export function formikToBucketLevelTriggerAction(values) {
 export function formikToTriggerUiMetadata(values, monitorUiMetadata) {
   switch (monitorUiMetadata.monitor_type) {
     case MONITOR_TYPE.QUERY_LEVEL:
+    case MONITOR_TYPE.CLUSTER_METRICS:
       const searchType = _.get(monitorUiMetadata, 'search.searchType', 'query');
       const queryLevelTriggersUiMetadata = {};
       _.get(values, 'triggerDefinitions', []).forEach((trigger) => {
@@ -170,7 +172,8 @@ export function formikToCondition(values, monitorUiMetadata = {}) {
   const searchType = _.get(monitorUiMetadata, 'search.searchType', 'query');
   const aggregationType = _.get(monitorUiMetadata, 'search.aggregations.0.aggregationType');
 
-  if (searchType === SEARCH_TYPE.QUERY) return { script: values.script };
+  if (searchType === SEARCH_TYPE.QUERY || searchType === SEARCH_TYPE.CLUSTER_METRICS)
+    return { script: values.script };
   if (searchType === SEARCH_TYPE.AD) return getADCondition(values);
 
   // If no aggregation type defined, default to count of documents situation

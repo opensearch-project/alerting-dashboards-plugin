@@ -21,9 +21,10 @@ export default function monitorToFormik(monitor) {
   } = monitor;
   // Default searchType to query, because if there is no ui_metadata or search then it was created through API or overwritten by API
   // In that case we don't want to guess on the UI what selections a user made, so we will default to just showing the extraction query
-  const { searchType = 'query', fieldName } = search;
+  let { searchType = 'query', fieldName } = search;
+  if (_.isEmpty(search) && 'uri' in inputs[0]) searchType = SEARCH_TYPE.CLUSTER_METRICS;
   const isAD = searchType === SEARCH_TYPE.AD;
-
+  const isClusterMetrics = searchType === SEARCH_TYPE.CLUSTER_METRICS;
   return {
     /* INITIALIZE WITH DEFAULTS */
     ...formikValues,
@@ -44,8 +45,10 @@ export default function monitorToFormik(monitor) {
     timezone: timezone ? [{ label: timezone }] : [],
 
     detectorId: isAD ? _.get(inputs, INPUTS_DETECTOR_ID) : undefined,
-    index: inputs[0].search.indices.map((index) => ({ label: index })),
-    adResultIndex: isAD ? _.get(inputs, '0.search.indices.0') : undefined,
-    query: JSON.stringify(inputs[0].search.query, null, 4),
+    index: !isClusterMetrics
+      ? inputs[0].search.indices.map((index) => ({ label: index }))
+      : FORMIK_INITIAL_VALUES.index,
+    query: !isClusterMetrics ? JSON.stringify(inputs[0].search.query, null, 4) : undefined,
+    uri: isClusterMetrics ? inputs[0].uri : undefined,
   };
 }
