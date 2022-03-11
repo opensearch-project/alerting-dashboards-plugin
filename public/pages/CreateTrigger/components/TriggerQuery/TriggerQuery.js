@@ -55,106 +55,107 @@ const TriggerQuery = ({
   const fieldName = `${fieldPath}script.source`;
 
   return (
-    <EuiFlexGroup direction={'column'}>
-      <EuiFlexItem style={{ paddingLeft: '10px', paddingRight: '10px' }}>
-        <EuiFlexGroup alignItems={'stretch'} gutterSize={'m'}>
-          <EuiFlexItem grow={1} style={{ marginBottom: '0px' }}>
-            <div>
-              {isAd ? (
-                <div>
-                  <EuiSpacer size={'s'} />
-                  <EuiFormRow label="Response" fullWidth={true}>
-                    <EuiCodeEditor
-                      grow={true}
-                      mode="json"
-                      theme={isDarkMode ? 'sense-dark' : 'github'}
-                      height="200px"
-                      width="100%"
-                      value={error || formattedResponse}
-                      readOnly
-                    />
-                  </EuiFormRow>
-                  <EuiSpacer size={'l'} />
-                </div>
-              ) : null}
+    <div>
+      <EuiFlexGroup direction={'column'}>
+        <EuiFlexItem style={{ paddingLeft: '10px', paddingRight: '10px' }}>
+          <EuiFlexGroup alignItems={'stretch'} gutterSize={'m'}>
+            <EuiFlexItem grow={1} style={{ marginBottom: '20px' }}>
+              <div>
+                {isAd ? (
+                  <div>
+                    <EuiSpacer size={'s'} />
+                    <EuiFormRow label="Response" fullWidth={true}>
+                      <EuiCodeEditor
+                        grow={true}
+                        mode="json"
+                        theme={isDarkMode ? 'sense-dark' : 'github'}
+                        height="200px"
+                        width="100%"
+                        value={error || formattedResponse}
+                        readOnly
+                      />
+                    </EuiFormRow>
+                    <EuiSpacer size={'l'} />
+                  </div>
+                ) : null}
 
-              <Field name={fieldName}>
-                {({
-                  field: { value },
-                  form: { errors, touched, setFieldValue, setFieldTouched },
-                }) => (
-                  <EuiFormRow
-                    label={
-                      <EuiFlexGroup alignItems={'flexEnd'} gutterSize={'s'}>
-                        <EuiFlexItem grow={false}>
-                          <EuiText size={'xs'}>
-                            <strong>Trigger condition</strong>
-                          </EuiText>
-                        </EuiFlexItem>
-                        <EuiFlexItem>
-                          <EuiText>
-                            <EuiLink
-                              onClick={() => {
-                                setFlyout({ type: 'triggerCondition', payload: context });
-                              }}
-                            >
-                              Info
-                            </EuiLink>
-                          </EuiText>
-                        </EuiFlexItem>
-                      </EuiFlexGroup>
-                    }
-                    fullWidth={true}
-                    isInvalid={_.get(touched, fieldName, false) && !!_.get(errors, fieldName)}
-                    error={_.get(errors, fieldName)}
-                  >
-                    <EuiCodeEditor
-                      grow={true}
-                      mode="plain_text"
-                      theme={isDarkMode ? 'sense-dark' : 'github'}
-                      height="200px"
-                      width="100%"
-                      onChange={(source) => {
-                        setFieldValue(fieldName, source);
-                      }}
-                      onBlur={() => setFieldTouched(fieldName, true)}
-                      value={value}
-                    />
-                  </EuiFormRow>
-                )}
-              </Field>
-            </div>
-          </EuiFlexItem>
+                <Field name={fieldName}>
+                  {({
+                    field: { value },
+                    form: { errors, touched, setFieldValue, setFieldTouched },
+                  }) => (
+                    <EuiFormRow
+                      label={
+                        <EuiFlexGroup alignItems={'flexEnd'} gutterSize={'s'}>
+                          <EuiFlexItem grow={false}>
+                            <EuiText size={'xs'}>
+                              <strong>Trigger condition</strong>
+                            </EuiText>
+                          </EuiFlexItem>
+                          <EuiFlexItem>
+                            <EuiText>
+                              <EuiLink
+                                onClick={() => {
+                                  setFlyout({ type: 'triggerCondition', payload: context });
+                                }}
+                              >
+                                Info
+                              </EuiLink>
+                            </EuiText>
+                          </EuiFlexItem>
+                        </EuiFlexGroup>
+                      }
+                      fullWidth={true}
+                      isInvalid={_.get(touched, fieldName, false) && !!_.get(errors, fieldName)}
+                      error={_.get(errors, fieldName)}
+                    >
+                      <EuiCodeEditor
+                        grow={true}
+                        mode="plain_text"
+                        theme={isDarkMode ? 'sense-dark' : 'github'}
+                        height="200px"
+                        width="100%"
+                        onChange={(source) => {
+                          setFieldValue(fieldName, source);
+                        }}
+                        onBlur={() => setFieldTouched(fieldName, true)}
+                        value={value}
+                        data-test-subj={'triggerQueryCodeEditor'}
+                      />
+                    </EuiFormRow>
+                  )}
+                </Field>
+              </div>
+            </EuiFlexItem>
 
-          <EuiFlexItem grow={1} style={{ marginBottom: '0px', paddingTop: '6px' }}>
-            <EuiFormRow
-              fullWidth={true}
-              label={
-                <EuiText size={'xs'}>
-                  <strong>Trigger condition response</strong>
-                </EuiText>
-              }
-            >
-              <EuiCodeEditor
-                grow={true}
-                mode="plain_text"
-                theme={isDarkMode ? 'sense-dark' : 'github'}
-                height="200px"
-                width="100%"
-                value={getExecuteMessage(executeResponse)}
-                readOnly
-              />
-            </EuiFormRow>
-          </EuiFlexItem>
-        </EuiFlexGroup>
-      </EuiFlexItem>
+            <EuiFlexItem grow={1} style={{ marginBottom: '0px', paddingTop: '6px' }}>
+              <EuiFormRow
+                fullWidth={true}
+                label={
+                  <EuiText size={'xs'}>
+                    <strong>Trigger condition response</strong>
+                  </EuiText>
+                }
+              >
+                <EuiCodeEditor
+                  grow={true}
+                  mode="plain_text"
+                  theme={isDarkMode ? 'sense-dark' : 'github'}
+                  height="200px"
+                  width="100%"
+                  value={getExecuteMessage(executeResponse)}
+                  readOnly
+                />
+              </EuiFormRow>
+            </EuiFlexItem>
+          </EuiFlexGroup>
+        </EuiFlexItem>
+      </EuiFlexGroup>
 
-      <EuiFlexItem style={{ paddingLeft: '10px' }}>
-        <EuiButton onClick={() => onRun([trigger])} size={'s'} style={{ width: '250px' }}>
-          Run for condition response
-        </EuiButton>
-      </EuiFlexItem>
-    </EuiFlexGroup>
+      <EuiButton onClick={() => onRun([trigger])} size={'s'} style={{ marginLeft: '10px' }}>
+        Preview condition response
+      </EuiButton>
+    </div>
   );
 };
 

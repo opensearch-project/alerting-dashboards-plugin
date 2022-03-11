@@ -152,6 +152,7 @@ export default class CreateMonitor extends Component {
       let triggerType;
       switch (monitor_type) {
         case MONITOR_TYPE.QUERY_LEVEL:
+        case MONITOR_TYPE.CLUSTER_METRICS:
           triggerType = TRIGGER_TYPE.QUERY_LEVEL;
           break;
         case MONITOR_TYPE.BUCKET_LEVEL:

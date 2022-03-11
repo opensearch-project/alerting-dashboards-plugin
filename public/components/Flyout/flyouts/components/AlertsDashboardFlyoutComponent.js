@@ -300,14 +300,13 @@ export default class AlertsDashboardFlyoutComponent extends Component {
     const searchType = _.get(monitor, 'ui_metadata.search.searchType', SEARCH_TYPE.GRAPH);
     const detectorId = _.get(monitor, MONITOR_INPUT_DETECTOR_ID);
 
-    const triggerType =
-      monitorType === MONITOR_TYPE.QUERY_LEVEL
-        ? TRIGGER_TYPE.QUERY_LEVEL
-        : TRIGGER_TYPE.BUCKET_LEVEL;
+    const triggerType = monitorType === MONITOR_TYPE.BUCKET_LEVEL
+        ? TRIGGER_TYPE.BUCKET_LEVEL
+        : TRIGGER_TYPE.QUERY_LEVEL;
 
-    let trigger = _.get(monitor, 'triggers', []).find((trigger) => {
-      return trigger[triggerType].id === triggerID;
-    });
+    let trigger = _.get(monitor, 'triggers', []).find(
+      (trigger) => trigger[triggerType].id === triggerID
+    );
     trigger = _.get(trigger, triggerType);
 
     const severity = _.get(trigger, 'severity');
@@ -360,6 +359,7 @@ export default class AlertsDashboardFlyoutComponent extends Component {
     const getItemId = (item) => {
       switch (monitorType) {
         case MONITOR_TYPE.QUERY_LEVEL:
+        case MONITOR_TYPE.CLUSTER_METRICS:
           return `${item.id}-${item.version}`;
         case MONITOR_TYPE.BUCKET_LEVEL:
           return item.id;
@@ -384,6 +384,7 @@ export default class AlertsDashboardFlyoutComponent extends Component {
       let columns = [];
       switch (monitorType) {
         case MONITOR_TYPE.QUERY_LEVEL:
+        case MONITOR_TYPE.CLUSTER_METRICS:
           columns = queryColumns;
           break;
         case MONITOR_TYPE.BUCKET_LEVEL:

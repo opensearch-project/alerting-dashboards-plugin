@@ -23,10 +23,14 @@ export const validateActionName = (monitor, trigger) => (value) => {
   // TODO: Expand on this validation by passing in triggerValues and comparing the current
   //  action's name with names of other actions in the trigger creation form.
   let actions;
-  if (monitor.monitor_type === MONITOR_TYPE.QUERY_LEVEL) {
-    actions = _.get(trigger, `${TRIGGER_TYPE.QUERY_LEVEL}.actions`, []);
-  } else if (monitor.monitor_type === MONITOR_TYPE.BUCKET_LEVEL) {
-    actions = _.get(trigger, `${TRIGGER_TYPE.BUCKET_LEVEL}.actions`, []);
+  switch (monitor.monitor_type) {
+    case MONITOR_TYPE.QUERY_LEVEL:
+    case MONITOR_TYPE.CLUSTER_METRICS:
+      actions = _.get(trigger, `${TRIGGER_TYPE.QUERY_LEVEL}.actions`, []);
+      break;
+    case MONITOR_TYPE.BUCKET_LEVEL:
+      actions = _.get(trigger, `${TRIGGER_TYPE.BUCKET_LEVEL}.actions`, []);
+      break;
   }
   const matches = actions.filter((action) => action.name === value);
   if (matches.length > 1) return 'Action name is already used.';
@@ -54,6 +58,11 @@ export const required = (value) => {
 
 export const validateRequiredNumber = (value) => {
   if (value === undefined || typeof value === 'string') return 'Provide a value.';
+};
+
+export const isInvalidApiPath = (name, form) => {
+  const path = _.get(form, `values.${name}`);
+  return _.get(form.touched, name, false) && _.isEmpty(path);
 };
 
 export const validateMonitorName = (httpClient, monitorToEdit) => async (value) => {
