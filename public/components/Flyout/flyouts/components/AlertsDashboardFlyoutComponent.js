@@ -300,8 +300,7 @@ export default class AlertsDashboardFlyoutComponent extends Component {
     const searchType = _.get(monitor, 'ui_metadata.search.searchType', SEARCH_TYPE.GRAPH);
     const detectorId = _.get(monitor, MONITOR_INPUT_DETECTOR_ID);
 
-    const triggerType =
-      monitorType === MONITOR_TYPE.BUCKET_LEVEL
+    const triggerType = monitorType === MONITOR_TYPE.BUCKET_LEVEL
         ? TRIGGER_TYPE.BUCKET_LEVEL
         : TRIGGER_TYPE.QUERY_LEVEL;
 
