@@ -43,6 +43,12 @@ exports[`MonitorIndex renders 1`] = `
       "searchType": "graph",
       "timeField": "",
       "timezone": Array [],
+      "uri": Object {
+        "api_type": "",
+        "path": "",
+        "path_params": "",
+        "url": "",
+      },
       "weekly": Object {
         "fri": false,
         "mon": false,
@@ -177,6 +183,12 @@ exports[`MonitorIndex renders 1`] = `
                   "searchType": "graph",
                   "timeField": "",
                   "timezone": Array [],
+                  "uri": Object {
+                    "api_type": "",
+                    "path": "",
+                    "path_params": "",
+                    "url": "",
+                  },
                   "weekly": Object {
                     "fri": false,
                     "mon": false,
@@ -258,6 +270,12 @@ exports[`MonitorIndex renders 1`] = `
                   "searchType": "graph",
                   "timeField": "",
                   "timezone": Array [],
+                  "uri": Object {
+                    "api_type": "",
+                    "path": "",
+                    "path_params": "",
+                    "url": "",
+                  },
                   "weekly": Object {
                     "fri": false,
                     "mon": false,
@@ -403,6 +421,12 @@ exports[`MonitorIndex renders 1`] = `
                           "searchType": "graph",
                           "timeField": "",
                           "timezone": Array [],
+                          "uri": Object {
+                            "api_type": "",
+                            "path": "",
+                            "path_params": "",
+                            "url": "",
+                          },
                           "weekly": Object {
                             "fri": false,
                             "mon": false,
@@ -484,6 +508,12 @@ exports[`MonitorIndex renders 1`] = `
                           "searchType": "graph",
                           "timeField": "",
                           "timezone": Array [],
+                          "uri": Object {
+                            "api_type": "",
+                            "path": "",
+                            "path_params": "",
+                            "url": "",
+                          },
                           "weekly": Object {
                             "fri": false,
                             "mon": false,

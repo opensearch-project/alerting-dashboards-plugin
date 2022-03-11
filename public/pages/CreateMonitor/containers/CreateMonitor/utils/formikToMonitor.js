@@ -8,6 +8,11 @@ import moment from 'moment-timezone';
 import { BUCKET_COUNT, DEFAULT_COMPOSITE_AGG_SIZE, FORMIK_INITIAL_VALUES } from './constants';
 import { MONITOR_TYPE, SEARCH_TYPE } from '../../../../../utils/constants';
 import { OPERATORS_QUERY_MAP } from './whereFilters';
+import { API_TYPES } from '../../../components/ClusterMetricsMonitor/utils/clusterMetricsMonitorConstants';
+import {
+  getApiPath,
+  getApiType,
+} from '../../../components/ClusterMetricsMonitor/utils/clusterMetricsMonitorHelpers';
 
 export function formikToMonitor(values) {
   const uiSchedule = formikToUiSchedule(values);
@@ -31,6 +36,8 @@ export function formikToMonitor(values) {
 
 export function formikToInputs(values) {
   switch (values.searchType) {
+    case SEARCH_TYPE.CLUSTER_METRICS:
+      return formikToClusterMetricsInput(values);
     default:
       return formikToSearch(values);
   }
@@ -83,6 +90,29 @@ export function formikToAdQuery(values) {
           field: 'anomaly_grade',
         },
       },
+    },
+  };
+}
+
+export function formikToClusterMetricsInput(values) {
+  let apiType = _.get(values, 'uri.api_type', FORMIK_INITIAL_VALUES.uri.api_type);
+  if (_.isEmpty(apiType)) apiType = getApiType(_.get(values, 'uri'));
+  let pathParams = _.get(values, 'uri.path_params', FORMIK_INITIAL_VALUES.uri.path_params);
+  pathParams = _.trim(pathParams);
+  const hasPathParams = !_.isEmpty(pathParams);
+  if (hasPathParams) _.concat(pathParams, _.get(API_TYPES, `${apiType}.appendText`, ''));
+  let path = _.get(values, 'uri.path', FORMIK_INITIAL_VALUES.uri.path);
+  if (_.isEmpty(path)) path = getApiPath(hasPathParams, apiType);
+  const canConstructUrl = !_.isEmpty(apiType);
+  const url = canConstructUrl
+    ? `http://localhost:9200/${path}${pathParams}`
+    : FORMIK_INITIAL_VALUES.uri.url;
+  return {
+    uri: {
+      api_type: apiType,
+      path: path,
+      path_params: pathParams,
+      url: url,
     },
   };
 }

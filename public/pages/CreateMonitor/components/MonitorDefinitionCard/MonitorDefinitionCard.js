@@ -4,15 +4,12 @@
  */
 
 import React from 'react';
-import _ from 'lodash';
 import { EuiFlexGroup, EuiFlexItem, EuiLink, EuiText } from '@elastic/eui';
 import FormikCheckableCard from '../../../../components/FormControls/FormikCheckableCard/FormikCheckableCard';
 import { OS_AD_PLUGIN, MONITOR_TYPE, SEARCH_TYPE } from '../../../../utils/constants';
-import { MONITOR_TYPE_CARD_WIDTH } from '../MonitorType/MonitorType';
 import { URL } from '../../../../../utils/constants';
 
-const MONITOR_DEFINITION_CARD_WIDTH =
-  (MONITOR_TYPE_CARD_WIDTH * _.keys(MONITOR_TYPE).length) / _.keys(SEARCH_TYPE).length;
+const MONITOR_DEFINITION_CARD_WIDTH = '275';
 
 const onChangeDefinition = (e, form) => {
   const type = e.target.value;

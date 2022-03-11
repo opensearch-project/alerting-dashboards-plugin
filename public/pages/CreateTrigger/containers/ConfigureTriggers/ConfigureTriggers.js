@@ -19,6 +19,12 @@ import { buildSearchRequest } from '../../../CreateMonitor/containers/DefineMoni
 import { backendErrorNotification, inputLimitText } from '../../../../utils/helpers';
 import moment from 'moment';
 import { formikToTrigger } from '../CreateTrigger/utils/formikToTrigger';
+import {
+  buildClusterMetricsRequest,
+  canExecuteClusterMetricsMonitor,
+  getDefaultScript,
+} from '../../../CreateMonitor/components/ClusterMetricsMonitor/utils/clusterMetricsMonitorHelpers';
+import { FORMIK_INITIAL_VALUES } from '../../../CreateMonitor/containers/CreateMonitor/utils/constants';
 
 class ConfigureTriggers extends React.Component {
   constructor(props) {
@@ -31,14 +37,24 @@ class ConfigureTriggers extends React.Component {
         _.get(props, 'monitor.monitor_type', MONITOR_TYPE.QUERY_LEVEL) ===
         MONITOR_TYPE.BUCKET_LEVEL,
       triggerDeleted: false,
+      addTriggerButton: this.prepareAddTriggerButton(),
+      triggerEmptyPrompt: this.prepareTriggerEmptyPrompt(),
     };
 
     this.onQueryMappings = this.onQueryMappings.bind(this);
     this.onRunExecute = this.onRunExecute.bind(this);
+    this.prepareAddTriggerButton = this.prepareAddTriggerButton.bind(this);
+    this.prepareTriggerEmptyPrompt = this.prepareTriggerEmptyPrompt.bind(this);
   }
 
   componentDidMount() {
-    if (this.state.isBucketLevelMonitor) this.onQueryMappings();
+    const {
+      monitorValues: { searchType, uri },
+    } = this.props;
+    const { isBucketLevelMonitor } = this.state;
+    if (searchType === SEARCH_TYPE.CLUSTER_METRICS && canExecuteClusterMetricsMonitor(uri))
+      this.onRunExecute();
+    if (isBucketLevelMonitor) this.onQueryMappings();
   }
 
   componentDidUpdate(prevProps) {
@@ -47,12 +63,65 @@ class ConfigureTriggers extends React.Component {
     if (prevMonitorType !== currMonitorType)
       _.set(this.state, 'isBucketLevelMonitor', currMonitorType === MONITOR_TYPE.BUCKET_LEVEL);
 
+    const prevSearchType = _.get(
+      prevProps,
+      'monitorValues.searchType',
+      FORMIK_INITIAL_VALUES.searchType
+    );
+    const currSearchType = _.get(
+      this.props,
+      'monitorValues.searchType',
+      FORMIK_INITIAL_VALUES.searchType
+    );
+    const prevApiType = _.get(
+      prevProps,
+      'monitorValues.uri.api_type',
+      FORMIK_INITIAL_VALUES.uri.api_type
+    );
+    const currApiType = _.get(
+      this.props,
+      'monitorValues.uri.api_type',
+      FORMIK_INITIAL_VALUES.uri.api_type
+    );
+    if (prevSearchType !== currSearchType || prevApiType !== currApiType) {
+      switch (currSearchType) {
+        case SEARCH_TYPE.CLUSTER_METRICS:
+          _.set(this.state, 'addTriggerButton', this.prepareAddTriggerButton());
+          _.set(this.state, 'triggerEmptyPrompt', this.prepareTriggerEmptyPrompt());
+          break;
+      }
+    }
+
     const prevInputs = prevProps.monitor.inputs[0];
     const currInputs = this.props.monitor.inputs[0];
     if (!_.isEqual(prevInputs, currInputs)) {
-      if (this.state.isBucketLevelMonitor) this.onQueryMappings();
+      const { isBucketLevelMonitor } = this.state;
+      if (isBucketLevelMonitor) this.onQueryMappings();
     }
   }
+
+  prepareAddTriggerButton = () => {
+    const { monitorValues, triggerArrayHelpers, triggerValues } = this.props;
+    const disableAddTriggerButton =
+      _.get(triggerValues, 'triggerDefinitions', []).length >= MAX_TRIGGERS;
+    return (
+      <AddTriggerButton
+        arrayHelpers={triggerArrayHelpers}
+        disabled={disableAddTriggerButton}
+        script={getDefaultScript(monitorValues)}
+      />
+    );
+  };
+
+  prepareTriggerEmptyPrompt = () => {
+    const { monitorValues, triggerArrayHelpers } = this.props;
+    return (
+      <TriggerEmptyPrompt
+        arrayHelpers={triggerArrayHelpers}
+        script={getDefaultScript(monitorValues)}
+      />
+    );
+  };
 
   onRunExecute = (triggers = []) => {
     const { httpClient, monitor, notifications } = this.props;
@@ -66,6 +135,10 @@ class ConfigureTriggers extends React.Component {
       case SEARCH_TYPE.GRAPH:
         const searchRequest = buildSearchRequest(formikValues);
         _.set(monitorToExecute, 'inputs[0].search', searchRequest);
+        break;
+      case SEARCH_TYPE.CLUSTER_METRICS:
+        const clusterMetricsRequest = buildClusterMetricsRequest(formikValues);
+        _.set(monitorToExecute, 'inputs[0].uri', clusterMetricsRequest);
         break;
       default:
         console.log(`Unsupported searchType found: ${JSON.stringify(searchType)}`, searchType);
@@ -140,62 +213,58 @@ class ConfigureTriggers extends React.Component {
       httpClient,
       notifications,
     } = this.props;
-
-    const { dataTypes, executeResponse, isBucketLevelMonitor } = this.state;
+    const { dataTypes, executeResponse, isBucketLevelMonitor, triggerEmptyPrompt } = this.state;
     const hasTriggers = !_.isEmpty(_.get(triggerValues, 'triggerDefinitions'));
-    return hasTriggers ? (
-      triggerValues.triggerDefinitions.map((trigger, index) => {
-        return (
-          <div key={index}>
-            {isBucketLevelMonitor ? (
-              <DefineBucketLevelTrigger
-                edit={edit}
-                triggerArrayHelpers={triggerArrayHelpers}
-                context={this.getTriggerContext(executeResponse, monitor, triggerValues)}
-                executeResponse={executeResponse}
-                monitor={monitor}
-                monitorValues={monitorValues}
-                onRun={this.onRunExecute}
-                setFlyout={setFlyout}
-                triggers={triggers}
-                triggerValues={triggerValues}
-                isDarkMode={isDarkMode}
-                dataTypes={dataTypes}
-                triggerIndex={index}
-                httpClient={httpClient}
-                notifications={notifications}
-              />
-            ) : (
-              <DefineTrigger
-                edit={edit}
-                triggerArrayHelpers={triggerArrayHelpers}
-                context={this.getTriggerContext(executeResponse, monitor, triggerValues)}
-                executeResponse={executeResponse}
-                monitor={monitor}
-                monitorValues={monitorValues}
-                onRun={this.onRunExecute}
-                setFlyout={setFlyout}
-                triggers={triggers}
-                triggerValues={triggerValues}
-                isDarkMode={isDarkMode}
-                triggerIndex={index}
-                httpClient={httpClient}
-                notifications={notifications}
-              />
-            )}
-            <EuiHorizontalRule margin={'s'} />
-          </div>
-        );
-      })
-    ) : (
-      <TriggerEmptyPrompt arrayHelpers={triggerArrayHelpers} />
-    );
+    return hasTriggers
+      ? triggerValues.triggerDefinitions.map((trigger, index) => {
+          return (
+            <div key={index}>
+              {isBucketLevelMonitor ? (
+                <DefineBucketLevelTrigger
+                  edit={edit}
+                  triggerArrayHelpers={triggerArrayHelpers}
+                  context={this.getTriggerContext(executeResponse, monitor, triggerValues)}
+                  executeResponse={executeResponse}
+                  monitor={monitor}
+                  monitorValues={monitorValues}
+                  onRun={this.onRunExecute}
+                  setFlyout={setFlyout}
+                  triggers={triggers}
+                  triggerValues={triggerValues}
+                  isDarkMode={isDarkMode}
+                  dataTypes={dataTypes}
+                  triggerIndex={index}
+                  httpClient={httpClient}
+                  notifications={notifications}
+                />
+              ) : (
+                <DefineTrigger
+                  edit={edit}
+                  triggerArrayHelpers={triggerArrayHelpers}
+                  context={this.getTriggerContext(executeResponse, monitor, triggerValues)}
+                  executeResponse={executeResponse}
+                  monitor={monitor}
+                  monitorValues={monitorValues}
+                  onRun={this.onRunExecute}
+                  setFlyout={setFlyout}
+                  triggers={triggers}
+                  triggerValues={triggerValues}
+                  isDarkMode={isDarkMode}
+                  triggerIndex={index}
+                  httpClient={httpClient}
+                  notifications={notifications}
+                />
+              )}
+              <EuiHorizontalRule margin={'s'} />
+            </div>
+          );
+        })
+      : triggerEmptyPrompt;
   };
 
   render() {
     const { triggerArrayHelpers, triggerValues } = this.props;
-    const disableAddTriggerButton =
-      _.get(triggerValues, 'triggerDefinitions', []).length >= MAX_TRIGGERS;
+    const { addTriggerButton } = this.state;
     const numOfTriggers = _.get(triggerValues, 'triggerDefinitions', []).length;
     const displayAddTriggerButton = numOfTriggers > 0;
     return (
@@ -210,10 +279,7 @@ class ConfigureTriggers extends React.Component {
 
         {displayAddTriggerButton ? (
           <div style={{ paddingBottom: '20px', paddingTop: '15px' }}>
-            <AddTriggerButton
-              arrayHelpers={triggerArrayHelpers}
-              disabled={disableAddTriggerButton}
-            />
+            {addTriggerButton}
             <EuiSpacer size={'s'} />
             {inputLimitText(numOfTriggers, MAX_TRIGGERS, 'trigger', 'triggers')}
           </div>
