@@ -97,6 +97,7 @@ class ConfigureActions extends React.Component {
             );
             break;
           case MONITOR_TYPE.QUERY_LEVEL:
+          case MONITOR_TYPE.CLUSTER_METRICS:
             _.set(
               initialActionValues,
               'message_template.source',
@@ -147,6 +148,7 @@ class ConfigureActions extends React.Component {
         _.set(testTrigger, `${TRIGGER_TYPE.BUCKET_LEVEL}.condition`, condition);
         break;
       case MONITOR_TYPE.QUERY_LEVEL:
+      case MONITOR_TYPE.CLUSTER_METRICS:
         action = _.get(testTrigger, `actions[${index}]`);
         condition = {
           ..._.get(testTrigger, 'condition'),

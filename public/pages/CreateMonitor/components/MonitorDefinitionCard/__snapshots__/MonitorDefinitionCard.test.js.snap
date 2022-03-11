@@ -36,7 +36,7 @@ exports[`MonitorDefinitionCard renders without AD plugin 1`] = `
   >
     <div
       class="euiFlexItem euiFlexItem--flexGrowZero"
-      style="width:266.6666666666667px"
+      style="width:275px"
     >
       <div
         class="euiFormRow"
@@ -83,7 +83,7 @@ exports[`MonitorDefinitionCard renders without AD plugin 1`] = `
     </div>
     <div
       class="euiFlexItem euiFlexItem--flexGrowZero"
-      style="width:266.6666666666667px"
+      style="width:275px"
     >
       <div
         class="euiFormRow"
@@ -168,7 +168,7 @@ exports[`MonitorDefinitionCard renders without AD plugin 2`] = `
   >
     <div
       class="euiFlexItem euiFlexItem--flexGrowZero"
-      style="width:266.6666666666667px"
+      style="width:275px"
     >
       <div
         class="euiFormRow"
@@ -215,7 +215,7 @@ exports[`MonitorDefinitionCard renders without AD plugin 2`] = `
     </div>
     <div
       class="euiFlexItem euiFlexItem--flexGrowZero"
-      style="width:266.6666666666667px"
+      style="width:275px"
     >
       <div
         class="euiFormRow"
@@ -262,7 +262,7 @@ exports[`MonitorDefinitionCard renders without AD plugin 2`] = `
     </div>
     <div
       class="euiFlexItem euiFlexItem--flexGrowZero"
-      style="width:266.6666666666667px"
+      style="width:275px"
     >
       <div
         class="euiCheckableCard"

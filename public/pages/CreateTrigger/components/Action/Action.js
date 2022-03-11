@@ -102,6 +102,7 @@ const Action = ({
                 },
                 singleSelection: { asPlainText: true },
                 isClearable: false,
+                'data-test-subj': `${fieldPath}actions.${index}_actionDestination`,
               }}
             />
             <EuiSpacer size="m" />
