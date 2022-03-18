@@ -81,6 +81,7 @@ export default class CreateMonitor extends Component {
 
   componentDidMount() {
     this.getPlugins();
+    this.setSchedule();
   }
 
   async getPlugins() {
@@ -130,6 +131,24 @@ export default class CreateMonitor extends Component {
       // TODO: setErrors
     }
   }
+
+  setSchedule = () => {
+    const { edit, monitorToEdit } = this.props;
+    const { initialValues } = this.state;
+
+    if (edit) {
+      const schedule = _.get(monitorToEdit, 'schedule', FORMIK_INITIAL_VALUES.period);
+      const scheduleType = _.keys(schedule)[0];
+      switch (scheduleType) {
+        case 'cron':
+          _.set(initialValues, 'frequency', 'cronExpression');
+          break;
+        default:
+          _.set(initialValues, 'period', schedule.period);
+          break;
+      }
+    }
+  };
 
   prepareTriggers = (trigger, triggerMetadata, monitor) => {
     const { edit } = this.props;

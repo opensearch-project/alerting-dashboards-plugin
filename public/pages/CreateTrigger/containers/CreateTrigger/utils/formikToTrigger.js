@@ -150,7 +150,7 @@ export function formikToTriggerUiMetadata(values, monitorUiMetadata) {
           };
         }
 
-        _.set(queryLevelTriggersUiMetadata, `${trigger.name}`, triggerMetadata);
+        queryLevelTriggersUiMetadata[trigger.name] = triggerMetadata;
       });
       return queryLevelTriggersUiMetadata;
 
