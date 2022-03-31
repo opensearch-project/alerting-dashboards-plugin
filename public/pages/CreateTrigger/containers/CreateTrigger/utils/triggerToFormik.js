@@ -46,37 +46,47 @@ export function queryLevelTriggerToFormik(trigger, monitor) {
     min_time_between_executions: minTimeBetweenExecutions,
     rolling_window_size: rollingWindowSize,
   } = trigger.query_level_trigger;
+
+  const triggersUiMetadata = _.get(monitor, 'ui_metadata.triggers', {});
   const thresholdEnum = _.get(
-    monitor,
-    `ui_metadata.triggers[${name}].enum`,
+    triggersUiMetadata[name],
+    'enum',
     FORMIK_INITIAL_TRIGGER_VALUES.thresholdEnum
   );
   const thresholdValue = _.get(
-    monitor,
-    `ui_metadata.triggers[${name}].value`,
+    triggersUiMetadata[name],
+    'value',
     FORMIK_INITIAL_TRIGGER_VALUES.thresholdValue
   );
+
+  const adTriggerMetadata = _.get(triggersUiMetadata[name], 'adTriggerMetadata', {});
+  /*
+    If trigger type doesn't exist fallback to query trigger with following reasons
+    1. User has changed monitory type from normal monitor to AD monitor.
+    2. User has created / updated from API and visiting OpenSearch Dashboards to do other operations.
+   */
+  const triggerType = _.get(adTriggerMetadata, 'triggerType', TRIGGER_TYPE.ALERT_TRIGGER);
   const anomalyConfidenceThresholdValue = _.get(
-    monitor,
-    `ui_metadata.triggers[${name}].adTriggerMetadata.anomalyConfidence.value`,
+    adTriggerMetadata,
+    'anomalyConfidence.value',
     FORMIK_INITIAL_TRIGGER_VALUES.anomalyDetector.anomalyConfidenceThresholdValue
   );
   const anomalyConfidenceThresholdEnum = _.get(
-    monitor,
-    `ui_metadata.triggers[${name}].adTriggerMetadata.anomalyConfidence.enum`,
+    adTriggerMetadata,
+    'anomalyConfidence.enum',
     FORMIK_INITIAL_TRIGGER_VALUES.anomalyDetector.anomalyConfidenceThresholdEnum
   );
   const anomalyGradeThresholdValue = _.get(
-    monitor,
-    `ui_metadata.triggers[${name}].adTriggerMetadata.anomalyGrade.value`,
+    adTriggerMetadata,
+    'anomalyGrade.value',
     FORMIK_INITIAL_TRIGGER_VALUES.anomalyDetector.anomalyGradeThresholdValue
   );
   const anomalyGradeThresholdEnum = _.get(
-    monitor,
-    `ui_metadata.triggers[${name}].adTriggerMetadata.anomalyGrade.enum`,
+    adTriggerMetadata,
+    'anomalyGrade.enum',
     FORMIK_INITIAL_TRIGGER_VALUES.anomalyDetector.anomalyGradeThresholdEnum
   );
-  const triggerType = _.get(monitor, `ui_metadata.triggers[${name}].adTriggerMetadata.triggerType`);
+
   return {
     ..._.cloneDeep(FORMIK_INITIAL_TRIGGER_VALUES),
     id,
@@ -89,11 +99,7 @@ export function queryLevelTriggerToFormik(trigger, monitor) {
     thresholdEnum,
     thresholdValue,
     anomalyDetector: {
-      /*If trigger type doesn't exist fallback to query trigger with following reasons
-        1. User has changed monitory type from normal monitor to AD monitor.
-        2. User has created / updated from API and visiting OpenSearch Dashboards to do other operations.
-      */
-      triggerType: triggerType ? triggerType : TRIGGER_TYPE.ALERT_TRIGGER,
+      triggerType,
       anomalyGradeThresholdValue,
       anomalyGradeThresholdEnum,
       anomalyConfidenceThresholdValue,
@@ -118,37 +124,46 @@ export function bucketLevelTriggerToFormik(trigger, monitor) {
   const triggerConditions = getBucketLevelTriggerConditions(condition);
   const where = getWhereExpression(composite_agg_filter);
 
+  const triggersUiMetadata = _.get(monitor, 'ui_metadata.triggers', {});
   const thresholdEnum = _.get(
-    monitor,
-    `ui_metadata.triggers[${name}].enum`,
+    triggersUiMetadata[name],
+    'enum',
     FORMIK_INITIAL_TRIGGER_VALUES.thresholdEnum
   );
   const thresholdValue = _.get(
-    monitor,
-    `ui_metadata.triggers[${name}].value`,
+    triggersUiMetadata,
+    'value',
     FORMIK_INITIAL_TRIGGER_VALUES.thresholdValue
   );
+
+  const adTriggerMetadata = _.get(triggersUiMetadata[name], 'adTriggerMetadata', {});
+  /*
+    If trigger type doesn't exist fallback to query trigger with following reasons
+    1. User has changed monitory type from normal monitor to AD monitor.
+    2. User has created / updated from API and visiting OpenSearch Dashboards to do other operations.
+   */
+  const triggerType = _.get(adTriggerMetadata, 'triggerType', TRIGGER_TYPE.ALERT_TRIGGER);
   const anomalyConfidenceThresholdValue = _.get(
-    monitor,
-    `ui_metadata.triggers[${name}].adTriggerMetadata.anomalyConfidence.value`,
+    adTriggerMetadata,
+    'anomalyConfidence.value',
     FORMIK_INITIAL_TRIGGER_VALUES.anomalyDetector.anomalyConfidenceThresholdValue
   );
   const anomalyConfidenceThresholdEnum = _.get(
-    monitor,
-    `ui_metadata.triggers[${name}].adTriggerMetadata.anomalyConfidence.enum`,
+    adTriggerMetadata,
+    'anomalyConfidence.enum',
     FORMIK_INITIAL_TRIGGER_VALUES.anomalyDetector.anomalyConfidenceThresholdEnum
   );
   const anomalyGradeThresholdValue = _.get(
-    monitor,
-    `ui_metadata.triggers[${name}].adTriggerMetadata.anomalyGrade.value`,
+    adTriggerMetadata,
+    'anomalyGrade.value',
     FORMIK_INITIAL_TRIGGER_VALUES.anomalyDetector.anomalyGradeThresholdValue
   );
   const anomalyGradeThresholdEnum = _.get(
-    monitor,
-    `ui_metadata.triggers[${name}].adTriggerMetadata.anomalyGrade.enum`,
+    adTriggerMetadata,
+    'anomalyGrade.enum',
     FORMIK_INITIAL_TRIGGER_VALUES.anomalyDetector.anomalyGradeThresholdEnum
   );
-  const triggerType = _.get(monitor, `ui_metadata.triggers[${name}].adTriggerMetadata.triggerType`);
+
   return {
     ..._.cloneDeep(FORMIK_INITIAL_TRIGGER_VALUES),
     id,
@@ -164,11 +179,7 @@ export function bucketLevelTriggerToFormik(trigger, monitor) {
     thresholdValue,
     where,
     anomalyDetector: {
-      /*If trigger type doesn't exist fallback to query trigger with following reasons
-        1. User has changed monitory type from normal monitor to AD monitor.
-        2. User has created / updated from API and visiting OpenSearch Dashboards to do other operations.
-      */
-      triggerType: triggerType ? triggerType : TRIGGER_TYPE.ALERT_TRIGGER,
+      triggerType,
       anomalyGradeThresholdValue,
       anomalyGradeThresholdEnum,
       anomalyConfidenceThresholdValue,

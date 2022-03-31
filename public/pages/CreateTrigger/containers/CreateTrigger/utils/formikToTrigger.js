@@ -150,7 +150,7 @@ export function formikToTriggerUiMetadata(values, monitorUiMetadata) {
           };
         }
 
-        _.set(queryLevelTriggersUiMetadata, `${trigger.name}`, triggerMetadata);
+        queryLevelTriggersUiMetadata[trigger.name] = triggerMetadata;
       });
       return queryLevelTriggersUiMetadata;
 
@@ -161,7 +161,7 @@ export function formikToTriggerUiMetadata(values, monitorUiMetadata) {
           value: condition.thresholdValue,
           enum: condition.thresholdEnum,
         }));
-        _.set(bucketLevelTriggersUiMetadata, `${trigger.name}`, triggerMetadata);
+        bucketLevelTriggersUiMetadata[trigger.name] = triggerMetadata;
       });
       return bucketLevelTriggersUiMetadata;
   }
