@@ -291,7 +291,7 @@ describe('ClusterMetricsMonitor', () => {
 
       describe('the modal CLOSE (i.e., the X button) button is clicked', () => {
         // Click the CLOSE button
-        cy.get('[class="euiButtonIcon euiButtonIcon--text euiModal__closeIcon"]').click();
+        cy.get('[aria-label="Closes this modal window"]').click();
 
         // Confirm clearTriggersModal closed
         cy.get('[data-test-subj="clusterMetricsClearTriggersModal"]').should('not.exist');
