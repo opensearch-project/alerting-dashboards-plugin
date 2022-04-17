@@ -19,12 +19,13 @@ import { staticColumns, MAX_DESTINATIONS } from './utils/constants';
 import { getURLQueryParams } from './utils/helpers';
 import { isDeleteAllowedQuery } from './utils/deleteHelpers';
 import { INDEX } from '../../../../../utils/constants';
-import { DESTINATION_ACTIONS } from '../../../../utils/constants';
+import { DESTINATION_ACTIONS, OS_NOTIFICATION_PLUGIN } from '../../../../utils/constants';
 import ManageSenders from '../CreateDestination/ManageSenders';
 import ManageEmailGroups from '../CreateDestination/ManageEmailGroups';
 import { getAllowList } from '../../utils/helpers';
 import { DESTINATION_TYPE } from '../../utils/constants';
 import { backendErrorNotification } from '../../../../utils/helpers';
+import NotificationsInfoCallOut from '../../components/NotificationsInfoCallOut';
 
 class DestinationsList extends React.Component {
   constructor(props) {
@@ -52,6 +53,7 @@ class DestinationsList extends React.Component {
       allowList: [],
       showManageSenders: false,
       showManageEmailGroups: false,
+      hasNotificationPlugin: false,
     };
 
     this.columns = [
@@ -63,17 +65,24 @@ class DestinationsList extends React.Component {
           {
             name: 'Edit',
             description: 'Edit this destination.',
-            enabled: this.isEditEnabled,
+            // Editing Destinations is now disabled since Destinations are deprecated
+            // and will automatically be migrated to Notifications Channels
+            enabled: false,
             onClick: this.handleEditDestination,
           },
           {
             name: 'Delete',
             description: 'Delete this destination.',
+            // Deleting Destinations is now disabled since Destinations are deprecated
+            // and will automatically be migrated to Notifications Channels
+            enabled: false,
             onClick: this.handleDeleteAction,
           },
         ],
       },
     ];
+
+    this.getPlugins = this.getPlugins.bind(this);
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -89,12 +98,29 @@ class DestinationsList extends React.Component {
   }
 
   async componentDidMount() {
+    this.getPlugins();
     const { httpClient } = this.props;
     const allowList = await getAllowList(httpClient);
     this.setState({ allowList });
 
     const { page, queryParams } = this.state;
     this.getDestinations(page * queryParams.size, queryParams);
+  }
+
+  async getPlugins() {
+    const { httpClient } = this.props;
+    try {
+      const pluginsResponse = await httpClient.get('../api/alerting/_plugins');
+      if (pluginsResponse.ok) {
+        const plugins = pluginsResponse.resp.map((plugin) => plugin.component);
+        const hasNotificationPlugin = plugins.indexOf(OS_NOTIFICATION_PLUGIN) !== -1;
+        this.setState({ hasNotificationPlugin });
+      } else {
+        console.error('There was a problem getting plugins list');
+      }
+    } catch (e) {
+      console.error('There was a problem getting plugins list', e);
+    }
   }
 
   isEmailAllowed = () => {
@@ -156,13 +182,6 @@ class DestinationsList extends React.Component {
     } catch (e) {
       console.log('unable to delete destination', e);
     }
-  };
-
-  isEditEnabled = (destination) => {
-    const { allowList } = this.state;
-    // Prevent editing disallowed Destination types since dependent API (like in the case of Email)
-    // may be blocked in this case, not making it possible to load the Edit page
-    return allowList.includes(destination.type);
   };
 
   handleEditDestination = (destinationToEdit) => {
@@ -275,6 +294,7 @@ class DestinationsList extends React.Component {
       isDestinationLoading,
       destinationConsumedByOthers,
       allowList,
+      hasNotificationPlugin,
     } = this.state;
     const isFilterApplied = !!search || type !== 'ALL';
     const pagination = {
@@ -298,19 +318,22 @@ class DestinationsList extends React.Component {
             color="danger"
           />
         ) : null}
+        <NotificationsInfoCallOut hasNotificationPlugin={hasNotificationPlugin} />
         <ContentPanel
           bodyStyles={{ padding: 'initial' }}
-          title="Destinations"
+          title="Destinations (deprecated)"
           actions={
-            <DestinationsActions
-              isEmailAllowed={this.isEmailAllowed()}
-              onClickManageSenders={() => {
-                this.setState({ showManageSenders: true });
-              }}
-              onClickManageEmailGroups={() => {
-                this.setState({ showManageEmailGroups: true });
-              }}
-            />
+            hasNotificationPlugin && (
+              <DestinationsActions
+                isEmailAllowed={this.isEmailAllowed()}
+                onClickManageSenders={() => {
+                  this.setState({ showManageSenders: true });
+                }}
+                onClickManageEmailGroups={() => {
+                  this.setState({ showManageEmailGroups: true });
+                }}
+              />
+            )
           }
         >
           <DeleteConfirmation
