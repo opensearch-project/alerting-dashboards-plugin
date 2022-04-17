@@ -14,6 +14,7 @@ import MonitorDetails from '../MonitorDetails/containers/MonitorDetails';
 import CreateDestination from '../Destinations/containers/CreateDestination';
 import Flyout from '../../components/Flyout';
 import { APP_PATH } from '../../utils/constants';
+import { ServicesConsumer } from '../../services';
 
 class Main extends Component {
   state = { flyout: null };
@@ -36,74 +37,82 @@ class Main extends Component {
       <CoreConsumer>
         {(core) =>
           core && (
-            <div style={{ padding: '15px 0px' }}>
-              <Breadcrumbs history={history} httpClient={core.http} {...rest} />
-              <Flyout
-                flyout={flyout}
-                onClose={() => {
-                  this.setFlyout(null);
-                }}
-              />
-              <Switch>
-                <Route
-                  path={APP_PATH.CREATE_MONITOR}
-                  render={(props) => (
-                    <CreateMonitor
-                      httpClient={core.http}
-                      setFlyout={this.setFlyout}
-                      notifications={core.notifications}
-                      isDarkMode={core.isDarkMode}
-                      {...props}
+            <ServicesConsumer>
+              {(services) =>
+                services && (
+                  <div style={{ padding: '15px 0px' }}>
+                    <Breadcrumbs history={history} httpClient={core.http} {...rest} />
+                    <Flyout
+                      flyout={flyout}
+                      onClose={() => {
+                        this.setFlyout(null);
+                      }}
                     />
-                  )}
-                />
-                <Route
-                  path={APP_PATH.CREATE_DESTINATION}
-                  render={(props) => (
-                    <CreateDestination
-                      httpClient={core.http}
-                      setFlyout={this.setFlyout}
-                      notifications={core.notifications}
-                      {...props}
-                    />
-                  )}
-                />
-                <Route
-                  path="/destinations/:destinationId"
-                  render={(props) => (
-                    <CreateDestination
-                      httpClient={core.http}
-                      setFlyout={this.setFlyout}
-                      notifications={core.notifications}
-                      {...props}
-                      edit
-                    />
-                  )}
-                />
-                <Route
-                  path="/monitors/:monitorId"
-                  render={(props) => (
-                    <MonitorDetails
-                      httpClient={core.http}
-                      setFlyout={this.setFlyout}
-                      notifications={core.notifications}
-                      isDarkMode={core.isDarkMode}
-                      {...props}
-                    />
-                  )}
-                />
-                <Route
-                  render={(props) => (
-                    <Home
-                      httpClient={core.http}
-                      {...props}
-                      setFlyout={this.setFlyout}
-                      notifications={core.notifications}
-                    />
-                  )}
-                />
-              </Switch>
-            </div>
+                    <Switch>
+                      <Route
+                        path={APP_PATH.CREATE_MONITOR}
+                        render={(props) => (
+                          <CreateMonitor
+                            httpClient={core.http}
+                            setFlyout={this.setFlyout}
+                            notifications={core.notifications}
+                            isDarkMode={core.isDarkMode}
+                            notificationService={services.notificationService}
+                            {...props}
+                          />
+                        )}
+                      />
+                      <Route
+                        path={APP_PATH.CREATE_DESTINATION}
+                        render={(props) => (
+                          <CreateDestination
+                            httpClient={core.http}
+                            setFlyout={this.setFlyout}
+                            notifications={core.notifications}
+                            {...props}
+                          />
+                        )}
+                      />
+                      <Route
+                        path="/destinations/:destinationId"
+                        render={(props) => (
+                          <CreateDestination
+                            httpClient={core.http}
+                            setFlyout={this.setFlyout}
+                            notifications={core.notifications}
+                            {...props}
+                            edit
+                          />
+                        )}
+                      />
+                      <Route
+                        path="/monitors/:monitorId"
+                        render={(props) => (
+                          <MonitorDetails
+                            httpClient={core.http}
+                            setFlyout={this.setFlyout}
+                            notifications={core.notifications}
+                            isDarkMode={core.isDarkMode}
+                            notificationService={services.notificationService}
+                            {...props}
+                          />
+                        )}
+                      />
+                      <Route
+                        render={(props) => (
+                          <Home
+                            httpClient={core.http}
+                            {...props}
+                            setFlyout={this.setFlyout}
+                            notifications={core.notifications}
+                          />
+                        )}
+                      />
+                    </Switch>
+                  </div>
+                )
+              }
+            </ServicesConsumer>
           )
         }
       </CoreConsumer>
