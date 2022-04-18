@@ -3,6 +3,16 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+import _ from 'lodash';
+
+export const GET_ALERTS_SORT_FILTERS = {
+  MONITOR_NAME: 'monitor_name',
+  TRIGGER_NAME: 'trigger_name',
+  START_TIME: 'start_time',
+  END_TIME: 'end_time',
+  ACKNOWLEDGE_TIME: 'acknowledged_time',
+};
+
 export default class AlertService {
   constructor(esDriver) {
     this.esDriver = esDriver;
@@ -14,7 +24,10 @@ export default class AlertService {
       size = 20,
       search = '',
       sortDirection = 'desc',
-      sortField = 'start_time',
+      // If the sortField parsed from the URL isn't a valid option for this API, use a default option.
+      sortField = _.includes(_.values(GET_ALERTS_SORT_FILTERS), req.query.sortField)
+        ? req.query.sortField
+        : GET_ALERTS_SORT_FILTERS.START_TIME,
       severityLevel = 'ALL',
       alertState = 'ALL',
       monitorIds = [],
@@ -22,32 +35,32 @@ export default class AlertService {
 
     var params;
     switch (sortField) {
-      case 'monitor_name':
+      case GET_ALERTS_SORT_FILTERS.MONITOR_NAME:
         params = {
           sortString: `${sortField}.keyword`,
           sortOrder: sortDirection,
         };
         break;
-      case 'trigger_name':
+      case GET_ALERTS_SORT_FILTERS.TRIGGER_NAME:
         params = {
           sortString: `${sortField}.keyword`,
           sortOrder: sortDirection,
         };
         break;
-      case 'start_time':
+      case GET_ALERTS_SORT_FILTERS.START_TIME:
         params = {
           sortString: sortField,
           sortOrder: sortDirection,
         };
         break;
-      case 'end_time':
+      case GET_ALERTS_SORT_FILTERS.END_TIME:
         params = {
           sortString: sortField,
           sortOrder: sortDirection,
           missing: sortDirection === 'asc' ? '_last' : '_first',
         };
         break;
-      case 'acknowledged_time':
+      case GET_ALERTS_SORT_FILTERS.ACKNOWLEDGE_TIME:
         params = {
           sortString: sortField,
           sortOrder: sortDirection,

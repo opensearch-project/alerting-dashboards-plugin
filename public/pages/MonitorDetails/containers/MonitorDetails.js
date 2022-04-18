@@ -4,7 +4,7 @@
  */
 
 import React, { Component, Fragment } from 'react';
-import { get } from 'lodash';
+import _ from 'lodash';
 import queryString from 'query-string';
 import {
   EuiButton,
@@ -23,6 +23,8 @@ import {
   EuiModalHeaderTitle,
   EuiOverlayMask,
   EuiSpacer,
+  EuiTab,
+  EuiTabs,
   EuiTitle,
 } from '@elastic/eui';
 import CreateMonitor from '../../CreateMonitor';
@@ -34,6 +36,7 @@ import {
   MONITOR_ACTIONS,
   MONITOR_GROUP_BY,
   MONITOR_INPUT_DETECTOR_ID,
+  MONITOR_TYPE,
   TRIGGER_ACTIONS,
 } from '../../../utils/constants';
 import { migrateTriggerMetadata } from './utils/helpers';
@@ -41,6 +44,8 @@ import { backendErrorNotification } from '../../../utils/helpers';
 import { getUnwrappedTriggers } from './Triggers/Triggers';
 import { formikToMonitor } from '../../CreateMonitor/containers/CreateMonitor/utils/formikToMonitor';
 import monitorToFormik from '../../CreateMonitor/containers/CreateMonitor/utils/monitorToFormik';
+import FindingsDashboard from '../../Dashboard/containers/FindingsDashboard';
+import { TABLE_TAB_IDS } from '../../Dashboard/components/FindingsDashboard/utils';
 
 export default class MonitorDetails extends Component {
   constructor(props) {
@@ -63,6 +68,7 @@ export default class MonitorDetails extends Component {
         });
       },
       isJsonModalOpen: false,
+      tabId: TABLE_TAB_IDS.ALERTS.id,
     };
   }
 
@@ -128,10 +134,11 @@ export default class MonitorDetails extends Component {
             loading: false,
             error: null,
           });
-          const adId = get(monitor, MONITOR_INPUT_DETECTOR_ID, undefined);
+          const adId = _.get(monitor, MONITOR_INPUT_DETECTOR_ID, undefined);
           if (adId) {
             this.getDetector(adId);
           }
+          this.setState({ tabContent: this.renderAlertsTable() });
         } else {
           // TODO: 404 handling
           this.props.history.push('/monitors');
@@ -237,6 +244,79 @@ export default class MonitorDetails extends Component {
     return { ...formikToMonitor(monitorValues), triggers };
   };
 
+  renderAlertsTable = () => {
+    const { monitor, editMonitor } = this.state;
+    const {
+      location,
+      match: {
+        params: { monitorId },
+      },
+      history,
+      httpClient,
+      notifications,
+    } = this.props;
+    const detectorId = _.get(monitor, MONITOR_INPUT_DETECTOR_ID, undefined);
+    const groupBy = _.get(monitor, MONITOR_GROUP_BY);
+    return (
+      <Dashboard
+        monitorIds={[monitorId]}
+        detectorIds={detectorId ? [detectorId] : []}
+        onCreateTrigger={editMonitor}
+        httpClient={httpClient}
+        location={location}
+        history={history}
+        notifications={notifications}
+        monitorType={monitor.monitor_type}
+        perAlertView={true}
+        groupBy={groupBy}
+      />
+    );
+  };
+
+  renderFindingsTable = () => {
+    const {
+      httpClient,
+      history,
+      location,
+      notifications,
+      match: {
+        params: { monitorId },
+      },
+    } = this.props;
+    return (
+      <FindingsDashboard
+        monitorId={monitorId}
+        httpClient={httpClient}
+        location={location}
+        history={history}
+        notifications={notifications}
+      />
+    );
+  };
+
+  renderTableTabs = () => {
+    const { tabId } = this.state;
+    const tabs = [
+      { ...TABLE_TAB_IDS.ALERTS, content: this.renderAlertsTable() },
+      { ...TABLE_TAB_IDS.FINDINGS, content: this.renderFindingsTable() },
+    ];
+    return tabs.map((tab, index) => (
+      <EuiTab
+        key={`${tab.id}${index}`}
+        isSelected={tab.id === tabId}
+        onClick={() => {
+          this.setState({
+            tabId: tab.id,
+            tabContent: tab.content,
+          });
+        }}
+        style={{ paddingTop: '0px' }}
+      >
+        {tab.name}
+      </EuiTab>
+    ));
+  };
+
   render() {
     const {
       monitor,
@@ -253,15 +333,14 @@ export default class MonitorDetails extends Component {
       match: {
         params: { monitorId },
       },
-      history,
       httpClient,
       notifications,
       isDarkMode,
     } = this.props;
     const { action } = queryString.parse(location.search);
     const updatingMonitor = action === MONITOR_ACTIONS.UPDATE_MONITOR;
-    const detectorId = get(monitor, MONITOR_INPUT_DETECTOR_ID, undefined);
-    const groupBy = get(monitor, MONITOR_GROUP_BY);
+    const detectorId = _.get(monitor, MONITOR_INPUT_DETECTOR_ID, undefined);
+
     if (loading) {
       return (
         <EuiFlexGroup justifyContent="center" alignItems="center" style={{ marginTop: '100px' }}>
@@ -283,6 +362,7 @@ export default class MonitorDetails extends Component {
       );
     }
 
+    const displayTableTabs = monitor.monitor_type === MONITOR_TYPE.DOC_LEVEL;
     return (
       <div style={{ padding: '25px 50px' }}>
         {this.renderNoTriggersCallOut()}
@@ -352,18 +432,16 @@ export default class MonitorDetails extends Component {
           />
         </div>
         <EuiSpacer />
-        <Dashboard
-          monitorIds={[monitorId]}
-          detectorIds={detectorId ? [detectorId] : []}
-          onCreateTrigger={editMonitor}
-          httpClient={httpClient}
-          location={location}
-          history={history}
-          notifications={notifications}
-          monitorType={monitor.monitor_type}
-          perAlertView={true}
-          groupBy={groupBy}
-        />
+
+        {displayTableTabs ? (
+          <div>
+            <EuiTabs>{this.renderTableTabs()}</EuiTabs>
+            {this.state.tabContent}
+          </div>
+        ) : (
+          this.renderAlertsTable()
+        )}
+
         {isJsonModalOpen && (
           <EuiOverlayMask>
             <EuiModal onClose={this.closeJsonModal} style={{ padding: '5px 30px' }}>

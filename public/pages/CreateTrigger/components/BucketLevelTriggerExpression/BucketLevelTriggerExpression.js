@@ -13,19 +13,9 @@ import {
   EuiFormRow,
   EuiSelect,
 } from '@elastic/eui';
+import { AND_OR_CONDITION_OPTIONS, THRESHOLD_ENUM_OPTIONS } from '../../utils/constants';
 
 export const Expressions = { THRESHOLD: 'THRESHOLD' };
-
-const THRESHOLD_ENUM_OPTIONS = [
-  { value: 'ABOVE', text: 'IS ABOVE' },
-  { value: 'BELOW', text: 'IS BELOW' },
-  { value: 'EXACTLY', text: 'IS EXACTLY' },
-];
-
-const AND_OR_CONDITION_OPTIONS = [
-  { value: 'AND', text: 'AND' },
-  { value: 'OR', text: 'OR' },
-];
 
 const GUTTER_WIDTH = 16;
 const AND_OR_FIELD_WIDTH = 90;

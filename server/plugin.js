@@ -11,8 +11,9 @@ import {
   OpensearchService,
   MonitorService,
   AnomalyDetectorService,
+  FindingService,
 } from './services';
-import { alerts, destinations, opensearch, monitors, detectors } from '../server/routes';
+import { alerts, destinations, opensearch, monitors, detectors, findings } from '../server/routes';
 
 export class AlertingPlugin {
   constructor(initializerContext) {
@@ -34,12 +35,14 @@ export class AlertingPlugin {
     const monitorService = new MonitorService(alertingESClient);
     const destinationsService = new DestinationsService(alertingESClient);
     const anomalyDetectorService = new AnomalyDetectorService(adESClient);
+    const findingService = new FindingService(alertingESClient);
     const services = {
       alertService,
       destinationsService,
       opensearchService,
       monitorService,
       anomalyDetectorService,
+      findingService,
     };
 
     // Create router
@@ -50,6 +53,7 @@ export class AlertingPlugin {
     opensearch(services, router);
     monitors(services, router);
     detectors(services, router);
+    findings(services, router);
 
     return {};
   }

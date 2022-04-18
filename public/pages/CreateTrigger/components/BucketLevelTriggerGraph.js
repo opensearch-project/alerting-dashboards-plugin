@@ -5,11 +5,9 @@
 
 import React from 'react';
 import BucketLevelTriggerExpression from './BucketLevelTriggerExpression';
-import {
-  DEFAULT_AND_OR_CONDITION,
-  DEFAULT_METRIC_AGGREGATION,
-} from '../containers/DefineBucketLevelTrigger/DefineBucketLevelTrigger';
+import { DEFAULT_METRIC_AGGREGATION } from '../containers/DefineBucketLevelTrigger/DefineBucketLevelTrigger';
 import _ from 'lodash';
+import { DEFAULT_AND_OR_CONDITION } from '../utils/constants';
 
 const BucketLevelTriggerGraph = ({
   arrayHelpers,

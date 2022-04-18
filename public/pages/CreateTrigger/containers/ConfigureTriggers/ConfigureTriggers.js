@@ -15,10 +15,11 @@ import DefineTrigger from '../DefineTrigger';
 import { MONITOR_TYPE, SEARCH_TYPE } from '../../../../utils/constants';
 import { getPathsPerDataType } from '../../../CreateMonitor/containers/DefineMonitor/utils/mappings';
 import monitorToFormik from '../../../CreateMonitor/containers/CreateMonitor/utils/monitorToFormik';
-import { buildSearchRequest } from '../../../CreateMonitor/containers/DefineMonitor/utils/searchRequests';
+import { buildRequest } from '../../../CreateMonitor/containers/DefineMonitor/utils/searchRequests';
 import { backendErrorNotification, inputLimitText } from '../../../../utils/helpers';
 import moment from 'moment';
 import { formikToTrigger } from '../CreateTrigger/utils/formikToTrigger';
+import DefineDocumentLevelTrigger from '../DefineDocumentLevelTrigger/DefineDocumentLevelTrigger';
 import {
   buildClusterMetricsRequest,
   canExecuteClusterMetricsMonitor,
@@ -133,7 +134,7 @@ class ConfigureTriggers extends React.Component {
     switch (searchType) {
       case SEARCH_TYPE.QUERY:
       case SEARCH_TYPE.GRAPH:
-        const searchRequest = buildSearchRequest(formikValues);
+        const searchRequest = buildRequest(formikValues);
         _.set(monitorToExecute, 'inputs[0].search', searchRequest);
         break;
       case SEARCH_TYPE.CLUSTER_METRICS:
@@ -201,7 +202,41 @@ class ConfigureTriggers extends React.Component {
     };
   };
 
-  renderTriggers = (triggerArrayHelpers) => {
+  renderDefineTrigger = (triggerArrayHelpers, index) => {
+    const {
+      edit,
+      monitor,
+      monitorValues,
+      notifications,
+      setFlyout,
+      triggers,
+      triggerValues,
+      isDarkMode,
+      httpClient,
+    } = this.props;
+
+    const { executeResponse } = this.state;
+    return (
+      <DefineTrigger
+        edit={edit}
+        triggerArrayHelpers={triggerArrayHelpers}
+        context={this.getTriggerContext(executeResponse, monitor, triggerValues)}
+        executeResponse={executeResponse}
+        monitor={monitor}
+        monitorValues={monitorValues}
+        onRun={this.onRunExecute}
+        setFlyout={setFlyout}
+        triggers={triggers}
+        triggerValues={triggerValues}
+        isDarkMode={isDarkMode}
+        triggerIndex={index}
+        httpClient={httpClient}
+        notifications={notifications}
+      />
+    );
+  };
+
+  renderDefineBucketLevelTrigger = (triggerArrayHelpers, index) => {
     const {
       edit,
       monitor,
@@ -213,53 +248,89 @@ class ConfigureTriggers extends React.Component {
       httpClient,
       notifications,
     } = this.props;
-    const { dataTypes, executeResponse, isBucketLevelMonitor, triggerEmptyPrompt } = this.state;
+    const { dataTypes, executeResponse } = this.state;
+    return (
+      <DefineBucketLevelTrigger
+        edit={edit}
+        triggerArrayHelpers={triggerArrayHelpers}
+        context={this.getTriggerContext(executeResponse, monitor, triggerValues)}
+        executeResponse={executeResponse}
+        monitor={monitor}
+        monitorValues={monitorValues}
+        onRun={this.onRunExecute}
+        setFlyout={setFlyout}
+        triggers={triggers}
+        triggerValues={triggerValues}
+        isDarkMode={isDarkMode}
+        dataTypes={dataTypes}
+        triggerIndex={index}
+        httpClient={httpClient}
+        notifications={notifications}
+      />
+    );
+  };
+
+  renderDefineDocumentLevelTrigger = (triggerArrayHelpers, index) => {
+    const {
+      edit,
+      monitor,
+      monitorValues,
+      setFlyout,
+      triggers,
+      triggerValues,
+      isDarkMode,
+      httpClient,
+      notifications,
+    } = this.props;
+    const { dataTypes, executeResponse } = this.state;
+    return (
+      <DefineDocumentLevelTrigger
+        edit={edit}
+        triggerArrayHelpers={triggerArrayHelpers}
+        context={this.getTriggerContext(executeResponse, monitor, triggerValues)}
+        executeResponse={executeResponse}
+        monitor={monitor}
+        monitorValues={monitorValues}
+        onRun={this.onRunExecute}
+        setFlyout={setFlyout}
+        triggers={triggers}
+        triggerValues={triggerValues}
+        isDarkMode={isDarkMode}
+        dataTypes={dataTypes}
+        triggerIndex={index}
+        httpClient={httpClient}
+        notifications={notifications}
+      />
+    );
+  };
+
+  renderTriggers = (triggerArrayHelpers) => {
+    const { monitorValues, triggerValues } = this.props;
     const hasTriggers = !_.isEmpty(_.get(triggerValues, 'triggerDefinitions'));
-    return hasTriggers
-      ? triggerValues.triggerDefinitions.map((trigger, index) => {
-          return (
-            <div key={index}>
-              {isBucketLevelMonitor ? (
-                <DefineBucketLevelTrigger
-                  edit={edit}
-                  triggerArrayHelpers={triggerArrayHelpers}
-                  context={this.getTriggerContext(executeResponse, monitor, triggerValues)}
-                  executeResponse={executeResponse}
-                  monitor={monitor}
-                  monitorValues={monitorValues}
-                  onRun={this.onRunExecute}
-                  setFlyout={setFlyout}
-                  triggers={triggers}
-                  triggerValues={triggerValues}
-                  isDarkMode={isDarkMode}
-                  dataTypes={dataTypes}
-                  triggerIndex={index}
-                  httpClient={httpClient}
-                  notifications={notifications}
-                />
-              ) : (
-                <DefineTrigger
-                  edit={edit}
-                  triggerArrayHelpers={triggerArrayHelpers}
-                  context={this.getTriggerContext(executeResponse, monitor, triggerValues)}
-                  executeResponse={executeResponse}
-                  monitor={monitor}
-                  monitorValues={monitorValues}
-                  onRun={this.onRunExecute}
-                  setFlyout={setFlyout}
-                  triggers={triggers}
-                  triggerValues={triggerValues}
-                  isDarkMode={isDarkMode}
-                  triggerIndex={index}
-                  httpClient={httpClient}
-                  notifications={notifications}
-                />
-              )}
-              <EuiHorizontalRule margin={'s'} />
-            </div>
-          );
-        })
-      : triggerEmptyPrompt;
+
+    const triggerContent = (arrayHelpers, index) => {
+      switch (monitorValues.monitor_type) {
+        case MONITOR_TYPE.BUCKET_LEVEL:
+          return this.renderDefineBucketLevelTrigger(arrayHelpers, index);
+        case MONITOR_TYPE.DOC_LEVEL:
+          return this.renderDefineDocumentLevelTrigger(arrayHelpers, index);
+        default:
+          return this.renderDefineTrigger(arrayHelpers, index);
+      }
+    };
+
+    return hasTriggers ? (
+      triggerValues.triggerDefinitions.map((trigger, index) => {
+        return (
+          <div key={index}>
+            {triggerContent(triggerArrayHelpers, index)}
+            <EuiHorizontalRule margin={'s'} />
+          </div>
+        );
+      })
+    ) : (
+      <TriggerEmptyPrompt arrayHelpers={triggerArrayHelpers} />
+    );
   };
 
   render() {

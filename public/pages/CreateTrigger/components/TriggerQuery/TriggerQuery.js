@@ -30,8 +30,11 @@ export const getExecuteMessage = (response) => {
   if (!triggerId) return 'No trigger results';
   const executeResults = _.get(triggerResults, `${triggerId}`);
   if (!executeResults) return 'No execute results';
-  const { error, triggered } = executeResults;
-  return error || `${triggered}`;
+  const { error, triggered, triggeredDocs } = executeResults;
+  if (!_.isNull(error) && !_.isEmpty(error)) return error;
+  if (!_.isNull(triggered) && !_.isEmpty(triggered)) return `${triggered}`;
+  if (!_.isNull(triggeredDocs) && !_.isEmpty(triggeredDocs))
+    return JSON.stringify(triggeredDocs, null, 4);
 };
 
 const TriggerQuery = ({

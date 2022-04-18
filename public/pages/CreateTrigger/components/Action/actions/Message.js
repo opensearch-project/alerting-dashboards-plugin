@@ -352,7 +352,16 @@ export default function Message(
             </EuiFlexItem>
           </EuiFlexGroup>
         </EuiFormRow>
-      ) : null}
+      ) : (
+        <EuiFormRow
+          label={<span style={{ color: '#343741' }}>Perform action</span>}
+          style={{ maxWidth: '100%' }}
+        >
+          <EuiText color={'subdued'} size={'xs'}>
+            Per monitor execution
+          </EuiText>
+        </EuiFormRow>
+      )}
 
       {actionExecutionScopeId !== NOTIFY_OPTIONS_VALUES.PER_EXECUTION ? (
         <EuiFormRow label={'Throttling'} style={{ paddingBottom: '10px', maxWidth: '100%' }}>

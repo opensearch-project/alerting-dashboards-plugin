@@ -4,6 +4,7 @@
  */
 
 import React, { Component, Fragment } from 'react';
+import moment from 'moment';
 import _ from 'lodash';
 import PropTypes from 'prop-types';
 import { EuiSpacer, EuiButton, EuiCallOut, EuiAccordion } from '@elastic/eui';
@@ -14,7 +15,7 @@ import MonitorExpressions from '../../components/MonitorExpressions';
 import QueryPerformance from '../../components/QueryPerformance';
 import { formikToMonitor } from '../CreateMonitor/utils/formikToMonitor';
 import { getPathsPerDataType } from './utils/mappings';
-import { buildSearchRequest } from './utils/searchRequests';
+import { buildRequest } from './utils/searchRequests';
 import { SEARCH_TYPE, OS_AD_PLUGIN, MONITOR_TYPE } from '../../../../utils/constants';
 import { backendErrorNotification } from '../../../../utils/helpers';
 import DataSource from '../DataSource';
@@ -26,6 +27,8 @@ import {
 import ClusterMetricsMonitor from '../../components/ClusterMetricsMonitor';
 import { FORMIK_INITIAL_VALUES } from '../CreateMonitor/utils/constants';
 import { API_TYPES } from '../../components/ClusterMetricsMonitor/utils/clusterMetricsMonitorConstants';
+import ConfigureDocumentLevelQueries from '../../components/DocumentLevelMonitorQueries/ConfigureDocumentLevelQueries';
+import FindingsDashboard from '../../../Dashboard/containers/FindingsDashboard';
 
 function renderEmptyMessage(message) {
   return (
@@ -86,7 +89,7 @@ class DefineMonitor extends Component {
     const hasTimeField = !!timeField;
     if (isGraph && hasIndices) {
       this.onQueryMappings();
-      if (hasTimeField) this.onRunQuery();
+      if (hasTimeField || !this.requiresTimeField()) this.onRunQuery();
     }
     if (searchType === SEARCH_TYPE.CLUSTER_METRICS) this.getSupportedApiList();
   }
@@ -102,6 +105,7 @@ class DefineMonitor extends Component {
       bucketValue: prevBucketValue,
       bucketUnitOfTime: prevBucketUnitOfTime,
       where: prevWhere,
+      queries: prevQueries,
     } = prevProps.values;
     const {
       searchType,
@@ -113,6 +117,7 @@ class DefineMonitor extends Component {
       bucketValue,
       bucketUnitOfTime,
       where,
+      queries,
     } = this.props.values;
     const isGraph = searchType === SEARCH_TYPE.GRAPH;
     const hasIndices = !!index.length;
@@ -127,16 +132,20 @@ class DefineMonitor extends Component {
       if (wasQuery || diffIndices) {
         this.onQueryMappings();
       }
-      // If there is a timeField selected, then we want to run the query if
-      // a) previous query type was query (to get first run executed)
-      // b) different indices, to get new data
-      // c) different time fields, to aggregate on new data/axis
-      const diffTimeFields = prevTimeField !== timeField;
+
       const hasTimeField = !!timeField;
-      const wasQueryType =
-        prevMonitorType === MONITOR_TYPE.QUERY_LEVEL && monitor_type === MONITOR_TYPE.BUCKET_LEVEL;
-      if (hasTimeField) {
-        if (wasQuery || diffIndices || diffTimeFields || wasQueryType) this.onRunQuery();
+      if (hasTimeField || !this.requiresTimeField()) {
+        const diffQueries = prevQueries !== queries;
+        // If there is a timeField selected, then we want to run the query if
+        // a) previous query type was query (to get first run executed)
+        // b) different indices, to get new data
+        // c) different time fields, to aggregate on new data/axis
+        const diffTimeFields = prevTimeField !== timeField;
+        const wasQueryType =
+          prevMonitorType === MONITOR_TYPE.QUERY_LEVEL &&
+          monitor_type === MONITOR_TYPE.BUCKET_LEVEL;
+        if (wasQuery || diffIndices || diffTimeFields || wasQueryType || diffQueries)
+          this.onRunQuery();
       }
     }
     const groupByCleared = prevGroupBy && !groupBy;
@@ -154,6 +163,23 @@ class DefineMonitor extends Component {
     if (prevSearchType !== searchType || prevMonitorType !== monitor_type || groupByCleared) {
       this.resetResponse();
       if (searchType === SEARCH_TYPE.CLUSTER_METRICS) this.getSupportedApiList();
+    }
+  }
+
+  requiresTimeField() {
+    const {
+      values: { monitor_type, searchType },
+    } = this.props;
+    if (searchType !== SEARCH_TYPE.GRAPH) return false;
+    switch (monitor_type) {
+      case MONITOR_TYPE.BUCKET_LEVEL:
+        return true;
+      case MONITOR_TYPE.CLUSTER_METRICS:
+        return false;
+      case MONITOR_TYPE.DOC_LEVEL:
+        return false;
+      default:
+        return true;
     }
   }
 
@@ -197,15 +223,45 @@ class DefineMonitor extends Component {
   };
 
   renderGraph() {
-    const { errors, values } = this.props;
-    const { response, performanceResponse, formikSnapshot } = this.state;
+    const { errors, history, httpClient, location, notifications, values } = this.props;
+    const { response, performanceResponse, formikSnapshot, dataTypes } = this.state;
     const aggregations = _.get(values, 'aggregations');
-    const isBucketLevel = values.monitor_type === MONITOR_TYPE.BUCKET_LEVEL;
+
+    const monitorExpressions = () => {
+      switch (values.monitor_type) {
+        case MONITOR_TYPE.DOC_LEVEL:
+          return <ConfigureDocumentLevelQueries errors={errors} dataTypes={dataTypes} />;
+        default:
+          return <MonitorExpressions errors={errors} dataTypes={dataTypes} />;
+      }
+    };
+
+    const previewContent = () => {
+      switch (values.monitor_type) {
+        case MONITOR_TYPE.BUCKET_LEVEL:
+          return this.getBucketMonitorGraphs(aggregations, formikSnapshot, response);
+        case MONITOR_TYPE.DOC_LEVEL:
+          const { index, queries } = values;
+          return _.isEmpty(response) ? (
+            renderEmptyMessage('Loading findings...')
+          ) : (
+            <FindingsDashboard
+              isPreview={true}
+              index={index[0].label}
+              queries={queries}
+              previewResponse={response}
+              httpClient={httpClient}
+            />
+          );
+        default:
+          return <VisualGraph values={formikSnapshot} response={response} />;
+      }
+    };
 
     return (
       <Fragment>
         <EuiSpacer size="s" />
-        <MonitorExpressions errors={errors} dataTypes={this.state.dataTypes} />
+        {monitorExpressions()}
         <EuiSpacer size="xl" />
 
         <EuiAccordion
@@ -216,13 +272,11 @@ class DefineMonitor extends Component {
           <QueryPerformance response={performanceResponse} />
           <EuiSpacer size="m" />
 
-          {errors.where ? (
-            renderEmptyMessage('Invalid input in data filter. Remove data filter or adjust filter ')
-          ) : isBucketLevel ? (
-            this.getBucketMonitorGraphs(aggregations, formikSnapshot, response)
-          ) : (
-            <VisualGraph values={formikSnapshot} response={response} />
-          )}
+          {errors.where
+            ? renderEmptyMessage(
+                'Invalid input in data filter. Remove data filter or adjust filter '
+              )
+            : previewContent()}
         </EuiAccordion>
         <EuiSpacer size="m" />
       </Fragment>
@@ -238,7 +292,7 @@ class DefineMonitor extends Component {
     let requests;
     switch (searchType) {
       case SEARCH_TYPE.QUERY:
-        requests = [buildSearchRequest(values)];
+        requests = [buildRequest(values)];
         break;
       case SEARCH_TYPE.GRAPH:
         // TODO: Might need to check if groupBy is defined if monitor_type === Graph, and prevent onRunQuery() if no group by defined to avoid errors.
@@ -246,14 +300,15 @@ class DefineMonitor extends Component {
         // 1. The actual query that will be saved on the monitor, to get accurate query performance stats
         // 2. The UI generated query that gets [BUCKET_COUNT] times the aggregated buckets to show past history of query
         // If the query is an extraction query, we can use the same query for results and query performance
-        requests = [buildSearchRequest(values)];
-        requests.push(buildSearchRequest(values, false));
+        requests = [buildRequest(values)];
+        requests.push(buildRequest(values, false));
         break;
       case SEARCH_TYPE.CLUSTER_METRICS:
         requests = [buildClusterMetricsRequest(values)];
         break;
     }
 
+    const startTime = moment();
     try {
       const promises = requests.map((request) => {
         // Fill in monitor name in case it's empty (in create workflow)
@@ -266,7 +321,7 @@ class DefineMonitor extends Component {
         switch (searchType) {
           case SEARCH_TYPE.QUERY:
           case SEARCH_TYPE.GRAPH:
-            _.set(monitor, 'inputs[0].search', request);
+            _.set(monitor, 'inputs[0]', request);
             break;
           case SEARCH_TYPE.CLUSTER_METRICS:
             _.set(monitor, 'inputs[0].uri', request);
@@ -283,12 +338,23 @@ class DefineMonitor extends Component {
       const [queryResponse, optionalResponse] = await Promise.all(promises);
 
       if (queryResponse.ok) {
+        const endTime = moment();
+        const duration = moment.duration(endTime.diff(startTime)).milliseconds();
         const response = _.get(queryResponse.resp, 'input_results.results[0]');
         // If there is an optionalResponse use it's results, otherwise use the original response
         const performanceResponse = optionalResponse
           ? _.get(optionalResponse, 'resp.input_results.results[0]', null)
           : response;
-        this.setState({ response, formikSnapshot, performanceResponse });
+        this.setState({
+          response,
+          formikSnapshot,
+          // TODO FIXME: Doc level backend monitor run results don't include duration metric. Using this for now.
+          //  This returns a much longer duration than other monitors, though.
+          performanceResponse:
+            values.monitor_type === MONITOR_TYPE.DOC_LEVEL
+              ? { ...performanceResponse, took: duration }
+              : performanceResponse,
+        });
       } else {
         console.error('There was an error running the query', queryResponse.resp);
         backendErrorNotification(notifications, 'run', 'query', queryResponse.resp);
@@ -336,11 +402,13 @@ class DefineMonitor extends Component {
   renderVisualMonitor() {
     const { values } = this.props;
     const { index, timeField } = values;
-    let content = null;
+    let content;
+    const supportsTimeField = values.monitor_type !== MONITOR_TYPE.DOC_LEVEL;
     if (index.length) {
-      content = timeField
-        ? this.renderGraph()
-        : renderEmptyMessage('You must specify a time field.');
+      content =
+        _.isEmpty(timeField) && supportsTimeField
+          ? renderEmptyMessage('You must specify a time field.')
+          : this.renderGraph();
     } else {
       content = renderEmptyMessage('You must specify an index.');
     }
@@ -527,7 +595,7 @@ class DefineMonitor extends Component {
             ? [
                 <EuiCallOut
                   color="warning"
-                  title="Anomaly detector plugin is not installed on Opensearch, This monitor will not functional properly."
+                  title="Anomaly detector plugin is not installed on OpenSearch, This monitor will not functional properly."
                   iconType="help"
                   size="s"
                 />,
