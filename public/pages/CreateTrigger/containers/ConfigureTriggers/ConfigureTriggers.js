@@ -213,6 +213,8 @@ class ConfigureTriggers extends React.Component {
       triggerValues,
       isDarkMode,
       httpClient,
+      notificationService,
+      plugins,
     } = this.props;
 
     const { executeResponse } = this.state;
@@ -232,6 +234,8 @@ class ConfigureTriggers extends React.Component {
         triggerIndex={index}
         httpClient={httpClient}
         notifications={notifications}
+        notificationService={notificationService}
+        plugins={plugins}
       />
     );
   };
@@ -247,6 +251,8 @@ class ConfigureTriggers extends React.Component {
       isDarkMode,
       httpClient,
       notifications,
+      notificationService,
+      plugins,
     } = this.props;
     const { dataTypes, executeResponse } = this.state;
     return (
@@ -266,6 +272,8 @@ class ConfigureTriggers extends React.Component {
         triggerIndex={index}
         httpClient={httpClient}
         notifications={notifications}
+        notificationService={notificationService}
+        plugins={plugins}
       />
     );
   };
@@ -281,6 +289,8 @@ class ConfigureTriggers extends React.Component {
       isDarkMode,
       httpClient,
       notifications,
+      notificationService,
+      plugins,
     } = this.props;
     const { dataTypes, executeResponse } = this.state;
     return (
@@ -300,6 +310,8 @@ class ConfigureTriggers extends React.Component {
         triggerIndex={index}
         httpClient={httpClient}
         notifications={notifications}
+        notificationService={notificationService}
+        plugins={plugins}
       />
     );
   };

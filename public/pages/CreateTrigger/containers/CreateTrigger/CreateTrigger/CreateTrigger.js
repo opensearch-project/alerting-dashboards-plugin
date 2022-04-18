@@ -280,7 +280,16 @@ export default class CreateTrigger extends Component {
   }
 
   render() {
-    const { monitor, onCloseTrigger, setFlyout, edit, httpClient, notifications } = this.props;
+    const {
+      monitor,
+      onCloseTrigger,
+      setFlyout,
+      edit,
+      httpClient,
+      notifications,
+      notificationService,
+      plugins,
+    } = this.props;
     const { dataTypes, initialValues, executeResponse } = this.state;
     const isBucketLevelMonitor = _.get(monitor, 'monitor_type') === MONITOR_TYPE.BUCKET_LEVEL;
 
@@ -313,6 +322,8 @@ export default class CreateTrigger extends Component {
                       openExpression={this.openExpression}
                       onMadeChanges={this.onMadeChanges}
                       dataTypes={dataTypes}
+                      notificationService={notificationService}
+                      plugins={plugins}
                     />
                   )}
                 </FieldArray>
@@ -326,6 +337,8 @@ export default class CreateTrigger extends Component {
                   triggers={monitor.triggers}
                   triggerValues={values}
                   isDarkMode={this.props.isDarkMode}
+                  notificationService={notificationService}
+                  plugins={plugins}
                 />
               )}
               <EuiSpacer />
@@ -338,6 +351,8 @@ export default class CreateTrigger extends Component {
                     setFlyout={setFlyout}
                     values={values}
                     notifications={notifications}
+                    notificationService={notificationService}
+                    plugins={plugins}
                   />
                 )}
               </FieldArray>
