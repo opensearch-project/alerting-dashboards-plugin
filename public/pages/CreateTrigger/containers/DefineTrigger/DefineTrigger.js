@@ -201,7 +201,7 @@ class DefineTrigger extends Component {
       <EuiAccordion
         id={triggerName}
         buttonContent={
-          <EuiTitle size={'s'}>
+          <EuiTitle size={'s'} data-test-subj={`${fieldPath}_triggerAccordion`}>
             <h1>{_.isEmpty(triggerName) ? DEFAULT_TRIGGER_NAME : triggerName}</h1>
           </EuiTitle>
         }

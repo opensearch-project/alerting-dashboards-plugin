@@ -22,7 +22,6 @@ class TriggerExpressions extends Component {
 
   render() {
     const { label, keyFieldName, valueFieldName } = this.props;
-
     return (
       <EuiFormRow label={label} style={{ width: '390px' }}>
         <EuiFlexGroup alignItems={'flexStart'} gutterSize={'m'}>
@@ -33,7 +32,11 @@ class TriggerExpressions extends Component {
                   isInvalid={touched.thresholdEnum && !!errors.thresholdEnum}
                   error={errors.thresholdEnum}
                 >
-                  <EuiSelect options={THRESHOLD_ENUM_OPTIONS} {...rest} />
+                  <EuiSelect
+                    options={THRESHOLD_ENUM_OPTIONS}
+                    data-test-subj={`${keyFieldName}_conditionEnumField`}
+                    {...rest}
+                  />
                 </EuiFormRow>
               )}
             </Field>
@@ -46,7 +49,10 @@ class TriggerExpressions extends Component {
                   isInvalid={touched.thresholdValue && !!errors.thresholdValue}
                   error={errors.thresholdValue}
                 >
-                  <EuiFieldNumber {...field} />
+                  <EuiFieldNumber
+                    data-test-subj={`${valueFieldName}_conditionValueField`}
+                    {...field}
+                  />
                 </EuiFormRow>
               )}
             </Field>
