@@ -28,12 +28,12 @@ export const getExecuteMessage = (response) => {
   if (!triggerResults) return 'No trigger results';
   const triggerId = Object.keys(triggerResults)[0];
   if (!triggerId) return 'No trigger results';
-  const executeResults = _.get(triggerResults, `${triggerId}`);
+  const executeResults = _.get(triggerResults, triggerId);
   if (!executeResults) return 'No execute results';
   const { error, triggered, triggeredDocs } = executeResults;
-  if (!_.isNull(error) && !_.isEmpty(error)) return error;
-  if (!_.isNull(triggered) && !_.isEmpty(triggered)) return `${triggered}`;
-  if (!_.isNull(triggeredDocs) && !_.isEmpty(triggeredDocs))
+  if (!_.isNull(error) && !_.isUndefined(error)) return error;
+  if (!_.isNull(triggered) && !_.isUndefined(triggered)) return `${triggered}`;
+  if (!_.isNull(triggeredDocs) && !_.isUndefined(triggeredDocs))
     return JSON.stringify(triggeredDocs, null, 4);
 };
 

@@ -695,7 +695,8 @@ describe('Dashboard/utils/helpers', () => {
       });
     });
     describe('when perAlertView is true', () => {
-      const perAlertView = test('when defaultSize is undefined', () => {
+      const perAlertView = true;
+      test('when defaultSize is undefined', () => {
         const defaultSize = undefined;
         expect(getInitialSize(perAlertView, defaultSize)).toEqual(
           DEFAULT_GET_ALERTS_QUERY_PARAMS.size
