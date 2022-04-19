@@ -26,6 +26,7 @@ import { getAllowList } from '../../utils/helpers';
 import { DESTINATION_TYPE } from '../../utils/constants';
 import { backendErrorNotification } from '../../../../utils/helpers';
 import NotificationsInfoCallOut from '../../components/NotificationsInfoCallOut';
+import NotificationsCallOut from '../../../CreateTrigger/components/NotificationsCallOut';
 
 class DestinationsList extends React.Component {
   constructor(props) {
@@ -310,6 +311,7 @@ class DestinationsList extends React.Component {
           />
         ) : null}
         <NotificationsInfoCallOut hasNotificationPlugin={hasNotificationPlugin} />
+        {!hasNotificationPlugin && <NotificationsCallOut />}
         <ContentPanel
           bodyStyles={{ padding: 'initial' }}
           title="Destinations (deprecated)"
