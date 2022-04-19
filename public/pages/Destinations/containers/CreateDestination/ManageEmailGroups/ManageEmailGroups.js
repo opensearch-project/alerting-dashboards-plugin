@@ -7,7 +7,6 @@ import React from 'react';
 import _ from 'lodash';
 import { Formik, FieldArray } from 'formik';
 import {
-  EuiButton,
   EuiButtonEmpty,
   EuiFlexGroup,
   EuiFlexItem,
@@ -22,7 +21,6 @@ import {
 } from '@elastic/eui';
 import PropTypes from 'prop-types';
 
-import AddEmailGroupButton from '../../../components/createDestinations/AddEmailGroupButton/AddEmailGroupButton';
 import EmailGroup from '../../../components/createDestinations/Email/EmailGroup';
 import EmailGroupEmptyPrompt from '../../../components/createDestinations/EmailGroupEmptyPrompt';
 import { emailGroupToFormik } from './utils/helpers';
@@ -233,12 +231,9 @@ export default class ManageEmailGroups extends React.Component {
             <EuiSpacer className="accordion-separator" />
           </div>
         ))}
-        <div style={{ justifyContent: 'left' }}>
-          <AddEmailGroupButton arrayHelpers={arrayHelpers} />
-        </div>
       </div>
     ) : (
-      <EmailGroupEmptyPrompt arrayHelpers={arrayHelpers} />
+      <EmailGroupEmptyPrompt />
     );
   };
 
@@ -291,17 +286,7 @@ export default class ManageEmailGroups extends React.Component {
                   <EuiModalFooter>
                     <EuiFlexGroup alignItems="center" justifyContent="flexEnd">
                       <EuiFlexItem grow={false}>
-                        <EuiButtonEmpty onClick={onClickCancel}>Cancel</EuiButtonEmpty>
-                      </EuiFlexItem>
-                      <EuiFlexItem grow={false}>
-                        <EuiButton
-                          isDisabled={true}
-                          onClick={handleSubmit}
-                          isLoading={isSubmitting}
-                          fill
-                        >
-                          Save
-                        </EuiButton>
+                        <EuiButtonEmpty onClick={onClickCancel}>Close</EuiButtonEmpty>
                       </EuiFlexItem>
                     </EuiFlexGroup>
                   </EuiModalFooter>

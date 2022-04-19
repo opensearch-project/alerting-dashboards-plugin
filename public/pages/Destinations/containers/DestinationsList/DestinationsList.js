@@ -63,20 +63,11 @@ class DestinationsList extends React.Component {
         width: '35px',
         actions: [
           {
-            name: 'Edit',
-            description: 'Edit this destination.',
             // Editing Destinations is now disabled since Destinations are deprecated
             // and will automatically be migrated to Notifications Channels
-            enabled: false,
+            name: 'View',
+            description: 'View this destination.',
             onClick: this.handleEditDestination,
-          },
-          {
-            name: 'Delete',
-            description: 'Delete this destination.',
-            // Deleting Destinations is now disabled since Destinations are deprecated
-            // and will automatically be migrated to Notifications Channels
-            enabled: false,
-            onClick: this.handleDeleteAction,
           },
         ],
       },
