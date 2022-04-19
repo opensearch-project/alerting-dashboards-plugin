@@ -1,0 +1,1108 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Action renders with Notifications plugin installed 1`] = `
+<div>
+  <div
+    class="euiPanel euiPanel--paddingMedium"
+    styles="[object Object]"
+  >
+    <div
+      class="euiAccordion euiAccordion-isOpen accordion-action"
+    >
+      <div
+        class="euiAccordion__triggerWrapper"
+      >
+        <button
+          aria-expanded="true"
+          class="euiAccordion__button"
+          id="generated-id"
+          type="button"
+        >
+          <span
+            class="euiAccordion__iconWrapper"
+          >
+            <div>
+              EuiIconMock
+            </div>
+          </span>
+          <span
+            class="euiIEFlexWrapFix"
+          >
+            <div
+              class="euiText euiText--medium"
+            >
+              Notification
+            </div>
+          </span>
+        </button>
+        <div
+          class="euiAccordion__optionalAction"
+        >
+          <button
+            class="euiButton euiButton--danger euiButton--small"
+            type="button"
+          >
+            <span
+              class="euiButtonContent euiButton__content"
+            >
+              <span
+                class="euiButton__text"
+              >
+                Remove action
+              </span>
+            </span>
+          </button>
+        </div>
+      </div>
+      <div
+        class="euiAccordion__childWrapper"
+      >
+        <div>
+          <div
+            class="euiAccordion__padding--s"
+          >
+            <hr
+              class="euiHorizontalRule euiHorizontalRule--full euiHorizontalRule--marginSmall"
+            />
+            <div
+              style="padding-left:20px;padding-right:20px;padding-top:10px"
+            >
+              <div
+                class="euiFormRow"
+                id="testPathactions.0.name-form-row-row"
+              >
+                <div
+                  class="euiFormRow__labelWrapper"
+                >
+                  <label
+                    aria-invalid="false"
+                    class="euiFormLabel euiFormRow__label"
+                    for="testPathactions.0.name-form-row"
+                  >
+                    Action name
+                  </label>
+                </div>
+                <div
+                  class="euiFormRow__fieldWrapper"
+                >
+                  <div
+                    class="euiFormControlLayout"
+                  >
+                    <div
+                      class="euiFormControlLayout__childrenWrapper"
+                    >
+                      <input
+                        class="euiFieldText"
+                        name="testPathactions.0.name"
+                        placeholder="Enter action name"
+                        type="text"
+                      />
+                    </div>
+                  </div>
+                  <div
+                    class="euiFormHelpText euiFormRow__text"
+                    id="testPathactions.0.name-form-row-help"
+                  >
+                    Names can only contain letters, numbers, and special characters
+                  </div>
+                </div>
+              </div>
+              <div
+                class="euiSpacer euiSpacer--m"
+              />
+              <div>
+                <div
+                  class="euiFlexGroup euiFlexGroup--gutterLarge euiFlexGroup--directionRow euiFlexGroup--responsive euiFlexGroup--wrap"
+                >
+                  <div
+                    class="euiFlexItem"
+                    style="max-width:400px"
+                  >
+                    <div
+                      class="euiFormRow"
+                      id="testPathactions.0.destination_id-form-row-row"
+                    >
+                      <div
+                        class="euiFormRow__labelWrapper"
+                      >
+                        <label
+                          aria-invalid="false"
+                          class="euiFormLabel euiFormRow__label"
+                          for="testPathactions.0.destination_id-form-row"
+                        >
+                          Channels
+                        </label>
+                      </div>
+                      <div
+                        class="euiFormRow__fieldWrapper"
+                      >
+                        <div
+                          aria-expanded="false"
+                          aria-haspopup="listbox"
+                          class="euiComboBox"
+                          name="testPathactions.0.destination_id"
+                          role="combobox"
+                        >
+                          <div
+                            class="euiFormControlLayout"
+                          >
+                            <div
+                              class="euiFormControlLayout__childrenWrapper"
+                            >
+                              <div
+                                class="euiComboBox__inputWrap euiComboBox__inputWrap--noWrap"
+                                data-test-subj="comboBoxInput"
+                                tabindex="-1"
+                              >
+                                <p
+                                  class="euiComboBoxPlaceholder"
+                                >
+                                  Select channel to notify
+                                </p>
+                                <div
+                                  class="euiComboBox__input"
+                                  style="font-size:14px;display:inline-block"
+                                >
+                                  <input
+                                    aria-controls=""
+                                    data-test-subj="comboBoxSearchInput"
+                                    id="testPathactions.0.destination_id"
+                                    role="textbox"
+                                    style="box-sizing:content-box;width:1px"
+                                    value=""
+                                  />
+                                  <div
+                                    style="position:absolute;top:0;left:0;visibility:hidden;height:0;overflow:scroll;white-space:pre"
+                                  />
+                                </div>
+                              </div>
+                              <div
+                                class="euiFormControlLayoutIcons euiFormControlLayoutIcons--right"
+                              >
+                                <button
+                                  aria-label="Open list of options"
+                                  class="euiFormControlLayoutCustomIcon euiFormControlLayoutCustomIcon--clickable"
+                                  data-test-subj="comboBoxToggleListButton"
+                                  type="button"
+                                >
+                                  <div>
+                                    EuiIconMock
+                                  </div>
+                                </button>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div
+                    class="euiFlexItem euiFlexItem--flexGrowZero"
+                  >
+                    <div
+                      class="euiSpacer euiSpacer--l"
+                    />
+                    <button
+                      class="euiButton euiButton--primary"
+                      type="button"
+                    >
+                      <span
+                        class="euiButtonContent euiButtonContent--iconRight euiButton__content"
+                      >
+                        <div>
+                          EuiIconMock
+                        </div>
+                        <span
+                          class="euiButton__text"
+                        >
+                          Manage channels
+                        </span>
+                      </span>
+                    </button>
+                  </div>
+                </div>
+                <div
+                  class="euiSpacer euiSpacer--m"
+                />
+              </div>
+              <div>
+                <div
+                  class="euiFormRow"
+                  id="testPathactions.0.subject_template.source-form-row-row"
+                  style="max-width:100%"
+                >
+                  <div
+                    class="euiFormRow__labelWrapper"
+                  >
+                    <label
+                      aria-invalid="false"
+                      class="euiFormLabel euiFormRow__label"
+                      for="testPathactions.0.subject_template.source-form-row"
+                    >
+                      Message subject
+                    </label>
+                  </div>
+                  <div
+                    class="euiFormRow__fieldWrapper"
+                  >
+                    <div
+                      class="euiFormControlLayout euiFormControlLayout--fullWidth"
+                    >
+                      <div
+                        class="euiFormControlLayout__childrenWrapper"
+                      >
+                        <input
+                          class="euiFieldText euiFieldText--fullWidth"
+                          name="testPathactions.0.subject_template.source"
+                          placeholder="Enter a subject"
+                          type="text"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div
+                  class="euiFormRow"
+                  id="testPathactions.0.message_template.source-form-row-row"
+                  style="max-width:100%"
+                >
+                  <div
+                    class="euiFormRow__labelWrapper"
+                  >
+                    <label
+                      aria-invalid="false"
+                      class="euiFormLabel euiFormRow__label"
+                      for="testPathactions.0.message_template.source-form-row"
+                    >
+                      <div>
+                        <div
+                          class="euiText euiText--extraSmall"
+                          style="padding-bottom:0px;margin-bottom:0px"
+                        >
+                          <h4>
+                            Message
+                          </h4>
+                        </div>
+                        <div
+                          class="euiText euiText--extraSmall"
+                        >
+                          <div
+                            class="euiTextColor euiTextColor--subdued"
+                          >
+                            Embed variables in your message using Mustache templates. 
+                            <a
+                              class="euiLink euiLink--primary"
+                              href="https://mustache.github.io/mustache.5.html"
+                              rel="noopener noreferrer"
+                              target="_blank"
+                            >
+                              Learn more
+                              <div>
+                                EuiIconMock
+                              </div>
+                            </a>
+                          </div>
+                        </div>
+                      </div>
+                    </label>
+                  </div>
+                  <div
+                    class="euiFormRow__fieldWrapper"
+                  >
+                    <textarea
+                      class="euiTextArea euiTextArea--resizeVertical euiTextArea--fullWidth"
+                      name="testPathactions.0.message_template.source"
+                      placeholder="Can use mustache templates"
+                      rows="6"
+                    />
+                  </div>
+                </div>
+                <div
+                  class="euiFormRow"
+                  id="generated-id-row"
+                  style="max-width:100%"
+                >
+                  <div
+                    class="euiFormRow__fieldWrapper"
+                  >
+                    <div
+                      class="euiFlexGroup euiFlexGroup--gutterLarge euiFlexGroup--alignItemsFlexStart euiFlexGroup--justifyContentSpaceBetween euiFlexGroup--directionRow euiFlexGroup--responsive"
+                      id="generated-id"
+                    >
+                      <div
+                        class="euiFlexItem"
+                      >
+                        <div
+                          class="euiCheckbox"
+                        >
+                          <input
+                            class="euiCheckbox__input"
+                            id="testPathactions.0"
+                            type="checkbox"
+                          />
+                          <div
+                            class="euiCheckbox__square"
+                          />
+                          <label
+                            class="euiCheckbox__label"
+                            for="testPathactions.0"
+                          >
+                            Preview message
+                          </label>
+                        </div>
+                      </div>
+                      <div
+                        class="euiFlexItem euiFlexItem--flexGrowZero"
+                      >
+                        <div
+                          class="euiFlexGroup euiFlexGroup--gutterExtraSmall euiFlexGroup--alignItemsFlexEnd euiFlexGroup--directionColumn euiFlexGroup--responsive"
+                        >
+                          <div
+                            class="euiFlexItem euiFlexItem--flexGrowZero"
+                          >
+                            <button
+                              class="euiLink euiLink--primary"
+                              type="button"
+                            >
+                              <div
+                                class="euiText euiText--medium"
+                              >
+                                Send test message
+                              </div>
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div
+                  class="euiSpacer euiSpacer--m"
+                />
+                <div
+                  class="euiText euiText--medium"
+                >
+                  <h4>
+                    Action configuration
+                  </h4>
+                </div>
+                <div
+                  class="euiSpacer euiSpacer--m"
+                />
+                <div
+                  class="euiFlexItem"
+                >
+                  <div
+                    class="euiText euiText--extraSmall"
+                  >
+                    <strong>
+                      Perform action
+                    </strong>
+                    <div>
+                      Per monitor execution
+                    </div>
+                  </div>
+                </div>
+                <div
+                  class="euiFormRow"
+                  id="generated-id-row"
+                  style="padding-bottom:10px;max-width:100%"
+                >
+                  <div
+                    class="euiFormRow__labelWrapper"
+                  >
+                    <label
+                      class="euiFormLabel euiFormRow__label"
+                      for="generated-id"
+                    >
+                      Throttling
+                    </label>
+                  </div>
+                  <div
+                    class="euiFormRow__fieldWrapper"
+                  >
+                    <div
+                      class="euiFlexGroup euiFlexGroup--gutterLarge euiFlexGroup--directionColumn euiFlexGroup--responsive"
+                      id="generated-id"
+                    >
+                      <div
+                        class="euiFlexItem euiFlexItem--flexGrowZero"
+                        style="margin-bottom:0px"
+                      >
+                        <div
+                          class="euiCheckbox"
+                        >
+                          <input
+                            class="euiCheckbox__input"
+                            id="testPathactions.0.throttle_enabled"
+                            name="testPathactions.0.throttle_enabled"
+                            type="checkbox"
+                          />
+                          <div
+                            class="euiCheckbox__square"
+                          />
+                          <label
+                            class="euiCheckbox__label"
+                            for="testPathactions.0.throttle_enabled"
+                          >
+                            Enable action throttling
+                          </label>
+                        </div>
+                      </div>
+                      <div
+                        class="euiFlexGroup euiFlexGroup--gutterLarge euiFlexGroup--alignItemsCenter euiFlexGroup--directionRow euiFlexGroup--responsive"
+                        style="margin:0px;display:none"
+                      >
+                        <div
+                          class="euiFlexItem euiFlexItem--flexGrowZero"
+                          style="margin-right:0px"
+                        >
+                          <div
+                            class="euiFormRow"
+                            id="generated-id-row"
+                          >
+                            <div
+                              class="euiFormRow__labelWrapper"
+                            >
+                              <label
+                                class="euiFormLabel euiFormRow__label"
+                                for="generated-id"
+                              >
+                                Throttle actions to only trigger every
+                              </label>
+                            </div>
+                            <div
+                              class="euiFormRow__fieldWrapper"
+                            >
+                              <div
+                                class="euiFormRow"
+                                id="testPathactions.0.throttle.value-form-row-row"
+                              >
+                                <div
+                                  class="euiFormRow__fieldWrapper"
+                                >
+                                  <div
+                                    class="euiFormControlLayout euiFormControlLayout--group"
+                                  >
+                                    <div
+                                      class="euiFormControlLayout__childrenWrapper"
+                                    >
+                                      <input
+                                        class="euiFieldNumber euiFieldText euiFieldNumber--inGroup"
+                                        disabled=""
+                                        max="1440"
+                                        min="1"
+                                        name="testPathactions.0.throttle.value"
+                                        style="width:400px"
+                                        type="number"
+                                      />
+                                    </div>
+                                    <div
+                                      class="euiText euiText--medium euiFormControlLayout__append"
+                                      style="background-color:transparent;padding-left:4px"
+                                    >
+                                      minutes
+                                    </div>
+                                  </div>
+                                  <div
+                                    class="euiFormHelpText euiFormRow__text"
+                                    id="testPathactions.0.throttle.value-form-row-help"
+                                  >
+                                    Throttle value must be greater than 0 and less than 1440.
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`Action renders without Notifications plugin installed 1`] = `
+<div>
+  <div
+    class="euiPanel euiPanel--paddingMedium"
+    styles="[object Object]"
+  >
+    <div
+      class="euiAccordion euiAccordion-isOpen accordion-action"
+    >
+      <div
+        class="euiAccordion__triggerWrapper"
+      >
+        <button
+          aria-expanded="true"
+          class="euiAccordion__button"
+          id="generated-id"
+          type="button"
+        >
+          <span
+            class="euiAccordion__iconWrapper"
+          >
+            <div>
+              EuiIconMock
+            </div>
+          </span>
+          <span
+            class="euiIEFlexWrapFix"
+          >
+            <div
+              class="euiText euiText--medium"
+            >
+              Notification
+            </div>
+          </span>
+        </button>
+        <div
+          class="euiAccordion__optionalAction"
+        >
+          <button
+            class="euiButton euiButton--danger euiButton--small"
+            type="button"
+          >
+            <span
+              class="euiButtonContent euiButton__content"
+            >
+              <span
+                class="euiButton__text"
+              >
+                Remove action
+              </span>
+            </span>
+          </button>
+        </div>
+      </div>
+      <div
+        class="euiAccordion__childWrapper"
+      >
+        <div>
+          <div
+            class="euiAccordion__padding--s"
+          >
+            <hr
+              class="euiHorizontalRule euiHorizontalRule--full euiHorizontalRule--marginSmall"
+            />
+            <div
+              style="padding-left:20px;padding-right:20px;padding-top:10px"
+            >
+              <div
+                class="euiFormRow"
+                id="testPathactions.0.name-form-row-row"
+              >
+                <div
+                  class="euiFormRow__labelWrapper"
+                >
+                  <label
+                    aria-invalid="false"
+                    class="euiFormLabel euiFormRow__label"
+                    for="testPathactions.0.name-form-row"
+                  >
+                    Action name
+                  </label>
+                </div>
+                <div
+                  class="euiFormRow__fieldWrapper"
+                >
+                  <div
+                    class="euiFormControlLayout"
+                  >
+                    <div
+                      class="euiFormControlLayout__childrenWrapper"
+                    >
+                      <input
+                        class="euiFieldText"
+                        name="testPathactions.0.name"
+                        placeholder="Enter action name"
+                        type="text"
+                      />
+                    </div>
+                  </div>
+                  <div
+                    class="euiFormHelpText euiFormRow__text"
+                    id="testPathactions.0.name-form-row-help"
+                  >
+                    Names can only contain letters, numbers, and special characters
+                  </div>
+                </div>
+              </div>
+              <div
+                class="euiSpacer euiSpacer--m"
+              />
+              <div>
+                <div
+                  class="euiFlexGroup euiFlexGroup--gutterLarge euiFlexGroup--directionRow euiFlexGroup--responsive euiFlexGroup--wrap"
+                >
+                  <div
+                    class="euiFlexItem"
+                    style="max-width:400px"
+                  >
+                    <div
+                      class="euiFormRow"
+                      id="testPathactions.0.destination_id-form-row-row"
+                    >
+                      <div
+                        class="euiFormRow__labelWrapper"
+                      >
+                        <label
+                          aria-invalid="false"
+                          class="euiFormLabel euiFormRow__label"
+                          for="testPathactions.0.destination_id-form-row"
+                        >
+                          Channels
+                        </label>
+                      </div>
+                      <div
+                        class="euiFormRow__fieldWrapper"
+                      >
+                        <div
+                          aria-expanded="false"
+                          aria-haspopup="listbox"
+                          class="euiComboBox euiComboBox-isDisabled"
+                          name="testPathactions.0.destination_id"
+                          role="combobox"
+                        >
+                          <div
+                            class="euiFormControlLayout"
+                          >
+                            <div
+                              class="euiFormControlLayout__childrenWrapper"
+                            >
+                              <div
+                                class="euiComboBox__inputWrap euiComboBox__inputWrap--noWrap"
+                                data-test-subj="comboBoxInput"
+                                tabindex="-1"
+                              >
+                                <p
+                                  class="euiComboBoxPlaceholder"
+                                >
+                                  Select channel to notify
+                                </p>
+                                <div
+                                  class="euiComboBox__input"
+                                  style="font-size:14px;display:inline-block"
+                                >
+                                  <input
+                                    aria-controls=""
+                                    data-test-subj="comboBoxSearchInput"
+                                    disabled=""
+                                    id="testPathactions.0.destination_id"
+                                    role="textbox"
+                                    style="box-sizing:content-box;width:1px"
+                                    value=""
+                                  />
+                                  <div
+                                    style="position:absolute;top:0;left:0;visibility:hidden;height:0;overflow:scroll;white-space:pre"
+                                  />
+                                </div>
+                              </div>
+                              <div
+                                class="euiFormControlLayoutIcons euiFormControlLayoutIcons--right"
+                              >
+                                <button
+                                  aria-label="Open list of options"
+                                  class="euiFormControlLayoutCustomIcon euiFormControlLayoutCustomIcon--clickable"
+                                  data-test-subj="comboBoxToggleListButton"
+                                  disabled=""
+                                  type="button"
+                                >
+                                  <div>
+                                    EuiIconMock
+                                  </div>
+                                </button>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div
+                    class="euiFlexItem euiFlexItem--flexGrowZero"
+                  >
+                    <div
+                      class="euiSpacer euiSpacer--l"
+                    />
+                    <button
+                      class="euiButton euiButton--primary euiButton-isDisabled"
+                      disabled=""
+                      type="button"
+                    >
+                      <span
+                        class="euiButtonContent euiButtonContent--iconRight euiButton__content"
+                      >
+                        <div>
+                          EuiIconMock
+                        </div>
+                        <span
+                          class="euiButton__text"
+                        >
+                          Manage channels
+                        </span>
+                      </span>
+                    </button>
+                  </div>
+                </div>
+                <div
+                  class="euiSpacer euiSpacer--m"
+                />
+                <div>
+                  <div
+                    class="euiCallOut euiCallOut--danger"
+                  >
+                    <div
+                      class="euiCallOutHeader"
+                    >
+                      <div>
+                        EuiIconMock
+                      </div>
+                      <span
+                        class="euiCallOutHeader__title"
+                      >
+                        Notifications plugin is not installed
+                      </span>
+                    </div>
+                    <div
+                      class="euiText euiText--small"
+                    >
+                      <p>
+                        Install the notifications plugin in order to create and select channels to send out notifications. 
+                        <a
+                          class="euiLink euiLink--primary"
+                          href="#"
+                          rel="noreferrer"
+                        >
+                          Learn more
+                        </a>
+                      </p>
+                      <div>
+                        <a
+                          class="euiLink euiLink--primary"
+                          href="#"
+                          rel="noreferrer"
+                        >
+                          EuiIconMock
+                        </a>
+                      </div>
+                      .
+                      <p />
+                    </div>
+                  </div>
+                  <div
+                    class="euiSpacer euiSpacer--m"
+                  />
+                </div>
+              </div>
+              <div>
+                <div
+                  class="euiFormRow"
+                  id="testPathactions.0.subject_template.source-form-row-row"
+                  style="max-width:100%"
+                >
+                  <div
+                    class="euiFormRow__labelWrapper"
+                  >
+                    <label
+                      aria-invalid="false"
+                      class="euiFormLabel euiFormRow__label"
+                      for="testPathactions.0.subject_template.source-form-row"
+                    >
+                      Message subject
+                    </label>
+                  </div>
+                  <div
+                    class="euiFormRow__fieldWrapper"
+                  >
+                    <div
+                      class="euiFormControlLayout euiFormControlLayout--fullWidth"
+                    >
+                      <div
+                        class="euiFormControlLayout__childrenWrapper"
+                      >
+                        <input
+                          class="euiFieldText euiFieldText--fullWidth"
+                          name="testPathactions.0.subject_template.source"
+                          placeholder="Enter a subject"
+                          type="text"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div
+                  class="euiFormRow"
+                  id="testPathactions.0.message_template.source-form-row-row"
+                  style="max-width:100%"
+                >
+                  <div
+                    class="euiFormRow__labelWrapper"
+                  >
+                    <label
+                      aria-invalid="false"
+                      class="euiFormLabel euiFormRow__label"
+                      for="testPathactions.0.message_template.source-form-row"
+                    >
+                      <div>
+                        <div
+                          class="euiText euiText--extraSmall"
+                          style="padding-bottom:0px;margin-bottom:0px"
+                        >
+                          <h4>
+                            Message
+                          </h4>
+                        </div>
+                        <div
+                          class="euiText euiText--extraSmall"
+                        >
+                          <div
+                            class="euiTextColor euiTextColor--subdued"
+                          >
+                            Embed variables in your message using Mustache templates. 
+                            <a
+                              class="euiLink euiLink--primary"
+                              href="https://mustache.github.io/mustache.5.html"
+                              rel="noopener noreferrer"
+                              target="_blank"
+                            >
+                              Learn more
+                              <div>
+                                EuiIconMock
+                              </div>
+                            </a>
+                          </div>
+                        </div>
+                      </div>
+                    </label>
+                  </div>
+                  <div
+                    class="euiFormRow__fieldWrapper"
+                  >
+                    <textarea
+                      class="euiTextArea euiTextArea--resizeVertical euiTextArea--fullWidth"
+                      name="testPathactions.0.message_template.source"
+                      placeholder="Can use mustache templates"
+                      rows="6"
+                    />
+                  </div>
+                </div>
+                <div
+                  class="euiFormRow"
+                  id="generated-id-row"
+                  style="max-width:100%"
+                >
+                  <div
+                    class="euiFormRow__fieldWrapper"
+                  >
+                    <div
+                      class="euiFlexGroup euiFlexGroup--gutterLarge euiFlexGroup--alignItemsFlexStart euiFlexGroup--justifyContentSpaceBetween euiFlexGroup--directionRow euiFlexGroup--responsive"
+                      id="generated-id"
+                    >
+                      <div
+                        class="euiFlexItem"
+                      >
+                        <div
+                          class="euiCheckbox"
+                        >
+                          <input
+                            class="euiCheckbox__input"
+                            id="testPathactions.0"
+                            type="checkbox"
+                          />
+                          <div
+                            class="euiCheckbox__square"
+                          />
+                          <label
+                            class="euiCheckbox__label"
+                            for="testPathactions.0"
+                          >
+                            Preview message
+                          </label>
+                        </div>
+                      </div>
+                      <div
+                        class="euiFlexItem euiFlexItem--flexGrowZero"
+                      >
+                        <div
+                          class="euiFlexGroup euiFlexGroup--gutterExtraSmall euiFlexGroup--alignItemsFlexEnd euiFlexGroup--directionColumn euiFlexGroup--responsive"
+                        >
+                          <div
+                            class="euiFlexItem euiFlexItem--flexGrowZero"
+                          >
+                            <button
+                              class="euiLink euiLink--primary"
+                              type="button"
+                            >
+                              <div
+                                class="euiText euiText--medium"
+                              >
+                                Send test message
+                              </div>
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div
+                  class="euiSpacer euiSpacer--m"
+                />
+                <div
+                  class="euiText euiText--medium"
+                >
+                  <h4>
+                    Action configuration
+                  </h4>
+                </div>
+                <div
+                  class="euiSpacer euiSpacer--m"
+                />
+                <div
+                  class="euiFlexItem"
+                >
+                  <div
+                    class="euiText euiText--extraSmall"
+                  >
+                    <strong>
+                      Perform action
+                    </strong>
+                    <div>
+                      Per monitor execution
+                    </div>
+                  </div>
+                </div>
+                <div
+                  class="euiFormRow"
+                  id="generated-id-row"
+                  style="padding-bottom:10px;max-width:100%"
+                >
+                  <div
+                    class="euiFormRow__labelWrapper"
+                  >
+                    <label
+                      class="euiFormLabel euiFormRow__label"
+                      for="generated-id"
+                    >
+                      Throttling
+                    </label>
+                  </div>
+                  <div
+                    class="euiFormRow__fieldWrapper"
+                  >
+                    <div
+                      class="euiFlexGroup euiFlexGroup--gutterLarge euiFlexGroup--directionColumn euiFlexGroup--responsive"
+                      id="generated-id"
+                    >
+                      <div
+                        class="euiFlexItem euiFlexItem--flexGrowZero"
+                        style="margin-bottom:0px"
+                      >
+                        <div
+                          class="euiCheckbox"
+                        >
+                          <input
+                            class="euiCheckbox__input"
+                            id="testPathactions.0.throttle_enabled"
+                            name="testPathactions.0.throttle_enabled"
+                            type="checkbox"
+                          />
+                          <div
+                            class="euiCheckbox__square"
+                          />
+                          <label
+                            class="euiCheckbox__label"
+                            for="testPathactions.0.throttle_enabled"
+                          >
+                            Enable action throttling
+                          </label>
+                        </div>
+                      </div>
+                      <div
+                        class="euiFlexGroup euiFlexGroup--gutterLarge euiFlexGroup--alignItemsCenter euiFlexGroup--directionRow euiFlexGroup--responsive"
+                        style="margin:0px;display:none"
+                      >
+                        <div
+                          class="euiFlexItem euiFlexItem--flexGrowZero"
+                          style="margin-right:0px"
+                        >
+                          <div
+                            class="euiFormRow"
+                            id="generated-id-row"
+                          >
+                            <div
+                              class="euiFormRow__labelWrapper"
+                            >
+                              <label
+                                class="euiFormLabel euiFormRow__label"
+                                for="generated-id"
+                              >
+                                Throttle actions to only trigger every
+                              </label>
+                            </div>
+                            <div
+                              class="euiFormRow__fieldWrapper"
+                            >
+                              <div
+                                class="euiFormRow"
+                                id="testPathactions.0.throttle.value-form-row-row"
+                              >
+                                <div
+                                  class="euiFormRow__fieldWrapper"
+                                >
+                                  <div
+                                    class="euiFormControlLayout euiFormControlLayout--group"
+                                  >
+                                    <div
+                                      class="euiFormControlLayout__childrenWrapper"
+                                    >
+                                      <input
+                                        class="euiFieldNumber euiFieldText euiFieldNumber--inGroup"
+                                        disabled=""
+                                        max="1440"
+                                        min="1"
+                                        name="testPathactions.0.throttle.value"
+                                        style="width:400px"
+                                        type="number"
+                                      />
+                                    </div>
+                                    <div
+                                      class="euiText euiText--medium euiFormControlLayout__append"
+                                      style="background-color:transparent;padding-left:4px"
+                                    >
+                                      minutes
+                                    </div>
+                                  </div>
+                                  <div
+                                    class="euiFormHelpText euiFormRow__text"
+                                    id="testPathactions.0.throttle.value-form-row-help"
+                                  >
+                                    Throttle value must be greater than 0 and less than 1440.
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
