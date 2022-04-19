@@ -5,6 +5,7 @@
 
 import { OPERATORS_MAP } from '../../../components/MonitorExpressions/expressions/utils/constants';
 import { MONITOR_TYPE } from '../../../../../utils/constants';
+import { QUERY_OPERATORS } from '../../../components/DocumentLevelMonitorQueries/DocumentLevelQuery';
 
 export const BUCKET_COUNT = 5;
 
@@ -34,6 +35,8 @@ export const FORMIK_INITIAL_VALUES = {
   index: [],
   timeField: '',
   query: MATCH_ALL_QUERY,
+  queries: [],
+  description: '',
   aggregationType: 'count',
   fieldName: [],
   aggregations: [],
@@ -58,6 +61,31 @@ export const FORMIK_INITIAL_AGG_VALUES = {
   aggregationType: 'count',
   fieldName: '',
 };
+
+export const FORMIK_INITIAL_DOCUMENT_LEVEL_QUERY_VALUES = {
+  id: undefined,
+  queryName: 'Query name',
+  field: '',
+  operator: QUERY_OPERATORS[0].value,
+  query: '',
+  tags: [],
+};
+
+// TODO DRAFT: Is this an appropriate default to display when defining as an extraction query?
+export const DEFAULT_DOCUMENT_LEVEL_QUERY = JSON.stringify(
+  {
+    description: 'DESCRIPTION_TEXT',
+    queries: [
+      {
+        name: 'QUERY_NAME',
+        query: { match_all: {} },
+        tags: ['TAG_TEXT'],
+      },
+    ],
+  },
+  null,
+  4
+);
 
 export const DEFAULT_COMPOSITE_AGG_SIZE = 50;
 

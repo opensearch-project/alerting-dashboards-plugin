@@ -8,6 +8,7 @@ export const TRIGGER_TYPE = {
   BUCKET_LEVEL: 'bucket_level_trigger',
   ALERT_TRIGGER: 'alerting_trigger',
   QUERY_LEVEL: 'query_level_trigger',
+  DOC_LEVEL: 'document_level_trigger',
 };
 
 export const FORMIK_INITIAL_BUCKET_SELECTOR_VALUES = {
@@ -37,6 +38,7 @@ export const FORMIK_INITIAL_TRIGGER_CONDITION_VALUES = {
   buckets_path: {},
   parent_bucket_path: 'composite_agg',
   gap_policy: '',
+  query: undefined,
   queryMetric: undefined,
   andOrCondition: undefined,
 };

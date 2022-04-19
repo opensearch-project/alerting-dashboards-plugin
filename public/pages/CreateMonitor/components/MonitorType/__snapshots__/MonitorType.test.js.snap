@@ -2,7 +2,8 @@
 
 exports[`MonitorType renders 1`] = `
 <div
-  class="euiFlexGroup euiFlexGroup--gutterMedium euiFlexGroup--alignItemsFlexEnd euiFlexGroup--directionRow euiFlexGroup--responsive"
+  alignitems="flexStart"
+  class="euiFlexGrid euiFlexGrid--gutterMedium euiFlexGrid--wrap euiFlexGrid--responsive"
 >
   <div
     class="euiFlexItem euiFlexItem--flexGrowZero"
@@ -87,7 +88,7 @@ exports[`MonitorType renders 1`] = `
     class="euiFlexItem euiFlexItem--flexGrowZero"
   >
     <div
-      class="euiFormRow"
+      class="euiFormRow euiFormRow--hasEmptyLabelSpace"
       id="monitorTypeBucketLevel-form-row-row"
     >
       <div
@@ -156,7 +157,7 @@ exports[`MonitorType renders 1`] = `
     class="euiFlexItem euiFlexItem--flexGrowZero"
   >
     <div
-      class="euiFormRow"
+      class="euiFormRow euiFormRow--hasEmptyLabelSpace"
       id="monitorTypeClusterMetrics-form-row-row"
     >
       <div
@@ -213,6 +214,75 @@ exports[`MonitorType renders 1`] = `
                   class="euiTextColor euiTextColor--subdued"
                 >
                   Per cluster metrics monitors allow you to alert based on responses to common REST APIs.
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div
+    class="euiFlexItem euiFlexItem--flexGrowZero"
+  >
+    <div
+      class="euiFormRow euiFormRow--hasEmptyLabelSpace"
+      id="monitorTypeDocLevel-form-row-row"
+    >
+      <div
+        class="euiFormRow__fieldWrapper"
+      >
+        <div
+          class="euiCheckableCard"
+        >
+          <div
+            class="euiCheckableCard__row"
+          >
+            <div
+              class="euiCheckableCard__control"
+            >
+              <div
+                class="euiRadio euiRadio--noLabel"
+                data-test-subj="docLevelMonitorRadioCard"
+              >
+                <input
+                  class="euiRadio__input"
+                  id="docLevelMonitorRadioCard"
+                  name="monitorTypeDocLevel"
+                  type="radio"
+                  value="doc_level_monitor"
+                />
+                <div
+                  class="euiRadio__circle"
+                />
+              </div>
+            </div>
+            <label
+              aria-describedby="docLevelMonitorRadioCard-details"
+              class="euiCheckableCard__label"
+              for="docLevelMonitorRadioCard"
+            >
+              Per document monitor
+            </label>
+          </div>
+          <div
+            class="euiCheckableCard__row"
+          >
+            <div
+              class="euiCheckableCard__control"
+            />
+            <div
+              class="euiCheckableCard__children"
+              id="docLevelMonitorRadioCard-details"
+            >
+              <div
+                class="euiText euiText--extraSmall"
+                style="padding-bottom:10px;padding-top:0px"
+              >
+                <div
+                  class="euiTextColor euiTextColor--subdued"
+                >
+                  Per document monitors allow you to run queries on new documents as they're indexed.
                 </div>
               </div>
             </div>

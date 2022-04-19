@@ -34,8 +34,7 @@ function getMonitorType(searchType, monitor) {
     case SEARCH_TYPE.CLUSTER_METRICS:
       const uri = _.get(monitor, 'inputs.0.uri');
       const apiType = getApiType(uri);
-      const apiTypeLabel = _.get(API_TYPES, `${apiType}.label`);
-      return apiTypeLabel;
+      return _.get(API_TYPES, `${apiType}.label`);
     default:
       return 'Extraction Query';
   }
@@ -49,6 +48,8 @@ function getMonitorLevelType(monitorType) {
       return 'Per bucket monitor';
     case MONITOR_TYPE.CLUSTER_METRICS:
       return 'Per cluster metrics monitor';
+    case MONITOR_TYPE.DOC_LEVEL:
+      return 'Per document monitor';
     default:
       // TODO: May be valuable to implement a toast that displays in this case.
       console.log('Unexpected monitor type:', monitorType);

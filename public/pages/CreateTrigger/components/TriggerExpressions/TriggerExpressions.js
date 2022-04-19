@@ -6,14 +6,9 @@
 import React, { Component } from 'react';
 import { Field } from 'formik';
 import { EuiFieldNumber, EuiFlexGroup, EuiFlexItem, EuiFormRow, EuiSelect } from '@elastic/eui';
+import { THRESHOLD_ENUM_OPTIONS } from '../../utils/constants';
 
 export const Expressions = { THRESHOLD: 'THRESHOLD' };
-
-const THRESHOLD_ENUM_OPTIONS = [
-  { value: 'ABOVE', text: 'IS ABOVE' },
-  { value: 'BELOW', text: 'IS BELOW' },
-  { value: 'EXACTLY', text: 'IS EXACTLY' },
-];
 
 class TriggerExpressions extends Component {
   constructor(props) {

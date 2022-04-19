@@ -29,11 +29,15 @@ export function triggerDefinitionsToFormik(triggers, monitor) {
 }
 
 export function triggerDefinitionToFormik(trigger, monitor) {
-  const isBucketLevelMonitor =
-    _.get(monitor, 'monitor_type', MONITOR_TYPE.QUERY_LEVEL) === MONITOR_TYPE.BUCKET_LEVEL;
-  return isBucketLevelMonitor
-    ? bucketLevelTriggerToFormik(trigger, monitor)
-    : queryLevelTriggerToFormik(trigger, monitor);
+  const monitorType = _.get(monitor, 'monitor_type', MONITOR_TYPE.QUERY_LEVEL);
+  switch (monitorType) {
+    case MONITOR_TYPE.BUCKET_LEVEL:
+      return bucketLevelTriggerToFormik(trigger, monitor);
+    case MONITOR_TYPE.DOC_LEVEL:
+      return documentLevelTriggerToFormik(trigger, monitor);
+    default:
+      return queryLevelTriggerToFormik(trigger, monitor);
+  }
 }
 
 export function queryLevelTriggerToFormik(trigger, monitor) {
@@ -185,6 +189,30 @@ export function bucketLevelTriggerToFormik(trigger, monitor) {
       anomalyConfidenceThresholdValue,
       anomalyConfidenceThresholdEnum,
     },
+  };
+}
+
+export function documentLevelTriggerToFormik(trigger, monitor) {
+  const {
+    id,
+    name,
+    severity,
+    condition: { script },
+    actions,
+    minTimeBetweenExecutions,
+    rollingWindowSize,
+  } = trigger[TRIGGER_TYPE.DOC_LEVEL];
+  const triggerUiMetadata = _.get(monitor, `ui_metadata.triggers[${name}]`);
+  return {
+    ..._.cloneDeep(FORMIK_INITIAL_TRIGGER_VALUES),
+    id,
+    name,
+    severity,
+    script,
+    actions,
+    minTimeBetweenExecutions,
+    rollingWindowSize,
+    triggerConditions: triggerUiMetadata,
   };
 }
 

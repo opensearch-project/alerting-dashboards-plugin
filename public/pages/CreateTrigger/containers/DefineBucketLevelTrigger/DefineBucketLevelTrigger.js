@@ -9,7 +9,7 @@ import _ from 'lodash';
 import { EuiAccordion, EuiButton, EuiSpacer, EuiText, EuiTitle } from '@elastic/eui';
 import 'brace/mode/plain_text';
 import { FormikFieldText, FormikSelect } from '../../../../components/FormControls';
-import { isInvalid, hasError } from '../../../../utils/validate';
+import { hasError, isInvalid } from '../../../../utils/validate';
 import { SEARCH_TYPE } from '../../../../utils/constants';
 import { FORMIK_INITIAL_TRIGGER_CONDITION_VALUES } from '../CreateTrigger/utils/constants';
 import AddTriggerConditionButton from '../../components/AddTriggerConditionButton';
@@ -19,8 +19,8 @@ import { validateTriggerName } from '../DefineTrigger/utils/validation';
 import WhereExpression from '../../../CreateMonitor/components/MonitorExpressions/expressions/WhereExpression';
 import { FieldArray } from 'formik';
 import ConfigureActions from '../ConfigureActions';
-import { SEVERITY_OPTIONS } from '../DefineTrigger/DefineTrigger';
 import { inputLimitText } from '../../../../utils/helpers';
+import { DEFAULT_TRIGGER_NAME, SEVERITY_OPTIONS } from '../../utils/constants';
 
 const defaultRowProps = {
   label: 'Trigger name',
@@ -59,11 +59,9 @@ const propTypes = {
   isDarkMode: PropTypes.bool.isRequired,
 };
 
-const DEFAULT_TRIGGER_NAME = 'New trigger';
-const MAX_TRIGGER_CONDITIONS = 5;
+const MAX_TRIGGER_CONDITIONS = 10;
 
 export const DEFAULT_METRIC_AGGREGATION = { value: '_count', text: 'Count of documents' };
-export const DEFAULT_AND_OR_CONDITION = 'AND';
 
 export const TRIGGER_OPERATORS_MAP = {
   INCLUDE: 'include',

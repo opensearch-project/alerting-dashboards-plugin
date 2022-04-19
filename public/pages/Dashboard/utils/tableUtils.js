@@ -10,7 +10,7 @@ import moment from 'moment';
 import { ALERT_STATE, DEFAULT_EMPTY_DATA } from '../../../utils/constants';
 import { PLUGIN_NAME } from '../../../../utils/constants';
 
-const renderTime = (time) => {
+export const renderTime = (time) => {
   const momentTime = moment(time);
   if (time && momentTime.isValid()) return momentTime.format('MM/DD/YY h:mm a');
   return DEFAULT_EMPTY_DATA;

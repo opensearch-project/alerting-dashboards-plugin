@@ -9,7 +9,7 @@ import { EuiSpacer } from '@elastic/eui';
 import MonitorIndex from '../MonitorIndex';
 import MonitorTimeField from '../../components/MonitorTimeField';
 import ContentPanel from '../../../../components/ContentPanel';
-import { SEARCH_TYPE } from '../../../../utils/constants';
+import { MONITOR_TYPE, SEARCH_TYPE } from '../../../../utils/constants';
 
 const propTypes = {
   values: PropTypes.object.isRequired,
@@ -30,8 +30,9 @@ class DataSource extends Component {
   }
 
   render() {
-    const { searchType } = this.props.values;
-    const isGraph = searchType === SEARCH_TYPE.GRAPH;
+    const { monitor_type, searchType } = this.props.values;
+    const displayTimeField =
+      searchType === SEARCH_TYPE.GRAPH && monitor_type !== MONITOR_TYPE.DOC_LEVEL;
     return (
       <ContentPanel
         title="Data source"
@@ -39,9 +40,9 @@ class DataSource extends Component {
         panelStyles={{ paddingLeft: '10px', paddingRight: '10px' }}
         bodyStyles={{ padding: 'initial' }}
       >
-        <MonitorIndex httpClient={this.props.httpClient} />
+        <MonitorIndex httpClient={this.props.httpClient} monitorType={monitor_type} />
         <EuiSpacer size="s" />
-        {isGraph && <MonitorTimeField dataTypes={this.props.dataTypes} />}
+        {displayTimeField && <MonitorTimeField dataTypes={this.props.dataTypes} />}
       </ContentPanel>
     );
   }

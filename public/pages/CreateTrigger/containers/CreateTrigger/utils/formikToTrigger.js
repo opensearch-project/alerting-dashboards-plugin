@@ -29,12 +29,14 @@ export function formikToTriggerDefinitions(values, monitorUiMetadata) {
 }
 
 export function formikToTriggerDefinition(values, monitorUiMetadata) {
-  const isBucketLevelMonitor =
-    _.get(monitorUiMetadata, 'monitor_type', MONITOR_TYPE.QUERY_LEVEL) ===
-    MONITOR_TYPE.BUCKET_LEVEL;
-  return isBucketLevelMonitor
-    ? formikToBucketLevelTrigger(values, monitorUiMetadata)
-    : formikToQueryLevelTrigger(values, monitorUiMetadata);
+  switch (monitorUiMetadata.monitor_type) {
+    case MONITOR_TYPE.BUCKET_LEVEL:
+      return formikToBucketLevelTrigger(values, monitorUiMetadata);
+    case MONITOR_TYPE.DOC_LEVEL:
+      return formikToDocumentLevelTrigger(values, monitorUiMetadata);
+    default:
+      return formikToQueryLevelTrigger(values, monitorUiMetadata);
+  }
 }
 
 export function formikToQueryLevelTrigger(values, monitorUiMetadata) {
@@ -67,6 +69,50 @@ export function formikToBucketLevelTrigger(values, monitorUiMetadata) {
       rolling_window_size: values.rollingWindowSize,
     },
   };
+}
+
+export function formikToDocumentLevelTrigger(values, monitorUiMetadata) {
+  const condition = formikToDocumentLevelTriggerCondition(values, monitorUiMetadata);
+  const actions = formikToAction(values);
+  return {
+    document_level_trigger: {
+      id: values.id,
+      name: values.name,
+      severity: values.severity,
+      condition: condition,
+      actions: actions,
+    },
+  };
+}
+
+export function formikToDocumentLevelTriggerCondition(values, monitorUiMetadata) {
+  const triggerConditions = _.get(values, 'triggerConditions', []);
+  const searchType = _.get(monitorUiMetadata, 'search.searchType', SEARCH_TYPE.QUERY);
+  if (searchType === SEARCH_TYPE.QUERY) return { script: values.script };
+  const source = getDocumentLevelScriptSource(triggerConditions);
+  return {
+    script: {
+      lang: 'painless',
+      source: source,
+    },
+  };
+}
+
+export function getDocumentLevelScriptSource(conditions) {
+  const scriptSourceContents = [];
+  conditions.forEach((condition) => {
+    const { andOrCondition, query } = condition;
+    if (andOrCondition) {
+      const logicOperator = getLogicalOperator(andOrCondition);
+      scriptSourceContents.push(logicOperator);
+    }
+    if (!_.isEmpty(query) && !_.isEmpty(query.queryName)) {
+      const queryExpression = _.get(query, 'expression');
+      const operator = query.operator === '!=' ? '!' : '';
+      scriptSourceContents.push(`(${operator}query[${queryExpression}])`);
+    }
+  });
+  return scriptSourceContents.join(' ');
 }
 
 export function formikToAction(values) {
@@ -164,6 +210,17 @@ export function formikToTriggerUiMetadata(values, monitorUiMetadata) {
         bucketLevelTriggersUiMetadata[trigger.name] = triggerMetadata;
       });
       return bucketLevelTriggersUiMetadata;
+    case MONITOR_TYPE.DOC_LEVEL:
+      const docLevelTriggersUiMetadata = {};
+      _.get(values, 'triggerDefinitions', []).forEach((trigger) => {
+        const triggerMetadata = _.get(trigger, 'triggerConditions', []).map((condition) => ({
+          query: condition.query,
+          andOrCondition: condition.andOrCondition,
+          script: condition.script,
+        }));
+        docLevelTriggersUiMetadata[trigger.name] = triggerMetadata;
+      });
+      return docLevelTriggersUiMetadata;
   }
 }
 

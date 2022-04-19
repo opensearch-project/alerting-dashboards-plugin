@@ -166,6 +166,20 @@ exports[`Message renders 1`] = `
     class="euiSpacer euiSpacer--m"
   />
   <div
+    class="euiFlexItem"
+  >
+    <div
+      class="euiText euiText--extraSmall"
+    >
+      <strong>
+        Perform action
+      </strong>
+      <div>
+        Per monitor execution
+      </div>
+    </div>
+  </div>
+  <div
     class="euiFormRow"
     id="generated-id-row"
     style="padding-bottom:10px;max-width:100%"

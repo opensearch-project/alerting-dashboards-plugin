@@ -17,7 +17,19 @@ import {
 export function formikToMonitor(values) {
   const uiSchedule = formikToUiSchedule(values);
   const schedule = buildSchedule(values.frequency, uiSchedule);
-  const uiSearch = formikToUiSearch(values);
+
+  const monitorUiMetadata = () => {
+    switch (values.monitor_type) {
+      case MONITOR_TYPE.DOC_LEVEL:
+        return {
+          doc_level_input: formikToDocLevelQueriesUiMetadata(values),
+          search: { searchType: values.searchType },
+        };
+      default:
+        return { search: formikToUiSearch(values) };
+    }
+  };
+
   return {
     name: values.name,
     type: 'monitor',
@@ -28,16 +40,18 @@ export function formikToMonitor(values) {
     triggers: [],
     ui_metadata: {
       schedule: uiSchedule,
-      search: uiSearch,
       monitor_type: values.monitor_type,
+      ...monitorUiMetadata(),
     },
   };
 }
 
 export function formikToInputs(values) {
-  switch (values.searchType) {
-    case SEARCH_TYPE.CLUSTER_METRICS:
+  switch (values.monitor_type) {
+    case MONITOR_TYPE.CLUSTER_METRICS:
       return formikToClusterMetricsInput(values);
+    case MONITOR_TYPE.DOC_LEVEL:
+      return formikToDocLevelInput(values);
     default:
       return formikToSearch(values);
   }
@@ -169,10 +183,16 @@ export function formikToExtractionQuery(values) {
 
 export function formikToGraphQuery(values) {
   const { bucketValue, bucketUnitOfTime, monitor_type } = values;
-  const useComposite = monitor_type === MONITOR_TYPE.BUCKET_LEVEL;
-  const aggregation = useComposite
-    ? formikToCompositeAggregation(values)
-    : formikToAggregation(values);
+
+  const aggregation = () => {
+    switch (monitor_type) {
+      case MONITOR_TYPE.BUCKET_LEVEL:
+        return formikToCompositeAggregation(values);
+      default:
+        return formikToAggregation(values);
+    }
+  };
+
   const timeField = values.timeField;
   const filters = [
     {
@@ -191,13 +211,68 @@ export function formikToGraphQuery(values) {
   }
   return {
     size: 0,
-    aggregations: aggregation,
+    aggregations: aggregation(),
     query: {
       bool: {
         filter: filters,
       },
     },
   };
+}
+
+export function formikToDocLevelInput(values) {
+  let description = FORMIK_INITIAL_VALUES.description;
+  let indices = formikToIndices(values);
+  let queries = _.get(values, 'queries', FORMIK_INITIAL_VALUES.queries);
+  switch (values.searchType) {
+    case SEARCH_TYPE.GRAPH:
+      description = values.description;
+      queries = queries.map((query) => {
+        const formikToQuery =
+          query.operator === '=='
+            ? `${query.field}:\"${query.query}\"`
+            : JSON.stringify({
+                bool: { must_not: { term: { [query.field]: `\"${query.query}\"` } } },
+              });
+        return {
+          // id: query.id, // TODO FIXME: Refactor to this assignment logic once backend generates its own ID value
+          id: query.queryName,
+          name: query.queryName,
+          query: formikToQuery,
+          tags: query.tags,
+        };
+      });
+      break;
+    case SEARCH_TYPE.QUERY:
+      let query = _.get(values, 'query', '');
+      try {
+        query = JSON.parse(query);
+        description = _.get(query, 'description', description);
+        queries = _.get(query, 'queries', queries);
+      } catch (e) {
+        /* Ignore JSON parsing errors as users may just be configuring the query */
+      }
+      break;
+    default:
+      console.log(
+        `Unsupported searchType found for ${MONITOR_TYPE.DOC_LEVEL}: ${JSON.stringify(
+          values.searchType
+        )}`,
+        values.searchType
+      );
+  }
+
+  return {
+    doc_level_input: {
+      description: description,
+      indices: indices,
+      queries: queries,
+    },
+  };
+}
+
+export function formikToDocLevelQueriesUiMetadata(values) {
+  return { queries: _.get(values, 'queries', []) };
 }
 
 export function formikToCompositeAggregation(values) {

@@ -19,12 +19,13 @@ import { TRIGGER_TYPE } from '../CreateTrigger/utils/constants';
 import { FieldArray } from 'formik';
 import ConfigureActions from '../ConfigureActions';
 import monitorToFormik from '../../../CreateMonitor/containers/CreateMonitor/utils/monitorToFormik';
-import { buildSearchRequest } from '../../../CreateMonitor/containers/DefineMonitor/utils/searchRequests';
+import { buildRequest } from '../../../CreateMonitor/containers/DefineMonitor/utils/searchRequests';
 import { backendErrorNotification } from '../../../../utils/helpers';
 import {
   buildClusterMetricsRequest,
   canExecuteClusterMetricsMonitor,
 } from '../../../CreateMonitor/components/ClusterMetricsMonitor/utils/clusterMetricsMonitorHelpers';
+import { DEFAULT_TRIGGER_NAME, SEVERITY_OPTIONS } from '../../utils/constants';
 
 const defaultRowProps = {
   label: 'Trigger name',
@@ -33,6 +34,7 @@ const defaultRowProps = {
   isInvalid,
   error: hasError,
 };
+
 const defaultInputProps = { isInvalid };
 
 const selectFieldProps = {
@@ -46,14 +48,6 @@ const selectRowProps = {
   isInvalid,
   error: hasError,
 };
-
-export const SEVERITY_OPTIONS = [
-  { value: '1', text: '1 (Highest)' },
-  { value: '2', text: '2 (High)' },
-  { value: '3', text: '3 (Medium)' },
-  { value: '4', text: '4 (Low)' },
-  { value: '5', text: '5 (Lowest)' },
-];
 
 const triggerOptions = [
   { value: TRIGGER_TYPE.AD, text: 'Anomaly detector grade and confidence' },
@@ -74,8 +68,6 @@ const propTypes = {
   triggerValues: PropTypes.object.isRequired,
   isDarkMode: PropTypes.bool.isRequired,
 };
-
-const DEFAULT_TRIGGER_NAME = 'New trigger';
 
 class DefineTrigger extends Component {
   constructor(props) {
@@ -109,8 +101,8 @@ class DefineTrigger extends Component {
     switch (searchType) {
       case SEARCH_TYPE.QUERY:
       case SEARCH_TYPE.GRAPH:
-        const searchRequest = buildSearchRequest(formikValues);
-        _.set(monitorToExecute, 'inputs[0].search', searchRequest);
+        const searchRequest = buildRequest(formikValues);
+        _.set(monitorToExecute, 'inputs[0]', searchRequest);
         break;
       case SEARCH_TYPE.AD:
         break;

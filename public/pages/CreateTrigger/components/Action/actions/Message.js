@@ -34,6 +34,7 @@ import {
 } from '../../../../../utils/validate';
 import { URL, MAX_THROTTLE_VALUE, WRONG_THROTTLE_WARNING } from '../../../../../../utils/constants';
 import { MONITOR_TYPE } from '../../../../../utils/constants';
+import OverviewStat from '../../../../MonitorDetails/components/OverviewStat';
 
 export const NOTIFY_OPTIONS_VALUES = {
   PER_ALERT: 'per_alert',
@@ -352,7 +353,9 @@ export default function Message(
             </EuiFlexItem>
           </EuiFlexGroup>
         </EuiFormRow>
-      ) : null}
+      ) : (
+        <OverviewStat header={'Perform action'} value={'Per monitor execution'} />
+      )}
 
       {actionExecutionScopeId !== NOTIFY_OPTIONS_VALUES.PER_EXECUTION ? (
         <EuiFormRow label={'Throttling'} style={{ paddingBottom: '10px', maxWidth: '100%' }}>

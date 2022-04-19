@@ -18,6 +18,7 @@ exports[`DataSource renders 1`] = `
 >
   <MonitorIndex
     httpClient={[MockFunction]}
+    monitorType="query_level_monitor"
   />
   <EuiSpacer
     size="s"
