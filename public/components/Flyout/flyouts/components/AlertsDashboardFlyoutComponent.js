@@ -524,7 +524,7 @@ export default class AlertsDashboardFlyoutComponent extends Component {
         ? `${bucketValue} ${bucketUnitOfTime}`
         : '-';
 
-    const displayTableTabs = monitor.monitor_type === MONITOR_TYPE.DOC_LEVEL;
+    const displayTableTabs = monitorType === MONITOR_TYPE.DOC_LEVEL;
     return (
       <div>
         <EuiFlexGroup>

@@ -36,7 +36,7 @@ export function triggerDefinitionToFormik(trigger, monitor) {
     case MONITOR_TYPE.DOC_LEVEL:
       return documentLevelTriggerToFormik(trigger, monitor);
     default:
-      queryLevelTriggerToFormik(trigger, monitor);
+      return queryLevelTriggerToFormik(trigger, monitor);
   }
 }
 
