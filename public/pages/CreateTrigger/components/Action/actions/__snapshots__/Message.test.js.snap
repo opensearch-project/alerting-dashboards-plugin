@@ -168,6 +168,40 @@ exports[`Message renders 1`] = `
   <div
     class="euiFormRow"
     id="generated-id-row"
+    style="max-width:100%"
+  >
+    <div
+      class="euiFormRow__labelWrapper"
+    >
+      <label
+        class="euiFormLabel euiFormRow__label"
+        for="generated-id"
+      >
+        <span
+          style="color:#343741"
+        >
+          Perform action
+        </span>
+      </label>
+    </div>
+    <div
+      class="euiFormRow__fieldWrapper"
+    >
+      <div
+        class="euiText euiText--extraSmall"
+        id="generated-id"
+      >
+        <div
+          class="euiTextColor euiTextColor--subdued"
+        >
+          Per monitor execution
+        </div>
+      </div>
+    </div>
+  </div>
+  <div
+    class="euiFormRow"
+    id="generated-id-row"
     style="padding-bottom:10px;max-width:100%"
   >
     <div
