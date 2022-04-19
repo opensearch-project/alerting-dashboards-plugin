@@ -63,7 +63,7 @@ const QueryParamsEditor = ({ type, queryParams, isEnabled = true }) => (
         removeButtonText="Remove parameter"
         onRenderKeyField={handleRenderKeyField}
         onRenderValueField={handleRenderValueField}
-        isEnabled={isEnabled}
+        isEnabled={false}
       />
     )}
   </FieldArray>

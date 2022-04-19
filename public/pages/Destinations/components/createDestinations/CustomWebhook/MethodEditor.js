@@ -29,7 +29,7 @@ const MethodEditor = ({ type }) => (
         style: { paddingLeft: '10px' },
       }}
       inputProps={{
-        disabled: false,
+        disabled: true,
         options: methodOptions,
       }}
     />

@@ -36,6 +36,7 @@ const Webhook = ({ type }) => {
           field.onChange(e);
           form.setFieldError('name', required(e.target.value));
         },
+        disabled: true,
       }}
     />
   );
