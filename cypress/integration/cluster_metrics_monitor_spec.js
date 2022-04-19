@@ -391,7 +391,6 @@ describe('ClusterMetricsMonitor', () => {
   after(() => {
     // Delete all monitors and destinations
     cy.deleteAllMonitors();
-    cy.deleteAllDestinations();
 
     // Delete sample data
     cy.deleteIndexByName(`${INDEX.SAMPLE_DATA_ECOMMERCE}`);
