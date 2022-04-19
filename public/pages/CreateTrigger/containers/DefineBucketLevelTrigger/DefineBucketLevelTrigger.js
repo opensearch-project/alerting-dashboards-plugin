@@ -59,7 +59,7 @@ const propTypes = {
   isDarkMode: PropTypes.bool.isRequired,
 };
 
-const MAX_TRIGGER_CONDITIONS = 5;
+const MAX_TRIGGER_CONDITIONS = 10;
 
 export const DEFAULT_METRIC_AGGREGATION = { value: '_count', text: 'Count of documents' };
 

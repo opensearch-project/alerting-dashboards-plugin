@@ -34,6 +34,7 @@ import {
 } from '../../../../../utils/validate';
 import { URL, MAX_THROTTLE_VALUE, WRONG_THROTTLE_WARNING } from '../../../../../../utils/constants';
 import { MONITOR_TYPE } from '../../../../../utils/constants';
+import OverviewStat from '../../../../MonitorDetails/components/OverviewStat';
 
 export const NOTIFY_OPTIONS_VALUES = {
   PER_ALERT: 'per_alert',
@@ -353,14 +354,7 @@ export default function Message(
           </EuiFlexGroup>
         </EuiFormRow>
       ) : (
-        <EuiFormRow
-          label={<span style={{ color: '#343741' }}>Perform action</span>}
-          style={{ maxWidth: '100%' }}
-        >
-          <EuiText color={'subdued'} size={'xs'}>
-            Per monitor execution
-          </EuiText>
-        </EuiFormRow>
+        <OverviewStat header={'Perform action'} value={'Per monitor execution'} />
       )}
 
       {actionExecutionScopeId !== NOTIFY_OPTIONS_VALUES.PER_EXECUTION ? (
