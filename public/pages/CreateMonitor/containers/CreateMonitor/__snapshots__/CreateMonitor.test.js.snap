@@ -18,6 +18,7 @@ exports[`CreateMonitor renders 1`] = `
         "bucketValue": 1,
         "cronExpression": "0 */1 * * *",
         "daily": 0,
+        "description": "",
         "detectorId": "",
         "disabled": false,
         "fieldName": Array [],
@@ -42,6 +43,7 @@ exports[`CreateMonitor renders 1`] = `
           "interval": 1,
           "unit": "MINUTES",
         },
+        "queries": Array [],
         "query": "{
     \\"size\\": 0,
     \\"query\\": {
