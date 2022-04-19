@@ -65,7 +65,7 @@ exports[`Message renders 1`] = `
             <div
               class="euiTextColor euiTextColor--subdued"
             >
-              Embed variables in your message using Mustache templates.
+              Embed variables in your message using Mustache templates. 
               <a
                 class="euiLink euiLink--primary"
                 href="https://mustache.github.io/mustache.5.html"
