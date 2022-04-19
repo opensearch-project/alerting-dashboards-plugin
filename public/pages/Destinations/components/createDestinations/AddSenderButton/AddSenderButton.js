@@ -10,7 +10,10 @@ import { EuiButton } from '@elastic/eui';
 import { FORMIK_INITIAL_SENDER_VALUES } from '../Email/utils/constants';
 
 const AddSenderButton = ({ arrayHelpers }) => (
-  <EuiButton onClick={() => arrayHelpers.unshift(_.cloneDeep(FORMIK_INITIAL_SENDER_VALUES))}>
+  <EuiButton
+    isDisabled={true}
+    onClick={() => arrayHelpers.unshift(_.cloneDeep(FORMIK_INITIAL_SENDER_VALUES))}
+  >
     Add sender
   </EuiButton>
 );

@@ -172,6 +172,8 @@ class DefineDocumentLevelTrigger extends Component {
       triggerIndex,
       httpClient,
       notifications,
+      notificationService,
+      plugins,
     } = this.props;
     const executeResponse = _.get(this.state, 'executeResponse', this.props.executeResponse);
     const fieldPath = triggerIndex !== undefined ? `triggerDefinitions[${triggerIndex}].` : '';
@@ -298,6 +300,8 @@ class DefineDocumentLevelTrigger extends Component {
                   notifications={notifications}
                   fieldPath={fieldPath}
                   triggerIndex={triggerIndex}
+                  notificationService={notificationService}
+                  plugins={plugins}
                 />
               )}
             </FieldArray>

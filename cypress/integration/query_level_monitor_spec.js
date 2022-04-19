@@ -7,7 +7,6 @@ import _ from 'lodash';
 import { INDEX, PLUGIN_NAME } from '../support/constants';
 import sampleQueryLevelMonitor from '../fixtures/sample_query_level_monitor';
 import sampleQueryLevelMonitorWithAlwaysTrueTrigger from '../fixtures/sample_query_level_monitor_with_always_true_trigger';
-import sampleDestination from '../fixtures/sample_destination_custom_webhook.json';
 
 const SAMPLE_MONITOR = 'sample_query_level_monitor';
 const UPDATED_MONITOR = 'updated_query_level_monitor';
@@ -314,7 +313,6 @@ describe('Query-Level Monitors', () => {
   after(() => {
     // Delete all existing monitors and destinations
     cy.deleteAllMonitors();
-    cy.deleteAllDestinations();
 
     // Delete sample data
     cy.deleteIndexByName(`${INDEX.SAMPLE_DATA_ECOMMERCE}`);

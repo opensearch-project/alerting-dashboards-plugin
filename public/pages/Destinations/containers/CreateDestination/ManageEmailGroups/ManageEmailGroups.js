@@ -294,7 +294,12 @@ export default class ManageEmailGroups extends React.Component {
                         <EuiButtonEmpty onClick={onClickCancel}>Cancel</EuiButtonEmpty>
                       </EuiFlexItem>
                       <EuiFlexItem grow={false}>
-                        <EuiButton onClick={handleSubmit} isLoading={isSubmitting} fill>
+                        <EuiButton
+                          isDisabled={true}
+                          onClick={handleSubmit}
+                          isLoading={isSubmitting}
+                          fill
+                        >
                           Save
                         </EuiButton>
                       </EuiFlexItem>

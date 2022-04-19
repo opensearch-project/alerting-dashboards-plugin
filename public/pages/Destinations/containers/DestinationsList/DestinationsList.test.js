@@ -9,6 +9,7 @@ import { mount } from 'enzyme';
 import DestinationsList from './DestinationsList';
 import { historyMock, httpClientMock } from '../../../../../test/mocks';
 import { DESTINATION_TYPE } from '../../utils/constants';
+import { OS_NOTIFICATION_PLUGIN } from '../../../../utils/constants';
 
 const location = {
   hash: '',
@@ -23,7 +24,47 @@ describe('DestinationsList', () => {
     jest.clearAllMocks();
   });
 
-  test('renders', async () => {
+  test('renders when Notification plugin is installed', async () => {
+    const mockSettings = {
+      defaults: {
+        plugins: {
+          alerting: {
+            destination: {
+              allow_list: Object.values(DESTINATION_TYPE),
+            },
+          },
+        },
+      },
+    };
+
+    httpClientMock.get
+      .mockResolvedValueOnce({
+        // Mock getPlugins
+        ok: true,
+        resp: { component: OS_NOTIFICATION_PLUGIN },
+      })
+      .mockResolvedValueOnce({
+        // Mock getAllowList
+        ok: true,
+        resp: mockSettings,
+      })
+      .mockResolvedValue({
+        // Mock return in getDestinations function
+        ok: true,
+        destinations: [],
+        totalDestinations: 0,
+      });
+
+    const wrapper = mount(
+      <DestinationsList httpClient={httpClientMock} history={historyMock} location={location} />
+    );
+
+    await runAllPromises();
+    wrapper.update();
+    expect(wrapper).toMatchSnapshot();
+  });
+
+  test('renders when Notification plugin is not installed', async () => {
     const mockSettings = {
       defaults: {
         plugins: {
@@ -74,6 +115,11 @@ describe('DestinationsList', () => {
 
     httpClientMock.get
       .mockResolvedValueOnce({
+        // Mock getPlugins
+        ok: true,
+        resp: { component: OS_NOTIFICATION_PLUGIN },
+      })
+      .mockResolvedValueOnce({
         // Mock getAllowList
         ok: true,
         resp: mockSettings,
@@ -120,6 +166,11 @@ describe('DestinationsList', () => {
     };
 
     httpClientMock.get
+      .mockResolvedValueOnce({
+        // Mock getPlugins
+        ok: true,
+        resp: { component: OS_NOTIFICATION_PLUGIN },
+      })
       .mockResolvedValueOnce({
         // Mock getAllowList
         ok: true,

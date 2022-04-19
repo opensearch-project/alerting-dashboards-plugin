@@ -242,6 +242,7 @@ export default class CreateMonitor extends Component {
       monitorToEdit,
       notifications,
       isDarkMode,
+      notificationService,
     } = this.props;
     const { initialValues, plugins } = this.state;
 
@@ -296,6 +297,8 @@ export default class CreateMonitor extends Component {
                     isDarkMode={this.props.isDarkMode}
                     httpClient={httpClient}
                     notifications={notifications}
+                    notificationService={notificationService}
+                    plugins={plugins}
                   />
                 )}
               </FieldArray>

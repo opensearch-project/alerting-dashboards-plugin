@@ -75,3 +75,7 @@ export const AND_OR_CONDITION_OPTIONS = [
 
 export const DEFAULT_TRIGGER_NAME = 'New trigger';
 export const DEFAULT_ACTION_TYPE = 'slack';
+
+export const MANAGE_CHANNELS_PATH = `/app/notifications-dashboards#/channels`;
+
+export const CHANNEL_TYPES = ['slack', 'email', 'chime', 'webhook', 'ses', 'sns'];

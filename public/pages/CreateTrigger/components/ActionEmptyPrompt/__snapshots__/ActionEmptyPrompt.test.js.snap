@@ -4,16 +4,19 @@ exports[`ActionEmptyPrompt renders 1`] = `
 <EuiEmptyPrompt
   actions={
     <EuiButton
+      disabled={true}
       fill={true}
-      href="alerting#/create-destination"
+      iconSide="right"
+      iconType="popout"
+      onClick={[Function]}
     >
-      Add destination
+      Manage channels
     </EuiButton>
   }
   body={
     <EuiText>
       <p>
-        There are no existing destinations. Add a destinations to create an action.
+        There are no existing channels. Add a channel to create an action.
       </p>
     </EuiText>
   }

@@ -9,13 +9,21 @@ import { EuiPanel, EuiText } from '@elastic/eui';
 import Action from '../../components/Action';
 import ActionEmptyPrompt from '../../components/ActionEmptyPrompt';
 import AddActionButton from '../../components/AddActionButton';
-import { DEFAULT_MESSAGE_SOURCE, FORMIK_INITIAL_ACTION_VALUES } from '../../utils/constants';
-import { DESTINATION_OPTIONS } from '../../../Destinations/utils/constants';
+import {
+  CHANNEL_TYPES,
+  DEFAULT_MESSAGE_SOURCE,
+  FORMIK_INITIAL_ACTION_VALUES,
+} from '../../utils/constants';
 import { getAllowList } from '../../../Destinations/utils/helpers';
-import { MAX_QUERY_RESULT_SIZE, MONITOR_TYPE } from '../../../../utils/constants';
+import {
+  MAX_QUERY_RESULT_SIZE,
+  MONITOR_TYPE,
+  OS_NOTIFICATION_PLUGIN,
+} from '../../../../utils/constants';
 import { backendErrorNotification } from '../../../../utils/helpers';
 import { TRIGGER_TYPE } from '../CreateTrigger/utils/constants';
 import { formikToTrigger } from '../CreateTrigger/utils/formikToTrigger';
+import { getChannelOptions, toChannelType } from '../../utils/helper';
 
 const createActionContext = (context, action) => ({
   ctx: {
@@ -44,78 +52,126 @@ class ConfigureActions extends React.Component {
     super(props);
     this.state = {
       destinations: [],
+      flattenedDestinations: [],
       allowList: [],
       loadingDestinations: true,
       actionDeleted: false,
+      hasNotificationPlugin: false,
     };
   }
 
   async componentDidMount() {
-    const { httpClient } = this.props;
+    const { httpClient, plugins } = this.props;
 
     const allowList = await getAllowList(httpClient);
     this.setState({ allowList });
 
+    // Check if notification plugin is present
+    if (plugins.indexOf(OS_NOTIFICATION_PLUGIN) !== -1) {
+      this.setState({ hasNotificationPlugin: true });
+    }
+
     this.loadDestinations();
+  }
+
+  async componentWillReceiveProps(nextProps, nextContext) {
+    if (this.props.plugins !== nextProps.plugins) {
+      if (nextProps.plugins.indexOf(OS_NOTIFICATION_PLUGIN) !== -1) {
+        this.setState({ hasNotificationPlugin: true });
+      }
+
+      this.loadDestinations();
+    }
   }
 
   loadDestinations = async (searchText = '') => {
     const { httpClient, values, arrayHelpers, notifications, fieldPath } = this.props;
-    const { allowList, actionDeleted } = this.state;
+    const { allowList, actionDeleted, hasNotificationPlugin } = this.state;
     this.setState({ loadingDestinations: true });
-    const getDestinationLabel = (destination) => {
-      const foundDestination = DESTINATION_OPTIONS.find(({ value }) => value === destination.type);
-      if (foundDestination) return foundDestination.text;
-      return destination.type;
-    };
     try {
       const response = await httpClient.get('../api/alerting/destinations', {
         query: { search: searchText, size: MAX_QUERY_RESULT_SIZE },
       });
+      let destinations = [];
       if (response.ok) {
-        const destinations = response.destinations
+        // Retrieve legacy Destinations in case there are any
+        destinations = response.destinations
+          .filter((destination) => allowList.includes(destination.type))
           .map((destination) => ({
-            label: `${destination.name} - (${getDestinationLabel(destination)})`,
+            label: `[Destination] ${destination.name}`,
             value: destination.id,
-            type: destination.type,
-          }))
-          .filter(({ type }) => allowList.includes(type));
-        this.setState({ destinations, loadingDestinations: false });
-
-        const monitorType = _.get(
-          arrayHelpers,
-          'form.values.monitor_type',
-          MONITOR_TYPE.QUERY_LEVEL
-        );
-        const initialActionValues = _.cloneDeep(FORMIK_INITIAL_ACTION_VALUES);
-        switch (monitorType) {
-          case MONITOR_TYPE.BUCKET_LEVEL:
-            _.set(
-              initialActionValues,
-              'message_template.source',
-              DEFAULT_MESSAGE_SOURCE.BUCKET_LEVEL_MONITOR
-            );
-            break;
-          case MONITOR_TYPE.QUERY_LEVEL:
-          case MONITOR_TYPE.CLUSTER_METRICS:
-            _.set(
-              initialActionValues,
-              'message_template.source',
-              DEFAULT_MESSAGE_SOURCE.QUERY_LEVEL_MONITOR
-            );
-            break;
-        }
-
-        // If actions is not defined  If user choose to delete actions, it will not override customer's preferences.
-        if (destinations.length > 0 && !_.get(values, `${fieldPath}actions`) && !actionDeleted) {
-          arrayHelpers.insert(0, initialActionValues);
-        }
+            type: toChannelType(destination.type),
+            description: '',
+          }));
       } else {
         backendErrorNotification(notifications, 'load', 'destinations', response.err);
       }
+
+      let channels = [];
+      if (hasNotificationPlugin) {
+        // Fetch Notification Channels
+        const getChannelsQuery = {
+          from_index: 0,
+          max_items: MAX_QUERY_RESULT_SIZE,
+          query: searchText,
+          config_type: CHANNEL_TYPES,
+          sort_field: 'name',
+          sort_order: 'asc',
+        };
+        const channelsResponse = await this.props.notificationService.getChannels(getChannelsQuery);
+        // TODO: Might still need to filter the allowed channel types here if the backend doesn't
+        //   since Notifications uses its own setting
+        channels = channelsResponse.items.map((channel) => ({
+          label: `[Channel] ${channel.name}`,
+          value: channel.config_id,
+          type: channel.config_type,
+          description: channel.description,
+        }));
+      }
+
+      const destinationsAndChannels = destinations.concat(channels);
+      const channelOptionsByType = getChannelOptions(destinationsAndChannels, CHANNEL_TYPES);
+      this.setState({
+        destinations: channelOptionsByType,
+        flattenedDestinations: destinationsAndChannels,
+        loadingDestinations: false,
+      });
+
+      const monitorType = _.get(arrayHelpers, 'form.values.monitor_type', MONITOR_TYPE.QUERY_LEVEL);
+      const initialActionValues = _.cloneDeep(FORMIK_INITIAL_ACTION_VALUES);
+      switch (monitorType) {
+        case MONITOR_TYPE.BUCKET_LEVEL:
+          _.set(
+            initialActionValues,
+            'message_template.source',
+            DEFAULT_MESSAGE_SOURCE.BUCKET_LEVEL_MONITOR
+          );
+          break;
+        case MONITOR_TYPE.QUERY_LEVEL:
+        case MONITOR_TYPE.CLUSTER_METRICS:
+          _.set(
+            initialActionValues,
+            'message_template.source',
+            DEFAULT_MESSAGE_SOURCE.QUERY_LEVEL_MONITOR
+          );
+          break;
+      }
+
+      // If actions is not defined  If user choose to delete actions, it will not override customer's preferences.
+      if (
+        destinationsAndChannels.length > 0 &&
+        !_.get(values, `${fieldPath}actions`) &&
+        !actionDeleted
+      ) {
+        arrayHelpers.insert(0, initialActionValues);
+      }
     } catch (err) {
       console.error(err);
-      this.setState({ destinations: [], loadingDestinations: false });
+      this.setState({
+        destinations: [],
+        flattenedDestinations: [],
+        loadingDestinations: false,
+      });
     }
   };
 
@@ -127,7 +183,7 @@ class ConfigureActions extends React.Component {
       triggerIndex,
       values,
     } = this.props;
-    const { destinations } = this.state;
+    const { flattenedDestinations } = this.state;
     // TODO: For bucket-level triggers, sendTestMessage will only send a test message if there is
     //  at least one bucket of data from the monitor input query.
     let testTrigger = _.cloneDeep(formikToTrigger(values, monitor.ui_metadata)[triggerIndex]);
@@ -171,7 +227,7 @@ class ConfigureActions extends React.Component {
         error = checkForError(response, error);
         if (!_.isEmpty(action.destination_id)) {
           const destinationName = _.get(
-            _.find(destinations, { value: action.destination_id }),
+            _.find(flattenedDestinations, { value: action.destination_id }),
             'label'
           );
           notifications.toasts.addSuccess(`Test message sent to "${destinationName}."`);
@@ -188,11 +244,12 @@ class ConfigureActions extends React.Component {
   };
 
   renderActions = (arrayHelpers) => {
-    const { context, setFlyout, values, fieldPath } = this.props;
-    const { destinations } = this.state;
+    const { context, setFlyout, values, fieldPath, httpClient, plugins } = this.props;
+    const { destinations, flattenedDestinations } = this.state;
     const hasDestinations = !_.isEmpty(destinations);
     const hasActions = !_.isEmpty(_.get(values, `${fieldPath}actions`));
     const shouldRenderActions = hasActions || (hasDestinations && hasActions);
+    const hasNotificationPlugin = plugins.indexOf(OS_NOTIFICATION_PLUGIN) !== -1;
 
     return shouldRenderActions ? (
       _.get(values, `${fieldPath}actions`).map((action, index) => (
@@ -202,6 +259,7 @@ class ConfigureActions extends React.Component {
           arrayHelpers={arrayHelpers}
           context={createActionContext(context, action)}
           destinations={destinations}
+          flattenedDestinations={flattenedDestinations}
           index={index}
           onDelete={() => {
             this.setState({ actionDeleted: true });
@@ -209,12 +267,19 @@ class ConfigureActions extends React.Component {
           }}
           sendTestMessage={this.sendTestMessage}
           setFlyout={setFlyout}
+          httpClient={httpClient}
           fieldPath={fieldPath}
           values={values}
+          hasNotificationPlugin={hasNotificationPlugin}
         />
       ))
     ) : (
-      <ActionEmptyPrompt arrayHelpers={arrayHelpers} hasDestinations={hasDestinations} />
+      <ActionEmptyPrompt
+        arrayHelpers={arrayHelpers}
+        hasDestinations={hasDestinations}
+        httpClient={httpClient}
+        hasNotificationPlugin={hasNotificationPlugin}
+      />
     );
   };
 
