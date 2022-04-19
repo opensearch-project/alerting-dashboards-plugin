@@ -76,7 +76,7 @@ export default class DestinationsActions extends Component {
           </EuiFlexItem>
         ) : null}
         <EuiFlexItem grow={false}>
-          <EuiButton fill href={`${PLUGIN_NAME}#${APP_PATH.CREATE_DESTINATION}`}>
+          <EuiButton isDisabled={true} fill href={`${PLUGIN_NAME}#${APP_PATH.CREATE_DESTINATION}`}>
             Add destination
           </EuiButton>
         </EuiFlexItem>

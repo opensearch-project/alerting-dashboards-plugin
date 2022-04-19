@@ -9,7 +9,11 @@ import { EuiPanel, EuiText } from '@elastic/eui';
 import Action from '../../components/Action';
 import ActionEmptyPrompt from '../../components/ActionEmptyPrompt';
 import AddActionButton from '../../components/AddActionButton';
-import { DEFAULT_MESSAGE_SOURCE, FORMIK_INITIAL_ACTION_VALUES } from '../../utils/constants';
+import {
+  CHANNEL_TYPES,
+  DEFAULT_MESSAGE_SOURCE,
+  FORMIK_INITIAL_ACTION_VALUES,
+} from '../../utils/constants';
 import { getAllowList } from '../../../Destinations/utils/helpers';
 import {
   MAX_QUERY_RESULT_SIZE,
@@ -19,7 +23,7 @@ import {
 import { backendErrorNotification } from '../../../../utils/helpers';
 import { TRIGGER_TYPE } from '../CreateTrigger/utils/constants';
 import { formikToTrigger } from '../CreateTrigger/utils/formikToTrigger';
-import { toChannelType } from '../../utils/helper';
+import { getChannelOptions, toChannelType } from '../../utils/helper';
 
 const createActionContext = (context, action) => ({
   ctx: {
@@ -70,6 +74,16 @@ class ConfigureActions extends React.Component {
     this.loadDestinations();
   }
 
+  async componentWillReceiveProps(nextProps, nextContext) {
+    if (this.props.plugins !== nextProps.plugins) {
+      if (nextProps.plugins.indexOf(OS_NOTIFICATION_PLUGIN) !== -1) {
+        this.setState({ hasNotificationPlugin: true });
+      }
+
+      this.loadDestinations();
+    }
+  }
+
   loadDestinations = async (searchText = '') => {
     const { httpClient, values, arrayHelpers, notifications, fieldPath } = this.props;
     const { allowList, actionDeleted, hasNotificationPlugin } = this.state;
@@ -89,7 +103,6 @@ class ConfigureActions extends React.Component {
             type: toChannelType(destination.type),
             description: '',
           }));
-        this.setState({ destinations, loadingDestinations: false });
       } else {
         backendErrorNotification(notifications, 'load', 'destinations', response.err);
       }
@@ -170,7 +183,7 @@ class ConfigureActions extends React.Component {
       triggerIndex,
       values,
     } = this.props;
-    const { destinations } = this.state;
+    const { flattenedDestinations } = this.state;
     // TODO: For bucket-level triggers, sendTestMessage will only send a test message if there is
     //  at least one bucket of data from the monitor input query.
     let testTrigger = _.cloneDeep(formikToTrigger(values, monitor.ui_metadata)[triggerIndex]);
@@ -214,7 +227,7 @@ class ConfigureActions extends React.Component {
         error = checkForError(response, error);
         if (!_.isEmpty(action.destination_id)) {
           const destinationName = _.get(
-            _.find(destinations, { value: action.destination_id }),
+            _.find(flattenedDestinations, { value: action.destination_id }),
             'label'
           );
           notifications.toasts.addSuccess(`Test message sent to "${destinationName}."`);
@@ -261,7 +274,12 @@ class ConfigureActions extends React.Component {
         />
       ))
     ) : (
-      <ActionEmptyPrompt arrayHelpers={arrayHelpers} hasDestinations={hasDestinations} />
+      <ActionEmptyPrompt
+        arrayHelpers={arrayHelpers}
+        hasDestinations={hasDestinations}
+        httpClient={httpClient}
+        hasNotificationPlugin={hasNotificationPlugin}
+      />
     );
   };
 
