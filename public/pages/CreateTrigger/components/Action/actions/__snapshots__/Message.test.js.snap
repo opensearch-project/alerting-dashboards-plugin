@@ -65,7 +65,7 @@ exports[`Message renders 1`] = `
             <div
               class="euiTextColor euiTextColor--subdued"
             >
-              Embed variables in your message using Mustache templates. 
+              Embed variables in your message using Mustache templates.
               <a
                 class="euiLink euiLink--primary"
                 href="https://mustache.github.io/mustache.5.html"
@@ -166,36 +166,16 @@ exports[`Message renders 1`] = `
     class="euiSpacer euiSpacer--m"
   />
   <div
-    class="euiFormRow"
-    id="generated-id-row"
-    style="max-width:100%"
+    class="euiFlexItem"
   >
     <div
-      class="euiFormRow__labelWrapper"
+      class="euiText euiText--extraSmall"
     >
-      <label
-        class="euiFormLabel euiFormRow__label"
-        for="generated-id"
-      >
-        <span
-          style="color:#343741"
-        >
-          Perform action
-        </span>
-      </label>
-    </div>
-    <div
-      class="euiFormRow__fieldWrapper"
-    >
-      <div
-        class="euiText euiText--extraSmall"
-        id="generated-id"
-      >
-        <div
-          class="euiTextColor euiTextColor--subdued"
-        >
-          Per monitor execution
-        </div>
+      <strong>
+        Perform action
+      </strong>
+      <div>
+        Per monitor execution
       </div>
     </div>
   </div>
