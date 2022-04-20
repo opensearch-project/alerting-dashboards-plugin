@@ -2,7 +2,6 @@
 
 exports[`MonitorType renders 1`] = `
 <div
-  alignitems="flexStart"
   class="euiFlexGrid euiFlexGrid--gutterMedium euiFlexGrid--wrap euiFlexGrid--responsive"
 >
   <div

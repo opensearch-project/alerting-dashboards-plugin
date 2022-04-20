@@ -149,11 +149,15 @@ export default class AlertsDashboardFlyoutComponent extends Component {
   }
 
   getBucketLevelGraphConditions = (trigger) => {
-    let conditions = _.get(trigger, 'condition.script.source', '-');
-    conditions = conditions.replaceAll(' && ', '&AND&');
-    conditions = conditions.replaceAll(' || ', '&OR&');
-    conditions = conditions.split(/&/);
-    return conditions.join('\n');
+    let conditions = _.get(trigger, 'condition.script.source');
+    if (_.isEmpty(conditions)) {
+      return '-';
+    } else {
+      conditions = conditions.replaceAll(' && ', '&AND&');
+      conditions = conditions.replaceAll(' || ', '&OR&');
+      conditions = conditions.split(/&/);
+      return conditions.join('\n');
+    }
   };
 
   getSeverityText = (severity) => {
