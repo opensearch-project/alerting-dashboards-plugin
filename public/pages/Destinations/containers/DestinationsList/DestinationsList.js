@@ -316,17 +316,15 @@ class DestinationsList extends React.Component {
           bodyStyles={{ padding: 'initial' }}
           title="Destinations (deprecated)"
           actions={
-            hasNotificationPlugin && (
-              <DestinationsActions
-                isEmailAllowed={this.isEmailAllowed()}
-                onClickManageSenders={() => {
-                  this.setState({ showManageSenders: true });
-                }}
-                onClickManageEmailGroups={() => {
-                  this.setState({ showManageEmailGroups: true });
-                }}
-              />
-            )
+            <DestinationsActions
+              isEmailAllowed={this.isEmailAllowed()}
+              onClickManageSenders={() => {
+                this.setState({ showManageSenders: true });
+              }}
+              onClickManageEmailGroups={() => {
+                this.setState({ showManageEmailGroups: true });
+              }}
+            />
           }
         >
           <DeleteConfirmation
