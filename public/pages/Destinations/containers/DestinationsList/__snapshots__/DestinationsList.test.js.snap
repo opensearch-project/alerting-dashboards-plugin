@@ -176,7 +176,13 @@ exports[`DestinationsList renders when Notification plugin is installed 1`] = `
     </div>
   </NotificationsCallOut>
   <ContentPanel
-    actions={false}
+    actions={
+      <DestinationsActions
+        isEmailAllowed={true}
+        onClickManageEmailGroups={[Function]}
+        onClickManageSenders={[Function]}
+      />
+    }
     bodyStyles={
       Object {
         "padding": "initial",
@@ -249,7 +255,120 @@ exports[`DestinationsList renders when Notification plugin is installed 1`] = `
                     <EuiFlexItem>
                       <div
                         className="euiFlexItem"
-                      />
+                      >
+                        <DestinationsActions
+                          isEmailAllowed={true}
+                          onClickManageEmailGroups={[Function]}
+                          onClickManageSenders={[Function]}
+                        >
+                          <EuiFlexGroup
+                            alignItems="center"
+                            justifyContent="spaceBetween"
+                          >
+                            <div
+                              className="euiFlexGroup euiFlexGroup--gutterLarge euiFlexGroup--alignItemsCenter euiFlexGroup--justifyContentSpaceBetween euiFlexGroup--directionRow euiFlexGroup--responsive"
+                            >
+                              <EuiFlexItem>
+                                <div
+                                  className="euiFlexItem"
+                                >
+                                  <EuiPopover
+                                    anchorPosition="downLeft"
+                                    button={
+                                      <EuiButton
+                                        iconSide="right"
+                                        iconType="arrowDown"
+                                        onClick={[Function]}
+                                      >
+                                        Actions
+                                      </EuiButton>
+                                    }
+                                    closePopover={[Function]}
+                                    display="inlineBlock"
+                                    hasArrow={true}
+                                    id="destinationActionsPopover"
+                                    isOpen={false}
+                                    ownFocus={false}
+                                    panelPaddingSize="none"
+                                  >
+                                    <EuiOutsideClickDetector
+                                      isDisabled={true}
+                                      onOutsideClick={[Function]}
+                                    >
+                                      <div
+                                        className="euiPopover euiPopover--anchorDownLeft"
+                                        id="destinationActionsPopover"
+                                        onKeyDown={[Function]}
+                                        onMouseDown={[Function]}
+                                        onMouseUp={[Function]}
+                                        onTouchEnd={[Function]}
+                                        onTouchStart={[Function]}
+                                      >
+                                        <div
+                                          className="euiPopover__anchor"
+                                        >
+                                          <EuiButton
+                                            iconSide="right"
+                                            iconType="arrowDown"
+                                            onClick={[Function]}
+                                          >
+                                            <EuiButtonDisplay
+                                              disabled={false}
+                                              element="button"
+                                              iconSide="right"
+                                              iconType="arrowDown"
+                                              isDisabled={false}
+                                              onClick={[Function]}
+                                              type="button"
+                                            >
+                                              <button
+                                                className="euiButton euiButton--primary"
+                                                disabled={false}
+                                                onClick={[Function]}
+                                                type="button"
+                                              >
+                                                <EuiButtonContent
+                                                  className="euiButton__content"
+                                                  iconSide="right"
+                                                  iconType="arrowDown"
+                                                  textProps={
+                                                    Object {
+                                                      "className": "euiButton__text",
+                                                    }
+                                                  }
+                                                >
+                                                  <span
+                                                    className="euiButtonContent euiButtonContent--iconRight euiButton__content"
+                                                  >
+                                                    <EuiIcon
+                                                      className="euiButtonContent__icon"
+                                                      size="m"
+                                                      type="arrowDown"
+                                                    >
+                                                      <div>
+                                                        EuiIconMock
+                                                      </div>
+                                                    </EuiIcon>
+                                                    <span
+                                                      className="euiButton__text"
+                                                    >
+                                                      Actions
+                                                    </span>
+                                                  </span>
+                                                </EuiButtonContent>
+                                              </button>
+                                            </EuiButtonDisplay>
+                                          </EuiButton>
+                                        </div>
+                                      </div>
+                                    </EuiOutsideClickDetector>
+                                  </EuiPopover>
+                                </div>
+                              </EuiFlexItem>
+                            </div>
+                          </EuiFlexGroup>
+                        </DestinationsActions>
+                      </div>
                     </EuiFlexItem>
                   </div>
                 </EuiFlexGroup>
@@ -1529,7 +1648,13 @@ exports[`DestinationsList renders when Notification plugin is not installed 1`] 
     </div>
   </NotificationsCallOut>
   <ContentPanel
-    actions={false}
+    actions={
+      <DestinationsActions
+        isEmailAllowed={false}
+        onClickManageEmailGroups={[Function]}
+        onClickManageSenders={[Function]}
+      />
+    }
     bodyStyles={
       Object {
         "padding": "initial",
@@ -1602,7 +1727,22 @@ exports[`DestinationsList renders when Notification plugin is not installed 1`] 
                     <EuiFlexItem>
                       <div
                         className="euiFlexItem"
-                      />
+                      >
+                        <DestinationsActions
+                          isEmailAllowed={false}
+                          onClickManageEmailGroups={[Function]}
+                          onClickManageSenders={[Function]}
+                        >
+                          <EuiFlexGroup
+                            alignItems="center"
+                            justifyContent="spaceBetween"
+                          >
+                            <div
+                              className="euiFlexGroup euiFlexGroup--gutterLarge euiFlexGroup--alignItemsCenter euiFlexGroup--justifyContentSpaceBetween euiFlexGroup--directionRow euiFlexGroup--responsive"
+                            />
+                          </EuiFlexGroup>
+                        </DestinationsActions>
+                      </div>
                     </EuiFlexItem>
                   </div>
                 </EuiFlexGroup>
@@ -2835,7 +2975,13 @@ exports[`DestinationsList renders when email is disallowed 1`] = `
     </div>
   </NotificationsCallOut>
   <ContentPanel
-    actions={false}
+    actions={
+      <DestinationsActions
+        isEmailAllowed={false}
+        onClickManageEmailGroups={[Function]}
+        onClickManageSenders={[Function]}
+      />
+    }
     bodyStyles={
       Object {
         "padding": "initial",
@@ -2908,7 +3054,22 @@ exports[`DestinationsList renders when email is disallowed 1`] = `
                     <EuiFlexItem>
                       <div
                         className="euiFlexItem"
-                      />
+                      >
+                        <DestinationsActions
+                          isEmailAllowed={false}
+                          onClickManageEmailGroups={[Function]}
+                          onClickManageSenders={[Function]}
+                        >
+                          <EuiFlexGroup
+                            alignItems="center"
+                            justifyContent="spaceBetween"
+                          >
+                            <div
+                              className="euiFlexGroup euiFlexGroup--gutterLarge euiFlexGroup--alignItemsCenter euiFlexGroup--justifyContentSpaceBetween euiFlexGroup--directionRow euiFlexGroup--responsive"
+                            />
+                          </EuiFlexGroup>
+                        </DestinationsActions>
+                      </div>
                     </EuiFlexItem>
                   </div>
                 </EuiFlexGroup>
