@@ -33,6 +33,11 @@ const DashboardEmptyPrompt = ({ onCreateTrigger, isModal = false }) => {
     : inMonitorDetails
     ? createTriggerText
     : createMonitorText;
+  const actions = inMonitorDetails
+    ? undefined
+    : isModal
+    ? editMonitorButton(onCreateTrigger)
+    : createMonitorButton;
   return (
     <EuiEmptyPrompt
       style={{ maxWidth: '45em' }}
@@ -41,9 +46,7 @@ const DashboardEmptyPrompt = ({ onCreateTrigger, isModal = false }) => {
           <p>{displayText}</p>
         </EuiText>
       }
-      actions={
-        inMonitorDetails || isModal ? editMonitorButton(onCreateTrigger) : createMonitorButton
-      }
+      actions={actions}
     />
   );
 };

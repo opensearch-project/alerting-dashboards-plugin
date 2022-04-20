@@ -47,7 +47,10 @@ import { DEFAULT_PAGE_SIZE_OPTIONS } from '../../../../pages/Monitors/containers
 import queryString from 'query-string';
 import { MAX_ALERT_COUNT } from '../../../../pages/Dashboard/utils/constants';
 import { SEVERITY_OPTIONS } from '../../../../pages/CreateTrigger/utils/constants';
-import { TABLE_TAB_IDS } from '../../../../pages/Dashboard/components/FindingsDashboard/utils';
+import {
+  ALERTS_FINDING_COLUMN,
+  TABLE_TAB_IDS,
+} from '../../../../pages/Dashboard/components/FindingsDashboard/utils';
 import FindingsDashboard from '../../../../pages/Dashboard/containers/FindingsDashboard';
 
 export const DEFAULT_NUM_FLYOUT_ROWS = 10;
@@ -147,8 +150,8 @@ export default class AlertsDashboardFlyoutComponent extends Component {
 
   getBucketLevelGraphConditions = (trigger) => {
     let conditions = _.get(trigger, 'condition.script.source', '-');
-    conditions = _.replace(conditions, ' && ', '&AND&');
-    conditions = _.replace(conditions, ' || ', '&OR&');
+    conditions = conditions.replaceAll(' && ', '&AND&');
+    conditions = conditions.replaceAll(' || ', '&OR&');
     conditions = conditions.split(/&/);
     return conditions.join('\n');
   };
@@ -167,7 +170,7 @@ export default class AlertsDashboardFlyoutComponent extends Component {
   };
 
   getAlerts = async () => {
-    this.setState({ loading: true });
+    this.setState({ loading: true, tabContent: undefined });
     const {
       from,
       search,
@@ -263,8 +266,7 @@ export default class AlertsDashboardFlyoutComponent extends Component {
       alertState,
       monitorIds
     );
-    this.setState({ selectedItems: [], tabContent: undefined });
-    this.setState({ tabContent: this.renderAlertsTable() });
+    this.setState({ selectedItems: [] });
     this.props.refreshDashboard();
   };
 
@@ -348,6 +350,10 @@ export default class AlertsDashboardFlyoutComponent extends Component {
       switch (monitorType) {
         case MONITOR_TYPE.BUCKET_LEVEL:
           columns = insertGroupByColumn(groupBy);
+          break;
+        case MONITOR_TYPE.DOC_LEVEL:
+          columns = _.cloneDeep(queryColumns);
+          columns.splice(0, 0, ALERTS_FINDING_COLUMN);
           break;
         default:
           columns = queryColumns;
