@@ -36,10 +36,7 @@ export default class FindingService {
       size = DEFAULT_GET_FINDINGS_PARAMS.size,
       search = DEFAULT_GET_FINDINGS_PARAMS.search,
       sortDirection = DEFAULT_GET_FINDINGS_PARAMS.sortDirection,
-      // If the sortField parsed from the URL isn't a valid option for this API, use a default option.
-      sortField = _.includes(_.values(GET_FINDINGS_SORT_FIELDS), req.query.sortField)
-        ? req.query.sortField
-        : DEFAULT_GET_FINDINGS_PARAMS.sortField,
+      sortField = DEFAULT_GET_FINDINGS_PARAMS.sortField,
     } = req.query;
 
     var params;
@@ -56,12 +53,12 @@ export default class FindingService {
           sortOrder: sortDirection,
         };
         break;
-      case GET_FINDINGS_SORT_FIELDS.TIMESTAMP:
+      default:
+        // If the sortField parsed from the URL isn't a valid option for this API, use a default option.
         params = {
-          sortString: sortField,
+          sortString: GET_FINDINGS_SORT_FIELDS.TIMESTAMP,
           sortOrder: sortDirection,
         };
-        break;
     }
 
     if (!_.isEmpty(id)) params.findingId = id;
