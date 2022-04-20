@@ -30,7 +30,7 @@ export default class DestinationsActions extends Component {
           this.props.onClickManageSenders();
         }}
       >
-        Manage email senders
+        View email senders
       </EuiContextMenuItem>,
       <EuiContextMenuItem
         key="manageEmailGroups"
@@ -39,7 +39,7 @@ export default class DestinationsActions extends Component {
           this.props.onClickManageEmailGroups();
         }}
       >
-        Manage email groups
+        View email groups
       </EuiContextMenuItem>,
     ];
   };
@@ -75,11 +75,6 @@ export default class DestinationsActions extends Component {
             </EuiPopover>
           </EuiFlexItem>
         ) : null}
-        <EuiFlexItem grow={false}>
-          <EuiButton isDisabled={true} fill href={`${PLUGIN_NAME}#${APP_PATH.CREATE_DESTINATION}`}>
-            Add destination
-          </EuiButton>
-        </EuiFlexItem>
       </EuiFlexGroup>
     );
   }

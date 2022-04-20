@@ -176,7 +176,7 @@ class CreateDestination extends React.Component {
           {({ values, handleSubmit, isSubmitting, errors, isValid }) => (
             <Fragment>
               <EuiTitle size="l">
-                <h1>{edit ? 'Edit' : 'Add'} destination</h1>
+                <h1>{edit ? 'View' : 'Add'} destination</h1>
               </EuiTitle>
               <EuiSpacer size="m" />
               <ContentPanel title="Destination" titleSize="s" bodyStyles={{ padding: 'initial' }}>
@@ -206,6 +206,7 @@ class CreateDestination extends React.Component {
                         field.onChange(e);
                         form.setFieldError('name', required(e.target.value));
                       },
+                      disabled: true,
                     }}
                   />
                   <FormikSelect
@@ -221,7 +222,7 @@ class CreateDestination extends React.Component {
                       error: hasError,
                     }}
                     inputProps={{
-                      disabled: edit,
+                      disabled: true,
                       options: this.getAllowedDestinationOptions(),
                       isInvalid,
                     }}
@@ -241,12 +242,7 @@ class CreateDestination extends React.Component {
               <EuiSpacer />
               <EuiFlexGroup alignItems="center" justifyContent="flexEnd">
                 <EuiFlexItem grow={false}>
-                  <EuiButtonEmpty onClick={this.handleCancel}>Cancel</EuiButtonEmpty>
-                </EuiFlexItem>
-                <EuiFlexItem grow={false}>
-                  <EuiButton fill onClick={handleSubmit} isLoading={isSubmitting}>
-                    {edit ? 'Update' : 'Create'}
-                  </EuiButton>
+                  <EuiButtonEmpty onClick={this.handleCancel}>Close</EuiButtonEmpty>
                 </EuiFlexItem>
               </EuiFlexGroup>
               <SubmitErrorHandler

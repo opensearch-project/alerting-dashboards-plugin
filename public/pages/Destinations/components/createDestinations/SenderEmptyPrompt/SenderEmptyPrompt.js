@@ -5,15 +5,13 @@
 
 import React from 'react';
 import { EuiEmptyPrompt, EuiText } from '@elastic/eui';
-import AddSenderButton from '../AddSenderButton/AddSenderButton';
 
 const senderEmptyText =
   'A sender specifies the sender name, sender email, port, host, ' +
   'and encryption method for your destination(s). You can reuse the same sender across different destinations ' +
   'or create as many senders as needed.';
-const addSenderButton = (arrayHelpers) => <AddSenderButton arrayHelpers={arrayHelpers} />;
 
-const SenderEmptyPrompt = ({ arrayHelpers }) => (
+const SenderEmptyPrompt = () => (
   <EuiEmptyPrompt
     style={{ maxWidth: '45em' }}
     body={
@@ -22,7 +20,6 @@ const SenderEmptyPrompt = ({ arrayHelpers }) => (
         <p>{senderEmptyText}</p>
       </EuiText>
     }
-    actions={addSenderButton(arrayHelpers)}
   />
 );
 

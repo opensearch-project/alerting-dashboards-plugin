@@ -133,6 +133,7 @@ export default class EmailRecipients extends React.Component {
                     form.setFieldValue
                   );
                 },
+                isDisabled: true,
               }}
             />
           </EuiFlexItem>

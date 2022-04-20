@@ -65,6 +65,7 @@ const URLInfo = ({ type, values }) => {
             }
             field.onChange(e);
           },
+          disabled: true,
         }}
       />
       <FormikFieldText
@@ -80,7 +81,7 @@ const URLInfo = ({ type, values }) => {
           error: hasError,
         }}
         inputProps={{
-          disabled: !isUrlEnabled,
+          disabled: true,
           isInvalid,
           // 'validateUrl()' is only called onBlur, but we enable the basic 'required()' validation onChange
           onChange: (e, field, form) => {
@@ -106,6 +107,7 @@ const URLInfo = ({ type, values }) => {
             }
             field.onChange(e);
           },
+          disabled: true,
         }}
       />
       <FormikSelect
@@ -116,7 +118,7 @@ const URLInfo = ({ type, values }) => {
           style: { paddingLeft: '10px' },
         }}
         inputProps={{
-          disabled: isUrlEnabled,
+          disabled: true,
           options: protocolOptions,
         }}
       />
@@ -133,7 +135,7 @@ const URLInfo = ({ type, values }) => {
           error: hasError,
         }}
         inputProps={{
-          disabled: isUrlEnabled,
+          disabled: true,
           isInvalid,
           // 'validateHost()' is only called onBlur, but we enable the basic 'required()' validation onChange
           onChange: (e, field, form) => {
@@ -152,7 +154,7 @@ const URLInfo = ({ type, values }) => {
           error: hasError,
         }}
         inputProps={{
-          disabled: isUrlEnabled,
+          disabled: true,
           isInvalid,
         }}
       />
@@ -166,15 +168,11 @@ const URLInfo = ({ type, values }) => {
           error: hasError,
         }}
         inputProps={{
-          disabled: isUrlEnabled,
+          disabled: true,
           isInvalid,
         }}
       />
-      <QueryParamsEditor
-        type={type}
-        queryParams={values[type].queryParams}
-        isEnabled={!isUrlEnabled}
-      />
+      <QueryParamsEditor type={type} queryParams={values[type].queryParams} isEnabled={false} />
     </Fragment>
   );
 };

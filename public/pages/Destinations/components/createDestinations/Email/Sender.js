@@ -34,16 +34,7 @@ const onSenderChange = (index, sender, arrayHelpers) => {
 const Sender = ({ sender, arrayHelpers, context, index, onDelete }) => {
   const { name } = sender;
   return (
-    <EuiAccordion
-      id={name}
-      buttonContent={!name ? 'New sender' : name}
-      paddingSize="l"
-      extraAction={
-        <EuiButton color="danger" size="s" onClick={onDelete}>
-          Remove sender
-        </EuiButton>
-      }
-    >
+    <EuiAccordion id={name} buttonContent={!name ? 'New sender' : name} paddingSize="l">
       <FormikFieldText
         name={`senders.${index}.name`}
         formRow
@@ -64,6 +55,7 @@ const Sender = ({ sender, arrayHelpers, context, index, onDelete }) => {
             onSenderChange(index, sender, arrayHelpers);
           },
           isInvalid,
+          disabled: true,
         }}
       />
       <EuiFlexGroup
@@ -88,6 +80,7 @@ const Sender = ({ sender, arrayHelpers, context, index, onDelete }) => {
                 onSenderChange(index, sender, arrayHelpers);
               },
               isInvalid,
+              disabled: true,
             }}
           />
         </EuiFlexItem>
@@ -108,6 +101,7 @@ const Sender = ({ sender, arrayHelpers, context, index, onDelete }) => {
                 onSenderChange(index, sender, arrayHelpers);
               },
               isInvalid,
+              disabled: true,
             }}
           />
         </EuiFlexItem>
@@ -128,6 +122,7 @@ const Sender = ({ sender, arrayHelpers, context, index, onDelete }) => {
                 onSenderChange(index, sender, arrayHelpers);
               },
               isInvalid,
+              disabled: true,
             }}
           />
         </EuiFlexItem>
@@ -149,6 +144,7 @@ const Sender = ({ sender, arrayHelpers, context, index, onDelete }) => {
             field.onChange(e);
             onSenderChange(index, sender, arrayHelpers);
           },
+          disabled: true,
         }}
       />
     </EuiAccordion>

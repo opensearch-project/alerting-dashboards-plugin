@@ -74,9 +74,9 @@ class ConfigureActions extends React.Component {
     this.loadDestinations();
   }
 
-  async componentWillReceiveProps(nextProps, nextContext) {
-    if (this.props.plugins !== nextProps.plugins) {
-      if (nextProps.plugins.indexOf(OS_NOTIFICATION_PLUGIN) !== -1) {
+  componentDidUpdate(prevProps) {
+    if (this.props.plugins !== prevProps.plugins) {
+      if (this.props.plugins.indexOf(OS_NOTIFICATION_PLUGIN) !== -1) {
         this.setState({ hasNotificationPlugin: true });
       }
 
