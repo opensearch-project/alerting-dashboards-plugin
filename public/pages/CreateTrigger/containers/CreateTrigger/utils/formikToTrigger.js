@@ -109,7 +109,7 @@ export function getDocumentLevelScriptSource(conditions) {
     if (!_.isEmpty(query) && !_.isEmpty(query.queryName)) {
       const queryExpression = _.get(query, 'expression');
       const operator = query.operator === '!=' ? '!' : '';
-      scriptSourceContents.push(`(${operator}query[${queryExpression}])`);
+      scriptSourceContents.push(`${operator}query[${queryExpression}]`);
     }
   });
   return scriptSourceContents.join(' ');

@@ -14,20 +14,16 @@ import {
   EuiSpacer,
   EuiText,
 } from '@elastic/eui';
-import { FormikFieldText, FormikComboBox, FormikSelect } from '../../../../components/FormControls';
+import { FormikComboBox, FormikFieldText, FormikSelect } from '../../../../components/FormControls';
 import { hasError, isInvalid, required } from '../../../../utils/validate';
 import { FORMIK_INITIAL_DOCUMENT_LEVEL_QUERY_VALUES } from '../../containers/CreateMonitor/utils/constants';
 import { DOC_LEVEL_TAG_TOOLTIP } from './DocumentLevelQueryTag';
 import IconToolTip from '../../../../components/IconToolTip';
 import ConfigureDocumentLevelQueryTags from './ConfigureDocumentLevelQueryTags';
 import { getIndexFields } from '../MonitorExpressions/expressions/utils/dataTypes';
+import { QUERY_OPERATORS } from '../../../Dashboard/components/FindingsDashboard/utils';
 
 const ALLOWED_DATA_TYPES = ['number', 'text', 'keyword', 'boolean'];
-
-export const QUERY_OPERATORS = [
-  { text: 'is', value: '==' },
-  { text: 'is not', value: '!=' },
-];
 
 export const getInitialQueryValues = (queryIndexNum = 0) =>
   _.cloneDeep({

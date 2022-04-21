@@ -5,7 +5,7 @@
 
 import { OPERATORS_MAP } from '../../../components/MonitorExpressions/expressions/utils/constants';
 import { MONITOR_TYPE } from '../../../../../utils/constants';
-import { QUERY_OPERATORS } from '../../../components/DocumentLevelMonitorQueries/DocumentLevelQuery';
+import { QUERY_OPERATORS } from '../../../../Dashboard/components/FindingsDashboard/utils';
 
 export const BUCKET_COUNT = 5;
 

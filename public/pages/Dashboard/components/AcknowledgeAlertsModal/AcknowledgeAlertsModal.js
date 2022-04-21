@@ -44,6 +44,7 @@ import DashboardControls from '../DashboardControls';
 import ContentPanel from '../../../../components/ContentPanel';
 import { queryColumns } from '../../utils/tableUtils';
 import DashboardEmptyPrompt from '../DashboardEmptyPrompt';
+import { ALERTS_FINDING_COLUMN } from '../FindingsDashboard/utils';
 
 export const DEFAULT_NUM_MODAL_ROWS = 10;
 
@@ -326,14 +327,17 @@ export default class AcknowledgeAlertsModal extends Component {
     } = this.state;
 
     const columnType = () => {
-      let columns = [];
+      let columns;
       switch (monitorType) {
-        case MONITOR_TYPE.QUERY_LEVEL:
-        case MONITOR_TYPE.CLUSTER_METRICS:
-          columns = queryColumns;
-          break;
         case MONITOR_TYPE.BUCKET_LEVEL:
           columns = insertGroupByColumn(groupBy);
+          break;
+        case MONITOR_TYPE.DOC_LEVEL:
+          columns = _.cloneDeep(queryColumns);
+          columns.splice(0, 0, ALERTS_FINDING_COLUMN);
+          break;
+        default:
+          columns = queryColumns;
           break;
       }
       return removeColumns(['trigger_name'], columns);

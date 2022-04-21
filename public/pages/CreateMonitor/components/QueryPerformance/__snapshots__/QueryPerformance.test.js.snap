@@ -15,7 +15,7 @@ exports[`QueryPerformance renders 1`] = `
       <h3
         class="euiTitle euiTitle--small"
       >
-        Query performance
+        Monitor performance
       </h3>
     </div>
     <div
@@ -72,7 +72,7 @@ exports[`QueryPerformance renders 1`] = `
           class="euiText euiText--extraSmall"
         >
           <strong>
-            Query duration
+            Monitor duration
           </strong>
           <span
             style="display:block"

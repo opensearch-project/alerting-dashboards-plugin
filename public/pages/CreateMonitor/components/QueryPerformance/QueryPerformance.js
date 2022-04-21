@@ -14,7 +14,7 @@ import ContentPanel from '../../../../components/ContentPanel';
 const QueryPerformance = ({ response, actions }) => (
   <Fragment>
     <ContentPanel
-      title="Query performance"
+      title="Monitor performance"
       titleSize="s"
       panelStyles={{ paddingLeft: '10px', paddingRight: '10px' }}
       description={
@@ -31,7 +31,7 @@ const QueryPerformance = ({ response, actions }) => (
       <EuiFlexGroup alignItems="flexStart" gutterSize="xl">
         <EuiFlexItem grow={false}>
           <EuiText size="xs">
-            <strong>Query duration</strong>
+            <strong>Monitor duration</strong>
             <span style={{ display: 'block' }}>
               {`${_.get(response, 'took', DEFAULT_EMPTY_DATA)} ms`}
             </span>

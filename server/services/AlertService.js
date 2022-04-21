@@ -24,10 +24,7 @@ export default class AlertService {
       size = 20,
       search = '',
       sortDirection = 'desc',
-      // If the sortField parsed from the URL isn't a valid option for this API, use a default option.
-      sortField = _.includes(_.values(GET_ALERTS_SORT_FILTERS), req.query.sortField)
-        ? req.query.sortField
-        : GET_ALERTS_SORT_FILTERS.START_TIME,
+      sortField = GET_ALERTS_SORT_FILTERS.START_TIME,
       severityLevel = 'ALL',
       alertState = 'ALL',
       monitorIds = [],
@@ -47,12 +44,6 @@ export default class AlertService {
           sortOrder: sortDirection,
         };
         break;
-      case GET_ALERTS_SORT_FILTERS.START_TIME:
-        params = {
-          sortString: sortField,
-          sortOrder: sortDirection,
-        };
-        break;
       case GET_ALERTS_SORT_FILTERS.END_TIME:
         params = {
           sortString: sortField,
@@ -67,6 +58,12 @@ export default class AlertService {
           missing: '_last',
         };
         break;
+      default:
+        // If the sortField parsed from the URL isn't a valid option for this API, use a default option.
+        params = {
+          sortString: GET_ALERTS_SORT_FILTERS.START_TIME,
+          sortOrder: sortDirection,
+        };
     }
 
     params.startIndex = from;

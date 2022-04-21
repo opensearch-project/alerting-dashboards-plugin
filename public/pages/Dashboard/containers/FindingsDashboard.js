@@ -6,7 +6,7 @@
 import React, { Component } from 'react';
 import _ from 'lodash';
 import queryString from 'query-string';
-import { EuiBasicTable } from '@elastic/eui';
+import { EuiBasicTable, EuiEmptyPrompt, EuiLoadingSpinner, EuiText } from '@elastic/eui';
 import ContentPanel from '../../../components/ContentPanel';
 import { backendErrorNotification } from '../../../utils/helpers';
 import { DEFAULT_PAGE_SIZE_OPTIONS } from '../../Monitors/containers/Monitors/utils/constants';
@@ -28,6 +28,10 @@ export const GET_FINDINGS_PREVIEW_PARAMS = {
   sortDirection: DEFAULT_GET_FINDINGS_PARAMS.sortDirection,
   sortField: GET_FINDINGS_SORT_FIELDS.TIMESTAMP,
 };
+
+export const NO_FINDINGS_TEXT =
+  'There are no existing findings. Adjust document level queries to generate findings. Once a document is indexed that meets the query condition, the finding will show in this table.';
+export const MAX_FINDINGS_COUNT = 10000;
 
 export default class FindingsDashboard extends Component {
   constructor(props) {
@@ -54,18 +58,16 @@ export default class FindingsDashboard extends Component {
 
   componentDidMount() {
     const { isPreview = false } = this.props;
-    if (isPreview) {
-      this.getPreviewFindingsDocuments();
-    } else {
-      const { id, from, size, search, sortField, sortDirection } = this.state;
-      this.getFindings(id, from, size, search, sortDirection, sortField);
-    }
+    if (isPreview) this.getPreviewFindingsDocuments();
+    else this.getFindings();
   }
 
   componentDidUpdate(prevProps, prevState) {
     const prevQuery = this.getQueryObjectFromState(prevState);
     const currQuery = this.getQueryObjectFromState(this.state);
-    if (!_.isEqual(prevQuery, currQuery)) this.componentDidMount();
+    if (!_.isEqual(prevQuery, currQuery)) this.sortFindings();
+    if (!_.isEqual(prevQuery.sortDirection, currQuery.sortDirection))
+      this.setState({ findings: _.reverse(this.state.findings) });
   }
 
   getURLQueryParams() {
@@ -78,10 +80,15 @@ export default class FindingsDashboard extends Component {
       sortField = DEFAULT_GET_FINDINGS_PARAMS.sortField,
       sortDirection = DEFAULT_GET_FINDINGS_PARAMS.sortDirection,
     } = queryString.parse(location.search);
+    const parsedSize = isNaN(parseInt(size, 10))
+      ? DEFAULT_GET_FINDINGS_PARAMS.size
+      : parseInt(size, 10);
     return {
       id,
       from: isNaN(parseInt(from, 10)) ? DEFAULT_GET_FINDINGS_PARAMS.from : parseInt(from, 10),
-      size: isNaN(parseInt(size, 10)) ? DEFAULT_GET_FINDINGS_PARAMS.size : parseInt(size, 10),
+      size: _.includes(DEFAULT_PAGE_SIZE_OPTIONS, parsedSize)
+        ? parsedSize
+        : DEFAULT_GET_FINDINGS_PARAMS.size,
       search,
       sortField: _.includes(_.values(GET_FINDINGS_SORT_FIELDS), sortField)
         ? sortField
@@ -95,8 +102,9 @@ export default class FindingsDashboard extends Component {
   }
 
   getFindings = _.debounce(
-    (id, from, size, search, sortDirection, sortField) => {
+    () => {
       this.setState({ loadingFindings: true });
+      const { id, from, size, search, sortField, sortDirection } = this.state;
       const params = {
         id,
         from,
@@ -106,6 +114,11 @@ export default class FindingsDashboard extends Component {
         sortField,
       };
       const queryParamsString = queryString.stringify(params);
+
+      // TODO FIXME: Refactor 'size' logic to return all findings for a monitor
+      //  once the backend supports retrieving findings for a monitorId.
+      params['size'] = Math.max(size, MAX_FINDINGS_COUNT);
+
       location.search;
       const { httpClient, history, monitorId, notifications } = this.props;
       history.replace({ ...this.props.location, search: queryParamsString });
@@ -113,6 +126,7 @@ export default class FindingsDashboard extends Component {
       httpClient.get('../api/alerting/findings/_search', { query: params }).then((resp) => {
         if (resp.ok) {
           this.setState({ ...getFindingsForMonitor(resp.findings, monitorId) });
+          this.sortFindings();
         } else {
           console.log('Error getting findings:', resp);
           backendErrorNotification(notifications, 'get', 'findings', resp.err);
@@ -123,6 +137,35 @@ export default class FindingsDashboard extends Component {
     500,
     { leading: true }
   );
+
+  sortFindings() {
+    this.setState({ loadingFindings: true });
+    const { findings, sortField } = this.state;
+    let sortedFindings;
+    switch (sortField) {
+      case 'document_list':
+        sortedFindings = _.orderBy(findings, (finding) => _.get(finding, 'document_list.0.id', ''));
+        break;
+      case GET_FINDINGS_SORT_FIELDS.INDEX:
+        sortedFindings = _.orderBy(findings, (finding) =>
+          _.get(finding, GET_FINDINGS_SORT_FIELDS.INDEX, '')
+        );
+        break;
+      case GET_FINDINGS_SORT_FIELDS.MONITOR_NAME:
+        sortedFindings = _.orderBy(findings, (finding) =>
+          _.get(finding, GET_FINDINGS_SORT_FIELDS.MONITOR_NAME, '')
+        );
+        break;
+      case 'queries':
+        sortedFindings = _.orderBy(findings, (finding) => _.get(finding, 'queries', []).length);
+        break;
+      default:
+        sortedFindings = _.orderBy(findings, (finding) =>
+          _.get(finding, GET_FINDINGS_SORT_FIELDS.TIMESTAMP, '')
+        );
+    }
+    this.setState({ findings: sortedFindings, loadingFindings: false });
+  }
 
   getPreviewFindingsDocuments() {
     this.setState({ loadingFindings: true });
@@ -154,7 +197,7 @@ export default class FindingsDashboard extends Component {
     const pagination = {
       pageIndex: page,
       pageSize: size,
-      totalItemCount: Math.min(size, totalFindings),
+      totalItemCount: totalFindings,
       pageSizeOptions: DEFAULT_PAGE_SIZE_OPTIONS,
     };
 
@@ -167,6 +210,7 @@ export default class FindingsDashboard extends Component {
 
     const getItemId = (item) => item.id;
 
+    const paginatedFindings = findings.slice(page * size, page * size + size);
     return (
       <ContentPanel
         title={'Document findings'}
@@ -179,7 +223,7 @@ export default class FindingsDashboard extends Component {
         bodyStyles={{ padding: 'initial' }}
       >
         <EuiBasicTable
-          items={findings}
+          items={loadingFindings ? [] : paginatedFindings}
           itemId={getItemId}
           columns={findingsColumnTypes(isAlertsFlyout)}
           pagination={isPreview ? undefined : pagination}
@@ -187,7 +231,20 @@ export default class FindingsDashboard extends Component {
           isSelectable={false}
           onChange={this.onTableChange}
           loading={loadingFindings}
-          noItemsMessage={loadingFindings ? 'Loading findings...' : 'No findings found.'}
+          noItemsMessage={
+            loadingFindings ? (
+              <EuiLoadingSpinner size="xl" />
+            ) : (
+              <EuiEmptyPrompt
+                style={{ maxWidth: '45em' }}
+                body={
+                  <EuiText>
+                    <p>{NO_FINDINGS_TEXT}</p>
+                  </EuiText>
+                }
+              />
+            )
+          }
         />
       </ContentPanel>
     );
