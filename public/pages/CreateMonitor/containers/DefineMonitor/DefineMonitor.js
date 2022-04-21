@@ -7,7 +7,7 @@ import React, { Component, Fragment } from 'react';
 import moment from 'moment';
 import _ from 'lodash';
 import PropTypes from 'prop-types';
-import { EuiSpacer, EuiButton, EuiCallOut, EuiAccordion } from '@elastic/eui';
+import { EuiSpacer, EuiButton, EuiCallOut, EuiAccordion, EuiLoadingSpinner } from '@elastic/eui';
 import ContentPanel from '../../../../components/ContentPanel';
 import VisualGraph from '../../components/VisualGraph';
 import ExtractionQuery from '../../components/ExtractionQuery';
@@ -29,6 +29,7 @@ import { FORMIK_INITIAL_VALUES } from '../CreateMonitor/utils/constants';
 import { API_TYPES } from '../../components/ClusterMetricsMonitor/utils/clusterMetricsMonitorConstants';
 import ConfigureDocumentLevelQueries from '../../components/DocumentLevelMonitorQueries/ConfigureDocumentLevelQueries';
 import FindingsDashboard from '../../../Dashboard/containers/FindingsDashboard';
+import { validDocLevelGraphQueries } from '../../../Dashboard/components/FindingsDashboard/utils';
 
 function renderEmptyMessage(message) {
   return (
@@ -36,7 +37,7 @@ function renderEmptyMessage(message) {
       <div
         style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '450px' }}
       >
-        <div>{message}</div>
+        <div>{_.isEmpty(message) ? <EuiLoadingSpinner size="xl" /> : message}</div>
       </div>
     </div>
   );
@@ -236,14 +237,18 @@ class DefineMonitor extends Component {
       }
     };
 
+    let accordionTitle = 'Preview query and performance';
     const previewContent = () => {
       switch (values.monitor_type) {
         case MONITOR_TYPE.BUCKET_LEVEL:
           return this.getBucketMonitorGraphs(aggregations, formikSnapshot, response);
         case MONITOR_TYPE.DOC_LEVEL:
           const { index, queries } = values;
+          accordionTitle = 'Preview findings and performance';
           return _.isEmpty(response) ? (
-            renderEmptyMessage('Loading findings...')
+            renderEmptyMessage(
+              validDocLevelGraphQueries(queries) ? '' : 'You must define at least one query.'
+            )
           ) : (
             <FindingsDashboard
               isPreview={true}
@@ -264,10 +269,7 @@ class DefineMonitor extends Component {
         {monitorExpressions()}
         <EuiSpacer size="xl" />
 
-        <EuiAccordion
-          id="preview-query-performance-accordion"
-          buttonContent="Preview query and performance"
-        >
+        <EuiAccordion id="preview-query-performance-accordion" buttonContent={accordionTitle}>
           <EuiSpacer size="s" />
           <QueryPerformance response={performanceResponse} />
           <EuiSpacer size="m" />
@@ -286,9 +288,16 @@ class DefineMonitor extends Component {
   async onRunQuery() {
     this.setState({ loadingResponse: true });
     const { httpClient, values, notifications } = this.props;
-    const formikSnapshot = _.cloneDeep(values);
+    const { monitor_type, searchType } = values;
 
-    const searchType = values.searchType;
+    // Cancel execution criteria
+    switch (monitor_type) {
+      case MONITOR_TYPE.DOC_LEVEL:
+        const { queries } = values;
+        if (SEARCH_TYPE.GRAPH && !validDocLevelGraphQueries(queries)) return;
+    }
+
+    const formikSnapshot = _.cloneDeep(values);
     let requests;
     switch (searchType) {
       case SEARCH_TYPE.QUERY:
@@ -341,20 +350,29 @@ class DefineMonitor extends Component {
         const endTime = moment();
         const duration = moment.duration(endTime.diff(startTime)).milliseconds();
         const response = _.get(queryResponse.resp, 'input_results.results[0]');
+
         // If there is an optionalResponse use it's results, otherwise use the original response
         const performanceResponse = optionalResponse
           ? _.get(optionalResponse, 'resp.input_results.results[0]', null)
           : response;
-        this.setState({
-          response,
-          formikSnapshot,
-          // TODO FIXME: Doc level backend monitor run results don't include duration metric. Using this for now.
-          //  This returns a much longer duration than other monitors, though.
-          performanceResponse:
-            values.monitor_type === MONITOR_TYPE.DOC_LEVEL
-              ? { ...performanceResponse, took: duration }
-              : performanceResponse,
-        });
+        this.setState({ response, formikSnapshot, performanceResponse });
+
+        // TODO FIXME: Doc level backend monitor run results don't include duration metrics. Using this for now.
+        //  This returns a much longer duration than other monitors, though.
+        if (monitor_type === MONITOR_TYPE.DOC_LEVEL) {
+          let hitsCount = 0;
+          _.keys(response).forEach(
+            (resultKey) => (hitsCount += _.values(performanceResponse[resultKey]).length)
+          );
+          this.setState({
+            performanceResponse: {
+              ...performanceResponse,
+              took: duration,
+              invalid: { path: duration },
+              hits: { total: { value: hitsCount } },
+            },
+          });
+        }
       } else {
         console.error('There was an error running the query', queryResponse.resp);
         backendErrorNotification(notifications, 'run', 'query', queryResponse.resp);

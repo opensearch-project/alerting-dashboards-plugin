@@ -5,7 +5,7 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import { EuiButton, EuiEmptyPrompt, EuiText } from '@elastic/eui';
+import { EuiButton, EuiButtonEmpty, EuiEmptyPrompt, EuiText } from '@elastic/eui';
 
 import { APP_PATH } from '../../../../utils/constants';
 import { PLUGIN_NAME } from '../../../../../utils/constants';
@@ -23,9 +23,7 @@ const createMonitorButton = (
   </EuiButton>
 );
 const editMonitorButton = (onCreateTrigger) => (
-  <EuiButton fill onClick={onCreateTrigger}>
-    Edit monitor
-  </EuiButton>
+  <EuiButtonEmpty onClick={onCreateTrigger}>Edit monitor</EuiButtonEmpty>
 );
 
 const DashboardEmptyPrompt = ({ onCreateTrigger, isModal = false }) => {
@@ -35,6 +33,11 @@ const DashboardEmptyPrompt = ({ onCreateTrigger, isModal = false }) => {
     : inMonitorDetails
     ? createTriggerText
     : createMonitorText;
+  const actions = inMonitorDetails
+    ? undefined
+    : isModal
+    ? editMonitorButton(onCreateTrigger)
+    : createMonitorButton;
   return (
     <EuiEmptyPrompt
       style={{ maxWidth: '45em' }}
@@ -43,9 +46,7 @@ const DashboardEmptyPrompt = ({ onCreateTrigger, isModal = false }) => {
           <p>{displayText}</p>
         </EuiText>
       }
-      actions={
-        inMonitorDetails || isModal ? editMonitorButton(onCreateTrigger) : createMonitorButton
-      }
+      actions={actions}
     />
   );
 };

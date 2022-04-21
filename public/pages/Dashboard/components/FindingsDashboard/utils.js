@@ -7,11 +7,28 @@ import React from 'react';
 import _ from 'lodash';
 import { renderTime } from '../../utils/tableUtils';
 import FindingFlyout from './FindingFlyout';
-import QueryPopover from './QueriesPopover';
+import FindingsPopover from './FindingsPopover';
+import { QUERY_OPERATORS } from '../../../CreateMonitor/components/DocumentLevelMonitorQueries/DocumentLevelQuery';
 
 export const TABLE_TAB_IDS = {
   ALERTS: { id: 'alerts', name: 'Alerts' },
   FINDINGS: { id: 'findings', name: 'Document findings' },
+};
+
+export const ALERTS_FINDING_COLUMN = {
+  field: 'related_doc_ids',
+  name: 'Document',
+  sortable: true,
+  truncateText: true,
+  render: (related_doc_ids, alert) => {
+    if (_.isEmpty(related_doc_ids))
+      console.log('Alerts index contains an entry with 0 related document IDs:', alert);
+    return related_doc_ids.length > 1 ? (
+      <FindingsPopover docIds={related_doc_ids} />
+    ) : (
+      related_doc_ids[0]
+    );
+  },
 };
 
 export const findingsColumnTypes = (isAlertsFlyout) => [
@@ -39,11 +56,11 @@ export const findingsColumnTypes = (isAlertsFlyout) => [
     name: 'Query',
     sortable: true,
     truncateText: false,
-    render: (queries) => {
+    render: (queries, finding) => {
       if (_.isEmpty(queries))
-        console.log('Findings index contains an entry with 0 queries:', queries);
+        console.log('Findings index contains an entry with 0 queries:', finding);
       return queries.length > 1 ? (
-        <QueryPopover queries={queries} />
+        <FindingsPopover queries={queries} />
       ) : (
         `${queries[0].name} (${queries[0].query})`
       );
@@ -74,31 +91,36 @@ export const getFindingsForMonitor = (findings, monitorId) => {
 export const parseFindingsForPreview = (previewResponse, index, queries = []) => {
   // TODO FIXME: ExecuteMonitor API currently only returns a list of query names/IDs and the relevant docIds.
   //  As a result, the preview dashboard cannot display document contents.
-  const timestamp = Date.now();
   const findings = [];
-  const docIdsToQueries = {};
-
-  _.keys(previewResponse).forEach((queryName) => {
-    _.get(previewResponse, queryName, []).forEach((id) => {
-      if (_.includes(_.keys(docIdsToQueries), id)) {
-        const query = _.find(queries, { queryName: queryName });
-        docIdsToQueries[id].push({ name: queryName, query: query.query });
-      } else {
-        const query = _.find(queries, { queryName: queryName });
-        docIdsToQueries[id] = [{ name: queryName, query: query.query }];
+  if (validDocLevelGraphQueries(queries)) {
+    const queryNames = queries.map((query) => query.queryName);
+    const timestamp = Date.now();
+    const docIdsToQueries = {};
+    _.keys(previewResponse).forEach((queryName) => {
+      if (_.includes(queryNames, queryName)) {
+        _.get(previewResponse, queryName, []).forEach((id) => {
+          if (_.includes(_.keys(docIdsToQueries), id)) {
+            const query = _.find(queries, { queryName: queryName });
+            docIdsToQueries[id].push({ name: queryName, query: query.query });
+          } else {
+            const query = _.find(queries, { queryName: queryName });
+            const operator = _.find(QUERY_OPERATORS, { value: query.operator }).text;
+            const querySource = `${query.field} ${operator} ${query.query}`;
+            docIdsToQueries[id] = [{ name: queryName, query: querySource }];
+          }
+        });
       }
     });
-  });
-
-  _.keys(docIdsToQueries).forEach((docId) => {
-    const finding = {
-      index: index,
-      related_doc_id: docId,
-      queries: docIdsToQueries[docId],
-      timestamp: timestamp,
-    };
-    findings.push(finding);
-  });
+    _.keys(docIdsToQueries).forEach((docId) => {
+      const finding = {
+        index: index,
+        related_doc_id: docId,
+        queries: docIdsToQueries[docId],
+        timestamp: timestamp,
+      };
+      findings.push(finding);
+    });
+  }
   return findings;
 };
 
@@ -111,4 +133,13 @@ export const getPreviewResponseDocIds = (response) => {
     });
   });
   return docIds;
+};
+
+export const validDocLevelGraphQueries = (queries) => {
+  // The 'queryName' and 'query' fields are required to execute a doc level query.
+  // If either are undefined for any queries, the monitor cannot be executed.
+  const allQueriesDefined = queries.find(
+    (query) => !_.isEmpty(query.queryName) && !_.isEmpty(query.query)
+  );
+  return !_.isEmpty(allQueriesDefined);
 };

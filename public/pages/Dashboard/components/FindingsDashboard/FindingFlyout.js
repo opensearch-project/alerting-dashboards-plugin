@@ -64,8 +64,8 @@ export default class FindingFlyout extends Component {
         onClose={this.closeFlyout}
         ownFocus={false}
         hideCloseButton={true}
-        side={isAlertsFlyout ? 'left' : 'right'}
-        size={'s'}
+        side={'right'}
+        size={'m'}
       >
         <EuiFlyoutHeader hasBorder>
           <EuiTitle size={'m'}>
@@ -119,13 +119,20 @@ export default class FindingFlyout extends Component {
             overflowHeight={600}
             inline={false}
             isCopyable
+            style={{ height: '400px' }}
           >
             {JSON.stringify(documentDisplay, null, 3)}
           </EuiCodeBlock>
         </EuiFlyoutBody>
 
         <EuiFlyoutFooter>
-          <EuiButtonEmpty onClick={this.closeFlyout}>Close</EuiButtonEmpty>
+          <EuiButtonEmpty
+            iconType={'cross'}
+            onClick={this.closeFlyout}
+            style={{ paddingLeft: '0px', marginLeft: '0px' }}
+          >
+            Close
+          </EuiButtonEmpty>
         </EuiFlyoutFooter>
       </EuiFlyout>
     );

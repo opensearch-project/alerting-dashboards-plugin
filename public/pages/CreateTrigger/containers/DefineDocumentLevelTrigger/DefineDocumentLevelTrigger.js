@@ -31,7 +31,7 @@ import { backendErrorNotification, inputLimitText } from '../../../../utils/help
 import monitorToFormik from '../../../CreateMonitor/containers/CreateMonitor/utils/monitorToFormik';
 import { buildRequest } from '../../../CreateMonitor/containers/DefineMonitor/utils/searchRequests';
 
-const MAX_TRIGGER_CONDITIONS = 5; // TODO DRAFT: Placeholder limit
+const MAX_TRIGGER_CONDITIONS = 10;
 
 const defaultRowProps = {
   label: 'Trigger name',

@@ -60,7 +60,7 @@ const documentLevelDescription = ( // TODO DRAFT: confirm wording
 );
 
 const MonitorType = ({ values }) => (
-  <EuiFlexGrid alignItems={'flexStart'} gutterSize={'m'}>
+  <EuiFlexGrid gutterSize={'m'}>
     <EuiFlexItem grow={false}>
       <FormikCheckableCard
         name="monitorTypeQueryLevel"
