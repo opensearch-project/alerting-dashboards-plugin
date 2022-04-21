@@ -81,42 +81,6 @@ exports[`DestinationsList renders when Notification plugin is installed 1`] = `
                     className="euiSpacer euiSpacer--l"
                   />
                 </EuiSpacer>
-                <EuiButton
-                  href="/app/notifications-dashboards#/channels"
-                >
-                  <EuiButtonDisplay
-                    element="a"
-                    href="/app/notifications-dashboards#/channels"
-                    isDisabled={false}
-                    rel="noreferrer"
-                  >
-                    <a
-                      className="euiButton euiButton--primary"
-                      href="/app/notifications-dashboards#/channels"
-                      rel="noreferrer"
-                    >
-                      <EuiButtonContent
-                        className="euiButton__content"
-                        iconSide="left"
-                        textProps={
-                          Object {
-                            "className": "euiButton__text",
-                          }
-                        }
-                      >
-                        <span
-                          className="euiButtonContent euiButton__content"
-                        >
-                          <span
-                            className="euiButton__text"
-                          >
-                            View Notifications
-                          </span>
-                        </span>
-                      </EuiButtonContent>
-                    </a>
-                  </EuiButtonDisplay>
-                </EuiButton>
               </p>
             </div>
           </EuiText>
@@ -131,8 +95,94 @@ exports[`DestinationsList renders when Notification plugin is installed 1`] = `
       </EuiSpacer>
     </div>
   </NotificationsInfoCallOut>
+  <NotificationsCallOut>
+    <div>
+      <EuiCallOut
+        color="danger"
+        iconType="alert"
+        title="Notifications plugin is not installed"
+      >
+        <div
+          className="euiCallOut euiCallOut--danger"
+        >
+          <div
+            className="euiCallOutHeader"
+          >
+            <EuiIcon
+              aria-hidden="true"
+              className="euiCallOutHeader__icon"
+              size="m"
+              type="alert"
+            >
+              <div>
+                EuiIconMock
+              </div>
+            </EuiIcon>
+            <span
+              className="euiCallOutHeader__title"
+            >
+              Notifications plugin is not installed
+            </span>
+          </div>
+          <EuiText
+            size="s"
+          >
+            <div
+              className="euiText euiText--small"
+            >
+              <p>
+                Install the notifications plugin in order to create and select channels to send out notifications.
+                 
+                <EuiLink
+                  external={true}
+                  href="#"
+                >
+                  <a
+                    className="euiLink euiLink--primary"
+                    href="#"
+                    rel="noreferrer"
+                  >
+                    Learn more
+                    <EuiI18n
+                      default="External link"
+                      token="euiLink.external.ariaLabel"
+                    >
+                      <EuiIcon
+                        aria-label="External link"
+                        className="euiLink__externalIcon"
+                        size="s"
+                        type="popout"
+                      >
+                        <div>
+                          EuiIconMock
+                        </div>
+                      </EuiIcon>
+                    </EuiI18n>
+                  </a>
+                </EuiLink>
+                .
+              </p>
+            </div>
+          </EuiText>
+        </div>
+      </EuiCallOut>
+      <EuiSpacer
+        size="m"
+      >
+        <div
+          className="euiSpacer euiSpacer--m"
+        />
+      </EuiSpacer>
+    </div>
+  </NotificationsCallOut>
   <ContentPanel
-    actions={false}
+    actions={
+      <DestinationsActions
+        isEmailAllowed={true}
+        onClickManageEmailGroups={[Function]}
+        onClickManageSenders={[Function]}
+      />
+    }
     bodyStyles={
       Object {
         "padding": "initial",
@@ -205,7 +255,120 @@ exports[`DestinationsList renders when Notification plugin is installed 1`] = `
                     <EuiFlexItem>
                       <div
                         className="euiFlexItem"
-                      />
+                      >
+                        <DestinationsActions
+                          isEmailAllowed={true}
+                          onClickManageEmailGroups={[Function]}
+                          onClickManageSenders={[Function]}
+                        >
+                          <EuiFlexGroup
+                            alignItems="center"
+                            justifyContent="spaceBetween"
+                          >
+                            <div
+                              className="euiFlexGroup euiFlexGroup--gutterLarge euiFlexGroup--alignItemsCenter euiFlexGroup--justifyContentSpaceBetween euiFlexGroup--directionRow euiFlexGroup--responsive"
+                            >
+                              <EuiFlexItem>
+                                <div
+                                  className="euiFlexItem"
+                                >
+                                  <EuiPopover
+                                    anchorPosition="downLeft"
+                                    button={
+                                      <EuiButton
+                                        iconSide="right"
+                                        iconType="arrowDown"
+                                        onClick={[Function]}
+                                      >
+                                        Actions
+                                      </EuiButton>
+                                    }
+                                    closePopover={[Function]}
+                                    display="inlineBlock"
+                                    hasArrow={true}
+                                    id="destinationActionsPopover"
+                                    isOpen={false}
+                                    ownFocus={false}
+                                    panelPaddingSize="none"
+                                  >
+                                    <EuiOutsideClickDetector
+                                      isDisabled={true}
+                                      onOutsideClick={[Function]}
+                                    >
+                                      <div
+                                        className="euiPopover euiPopover--anchorDownLeft"
+                                        id="destinationActionsPopover"
+                                        onKeyDown={[Function]}
+                                        onMouseDown={[Function]}
+                                        onMouseUp={[Function]}
+                                        onTouchEnd={[Function]}
+                                        onTouchStart={[Function]}
+                                      >
+                                        <div
+                                          className="euiPopover__anchor"
+                                        >
+                                          <EuiButton
+                                            iconSide="right"
+                                            iconType="arrowDown"
+                                            onClick={[Function]}
+                                          >
+                                            <EuiButtonDisplay
+                                              disabled={false}
+                                              element="button"
+                                              iconSide="right"
+                                              iconType="arrowDown"
+                                              isDisabled={false}
+                                              onClick={[Function]}
+                                              type="button"
+                                            >
+                                              <button
+                                                className="euiButton euiButton--primary"
+                                                disabled={false}
+                                                onClick={[Function]}
+                                                type="button"
+                                              >
+                                                <EuiButtonContent
+                                                  className="euiButton__content"
+                                                  iconSide="right"
+                                                  iconType="arrowDown"
+                                                  textProps={
+                                                    Object {
+                                                      "className": "euiButton__text",
+                                                    }
+                                                  }
+                                                >
+                                                  <span
+                                                    className="euiButtonContent euiButtonContent--iconRight euiButton__content"
+                                                  >
+                                                    <EuiIcon
+                                                      className="euiButtonContent__icon"
+                                                      size="m"
+                                                      type="arrowDown"
+                                                    >
+                                                      <div>
+                                                        EuiIconMock
+                                                      </div>
+                                                    </EuiIcon>
+                                                    <span
+                                                      className="euiButton__text"
+                                                    >
+                                                      Actions
+                                                    </span>
+                                                  </span>
+                                                </EuiButtonContent>
+                                              </button>
+                                            </EuiButtonDisplay>
+                                          </EuiButton>
+                                        </div>
+                                      </div>
+                                    </EuiOutsideClickDetector>
+                                  </EuiPopover>
+                                </div>
+                              </EuiFlexItem>
+                            </div>
+                          </EuiFlexGroup>
+                        </DestinationsActions>
+                      </div>
                     </EuiFlexItem>
                   </div>
                 </EuiFlexGroup>
@@ -739,15 +902,8 @@ exports[`DestinationsList renders when Notification plugin is installed 1`] = `
                 Object {
                   "actions": Array [
                     Object {
-                      "description": "Edit this destination.",
-                      "enabled": false,
-                      "name": "Edit",
-                      "onClick": [Function],
-                    },
-                    Object {
-                      "description": "Delete this destination.",
-                      "enabled": false,
-                      "name": "Delete",
+                      "description": "View this destination.",
+                      "name": "View",
                       "onClick": [Function],
                     },
                   ],
@@ -1397,42 +1553,6 @@ exports[`DestinationsList renders when Notification plugin is not installed 1`] 
                     className="euiSpacer euiSpacer--l"
                   />
                 </EuiSpacer>
-                <EuiButton
-                  href="/app/notifications-dashboards#/channels"
-                >
-                  <EuiButtonDisplay
-                    element="a"
-                    href="/app/notifications-dashboards#/channels"
-                    isDisabled={false}
-                    rel="noreferrer"
-                  >
-                    <a
-                      className="euiButton euiButton--primary"
-                      href="/app/notifications-dashboards#/channels"
-                      rel="noreferrer"
-                    >
-                      <EuiButtonContent
-                        className="euiButton__content"
-                        iconSide="left"
-                        textProps={
-                          Object {
-                            "className": "euiButton__text",
-                          }
-                        }
-                      >
-                        <span
-                          className="euiButtonContent euiButton__content"
-                        >
-                          <span
-                            className="euiButton__text"
-                          >
-                            View Notifications
-                          </span>
-                        </span>
-                      </EuiButtonContent>
-                    </a>
-                  </EuiButtonDisplay>
-                </EuiButton>
               </p>
             </div>
           </EuiText>
@@ -1447,8 +1567,94 @@ exports[`DestinationsList renders when Notification plugin is not installed 1`] 
       </EuiSpacer>
     </div>
   </NotificationsInfoCallOut>
+  <NotificationsCallOut>
+    <div>
+      <EuiCallOut
+        color="danger"
+        iconType="alert"
+        title="Notifications plugin is not installed"
+      >
+        <div
+          className="euiCallOut euiCallOut--danger"
+        >
+          <div
+            className="euiCallOutHeader"
+          >
+            <EuiIcon
+              aria-hidden="true"
+              className="euiCallOutHeader__icon"
+              size="m"
+              type="alert"
+            >
+              <div>
+                EuiIconMock
+              </div>
+            </EuiIcon>
+            <span
+              className="euiCallOutHeader__title"
+            >
+              Notifications plugin is not installed
+            </span>
+          </div>
+          <EuiText
+            size="s"
+          >
+            <div
+              className="euiText euiText--small"
+            >
+              <p>
+                Install the notifications plugin in order to create and select channels to send out notifications.
+                 
+                <EuiLink
+                  external={true}
+                  href="#"
+                >
+                  <a
+                    className="euiLink euiLink--primary"
+                    href="#"
+                    rel="noreferrer"
+                  >
+                    Learn more
+                    <EuiI18n
+                      default="External link"
+                      token="euiLink.external.ariaLabel"
+                    >
+                      <EuiIcon
+                        aria-label="External link"
+                        className="euiLink__externalIcon"
+                        size="s"
+                        type="popout"
+                      >
+                        <div>
+                          EuiIconMock
+                        </div>
+                      </EuiIcon>
+                    </EuiI18n>
+                  </a>
+                </EuiLink>
+                .
+              </p>
+            </div>
+          </EuiText>
+        </div>
+      </EuiCallOut>
+      <EuiSpacer
+        size="m"
+      >
+        <div
+          className="euiSpacer euiSpacer--m"
+        />
+      </EuiSpacer>
+    </div>
+  </NotificationsCallOut>
   <ContentPanel
-    actions={false}
+    actions={
+      <DestinationsActions
+        isEmailAllowed={false}
+        onClickManageEmailGroups={[Function]}
+        onClickManageSenders={[Function]}
+      />
+    }
     bodyStyles={
       Object {
         "padding": "initial",
@@ -1521,7 +1727,22 @@ exports[`DestinationsList renders when Notification plugin is not installed 1`] 
                     <EuiFlexItem>
                       <div
                         className="euiFlexItem"
-                      />
+                      >
+                        <DestinationsActions
+                          isEmailAllowed={false}
+                          onClickManageEmailGroups={[Function]}
+                          onClickManageSenders={[Function]}
+                        >
+                          <EuiFlexGroup
+                            alignItems="center"
+                            justifyContent="spaceBetween"
+                          >
+                            <div
+                              className="euiFlexGroup euiFlexGroup--gutterLarge euiFlexGroup--alignItemsCenter euiFlexGroup--justifyContentSpaceBetween euiFlexGroup--directionRow euiFlexGroup--responsive"
+                            />
+                          </EuiFlexGroup>
+                        </DestinationsActions>
+                      </div>
                     </EuiFlexItem>
                   </div>
                 </EuiFlexGroup>
@@ -2008,15 +2229,8 @@ exports[`DestinationsList renders when Notification plugin is not installed 1`] 
                 Object {
                   "actions": Array [
                     Object {
-                      "description": "Edit this destination.",
-                      "enabled": false,
-                      "name": "Edit",
-                      "onClick": [Function],
-                    },
-                    Object {
-                      "description": "Delete this destination.",
-                      "enabled": false,
-                      "name": "Delete",
+                      "description": "View this destination.",
+                      "name": "View",
                       "onClick": [Function],
                     },
                   ],
@@ -2666,42 +2880,6 @@ exports[`DestinationsList renders when email is disallowed 1`] = `
                     className="euiSpacer euiSpacer--l"
                   />
                 </EuiSpacer>
-                <EuiButton
-                  href="/app/notifications-dashboards#/channels"
-                >
-                  <EuiButtonDisplay
-                    element="a"
-                    href="/app/notifications-dashboards#/channels"
-                    isDisabled={false}
-                    rel="noreferrer"
-                  >
-                    <a
-                      className="euiButton euiButton--primary"
-                      href="/app/notifications-dashboards#/channels"
-                      rel="noreferrer"
-                    >
-                      <EuiButtonContent
-                        className="euiButton__content"
-                        iconSide="left"
-                        textProps={
-                          Object {
-                            "className": "euiButton__text",
-                          }
-                        }
-                      >
-                        <span
-                          className="euiButtonContent euiButton__content"
-                        >
-                          <span
-                            className="euiButton__text"
-                          >
-                            View Notifications
-                          </span>
-                        </span>
-                      </EuiButtonContent>
-                    </a>
-                  </EuiButtonDisplay>
-                </EuiButton>
               </p>
             </div>
           </EuiText>
@@ -2716,8 +2894,94 @@ exports[`DestinationsList renders when email is disallowed 1`] = `
       </EuiSpacer>
     </div>
   </NotificationsInfoCallOut>
+  <NotificationsCallOut>
+    <div>
+      <EuiCallOut
+        color="danger"
+        iconType="alert"
+        title="Notifications plugin is not installed"
+      >
+        <div
+          className="euiCallOut euiCallOut--danger"
+        >
+          <div
+            className="euiCallOutHeader"
+          >
+            <EuiIcon
+              aria-hidden="true"
+              className="euiCallOutHeader__icon"
+              size="m"
+              type="alert"
+            >
+              <div>
+                EuiIconMock
+              </div>
+            </EuiIcon>
+            <span
+              className="euiCallOutHeader__title"
+            >
+              Notifications plugin is not installed
+            </span>
+          </div>
+          <EuiText
+            size="s"
+          >
+            <div
+              className="euiText euiText--small"
+            >
+              <p>
+                Install the notifications plugin in order to create and select channels to send out notifications.
+                 
+                <EuiLink
+                  external={true}
+                  href="#"
+                >
+                  <a
+                    className="euiLink euiLink--primary"
+                    href="#"
+                    rel="noreferrer"
+                  >
+                    Learn more
+                    <EuiI18n
+                      default="External link"
+                      token="euiLink.external.ariaLabel"
+                    >
+                      <EuiIcon
+                        aria-label="External link"
+                        className="euiLink__externalIcon"
+                        size="s"
+                        type="popout"
+                      >
+                        <div>
+                          EuiIconMock
+                        </div>
+                      </EuiIcon>
+                    </EuiI18n>
+                  </a>
+                </EuiLink>
+                .
+              </p>
+            </div>
+          </EuiText>
+        </div>
+      </EuiCallOut>
+      <EuiSpacer
+        size="m"
+      >
+        <div
+          className="euiSpacer euiSpacer--m"
+        />
+      </EuiSpacer>
+    </div>
+  </NotificationsCallOut>
   <ContentPanel
-    actions={false}
+    actions={
+      <DestinationsActions
+        isEmailAllowed={false}
+        onClickManageEmailGroups={[Function]}
+        onClickManageSenders={[Function]}
+      />
+    }
     bodyStyles={
       Object {
         "padding": "initial",
@@ -2790,7 +3054,22 @@ exports[`DestinationsList renders when email is disallowed 1`] = `
                     <EuiFlexItem>
                       <div
                         className="euiFlexItem"
-                      />
+                      >
+                        <DestinationsActions
+                          isEmailAllowed={false}
+                          onClickManageEmailGroups={[Function]}
+                          onClickManageSenders={[Function]}
+                        >
+                          <EuiFlexGroup
+                            alignItems="center"
+                            justifyContent="spaceBetween"
+                          >
+                            <div
+                              className="euiFlexGroup euiFlexGroup--gutterLarge euiFlexGroup--alignItemsCenter euiFlexGroup--justifyContentSpaceBetween euiFlexGroup--directionRow euiFlexGroup--responsive"
+                            />
+                          </EuiFlexGroup>
+                        </DestinationsActions>
+                      </div>
                     </EuiFlexItem>
                   </div>
                 </EuiFlexGroup>
@@ -3313,15 +3592,8 @@ exports[`DestinationsList renders when email is disallowed 1`] = `
                 Object {
                   "actions": Array [
                     Object {
-                      "description": "Edit this destination.",
-                      "enabled": false,
-                      "name": "Edit",
-                      "onClick": [Function],
-                    },
-                    Object {
-                      "description": "Delete this destination.",
-                      "enabled": false,
-                      "name": "Delete",
+                      "description": "View this destination.",
+                      "name": "View",
                       "onClick": [Function],
                     },
                   ],

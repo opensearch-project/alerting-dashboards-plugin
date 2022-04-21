@@ -22,7 +22,6 @@ import {
 } from '@elastic/eui';
 import PropTypes from 'prop-types';
 
-import AddSenderButton from '../../../components/createDestinations/AddSenderButton/AddSenderButton';
 import Sender from '../../../components/createDestinations/Email/Sender';
 import SenderEmptyPrompt from '../../../components/createDestinations/SenderEmptyPrompt';
 import { senderToFormik } from './utils/helpers';
@@ -221,12 +220,9 @@ export default class ManageSenders extends React.Component {
             <EuiSpacer className="accordion-separator" />
           </div>
         ))}
-        <div style={{ justifyContent: 'left' }}>
-          <AddSenderButton arrayHelpers={arrayHelpers} />
-        </div>
       </div>
     ) : (
-      <SenderEmptyPrompt arrayHelpers={arrayHelpers} />
+      <SenderEmptyPrompt />
     );
   };
 
@@ -279,17 +275,7 @@ export default class ManageSenders extends React.Component {
                   <EuiModalFooter>
                     <EuiFlexGroup alignItems="center" justifyContent="flexEnd">
                       <EuiFlexItem grow={false}>
-                        <EuiButtonEmpty onClick={onClickCancel}>Cancel</EuiButtonEmpty>
-                      </EuiFlexItem>
-                      <EuiFlexItem grow={false}>
-                        <EuiButton
-                          isDisabled={true}
-                          onClick={handleSubmit}
-                          isLoading={isSubmitting}
-                          fill
-                        >
-                          Save
-                        </EuiButton>
+                        <EuiButtonEmpty onClick={onClickCancel}>Close</EuiButtonEmpty>
                       </EuiFlexItem>
                     </EuiFlexGroup>
                   </EuiModalFooter>

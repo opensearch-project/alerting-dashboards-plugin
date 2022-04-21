@@ -1,0 +1,25 @@
+{
+  "name": "sample_days_interval_query_level_monitor",
+  "enabled": true,
+  "schedule": {
+    "period": {
+      "interval": "7",
+      "unit": "DAYS"
+    }
+  },
+  "inputs": [
+    {
+      "search": {
+        "indices": ["*"],
+        "query": {
+          "query": {
+            "match_all": {}
+          }
+        }
+      }
+    }
+  ],
+  "ui_metadata": {
+    "schedule": {}
+  }
+}

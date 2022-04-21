@@ -7,7 +7,8 @@ import React from 'react';
 import { EuiCallOut, EuiButton, EuiSpacer } from '@elastic/eui';
 import { MANAGE_CHANNELS_PATH } from '../../../CreateTrigger/utils/constants';
 
-const NotificationsInfoCallOut = (hasNotificationPlugin) => {
+const NotificationsInfoCallOut = ({ hasNotificationPlugin }) => {
+  console.log(`NotificationsInfoCallOut: ${hasNotificationPlugin}`);
   return (
     <div>
       <EuiCallOut title="Destinations have become channels in Notifications.">

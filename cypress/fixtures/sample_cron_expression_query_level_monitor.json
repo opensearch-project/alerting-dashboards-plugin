@@ -1,0 +1,25 @@
+{
+  "name": "sample_cron_expression_query_level_monitor",
+  "enabled": true,
+  "schedule": {
+    "cron": {
+      "expression": "30 11 * * 1-5",
+      "timezone": "US/Pacific"
+    }
+  },
+  "inputs": [
+    {
+      "search": {
+        "indices": ["*"],
+        "query": {
+          "query": {
+            "match_all": {}
+          }
+        }
+      }
+    }
+  ],
+  "ui_metadata": {
+    "schedule": {}
+  }
+}

@@ -11,7 +11,7 @@ import SubHeader from '../../../../../components/SubHeader';
 import { FormikFieldText } from '../../../../../components/FormControls';
 import { hasError, isInvalid, required } from '../../../../../utils/validate';
 
-const handleRenderKeyField = (fieldName, index) => (
+const handleRenderKeyField = (fieldName, index, isEnabled) => (
   <FormikFieldText
     formRow={index === 0}
     fieldProps={{
@@ -24,13 +24,13 @@ const handleRenderKeyField = (fieldName, index) => (
     }}
     inputProps={{
       isInvalid,
-      disabled: false,
+      disabled: !isEnabled,
     }}
     name={fieldName}
   />
 );
 
-const handleRenderValueField = (fieldName, index) => (
+const handleRenderValueField = (fieldName, index, isEnabled) => (
   <FormikFieldText
     formRow={index === 0}
     fieldProps={{
@@ -41,6 +41,7 @@ const handleRenderValueField = (fieldName, index) => (
     }}
     inputProps={{
       isInvalid,
+      disabled: !isEnabled,
     }}
     name={fieldName}
   />
@@ -64,6 +65,7 @@ const HeaderParamsEditor = ({ type, headerParams }) => (
           removeButtonText="Remove header"
           onRenderKeyField={handleRenderKeyField}
           onRenderValueField={handleRenderValueField}
+          isEnabled={false}
         />
       )}
     </FieldArray>

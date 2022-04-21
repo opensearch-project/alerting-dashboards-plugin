@@ -70,21 +70,6 @@ exports[`NotificationsInfoCallOut renders when Notifications plugin is not insta
       <div
         class="euiSpacer euiSpacer--l"
       />
-      <a
-        class="euiButton euiButton--primary"
-        href="/app/notifications-dashboards#/channels"
-        rel="noreferrer"
-      >
-        <span
-          class="euiButtonContent euiButton__content"
-        >
-          <span
-            class="euiButton__text"
-          >
-            View Notifications
-          </span>
-        </span>
-      </a>
       <p />
     </div>
   </div>

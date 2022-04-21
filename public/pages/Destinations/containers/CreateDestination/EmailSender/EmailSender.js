@@ -111,6 +111,7 @@ export default class EmailSender extends React.Component {
                 },
                 singleSelection: { asPlainText: true },
                 isClearable: false,
+                isDisabled: true,
               }}
             />
           </EuiFlexItem>
