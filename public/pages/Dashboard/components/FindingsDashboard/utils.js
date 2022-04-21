@@ -8,7 +8,11 @@ import _ from 'lodash';
 import { renderTime } from '../../utils/tableUtils';
 import FindingFlyout from './FindingFlyout';
 import FindingsPopover from './FindingsPopover';
-import { QUERY_OPERATORS } from '../../../CreateMonitor/components/DocumentLevelMonitorQueries/DocumentLevelQuery';
+
+export const QUERY_OPERATORS = [
+  { text: 'is', value: '==' },
+  { text: 'is not', value: '!=' },
+];
 
 export const TABLE_TAB_IDS = {
   ALERTS: { id: 'alerts', name: 'Alerts' },

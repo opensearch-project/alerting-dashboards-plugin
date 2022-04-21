@@ -4,8 +4,9 @@
  */
 
 import React from 'react';
+import _ from 'lodash';
 import { EuiFieldSearch, EuiFlexGroup, EuiSelect, EuiFlexItem, EuiPagination } from '@elastic/eui';
-import { ALERT_STATE } from '../../../../utils/constants';
+import { ALERT_STATE, MONITOR_TYPE } from '../../../../utils/constants';
 
 const severityOptions = [
   { value: 'ALL', text: 'All severity levels' },
@@ -36,35 +37,47 @@ const DashboardControls = ({
   onStateChange,
   onPageChange,
   isAlertsFlyout = false,
-}) => (
-  <EuiFlexGroup style={{ padding: '0px 5px' }}>
-    <EuiFlexItem>
-      <EuiFieldSearch
-        fullWidth={true}
-        placeholder="Search"
-        onChange={onSearchChange}
-        value={search}
-      />
-    </EuiFlexItem>
-
-    {isAlertsFlyout ? null : (
-      <EuiFlexItem grow={false}>
-        <EuiSelect options={severityOptions} value={severity} onChange={onSeverityChange} />
+  monitorType,
+}) => {
+  let supportedStateOptions = stateOptions;
+  switch (monitorType) {
+    case MONITOR_TYPE.DOC_LEVEL:
+      const supportedStates = [ALERT_STATE.ACKNOWLEDGED, ALERT_STATE.ACTIVE, ALERT_STATE.ERROR];
+      supportedStateOptions = stateOptions.filter((state) =>
+        _.includes(supportedStates, state.value)
+      );
+      break;
+  }
+  return (
+    <EuiFlexGroup style={{ padding: '0px 5px' }}>
+      <EuiFlexItem>
+        <EuiFieldSearch
+          fullWidth={true}
+          placeholder="Search"
+          onChange={onSearchChange}
+          value={search}
+        />
       </EuiFlexItem>
-    )}
 
-    <EuiFlexItem grow={false}>
-      <EuiSelect
-        options={stateOptions}
-        value={state}
-        onChange={onStateChange}
-        data-test-subj={'dashboardAlertStateFilter'}
-      />
-    </EuiFlexItem>
-    <EuiFlexItem grow={false} style={{ justifyContent: 'center' }}>
-      <EuiPagination pageCount={pageCount} activePage={activePage} onPageClick={onPageChange} />
-    </EuiFlexItem>
-  </EuiFlexGroup>
-);
+      {isAlertsFlyout ? null : (
+        <EuiFlexItem grow={false}>
+          <EuiSelect options={severityOptions} value={severity} onChange={onSeverityChange} />
+        </EuiFlexItem>
+      )}
+
+      <EuiFlexItem grow={false}>
+        <EuiSelect
+          options={supportedStateOptions}
+          value={state}
+          onChange={onStateChange}
+          data-test-subj={'dashboardAlertStateFilter'}
+        />
+      </EuiFlexItem>
+      <EuiFlexItem grow={false} style={{ justifyContent: 'center' }}>
+        <EuiPagination pageCount={pageCount} activePage={activePage} onPageClick={onPageChange} />
+      </EuiFlexItem>
+    </EuiFlexGroup>
+  );
+};
 
 export default DashboardControls;

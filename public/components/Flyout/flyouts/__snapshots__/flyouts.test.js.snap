@@ -8,6 +8,7 @@ Object {
     "data-test-subj": "alertsDashboardFlyout_undefined",
     "hideCloseButton": true,
     "size": "m",
+    "type": "push",
   },
   "footer": <EuiButtonEmpty
     data-test-subj="alertsDashboardFlyout_closeButton_undefined"

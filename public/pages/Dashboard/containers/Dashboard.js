@@ -27,6 +27,7 @@ import {
 import { DEFAULT_PAGE_SIZE_OPTIONS } from '../../Monitors/containers/Monitors/utils/constants';
 import { MAX_ALERT_COUNT } from '../utils/constants';
 import AcknowledgeAlertsModal from '../components/AcknowledgeAlertsModal';
+import { ALERTS_FINDING_COLUMN } from '../components/FindingsDashboard/utils';
 
 export default class Dashboard extends Component {
   constructor(props) {
@@ -314,22 +315,34 @@ export default class Dashboard extends Component {
     let totalItems = perAlertView ? totalAlerts : totalTriggers;
     const isBucketMonitor = monitorType === MONITOR_TYPE.BUCKET_LEVEL;
 
-    let columnType = perAlertView
-      ? isBucketMonitor
-        ? insertGroupByColumn(groupBy)
-        : queryColumns
-      : alertColumns(
-          history,
-          httpClient,
-          loadingMonitors,
-          location,
-          monitors,
-          notifications,
-          setFlyout,
-          this.openFlyout,
-          this.closeFlyout,
-          this.refreshDashboard
-        );
+    let columnType;
+    if (perAlertView) {
+      switch (monitorType) {
+        case MONITOR_TYPE.BUCKET_LEVEL:
+          columnType = insertGroupByColumn(groupBy);
+          break;
+        case MONITOR_TYPE.DOC_LEVEL:
+          columnType = _.cloneDeep(queryColumns);
+          columnType.splice(0, 0, ALERTS_FINDING_COLUMN);
+          break;
+        default:
+          columnType = queryColumns;
+          break;
+      }
+    } else {
+      columnType = alertColumns(
+        history,
+        httpClient,
+        loadingMonitors,
+        location,
+        monitors,
+        notifications,
+        setFlyout,
+        this.openFlyout,
+        this.closeFlyout,
+        this.refreshDashboard
+      );
+    }
 
     const pagination = {
       pageIndex: page,
@@ -429,6 +442,7 @@ export default class Dashboard extends Component {
           onStateChange={this.onAlertStateChange}
           onPageChange={this.onPageClick}
           isAlertsFlyout={isAlertsFlyout}
+          monitorType={monitorType}
         />
 
         <EuiHorizontalRule margin="xs" />
