@@ -3,7 +3,6 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import sampleDestination from '../fixtures/sample_destination_custom_webhook';
 import sampleClusterMetricsMonitor from '../fixtures/sample_cluster_metrics_monitor.json';
 import { INDEX, PLUGIN_NAME } from '../../cypress/support/constants';
 
@@ -392,7 +391,6 @@ describe('ClusterMetricsMonitor', () => {
   after(() => {
     // Delete all monitors and destinations
     cy.deleteAllMonitors();
-    cy.deleteAllDestinations();
 
     // Delete sample data
     cy.deleteIndexByName(`${INDEX.SAMPLE_DATA_ECOMMERCE}`);

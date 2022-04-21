@@ -11,20 +11,23 @@ import _ from 'lodash';
 
 import ContentPanel from '../../../../components/ContentPanel';
 import { MONITOR_TYPE } from '../../../../utils/constants';
+import { TRIGGER_TYPE } from '../../../CreateTrigger/containers/CreateTrigger/utils/constants';
 
 export const MAX_TRIGGERS = 10;
 
 // TODO: For now, unwrapping all the Triggers since it's conflicting with the table
 //   retrieving the 'id' and causing it to behave strangely
 export function getUnwrappedTriggers(monitor) {
-  const isBucketLevelMonitor = monitor.monitor_type === MONITOR_TYPE.BUCKET_LEVEL;
-  return isBucketLevelMonitor
-    ? monitor.triggers.map((trigger) => {
-        return trigger.bucket_level_trigger;
-      })
-    : monitor.triggers.map((trigger) => {
-        return trigger.query_level_trigger;
-      });
+  return monitor.triggers.map((trigger) => {
+    switch (monitor.monitor_type) {
+      case MONITOR_TYPE.BUCKET_LEVEL:
+        return trigger[TRIGGER_TYPE.BUCKET_LEVEL];
+      case MONITOR_TYPE.DOC_LEVEL:
+        return trigger[TRIGGER_TYPE.DOC_LEVEL];
+      default:
+        return trigger[TRIGGER_TYPE.QUERY_LEVEL];
+    }
+  });
 }
 
 export default class Triggers extends Component {

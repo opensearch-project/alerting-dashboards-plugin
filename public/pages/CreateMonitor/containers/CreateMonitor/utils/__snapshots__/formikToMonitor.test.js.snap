@@ -115,11 +115,14 @@ Array [
 
 exports[`formikToInputs can call formikToClusterMetricsUri 1`] = `
 Object {
-  "uri": Object {
-    "api_type": "",
-    "path": "",
-    "path_params": "",
-    "url": "",
+  "search": Object {
+    "indices": Array [],
+    "query": Object {
+      "query": Object {
+        "match_all": Object {},
+      },
+      "size": 0,
+    },
   },
 }
 `;

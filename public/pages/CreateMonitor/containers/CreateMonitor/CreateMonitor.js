@@ -253,8 +253,17 @@ export default class CreateMonitor extends Component {
   }
 
   render() {
+    const {
+      edit,
+      history,
+      httpClient,
+      location,
+      monitorToEdit,
+      notifications,
+      isDarkMode,
+      notificationService,
+    } = this.props;
     const { initialValues, plugins } = this.state;
-    const { edit, httpClient, monitorToEdit, notifications, isDarkMode } = this.props;
 
     return (
       <div style={{ padding: '25px 50px' }}>
@@ -269,6 +278,7 @@ export default class CreateMonitor extends Component {
               <MonitorDetails
                 values={values}
                 errors={errors}
+                history={history}
                 httpClient={httpClient}
                 monitorToEdit={monitorToEdit}
                 plugins={plugins}
@@ -284,6 +294,7 @@ export default class CreateMonitor extends Component {
                     errors={errors}
                     touched={touched}
                     httpClient={httpClient}
+                    location={location}
                     detectorId={this.props.detectorId}
                     notifications={notifications}
                     isDarkMode={isDarkMode}
@@ -305,6 +316,8 @@ export default class CreateMonitor extends Component {
                     isDarkMode={this.props.isDarkMode}
                     httpClient={httpClient}
                     notifications={notifications}
+                    notificationService={notificationService}
+                    plugins={plugins}
                   />
                 )}
               </FieldArray>

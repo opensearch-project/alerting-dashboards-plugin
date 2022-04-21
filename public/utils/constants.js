@@ -29,6 +29,7 @@ export const MONITOR_TYPE = {
   QUERY_LEVEL: 'query_level_monitor',
   BUCKET_LEVEL: 'bucket_level_monitor',
   CLUSTER_METRICS: 'cluster_metrics_monitor',
+  DOC_LEVEL: 'doc_level_monitor',
 };
 
 export const DESTINATION_ACTIONS = {
@@ -52,6 +53,7 @@ export const DATA_TYPES = {
 };
 
 export const OS_AD_PLUGIN = 'opensearch-anomaly-detection';
+export const OS_NOTIFICATION_PLUGIN = 'opensearch-notifications';
 export const OPENSEARCH_DASHBOARDS_AD_PLUGIN = 'anomaly-detection-dashboards';
 
 export const INPUTS_DETECTOR_ID = '0.search.query.query.bool.filter[1].term.detector_id.value';
@@ -63,3 +65,23 @@ export const AD_PREVIEW_DAYS = 7;
 export const MAX_QUERY_RESULT_SIZE = 200;
 
 export const MONITOR_GROUP_BY = 'ui_metadata.search.groupBy';
+
+// Notification related constants
+
+export const BACKEND_CHANNEL_TYPE = Object.freeze({
+  SLACK: 'slack',
+  EMAIL: 'email',
+  CHIME: 'chime',
+  CUSTOM_WEBHOOK: 'webhook',
+  SES: 'ses',
+  SNS: 'sns',
+});
+
+export const CHANNEL_TYPE = Object.freeze({
+  [BACKEND_CHANNEL_TYPE.SLACK]: 'Slack',
+  [BACKEND_CHANNEL_TYPE.EMAIL]: 'Email',
+  [BACKEND_CHANNEL_TYPE.CHIME]: 'Chime',
+  [BACKEND_CHANNEL_TYPE.CUSTOM_WEBHOOK]: 'Custom webhook',
+  [BACKEND_CHANNEL_TYPE.SES]: 'Amazon SES',
+  [BACKEND_CHANNEL_TYPE.SNS]: 'Amazon SNS',
+});

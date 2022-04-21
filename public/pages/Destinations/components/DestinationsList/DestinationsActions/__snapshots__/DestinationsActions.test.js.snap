@@ -34,24 +34,5 @@ exports[`<DestinationsActions /> should render DestinationsActions 1`] = `
       </div>
     </div>
   </div>
-  <div
-    class="euiFlexItem euiFlexItem--flexGrowZero"
-  >
-    <a
-      class="euiButton euiButton--primary euiButton--fill"
-      href="alerting#/create-destination"
-      rel="noreferrer"
-    >
-      <span
-        class="euiButtonContent euiButton__content"
-      >
-        <span
-          class="euiButton__text"
-        >
-          Add destination
-        </span>
-      </span>
-    </a>
-  </div>
 </div>
 `;

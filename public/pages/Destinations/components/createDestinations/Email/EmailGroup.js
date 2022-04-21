@@ -33,16 +33,7 @@ const onCreateOption = (fieldName, value, selectedOptions, setFieldValue) => {
 const EmailGroup = ({ emailGroup, emailOptions, arrayHelpers, context, index, onDelete }) => {
   const { name } = emailGroup;
   return (
-    <EuiAccordion
-      id={name}
-      buttonContent={!name ? 'New email group' : name}
-      paddingSize="l"
-      extraAction={
-        <EuiButton color="danger" size="s" onClick={onDelete}>
-          Remove email group
-        </EuiButton>
-      }
-    >
+    <EuiAccordion id={name} buttonContent={!name ? 'New email group' : name} paddingSize="l">
       <FormikFieldText
         name={`emailGroups.${index}.name`}
         formRow
@@ -62,6 +53,7 @@ const EmailGroup = ({ emailGroup, emailOptions, arrayHelpers, context, index, on
             field.onChange(e);
             onEmailGroupChange(index, emailGroup, arrayHelpers);
           },
+          disabled: true,
         }}
       />
       <FormikComboBox
@@ -89,6 +81,7 @@ const EmailGroup = ({ emailGroup, emailOptions, arrayHelpers, context, index, on
             onCreateOption(`emailGroups.${index}.emails`, value, field.value, form.setFieldValue);
           },
           isClearable: true,
+          isDisabled: true,
         }}
       />
     </EuiAccordion>

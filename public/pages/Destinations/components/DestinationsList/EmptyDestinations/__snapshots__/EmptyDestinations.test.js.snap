@@ -15,32 +15,11 @@ exports[`<EmptyDestinations /> should render empty destinations message 1`] = `
         class="euiText euiText--medium"
       >
         <p>
-          There are no existing destinations. Add a destination.
+          There are no existing destinations.
         </p>
       </div>
     </div>
   </span>
-  <div
-    class="euiSpacer euiSpacer--l"
-  />
-  <div
-    class="euiSpacer euiSpacer--s"
-  />
-  <a
-    class="euiButton euiButton--primary euiButton--fill"
-    href="alerting#/create-destination"
-    rel="noreferrer"
-  >
-    <span
-      class="euiButtonContent euiButton__content"
-    >
-      <span
-        class="euiButton__text"
-      >
-        Add destination
-      </span>
-    </span>
-  </a>
 </div>
 `;
 

@@ -7,6 +7,7 @@ import _ from 'lodash';
 import monitorToFormik from './monitorToFormik';
 
 import { FORMIK_INITIAL_VALUES, MATCH_ALL_QUERY } from './constants';
+import { MONITOR_TYPE, SEARCH_TYPE } from '../../../../../utils/constants';
 
 const exampleMonitor = {
   name: 'Example Monitor',
@@ -156,7 +157,8 @@ describe('monitorToFormik', () => {
   describe('can build ClusterMetricsMonitor', () => {
     test('with path params', () => {
       const clusterMetricsMonitor = _.cloneDeep(exampleMonitor);
-      clusterMetricsMonitor.ui_metadata.search.searchType = 'clusterMetrics';
+      clusterMetricsMonitor.monitor_type = MONITOR_TYPE.CLUSTER_METRICS;
+      clusterMetricsMonitor.ui_metadata.search.searchType = SEARCH_TYPE.CLUSTER_METRICS;
       clusterMetricsMonitor.inputs = [
         {
           uri: {
@@ -171,7 +173,8 @@ describe('monitorToFormik', () => {
     });
     test('without path params', () => {
       const clusterMetricsMonitor = _.cloneDeep(exampleMonitor);
-      clusterMetricsMonitor.ui_metadata.search.searchType = 'clusterMetrics';
+      clusterMetricsMonitor.monitor_type = MONITOR_TYPE.CLUSTER_METRICS;
+      clusterMetricsMonitor.ui_metadata.search.searchType = SEARCH_TYPE.CLUSTER_METRICS;
       clusterMetricsMonitor.inputs = [
         {
           uri: {

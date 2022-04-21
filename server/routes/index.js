@@ -8,5 +8,6 @@ import destinations from './destinations';
 import opensearch from './opensearch';
 import monitors from './monitors';
 import detectors from './anomalyDetector';
+import findings from './findings';
 
-export { alerts, destinations, opensearch, monitors, detectors };
+export { alerts, destinations, opensearch, monitors, detectors, findings };

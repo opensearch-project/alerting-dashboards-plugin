@@ -5,7 +5,6 @@
 
 import { INDEX, PLUGIN_NAME } from '../support/constants';
 import sampleAggregationQuery from '../fixtures/sample_aggregation_query';
-import sampleDestination from '../fixtures/sample_destination_custom_webhook';
 import sampleExtractionQueryMonitor from '../fixtures/sample_extraction_query_bucket_level_monitor';
 import sampleVisualEditorMonitor from '../fixtures/sample_visual_editor_bucket_level_monitor';
 
@@ -309,7 +308,6 @@ describe('Bucket-Level Monitors', () => {
   after(() => {
     // Delete all monitors and destinations
     cy.deleteAllMonitors();
-    cy.deleteAllDestinations();
 
     // Delete sample data
     cy.deleteIndexByName(`${INDEX.SAMPLE_DATA_ECOMMERCE}`);

@@ -8,6 +8,7 @@ import { DEFAULT_GET_ALERTS_QUERY_PARAMS, EMPTY_ALERT_LIST, MAX_ALERT_COUNT } fr
 import { bucketColumns } from './tableUtils';
 import { ALERT_STATE, DEFAULT_EMPTY_DATA } from '../../../utils/constants';
 import queryString from 'query-string';
+import { GET_ALERTS_SORT_FILTERS } from '../../../../server/services/AlertService';
 
 export function groupAlertsByTrigger(alerts) {
   if (_.isUndefined(alerts)) return _.cloneDeep(EMPTY_ALERT_LIST.alerts);
@@ -142,7 +143,9 @@ export function getURLQueryParams(location) {
     from: isNaN(parseInt(from, 10)) ? DEFAULT_GET_ALERTS_QUERY_PARAMS.from : parseInt(from, 10),
     size: isNaN(parseInt(size, 10)) ? DEFAULT_GET_ALERTS_QUERY_PARAMS.size : parseInt(size, 10),
     search,
-    sortField,
+    sortField: _.includes(_.values(GET_ALERTS_SORT_FILTERS), sortField)
+      ? sortField
+      : DEFAULT_GET_ALERTS_QUERY_PARAMS.sortField,
     sortDirection,
     severityLevel,
     alertState,

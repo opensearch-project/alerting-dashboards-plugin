@@ -11,6 +11,7 @@ import { EuiHealth, EuiHighlight } from '@elastic/eui';
 import { FormikComboBox } from '../../../../components/FormControls';
 import { validateIndex, hasError, isInvalid } from '../../../../utils/validate';
 import { canAppendWildcard, createReasonableWait, getMatchedOptions } from './utils/helpers';
+import { MONITOR_TYPE } from '../../../../utils/constants';
 
 const CustomOption = ({ option, searchValue, contentClassName }) => {
   const { health, label, index } = option;
@@ -215,6 +216,8 @@ class MonitorIndex extends React.Component {
       false //isIncludingSystemIndices
     );
 
+    const supportMultipleIndices = this.props.monitorType !== MONITOR_TYPE.DOC_LEVEL;
+
     return (
       <FormikComboBox
         name="index"
@@ -223,13 +226,13 @@ class MonitorIndex extends React.Component {
         rowProps={{
           label: 'Index',
           helpText:
-            'You can use a * as a wildcard or date math index resolution in your index pattern',
+            'You can use a * as a wildcard or date math index resolution in your index pattern', // TODO DRAFT: Confirm wildcard wording is appropriate for doc level monitors
           isInvalid,
           error: hasError,
           style: { paddingLeft: '10px' },
         }}
         inputProps={{
-          placeholder: 'Select indices',
+          placeholder: supportMultipleIndices ? 'Select indices' : 'Select index',
           async: true,
           isLoading,
           options: visibleOptions,
@@ -245,6 +248,7 @@ class MonitorIndex extends React.Component {
           onSearchChange: this.onSearchChange,
           renderOption: this.renderOption,
           isClearable: true,
+          singleSelection: supportMultipleIndices ? false : { asPlainText: true },
           'data-test-subj': 'indicesComboBox',
         }}
       />

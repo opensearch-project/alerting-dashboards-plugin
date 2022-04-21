@@ -25,7 +25,7 @@ import 'brace/ext/language_tools';
 import ConfigureActions from '../../ConfigureActions';
 import DefineTrigger from '../../DefineTrigger';
 import monitorToFormik from '../../../../CreateMonitor/containers/CreateMonitor/utils/monitorToFormik';
-import { buildSearchRequest } from '../../../../CreateMonitor/containers/DefineMonitor/utils/searchRequests';
+import { buildRequest } from '../../../../CreateMonitor/containers/DefineMonitor/utils/searchRequests';
 import { formikToTrigger, formikToTriggerUiMetadata } from '../utils/formikToTrigger';
 import { triggerToFormik } from '../utils/triggerToFormik';
 import { FORMIK_INITIAL_TRIGGER_VALUES, TRIGGER_TYPE } from '../utils/constants';
@@ -142,7 +142,7 @@ export default class CreateTrigger extends Component {
     switch (searchType) {
       case SEARCH_TYPE.QUERY:
       case SEARCH_TYPE.GRAPH:
-        const searchRequest = buildSearchRequest(formikValues);
+        const searchRequest = buildRequest(formikValues);
         _.set(monitorToExecute, 'inputs[0].search', searchRequest);
         break;
       case SEARCH_TYPE.CLUSTER_METRICS:
@@ -280,7 +280,16 @@ export default class CreateTrigger extends Component {
   }
 
   render() {
-    const { monitor, onCloseTrigger, setFlyout, edit, httpClient, notifications } = this.props;
+    const {
+      monitor,
+      onCloseTrigger,
+      setFlyout,
+      edit,
+      httpClient,
+      notifications,
+      notificationService,
+      plugins,
+    } = this.props;
     const { dataTypes, initialValues, executeResponse } = this.state;
     const isBucketLevelMonitor = _.get(monitor, 'monitor_type') === MONITOR_TYPE.BUCKET_LEVEL;
 
@@ -313,6 +322,8 @@ export default class CreateTrigger extends Component {
                       openExpression={this.openExpression}
                       onMadeChanges={this.onMadeChanges}
                       dataTypes={dataTypes}
+                      notificationService={notificationService}
+                      plugins={plugins}
                     />
                   )}
                 </FieldArray>
@@ -326,6 +337,8 @@ export default class CreateTrigger extends Component {
                   triggers={monitor.triggers}
                   triggerValues={values}
                   isDarkMode={this.props.isDarkMode}
+                  notificationService={notificationService}
+                  plugins={plugins}
                 />
               )}
               <EuiSpacer />
@@ -338,6 +351,8 @@ export default class CreateTrigger extends Component {
                     setFlyout={setFlyout}
                     values={values}
                     notifications={notifications}
+                    notificationService={notificationService}
+                    plugins={plugins}
                   />
                 )}
               </FieldArray>

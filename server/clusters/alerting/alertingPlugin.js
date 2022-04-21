@@ -4,6 +4,7 @@
  */
 
 import {
+  API_ROUTE_PREFIX,
   MONITOR_BASE_API,
   DESTINATION_BASE_API,
   EMAIL_ACCOUNT_BASE_API,
@@ -15,6 +16,14 @@ export default function alertingPlugin(Client, config, components) {
 
   Client.prototype.alerting = components.clientAction.namespaceFactory();
   const alerting = Client.prototype.alerting.prototype;
+
+  alerting.getFindings = ca({
+    url: {
+      fmt: `${API_ROUTE_PREFIX}/findings/_search`,
+    },
+    needBody: true,
+    method: 'GET',
+  });
 
   alerting.getMonitor = ca({
     url: {

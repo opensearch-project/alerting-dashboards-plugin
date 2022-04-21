@@ -114,153 +114,158 @@ exports[`AlertsDashboardFlyoutComponent renders 1`] = `
       </EuiText>
     </EuiFlexItem>
   </EuiFlexGroup>
+  <div>
+    <EuiSpacer
+      size="xxl"
+    />
+    <EuiFlexGroup>
+      <EuiFlexItem>
+        <EuiText
+          data-test-subj="alertsDashboardFlyout_filters_undefined"
+          size="m"
+        >
+          <strong>
+            Filters
+          </strong>
+          <p>
+            Loading filters...
+          </p>
+        </EuiText>
+      </EuiFlexItem>
+      <EuiFlexItem>
+        <EuiText
+          data-test-subj="alertsDashboardFlyout_groupBy_undefined"
+          size="m"
+        >
+          <strong>
+            Group by
+          </strong>
+          <p>
+            Loading groups...
+          </p>
+        </EuiText>
+      </EuiFlexItem>
+    </EuiFlexGroup>
+  </div>
   <EuiSpacer
     size="xxl"
   />
-  <EuiFlexGroup>
-    <EuiFlexItem>
-      <EuiText
-        data-test-subj="alertsDashboardFlyout_filters_undefined"
-        size="m"
-      >
-        <strong>
-          Filters
-        </strong>
-        <p>
-          Loading filters...
-        </p>
-      </EuiText>
-    </EuiFlexItem>
-    <EuiFlexItem>
-      <EuiText
-        data-test-subj="alertsDashboardFlyout_groupBy_undefined"
-        size="m"
-      >
-        <strong>
-          Group by
-        </strong>
-        <p>
-          Loading groups...
-        </p>
-      </EuiText>
-    </EuiFlexItem>
-  </EuiFlexGroup>
   <EuiHorizontalRule
-    margin="xxl"
+    margin="none"
   />
-  <EuiFlexGroup>
-    <EuiFlexItem>
-      <ContentPanel
-        actions={
-          Array [
-            <EuiButton
-              data-test-subj="flyoutAcknowledgeAlertsButton"
-              disabled={true}
-              onClick={[Function]}
-            >
-              Acknowledge
-            </EuiButton>,
-          ]
-        }
-        bodyStyles={
+  <EuiSpacer
+    size="xxl"
+  />
+  <ContentPanel
+    actions={
+      Array [
+        <EuiButton
+          data-test-subj="flyoutAcknowledgeAlertsButton"
+          disabled={true}
+          onClick={[Function]}
+        >
+          Acknowledge
+        </EuiButton>,
+      ]
+    }
+    bodyStyles={
+      Object {
+        "padding": "initial",
+      }
+    }
+    title="Alerts"
+    titleSize="s"
+  >
+    <DashboardControls
+      activePage={0}
+      isAlertsFlyout={true}
+      onPageChange={[Function]}
+      onSearchChange={[Function]}
+      onStateChange={[Function]}
+      pageCount={1}
+      search=""
+      severity="ALL"
+      state="ALL"
+    />
+    <EuiHorizontalRule
+      margin="xs"
+    />
+    <EuiBasicTable
+      columns={
+        Array [
           Object {
-            "padding": "initial",
-          }
+            "dataType": "date",
+            "field": "start_time",
+            "name": "Alert start time",
+            "render": [Function],
+            "sortable": true,
+            "truncateText": false,
+          },
+          Object {
+            "dataType": "date",
+            "field": "end_time",
+            "name": "Alert end time",
+            "render": [Function],
+            "sortable": true,
+            "truncateText": false,
+          },
+          Object {
+            "field": "state",
+            "name": "State",
+            "render": [Function],
+            "sortable": false,
+            "truncateText": false,
+          },
+          Object {
+            "dataType": "date",
+            "field": "acknowledged_time",
+            "name": "Time acknowledged",
+            "render": [Function],
+            "sortable": true,
+            "truncateText": false,
+          },
+        ]
+      }
+      data-test-subj="alertsDashboardFlyout_table_undefined"
+      isSelectable={true}
+      itemId={[Function]}
+      items={Array []}
+      loading={true}
+      noItemsMessage="Loading alerts..."
+      onChange={[Function]}
+      pagination={
+        Object {
+          "pageIndex": 0,
+          "pageSize": 10,
+          "pageSizeOptions": Array [
+            5,
+            10,
+            20,
+            50,
+          ],
+          "totalItemCount": 0,
         }
-        title="Alerts"
-        titleSize="s"
-      >
-        <DashboardControls
-          activePage={0}
-          isAlertsFlyout={true}
-          onPageChange={[Function]}
-          onSearchChange={[Function]}
-          onStateChange={[Function]}
-          pageCount={1}
-          search=""
-          severity="ALL"
-          state="ALL"
-        />
-        <EuiHorizontalRule
-          margin="xs"
-        />
-        <EuiBasicTable
-          columns={
-            Array [
-              Object {
-                "dataType": "date",
-                "field": "start_time",
-                "name": "Alert start time",
-                "render": [Function],
-                "sortable": true,
-                "truncateText": false,
-              },
-              Object {
-                "dataType": "date",
-                "field": "end_time",
-                "name": "Alert end time",
-                "render": [Function],
-                "sortable": true,
-                "truncateText": false,
-              },
-              Object {
-                "field": "state",
-                "name": "State",
-                "render": [Function],
-                "sortable": false,
-                "truncateText": false,
-              },
-              Object {
-                "dataType": "date",
-                "field": "acknowledged_time",
-                "name": "Time acknowledged",
-                "render": [Function],
-                "sortable": true,
-                "truncateText": false,
-              },
-            ]
-          }
-          data-test-subj="alertsDashboardFlyout_table_undefined"
-          isSelectable={true}
-          itemId={[Function]}
-          items={Array []}
-          loading={true}
-          noItemsMessage="Loading alerts..."
-          onChange={[Function]}
-          pagination={
-            Object {
-              "pageIndex": 0,
-              "pageSize": 10,
-              "pageSizeOptions": Array [
-                5,
-                10,
-                20,
-                50,
-              ],
-              "totalItemCount": 0,
-            }
-          }
-          responsive={true}
-          selection={
-            Object {
-              "onSelectionChange": [Function],
-              "selectable": [Function],
-              "selectableMessage": [Function],
-            }
-          }
-          sorting={
-            Object {
-              "sort": Object {
-                "direction": "desc",
-                "field": "start_time",
-              },
-            }
-          }
-          tableLayout="fixed"
-        />
-      </ContentPanel>
-    </EuiFlexItem>
-  </EuiFlexGroup>
+      }
+      responsive={true}
+      selection={
+        Object {
+          "initialSelected": Array [],
+          "onSelectionChange": [Function],
+          "selectable": [Function],
+          "selectableMessage": [Function],
+        }
+      }
+      sorting={
+        Object {
+          "sort": Object {
+            "direction": "desc",
+            "field": "start_time",
+          },
+        }
+      }
+      tableLayout="fixed"
+    />
+  </ContentPanel>
   <EuiSpacer
     size="l"
   />

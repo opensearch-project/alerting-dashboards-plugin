@@ -12,10 +12,14 @@ import 'react-vis/dist/style.css';
 // import './less/main.less';
 import Main from './pages/Main';
 import { CoreContext } from './utils/CoreContext';
+import { ServicesContext, NotificationService } from './services';
 
 export function renderApp(coreStart, params) {
   const isDarkMode = coreStart.uiSettings.get('theme:darkMode') || false;
+  const http = coreStart.http;
   coreStart.chrome.setBreadcrumbs([{ text: 'Alerting' }]); // Set Breadcrumbs for the plugin
+  const notificationService = new NotificationService(http);
+  const services = { notificationService };
 
   // Load Chart's dark mode CSS
   if (isDarkMode) {
@@ -27,11 +31,13 @@ export function renderApp(coreStart, params) {
   // render react to DOM
   ReactDOM.render(
     <Router>
-      <CoreContext.Provider
-        value={{ http: coreStart.http, isDarkMode, notifications: coreStart.notifications }}
-      >
-        <Route render={(props) => <Main title="Alerting" {...props} />} />
-      </CoreContext.Provider>
+      <ServicesContext.Provider value={services}>
+        <CoreContext.Provider
+          value={{ http: coreStart.http, isDarkMode, notifications: coreStart.notifications }}
+        >
+          <Route render={(props) => <Main title="Alerting" {...props} />} />
+        </CoreContext.Provider>
+      </ServicesContext.Provider>
     </Router>,
     params.element
   );

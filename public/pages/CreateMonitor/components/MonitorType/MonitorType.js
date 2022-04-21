@@ -5,20 +5,32 @@
 
 import React from 'react';
 import _ from 'lodash';
-import { EuiFlexGroup, EuiFlexItem, EuiText } from '@elastic/eui';
+import { EuiFlexGrid, EuiFlexItem, EuiText } from '@elastic/eui';
 import FormikCheckableCard from '../../../../components/FormControls/FormikCheckableCard';
 import { MONITOR_TYPE, SEARCH_TYPE } from '../../../../utils/constants';
 import { FORMIK_INITIAL_TRIGGER_VALUES } from '../../../CreateTrigger/containers/CreateTrigger/utils/constants';
+import {
+  DEFAULT_DOCUMENT_LEVEL_QUERY,
+  FORMIK_INITIAL_VALUES,
+} from '../../containers/CreateMonitor/utils/constants';
 
-export const MONITOR_TYPE_CARD_WIDTH = 400;
+export const MONITOR_TYPE_CARD_WIDTH = 400; // TODO DRAFT: Determine width
 
 const onChangeDefinition = (e, form) => {
   const type = e.target.value;
   form.setFieldValue('monitor_type', type);
 
-  // Clearing trigger definitions when changing monitor types.
+  // Clearing various form fields when changing monitor types.
   // TODO: Implement modal that confirms the change before clearing.
+  form.setFieldValue('index', FORMIK_INITIAL_VALUES.index);
   form.setFieldValue('triggerDefinitions', FORMIK_INITIAL_TRIGGER_VALUES.triggerConditions);
+  switch (type) {
+    case MONITOR_TYPE.DOC_LEVEL:
+      form.setFieldValue('query', DEFAULT_DOCUMENT_LEVEL_QUERY);
+      break;
+    default:
+      form.setFieldValue('query', FORMIK_INITIAL_VALUES.query);
+  }
 };
 
 const queryLevelDescription = (
@@ -41,15 +53,19 @@ const clusterMetricsDescription = (
   </EuiText>
 );
 
+const documentLevelDescription = ( // TODO DRAFT: confirm wording
+  <EuiText color={'subdued'} size={'xs'} style={{ paddingBottom: '10px', paddingTop: '0px' }}>
+    Per document monitors allow you to run queries on new documents as they're indexed.
+  </EuiText>
+);
+
 const MonitorType = ({ values }) => (
-  <EuiFlexGroup alignItems={'flexEnd'} gutterSize={'m'}>
+  <EuiFlexGrid alignItems={'flexStart'} gutterSize={'m'}>
     <EuiFlexItem grow={false}>
       <FormikCheckableCard
         name="monitorTypeQueryLevel"
         formRow
-        rowProps={{
-          label: 'Monitor type',
-        }}
+        rowProps={{ label: 'Monitor type' }}
         inputProps={{
           id: 'queryLevelMonitorRadioCard',
           label: 'Per query monitor',
@@ -67,6 +83,7 @@ const MonitorType = ({ values }) => (
       <FormikCheckableCard
         name="monitorTypeBucketLevel"
         formRow
+        rowProps={{ hasEmptyLabelSpace: true }}
         inputProps={{
           id: 'bucketLevelMonitorRadioCard',
           label: 'Per bucket monitor',
@@ -89,6 +106,7 @@ const MonitorType = ({ values }) => (
       <FormikCheckableCard
         name="monitorTypeClusterMetrics"
         formRow
+        rowProps={{ hasEmptyLabelSpace: true }}
         inputProps={{
           id: 'clusterMetricsMonitorRadioCard',
           label: 'Per cluster metrics monitor',
@@ -103,7 +121,25 @@ const MonitorType = ({ values }) => (
         }}
       />
     </EuiFlexItem>
-  </EuiFlexGroup>
+    <EuiFlexItem grow={false}>
+      <FormikCheckableCard
+        name="monitorTypeDocLevel"
+        formRow
+        rowProps={{ hasEmptyLabelSpace: true }}
+        inputProps={{
+          id: 'docLevelMonitorRadioCard',
+          label: 'Per document monitor',
+          checked: values.monitor_type === MONITOR_TYPE.DOC_LEVEL,
+          value: MONITOR_TYPE.DOC_LEVEL,
+          onChange: (e, field, form) => {
+            onChangeDefinition(e, form);
+          },
+          children: documentLevelDescription,
+          'data-test-subj': 'docLevelMonitorRadioCard',
+        }}
+      />
+    </EuiFlexItem>
+  </EuiFlexGrid>
 );
 
 export default MonitorType;

@@ -8,6 +8,7 @@ import DestinationsService from './DestinationsService';
 import OpensearchService from './OpensearchService';
 import MonitorService from './MonitorService';
 import AnomalyDetectorService from './AnomalyDetectorService';
+import FindingService from './FindingService';
 
 export {
   AlertService,
@@ -15,4 +16,5 @@ export {
   OpensearchService,
   MonitorService,
   AnomalyDetectorService,
+  FindingService,
 };
