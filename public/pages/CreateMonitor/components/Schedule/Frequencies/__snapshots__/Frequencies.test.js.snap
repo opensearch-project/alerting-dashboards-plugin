@@ -30,6 +30,7 @@ exports[`Frequencies renders CustomCron 1`] = `
       >
         <textarea
           class="euiTextArea euiTextArea--resizeVertical"
+          data-test-subj="customCron_cronExpression_field"
           name="cronExpression"
           rows="6"
         >
@@ -163,6 +164,7 @@ exports[`Frequencies renders Frequency 1`] = `
       >
         <select
           class="euiSelect"
+          data-test-subj="frequency_field"
           id="frequency"
           name="frequency"
         >
@@ -243,6 +245,7 @@ exports[`Frequencies renders FrequencyPicker 1`] = `
           >
             <input
               class="euiFieldNumber euiFieldNumber--withIcon"
+              data-test-subj="interval_interval_field"
               min="1"
               name="period.interval"
               type="number"
@@ -282,6 +285,7 @@ exports[`Frequencies renders FrequencyPicker 1`] = `
           >
             <select
               class="euiSelect"
+              data-test-subj="interval_unit_field"
               id="period.unit"
               name="period.unit"
             >
@@ -354,6 +358,7 @@ exports[`Frequencies renders Interval 1`] = `
           >
             <input
               class="euiFieldNumber euiFieldNumber--withIcon"
+              data-test-subj="interval_interval_field"
               min="1"
               name="period.interval"
               type="number"
@@ -393,6 +398,7 @@ exports[`Frequencies renders Interval 1`] = `
           >
             <select
               class="euiSelect"
+              data-test-subj="interval_unit_field"
               id="period.unit"
               name="period.unit"
             >

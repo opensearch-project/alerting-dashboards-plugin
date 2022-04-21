@@ -32,7 +32,11 @@ const Interval = () => (
           isInvalid,
           error: hasError,
         }}
-        inputProps={{ icon: 'clock', min: 1 }}
+        inputProps={{
+          icon: 'clock',
+          min: 1,
+          'data-test-subj': 'interval_interval_field',
+        }}
       />
     </EuiFlexItem>
     <EuiFlexItem>
@@ -45,7 +49,10 @@ const Interval = () => (
           isInvalid,
           error: hasError,
         }}
-        inputProps={{ options: unitOptions }}
+        inputProps={{
+          options: unitOptions,
+          'data-test-subj': 'interval_unit_field',
+        }}
       />
     </EuiFlexItem>
   </EuiFlexGroup>

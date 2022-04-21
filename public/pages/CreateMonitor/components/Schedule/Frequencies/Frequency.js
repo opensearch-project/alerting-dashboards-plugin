@@ -27,6 +27,7 @@ const Frequency = () => (
     inputProps={{
       options: frequencies,
       isInvalid,
+      'data-test-subj': 'frequency_field',
     }}
   />
 );

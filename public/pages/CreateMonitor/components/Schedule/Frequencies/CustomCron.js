@@ -32,6 +32,7 @@ const CustomCron = () => (
           error: hasError,
           style: { marginTop: '0px' },
         }}
+        inputProps={{ 'data-test-subj': 'customCron_cronExpression_field' }}
       />
     </EuiFlexItem>
     <EuiFlexItem style={{ marginTop: '0px' }}>
