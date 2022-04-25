@@ -354,7 +354,10 @@ export default function Message(
           </EuiFlexGroup>
         </EuiFormRow>
       ) : (
-        <OverviewStat header={'Perform action'} value={'Per monitor execution'} />
+        <div>
+          <OverviewStat header={'Perform action'} value={'Per monitor execution'} />
+          <EuiSpacer size={'s'} />
+        </div>
       )}
 
       {actionExecutionScopeId !== NOTIFY_OPTIONS_VALUES.PER_EXECUTION ? (

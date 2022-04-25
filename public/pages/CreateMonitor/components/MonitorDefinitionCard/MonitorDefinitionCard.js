@@ -18,8 +18,14 @@ const onChangeDefinition = (e, form) => {
 
 const MonitorDefinitionCard = ({ values, plugins }) => {
   const hasADPlugin = plugins.indexOf(OS_AD_PLUGIN) !== -1;
-  const isBucketLevelMonitor = values.monitor_type === MONITOR_TYPE.BUCKET_LEVEL;
-
+  let supportsADOption;
+  switch (values.monitor_type) {
+    case MONITOR_TYPE.QUERY_LEVEL:
+      supportsADOption = true;
+      break;
+    default:
+      supportsADOption = false;
+  }
   return (
     <div>
       <EuiText size={'xs'} style={{ paddingBottom: '0px', marginBottom: '0px' }}>
@@ -68,8 +74,8 @@ const MonitorDefinitionCard = ({ values, plugins }) => {
             }}
           />
         </EuiFlexItem>
-        {/*// Only show the anomaly detector option when anomaly detection plugin is present, but not for bucket-level monitors.*/}
-        {hasADPlugin && !isBucketLevelMonitor && (
+        {/*// Only show the anomaly detector option when anomaly detection plugin is present, and for supporting monitors.*/}
+        {hasADPlugin && supportsADOption && (
           <EuiFlexItem grow={false} style={{ width: `${MONITOR_DEFINITION_CARD_WIDTH}px` }}>
             <FormikCheckableCard
               name="searchTypeAD"

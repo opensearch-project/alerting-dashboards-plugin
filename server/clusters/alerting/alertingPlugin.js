@@ -59,19 +59,12 @@ export default function alertingPlugin(Client, config, components) {
     method: 'DELETE',
   });
 
+  // TODO DRAFT: May need to add 'refresh' assignment here again.
   alerting.updateMonitor = ca({
     url: {
-      fmt: `${MONITOR_BASE_API}/<%=monitorId%>?if_seq_no=<%=ifSeqNo%>&if_primary_term=<%=ifPrimaryTerm%>&refresh=wait_for`,
+      fmt: `${MONITOR_BASE_API}/<%=monitorId%>`,
       req: {
         monitorId: {
-          type: 'string',
-          required: true,
-        },
-        ifSeqNo: {
-          type: 'string',
-          required: true,
-        },
-        ifPrimaryTerm: {
           type: 'string',
           required: true,
         },

@@ -177,6 +177,7 @@ export default class AcknowledgeAlertsModal extends Component {
   };
 
   acknowledgeAlerts = async () => {
+    this.setState({ loading: true });
     const { selectedItems } = this.state;
     const { httpClient, notifications } = this.props;
 
@@ -227,7 +228,7 @@ export default class AcknowledgeAlertsModal extends Component {
       alertState,
       monitorIds
     );
-    this.setState({ ...this.state, selectedItems: [] });
+    this.setState({ ...this.state, loading: false, selectedItems: [] });
   };
 
   onSeverityLevelChange = (e) => {
@@ -305,6 +306,7 @@ export default class AcknowledgeAlertsModal extends Component {
       switch (monitorType) {
         case MONITOR_TYPE.QUERY_LEVEL:
         case MONITOR_TYPE.CLUSTER_METRICS:
+        case MONITOR_TYPE.DOC_LEVEL:
           return `${item.id}-${item.version}`;
         case MONITOR_TYPE.BUCKET_LEVEL:
           return item.id;

@@ -8,7 +8,8 @@ import _ from 'lodash';
 import { connect, FieldArray } from 'formik';
 import { EuiButton, EuiSpacer } from '@elastic/eui';
 import { inputLimitText } from '../../../../utils/helpers';
-import DocumentLevelQuery, { getInitialQueryValues } from './DocumentLevelQuery';
+import DocumentLevelQuery from './DocumentLevelQuery';
+import { FORMIK_INITIAL_DOCUMENT_LEVEL_QUERY_VALUES } from '../../containers/CreateMonitor/utils/constants';
 
 export const MAX_QUERIES = 10; // TODO DRAFT: Placeholder limit
 
@@ -23,7 +24,8 @@ class ConfigureDocumentLevelQueries extends Component {
       dataTypes,
       formik: { values },
     } = this.props;
-    if (_.isEmpty(values.queries)) arrayHelpers.push(_.cloneDeep(getInitialQueryValues()));
+    if (_.isEmpty(values.queries))
+      arrayHelpers.push(_.cloneDeep(FORMIK_INITIAL_DOCUMENT_LEVEL_QUERY_VALUES));
     const numOfQueries = values.queries.length;
     return (
       <div>
@@ -44,7 +46,9 @@ class ConfigureDocumentLevelQueries extends Component {
           <EuiButton
             fill={false}
             size={'s'}
-            onClick={() => arrayHelpers.push(_.cloneDeep(getInitialQueryValues(numOfQueries)))}
+            onClick={() =>
+              arrayHelpers.push(_.cloneDeep(FORMIK_INITIAL_DOCUMENT_LEVEL_QUERY_VALUES))
+            }
             disabled={numOfQueries >= MAX_QUERIES}
           >
             {numOfQueries === 0 ? 'Add query' : 'Add another query'}

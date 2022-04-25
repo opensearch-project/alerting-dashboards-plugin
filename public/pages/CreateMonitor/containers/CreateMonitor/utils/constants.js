@@ -64,7 +64,7 @@ export const FORMIK_INITIAL_AGG_VALUES = {
 
 export const FORMIK_INITIAL_DOCUMENT_LEVEL_QUERY_VALUES = {
   id: undefined,
-  queryName: 'Query name',
+  queryName: '',
   field: '',
   operator: QUERY_OPERATORS[0].value,
   query: '',
