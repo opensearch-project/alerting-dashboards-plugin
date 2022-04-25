@@ -122,26 +122,31 @@ class DefineDocumentLevelTrigger extends Component {
     response,
     triggerValues
   ) => {
+    const triggerConditions = _.get(triggerValues, `${fieldPath}triggerConditions`, []);
+    const selectedQueriesAndTags = triggerConditions.map((condition) =>
+      _.get(condition, 'query.queryName')
+    );
     const queries = _.get(monitorValues, 'queries', []);
+
     const tagSelectOptions = [];
     const querySelectOptions = queries.map((query) => {
       query.tags.forEach((tag) => {
         const tagOption = {
           label: tag,
           value: { queryName: tag, operator: '==', expression: `${QUERY_IDENTIFIERS.TAG}${tag}` },
+          disabled: _.includes(selectedQueriesAndTags, tag),
         };
         if (!_.includes(tagSelectOptions, tagOption)) tagSelectOptions.push(tagOption);
       });
       return {
         label: query.queryName,
         value: { ...query, expression: `${QUERY_IDENTIFIERS.NAME}${query.queryName}` },
+        disabled: _.includes(selectedQueriesAndTags, query.queryName),
       };
     });
 
-    const triggerConditions = _.get(triggerValues, `${fieldPath}triggerConditions`, []);
-    if (_.isEmpty(triggerConditions)) {
+    if (_.isEmpty(triggerConditions))
       arrayHelpers.push(_.cloneDeep(FORMIK_INITIAL_TRIGGER_CONDITION_VALUES));
-    }
 
     return triggerConditions.map((triggerCondition, index) => (
       <div key={`${fieldPath}triggerConditions.${index}`} style={{ paddingLeft: '10px' }}>

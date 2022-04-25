@@ -4,32 +4,23 @@
  */
 
 import React, { Component } from 'react';
-import _ from 'lodash';
 import { connect } from 'formik';
-import {
-  EuiButton,
-  EuiFlexGroup,
-  EuiFlexItem,
-  EuiHorizontalRule,
-  EuiSpacer,
-  EuiText,
-} from '@elastic/eui';
+import { EuiButton, EuiFlexGroup, EuiFlexItem, EuiHorizontalRule, EuiSpacer } from '@elastic/eui';
 import { FormikComboBox, FormikFieldText, FormikSelect } from '../../../../components/FormControls';
-import { hasError, isInvalid, required } from '../../../../utils/validate';
-import { FORMIK_INITIAL_DOCUMENT_LEVEL_QUERY_VALUES } from '../../containers/CreateMonitor/utils/constants';
-import { DOC_LEVEL_TAG_TOOLTIP } from './DocumentLevelQueryTag';
-import IconToolTip from '../../../../components/IconToolTip';
+import {
+  hasError,
+  isInvalid,
+  required,
+  validateIllegalCharacters,
+} from '../../../../utils/validate';
 import ConfigureDocumentLevelQueryTags from './ConfigureDocumentLevelQueryTags';
 import { getIndexFields } from '../MonitorExpressions/expressions/utils/dataTypes';
 import { QUERY_OPERATORS } from '../../../Dashboard/components/FindingsDashboard/utils';
 
 const ALLOWED_DATA_TYPES = ['number', 'text', 'keyword', 'boolean'];
 
-export const getInitialQueryValues = (queryIndexNum = 0) =>
-  _.cloneDeep({
-    ...FORMIK_INITIAL_DOCUMENT_LEVEL_QUERY_VALUES,
-    queryName: `Query ${queryIndexNum + 1}`,
-  });
+// TODO DRAFT: implement validation
+export const ILLEGAL_QUERY_NAME_CHARACTERS = [' '];
 
 class DocumentLevelQuery extends Component {
   constructor(props) {
@@ -46,14 +37,19 @@ class DocumentLevelQuery extends Component {
             <FormikFieldText
               name={`${formFieldName}.queryName`}
               formRow
-              fieldProps={{ validate: required }} // TODO DRAFT: implement validation
+              fieldProps={{
+                validate: validateIllegalCharacters(ILLEGAL_QUERY_NAME_CHARACTERS),
+              }}
               rowProps={{
                 label: 'Query name',
                 style: { width: '300px' },
                 isInvalid,
                 error: hasError,
               }}
-              inputProps={{ isInvalid }}
+              inputProps={{
+                placeholder: 'Enter a name for the query',
+                isInvalid,
+              }}
             />
           </EuiFlexItem>
 
@@ -123,19 +119,6 @@ class DocumentLevelQuery extends Component {
         </EuiFlexGroup>
 
         <EuiSpacer size={'m'} />
-
-        <EuiText size={'xs'}>
-          <strong>Tags</strong>
-          <i> - optional </i>
-          <IconToolTip content={DOC_LEVEL_TAG_TOOLTIP} iconType={'questionInCircle'} />
-        </EuiText>
-        <EuiSpacer size={'s'} />
-
-        {_.isEmpty(query.tags) && (
-          <div>
-            <EuiText size={'xs'}>No tags defined.</EuiText>
-          </div>
-        )}
 
         <ConfigureDocumentLevelQueryTags
           formFieldName={formFieldName}
