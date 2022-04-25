@@ -78,8 +78,8 @@ export default function (services, router) {
           id: schema.string(),
         }),
         query: schema.object({
-          ifSeqNo: schema.number(),
-          ifPrimaryTerm: schema.number(),
+          ifSeqNo: schema.maybe(schema.number()),
+          ifPrimaryTerm: schema.maybe(schema.number()),
         }),
         body: schema.any(),
       },
