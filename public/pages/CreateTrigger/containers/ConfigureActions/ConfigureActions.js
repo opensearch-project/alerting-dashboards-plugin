@@ -147,8 +147,7 @@ class ConfigureActions extends React.Component {
             DEFAULT_MESSAGE_SOURCE.BUCKET_LEVEL_MONITOR
           );
           break;
-        case MONITOR_TYPE.QUERY_LEVEL:
-        case MONITOR_TYPE.CLUSTER_METRICS:
+        default:
           _.set(
             initialActionValues,
             'message_template.source',
@@ -203,8 +202,16 @@ class ConfigureActions extends React.Component {
         _.set(testTrigger, `${TRIGGER_TYPE.BUCKET_LEVEL}.actions`, [action]);
         _.set(testTrigger, `${TRIGGER_TYPE.BUCKET_LEVEL}.condition`, condition);
         break;
-      case MONITOR_TYPE.QUERY_LEVEL:
-      case MONITOR_TYPE.CLUSTER_METRICS:
+      case MONITOR_TYPE.DOC_LEVEL:
+        action = _.get(testTrigger, `${TRIGGER_TYPE.DOC_LEVEL}.actions[${index}]`);
+        condition = {
+          ..._.get(testTrigger, `${TRIGGER_TYPE.DOC_LEVEL}.condition`),
+          script: { lang: 'painless', source: 'return true' },
+        };
+        _.set(testTrigger, `${TRIGGER_TYPE.DOC_LEVEL}.actions`, [action]);
+        _.set(testTrigger, `${TRIGGER_TYPE.DOC_LEVEL}.condition`, condition);
+        break;
+      default:
         action = _.get(testTrigger, `actions[${index}]`);
         condition = {
           ..._.get(testTrigger, 'condition'),

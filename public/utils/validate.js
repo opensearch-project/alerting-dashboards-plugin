@@ -31,6 +31,9 @@ export const validateActionName = (monitor, trigger) => (value) => {
     case MONITOR_TYPE.BUCKET_LEVEL:
       actions = _.get(trigger, `${TRIGGER_TYPE.BUCKET_LEVEL}.actions`, []);
       break;
+    case MONITOR_TYPE.DOC_LEVEL:
+      actions = _.get(trigger, `${TRIGGER_TYPE.DOC_LEVEL}.actions`, []);
+      break;
   }
   const matches = actions.filter((action) => action.name === value);
   if (matches.length > 1) return 'Action name is already used.';
@@ -54,6 +57,26 @@ export const validateActionThrottle = (action) => (value) => {
 
 export const required = (value) => {
   if (!value) return 'Required.';
+};
+
+export const validateIllegalCharacters = (illegalCharacters = ILLEGAL_CHARACTERS) => (value) => {
+  if (_.isEmpty(value)) return required(value);
+
+  const illegalCharactersString = illegalCharacters.join(' ');
+  let errorText = `Contains invalid characters. Cannot contain: ${illegalCharactersString}`;
+
+  if (_.includes(illegalCharacters, ' ')) {
+    errorText =
+      illegalCharacters.length === 1
+        ? 'Cannot contain spaces.'
+        : `Contains invalid characters or spaces. Cannot contain: ${illegalCharactersString}`;
+  }
+
+  let includesIllegalCharacter = false;
+  illegalCharacters.forEach((character) => {
+    if (_.includes(value, character)) includesIllegalCharacter = true;
+  });
+  if (includesIllegalCharacter) return errorText;
 };
 
 export const validateRequiredNumber = (value) => {

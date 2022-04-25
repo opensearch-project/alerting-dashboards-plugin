@@ -17,11 +17,14 @@ import {
   EuiSpacer,
 } from '@elastic/eui';
 import { FormikFieldText } from '../../../../components/FormControls';
-import { hasError, isInvalid, required } from '../../../../utils/validate';
+import { hasError, isInvalid, validateIllegalCharacters } from '../../../../utils/validate';
 import { EXPRESSION_STYLE, POPOVER_STYLE } from '../MonitorExpressions/expressions/utils/constants';
 
 export const DOC_LEVEL_TAG_TOOLTIP = 'Tags to associate with your queries.'; // TODO DRAFT: Placeholder wording
 export const TAG_PLACEHOLDER_TEXT = 'Enter the search term'; // TODO DRAFT: Placeholder wording
+
+// TODO DRAFT: What constraints should we implement?
+export const ILLEGAL_TAG_CHARACTERS = [' '];
 
 class DocumentLevelQueryTag extends Component {
   constructor(props) {
@@ -58,7 +61,9 @@ class DocumentLevelQueryTag extends Component {
         <FormikFieldText
           name={formFieldName}
           formRow
-          fieldProps={{ validate: required }} // TODO DRAFT: What constraints should we implement?
+          fieldProps={{
+            validate: validateIllegalCharacters(ILLEGAL_TAG_CHARACTERS),
+          }}
           rowProps={{
             style: { maxWidth: '100%' },
             isInvalid,
@@ -86,8 +91,21 @@ class DocumentLevelQueryTag extends Component {
   }
 
   render() {
-    const { arrayHelpers, tag = '', tagIndex = 0 } = this.props;
+    const {
+      formik: { errors },
+      arrayHelpers,
+      formFieldName,
+      tag = '',
+      tagIndex = 0,
+    } = this.props;
     const { isPopoverOpen } = this.state;
+
+    let errorText;
+    if (!_.isEmpty(tag)) errorText = validateIllegalCharacters(ILLEGAL_TAG_CHARACTERS)(tag);
+
+    if (_.isEmpty(errorText)) delete errors[formFieldName];
+    else _.set(errors, formFieldName, validateIllegalCharacters(ILLEGAL_TAG_CHARACTERS)(tag));
+
     return (
       <EuiPopover
         id={'tag-badge-popover'}

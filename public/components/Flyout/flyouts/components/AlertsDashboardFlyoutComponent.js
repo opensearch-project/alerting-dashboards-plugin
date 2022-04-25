@@ -148,7 +148,7 @@ export default class AlertsDashboardFlyoutComponent extends Component {
       this.setState({ tabContent: this.renderAlertsTable() });
   }
 
-  getBucketLevelGraphConditions = (trigger) => {
+  getMultipleGraphConditions = (trigger) => {
     let conditions = _.get(trigger, 'condition.script.source');
     if (_.isEmpty(conditions)) {
       return '-';
@@ -514,10 +514,20 @@ export default class AlertsDashboardFlyoutComponent extends Component {
     const groupBy = _.get(monitor, MONITOR_GROUP_BY);
 
     const condition =
-      (searchType === SEARCH_TYPE.GRAPH && monitorType === MONITOR_TYPE.BUCKET_LEVEL) ||
-      MONITOR_TYPE.DOC_LEVEL
-        ? this.getBucketLevelGraphConditions(trigger)
+      searchType === SEARCH_TYPE.GRAPH &&
+      (monitorType === MONITOR_TYPE.BUCKET_LEVEL || monitorType === MONITOR_TYPE.DOC_LEVEL)
+        ? this.getMultipleGraphConditions(trigger)
         : _.get(trigger, 'condition.script.source', '-');
+
+    let displayMultipleConditions;
+    switch (monitorType) {
+      case MONITOR_TYPE.BUCKET_LEVEL:
+      case MONITOR_TYPE.DOC_LEVEL:
+        displayMultipleConditions = true;
+        break;
+      default:
+        displayMultipleConditions = false;
+    }
 
     const filters =
       monitorType === MONITOR_TYPE.BUCKET_LEVEL && searchType === SEARCH_TYPE.GRAPH
@@ -534,7 +544,15 @@ export default class AlertsDashboardFlyoutComponent extends Component {
         ? `${bucketValue} ${bucketUnitOfTime}`
         : '-';
 
-    const displayTableTabs = monitorType === MONITOR_TYPE.DOC_LEVEL;
+    let displayTableTabs;
+    switch (monitorType) {
+      case MONITOR_TYPE.DOC_LEVEL:
+        displayTableTabs = true;
+        break;
+      default:
+        displayTableTabs = false;
+        break;
+    }
     return (
       <div>
         <EuiFlexGroup>
@@ -590,9 +608,7 @@ export default class AlertsDashboardFlyoutComponent extends Component {
         <EuiFlexGroup>
           <EuiFlexItem>
             <EuiText size={'m'} data-test-subj={`alertsDashboardFlyout_conditions_${trigger_name}`}>
-              <strong>
-                {monitorType === MONITOR_TYPE.BUCKET_LEVEL ? 'Conditions' : 'Condition'}
-              </strong>
+              <strong>{displayMultipleConditions ? 'Conditions' : 'Condition'}</strong>
               <p style={{ whiteSpace: 'pre-wrap' }}>
                 {loadingMonitors || loading ? 'Loading conditions...' : condition}
               </p>
