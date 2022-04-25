@@ -260,44 +260,6 @@ exports[`MonitorDefinitionCard renders without AD plugin 2`] = `
         </div>
       </div>
     </div>
-    <div
-      class="euiFlexItem euiFlexItem--flexGrowZero"
-      style="width:275px"
-    >
-      <div
-        class="euiCheckableCard"
-      >
-        <div
-          class="euiCheckableCard__row"
-        >
-          <div
-            class="euiCheckableCard__control"
-          >
-            <div
-              class="euiRadio euiRadio--noLabel"
-              data-test-subj="anomalyDetectorRadioCard"
-            >
-              <input
-                class="euiRadio__input"
-                id="anomalyDetectorRadioCard"
-                name="searchTypeAD"
-                type="radio"
-                value="ad"
-              />
-              <div
-                class="euiRadio__circle"
-              />
-            </div>
-          </div>
-          <label
-            class="euiCheckableCard__label"
-            for="anomalyDetectorRadioCard"
-          >
-            Anomaly detector
-          </label>
-        </div>
-      </div>
-    </div>
   </div>
 </div>
 `;

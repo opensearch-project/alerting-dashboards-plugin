@@ -389,19 +389,24 @@ exports[`Action renders with Notifications plugin installed 1`] = `
                 <div
                   class="euiSpacer euiSpacer--m"
                 />
-                <div
-                  class="euiFlexItem"
-                >
+                <div>
                   <div
-                    class="euiText euiText--extraSmall"
+                    class="euiFlexItem"
                   >
-                    <strong>
-                      Perform action
-                    </strong>
-                    <div>
-                      Per monitor execution
+                    <div
+                      class="euiText euiText--extraSmall"
+                    >
+                      <strong>
+                        Perform action
+                      </strong>
+                      <div>
+                        Per monitor execution
+                      </div>
                     </div>
                   </div>
+                  <div
+                    class="euiSpacer euiSpacer--s"
+                  />
                 </div>
                 <div
                   class="euiFormRow"
@@ -967,19 +972,24 @@ exports[`Action renders without Notifications plugin installed 1`] = `
                 <div
                   class="euiSpacer euiSpacer--m"
                 />
-                <div
-                  class="euiFlexItem"
-                >
+                <div>
                   <div
-                    class="euiText euiText--extraSmall"
+                    class="euiFlexItem"
                   >
-                    <strong>
-                      Perform action
-                    </strong>
-                    <div>
-                      Per monitor execution
+                    <div
+                      class="euiText euiText--extraSmall"
+                    >
+                      <strong>
+                        Perform action
+                      </strong>
+                      <div>
+                        Per monitor execution
+                      </div>
                     </div>
                   </div>
+                  <div
+                    class="euiSpacer euiSpacer--s"
+                  />
                 </div>
                 <div
                   class="euiFormRow"
