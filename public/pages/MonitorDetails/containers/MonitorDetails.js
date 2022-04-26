@@ -158,10 +158,18 @@ export default class MonitorDetails extends Component {
       notifications,
     } = this.props;
     const { monitor, ifSeqNo, ifPrimaryTerm } = this.state;
+
+    let query = { ifSeqNo, ifPrimaryTerm };
+    switch (monitor.monitor_type) {
+      case MONITOR_TYPE.DOC_LEVEL:
+        query = {};
+        break;
+    }
+
     this.setState({ updating: true });
     return httpClient
       .put(`../api/alerting/monitors/${monitorId}`, {
-        query: { ifSeqNo, ifPrimaryTerm },
+        query: { ...query },
         body: JSON.stringify({ ...monitor, ...update }),
       })
       .then((resp) => {
