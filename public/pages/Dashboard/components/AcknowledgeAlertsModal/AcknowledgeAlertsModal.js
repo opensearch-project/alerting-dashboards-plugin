@@ -44,7 +44,7 @@ import DashboardControls from '../DashboardControls';
 import ContentPanel from '../../../../components/ContentPanel';
 import { queryColumns } from '../../utils/tableUtils';
 import DashboardEmptyPrompt from '../DashboardEmptyPrompt';
-import { ALERTS_FINDING_COLUMN } from '../FindingsDashboard/utils';
+import { getAlertsFindingColumn } from '../FindingsDashboard/utils';
 
 export const DEFAULT_NUM_MODAL_ROWS = 10;
 
@@ -273,7 +273,15 @@ export default class AcknowledgeAlertsModal extends Component {
   };
 
   render() {
-    const { monitor, onClose, triggerName } = this.props;
+    const {
+      httpClient,
+      location,
+      history,
+      monitor,
+      notifications,
+      onClose,
+      triggerName,
+    } = this.props;
     const detectorId = _.get(monitor, MONITOR_INPUT_DETECTOR_ID);
     const groupBy = _.get(monitor, MONITOR_GROUP_BY);
     const monitorType = _.get(monitor, 'monitor_type', MONITOR_TYPE.QUERY_LEVEL);
@@ -336,7 +344,11 @@ export default class AcknowledgeAlertsModal extends Component {
           break;
         case MONITOR_TYPE.DOC_LEVEL:
           columns = _.cloneDeep(queryColumns);
-          columns.splice(0, 0, ALERTS_FINDING_COLUMN);
+          columns.splice(
+            0,
+            0,
+            getAlertsFindingColumn(httpClient, history, false, location, notifications)
+          );
           break;
         default:
           columns = queryColumns;

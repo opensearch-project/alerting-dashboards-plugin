@@ -8,6 +8,9 @@ import _ from 'lodash';
 import { renderTime } from '../../utils/tableUtils';
 import FindingFlyout from './FindingFlyout';
 import FindingsPopover from './FindingsPopover';
+import queryString from 'query-string';
+import { backendErrorNotification } from '../../../../utils/helpers';
+import { MAX_FINDINGS_COUNT } from '../../containers/FindingsDashboard';
 
 export const QUERY_OPERATORS = [
   { text: 'is', value: '==' },
@@ -35,7 +38,36 @@ export const ALERTS_FINDING_COLUMN = {
   },
 };
 
-export const findingsColumnTypes = (isAlertsFlyout) => [
+export const getAlertsFindingColumn = (
+  httpClient,
+  history,
+  isAlertsFlyout = false,
+  location,
+  notifications
+) => {
+  return {
+    field: 'related_doc_ids',
+    name: 'Document',
+    sortable: true,
+    truncateText: true,
+    render: (related_doc_ids, alert) => {
+      if (_.isEmpty(related_doc_ids))
+        console.log('Alerts index contains an entry with 0 related document IDs:', alert);
+      return (
+        <FindingFlyout
+          isAlertsFlyout={isAlertsFlyout}
+          alert={alert}
+          httpClient={httpClient}
+          history={history}
+          location={location}
+          notifications={notifications}
+        />
+      );
+    },
+  };
+};
+
+export const findingsColumnTypes = (isAlertsFlyout = false) => [
   {
     field: 'document_list',
     name: 'Document',
@@ -147,3 +179,41 @@ export const validDocLevelGraphQueries = (queries) => {
   );
   return !_.isEmpty(allQueriesDefined);
 };
+
+export async function getFindings({
+  id,
+  from,
+  size,
+  search,
+  sortField,
+  sortDirection,
+  httpClient,
+  history,
+  location,
+  monitorId,
+  notifications,
+}) {
+  const params = {
+    id,
+    from,
+    size,
+    search,
+    sortDirection,
+    sortField,
+  };
+  const queryParamsString = queryString.stringify(params);
+  location.search;
+  history.replace({ ...location, search: queryParamsString });
+
+  // TODO FIXME: Refactor 'size' logic to return all findings for a monitor
+  //  once the backend supports retrieving findings for a monitorId.
+  params['size'] = Math.max(size, MAX_FINDINGS_COUNT);
+
+  const resp = await httpClient.get('../api/alerting/findings/_search', { query: params });
+  if (resp.ok) {
+    return getFindingsForMonitor(resp.findings, monitorId);
+  } else {
+    console.log('Error getting findings:', resp);
+    backendErrorNotification(notifications, 'get', 'findings', resp.err);
+  }
+}
