@@ -45,7 +45,7 @@ import { getUnwrappedTriggers } from './Triggers/Triggers';
 import { formikToMonitor } from '../../CreateMonitor/containers/CreateMonitor/utils/formikToMonitor';
 import monitorToFormik from '../../CreateMonitor/containers/CreateMonitor/utils/monitorToFormik';
 import FindingsDashboard from '../../Dashboard/containers/FindingsDashboard';
-import { TABLE_TAB_IDS } from '../../Dashboard/components/FindingsDashboard/utils';
+import { TABLE_TAB_IDS } from '../../Dashboard/components/FindingsDashboard/findingsUtils';
 
 export default class MonitorDetails extends Component {
   constructor(props) {

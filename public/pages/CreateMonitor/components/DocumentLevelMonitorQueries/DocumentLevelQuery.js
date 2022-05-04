@@ -15,7 +15,7 @@ import {
 } from '../../../../utils/validate';
 import ConfigureDocumentLevelQueryTags from './ConfigureDocumentLevelQueryTags';
 import { getIndexFields } from '../MonitorExpressions/expressions/utils/dataTypes';
-import { QUERY_OPERATORS } from '../../../Dashboard/components/FindingsDashboard/utils';
+import { QUERY_OPERATORS } from '../../../Dashboard/components/FindingsDashboard/findingsUtils';
 
 const ALLOWED_DATA_TYPES = ['number', 'text', 'keyword', 'boolean'];
 

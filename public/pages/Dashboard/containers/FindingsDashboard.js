@@ -27,7 +27,7 @@ import {
   findingsColumnTypes,
   getFindings,
   parseFindingsForPreview,
-} from '../components/FindingsDashboard/utils';
+} from '../components/FindingsDashboard/findingsUtils';
 
 export const GET_FINDINGS_PREVIEW_PARAMS = {
   id: DEFAULT_GET_FINDINGS_PARAMS.id,
