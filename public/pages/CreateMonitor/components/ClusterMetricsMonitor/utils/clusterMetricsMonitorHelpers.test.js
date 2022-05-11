@@ -6,7 +6,6 @@
 import _ from 'lodash';
 import {
   API_TYPES,
-  DEFAULT_CLUSTER_METRICS_SCRIPT,
   GET_API_TYPE_DEBUG_TEXT,
   ILLEGAL_PATH_PARAMETER_CHARACTERS,
   NO_PATH_PARAMS_PLACEHOLDER_TEXT,
@@ -19,15 +18,12 @@ import {
   getApiPath,
   getApiType,
   getApiTypesRequiringPathParams,
-  getDefaultScript,
   getExamplePathParams,
   isInvalidApiPathParameter,
   pathParamsContainIllegalCharacters,
   validateApiPathParameter,
 } from './clusterMetricsMonitorHelpers';
 import { FORMIK_INITIAL_VALUES } from '../../../containers/CreateMonitor/utils/constants';
-import { SEARCH_TYPE } from '../../../../../utils/constants';
-import { FORMIK_INITIAL_TRIGGER_VALUES } from '../../../../CreateTrigger/containers/CreateTrigger/utils/constants';
 
 describe('clusterMetricsMonitorHelpers', () => {
   describe('buildClusterMetricsRequest', () => {
@@ -269,61 +265,6 @@ describe('clusterMetricsMonitorHelpers', () => {
       results.forEach((entry) => {
         const entryExpected = _.includes(expectedApiTypes, entry.value);
         expect(entryExpected).toEqual(true);
-      });
-    });
-  });
-
-  describe('getDefaultScript', () => {
-    test('when searchType is undefined', () => {
-      const monitorValues = undefined;
-      expect(getDefaultScript(monitorValues)).toEqual(FORMIK_INITIAL_TRIGGER_VALUES.script);
-    });
-    test('when searchType is clusterMetrics and api_type is undefined', () => {
-      const monitorValues = {
-        searchType: SEARCH_TYPE.CLUSTER_METRICS,
-        uri: undefined,
-      };
-      expect(getDefaultScript(monitorValues)).toEqual(DEFAULT_CLUSTER_METRICS_SCRIPT);
-    });
-    test('when searchType is clusterMetrics and api_type is empty', () => {
-      const monitorValues = {
-        searchType: SEARCH_TYPE.CLUSTER_METRICS,
-        uri: {
-          api_type: '',
-        },
-      };
-      expect(getDefaultScript(monitorValues)).toEqual(DEFAULT_CLUSTER_METRICS_SCRIPT);
-    });
-    test('when searchType is clusterMetrics and api_type does not have a default condition', () => {
-      const monitorValues = {
-        searchType: SEARCH_TYPE.CLUSTER_METRICS,
-        uri: {
-          api_type: 'unknownApi',
-        },
-      };
-      expect(getDefaultScript(monitorValues)).toEqual(DEFAULT_CLUSTER_METRICS_SCRIPT);
-    });
-
-    _.keys(SEARCH_TYPE).forEach((searchType) => {
-      test(`when searchType is ${searchType}`, () => {
-        if (SEARCH_TYPE[searchType] !== SEARCH_TYPE.CLUSTER_METRICS) {
-          const monitorValues = { searchType: searchType };
-          expect(getDefaultScript(monitorValues)).toEqual(FORMIK_INITIAL_TRIGGER_VALUES.script);
-        }
-      });
-    });
-
-    _.keys(API_TYPES).forEach((apiType) => {
-      test(`when searchType is clusterMetrics and api_type is ${apiType}`, () => {
-        const monitorValues = {
-          searchType: SEARCH_TYPE.CLUSTER_METRICS,
-          uri: {
-            api_type: apiType,
-          },
-        };
-        const expectedOutput = _.get(API_TYPES, `${apiType}.defaultCondition`);
-        if (!_.isEmpty(expectedOutput))
-          expect(getDefaultScript(monitorValues)).toEqual(expectedOutput);
       });
     });
   });

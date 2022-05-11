@@ -73,6 +73,11 @@ export const FORMIK_INITIAL_TRIGGER_VALUES = {
   actions: undefined,
 };
 
+export const FORMIK_INITIAL_DOC_LEVEL_SCRIPT = {
+  lang: FORMIK_INITIAL_TRIGGER_VALUES.script.lang,
+  source: '(query[name=<queryName>] || query[name=<queryName>]) && query[tag=<queryTag>]',
+};
+
 export const HITS_TOTAL_RESULTS_PATH = 'ctx.results[0].hits.total.value';
 export const AGGREGATION_RESULTS_PATH = 'ctx.results[0].aggregations.metric.value';
 export const ANOMALY_GRADE_RESULT_PATH = 'ctx.results[0].aggregations.max_anomaly_grade.value';
