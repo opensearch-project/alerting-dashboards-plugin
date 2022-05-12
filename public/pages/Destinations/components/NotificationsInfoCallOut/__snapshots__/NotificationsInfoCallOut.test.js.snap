@@ -17,28 +17,32 @@ exports[`NotificationsInfoCallOut renders when Notifications plugin is installed
     <div
       class="euiText euiText--small"
     >
-      <p>
-        Your destinations have been migrated to Notifications, a new centralized place to manage your notification channels. Destinations will be deprecated going forward.
-      </p>
       <div
-        class="euiSpacer euiSpacer--l"
-      />
-      <a
-        class="euiButton euiButton--primary"
-        href="/app/notifications-dashboards#/channels"
-        rel="noreferrer"
+        class="euiTextColor euiTextColor--default"
       >
-        <span
-          class="euiButtonContent euiButton__content"
+        <p>
+          Your destinations have been migrated to Notifications, a new centralized place to manage your notification channels. Destinations will be deprecated going forward.
+        </p>
+        <div
+          class="euiSpacer euiSpacer--l"
+        />
+        <a
+          class="euiButton euiButton--primary"
+          href="/app/notifications-dashboards#/channels"
+          rel="noreferrer"
         >
           <span
-            class="euiButton__text"
+            class="euiButtonContent euiButton__content"
           >
-            View Notifications
+            <span
+              class="euiButton__text"
+            >
+              View Notifications
+            </span>
           </span>
-        </span>
-      </a>
-      <p />
+        </a>
+        <p />
+      </div>
     </div>
   </div>
   <div
@@ -64,13 +68,17 @@ exports[`NotificationsInfoCallOut renders when Notifications plugin is not insta
     <div
       class="euiText euiText--small"
     >
-      <p>
-        Your destinations have been migrated to Notifications, a new centralized place to manage your notification channels. Destinations will be deprecated going forward.
-      </p>
       <div
-        class="euiSpacer euiSpacer--l"
-      />
-      <p />
+        class="euiTextColor euiTextColor--default"
+      >
+        <p>
+          Your destinations have been migrated to Notifications, a new centralized place to manage your notification channels. Destinations will be deprecated going forward.
+        </p>
+        <div
+          class="euiSpacer euiSpacer--l"
+        />
+        <p />
+      </div>
     </div>
   </div>
   <div

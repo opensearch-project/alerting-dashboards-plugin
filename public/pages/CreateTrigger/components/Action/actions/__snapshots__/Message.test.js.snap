@@ -76,6 +76,11 @@ exports[`Message renders 1`] = `
                 <div>
                   EuiIconMock
                 </div>
+                <span
+                  class="euiScreenReaderOnly"
+                >
+                  (opens in a new tab or window)
+                </span>
               </a>
             </div>
           </div>
@@ -287,7 +292,7 @@ exports[`Message renders 1`] = `
                     </div>
                     <div
                       class="euiFormHelpText euiFormRow__text"
-                      id="undefinedactions.0.throttle.value-form-row-help"
+                      id="undefinedactions.0.throttle.value-form-row-help-0"
                     >
                       Throttle value must be greater than 0 and less than 1440.
                     </div>

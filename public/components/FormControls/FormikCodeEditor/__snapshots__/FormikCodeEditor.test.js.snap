@@ -12,12 +12,10 @@ exports[`FormikCodeEditor render formRow 1`] = `
       class="euiCodeEditorWrapper"
       data-test-subj="codeEditorContainer"
     >
-      <div
+      <button
         class="euiCodeEditorKeyboardHint"
         data-test-subj="codeEditorHint"
         id="generated-id"
-        role="button"
-        tabindex="0"
       >
         <p
           class="euiText"
@@ -29,7 +27,7 @@ exports[`FormikCodeEditor render formRow 1`] = `
         >
           When you're done, press Escape to stop editing.
         </p>
-      </div>
+      </button>
       <div
         id="generated-id"
         style="width:500px;height:500px"
@@ -44,12 +42,10 @@ exports[`FormikCodeEditor renders 1`] = `
   class="euiCodeEditorWrapper"
   data-test-subj="codeEditorContainer"
 >
-  <div
+  <button
     class="euiCodeEditorKeyboardHint"
     data-test-subj="codeEditorHint"
     id="generated-id"
-    role="button"
-    tabindex="0"
   >
     <p
       class="euiText"
@@ -61,7 +57,7 @@ exports[`FormikCodeEditor renders 1`] = `
     >
       When you're done, press Escape to stop editing.
     </p>
-  </div>
+  </button>
   <div
     id="generated-id"
     style="width:500px;height:500px"

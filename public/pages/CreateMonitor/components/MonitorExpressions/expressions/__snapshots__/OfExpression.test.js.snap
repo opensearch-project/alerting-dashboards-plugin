@@ -2,14 +2,14 @@
 
 exports[`OfExpression renders 1`] = `
 <div
-  class="euiPopover euiPopover--anchorDownLeft euiPopover--withTitle"
+  class="euiPopover euiPopover--anchorDownLeft"
   id="of-popover"
 >
   <div
     class="euiPopover__anchor"
   >
     <button
-      class="euiExpression euiExpression-isClickable euiExpression-isUppercase euiExpression--secondary"
+      class="euiExpression euiExpression-isClickable euiExpression-isUppercase euiExpression--success"
     >
       <span
         class="euiExpression__description"

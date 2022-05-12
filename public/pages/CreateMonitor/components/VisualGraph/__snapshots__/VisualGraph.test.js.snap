@@ -2,7 +2,7 @@
 
 exports[`VisualGraph renders 1`] = `
 <div
-  class="euiPanel euiPanel--paddingMedium"
+  class="euiPanel euiPanel--paddingMedium euiPanel--borderRadiusMedium euiPanel--plain euiPanel--hasShadow"
   style="padding-left:10px;padding-right:0px"
 >
   <div
@@ -541,7 +541,7 @@ exports[`VisualGraph renders 1`] = `
 
 exports[`VisualGraph renders with bucket level monitor 1`] = `
 <div
-  class="euiPanel euiPanel--paddingMedium"
+  class="euiPanel euiPanel--paddingMedium euiPanel--borderRadiusMedium euiPanel--plain euiPanel--hasShadow"
   style="padding-left:10px;padding-right:0px"
 >
   <div
