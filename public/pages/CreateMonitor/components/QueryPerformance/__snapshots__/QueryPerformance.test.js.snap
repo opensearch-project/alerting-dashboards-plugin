@@ -2,7 +2,7 @@
 
 exports[`QueryPerformance renders 1`] = `
 <div
-  class="euiPanel euiPanel--paddingMedium"
+  class="euiPanel euiPanel--paddingMedium euiPanel--borderRadiusMedium euiPanel--plain euiPanel--hasShadow"
   style="padding-left:10px;padding-right:10px"
 >
   <div
@@ -49,6 +49,11 @@ exports[`QueryPerformance renders 1`] = `
           <div>
             EuiIconMock
           </div>
+          <span
+            class="euiScreenReaderOnly"
+          >
+            (opens in a new tab or window)
+          </span>
         </a>
       </span>
     </div>

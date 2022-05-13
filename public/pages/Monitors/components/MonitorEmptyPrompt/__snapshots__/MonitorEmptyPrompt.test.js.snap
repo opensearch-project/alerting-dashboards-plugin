@@ -23,9 +23,6 @@ exports[`MonitorEmptyPrompt renders 1`] = `
   <div
     class="euiSpacer euiSpacer--l"
   />
-  <div
-    class="euiSpacer euiSpacer--s"
-  />
   <a
     class="euiButton euiButton--primary euiButton--fill"
     href="alerting#/create-monitor"

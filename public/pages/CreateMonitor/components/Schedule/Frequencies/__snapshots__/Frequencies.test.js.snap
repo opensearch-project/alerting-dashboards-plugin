@@ -38,7 +38,7 @@ exports[`Frequencies renders CustomCron 1`] = `
         </textarea>
         <div
           class="euiFormHelpText euiFormRow__text"
-          id="cronExpression-form-row-help"
+          id="cronExpression-form-row-help-0"
         >
           <div
             class="euiText euiText--small"
@@ -54,6 +54,11 @@ exports[`Frequencies renders CustomCron 1`] = `
               <div>
                 EuiIconMock
               </div>
+              <span
+                class="euiScreenReaderOnly"
+              >
+                (opens in a new tab or window)
+              </span>
             </a>
              for complex schedules
           </div>

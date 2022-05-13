@@ -3,7 +3,7 @@
 exports[`Action renders with Notifications plugin installed 1`] = `
 <div>
   <div
-    class="euiPanel euiPanel--paddingMedium"
+    class="euiPanel euiPanel--paddingMedium euiPanel--borderRadiusMedium euiPanel--plain euiPanel--hasShadow"
     styles="[object Object]"
   >
     <div
@@ -55,7 +55,10 @@ exports[`Action renders with Notifications plugin installed 1`] = `
         </div>
       </div>
       <div
+        aria-labelledby="generated-id"
         class="euiAccordion__childWrapper"
+        role="region"
+        tabindex="-1"
       >
         <div>
           <div
@@ -101,7 +104,7 @@ exports[`Action renders with Notifications plugin installed 1`] = `
                   </div>
                   <div
                     class="euiFormHelpText euiFormRow__text"
-                    id="testPathactions.0.name-form-row-help"
+                    id="testPathactions.0.name-form-row-help-0"
                   >
                     Names can only contain letters, numbers, and special characters
                   </div>
@@ -300,6 +303,11 @@ exports[`Action renders with Notifications plugin installed 1`] = `
                               <div>
                                 EuiIconMock
                               </div>
+                              <span
+                                class="euiScreenReaderOnly"
+                              >
+                                (opens in a new tab or window)
+                              </span>
                             </a>
                           </div>
                         </div>
@@ -511,7 +519,7 @@ exports[`Action renders with Notifications plugin installed 1`] = `
                                   </div>
                                   <div
                                     class="euiFormHelpText euiFormRow__text"
-                                    id="testPathactions.0.throttle.value-form-row-help"
+                                    id="testPathactions.0.throttle.value-form-row-help-0"
                                   >
                                     Throttle value must be greater than 0 and less than 1440.
                                   </div>
@@ -537,7 +545,7 @@ exports[`Action renders with Notifications plugin installed 1`] = `
 exports[`Action renders without Notifications plugin installed 1`] = `
 <div>
   <div
-    class="euiPanel euiPanel--paddingMedium"
+    class="euiPanel euiPanel--paddingMedium euiPanel--borderRadiusMedium euiPanel--plain euiPanel--hasShadow"
     styles="[object Object]"
   >
     <div
@@ -589,7 +597,10 @@ exports[`Action renders without Notifications plugin installed 1`] = `
         </div>
       </div>
       <div
+        aria-labelledby="generated-id"
         class="euiAccordion__childWrapper"
+        role="region"
+        tabindex="-1"
       >
         <div>
           <div
@@ -635,7 +646,7 @@ exports[`Action renders without Notifications plugin installed 1`] = `
                   </div>
                   <div
                     class="euiFormHelpText euiFormRow__text"
-                    id="testPathactions.0.name-form-row-help"
+                    id="testPathactions.0.name-form-row-help-0"
                   >
                     Names can only contain letters, numbers, and special characters
                   </div>
@@ -780,27 +791,31 @@ exports[`Action renders without Notifications plugin installed 1`] = `
                     <div
                       class="euiText euiText--small"
                     >
-                      <p>
-                        Install the notifications plugin in order to create and select channels to send out notifications. 
-                        <a
-                          class="euiLink euiLink--primary"
-                          href="#"
-                          rel="noreferrer"
-                        >
-                          Learn more
-                        </a>
-                      </p>
-                      <div>
-                        <a
-                          class="euiLink euiLink--primary"
-                          href="#"
-                          rel="noreferrer"
-                        >
-                          EuiIconMock
-                        </a>
+                      <div
+                        class="euiTextColor euiTextColor--default"
+                      >
+                        <p>
+                          Install the notifications plugin in order to create and select channels to send out notifications. 
+                          <a
+                            class="euiLink euiLink--primary"
+                            href="#"
+                            rel="noreferrer"
+                          >
+                            Learn more
+                          </a>
+                        </p>
+                        <div>
+                          <a
+                            class="euiLink euiLink--primary"
+                            href="#"
+                            rel="noreferrer"
+                          >
+                            EuiIconMock
+                          </a>
+                        </div>
+                        .
+                        <p />
                       </div>
-                      .
-                      <p />
                     </div>
                   </div>
                   <div
@@ -883,6 +898,11 @@ exports[`Action renders without Notifications plugin installed 1`] = `
                               <div>
                                 EuiIconMock
                               </div>
+                              <span
+                                class="euiScreenReaderOnly"
+                              >
+                                (opens in a new tab or window)
+                              </span>
                             </a>
                           </div>
                         </div>
@@ -1094,7 +1114,7 @@ exports[`Action renders without Notifications plugin installed 1`] = `
                                   </div>
                                   <div
                                     class="euiFormHelpText euiFormRow__text"
-                                    id="testPathactions.0.throttle.value-form-row-help"
+                                    id="testPathactions.0.throttle.value-form-row-help-0"
                                   >
                                     Throttle value must be greater than 0 and less than 1440.
                                   </div>

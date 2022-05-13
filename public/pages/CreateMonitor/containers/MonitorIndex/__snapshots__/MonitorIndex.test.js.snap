@@ -365,7 +365,7 @@ exports[`MonitorIndex renders 1`] = `
                   className="euiFormRow__fieldWrapper"
                 >
                   <ComboBox
-                    aria-describedby="index-form-row-help"
+                    aria-describedby="index-form-row-help-0"
                     field={
                       Object {
                         "name": "index",
@@ -734,6 +734,7 @@ exports[`MonitorIndex renders 1`] = `
                                   </AutosizeInput>
                                 </div>
                                 <EuiFormControlLayoutIcons
+                                  compressed={false}
                                   icon={
                                     Object {
                                       "aria-label": "Open list of options",
@@ -762,6 +763,7 @@ exports[`MonitorIndex renders 1`] = `
                                       data-test-subj="comboBoxToggleListButton"
                                       iconRef={[Function]}
                                       onClick={[Function]}
+                                      size="m"
                                       type="arrowDown"
                                     >
                                       <button
@@ -774,6 +776,7 @@ exports[`MonitorIndex renders 1`] = `
                                         <EuiIcon
                                           aria-hidden="true"
                                           className="euiFormControlLayoutCustomIcon__icon"
+                                          size="m"
                                           type="arrowDown"
                                         >
                                           <div>
@@ -793,11 +796,12 @@ exports[`MonitorIndex renders 1`] = `
                   </ComboBox>
                   <EuiFormHelpText
                     className="euiFormRow__text"
-                    id="index-form-row-help"
+                    id="index-form-row-help-0"
+                    key="You can use a * as a wildcard or date math index resolution in your index pattern"
                   >
                     <div
                       className="euiFormHelpText euiFormRow__text"
-                      id="index-form-row-help"
+                      id="index-form-row-help-0"
                     >
                       You can use a * as a wildcard or date math index resolution in your index pattern
                     </div>
