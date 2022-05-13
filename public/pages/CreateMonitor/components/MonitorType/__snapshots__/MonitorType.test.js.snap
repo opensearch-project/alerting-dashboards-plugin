@@ -25,30 +25,30 @@ exports[`MonitorType renders 1`] = `
         class="euiFormRow__fieldWrapper"
       >
         <div
-          class="euiCheckableCard"
+          class="euiPanel euiPanel--borderRadiusMedium euiPanel--plain euiPanel--hasShadow euiPanel--hasBorder euiPanel--flexGrowZero euiSplitPanel euiSplitPanel--row euiCheckableCard"
         >
           <div
-            class="euiCheckableCard__row"
+            class="euiPanel euiPanel--paddingMedium euiPanel--borderRadiusNone euiPanel--subdued euiPanel--noShadow euiPanel--noBorder euiPanel--flexGrowZero euiPanel--isClickable euiSplitPanel__inner"
           >
             <div
-              class="euiCheckableCard__control"
+              class="euiRadio euiRadio--noLabel"
+              data-test-subj="queryLevelMonitorRadioCard"
             >
+              <input
+                class="euiRadio__input"
+                id="queryLevelMonitorRadioCard"
+                name="monitorTypeQueryLevel"
+                type="radio"
+                value="query_level_monitor"
+              />
               <div
-                class="euiRadio euiRadio--noLabel"
-                data-test-subj="queryLevelMonitorRadioCard"
-              >
-                <input
-                  class="euiRadio__input"
-                  id="queryLevelMonitorRadioCard"
-                  name="monitorTypeQueryLevel"
-                  type="radio"
-                  value="query_level_monitor"
-                />
-                <div
-                  class="euiRadio__circle"
-                />
-              </div>
+                class="euiRadio__circle"
+              />
             </div>
+          </div>
+          <div
+            class="euiPanel euiPanel--paddingMedium euiPanel--borderRadiusNone euiPanel--transparent euiPanel--noShadow euiPanel--noBorder euiSplitPanel__inner"
+          >
             <label
               aria-describedby="queryLevelMonitorRadioCard-details"
               class="euiCheckableCard__label"
@@ -56,13 +56,6 @@ exports[`MonitorType renders 1`] = `
             >
               Per query monitor
             </label>
-          </div>
-          <div
-            class="euiCheckableCard__row"
-          >
-            <div
-              class="euiCheckableCard__control"
-            />
             <div
               class="euiCheckableCard__children"
               id="queryLevelMonitorRadioCard-details"
@@ -94,30 +87,30 @@ exports[`MonitorType renders 1`] = `
         class="euiFormRow__fieldWrapper"
       >
         <div
-          class="euiCheckableCard"
+          class="euiPanel euiPanel--borderRadiusMedium euiPanel--plain euiPanel--hasShadow euiPanel--hasBorder euiPanel--flexGrowZero euiSplitPanel euiSplitPanel--row euiCheckableCard"
         >
           <div
-            class="euiCheckableCard__row"
+            class="euiPanel euiPanel--paddingMedium euiPanel--borderRadiusNone euiPanel--subdued euiPanel--noShadow euiPanel--noBorder euiPanel--flexGrowZero euiPanel--isClickable euiSplitPanel__inner"
           >
             <div
-              class="euiCheckableCard__control"
+              class="euiRadio euiRadio--noLabel"
+              data-test-subj="bucketLevelMonitorRadioCard"
             >
+              <input
+                class="euiRadio__input"
+                id="bucketLevelMonitorRadioCard"
+                name="monitorTypeBucketLevel"
+                type="radio"
+                value="bucket_level_monitor"
+              />
               <div
-                class="euiRadio euiRadio--noLabel"
-                data-test-subj="bucketLevelMonitorRadioCard"
-              >
-                <input
-                  class="euiRadio__input"
-                  id="bucketLevelMonitorRadioCard"
-                  name="monitorTypeBucketLevel"
-                  type="radio"
-                  value="bucket_level_monitor"
-                />
-                <div
-                  class="euiRadio__circle"
-                />
-              </div>
+                class="euiRadio__circle"
+              />
             </div>
+          </div>
+          <div
+            class="euiPanel euiPanel--paddingMedium euiPanel--borderRadiusNone euiPanel--transparent euiPanel--noShadow euiPanel--noBorder euiSplitPanel__inner"
+          >
             <label
               aria-describedby="bucketLevelMonitorRadioCard-details"
               class="euiCheckableCard__label"
@@ -125,13 +118,6 @@ exports[`MonitorType renders 1`] = `
             >
               Per bucket monitor
             </label>
-          </div>
-          <div
-            class="euiCheckableCard__row"
-          >
-            <div
-              class="euiCheckableCard__control"
-            />
             <div
               class="euiCheckableCard__children"
               id="bucketLevelMonitorRadioCard-details"
@@ -163,30 +149,30 @@ exports[`MonitorType renders 1`] = `
         class="euiFormRow__fieldWrapper"
       >
         <div
-          class="euiCheckableCard"
+          class="euiPanel euiPanel--borderRadiusMedium euiPanel--plain euiPanel--hasShadow euiPanel--hasBorder euiPanel--flexGrowZero euiSplitPanel euiSplitPanel--row euiCheckableCard"
         >
           <div
-            class="euiCheckableCard__row"
+            class="euiPanel euiPanel--paddingMedium euiPanel--borderRadiusNone euiPanel--subdued euiPanel--noShadow euiPanel--noBorder euiPanel--flexGrowZero euiPanel--isClickable euiSplitPanel__inner"
           >
             <div
-              class="euiCheckableCard__control"
+              class="euiRadio euiRadio--noLabel"
+              data-test-subj="clusterMetricsMonitorRadioCard"
             >
+              <input
+                class="euiRadio__input"
+                id="clusterMetricsMonitorRadioCard"
+                name="monitorTypeClusterMetrics"
+                type="radio"
+                value="cluster_metrics_monitor"
+              />
               <div
-                class="euiRadio euiRadio--noLabel"
-                data-test-subj="clusterMetricsMonitorRadioCard"
-              >
-                <input
-                  class="euiRadio__input"
-                  id="clusterMetricsMonitorRadioCard"
-                  name="monitorTypeClusterMetrics"
-                  type="radio"
-                  value="cluster_metrics_monitor"
-                />
-                <div
-                  class="euiRadio__circle"
-                />
-              </div>
+                class="euiRadio__circle"
+              />
             </div>
+          </div>
+          <div
+            class="euiPanel euiPanel--paddingMedium euiPanel--borderRadiusNone euiPanel--transparent euiPanel--noShadow euiPanel--noBorder euiSplitPanel__inner"
+          >
             <label
               aria-describedby="clusterMetricsMonitorRadioCard-details"
               class="euiCheckableCard__label"
@@ -194,13 +180,6 @@ exports[`MonitorType renders 1`] = `
             >
               Per cluster metrics monitor
             </label>
-          </div>
-          <div
-            class="euiCheckableCard__row"
-          >
-            <div
-              class="euiCheckableCard__control"
-            />
             <div
               class="euiCheckableCard__children"
               id="clusterMetricsMonitorRadioCard-details"
@@ -232,30 +211,30 @@ exports[`MonitorType renders 1`] = `
         class="euiFormRow__fieldWrapper"
       >
         <div
-          class="euiCheckableCard"
+          class="euiPanel euiPanel--borderRadiusMedium euiPanel--plain euiPanel--hasShadow euiPanel--hasBorder euiPanel--flexGrowZero euiSplitPanel euiSplitPanel--row euiCheckableCard"
         >
           <div
-            class="euiCheckableCard__row"
+            class="euiPanel euiPanel--paddingMedium euiPanel--borderRadiusNone euiPanel--subdued euiPanel--noShadow euiPanel--noBorder euiPanel--flexGrowZero euiPanel--isClickable euiSplitPanel__inner"
           >
             <div
-              class="euiCheckableCard__control"
+              class="euiRadio euiRadio--noLabel"
+              data-test-subj="docLevelMonitorRadioCard"
             >
+              <input
+                class="euiRadio__input"
+                id="docLevelMonitorRadioCard"
+                name="monitorTypeDocLevel"
+                type="radio"
+                value="doc_level_monitor"
+              />
               <div
-                class="euiRadio euiRadio--noLabel"
-                data-test-subj="docLevelMonitorRadioCard"
-              >
-                <input
-                  class="euiRadio__input"
-                  id="docLevelMonitorRadioCard"
-                  name="monitorTypeDocLevel"
-                  type="radio"
-                  value="doc_level_monitor"
-                />
-                <div
-                  class="euiRadio__circle"
-                />
-              </div>
+                class="euiRadio__circle"
+              />
             </div>
+          </div>
+          <div
+            class="euiPanel euiPanel--paddingMedium euiPanel--borderRadiusNone euiPanel--transparent euiPanel--noShadow euiPanel--noBorder euiSplitPanel__inner"
+          >
             <label
               aria-describedby="docLevelMonitorRadioCard-details"
               class="euiCheckableCard__label"
@@ -263,13 +242,6 @@ exports[`MonitorType renders 1`] = `
             >
               Per document monitor
             </label>
-          </div>
-          <div
-            class="euiCheckableCard__row"
-          >
-            <div
-              class="euiCheckableCard__control"
-            />
             <div
               class="euiCheckableCard__children"
               id="docLevelMonitorRadioCard-details"

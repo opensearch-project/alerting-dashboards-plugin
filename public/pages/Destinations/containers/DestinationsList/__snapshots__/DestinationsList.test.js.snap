@@ -67,21 +67,31 @@ exports[`DestinationsList renders when Notification plugin is installed 1`] = `
             </span>
           </div>
           <EuiText
+            color="default"
             size="s"
           >
             <div
               className="euiText euiText--small"
             >
-              <p>
-                Your destinations have been migrated to Notifications, a new centralized place to manage your notification channels. Destinations will be deprecated going forward.
-                <EuiSpacer
-                  size="l"
+              <EuiTextColor
+                color="default"
+                component="div"
+              >
+                <div
+                  className="euiTextColor euiTextColor--default"
                 >
-                  <div
-                    className="euiSpacer euiSpacer--l"
-                  />
-                </EuiSpacer>
-              </p>
+                  <p>
+                    Your destinations have been migrated to Notifications, a new centralized place to manage your notification channels. Destinations will be deprecated going forward.
+                    <EuiSpacer
+                      size="l"
+                    >
+                      <div
+                        className="euiSpacer euiSpacer--l"
+                      />
+                    </EuiSpacer>
+                  </p>
+                </div>
+              </EuiTextColor>
             </div>
           </EuiText>
         </div>
@@ -111,6 +121,7 @@ exports[`DestinationsList renders when Notification plugin is installed 1`] = `
             <EuiIcon
               aria-hidden="true"
               className="euiCallOutHeader__icon"
+              color="inherit"
               size="m"
               type="alert"
             >
@@ -125,43 +136,48 @@ exports[`DestinationsList renders when Notification plugin is installed 1`] = `
             </span>
           </div>
           <EuiText
+            color="default"
             size="s"
           >
             <div
               className="euiText euiText--small"
             >
-              <p>
-                Install the notifications plugin in order to create and select channels to send out notifications.
-                 
-                <EuiLink
-                  external={true}
-                  href="#"
+              <EuiTextColor
+                color="default"
+                component="div"
+              >
+                <div
+                  className="euiTextColor euiTextColor--default"
                 >
-                  <a
-                    className="euiLink euiLink--primary"
-                    href="#"
-                    rel="noreferrer"
-                  >
-                    Learn more
-                    <EuiI18n
-                      default="External link"
-                      token="euiLink.external.ariaLabel"
+                  <p>
+                    Install the notifications plugin in order to create and select channels to send out notifications.
+                     
+                    <EuiLink
+                      external={true}
+                      href="#"
                     >
-                      <EuiIcon
-                        aria-label="External link"
-                        className="euiLink__externalIcon"
-                        size="s"
-                        type="popout"
+                      <a
+                        className="euiLink euiLink--primary"
+                        href="#"
+                        rel="noreferrer"
                       >
-                        <div>
-                          EuiIconMock
-                        </div>
-                      </EuiIcon>
-                    </EuiI18n>
-                  </a>
-                </EuiLink>
-                .
-              </p>
+                        Learn more
+                        <EuiIcon
+                          aria-label="External link"
+                          className="euiLink__externalIcon"
+                          size="s"
+                          type="popout"
+                        >
+                          <div>
+                            EuiIconMock
+                          </div>
+                        </EuiIcon>
+                      </a>
+                    </EuiLink>
+                    .
+                  </p>
+                </div>
+              </EuiTextColor>
             </div>
           </EuiText>
         </div>
@@ -199,7 +215,7 @@ exports[`DestinationsList renders when Notification plugin is installed 1`] = `
       }
     >
       <div
-        className="euiPanel euiPanel--paddingMedium"
+        className="euiPanel euiPanel--paddingMedium euiPanel--borderRadiusMedium euiPanel--plain euiPanel--hasShadow"
         style={
           Object {
             "paddingLeft": "0px",
@@ -288,80 +304,77 @@ exports[`DestinationsList renders when Notification plugin is installed 1`] = `
                                     hasArrow={true}
                                     id="destinationActionsPopover"
                                     isOpen={false}
-                                    ownFocus={false}
+                                    ownFocus={true}
                                     panelPaddingSize="none"
                                   >
-                                    <EuiOutsideClickDetector
-                                      isDisabled={true}
-                                      onOutsideClick={[Function]}
+                                    <div
+                                      className="euiPopover euiPopover--anchorDownLeft"
+                                      id="destinationActionsPopover"
                                     >
                                       <div
-                                        className="euiPopover euiPopover--anchorDownLeft"
-                                        id="destinationActionsPopover"
-                                        onKeyDown={[Function]}
-                                        onMouseDown={[Function]}
-                                        onMouseUp={[Function]}
-                                        onTouchEnd={[Function]}
-                                        onTouchStart={[Function]}
+                                        className="euiPopover__anchor"
                                       >
-                                        <div
-                                          className="euiPopover__anchor"
+                                        <EuiButton
+                                          iconSide="right"
+                                          iconType="arrowDown"
+                                          onClick={[Function]}
                                         >
-                                          <EuiButton
+                                          <EuiButtonDisplay
+                                            baseClassName="euiButton"
+                                            disabled={false}
+                                            element="button"
                                             iconSide="right"
                                             iconType="arrowDown"
+                                            isDisabled={false}
                                             onClick={[Function]}
+                                            type="button"
                                           >
-                                            <EuiButtonDisplay
+                                            <button
+                                              className="euiButton euiButton--primary"
                                               disabled={false}
-                                              element="button"
-                                              iconSide="right"
-                                              iconType="arrowDown"
-                                              isDisabled={false}
                                               onClick={[Function]}
+                                              style={
+                                                Object {
+                                                  "minWidth": undefined,
+                                                }
+                                              }
                                               type="button"
                                             >
-                                              <button
-                                                className="euiButton euiButton--primary"
-                                                disabled={false}
-                                                onClick={[Function]}
-                                                type="button"
-                                              >
-                                                <EuiButtonContent
-                                                  className="euiButton__content"
-                                                  iconSide="right"
-                                                  iconType="arrowDown"
-                                                  textProps={
-                                                    Object {
-                                                      "className": "euiButton__text",
-                                                    }
+                                              <EuiButtonContent
+                                                className="euiButton__content"
+                                                iconSide="right"
+                                                iconType="arrowDown"
+                                                textProps={
+                                                  Object {
+                                                    "className": "euiButton__text",
                                                   }
+                                                }
+                                              >
+                                                <span
+                                                  className="euiButtonContent euiButtonContent--iconRight euiButton__content"
                                                 >
-                                                  <span
-                                                    className="euiButtonContent euiButtonContent--iconRight euiButton__content"
+                                                  <EuiIcon
+                                                    className="euiButtonContent__icon"
+                                                    color="inherit"
+                                                    size="m"
+                                                    type="arrowDown"
                                                   >
-                                                    <EuiIcon
-                                                      className="euiButtonContent__icon"
-                                                      size="m"
-                                                      type="arrowDown"
-                                                    >
-                                                      <div>
-                                                        EuiIconMock
-                                                      </div>
-                                                    </EuiIcon>
-                                                    <span
-                                                      className="euiButton__text"
-                                                    >
-                                                      Actions
-                                                    </span>
+                                                    <div>
+                                                      EuiIconMock
+                                                    </div>
+                                                  </EuiIcon>
+                                                  <span
+                                                    className="euiButton__text"
+                                                  >
+                                                    Actions
                                                   </span>
-                                                </EuiButtonContent>
-                                              </button>
-                                            </EuiButtonDisplay>
-                                          </EuiButton>
-                                        </div>
+                                                </span>
+                                              </EuiButtonContent>
+                                            </button>
+                                          </EuiButtonDisplay>
+                                        </EuiButton>
                                       </div>
-                                    </EuiOutsideClickDetector>
+                                    </div>
                                   </EuiPopover>
                                 </div>
                               </EuiFlexItem>
@@ -497,7 +510,7 @@ exports[`DestinationsList renders when Notification plugin is installed 1`] = `
                           >
                             <EuiValidatableControl>
                               <input
-                                className="euiFieldSearch euiFieldSearch--fullWidth euiFieldSearch-isClearable"
+                                className="euiFieldSearch euiFieldSearch--fullWidth"
                                 onChange={[Function]}
                                 onKeyUp={[Function]}
                                 placeholder="Search"
@@ -506,6 +519,7 @@ exports[`DestinationsList renders when Notification plugin is installed 1`] = `
                               />
                             </EuiValidatableControl>
                             <EuiFormControlLayoutIcons
+                              compressed={false}
                               icon="search"
                               isLoading={false}
                             >
@@ -513,6 +527,7 @@ exports[`DestinationsList renders when Notification plugin is installed 1`] = `
                                 className="euiFormControlLayoutIcons"
                               >
                                 <EuiFormControlLayoutCustomIcon
+                                  size="m"
                                   type="search"
                                 >
                                   <span
@@ -521,6 +536,7 @@ exports[`DestinationsList renders when Notification plugin is installed 1`] = `
                                     <EuiIcon
                                       aria-hidden="true"
                                       className="euiFormControlLayoutCustomIcon__icon"
+                                      size="m"
                                       type="search"
                                     >
                                       <div>
@@ -628,6 +644,7 @@ exports[`DestinationsList renders when Notification plugin is installed 1`] = `
                               </select>
                             </EuiValidatableControl>
                             <EuiFormControlLayoutIcons
+                              compressed={false}
                               icon={
                                 Object {
                                   "side": "right",
@@ -640,6 +657,7 @@ exports[`DestinationsList renders when Notification plugin is installed 1`] = `
                                 className="euiFormControlLayoutIcons euiFormControlLayoutIcons--right"
                               >
                                 <EuiFormControlLayoutCustomIcon
+                                  size="m"
                                   type="arrowDown"
                                 >
                                   <span
@@ -648,6 +666,7 @@ exports[`DestinationsList renders when Notification plugin is installed 1`] = `
                                     <EuiIcon
                                       aria-hidden="true"
                                       className="euiFormControlLayoutCustomIcon__icon"
+                                      size="m"
                                       type="arrowDown"
                                     >
                                       <div>
@@ -711,7 +730,7 @@ exports[`DestinationsList renders when Notification plugin is installed 1`] = `
                             >
                               <button
                                 aria-label="Previous page"
-                                className="euiButtonIcon euiButtonIcon--text"
+                                className="euiButtonIcon euiButtonIcon--text euiButtonIcon--empty euiButtonIcon--xSmall"
                                 data-test-subj="pagination-button-previous"
                                 disabled={true}
                                 onClick={[Function]}
@@ -720,6 +739,7 @@ exports[`DestinationsList renders when Notification plugin is installed 1`] = `
                                 <EuiIcon
                                   aria-hidden="true"
                                   className="euiButtonIcon__icon"
+                                  color="inherit"
                                   size="m"
                                   type="arrowLeft"
                                 >
@@ -775,12 +795,12 @@ exports[`DestinationsList renders when Notification plugin is installed 1`] = `
                                       data-test-subj="pagination-button-0"
                                       isDisabled={true}
                                       onClick={[Function]}
-                                      size="xs"
+                                      size="s"
                                     >
                                       <button
                                         aria-current={true}
                                         aria-label="Page 1 of 1"
-                                        className="euiButtonEmpty euiButtonEmpty--text euiButtonEmpty--xSmall euiButtonEmpty-isDisabled euiPaginationButton euiPaginationButton-isActive euiPaginationButton--hideOnMobile"
+                                        className="euiButtonEmpty euiButtonEmpty--text euiButtonEmpty--small euiButtonEmpty-isDisabled euiPaginationButton euiPaginationButton-isActive euiPaginationButton--hideOnMobile"
                                         data-test-subj="pagination-button-0"
                                         disabled={true}
                                         onClick={[Function]}
@@ -789,6 +809,7 @@ exports[`DestinationsList renders when Notification plugin is installed 1`] = `
                                         <EuiButtonContent
                                           className="euiButtonEmpty__content"
                                           iconSide="left"
+                                          iconSize="m"
                                           textProps={
                                             Object {
                                               "className": "euiButtonEmpty__text",
@@ -836,7 +857,7 @@ exports[`DestinationsList renders when Notification plugin is installed 1`] = `
                             >
                               <button
                                 aria-label="Next page"
-                                className="euiButtonIcon euiButtonIcon--text"
+                                className="euiButtonIcon euiButtonIcon--text euiButtonIcon--empty euiButtonIcon--xSmall"
                                 data-test-subj="pagination-button-next"
                                 disabled={true}
                                 onClick={[Function]}
@@ -845,6 +866,7 @@ exports[`DestinationsList renders when Notification plugin is installed 1`] = `
                                 <EuiIcon
                                   aria-hidden="true"
                                   className="euiButtonIcon__icon"
+                                  color="inherit"
                                   size="m"
                                   type="arrowRight"
                                 >
@@ -1028,73 +1050,65 @@ exports[`DestinationsList renders when Notification plugin is installed 1`] = `
                                   ownFocus={true}
                                   panelPaddingSize="none"
                                 >
-                                  <EuiOutsideClickDetector
-                                    isDisabled={true}
-                                    onOutsideClick={[Function]}
+                                  <div
+                                    className="euiPopover euiPopover--anchorDownRight"
                                   >
                                     <div
-                                      className="euiPopover euiPopover--anchorDownRight"
-                                      onKeyDown={[Function]}
-                                      onMouseDown={[Function]}
-                                      onMouseUp={[Function]}
-                                      onTouchEnd={[Function]}
-                                      onTouchStart={[Function]}
+                                      className="euiPopover__anchor"
                                     >
-                                      <div
-                                        className="euiPopover__anchor"
+                                      <EuiButtonEmpty
+                                        flush="right"
+                                        iconSide="right"
+                                        iconType="arrowDown"
+                                        onClick={[Function]}
+                                        size="xs"
                                       >
-                                        <EuiButtonEmpty
-                                          flush="right"
-                                          iconSide="right"
-                                          iconType="arrowDown"
+                                        <button
+                                          className="euiButtonEmpty euiButtonEmpty--primary euiButtonEmpty--xSmall euiButtonEmpty--flushRight"
+                                          disabled={false}
                                           onClick={[Function]}
-                                          size="xs"
+                                          type="button"
                                         >
-                                          <button
-                                            className="euiButtonEmpty euiButtonEmpty--primary euiButtonEmpty--xSmall euiButtonEmpty--flushRight"
-                                            disabled={false}
-                                            onClick={[Function]}
-                                            type="button"
-                                          >
-                                            <EuiButtonContent
-                                              className="euiButtonEmpty__content"
-                                              iconSide="right"
-                                              iconType="arrowDown"
-                                              textProps={
-                                                Object {
-                                                  "className": "euiButtonEmpty__text",
-                                                }
+                                          <EuiButtonContent
+                                            className="euiButtonEmpty__content"
+                                            iconSide="right"
+                                            iconSize="s"
+                                            iconType="arrowDown"
+                                            textProps={
+                                              Object {
+                                                "className": "euiButtonEmpty__text",
                                               }
+                                            }
+                                          >
+                                            <span
+                                              className="euiButtonContent euiButtonContent--iconRight euiButtonEmpty__content"
                                             >
-                                              <span
-                                                className="euiButtonContent euiButtonContent--iconRight euiButtonEmpty__content"
+                                              <EuiIcon
+                                                className="euiButtonContent__icon"
+                                                color="inherit"
+                                                size="s"
+                                                type="arrowDown"
                                               >
-                                                <EuiIcon
-                                                  className="euiButtonContent__icon"
-                                                  size="m"
-                                                  type="arrowDown"
+                                                <div>
+                                                  EuiIconMock
+                                                </div>
+                                              </EuiIcon>
+                                              <span
+                                                className="euiButtonEmpty__text"
+                                              >
+                                                <EuiI18n
+                                                  default="Sorting"
+                                                  token="euiTableSortMobile.sorting"
                                                 >
-                                                  <div>
-                                                    EuiIconMock
-                                                  </div>
-                                                </EuiIcon>
-                                                <span
-                                                  className="euiButtonEmpty__text"
-                                                >
-                                                  <EuiI18n
-                                                    default="Sorting"
-                                                    token="euiTableSortMobile.sorting"
-                                                  >
-                                                    Sorting
-                                                  </EuiI18n>
-                                                </span>
+                                                  Sorting
+                                                </EuiI18n>
                                               </span>
-                                            </EuiButtonContent>
-                                          </button>
-                                        </EuiButtonEmpty>
-                                      </div>
+                                            </span>
+                                          </EuiButtonContent>
+                                        </button>
+                                      </EuiButtonEmpty>
                                     </div>
-                                  </EuiOutsideClickDetector>
+                                  </div>
                                 </EuiPopover>
                               </div>
                             </EuiTableSortMobile>
@@ -1154,39 +1168,35 @@ exports[`DestinationsList renders when Notification plugin is installed 1`] = `
                                 onClick={[Function]}
                                 type="button"
                               >
-                                <span
+                                <CellContents
                                   className="euiTableCellContent"
+                                  isSortAscending={false}
+                                  isSorted={true}
+                                  showSortMsg={true}
                                 >
-                                  <EuiInnerText>
-                                    <EuiI18n
-                                      default="{innerText}; Sorted in {ariaSortValue} order"
-                                      token="euiTableHeaderCell.titleTextWithSort"
-                                      values={
-                                        Object {
-                                          "ariaSortValue": "descending",
-                                          "innerText": "Destination name",
-                                        }
-                                      }
-                                    >
-                                      <span
-                                        className="euiTableCellContent__text"
-                                        title="Destination name; Sorted in descending order"
-                                      >
-                                        Destination name
-                                      </span>
-                                    </EuiI18n>
-                                  </EuiInnerText>
-                                  <EuiI18n
-                                    default="Sorted in {ariaSortValue} order"
-                                    token="euiTableHeaderCell.sortedAriaLabel"
-                                    values={
-                                      Object {
-                                        "ariaSortValue": "descending",
-                                      }
-                                    }
+                                  <span
+                                    className="euiTableCellContent"
                                   >
+                                    <EuiInnerText>
+                                      <EuiI18n
+                                        default="{innerText}; {description}"
+                                        token="euiTableHeaderCell.titleTextWithDesc"
+                                        values={
+                                          Object {
+                                            "description": undefined,
+                                            "innerText": "Destination name",
+                                          }
+                                        }
+                                      >
+                                        <span
+                                          className="euiTableCellContent__text"
+                                          title="Destination name"
+                                        >
+                                          Destination name
+                                        </span>
+                                      </EuiI18n>
+                                    </EuiInnerText>
                                     <EuiIcon
-                                      aria-label="Sorted in descending order"
                                       className="euiTableSortIcon"
                                       size="m"
                                       type="sortDown"
@@ -1195,20 +1205,8 @@ exports[`DestinationsList renders when Notification plugin is installed 1`] = `
                                         EuiIconMock
                                       </div>
                                     </EuiIcon>
-                                  </EuiI18n>
-                                  <EuiScreenReaderOnly>
-                                    <span
-                                      className="euiScreenReaderOnly"
-                                    >
-                                      <EuiI18n
-                                        default="Click to sort in ascending order"
-                                        token="euiTableHeaderCell.clickForAscending"
-                                      >
-                                        Click to sort in ascending order
-                                      </EuiI18n>
-                                    </span>
-                                  </EuiScreenReaderOnly>
-                                </span>
+                                  </span>
+                                </CellContents>
                               </button>
                             </th>
                           </EuiTableHeaderCell>
@@ -1239,41 +1237,35 @@ exports[`DestinationsList renders when Notification plugin is installed 1`] = `
                                 onClick={[Function]}
                                 type="button"
                               >
-                                <span
+                                <CellContents
                                   className="euiTableCellContent"
+                                  isSorted={false}
+                                  showSortMsg={true}
                                 >
-                                  <EuiInnerText>
-                                    <EuiI18n
-                                      default="{innerText}; Sorted in {ariaSortValue} order"
-                                      token="euiTableHeaderCell.titleTextWithSort"
-                                      values={
-                                        Object {
-                                          "ariaSortValue": "none",
-                                          "innerText": "Destination type",
-                                        }
-                                      }
-                                    >
-                                      <span
-                                        className="euiTableCellContent__text"
-                                        title="Destination type"
-                                      >
-                                        Destination type
-                                      </span>
-                                    </EuiI18n>
-                                  </EuiInnerText>
-                                  <EuiScreenReaderOnly>
-                                    <span
-                                      className="euiScreenReaderOnly"
-                                    >
+                                  <span
+                                    className="euiTableCellContent"
+                                  >
+                                    <EuiInnerText>
                                       <EuiI18n
-                                        default="Click to sort in ascending order"
-                                        token="euiTableHeaderCell.clickForAscending"
+                                        default="{innerText}; {description}"
+                                        token="euiTableHeaderCell.titleTextWithDesc"
+                                        values={
+                                          Object {
+                                            "description": undefined,
+                                            "innerText": "Destination type",
+                                          }
+                                        }
                                       >
-                                        Click to sort in ascending order
+                                        <span
+                                          className="euiTableCellContent__text"
+                                          title="Destination type"
+                                        >
+                                          Destination type
+                                        </span>
                                       </EuiI18n>
-                                    </span>
-                                  </EuiScreenReaderOnly>
-                                </span>
+                                    </EuiInnerText>
+                                  </span>
+                                </CellContents>
                               </button>
                             </th>
                           </EuiTableHeaderCell>
@@ -1304,41 +1296,35 @@ exports[`DestinationsList renders when Notification plugin is installed 1`] = `
                                 onClick={[Function]}
                                 type="button"
                               >
-                                <span
+                                <CellContents
                                   className="euiTableCellContent"
+                                  isSorted={false}
+                                  showSortMsg={true}
                                 >
-                                  <EuiInnerText>
-                                    <EuiI18n
-                                      default="{innerText}; Sorted in {ariaSortValue} order"
-                                      token="euiTableHeaderCell.titleTextWithSort"
-                                      values={
-                                        Object {
-                                          "ariaSortValue": "none",
-                                          "innerText": "Last updated by",
-                                        }
-                                      }
-                                    >
-                                      <span
-                                        className="euiTableCellContent__text"
-                                        title="Last updated by"
-                                      >
-                                        Last updated by
-                                      </span>
-                                    </EuiI18n>
-                                  </EuiInnerText>
-                                  <EuiScreenReaderOnly>
-                                    <span
-                                      className="euiScreenReaderOnly"
-                                    >
+                                  <span
+                                    className="euiTableCellContent"
+                                  >
+                                    <EuiInnerText>
                                       <EuiI18n
-                                        default="Click to sort in ascending order"
-                                        token="euiTableHeaderCell.clickForAscending"
+                                        default="{innerText}; {description}"
+                                        token="euiTableHeaderCell.titleTextWithDesc"
+                                        values={
+                                          Object {
+                                            "description": undefined,
+                                            "innerText": "Last updated by",
+                                          }
+                                        }
                                       >
-                                        Click to sort in ascending order
+                                        <span
+                                          className="euiTableCellContent__text"
+                                          title="Last updated by"
+                                        >
+                                          Last updated by
+                                        </span>
                                       </EuiI18n>
-                                    </span>
-                                  </EuiScreenReaderOnly>
-                                </span>
+                                    </EuiInnerText>
+                                  </span>
+                                </CellContents>
                               </button>
                             </th>
                           </EuiTableHeaderCell>
@@ -1357,18 +1343,34 @@ exports[`DestinationsList renders when Notification plugin is installed 1`] = `
                                 }
                               }
                             >
-                              <div
+                              <CellContents
                                 className="euiTableCellContent euiTableCellContent--alignRight"
+                                showSortMsg={false}
                               >
-                                <EuiInnerText>
-                                  <span
-                                    className="euiTableCellContent__text"
-                                    title="Actions"
-                                  >
-                                    Actions
-                                  </span>
-                                </EuiInnerText>
-                              </div>
+                                <span
+                                  className="euiTableCellContent euiTableCellContent--alignRight"
+                                >
+                                  <EuiInnerText>
+                                    <EuiI18n
+                                      default="{innerText}; {description}"
+                                      token="euiTableHeaderCell.titleTextWithDesc"
+                                      values={
+                                        Object {
+                                          "description": undefined,
+                                          "innerText": "Actions",
+                                        }
+                                      }
+                                    >
+                                      <span
+                                        className="euiTableCellContent__text"
+                                        title="Actions"
+                                      >
+                                        Actions
+                                      </span>
+                                    </EuiI18n>
+                                  </EuiInnerText>
+                                </span>
+                              </CellContents>
                             </th>
                           </EuiTableHeaderCell>
                         </tr>
@@ -1539,21 +1541,31 @@ exports[`DestinationsList renders when Notification plugin is not installed 1`] 
             </span>
           </div>
           <EuiText
+            color="default"
             size="s"
           >
             <div
               className="euiText euiText--small"
             >
-              <p>
-                Your destinations have been migrated to Notifications, a new centralized place to manage your notification channels. Destinations will be deprecated going forward.
-                <EuiSpacer
-                  size="l"
+              <EuiTextColor
+                color="default"
+                component="div"
+              >
+                <div
+                  className="euiTextColor euiTextColor--default"
                 >
-                  <div
-                    className="euiSpacer euiSpacer--l"
-                  />
-                </EuiSpacer>
-              </p>
+                  <p>
+                    Your destinations have been migrated to Notifications, a new centralized place to manage your notification channels. Destinations will be deprecated going forward.
+                    <EuiSpacer
+                      size="l"
+                    >
+                      <div
+                        className="euiSpacer euiSpacer--l"
+                      />
+                    </EuiSpacer>
+                  </p>
+                </div>
+              </EuiTextColor>
             </div>
           </EuiText>
         </div>
@@ -1583,6 +1595,7 @@ exports[`DestinationsList renders when Notification plugin is not installed 1`] 
             <EuiIcon
               aria-hidden="true"
               className="euiCallOutHeader__icon"
+              color="inherit"
               size="m"
               type="alert"
             >
@@ -1597,43 +1610,48 @@ exports[`DestinationsList renders when Notification plugin is not installed 1`] 
             </span>
           </div>
           <EuiText
+            color="default"
             size="s"
           >
             <div
               className="euiText euiText--small"
             >
-              <p>
-                Install the notifications plugin in order to create and select channels to send out notifications.
-                 
-                <EuiLink
-                  external={true}
-                  href="#"
+              <EuiTextColor
+                color="default"
+                component="div"
+              >
+                <div
+                  className="euiTextColor euiTextColor--default"
                 >
-                  <a
-                    className="euiLink euiLink--primary"
-                    href="#"
-                    rel="noreferrer"
-                  >
-                    Learn more
-                    <EuiI18n
-                      default="External link"
-                      token="euiLink.external.ariaLabel"
+                  <p>
+                    Install the notifications plugin in order to create and select channels to send out notifications.
+                     
+                    <EuiLink
+                      external={true}
+                      href="#"
                     >
-                      <EuiIcon
-                        aria-label="External link"
-                        className="euiLink__externalIcon"
-                        size="s"
-                        type="popout"
+                      <a
+                        className="euiLink euiLink--primary"
+                        href="#"
+                        rel="noreferrer"
                       >
-                        <div>
-                          EuiIconMock
-                        </div>
-                      </EuiIcon>
-                    </EuiI18n>
-                  </a>
-                </EuiLink>
-                .
-              </p>
+                        Learn more
+                        <EuiIcon
+                          aria-label="External link"
+                          className="euiLink__externalIcon"
+                          size="s"
+                          type="popout"
+                        >
+                          <div>
+                            EuiIconMock
+                          </div>
+                        </EuiIcon>
+                      </a>
+                    </EuiLink>
+                    .
+                  </p>
+                </div>
+              </EuiTextColor>
             </div>
           </EuiText>
         </div>
@@ -1671,7 +1689,7 @@ exports[`DestinationsList renders when Notification plugin is not installed 1`] 
       }
     >
       <div
-        className="euiPanel euiPanel--paddingMedium"
+        className="euiPanel euiPanel--paddingMedium euiPanel--borderRadiusMedium euiPanel--plain euiPanel--hasShadow"
         style={
           Object {
             "paddingLeft": "0px",
@@ -1864,7 +1882,7 @@ exports[`DestinationsList renders when Notification plugin is not installed 1`] 
                           >
                             <EuiValidatableControl>
                               <input
-                                className="euiFieldSearch euiFieldSearch--fullWidth euiFieldSearch-isClearable"
+                                className="euiFieldSearch euiFieldSearch--fullWidth"
                                 onChange={[Function]}
                                 onKeyUp={[Function]}
                                 placeholder="Search"
@@ -1873,6 +1891,7 @@ exports[`DestinationsList renders when Notification plugin is not installed 1`] 
                               />
                             </EuiValidatableControl>
                             <EuiFormControlLayoutIcons
+                              compressed={false}
                               icon="search"
                               isLoading={false}
                             >
@@ -1880,6 +1899,7 @@ exports[`DestinationsList renders when Notification plugin is not installed 1`] 
                                 className="euiFormControlLayoutIcons"
                               >
                                 <EuiFormControlLayoutCustomIcon
+                                  size="m"
                                   type="search"
                                 >
                                   <span
@@ -1888,6 +1908,7 @@ exports[`DestinationsList renders when Notification plugin is not installed 1`] 
                                     <EuiIcon
                                       aria-hidden="true"
                                       className="euiFormControlLayoutCustomIcon__icon"
+                                      size="m"
                                       type="search"
                                     >
                                       <div>
@@ -1955,6 +1976,7 @@ exports[`DestinationsList renders when Notification plugin is not installed 1`] 
                               </select>
                             </EuiValidatableControl>
                             <EuiFormControlLayoutIcons
+                              compressed={false}
                               icon={
                                 Object {
                                   "side": "right",
@@ -1967,6 +1989,7 @@ exports[`DestinationsList renders when Notification plugin is not installed 1`] 
                                 className="euiFormControlLayoutIcons euiFormControlLayoutIcons--right"
                               >
                                 <EuiFormControlLayoutCustomIcon
+                                  size="m"
                                   type="arrowDown"
                                 >
                                   <span
@@ -1975,6 +1998,7 @@ exports[`DestinationsList renders when Notification plugin is not installed 1`] 
                                     <EuiIcon
                                       aria-hidden="true"
                                       className="euiFormControlLayoutCustomIcon__icon"
+                                      size="m"
                                       type="arrowDown"
                                     >
                                       <div>
@@ -2038,7 +2062,7 @@ exports[`DestinationsList renders when Notification plugin is not installed 1`] 
                             >
                               <button
                                 aria-label="Previous page"
-                                className="euiButtonIcon euiButtonIcon--text"
+                                className="euiButtonIcon euiButtonIcon--text euiButtonIcon--empty euiButtonIcon--xSmall"
                                 data-test-subj="pagination-button-previous"
                                 disabled={true}
                                 onClick={[Function]}
@@ -2047,6 +2071,7 @@ exports[`DestinationsList renders when Notification plugin is not installed 1`] 
                                 <EuiIcon
                                   aria-hidden="true"
                                   className="euiButtonIcon__icon"
+                                  color="inherit"
                                   size="m"
                                   type="arrowLeft"
                                 >
@@ -2102,12 +2127,12 @@ exports[`DestinationsList renders when Notification plugin is not installed 1`] 
                                       data-test-subj="pagination-button-0"
                                       isDisabled={true}
                                       onClick={[Function]}
-                                      size="xs"
+                                      size="s"
                                     >
                                       <button
                                         aria-current={true}
                                         aria-label="Page 1 of 1"
-                                        className="euiButtonEmpty euiButtonEmpty--text euiButtonEmpty--xSmall euiButtonEmpty-isDisabled euiPaginationButton euiPaginationButton-isActive euiPaginationButton--hideOnMobile"
+                                        className="euiButtonEmpty euiButtonEmpty--text euiButtonEmpty--small euiButtonEmpty-isDisabled euiPaginationButton euiPaginationButton-isActive euiPaginationButton--hideOnMobile"
                                         data-test-subj="pagination-button-0"
                                         disabled={true}
                                         onClick={[Function]}
@@ -2116,6 +2141,7 @@ exports[`DestinationsList renders when Notification plugin is not installed 1`] 
                                         <EuiButtonContent
                                           className="euiButtonEmpty__content"
                                           iconSide="left"
+                                          iconSize="m"
                                           textProps={
                                             Object {
                                               "className": "euiButtonEmpty__text",
@@ -2163,7 +2189,7 @@ exports[`DestinationsList renders when Notification plugin is not installed 1`] 
                             >
                               <button
                                 aria-label="Next page"
-                                className="euiButtonIcon euiButtonIcon--text"
+                                className="euiButtonIcon euiButtonIcon--text euiButtonIcon--empty euiButtonIcon--xSmall"
                                 data-test-subj="pagination-button-next"
                                 disabled={true}
                                 onClick={[Function]}
@@ -2172,6 +2198,7 @@ exports[`DestinationsList renders when Notification plugin is not installed 1`] 
                                 <EuiIcon
                                   aria-hidden="true"
                                   className="euiButtonIcon__icon"
+                                  color="inherit"
                                   size="m"
                                   type="arrowRight"
                                 >
@@ -2355,73 +2382,65 @@ exports[`DestinationsList renders when Notification plugin is not installed 1`] 
                                   ownFocus={true}
                                   panelPaddingSize="none"
                                 >
-                                  <EuiOutsideClickDetector
-                                    isDisabled={true}
-                                    onOutsideClick={[Function]}
+                                  <div
+                                    className="euiPopover euiPopover--anchorDownRight"
                                   >
                                     <div
-                                      className="euiPopover euiPopover--anchorDownRight"
-                                      onKeyDown={[Function]}
-                                      onMouseDown={[Function]}
-                                      onMouseUp={[Function]}
-                                      onTouchEnd={[Function]}
-                                      onTouchStart={[Function]}
+                                      className="euiPopover__anchor"
                                     >
-                                      <div
-                                        className="euiPopover__anchor"
+                                      <EuiButtonEmpty
+                                        flush="right"
+                                        iconSide="right"
+                                        iconType="arrowDown"
+                                        onClick={[Function]}
+                                        size="xs"
                                       >
-                                        <EuiButtonEmpty
-                                          flush="right"
-                                          iconSide="right"
-                                          iconType="arrowDown"
+                                        <button
+                                          className="euiButtonEmpty euiButtonEmpty--primary euiButtonEmpty--xSmall euiButtonEmpty--flushRight"
+                                          disabled={false}
                                           onClick={[Function]}
-                                          size="xs"
+                                          type="button"
                                         >
-                                          <button
-                                            className="euiButtonEmpty euiButtonEmpty--primary euiButtonEmpty--xSmall euiButtonEmpty--flushRight"
-                                            disabled={false}
-                                            onClick={[Function]}
-                                            type="button"
-                                          >
-                                            <EuiButtonContent
-                                              className="euiButtonEmpty__content"
-                                              iconSide="right"
-                                              iconType="arrowDown"
-                                              textProps={
-                                                Object {
-                                                  "className": "euiButtonEmpty__text",
-                                                }
+                                          <EuiButtonContent
+                                            className="euiButtonEmpty__content"
+                                            iconSide="right"
+                                            iconSize="s"
+                                            iconType="arrowDown"
+                                            textProps={
+                                              Object {
+                                                "className": "euiButtonEmpty__text",
                                               }
+                                            }
+                                          >
+                                            <span
+                                              className="euiButtonContent euiButtonContent--iconRight euiButtonEmpty__content"
                                             >
-                                              <span
-                                                className="euiButtonContent euiButtonContent--iconRight euiButtonEmpty__content"
+                                              <EuiIcon
+                                                className="euiButtonContent__icon"
+                                                color="inherit"
+                                                size="s"
+                                                type="arrowDown"
                                               >
-                                                <EuiIcon
-                                                  className="euiButtonContent__icon"
-                                                  size="m"
-                                                  type="arrowDown"
+                                                <div>
+                                                  EuiIconMock
+                                                </div>
+                                              </EuiIcon>
+                                              <span
+                                                className="euiButtonEmpty__text"
+                                              >
+                                                <EuiI18n
+                                                  default="Sorting"
+                                                  token="euiTableSortMobile.sorting"
                                                 >
-                                                  <div>
-                                                    EuiIconMock
-                                                  </div>
-                                                </EuiIcon>
-                                                <span
-                                                  className="euiButtonEmpty__text"
-                                                >
-                                                  <EuiI18n
-                                                    default="Sorting"
-                                                    token="euiTableSortMobile.sorting"
-                                                  >
-                                                    Sorting
-                                                  </EuiI18n>
-                                                </span>
+                                                  Sorting
+                                                </EuiI18n>
                                               </span>
-                                            </EuiButtonContent>
-                                          </button>
-                                        </EuiButtonEmpty>
-                                      </div>
+                                            </span>
+                                          </EuiButtonContent>
+                                        </button>
+                                      </EuiButtonEmpty>
                                     </div>
-                                  </EuiOutsideClickDetector>
+                                  </div>
                                 </EuiPopover>
                               </div>
                             </EuiTableSortMobile>
@@ -2481,39 +2500,35 @@ exports[`DestinationsList renders when Notification plugin is not installed 1`] 
                                 onClick={[Function]}
                                 type="button"
                               >
-                                <span
+                                <CellContents
                                   className="euiTableCellContent"
+                                  isSortAscending={false}
+                                  isSorted={true}
+                                  showSortMsg={true}
                                 >
-                                  <EuiInnerText>
-                                    <EuiI18n
-                                      default="{innerText}; Sorted in {ariaSortValue} order"
-                                      token="euiTableHeaderCell.titleTextWithSort"
-                                      values={
-                                        Object {
-                                          "ariaSortValue": "descending",
-                                          "innerText": "Destination name",
-                                        }
-                                      }
-                                    >
-                                      <span
-                                        className="euiTableCellContent__text"
-                                        title="Destination name; Sorted in descending order"
-                                      >
-                                        Destination name
-                                      </span>
-                                    </EuiI18n>
-                                  </EuiInnerText>
-                                  <EuiI18n
-                                    default="Sorted in {ariaSortValue} order"
-                                    token="euiTableHeaderCell.sortedAriaLabel"
-                                    values={
-                                      Object {
-                                        "ariaSortValue": "descending",
-                                      }
-                                    }
+                                  <span
+                                    className="euiTableCellContent"
                                   >
+                                    <EuiInnerText>
+                                      <EuiI18n
+                                        default="{innerText}; {description}"
+                                        token="euiTableHeaderCell.titleTextWithDesc"
+                                        values={
+                                          Object {
+                                            "description": undefined,
+                                            "innerText": "Destination name",
+                                          }
+                                        }
+                                      >
+                                        <span
+                                          className="euiTableCellContent__text"
+                                          title="Destination name"
+                                        >
+                                          Destination name
+                                        </span>
+                                      </EuiI18n>
+                                    </EuiInnerText>
                                     <EuiIcon
-                                      aria-label="Sorted in descending order"
                                       className="euiTableSortIcon"
                                       size="m"
                                       type="sortDown"
@@ -2522,20 +2537,8 @@ exports[`DestinationsList renders when Notification plugin is not installed 1`] 
                                         EuiIconMock
                                       </div>
                                     </EuiIcon>
-                                  </EuiI18n>
-                                  <EuiScreenReaderOnly>
-                                    <span
-                                      className="euiScreenReaderOnly"
-                                    >
-                                      <EuiI18n
-                                        default="Click to sort in ascending order"
-                                        token="euiTableHeaderCell.clickForAscending"
-                                      >
-                                        Click to sort in ascending order
-                                      </EuiI18n>
-                                    </span>
-                                  </EuiScreenReaderOnly>
-                                </span>
+                                  </span>
+                                </CellContents>
                               </button>
                             </th>
                           </EuiTableHeaderCell>
@@ -2566,41 +2569,35 @@ exports[`DestinationsList renders when Notification plugin is not installed 1`] 
                                 onClick={[Function]}
                                 type="button"
                               >
-                                <span
+                                <CellContents
                                   className="euiTableCellContent"
+                                  isSorted={false}
+                                  showSortMsg={true}
                                 >
-                                  <EuiInnerText>
-                                    <EuiI18n
-                                      default="{innerText}; Sorted in {ariaSortValue} order"
-                                      token="euiTableHeaderCell.titleTextWithSort"
-                                      values={
-                                        Object {
-                                          "ariaSortValue": "none",
-                                          "innerText": "Destination type",
-                                        }
-                                      }
-                                    >
-                                      <span
-                                        className="euiTableCellContent__text"
-                                        title="Destination type"
-                                      >
-                                        Destination type
-                                      </span>
-                                    </EuiI18n>
-                                  </EuiInnerText>
-                                  <EuiScreenReaderOnly>
-                                    <span
-                                      className="euiScreenReaderOnly"
-                                    >
+                                  <span
+                                    className="euiTableCellContent"
+                                  >
+                                    <EuiInnerText>
                                       <EuiI18n
-                                        default="Click to sort in ascending order"
-                                        token="euiTableHeaderCell.clickForAscending"
+                                        default="{innerText}; {description}"
+                                        token="euiTableHeaderCell.titleTextWithDesc"
+                                        values={
+                                          Object {
+                                            "description": undefined,
+                                            "innerText": "Destination type",
+                                          }
+                                        }
                                       >
-                                        Click to sort in ascending order
+                                        <span
+                                          className="euiTableCellContent__text"
+                                          title="Destination type"
+                                        >
+                                          Destination type
+                                        </span>
                                       </EuiI18n>
-                                    </span>
-                                  </EuiScreenReaderOnly>
-                                </span>
+                                    </EuiInnerText>
+                                  </span>
+                                </CellContents>
                               </button>
                             </th>
                           </EuiTableHeaderCell>
@@ -2631,41 +2628,35 @@ exports[`DestinationsList renders when Notification plugin is not installed 1`] 
                                 onClick={[Function]}
                                 type="button"
                               >
-                                <span
+                                <CellContents
                                   className="euiTableCellContent"
+                                  isSorted={false}
+                                  showSortMsg={true}
                                 >
-                                  <EuiInnerText>
-                                    <EuiI18n
-                                      default="{innerText}; Sorted in {ariaSortValue} order"
-                                      token="euiTableHeaderCell.titleTextWithSort"
-                                      values={
-                                        Object {
-                                          "ariaSortValue": "none",
-                                          "innerText": "Last updated by",
-                                        }
-                                      }
-                                    >
-                                      <span
-                                        className="euiTableCellContent__text"
-                                        title="Last updated by"
-                                      >
-                                        Last updated by
-                                      </span>
-                                    </EuiI18n>
-                                  </EuiInnerText>
-                                  <EuiScreenReaderOnly>
-                                    <span
-                                      className="euiScreenReaderOnly"
-                                    >
+                                  <span
+                                    className="euiTableCellContent"
+                                  >
+                                    <EuiInnerText>
                                       <EuiI18n
-                                        default="Click to sort in ascending order"
-                                        token="euiTableHeaderCell.clickForAscending"
+                                        default="{innerText}; {description}"
+                                        token="euiTableHeaderCell.titleTextWithDesc"
+                                        values={
+                                          Object {
+                                            "description": undefined,
+                                            "innerText": "Last updated by",
+                                          }
+                                        }
                                       >
-                                        Click to sort in ascending order
+                                        <span
+                                          className="euiTableCellContent__text"
+                                          title="Last updated by"
+                                        >
+                                          Last updated by
+                                        </span>
                                       </EuiI18n>
-                                    </span>
-                                  </EuiScreenReaderOnly>
-                                </span>
+                                    </EuiInnerText>
+                                  </span>
+                                </CellContents>
                               </button>
                             </th>
                           </EuiTableHeaderCell>
@@ -2684,18 +2675,34 @@ exports[`DestinationsList renders when Notification plugin is not installed 1`] 
                                 }
                               }
                             >
-                              <div
+                              <CellContents
                                 className="euiTableCellContent euiTableCellContent--alignRight"
+                                showSortMsg={false}
                               >
-                                <EuiInnerText>
-                                  <span
-                                    className="euiTableCellContent__text"
-                                    title="Actions"
-                                  >
-                                    Actions
-                                  </span>
-                                </EuiInnerText>
-                              </div>
+                                <span
+                                  className="euiTableCellContent euiTableCellContent--alignRight"
+                                >
+                                  <EuiInnerText>
+                                    <EuiI18n
+                                      default="{innerText}; {description}"
+                                      token="euiTableHeaderCell.titleTextWithDesc"
+                                      values={
+                                        Object {
+                                          "description": undefined,
+                                          "innerText": "Actions",
+                                        }
+                                      }
+                                    >
+                                      <span
+                                        className="euiTableCellContent__text"
+                                        title="Actions"
+                                      >
+                                        Actions
+                                      </span>
+                                    </EuiI18n>
+                                  </EuiInnerText>
+                                </span>
+                              </CellContents>
                             </th>
                           </EuiTableHeaderCell>
                         </tr>
@@ -2866,21 +2873,31 @@ exports[`DestinationsList renders when email is disallowed 1`] = `
             </span>
           </div>
           <EuiText
+            color="default"
             size="s"
           >
             <div
               className="euiText euiText--small"
             >
-              <p>
-                Your destinations have been migrated to Notifications, a new centralized place to manage your notification channels. Destinations will be deprecated going forward.
-                <EuiSpacer
-                  size="l"
+              <EuiTextColor
+                color="default"
+                component="div"
+              >
+                <div
+                  className="euiTextColor euiTextColor--default"
                 >
-                  <div
-                    className="euiSpacer euiSpacer--l"
-                  />
-                </EuiSpacer>
-              </p>
+                  <p>
+                    Your destinations have been migrated to Notifications, a new centralized place to manage your notification channels. Destinations will be deprecated going forward.
+                    <EuiSpacer
+                      size="l"
+                    >
+                      <div
+                        className="euiSpacer euiSpacer--l"
+                      />
+                    </EuiSpacer>
+                  </p>
+                </div>
+              </EuiTextColor>
             </div>
           </EuiText>
         </div>
@@ -2910,6 +2927,7 @@ exports[`DestinationsList renders when email is disallowed 1`] = `
             <EuiIcon
               aria-hidden="true"
               className="euiCallOutHeader__icon"
+              color="inherit"
               size="m"
               type="alert"
             >
@@ -2924,43 +2942,48 @@ exports[`DestinationsList renders when email is disallowed 1`] = `
             </span>
           </div>
           <EuiText
+            color="default"
             size="s"
           >
             <div
               className="euiText euiText--small"
             >
-              <p>
-                Install the notifications plugin in order to create and select channels to send out notifications.
-                 
-                <EuiLink
-                  external={true}
-                  href="#"
+              <EuiTextColor
+                color="default"
+                component="div"
+              >
+                <div
+                  className="euiTextColor euiTextColor--default"
                 >
-                  <a
-                    className="euiLink euiLink--primary"
-                    href="#"
-                    rel="noreferrer"
-                  >
-                    Learn more
-                    <EuiI18n
-                      default="External link"
-                      token="euiLink.external.ariaLabel"
+                  <p>
+                    Install the notifications plugin in order to create and select channels to send out notifications.
+                     
+                    <EuiLink
+                      external={true}
+                      href="#"
                     >
-                      <EuiIcon
-                        aria-label="External link"
-                        className="euiLink__externalIcon"
-                        size="s"
-                        type="popout"
+                      <a
+                        className="euiLink euiLink--primary"
+                        href="#"
+                        rel="noreferrer"
                       >
-                        <div>
-                          EuiIconMock
-                        </div>
-                      </EuiIcon>
-                    </EuiI18n>
-                  </a>
-                </EuiLink>
-                .
-              </p>
+                        Learn more
+                        <EuiIcon
+                          aria-label="External link"
+                          className="euiLink__externalIcon"
+                          size="s"
+                          type="popout"
+                        >
+                          <div>
+                            EuiIconMock
+                          </div>
+                        </EuiIcon>
+                      </a>
+                    </EuiLink>
+                    .
+                  </p>
+                </div>
+              </EuiTextColor>
             </div>
           </EuiText>
         </div>
@@ -2998,7 +3021,7 @@ exports[`DestinationsList renders when email is disallowed 1`] = `
       }
     >
       <div
-        className="euiPanel euiPanel--paddingMedium"
+        className="euiPanel euiPanel--paddingMedium euiPanel--borderRadiusMedium euiPanel--plain euiPanel--hasShadow"
         style={
           Object {
             "paddingLeft": "0px",
@@ -3197,7 +3220,7 @@ exports[`DestinationsList renders when email is disallowed 1`] = `
                           >
                             <EuiValidatableControl>
                               <input
-                                className="euiFieldSearch euiFieldSearch--fullWidth euiFieldSearch-isClearable"
+                                className="euiFieldSearch euiFieldSearch--fullWidth"
                                 onChange={[Function]}
                                 onKeyUp={[Function]}
                                 placeholder="Search"
@@ -3206,6 +3229,7 @@ exports[`DestinationsList renders when email is disallowed 1`] = `
                               />
                             </EuiValidatableControl>
                             <EuiFormControlLayoutIcons
+                              compressed={false}
                               icon="search"
                               isLoading={false}
                             >
@@ -3213,6 +3237,7 @@ exports[`DestinationsList renders when email is disallowed 1`] = `
                                 className="euiFormControlLayoutIcons"
                               >
                                 <EuiFormControlLayoutCustomIcon
+                                  size="m"
                                   type="search"
                                 >
                                   <span
@@ -3221,6 +3246,7 @@ exports[`DestinationsList renders when email is disallowed 1`] = `
                                     <EuiIcon
                                       aria-hidden="true"
                                       className="euiFormControlLayoutCustomIcon__icon"
+                                      size="m"
                                       type="search"
                                     >
                                       <div>
@@ -3318,6 +3344,7 @@ exports[`DestinationsList renders when email is disallowed 1`] = `
                               </select>
                             </EuiValidatableControl>
                             <EuiFormControlLayoutIcons
+                              compressed={false}
                               icon={
                                 Object {
                                   "side": "right",
@@ -3330,6 +3357,7 @@ exports[`DestinationsList renders when email is disallowed 1`] = `
                                 className="euiFormControlLayoutIcons euiFormControlLayoutIcons--right"
                               >
                                 <EuiFormControlLayoutCustomIcon
+                                  size="m"
                                   type="arrowDown"
                                 >
                                   <span
@@ -3338,6 +3366,7 @@ exports[`DestinationsList renders when email is disallowed 1`] = `
                                     <EuiIcon
                                       aria-hidden="true"
                                       className="euiFormControlLayoutCustomIcon__icon"
+                                      size="m"
                                       type="arrowDown"
                                     >
                                       <div>
@@ -3401,7 +3430,7 @@ exports[`DestinationsList renders when email is disallowed 1`] = `
                             >
                               <button
                                 aria-label="Previous page"
-                                className="euiButtonIcon euiButtonIcon--text"
+                                className="euiButtonIcon euiButtonIcon--text euiButtonIcon--empty euiButtonIcon--xSmall"
                                 data-test-subj="pagination-button-previous"
                                 disabled={true}
                                 onClick={[Function]}
@@ -3410,6 +3439,7 @@ exports[`DestinationsList renders when email is disallowed 1`] = `
                                 <EuiIcon
                                   aria-hidden="true"
                                   className="euiButtonIcon__icon"
+                                  color="inherit"
                                   size="m"
                                   type="arrowLeft"
                                 >
@@ -3465,12 +3495,12 @@ exports[`DestinationsList renders when email is disallowed 1`] = `
                                       data-test-subj="pagination-button-0"
                                       isDisabled={true}
                                       onClick={[Function]}
-                                      size="xs"
+                                      size="s"
                                     >
                                       <button
                                         aria-current={true}
                                         aria-label="Page 1 of 1"
-                                        className="euiButtonEmpty euiButtonEmpty--text euiButtonEmpty--xSmall euiButtonEmpty-isDisabled euiPaginationButton euiPaginationButton-isActive euiPaginationButton--hideOnMobile"
+                                        className="euiButtonEmpty euiButtonEmpty--text euiButtonEmpty--small euiButtonEmpty-isDisabled euiPaginationButton euiPaginationButton-isActive euiPaginationButton--hideOnMobile"
                                         data-test-subj="pagination-button-0"
                                         disabled={true}
                                         onClick={[Function]}
@@ -3479,6 +3509,7 @@ exports[`DestinationsList renders when email is disallowed 1`] = `
                                         <EuiButtonContent
                                           className="euiButtonEmpty__content"
                                           iconSide="left"
+                                          iconSize="m"
                                           textProps={
                                             Object {
                                               "className": "euiButtonEmpty__text",
@@ -3526,7 +3557,7 @@ exports[`DestinationsList renders when email is disallowed 1`] = `
                             >
                               <button
                                 aria-label="Next page"
-                                className="euiButtonIcon euiButtonIcon--text"
+                                className="euiButtonIcon euiButtonIcon--text euiButtonIcon--empty euiButtonIcon--xSmall"
                                 data-test-subj="pagination-button-next"
                                 disabled={true}
                                 onClick={[Function]}
@@ -3535,6 +3566,7 @@ exports[`DestinationsList renders when email is disallowed 1`] = `
                                 <EuiIcon
                                   aria-hidden="true"
                                   className="euiButtonIcon__icon"
+                                  color="inherit"
                                   size="m"
                                   type="arrowRight"
                                 >
@@ -3718,73 +3750,65 @@ exports[`DestinationsList renders when email is disallowed 1`] = `
                                   ownFocus={true}
                                   panelPaddingSize="none"
                                 >
-                                  <EuiOutsideClickDetector
-                                    isDisabled={true}
-                                    onOutsideClick={[Function]}
+                                  <div
+                                    className="euiPopover euiPopover--anchorDownRight"
                                   >
                                     <div
-                                      className="euiPopover euiPopover--anchorDownRight"
-                                      onKeyDown={[Function]}
-                                      onMouseDown={[Function]}
-                                      onMouseUp={[Function]}
-                                      onTouchEnd={[Function]}
-                                      onTouchStart={[Function]}
+                                      className="euiPopover__anchor"
                                     >
-                                      <div
-                                        className="euiPopover__anchor"
+                                      <EuiButtonEmpty
+                                        flush="right"
+                                        iconSide="right"
+                                        iconType="arrowDown"
+                                        onClick={[Function]}
+                                        size="xs"
                                       >
-                                        <EuiButtonEmpty
-                                          flush="right"
-                                          iconSide="right"
-                                          iconType="arrowDown"
+                                        <button
+                                          className="euiButtonEmpty euiButtonEmpty--primary euiButtonEmpty--xSmall euiButtonEmpty--flushRight"
+                                          disabled={false}
                                           onClick={[Function]}
-                                          size="xs"
+                                          type="button"
                                         >
-                                          <button
-                                            className="euiButtonEmpty euiButtonEmpty--primary euiButtonEmpty--xSmall euiButtonEmpty--flushRight"
-                                            disabled={false}
-                                            onClick={[Function]}
-                                            type="button"
-                                          >
-                                            <EuiButtonContent
-                                              className="euiButtonEmpty__content"
-                                              iconSide="right"
-                                              iconType="arrowDown"
-                                              textProps={
-                                                Object {
-                                                  "className": "euiButtonEmpty__text",
-                                                }
+                                          <EuiButtonContent
+                                            className="euiButtonEmpty__content"
+                                            iconSide="right"
+                                            iconSize="s"
+                                            iconType="arrowDown"
+                                            textProps={
+                                              Object {
+                                                "className": "euiButtonEmpty__text",
                                               }
+                                            }
+                                          >
+                                            <span
+                                              className="euiButtonContent euiButtonContent--iconRight euiButtonEmpty__content"
                                             >
-                                              <span
-                                                className="euiButtonContent euiButtonContent--iconRight euiButtonEmpty__content"
+                                              <EuiIcon
+                                                className="euiButtonContent__icon"
+                                                color="inherit"
+                                                size="s"
+                                                type="arrowDown"
                                               >
-                                                <EuiIcon
-                                                  className="euiButtonContent__icon"
-                                                  size="m"
-                                                  type="arrowDown"
+                                                <div>
+                                                  EuiIconMock
+                                                </div>
+                                              </EuiIcon>
+                                              <span
+                                                className="euiButtonEmpty__text"
+                                              >
+                                                <EuiI18n
+                                                  default="Sorting"
+                                                  token="euiTableSortMobile.sorting"
                                                 >
-                                                  <div>
-                                                    EuiIconMock
-                                                  </div>
-                                                </EuiIcon>
-                                                <span
-                                                  className="euiButtonEmpty__text"
-                                                >
-                                                  <EuiI18n
-                                                    default="Sorting"
-                                                    token="euiTableSortMobile.sorting"
-                                                  >
-                                                    Sorting
-                                                  </EuiI18n>
-                                                </span>
+                                                  Sorting
+                                                </EuiI18n>
                                               </span>
-                                            </EuiButtonContent>
-                                          </button>
-                                        </EuiButtonEmpty>
-                                      </div>
+                                            </span>
+                                          </EuiButtonContent>
+                                        </button>
+                                      </EuiButtonEmpty>
                                     </div>
-                                  </EuiOutsideClickDetector>
+                                  </div>
                                 </EuiPopover>
                               </div>
                             </EuiTableSortMobile>
@@ -3844,39 +3868,35 @@ exports[`DestinationsList renders when email is disallowed 1`] = `
                                 onClick={[Function]}
                                 type="button"
                               >
-                                <span
+                                <CellContents
                                   className="euiTableCellContent"
+                                  isSortAscending={false}
+                                  isSorted={true}
+                                  showSortMsg={true}
                                 >
-                                  <EuiInnerText>
-                                    <EuiI18n
-                                      default="{innerText}; Sorted in {ariaSortValue} order"
-                                      token="euiTableHeaderCell.titleTextWithSort"
-                                      values={
-                                        Object {
-                                          "ariaSortValue": "descending",
-                                          "innerText": "Destination name",
-                                        }
-                                      }
-                                    >
-                                      <span
-                                        className="euiTableCellContent__text"
-                                        title="Destination name; Sorted in descending order"
-                                      >
-                                        Destination name
-                                      </span>
-                                    </EuiI18n>
-                                  </EuiInnerText>
-                                  <EuiI18n
-                                    default="Sorted in {ariaSortValue} order"
-                                    token="euiTableHeaderCell.sortedAriaLabel"
-                                    values={
-                                      Object {
-                                        "ariaSortValue": "descending",
-                                      }
-                                    }
+                                  <span
+                                    className="euiTableCellContent"
                                   >
+                                    <EuiInnerText>
+                                      <EuiI18n
+                                        default="{innerText}; {description}"
+                                        token="euiTableHeaderCell.titleTextWithDesc"
+                                        values={
+                                          Object {
+                                            "description": undefined,
+                                            "innerText": "Destination name",
+                                          }
+                                        }
+                                      >
+                                        <span
+                                          className="euiTableCellContent__text"
+                                          title="Destination name"
+                                        >
+                                          Destination name
+                                        </span>
+                                      </EuiI18n>
+                                    </EuiInnerText>
                                     <EuiIcon
-                                      aria-label="Sorted in descending order"
                                       className="euiTableSortIcon"
                                       size="m"
                                       type="sortDown"
@@ -3885,20 +3905,8 @@ exports[`DestinationsList renders when email is disallowed 1`] = `
                                         EuiIconMock
                                       </div>
                                     </EuiIcon>
-                                  </EuiI18n>
-                                  <EuiScreenReaderOnly>
-                                    <span
-                                      className="euiScreenReaderOnly"
-                                    >
-                                      <EuiI18n
-                                        default="Click to sort in ascending order"
-                                        token="euiTableHeaderCell.clickForAscending"
-                                      >
-                                        Click to sort in ascending order
-                                      </EuiI18n>
-                                    </span>
-                                  </EuiScreenReaderOnly>
-                                </span>
+                                  </span>
+                                </CellContents>
                               </button>
                             </th>
                           </EuiTableHeaderCell>
@@ -3929,41 +3937,35 @@ exports[`DestinationsList renders when email is disallowed 1`] = `
                                 onClick={[Function]}
                                 type="button"
                               >
-                                <span
+                                <CellContents
                                   className="euiTableCellContent"
+                                  isSorted={false}
+                                  showSortMsg={true}
                                 >
-                                  <EuiInnerText>
-                                    <EuiI18n
-                                      default="{innerText}; Sorted in {ariaSortValue} order"
-                                      token="euiTableHeaderCell.titleTextWithSort"
-                                      values={
-                                        Object {
-                                          "ariaSortValue": "none",
-                                          "innerText": "Destination type",
-                                        }
-                                      }
-                                    >
-                                      <span
-                                        className="euiTableCellContent__text"
-                                        title="Destination type"
-                                      >
-                                        Destination type
-                                      </span>
-                                    </EuiI18n>
-                                  </EuiInnerText>
-                                  <EuiScreenReaderOnly>
-                                    <span
-                                      className="euiScreenReaderOnly"
-                                    >
+                                  <span
+                                    className="euiTableCellContent"
+                                  >
+                                    <EuiInnerText>
                                       <EuiI18n
-                                        default="Click to sort in ascending order"
-                                        token="euiTableHeaderCell.clickForAscending"
+                                        default="{innerText}; {description}"
+                                        token="euiTableHeaderCell.titleTextWithDesc"
+                                        values={
+                                          Object {
+                                            "description": undefined,
+                                            "innerText": "Destination type",
+                                          }
+                                        }
                                       >
-                                        Click to sort in ascending order
+                                        <span
+                                          className="euiTableCellContent__text"
+                                          title="Destination type"
+                                        >
+                                          Destination type
+                                        </span>
                                       </EuiI18n>
-                                    </span>
-                                  </EuiScreenReaderOnly>
-                                </span>
+                                    </EuiInnerText>
+                                  </span>
+                                </CellContents>
                               </button>
                             </th>
                           </EuiTableHeaderCell>
@@ -3994,41 +3996,35 @@ exports[`DestinationsList renders when email is disallowed 1`] = `
                                 onClick={[Function]}
                                 type="button"
                               >
-                                <span
+                                <CellContents
                                   className="euiTableCellContent"
+                                  isSorted={false}
+                                  showSortMsg={true}
                                 >
-                                  <EuiInnerText>
-                                    <EuiI18n
-                                      default="{innerText}; Sorted in {ariaSortValue} order"
-                                      token="euiTableHeaderCell.titleTextWithSort"
-                                      values={
-                                        Object {
-                                          "ariaSortValue": "none",
-                                          "innerText": "Last updated by",
-                                        }
-                                      }
-                                    >
-                                      <span
-                                        className="euiTableCellContent__text"
-                                        title="Last updated by"
-                                      >
-                                        Last updated by
-                                      </span>
-                                    </EuiI18n>
-                                  </EuiInnerText>
-                                  <EuiScreenReaderOnly>
-                                    <span
-                                      className="euiScreenReaderOnly"
-                                    >
+                                  <span
+                                    className="euiTableCellContent"
+                                  >
+                                    <EuiInnerText>
                                       <EuiI18n
-                                        default="Click to sort in ascending order"
-                                        token="euiTableHeaderCell.clickForAscending"
+                                        default="{innerText}; {description}"
+                                        token="euiTableHeaderCell.titleTextWithDesc"
+                                        values={
+                                          Object {
+                                            "description": undefined,
+                                            "innerText": "Last updated by",
+                                          }
+                                        }
                                       >
-                                        Click to sort in ascending order
+                                        <span
+                                          className="euiTableCellContent__text"
+                                          title="Last updated by"
+                                        >
+                                          Last updated by
+                                        </span>
                                       </EuiI18n>
-                                    </span>
-                                  </EuiScreenReaderOnly>
-                                </span>
+                                    </EuiInnerText>
+                                  </span>
+                                </CellContents>
                               </button>
                             </th>
                           </EuiTableHeaderCell>
@@ -4047,18 +4043,34 @@ exports[`DestinationsList renders when email is disallowed 1`] = `
                                 }
                               }
                             >
-                              <div
+                              <CellContents
                                 className="euiTableCellContent euiTableCellContent--alignRight"
+                                showSortMsg={false}
                               >
-                                <EuiInnerText>
-                                  <span
-                                    className="euiTableCellContent__text"
-                                    title="Actions"
-                                  >
-                                    Actions
-                                  </span>
-                                </EuiInnerText>
-                              </div>
+                                <span
+                                  className="euiTableCellContent euiTableCellContent--alignRight"
+                                >
+                                  <EuiInnerText>
+                                    <EuiI18n
+                                      default="{innerText}; {description}"
+                                      token="euiTableHeaderCell.titleTextWithDesc"
+                                      values={
+                                        Object {
+                                          "description": undefined,
+                                          "innerText": "Actions",
+                                        }
+                                      }
+                                    >
+                                      <span
+                                        className="euiTableCellContent__text"
+                                        title="Actions"
+                                      >
+                                        Actions
+                                      </span>
+                                    </EuiI18n>
+                                  </EuiInnerText>
+                                </span>
+                              </CellContents>
                             </th>
                           </EuiTableHeaderCell>
                         </tr>
