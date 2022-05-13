@@ -49,13 +49,18 @@ class DocumentLevelQuery extends Component {
               inputProps={{
                 placeholder: 'Enter a name for the query',
                 isInvalid,
+                'data-test-subj': `documentLevelQuery_queryName${queryIndex}`,
               }}
             />
           </EuiFlexItem>
 
           {queryIndex > 0 && (
             <EuiFlexItem grow={false}>
-              <EuiButton color={'danger'} onClick={() => queriesArrayHelpers.remove(queryIndex)}>
+              <EuiButton
+                color={'danger'}
+                onClick={() => queriesArrayHelpers.remove(queryIndex)}
+                data-test-subj={`documentLevelQuery_removeQueryButton${queryIndex}`}
+              >
                 Remove query
               </EuiButton>
             </EuiFlexItem>
@@ -82,6 +87,8 @@ class DocumentLevelQuery extends Component {
                 onChange: (e, field, form) => form.setFieldValue(field.name, e[0].label),
                 onBlur: (e, field, form) => form.setFieldTouched(field.name, true),
                 singleSelection: { asPlainText: true },
+                isClearable: false,
+                'data-test-subj': `documentLevelQuery_field${queryIndex}`,
               }}
             />
           </EuiFlexItem>
@@ -94,6 +101,7 @@ class DocumentLevelQuery extends Component {
               inputProps={{
                 onChange: (e, field) => field.onChange(e),
                 options: QUERY_OPERATORS,
+                'data-test-subj': `documentLevelQuery_operator${queryIndex}`,
               }}
             />
           </EuiFlexItem>
@@ -113,6 +121,7 @@ class DocumentLevelQuery extends Component {
                 placeholder: 'Enter the search term',
                 fullWidth: true,
                 isInvalid,
+                'data-test-subj': `documentLevelQuery_query${queryIndex}`,
               }}
             />
           </EuiFlexItem>

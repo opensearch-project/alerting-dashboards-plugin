@@ -28,6 +28,7 @@ class DocumentLevelTriggerExpression extends Component {
     const isFirstCondition = index === 0;
     if (index > 0)
       values['andOrCondition'] = values.andOrCondition || AND_OR_CONDITION_OPTIONS[0].value;
+    console.info(`hurneyt formFieldName = ${formFieldName}`);
     return (
       <EuiFlexGroup alignItems={'flexStart'} gutterSize={'m'}>
         {/* Do not display AND/OR selector for the first condition */}
@@ -42,6 +43,7 @@ class DocumentLevelTriggerExpression extends Component {
               inputProps={{
                 onChange: (e, field) => field.onChange(e),
                 options: AND_OR_CONDITION_OPTIONS,
+                'data-test-subj': `documentLevelTriggerExpression_andOr_${formFieldName}`,
               }}
             />
           </EuiFlexItem>
@@ -78,6 +80,7 @@ class DocumentLevelTriggerExpression extends Component {
                       },
                     ]
                   : undefined,
+              'data-test-subj': `documentLevelTriggerExpression_query_${formFieldName}`,
             }}
           />
         </EuiFlexItem>
@@ -86,7 +89,11 @@ class DocumentLevelTriggerExpression extends Component {
         {!isFirstCondition && (
           <EuiFlexItem grow={false}>
             <EuiFormRow hasEmptyLabelSpace={true}>
-              <EuiButton color={'danger'} onClick={() => arrayHelpers.remove(index)}>
+              <EuiButton
+                color={'danger'}
+                onClick={() => arrayHelpers.remove(index)}
+                data-test-subj={`documentLevelTriggerExpression_removeConditionButton_${formFieldName}`}
+              >
                 Remove condition
               </EuiButton>
             </EuiFormRow>
