@@ -5,9 +5,10 @@
 
 import React, { Component } from 'react';
 import _ from 'lodash';
-import { EuiButton, EuiFlexGroup, EuiFlexItem } from '@elastic/eui';
+import { EuiButton, EuiFlexGroup, EuiFlexItem, EuiFormRow } from '@elastic/eui';
 import { FormikComboBox, FormikSelect } from '../../../../components/FormControls';
 import { AND_OR_CONDITION_OPTIONS } from '../../utils/constants';
+import { hasError, isInvalid, required } from '../../../../utils/validate';
 
 class DocumentLevelTriggerExpression extends Component {
   constructor(props) {
@@ -27,61 +28,40 @@ class DocumentLevelTriggerExpression extends Component {
     const isFirstCondition = index === 0;
     if (index > 0)
       values['andOrCondition'] = values.andOrCondition || AND_OR_CONDITION_OPTIONS[0].value;
-    return isFirstCondition ? (
-      <FormikComboBox
-        name={`${formFieldName}.query`}
-        formRow={true}
-        rowProps={{
-          label: isFirstCondition ? 'Specify queries or tags' : undefined,
-          hasEmptyLabelSpace: !isFirstCondition,
-        }}
-        inputProps={{
-          placeholder: 'Select a query or tag',
-          onChange: (e, field, form) => form.setFieldValue(field.name, e[0].value),
-          isClearable: false,
-          singleSelection: { asPlainText: true },
-          options: [
-            { label: 'Queries', options: querySelectOptions },
-            { label: 'Tags', options: tagSelectOptions },
-          ],
-          selectedOptions:
-            !_.isEmpty(values.query) && !_.isEmpty(values.query.queryName)
-              ? [
-                  {
-                    value: values.query.queryName,
-                    label: values.query.queryName,
-                    query: values.query,
-                  },
-                ]
-              : undefined,
-        }}
-      />
-    ) : (
-      <EuiFlexGroup alignItems={'flexEnd'}>
-        <EuiFlexItem grow={false} style={{ width: '100px' }}>
-          <FormikSelect
-            name={`${formFieldName}.andOrCondition`}
-            formRow={true}
-            rowProps={{
-              hasEmptyLabelSpace: true,
-            }}
-            inputProps={{
-              onChange: (e, field) => field.onChange(e),
-              options: AND_OR_CONDITION_OPTIONS,
-            }}
-          />
-        </EuiFlexItem>
+    return (
+      <EuiFlexGroup alignItems={'flexStart'} gutterSize={'m'}>
+        {/* Do not display AND/OR selector for the first condition */}
+        {!isFirstCondition && (
+          <EuiFlexItem grow={false} style={{ width: '100px' }}>
+            <FormikSelect
+              name={`${formFieldName}.andOrCondition`}
+              formRow={true}
+              rowProps={{
+                hasEmptyLabelSpace: true,
+              }}
+              inputProps={{
+                onChange: (e, field) => field.onChange(e),
+                options: AND_OR_CONDITION_OPTIONS,
+              }}
+            />
+          </EuiFlexItem>
+        )}
 
         <EuiFlexItem grow={false} style={{ width: '300px' }}>
           <FormikComboBox
             name={`${formFieldName}.query`}
             formRow={true}
+            fieldProps={{ validate: required }}
             rowProps={{
-              hasEmptyLabelSpace: true,
+              label: isFirstCondition ? 'Specify queries or tags' : undefined,
+              hasEmptyLabelSpace: !isFirstCondition,
+              isInvalid,
+              error: hasError,
             }}
             inputProps={{
               placeholder: 'Select another query or tag',
               onChange: (e, field, form) => form.setFieldValue(field.name, e[0].value),
+              onBlur: (e, field, form) => form.setFieldTouched(field.name, true),
               isClearable: false,
               singleSelection: { asPlainText: true },
               options: [
@@ -102,11 +82,16 @@ class DocumentLevelTriggerExpression extends Component {
           />
         </EuiFlexItem>
 
-        <EuiFlexItem grow={false}>
-          <EuiButton color={'danger'} onClick={() => arrayHelpers.remove(index)}>
-            Remove condition
-          </EuiButton>
-        </EuiFlexItem>
+        {/* Do not display the button for the first condition */}
+        {!isFirstCondition && (
+          <EuiFlexItem grow={false}>
+            <EuiFormRow hasEmptyLabelSpace={true}>
+              <EuiButton color={'danger'} onClick={() => arrayHelpers.remove(index)}>
+                Remove condition
+              </EuiButton>
+            </EuiFormRow>
+          </EuiFlexItem>
+        )}
       </EuiFlexGroup>
     );
   }
