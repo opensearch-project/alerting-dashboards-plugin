@@ -20,27 +20,31 @@ exports[`NotifictionsCallOut renders 1`] = `
     <div
       class="euiText euiText--small"
     >
-      <p>
-        Install the notifications plugin in order to create and select channels to send out notifications. 
-        <a
-          class="euiLink euiLink--primary"
-          href="#"
-          rel="noreferrer"
-        >
-          Learn more
-        </a>
-      </p>
-      <div>
-        <a
-          class="euiLink euiLink--primary"
-          href="#"
-          rel="noreferrer"
-        >
-          EuiIconMock
-        </a>
+      <div
+        class="euiTextColor euiTextColor--default"
+      >
+        <p>
+          Install the notifications plugin in order to create and select channels to send out notifications. 
+          <a
+            class="euiLink euiLink--primary"
+            href="#"
+            rel="noreferrer"
+          >
+            Learn more
+          </a>
+        </p>
+        <div>
+          <a
+            class="euiLink euiLink--primary"
+            href="#"
+            rel="noreferrer"
+          >
+            EuiIconMock
+          </a>
+        </div>
+        .
+        <p />
       </div>
-      .
-      <p />
     </div>
   </div>
   <div

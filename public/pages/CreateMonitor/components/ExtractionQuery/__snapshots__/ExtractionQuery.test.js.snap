@@ -30,12 +30,10 @@ exports[`ExtractionQuery renders 1`] = `
           data-test-subj="extractionQueryCodeEditor"
           style="width:100%;height:500px"
         >
-          <div
+          <button
             class="euiCodeEditorKeyboardHint"
             data-test-subj="codeEditorHint"
             id="generated-id"
-            role="button"
-            tabindex="0"
           >
             <p
               class="euiText"
@@ -47,7 +45,7 @@ exports[`ExtractionQuery renders 1`] = `
             >
               When you're done, press Escape to stop editing.
             </p>
-          </div>
+          </button>
           <div
             id="generated-id"
             style="width:100%;height:500px"
@@ -81,12 +79,10 @@ exports[`ExtractionQuery renders 1`] = `
           data-test-subj="codeEditorContainer"
           style="width:100%;height:500px"
         >
-          <div
+          <button
             class="euiCodeEditorKeyboardHint"
             data-test-subj="codeEditorHint"
             id="generated-id"
-            role="button"
-            tabindex="0"
           >
             <p
               class="euiText"
@@ -98,7 +94,7 @@ exports[`ExtractionQuery renders 1`] = `
             >
               When you're done, press Escape to stop editing.
             </p>
-          </div>
+          </button>
           <div
             id="generated-id"
             style="width:100%;height:500px"

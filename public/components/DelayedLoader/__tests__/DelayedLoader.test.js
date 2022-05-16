@@ -23,6 +23,7 @@ describe('<DelayedLoader/>', () => {
   });
 
   test('should set Timer for 1 seconds if initial loading is true', () => {
+    const setTimeout = jest.spyOn(window, 'setTimeout');
     const wrapper = mount(
       <DelayedLoader isLoading={true}>
         {(showLoader) => <div style={{ opacity: showLoader ? '0.2' : '1' }} />}
@@ -33,6 +34,8 @@ describe('<DelayedLoader/>', () => {
     expect(wrapper).toMatchSnapshot();
   });
   test('should clear Timer on componentWillUnmount if exists', () => {
+    const setTimeout = jest.spyOn(window, 'setTimeout');
+    const clearTimeout = jest.spyOn(window, 'clearTimeout');
     const wrapper = mount(
       <DelayedLoader isLoading={true}>
         {(showLoader) => <div style={{ opacity: showLoader ? '0.2' : '1' }} />}
@@ -45,6 +48,7 @@ describe('<DelayedLoader/>', () => {
   });
 
   test('should not show loader if data fetching is finished before threshold', () => {
+    const clearTimeout = jest.spyOn(window, 'clearTimeout');
     const wrapper = mount(
       <DelayedLoader isLoading={true}>
         {(showLoader) => <div style={{ opacity: showLoader ? '0.2' : '1' }} />}

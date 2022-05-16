@@ -23,9 +23,6 @@ exports[`<EmptyHistory/> renders 1`] = `
   <div
     class="euiSpacer euiSpacer--l"
   />
-  <div
-    class="euiSpacer euiSpacer--s"
-  />
   <button
     class="euiButton euiButton--primary euiButton--fill"
     type="button"
