@@ -120,7 +120,7 @@ exports[`Dashboard renders in flyout 1`] = `
       }
     >
       <div
-        className="euiPanel euiPanel--paddingMedium"
+        className="euiPanel euiPanel--paddingMedium euiPanel--borderRadiusMedium euiPanel--plain euiPanel--hasShadow"
         style={
           Object {
             "paddingLeft": "0px",
@@ -185,6 +185,7 @@ exports[`Dashboard renders in flyout 1`] = `
                           onClick={[Function]}
                         >
                           <EuiButtonDisplay
+                            baseClassName="euiButton"
                             data-test-subj="acknowledgeAlertsButton"
                             disabled={true}
                             element="button"
@@ -197,6 +198,11 @@ exports[`Dashboard renders in flyout 1`] = `
                               data-test-subj="acknowledgeAlertsButton"
                               disabled={true}
                               onClick={[Function]}
+                              style={
+                                Object {
+                                  "minWidth": undefined,
+                                }
+                              }
                               type="button"
                             >
                               <EuiButtonContent
@@ -326,7 +332,7 @@ exports[`Dashboard renders in flyout 1`] = `
                           >
                             <EuiValidatableControl>
                               <input
-                                className="euiFieldSearch euiFieldSearch--fullWidth euiFieldSearch-isClearable"
+                                className="euiFieldSearch euiFieldSearch--fullWidth"
                                 onChange={[Function]}
                                 onKeyUp={[Function]}
                                 placeholder="Search"
@@ -335,6 +341,7 @@ exports[`Dashboard renders in flyout 1`] = `
                               />
                             </EuiValidatableControl>
                             <EuiFormControlLayoutIcons
+                              compressed={false}
                               icon="search"
                               isLoading={false}
                             >
@@ -342,6 +349,7 @@ exports[`Dashboard renders in flyout 1`] = `
                                 className="euiFormControlLayoutIcons"
                               >
                                 <EuiFormControlLayoutCustomIcon
+                                  size="m"
                                   type="search"
                                 >
                                   <span
@@ -350,6 +358,7 @@ exports[`Dashboard renders in flyout 1`] = `
                                     <EuiIcon
                                       aria-hidden="true"
                                       className="euiFormControlLayoutCustomIcon__icon"
+                                      size="m"
                                       type="search"
                                     >
                                       <div>
@@ -469,6 +478,7 @@ exports[`Dashboard renders in flyout 1`] = `
                               </select>
                             </EuiValidatableControl>
                             <EuiFormControlLayoutIcons
+                              compressed={false}
                               icon={
                                 Object {
                                   "side": "right",
@@ -481,6 +491,7 @@ exports[`Dashboard renders in flyout 1`] = `
                                 className="euiFormControlLayoutIcons euiFormControlLayoutIcons--right"
                               >
                                 <EuiFormControlLayoutCustomIcon
+                                  size="m"
                                   type="arrowDown"
                                 >
                                   <span
@@ -489,6 +500,7 @@ exports[`Dashboard renders in flyout 1`] = `
                                     <EuiIcon
                                       aria-hidden="true"
                                       className="euiFormControlLayoutCustomIcon__icon"
+                                      size="m"
                                       type="arrowDown"
                                     >
                                       <div>
@@ -552,7 +564,7 @@ exports[`Dashboard renders in flyout 1`] = `
                             >
                               <button
                                 aria-label="Previous page"
-                                className="euiButtonIcon euiButtonIcon--text"
+                                className="euiButtonIcon euiButtonIcon--text euiButtonIcon--empty euiButtonIcon--xSmall"
                                 data-test-subj="pagination-button-previous"
                                 disabled={true}
                                 onClick={[Function]}
@@ -561,6 +573,7 @@ exports[`Dashboard renders in flyout 1`] = `
                                 <EuiIcon
                                   aria-hidden="true"
                                   className="euiButtonIcon__icon"
+                                  color="inherit"
                                   size="m"
                                   type="arrowLeft"
                                 >
@@ -616,12 +629,12 @@ exports[`Dashboard renders in flyout 1`] = `
                                       data-test-subj="pagination-button-0"
                                       isDisabled={true}
                                       onClick={[Function]}
-                                      size="xs"
+                                      size="s"
                                     >
                                       <button
                                         aria-current={true}
                                         aria-label="Page 1 of 1"
-                                        className="euiButtonEmpty euiButtonEmpty--text euiButtonEmpty--xSmall euiButtonEmpty-isDisabled euiPaginationButton euiPaginationButton-isActive euiPaginationButton--hideOnMobile"
+                                        className="euiButtonEmpty euiButtonEmpty--text euiButtonEmpty--small euiButtonEmpty-isDisabled euiPaginationButton euiPaginationButton-isActive euiPaginationButton--hideOnMobile"
                                         data-test-subj="pagination-button-0"
                                         disabled={true}
                                         onClick={[Function]}
@@ -630,6 +643,7 @@ exports[`Dashboard renders in flyout 1`] = `
                                         <EuiButtonContent
                                           className="euiButtonEmpty__content"
                                           iconSide="left"
+                                          iconSize="m"
                                           textProps={
                                             Object {
                                               "className": "euiButtonEmpty__text",
@@ -677,7 +691,7 @@ exports[`Dashboard renders in flyout 1`] = `
                             >
                               <button
                                 aria-label="Next page"
-                                className="euiButtonIcon euiButtonIcon--text"
+                                className="euiButtonIcon euiButtonIcon--text euiButtonIcon--empty euiButtonIcon--xSmall"
                                 data-test-subj="pagination-button-next"
                                 disabled={true}
                                 onClick={[Function]}
@@ -686,6 +700,7 @@ exports[`Dashboard renders in flyout 1`] = `
                                 <EuiIcon
                                   aria-hidden="true"
                                   className="euiButtonIcon__icon"
+                                  color="inherit"
                                   size="m"
                                   type="arrowRight"
                                 >
@@ -926,73 +941,65 @@ exports[`Dashboard renders in flyout 1`] = `
                                   ownFocus={true}
                                   panelPaddingSize="none"
                                 >
-                                  <EuiOutsideClickDetector
-                                    isDisabled={true}
-                                    onOutsideClick={[Function]}
+                                  <div
+                                    className="euiPopover euiPopover--anchorDownRight"
                                   >
                                     <div
-                                      className="euiPopover euiPopover--anchorDownRight"
-                                      onKeyDown={[Function]}
-                                      onMouseDown={[Function]}
-                                      onMouseUp={[Function]}
-                                      onTouchEnd={[Function]}
-                                      onTouchStart={[Function]}
+                                      className="euiPopover__anchor"
                                     >
-                                      <div
-                                        className="euiPopover__anchor"
+                                      <EuiButtonEmpty
+                                        flush="right"
+                                        iconSide="right"
+                                        iconType="arrowDown"
+                                        onClick={[Function]}
+                                        size="xs"
                                       >
-                                        <EuiButtonEmpty
-                                          flush="right"
-                                          iconSide="right"
-                                          iconType="arrowDown"
+                                        <button
+                                          className="euiButtonEmpty euiButtonEmpty--primary euiButtonEmpty--xSmall euiButtonEmpty--flushRight"
+                                          disabled={false}
                                           onClick={[Function]}
-                                          size="xs"
+                                          type="button"
                                         >
-                                          <button
-                                            className="euiButtonEmpty euiButtonEmpty--primary euiButtonEmpty--xSmall euiButtonEmpty--flushRight"
-                                            disabled={false}
-                                            onClick={[Function]}
-                                            type="button"
-                                          >
-                                            <EuiButtonContent
-                                              className="euiButtonEmpty__content"
-                                              iconSide="right"
-                                              iconType="arrowDown"
-                                              textProps={
-                                                Object {
-                                                  "className": "euiButtonEmpty__text",
-                                                }
+                                          <EuiButtonContent
+                                            className="euiButtonEmpty__content"
+                                            iconSide="right"
+                                            iconSize="s"
+                                            iconType="arrowDown"
+                                            textProps={
+                                              Object {
+                                                "className": "euiButtonEmpty__text",
                                               }
+                                            }
+                                          >
+                                            <span
+                                              className="euiButtonContent euiButtonContent--iconRight euiButtonEmpty__content"
                                             >
-                                              <span
-                                                className="euiButtonContent euiButtonContent--iconRight euiButtonEmpty__content"
+                                              <EuiIcon
+                                                className="euiButtonContent__icon"
+                                                color="inherit"
+                                                size="s"
+                                                type="arrowDown"
                                               >
-                                                <EuiIcon
-                                                  className="euiButtonContent__icon"
-                                                  size="m"
-                                                  type="arrowDown"
+                                                <div>
+                                                  EuiIconMock
+                                                </div>
+                                              </EuiIcon>
+                                              <span
+                                                className="euiButtonEmpty__text"
+                                              >
+                                                <EuiI18n
+                                                  default="Sorting"
+                                                  token="euiTableSortMobile.sorting"
                                                 >
-                                                  <div>
-                                                    EuiIconMock
-                                                  </div>
-                                                </EuiIcon>
-                                                <span
-                                                  className="euiButtonEmpty__text"
-                                                >
-                                                  <EuiI18n
-                                                    default="Sorting"
-                                                    token="euiTableSortMobile.sorting"
-                                                  >
-                                                    Sorting
-                                                  </EuiI18n>
-                                                </span>
+                                                  Sorting
+                                                </EuiI18n>
                                               </span>
-                                            </EuiButtonContent>
-                                          </button>
-                                        </EuiButtonEmpty>
-                                      </div>
+                                            </span>
+                                          </EuiButtonContent>
+                                        </button>
+                                      </EuiButtonEmpty>
                                     </div>
-                                  </EuiOutsideClickDetector>
+                                  </div>
                                 </EuiPopover>
                               </div>
                             </EuiTableSortMobile>
@@ -1104,39 +1111,35 @@ exports[`Dashboard renders in flyout 1`] = `
                                 onClick={[Function]}
                                 type="button"
                               >
-                                <span
+                                <CellContents
                                   className="euiTableCellContent"
+                                  isSortAscending={false}
+                                  isSorted={true}
+                                  showSortMsg={true}
                                 >
-                                  <EuiInnerText>
-                                    <EuiI18n
-                                      default="{innerText}; Sorted in {ariaSortValue} order"
-                                      token="euiTableHeaderCell.titleTextWithSort"
-                                      values={
-                                        Object {
-                                          "ariaSortValue": "descending",
-                                          "innerText": "Alert start time",
-                                        }
-                                      }
-                                    >
-                                      <span
-                                        className="euiTableCellContent__text"
-                                        title="Alert start time; Sorted in descending order"
-                                      >
-                                        Alert start time
-                                      </span>
-                                    </EuiI18n>
-                                  </EuiInnerText>
-                                  <EuiI18n
-                                    default="Sorted in {ariaSortValue} order"
-                                    token="euiTableHeaderCell.sortedAriaLabel"
-                                    values={
-                                      Object {
-                                        "ariaSortValue": "descending",
-                                      }
-                                    }
+                                  <span
+                                    className="euiTableCellContent"
                                   >
+                                    <EuiInnerText>
+                                      <EuiI18n
+                                        default="{innerText}; {description}"
+                                        token="euiTableHeaderCell.titleTextWithDesc"
+                                        values={
+                                          Object {
+                                            "description": undefined,
+                                            "innerText": "Alert start time",
+                                          }
+                                        }
+                                      >
+                                        <span
+                                          className="euiTableCellContent__text"
+                                          title="Alert start time"
+                                        >
+                                          Alert start time
+                                        </span>
+                                      </EuiI18n>
+                                    </EuiInnerText>
                                     <EuiIcon
-                                      aria-label="Sorted in descending order"
                                       className="euiTableSortIcon"
                                       size="m"
                                       type="sortDown"
@@ -1145,20 +1148,8 @@ exports[`Dashboard renders in flyout 1`] = `
                                         EuiIconMock
                                       </div>
                                     </EuiIcon>
-                                  </EuiI18n>
-                                  <EuiScreenReaderOnly>
-                                    <span
-                                      className="euiScreenReaderOnly"
-                                    >
-                                      <EuiI18n
-                                        default="Click to sort in ascending order"
-                                        token="euiTableHeaderCell.clickForAscending"
-                                      >
-                                        Click to sort in ascending order
-                                      </EuiI18n>
-                                    </span>
-                                  </EuiScreenReaderOnly>
-                                </span>
+                                  </span>
+                                </CellContents>
                               </button>
                             </th>
                           </EuiTableHeaderCell>
@@ -1188,41 +1179,35 @@ exports[`Dashboard renders in flyout 1`] = `
                                 onClick={[Function]}
                                 type="button"
                               >
-                                <span
+                                <CellContents
                                   className="euiTableCellContent"
+                                  isSorted={false}
+                                  showSortMsg={true}
                                 >
-                                  <EuiInnerText>
-                                    <EuiI18n
-                                      default="{innerText}; Sorted in {ariaSortValue} order"
-                                      token="euiTableHeaderCell.titleTextWithSort"
-                                      values={
-                                        Object {
-                                          "ariaSortValue": "none",
-                                          "innerText": "Alert end time",
-                                        }
-                                      }
-                                    >
-                                      <span
-                                        className="euiTableCellContent__text"
-                                        title="Alert end time"
-                                      >
-                                        Alert end time
-                                      </span>
-                                    </EuiI18n>
-                                  </EuiInnerText>
-                                  <EuiScreenReaderOnly>
-                                    <span
-                                      className="euiScreenReaderOnly"
-                                    >
+                                  <span
+                                    className="euiTableCellContent"
+                                  >
+                                    <EuiInnerText>
                                       <EuiI18n
-                                        default="Click to sort in ascending order"
-                                        token="euiTableHeaderCell.clickForAscending"
+                                        default="{innerText}; {description}"
+                                        token="euiTableHeaderCell.titleTextWithDesc"
+                                        values={
+                                          Object {
+                                            "description": undefined,
+                                            "innerText": "Alert end time",
+                                          }
+                                        }
                                       >
-                                        Click to sort in ascending order
+                                        <span
+                                          className="euiTableCellContent__text"
+                                          title="Alert end time"
+                                        >
+                                          Alert end time
+                                        </span>
                                       </EuiI18n>
-                                    </span>
-                                  </EuiScreenReaderOnly>
-                                </span>
+                                    </EuiInnerText>
+                                  </span>
+                                </CellContents>
                               </button>
                             </th>
                           </EuiTableHeaderCell>
@@ -1252,41 +1237,35 @@ exports[`Dashboard renders in flyout 1`] = `
                                 onClick={[Function]}
                                 type="button"
                               >
-                                <span
+                                <CellContents
                                   className="euiTableCellContent"
+                                  isSorted={false}
+                                  showSortMsg={true}
                                 >
-                                  <EuiInnerText>
-                                    <EuiI18n
-                                      default="{innerText}; Sorted in {ariaSortValue} order"
-                                      token="euiTableHeaderCell.titleTextWithSort"
-                                      values={
-                                        Object {
-                                          "ariaSortValue": "none",
-                                          "innerText": "Trigger name",
-                                        }
-                                      }
-                                    >
-                                      <span
-                                        className="euiTableCellContent__text"
-                                        title="Trigger name"
-                                      >
-                                        Trigger name
-                                      </span>
-                                    </EuiI18n>
-                                  </EuiInnerText>
-                                  <EuiScreenReaderOnly>
-                                    <span
-                                      className="euiScreenReaderOnly"
-                                    >
+                                  <span
+                                    className="euiTableCellContent"
+                                  >
+                                    <EuiInnerText>
                                       <EuiI18n
-                                        default="Click to sort in ascending order"
-                                        token="euiTableHeaderCell.clickForAscending"
+                                        default="{innerText}; {description}"
+                                        token="euiTableHeaderCell.titleTextWithDesc"
+                                        values={
+                                          Object {
+                                            "description": undefined,
+                                            "innerText": "Trigger name",
+                                          }
+                                        }
                                       >
-                                        Click to sort in ascending order
+                                        <span
+                                          className="euiTableCellContent__text"
+                                          title="Trigger name"
+                                        >
+                                          Trigger name
+                                        </span>
                                       </EuiI18n>
-                                    </span>
-                                  </EuiScreenReaderOnly>
-                                </span>
+                                    </EuiInnerText>
+                                  </span>
+                                </CellContents>
                               </button>
                             </th>
                           </EuiTableHeaderCell>
@@ -1306,18 +1285,34 @@ exports[`Dashboard renders in flyout 1`] = `
                                 }
                               }
                             >
-                              <div
+                              <CellContents
                                 className="euiTableCellContent"
+                                showSortMsg={false}
                               >
-                                <EuiInnerText>
-                                  <span
-                                    className="euiTableCellContent__text"
-                                    title="Severity"
-                                  >
-                                    Severity
-                                  </span>
-                                </EuiInnerText>
-                              </div>
+                                <span
+                                  className="euiTableCellContent"
+                                >
+                                  <EuiInnerText>
+                                    <EuiI18n
+                                      default="{innerText}; {description}"
+                                      token="euiTableHeaderCell.titleTextWithDesc"
+                                      values={
+                                        Object {
+                                          "description": undefined,
+                                          "innerText": "Severity",
+                                        }
+                                      }
+                                    >
+                                      <span
+                                        className="euiTableCellContent__text"
+                                        title="Severity"
+                                      >
+                                        Severity
+                                      </span>
+                                    </EuiI18n>
+                                  </EuiInnerText>
+                                </span>
+                              </CellContents>
                             </th>
                           </EuiTableHeaderCell>
                           <EuiTableHeaderCell
@@ -1336,18 +1331,34 @@ exports[`Dashboard renders in flyout 1`] = `
                                 }
                               }
                             >
-                              <div
+                              <CellContents
                                 className="euiTableCellContent"
+                                showSortMsg={false}
                               >
-                                <EuiInnerText>
-                                  <span
-                                    className="euiTableCellContent__text"
-                                    title="State"
-                                  >
-                                    State
-                                  </span>
-                                </EuiInnerText>
-                              </div>
+                                <span
+                                  className="euiTableCellContent"
+                                >
+                                  <EuiInnerText>
+                                    <EuiI18n
+                                      default="{innerText}; {description}"
+                                      token="euiTableHeaderCell.titleTextWithDesc"
+                                      values={
+                                        Object {
+                                          "description": undefined,
+                                          "innerText": "State",
+                                        }
+                                      }
+                                    >
+                                      <span
+                                        className="euiTableCellContent__text"
+                                        title="State"
+                                      >
+                                        State
+                                      </span>
+                                    </EuiI18n>
+                                  </EuiInnerText>
+                                </span>
+                              </CellContents>
                             </th>
                           </EuiTableHeaderCell>
                           <EuiTableHeaderCell
@@ -1376,41 +1387,35 @@ exports[`Dashboard renders in flyout 1`] = `
                                 onClick={[Function]}
                                 type="button"
                               >
-                                <span
+                                <CellContents
                                   className="euiTableCellContent"
+                                  isSorted={false}
+                                  showSortMsg={true}
                                 >
-                                  <EuiInnerText>
-                                    <EuiI18n
-                                      default="{innerText}; Sorted in {ariaSortValue} order"
-                                      token="euiTableHeaderCell.titleTextWithSort"
-                                      values={
-                                        Object {
-                                          "ariaSortValue": "none",
-                                          "innerText": "Time acknowledged",
-                                        }
-                                      }
-                                    >
-                                      <span
-                                        className="euiTableCellContent__text"
-                                        title="Time acknowledged"
-                                      >
-                                        Time acknowledged
-                                      </span>
-                                    </EuiI18n>
-                                  </EuiInnerText>
-                                  <EuiScreenReaderOnly>
-                                    <span
-                                      className="euiScreenReaderOnly"
-                                    >
+                                  <span
+                                    className="euiTableCellContent"
+                                  >
+                                    <EuiInnerText>
                                       <EuiI18n
-                                        default="Click to sort in ascending order"
-                                        token="euiTableHeaderCell.clickForAscending"
+                                        default="{innerText}; {description}"
+                                        token="euiTableHeaderCell.titleTextWithDesc"
+                                        values={
+                                          Object {
+                                            "description": undefined,
+                                            "innerText": "Time acknowledged",
+                                          }
+                                        }
                                       >
-                                        Click to sort in ascending order
+                                        <span
+                                          className="euiTableCellContent__text"
+                                          title="Time acknowledged"
+                                        >
+                                          Time acknowledged
+                                        </span>
                                       </EuiI18n>
-                                    </span>
-                                  </EuiScreenReaderOnly>
-                                </span>
+                                    </EuiInnerText>
+                                  </span>
+                                </CellContents>
                               </button>
                             </th>
                           </EuiTableHeaderCell>
@@ -1504,18 +1509,12 @@ exports[`Dashboard renders in flyout 1`] = `
                                               className="euiSpacer euiSpacer--l"
                                             />
                                           </EuiSpacer>
-                                          <EuiSpacer
-                                            size="s"
-                                          >
-                                            <div
-                                              className="euiSpacer euiSpacer--s"
-                                            />
-                                          </EuiSpacer>
                                           <EuiButton
                                             fill={true}
                                             href="alerting#/create-monitor"
                                           >
                                             <EuiButtonDisplay
+                                              baseClassName="euiButton"
                                               element="a"
                                               fill={true}
                                               href="alerting#/create-monitor"
@@ -1524,8 +1523,14 @@ exports[`Dashboard renders in flyout 1`] = `
                                             >
                                               <a
                                                 className="euiButton euiButton--primary euiButton--fill"
+                                                disabled={false}
                                                 href="alerting#/create-monitor"
                                                 rel="noreferrer"
+                                                style={
+                                                  Object {
+                                                    "minWidth": undefined,
+                                                  }
+                                                }
                                               >
                                                 <EuiButtonContent
                                                   className="euiButton__content"
@@ -1657,7 +1662,7 @@ exports[`Dashboard renders with alert by triggers view 1`] = `
       }
     >
       <div
-        className="euiPanel euiPanel--paddingMedium"
+        className="euiPanel euiPanel--paddingMedium euiPanel--borderRadiusMedium euiPanel--plain euiPanel--hasShadow"
         style={
           Object {
             "paddingLeft": "0px",
@@ -1721,6 +1726,7 @@ exports[`Dashboard renders with alert by triggers view 1`] = `
                           onClick={[Function]}
                         >
                           <EuiButtonDisplay
+                            baseClassName="euiButton"
                             disabled={true}
                             element="button"
                             isDisabled={true}
@@ -1731,6 +1737,11 @@ exports[`Dashboard renders with alert by triggers view 1`] = `
                               className="euiButton euiButton--primary euiButton-isDisabled"
                               disabled={true}
                               onClick={[Function]}
+                              style={
+                                Object {
+                                  "minWidth": undefined,
+                                }
+                              }
                               type="button"
                             >
                               <EuiButtonContent
@@ -1769,6 +1780,7 @@ exports[`Dashboard renders with alert by triggers view 1`] = `
                           onClick={[Function]}
                         >
                           <EuiButtonDisplay
+                            baseClassName="euiButton"
                             data-test-subj="acknowledgeAlertsButton"
                             disabled={true}
                             element="button"
@@ -1781,6 +1793,11 @@ exports[`Dashboard renders with alert by triggers view 1`] = `
                               data-test-subj="acknowledgeAlertsButton"
                               disabled={true}
                               onClick={[Function]}
+                              style={
+                                Object {
+                                  "minWidth": undefined,
+                                }
+                              }
                               type="button"
                             >
                               <EuiButtonContent
@@ -1910,7 +1927,7 @@ exports[`Dashboard renders with alert by triggers view 1`] = `
                           >
                             <EuiValidatableControl>
                               <input
-                                className="euiFieldSearch euiFieldSearch--fullWidth euiFieldSearch-isClearable"
+                                className="euiFieldSearch euiFieldSearch--fullWidth"
                                 onChange={[Function]}
                                 onKeyUp={[Function]}
                                 placeholder="Search"
@@ -1919,6 +1936,7 @@ exports[`Dashboard renders with alert by triggers view 1`] = `
                               />
                             </EuiValidatableControl>
                             <EuiFormControlLayoutIcons
+                              compressed={false}
                               icon="search"
                               isLoading={false}
                             >
@@ -1926,6 +1944,7 @@ exports[`Dashboard renders with alert by triggers view 1`] = `
                                 className="euiFormControlLayoutIcons"
                               >
                                 <EuiFormControlLayoutCustomIcon
+                                  size="m"
                                   type="search"
                                 >
                                   <span
@@ -1934,6 +1953,7 @@ exports[`Dashboard renders with alert by triggers view 1`] = `
                                     <EuiIcon
                                       aria-hidden="true"
                                       className="euiFormControlLayoutCustomIcon__icon"
+                                      size="m"
                                       type="search"
                                     >
                                       <div>
@@ -2051,6 +2071,7 @@ exports[`Dashboard renders with alert by triggers view 1`] = `
                               </select>
                             </EuiValidatableControl>
                             <EuiFormControlLayoutIcons
+                              compressed={false}
                               icon={
                                 Object {
                                   "side": "right",
@@ -2063,6 +2084,7 @@ exports[`Dashboard renders with alert by triggers view 1`] = `
                                 className="euiFormControlLayoutIcons euiFormControlLayoutIcons--right"
                               >
                                 <EuiFormControlLayoutCustomIcon
+                                  size="m"
                                   type="arrowDown"
                                 >
                                   <span
@@ -2071,6 +2093,7 @@ exports[`Dashboard renders with alert by triggers view 1`] = `
                                     <EuiIcon
                                       aria-hidden="true"
                                       className="euiFormControlLayoutCustomIcon__icon"
+                                      size="m"
                                       type="arrowDown"
                                     >
                                       <div>
@@ -2190,6 +2213,7 @@ exports[`Dashboard renders with alert by triggers view 1`] = `
                               </select>
                             </EuiValidatableControl>
                             <EuiFormControlLayoutIcons
+                              compressed={false}
                               icon={
                                 Object {
                                   "side": "right",
@@ -2202,6 +2226,7 @@ exports[`Dashboard renders with alert by triggers view 1`] = `
                                 className="euiFormControlLayoutIcons euiFormControlLayoutIcons--right"
                               >
                                 <EuiFormControlLayoutCustomIcon
+                                  size="m"
                                   type="arrowDown"
                                 >
                                   <span
@@ -2210,6 +2235,7 @@ exports[`Dashboard renders with alert by triggers view 1`] = `
                                     <EuiIcon
                                       aria-hidden="true"
                                       className="euiFormControlLayoutCustomIcon__icon"
+                                      size="m"
                                       type="arrowDown"
                                     >
                                       <div>
@@ -2273,7 +2299,7 @@ exports[`Dashboard renders with alert by triggers view 1`] = `
                             >
                               <button
                                 aria-label="Previous page"
-                                className="euiButtonIcon euiButtonIcon--text"
+                                className="euiButtonIcon euiButtonIcon--text euiButtonIcon--empty euiButtonIcon--xSmall"
                                 data-test-subj="pagination-button-previous"
                                 disabled={true}
                                 onClick={[Function]}
@@ -2282,6 +2308,7 @@ exports[`Dashboard renders with alert by triggers view 1`] = `
                                 <EuiIcon
                                   aria-hidden="true"
                                   className="euiButtonIcon__icon"
+                                  color="inherit"
                                   size="m"
                                   type="arrowLeft"
                                 >
@@ -2337,12 +2364,12 @@ exports[`Dashboard renders with alert by triggers view 1`] = `
                                       data-test-subj="pagination-button-0"
                                       isDisabled={true}
                                       onClick={[Function]}
-                                      size="xs"
+                                      size="s"
                                     >
                                       <button
                                         aria-current={true}
                                         aria-label="Page 1 of 1"
-                                        className="euiButtonEmpty euiButtonEmpty--text euiButtonEmpty--xSmall euiButtonEmpty-isDisabled euiPaginationButton euiPaginationButton-isActive euiPaginationButton--hideOnMobile"
+                                        className="euiButtonEmpty euiButtonEmpty--text euiButtonEmpty--small euiButtonEmpty-isDisabled euiPaginationButton euiPaginationButton-isActive euiPaginationButton--hideOnMobile"
                                         data-test-subj="pagination-button-0"
                                         disabled={true}
                                         onClick={[Function]}
@@ -2351,6 +2378,7 @@ exports[`Dashboard renders with alert by triggers view 1`] = `
                                         <EuiButtonContent
                                           className="euiButtonEmpty__content"
                                           iconSide="left"
+                                          iconSize="m"
                                           textProps={
                                             Object {
                                               "className": "euiButtonEmpty__text",
@@ -2398,7 +2426,7 @@ exports[`Dashboard renders with alert by triggers view 1`] = `
                             >
                               <button
                                 aria-label="Next page"
-                                className="euiButtonIcon euiButtonIcon--text"
+                                className="euiButtonIcon euiButtonIcon--text euiButtonIcon--empty euiButtonIcon--xSmall"
                                 data-test-subj="pagination-button-next"
                                 disabled={true}
                                 onClick={[Function]}
@@ -2407,6 +2435,7 @@ exports[`Dashboard renders with alert by triggers view 1`] = `
                                 <EuiIcon
                                   aria-hidden="true"
                                   className="euiButtonIcon__icon"
+                                  color="inherit"
                                   size="m"
                                   type="arrowRight"
                                 >
@@ -2680,73 +2709,65 @@ exports[`Dashboard renders with alert by triggers view 1`] = `
                                   ownFocus={true}
                                   panelPaddingSize="none"
                                 >
-                                  <EuiOutsideClickDetector
-                                    isDisabled={true}
-                                    onOutsideClick={[Function]}
+                                  <div
+                                    className="euiPopover euiPopover--anchorDownRight"
                                   >
                                     <div
-                                      className="euiPopover euiPopover--anchorDownRight"
-                                      onKeyDown={[Function]}
-                                      onMouseDown={[Function]}
-                                      onMouseUp={[Function]}
-                                      onTouchEnd={[Function]}
-                                      onTouchStart={[Function]}
+                                      className="euiPopover__anchor"
                                     >
-                                      <div
-                                        className="euiPopover__anchor"
+                                      <EuiButtonEmpty
+                                        flush="right"
+                                        iconSide="right"
+                                        iconType="arrowDown"
+                                        onClick={[Function]}
+                                        size="xs"
                                       >
-                                        <EuiButtonEmpty
-                                          flush="right"
-                                          iconSide="right"
-                                          iconType="arrowDown"
+                                        <button
+                                          className="euiButtonEmpty euiButtonEmpty--primary euiButtonEmpty--xSmall euiButtonEmpty--flushRight"
+                                          disabled={false}
                                           onClick={[Function]}
-                                          size="xs"
+                                          type="button"
                                         >
-                                          <button
-                                            className="euiButtonEmpty euiButtonEmpty--primary euiButtonEmpty--xSmall euiButtonEmpty--flushRight"
-                                            disabled={false}
-                                            onClick={[Function]}
-                                            type="button"
-                                          >
-                                            <EuiButtonContent
-                                              className="euiButtonEmpty__content"
-                                              iconSide="right"
-                                              iconType="arrowDown"
-                                              textProps={
-                                                Object {
-                                                  "className": "euiButtonEmpty__text",
-                                                }
+                                          <EuiButtonContent
+                                            className="euiButtonEmpty__content"
+                                            iconSide="right"
+                                            iconSize="s"
+                                            iconType="arrowDown"
+                                            textProps={
+                                              Object {
+                                                "className": "euiButtonEmpty__text",
                                               }
+                                            }
+                                          >
+                                            <span
+                                              className="euiButtonContent euiButtonContent--iconRight euiButtonEmpty__content"
                                             >
-                                              <span
-                                                className="euiButtonContent euiButtonContent--iconRight euiButtonEmpty__content"
+                                              <EuiIcon
+                                                className="euiButtonContent__icon"
+                                                color="inherit"
+                                                size="s"
+                                                type="arrowDown"
                                               >
-                                                <EuiIcon
-                                                  className="euiButtonContent__icon"
-                                                  size="m"
-                                                  type="arrowDown"
+                                                <div>
+                                                  EuiIconMock
+                                                </div>
+                                              </EuiIcon>
+                                              <span
+                                                className="euiButtonEmpty__text"
+                                              >
+                                                <EuiI18n
+                                                  default="Sorting"
+                                                  token="euiTableSortMobile.sorting"
                                                 >
-                                                  <div>
-                                                    EuiIconMock
-                                                  </div>
-                                                </EuiIcon>
-                                                <span
-                                                  className="euiButtonEmpty__text"
-                                                >
-                                                  <EuiI18n
-                                                    default="Sorting"
-                                                    token="euiTableSortMobile.sorting"
-                                                  >
-                                                    Sorting
-                                                  </EuiI18n>
-                                                </span>
+                                                  Sorting
+                                                </EuiI18n>
                                               </span>
-                                            </EuiButtonContent>
-                                          </button>
-                                        </EuiButtonEmpty>
-                                      </div>
+                                            </span>
+                                          </EuiButtonContent>
+                                        </button>
+                                      </EuiButtonEmpty>
                                     </div>
-                                  </EuiOutsideClickDetector>
+                                  </div>
                                 </EuiPopover>
                               </div>
                             </EuiTableSortMobile>
@@ -2857,41 +2878,35 @@ exports[`Dashboard renders with alert by triggers view 1`] = `
                                 onClick={[Function]}
                                 type="button"
                               >
-                                <span
+                                <CellContents
                                   className="euiTableCellContent"
+                                  isSorted={false}
+                                  showSortMsg={true}
                                 >
-                                  <EuiInnerText>
-                                    <EuiI18n
-                                      default="{innerText}; Sorted in {ariaSortValue} order"
-                                      token="euiTableHeaderCell.titleTextWithSort"
-                                      values={
-                                        Object {
-                                          "ariaSortValue": "none",
-                                          "innerText": "Alerts",
-                                        }
-                                      }
-                                    >
-                                      <span
-                                        className="euiTableCellContent__text"
-                                        title="Alerts"
-                                      >
-                                        Alerts
-                                      </span>
-                                    </EuiI18n>
-                                  </EuiInnerText>
-                                  <EuiScreenReaderOnly>
-                                    <span
-                                      className="euiScreenReaderOnly"
-                                    >
+                                  <span
+                                    className="euiTableCellContent"
+                                  >
+                                    <EuiInnerText>
                                       <EuiI18n
-                                        default="Click to sort in ascending order"
-                                        token="euiTableHeaderCell.clickForAscending"
+                                        default="{innerText}; {description}"
+                                        token="euiTableHeaderCell.titleTextWithDesc"
+                                        values={
+                                          Object {
+                                            "description": undefined,
+                                            "innerText": "Alerts",
+                                          }
+                                        }
                                       >
-                                        Click to sort in ascending order
+                                        <span
+                                          className="euiTableCellContent__text"
+                                          title="Alerts"
+                                        >
+                                          Alerts
+                                        </span>
                                       </EuiI18n>
-                                    </span>
-                                  </EuiScreenReaderOnly>
-                                </span>
+                                    </EuiInnerText>
+                                  </span>
+                                </CellContents>
                               </button>
                             </th>
                           </EuiTableHeaderCell>
@@ -2921,41 +2936,35 @@ exports[`Dashboard renders with alert by triggers view 1`] = `
                                 onClick={[Function]}
                                 type="button"
                               >
-                                <span
+                                <CellContents
                                   className="euiTableCellContent"
+                                  isSorted={false}
+                                  showSortMsg={true}
                                 >
-                                  <EuiInnerText>
-                                    <EuiI18n
-                                      default="{innerText}; Sorted in {ariaSortValue} order"
-                                      token="euiTableHeaderCell.titleTextWithSort"
-                                      values={
-                                        Object {
-                                          "ariaSortValue": "none",
-                                          "innerText": "Active",
-                                        }
-                                      }
-                                    >
-                                      <span
-                                        className="euiTableCellContent__text"
-                                        title="Active"
-                                      >
-                                        Active
-                                      </span>
-                                    </EuiI18n>
-                                  </EuiInnerText>
-                                  <EuiScreenReaderOnly>
-                                    <span
-                                      className="euiScreenReaderOnly"
-                                    >
+                                  <span
+                                    className="euiTableCellContent"
+                                  >
+                                    <EuiInnerText>
                                       <EuiI18n
-                                        default="Click to sort in ascending order"
-                                        token="euiTableHeaderCell.clickForAscending"
+                                        default="{innerText}; {description}"
+                                        token="euiTableHeaderCell.titleTextWithDesc"
+                                        values={
+                                          Object {
+                                            "description": undefined,
+                                            "innerText": "Active",
+                                          }
+                                        }
                                       >
-                                        Click to sort in ascending order
+                                        <span
+                                          className="euiTableCellContent__text"
+                                          title="Active"
+                                        >
+                                          Active
+                                        </span>
                                       </EuiI18n>
-                                    </span>
-                                  </EuiScreenReaderOnly>
-                                </span>
+                                    </EuiInnerText>
+                                  </span>
+                                </CellContents>
                               </button>
                             </th>
                           </EuiTableHeaderCell>
@@ -2985,41 +2994,35 @@ exports[`Dashboard renders with alert by triggers view 1`] = `
                                 onClick={[Function]}
                                 type="button"
                               >
-                                <span
+                                <CellContents
                                   className="euiTableCellContent"
+                                  isSorted={false}
+                                  showSortMsg={true}
                                 >
-                                  <EuiInnerText>
-                                    <EuiI18n
-                                      default="{innerText}; Sorted in {ariaSortValue} order"
-                                      token="euiTableHeaderCell.titleTextWithSort"
-                                      values={
-                                        Object {
-                                          "ariaSortValue": "none",
-                                          "innerText": "Acknowledged",
-                                        }
-                                      }
-                                    >
-                                      <span
-                                        className="euiTableCellContent__text"
-                                        title="Acknowledged"
-                                      >
-                                        Acknowledged
-                                      </span>
-                                    </EuiI18n>
-                                  </EuiInnerText>
-                                  <EuiScreenReaderOnly>
-                                    <span
-                                      className="euiScreenReaderOnly"
-                                    >
+                                  <span
+                                    className="euiTableCellContent"
+                                  >
+                                    <EuiInnerText>
                                       <EuiI18n
-                                        default="Click to sort in ascending order"
-                                        token="euiTableHeaderCell.clickForAscending"
+                                        default="{innerText}; {description}"
+                                        token="euiTableHeaderCell.titleTextWithDesc"
+                                        values={
+                                          Object {
+                                            "description": undefined,
+                                            "innerText": "Acknowledged",
+                                          }
+                                        }
                                       >
-                                        Click to sort in ascending order
+                                        <span
+                                          className="euiTableCellContent__text"
+                                          title="Acknowledged"
+                                        >
+                                          Acknowledged
+                                        </span>
                                       </EuiI18n>
-                                    </span>
-                                  </EuiScreenReaderOnly>
-                                </span>
+                                    </EuiInnerText>
+                                  </span>
+                                </CellContents>
                               </button>
                             </th>
                           </EuiTableHeaderCell>
@@ -3049,41 +3052,35 @@ exports[`Dashboard renders with alert by triggers view 1`] = `
                                 onClick={[Function]}
                                 type="button"
                               >
-                                <span
+                                <CellContents
                                   className="euiTableCellContent"
+                                  isSorted={false}
+                                  showSortMsg={true}
                                 >
-                                  <EuiInnerText>
-                                    <EuiI18n
-                                      default="{innerText}; Sorted in {ariaSortValue} order"
-                                      token="euiTableHeaderCell.titleTextWithSort"
-                                      values={
-                                        Object {
-                                          "ariaSortValue": "none",
-                                          "innerText": "Errors",
-                                        }
-                                      }
-                                    >
-                                      <span
-                                        className="euiTableCellContent__text"
-                                        title="Errors"
-                                      >
-                                        Errors
-                                      </span>
-                                    </EuiI18n>
-                                  </EuiInnerText>
-                                  <EuiScreenReaderOnly>
-                                    <span
-                                      className="euiScreenReaderOnly"
-                                    >
+                                  <span
+                                    className="euiTableCellContent"
+                                  >
+                                    <EuiInnerText>
                                       <EuiI18n
-                                        default="Click to sort in ascending order"
-                                        token="euiTableHeaderCell.clickForAscending"
+                                        default="{innerText}; {description}"
+                                        token="euiTableHeaderCell.titleTextWithDesc"
+                                        values={
+                                          Object {
+                                            "description": undefined,
+                                            "innerText": "Errors",
+                                          }
+                                        }
                                       >
-                                        Click to sort in ascending order
+                                        <span
+                                          className="euiTableCellContent__text"
+                                          title="Errors"
+                                        >
+                                          Errors
+                                        </span>
                                       </EuiI18n>
-                                    </span>
-                                  </EuiScreenReaderOnly>
-                                </span>
+                                    </EuiInnerText>
+                                  </span>
+                                </CellContents>
                               </button>
                             </th>
                           </EuiTableHeaderCell>
@@ -3113,41 +3110,35 @@ exports[`Dashboard renders with alert by triggers view 1`] = `
                                 onClick={[Function]}
                                 type="button"
                               >
-                                <span
+                                <CellContents
                                   className="euiTableCellContent"
+                                  isSorted={false}
+                                  showSortMsg={true}
                                 >
-                                  <EuiInnerText>
-                                    <EuiI18n
-                                      default="{innerText}; Sorted in {ariaSortValue} order"
-                                      token="euiTableHeaderCell.titleTextWithSort"
-                                      values={
-                                        Object {
-                                          "ariaSortValue": "none",
-                                          "innerText": "Trigger name",
-                                        }
-                                      }
-                                    >
-                                      <span
-                                        className="euiTableCellContent__text"
-                                        title="Trigger name"
-                                      >
-                                        Trigger name
-                                      </span>
-                                    </EuiI18n>
-                                  </EuiInnerText>
-                                  <EuiScreenReaderOnly>
-                                    <span
-                                      className="euiScreenReaderOnly"
-                                    >
+                                  <span
+                                    className="euiTableCellContent"
+                                  >
+                                    <EuiInnerText>
                                       <EuiI18n
-                                        default="Click to sort in ascending order"
-                                        token="euiTableHeaderCell.clickForAscending"
+                                        default="{innerText}; {description}"
+                                        token="euiTableHeaderCell.titleTextWithDesc"
+                                        values={
+                                          Object {
+                                            "description": undefined,
+                                            "innerText": "Trigger name",
+                                          }
+                                        }
                                       >
-                                        Click to sort in ascending order
+                                        <span
+                                          className="euiTableCellContent__text"
+                                          title="Trigger name"
+                                        >
+                                          Trigger name
+                                        </span>
                                       </EuiI18n>
-                                    </span>
-                                  </EuiScreenReaderOnly>
-                                </span>
+                                    </EuiInnerText>
+                                  </span>
+                                </CellContents>
                               </button>
                             </th>
                           </EuiTableHeaderCell>
@@ -3178,39 +3169,35 @@ exports[`Dashboard renders with alert by triggers view 1`] = `
                                 onClick={[Function]}
                                 type="button"
                               >
-                                <span
+                                <CellContents
                                   className="euiTableCellContent"
+                                  isSortAscending={false}
+                                  isSorted={true}
+                                  showSortMsg={true}
                                 >
-                                  <EuiInnerText>
-                                    <EuiI18n
-                                      default="{innerText}; Sorted in {ariaSortValue} order"
-                                      token="euiTableHeaderCell.titleTextWithSort"
-                                      values={
-                                        Object {
-                                          "ariaSortValue": "descending",
-                                          "innerText": "Trigger start time",
-                                        }
-                                      }
-                                    >
-                                      <span
-                                        className="euiTableCellContent__text"
-                                        title="Trigger start time; Sorted in descending order"
-                                      >
-                                        Trigger start time
-                                      </span>
-                                    </EuiI18n>
-                                  </EuiInnerText>
-                                  <EuiI18n
-                                    default="Sorted in {ariaSortValue} order"
-                                    token="euiTableHeaderCell.sortedAriaLabel"
-                                    values={
-                                      Object {
-                                        "ariaSortValue": "descending",
-                                      }
-                                    }
+                                  <span
+                                    className="euiTableCellContent"
                                   >
+                                    <EuiInnerText>
+                                      <EuiI18n
+                                        default="{innerText}; {description}"
+                                        token="euiTableHeaderCell.titleTextWithDesc"
+                                        values={
+                                          Object {
+                                            "description": undefined,
+                                            "innerText": "Trigger start time",
+                                          }
+                                        }
+                                      >
+                                        <span
+                                          className="euiTableCellContent__text"
+                                          title="Trigger start time"
+                                        >
+                                          Trigger start time
+                                        </span>
+                                      </EuiI18n>
+                                    </EuiInnerText>
                                     <EuiIcon
-                                      aria-label="Sorted in descending order"
                                       className="euiTableSortIcon"
                                       size="m"
                                       type="sortDown"
@@ -3219,20 +3206,8 @@ exports[`Dashboard renders with alert by triggers view 1`] = `
                                         EuiIconMock
                                       </div>
                                     </EuiIcon>
-                                  </EuiI18n>
-                                  <EuiScreenReaderOnly>
-                                    <span
-                                      className="euiScreenReaderOnly"
-                                    >
-                                      <EuiI18n
-                                        default="Click to sort in ascending order"
-                                        token="euiTableHeaderCell.clickForAscending"
-                                      >
-                                        Click to sort in ascending order
-                                      </EuiI18n>
-                                    </span>
-                                  </EuiScreenReaderOnly>
-                                </span>
+                                  </span>
+                                </CellContents>
                               </button>
                             </th>
                           </EuiTableHeaderCell>
@@ -3262,41 +3237,35 @@ exports[`Dashboard renders with alert by triggers view 1`] = `
                                 onClick={[Function]}
                                 type="button"
                               >
-                                <span
+                                <CellContents
                                   className="euiTableCellContent"
+                                  isSorted={false}
+                                  showSortMsg={true}
                                 >
-                                  <EuiInnerText>
-                                    <EuiI18n
-                                      default="{innerText}; Sorted in {ariaSortValue} order"
-                                      token="euiTableHeaderCell.titleTextWithSort"
-                                      values={
-                                        Object {
-                                          "ariaSortValue": "none",
-                                          "innerText": "Trigger last updated",
-                                        }
-                                      }
-                                    >
-                                      <span
-                                        className="euiTableCellContent__text"
-                                        title="Trigger last updated"
-                                      >
-                                        Trigger last updated
-                                      </span>
-                                    </EuiI18n>
-                                  </EuiInnerText>
-                                  <EuiScreenReaderOnly>
-                                    <span
-                                      className="euiScreenReaderOnly"
-                                    >
+                                  <span
+                                    className="euiTableCellContent"
+                                  >
+                                    <EuiInnerText>
                                       <EuiI18n
-                                        default="Click to sort in ascending order"
-                                        token="euiTableHeaderCell.clickForAscending"
+                                        default="{innerText}; {description}"
+                                        token="euiTableHeaderCell.titleTextWithDesc"
+                                        values={
+                                          Object {
+                                            "description": undefined,
+                                            "innerText": "Trigger last updated",
+                                          }
+                                        }
                                       >
-                                        Click to sort in ascending order
+                                        <span
+                                          className="euiTableCellContent__text"
+                                          title="Trigger last updated"
+                                        >
+                                          Trigger last updated
+                                        </span>
                                       </EuiI18n>
-                                    </span>
-                                  </EuiScreenReaderOnly>
-                                </span>
+                                    </EuiInnerText>
+                                  </span>
+                                </CellContents>
                               </button>
                             </th>
                           </EuiTableHeaderCell>
@@ -3316,18 +3285,34 @@ exports[`Dashboard renders with alert by triggers view 1`] = `
                                 }
                               }
                             >
-                              <div
+                              <CellContents
                                 className="euiTableCellContent"
+                                showSortMsg={false}
                               >
-                                <EuiInnerText>
-                                  <span
-                                    className="euiTableCellContent__text"
-                                    title="Severity"
-                                  >
-                                    Severity
-                                  </span>
-                                </EuiInnerText>
-                              </div>
+                                <span
+                                  className="euiTableCellContent"
+                                >
+                                  <EuiInnerText>
+                                    <EuiI18n
+                                      default="{innerText}; {description}"
+                                      token="euiTableHeaderCell.titleTextWithDesc"
+                                      values={
+                                        Object {
+                                          "description": undefined,
+                                          "innerText": "Severity",
+                                        }
+                                      }
+                                    >
+                                      <span
+                                        className="euiTableCellContent__text"
+                                        title="Severity"
+                                      >
+                                        Severity
+                                      </span>
+                                    </EuiI18n>
+                                  </EuiInnerText>
+                                </span>
+                              </CellContents>
                             </th>
                           </EuiTableHeaderCell>
                           <EuiTableHeaderCell
@@ -3356,41 +3341,35 @@ exports[`Dashboard renders with alert by triggers view 1`] = `
                                 onClick={[Function]}
                                 type="button"
                               >
-                                <span
+                                <CellContents
                                   className="euiTableCellContent"
+                                  isSorted={false}
+                                  showSortMsg={true}
                                 >
-                                  <EuiInnerText>
-                                    <EuiI18n
-                                      default="{innerText}; Sorted in {ariaSortValue} order"
-                                      token="euiTableHeaderCell.titleTextWithSort"
-                                      values={
-                                        Object {
-                                          "ariaSortValue": "none",
-                                          "innerText": "Monitor name",
-                                        }
-                                      }
-                                    >
-                                      <span
-                                        className="euiTableCellContent__text"
-                                        title="Monitor name"
-                                      >
-                                        Monitor name
-                                      </span>
-                                    </EuiI18n>
-                                  </EuiInnerText>
-                                  <EuiScreenReaderOnly>
-                                    <span
-                                      className="euiScreenReaderOnly"
-                                    >
+                                  <span
+                                    className="euiTableCellContent"
+                                  >
+                                    <EuiInnerText>
                                       <EuiI18n
-                                        default="Click to sort in ascending order"
-                                        token="euiTableHeaderCell.clickForAscending"
+                                        default="{innerText}; {description}"
+                                        token="euiTableHeaderCell.titleTextWithDesc"
+                                        values={
+                                          Object {
+                                            "description": undefined,
+                                            "innerText": "Monitor name",
+                                          }
+                                        }
                                       >
-                                        Click to sort in ascending order
+                                        <span
+                                          className="euiTableCellContent__text"
+                                          title="Monitor name"
+                                        >
+                                          Monitor name
+                                        </span>
                                       </EuiI18n>
-                                    </span>
-                                  </EuiScreenReaderOnly>
-                                </span>
+                                    </EuiInnerText>
+                                  </span>
+                                </CellContents>
                               </button>
                             </th>
                           </EuiTableHeaderCell>
@@ -3484,18 +3463,12 @@ exports[`Dashboard renders with alert by triggers view 1`] = `
                                               className="euiSpacer euiSpacer--l"
                                             />
                                           </EuiSpacer>
-                                          <EuiSpacer
-                                            size="s"
-                                          >
-                                            <div
-                                              className="euiSpacer euiSpacer--s"
-                                            />
-                                          </EuiSpacer>
                                           <EuiButton
                                             fill={true}
                                             href="alerting#/create-monitor"
                                           >
                                             <EuiButtonDisplay
+                                              baseClassName="euiButton"
                                               element="a"
                                               fill={true}
                                               href="alerting#/create-monitor"
@@ -3504,8 +3477,14 @@ exports[`Dashboard renders with alert by triggers view 1`] = `
                                             >
                                               <a
                                                 className="euiButton euiButton--primary euiButton--fill"
+                                                disabled={false}
                                                 href="alerting#/create-monitor"
                                                 rel="noreferrer"
+                                                style={
+                                                  Object {
+                                                    "minWidth": undefined,
+                                                  }
+                                                }
                                               >
                                                 <EuiButtonContent
                                                   className="euiButton__content"
@@ -3631,7 +3610,7 @@ exports[`Dashboard renders with per alert view 1`] = `
       }
     >
       <div
-        className="euiPanel euiPanel--paddingMedium"
+        className="euiPanel euiPanel--paddingMedium euiPanel--borderRadiusMedium euiPanel--plain euiPanel--hasShadow"
         style={
           Object {
             "paddingLeft": "0px",
@@ -3696,6 +3675,7 @@ exports[`Dashboard renders with per alert view 1`] = `
                           onClick={[Function]}
                         >
                           <EuiButtonDisplay
+                            baseClassName="euiButton"
                             data-test-subj="acknowledgeAlertsButton"
                             disabled={true}
                             element="button"
@@ -3708,6 +3688,11 @@ exports[`Dashboard renders with per alert view 1`] = `
                               data-test-subj="acknowledgeAlertsButton"
                               disabled={true}
                               onClick={[Function]}
+                              style={
+                                Object {
+                                  "minWidth": undefined,
+                                }
+                              }
                               type="button"
                             >
                               <EuiButtonContent
@@ -3837,7 +3822,7 @@ exports[`Dashboard renders with per alert view 1`] = `
                           >
                             <EuiValidatableControl>
                               <input
-                                className="euiFieldSearch euiFieldSearch--fullWidth euiFieldSearch-isClearable"
+                                className="euiFieldSearch euiFieldSearch--fullWidth"
                                 onChange={[Function]}
                                 onKeyUp={[Function]}
                                 placeholder="Search"
@@ -3846,6 +3831,7 @@ exports[`Dashboard renders with per alert view 1`] = `
                               />
                             </EuiValidatableControl>
                             <EuiFormControlLayoutIcons
+                              compressed={false}
                               icon="search"
                               isLoading={false}
                             >
@@ -3853,6 +3839,7 @@ exports[`Dashboard renders with per alert view 1`] = `
                                 className="euiFormControlLayoutIcons"
                               >
                                 <EuiFormControlLayoutCustomIcon
+                                  size="m"
                                   type="search"
                                 >
                                   <span
@@ -3861,6 +3848,7 @@ exports[`Dashboard renders with per alert view 1`] = `
                                     <EuiIcon
                                       aria-hidden="true"
                                       className="euiFormControlLayoutCustomIcon__icon"
+                                      size="m"
                                       type="search"
                                     >
                                       <div>
@@ -3978,6 +3966,7 @@ exports[`Dashboard renders with per alert view 1`] = `
                               </select>
                             </EuiValidatableControl>
                             <EuiFormControlLayoutIcons
+                              compressed={false}
                               icon={
                                 Object {
                                   "side": "right",
@@ -3990,6 +3979,7 @@ exports[`Dashboard renders with per alert view 1`] = `
                                 className="euiFormControlLayoutIcons euiFormControlLayoutIcons--right"
                               >
                                 <EuiFormControlLayoutCustomIcon
+                                  size="m"
                                   type="arrowDown"
                                 >
                                   <span
@@ -3998,6 +3988,7 @@ exports[`Dashboard renders with per alert view 1`] = `
                                     <EuiIcon
                                       aria-hidden="true"
                                       className="euiFormControlLayoutCustomIcon__icon"
+                                      size="m"
                                       type="arrowDown"
                                     >
                                       <div>
@@ -4117,6 +4108,7 @@ exports[`Dashboard renders with per alert view 1`] = `
                               </select>
                             </EuiValidatableControl>
                             <EuiFormControlLayoutIcons
+                              compressed={false}
                               icon={
                                 Object {
                                   "side": "right",
@@ -4129,6 +4121,7 @@ exports[`Dashboard renders with per alert view 1`] = `
                                 className="euiFormControlLayoutIcons euiFormControlLayoutIcons--right"
                               >
                                 <EuiFormControlLayoutCustomIcon
+                                  size="m"
                                   type="arrowDown"
                                 >
                                   <span
@@ -4137,6 +4130,7 @@ exports[`Dashboard renders with per alert view 1`] = `
                                     <EuiIcon
                                       aria-hidden="true"
                                       className="euiFormControlLayoutCustomIcon__icon"
+                                      size="m"
                                       type="arrowDown"
                                     >
                                       <div>
@@ -4200,7 +4194,7 @@ exports[`Dashboard renders with per alert view 1`] = `
                             >
                               <button
                                 aria-label="Previous page"
-                                className="euiButtonIcon euiButtonIcon--text"
+                                className="euiButtonIcon euiButtonIcon--text euiButtonIcon--empty euiButtonIcon--xSmall"
                                 data-test-subj="pagination-button-previous"
                                 disabled={true}
                                 onClick={[Function]}
@@ -4209,6 +4203,7 @@ exports[`Dashboard renders with per alert view 1`] = `
                                 <EuiIcon
                                   aria-hidden="true"
                                   className="euiButtonIcon__icon"
+                                  color="inherit"
                                   size="m"
                                   type="arrowLeft"
                                 >
@@ -4264,12 +4259,12 @@ exports[`Dashboard renders with per alert view 1`] = `
                                       data-test-subj="pagination-button-0"
                                       isDisabled={true}
                                       onClick={[Function]}
-                                      size="xs"
+                                      size="s"
                                     >
                                       <button
                                         aria-current={true}
                                         aria-label="Page 1 of 1"
-                                        className="euiButtonEmpty euiButtonEmpty--text euiButtonEmpty--xSmall euiButtonEmpty-isDisabled euiPaginationButton euiPaginationButton-isActive euiPaginationButton--hideOnMobile"
+                                        className="euiButtonEmpty euiButtonEmpty--text euiButtonEmpty--small euiButtonEmpty-isDisabled euiPaginationButton euiPaginationButton-isActive euiPaginationButton--hideOnMobile"
                                         data-test-subj="pagination-button-0"
                                         disabled={true}
                                         onClick={[Function]}
@@ -4278,6 +4273,7 @@ exports[`Dashboard renders with per alert view 1`] = `
                                         <EuiButtonContent
                                           className="euiButtonEmpty__content"
                                           iconSide="left"
+                                          iconSize="m"
                                           textProps={
                                             Object {
                                               "className": "euiButtonEmpty__text",
@@ -4325,7 +4321,7 @@ exports[`Dashboard renders with per alert view 1`] = `
                             >
                               <button
                                 aria-label="Next page"
-                                className="euiButtonIcon euiButtonIcon--text"
+                                className="euiButtonIcon euiButtonIcon--text euiButtonIcon--empty euiButtonIcon--xSmall"
                                 data-test-subj="pagination-button-next"
                                 disabled={true}
                                 onClick={[Function]}
@@ -4334,6 +4330,7 @@ exports[`Dashboard renders with per alert view 1`] = `
                                 <EuiIcon
                                   aria-hidden="true"
                                   className="euiButtonIcon__icon"
+                                  color="inherit"
                                   size="m"
                                   type="arrowRight"
                                 >
@@ -4574,73 +4571,65 @@ exports[`Dashboard renders with per alert view 1`] = `
                                   ownFocus={true}
                                   panelPaddingSize="none"
                                 >
-                                  <EuiOutsideClickDetector
-                                    isDisabled={true}
-                                    onOutsideClick={[Function]}
+                                  <div
+                                    className="euiPopover euiPopover--anchorDownRight"
                                   >
                                     <div
-                                      className="euiPopover euiPopover--anchorDownRight"
-                                      onKeyDown={[Function]}
-                                      onMouseDown={[Function]}
-                                      onMouseUp={[Function]}
-                                      onTouchEnd={[Function]}
-                                      onTouchStart={[Function]}
+                                      className="euiPopover__anchor"
                                     >
-                                      <div
-                                        className="euiPopover__anchor"
+                                      <EuiButtonEmpty
+                                        flush="right"
+                                        iconSide="right"
+                                        iconType="arrowDown"
+                                        onClick={[Function]}
+                                        size="xs"
                                       >
-                                        <EuiButtonEmpty
-                                          flush="right"
-                                          iconSide="right"
-                                          iconType="arrowDown"
+                                        <button
+                                          className="euiButtonEmpty euiButtonEmpty--primary euiButtonEmpty--xSmall euiButtonEmpty--flushRight"
+                                          disabled={false}
                                           onClick={[Function]}
-                                          size="xs"
+                                          type="button"
                                         >
-                                          <button
-                                            className="euiButtonEmpty euiButtonEmpty--primary euiButtonEmpty--xSmall euiButtonEmpty--flushRight"
-                                            disabled={false}
-                                            onClick={[Function]}
-                                            type="button"
-                                          >
-                                            <EuiButtonContent
-                                              className="euiButtonEmpty__content"
-                                              iconSide="right"
-                                              iconType="arrowDown"
-                                              textProps={
-                                                Object {
-                                                  "className": "euiButtonEmpty__text",
-                                                }
+                                          <EuiButtonContent
+                                            className="euiButtonEmpty__content"
+                                            iconSide="right"
+                                            iconSize="s"
+                                            iconType="arrowDown"
+                                            textProps={
+                                              Object {
+                                                "className": "euiButtonEmpty__text",
                                               }
+                                            }
+                                          >
+                                            <span
+                                              className="euiButtonContent euiButtonContent--iconRight euiButtonEmpty__content"
                                             >
-                                              <span
-                                                className="euiButtonContent euiButtonContent--iconRight euiButtonEmpty__content"
+                                              <EuiIcon
+                                                className="euiButtonContent__icon"
+                                                color="inherit"
+                                                size="s"
+                                                type="arrowDown"
                                               >
-                                                <EuiIcon
-                                                  className="euiButtonContent__icon"
-                                                  size="m"
-                                                  type="arrowDown"
+                                                <div>
+                                                  EuiIconMock
+                                                </div>
+                                              </EuiIcon>
+                                              <span
+                                                className="euiButtonEmpty__text"
+                                              >
+                                                <EuiI18n
+                                                  default="Sorting"
+                                                  token="euiTableSortMobile.sorting"
                                                 >
-                                                  <div>
-                                                    EuiIconMock
-                                                  </div>
-                                                </EuiIcon>
-                                                <span
-                                                  className="euiButtonEmpty__text"
-                                                >
-                                                  <EuiI18n
-                                                    default="Sorting"
-                                                    token="euiTableSortMobile.sorting"
-                                                  >
-                                                    Sorting
-                                                  </EuiI18n>
-                                                </span>
+                                                  Sorting
+                                                </EuiI18n>
                                               </span>
-                                            </EuiButtonContent>
-                                          </button>
-                                        </EuiButtonEmpty>
-                                      </div>
+                                            </span>
+                                          </EuiButtonContent>
+                                        </button>
+                                      </EuiButtonEmpty>
                                     </div>
-                                  </EuiOutsideClickDetector>
+                                  </div>
                                 </EuiPopover>
                               </div>
                             </EuiTableSortMobile>
@@ -4752,39 +4741,35 @@ exports[`Dashboard renders with per alert view 1`] = `
                                 onClick={[Function]}
                                 type="button"
                               >
-                                <span
+                                <CellContents
                                   className="euiTableCellContent"
+                                  isSortAscending={false}
+                                  isSorted={true}
+                                  showSortMsg={true}
                                 >
-                                  <EuiInnerText>
-                                    <EuiI18n
-                                      default="{innerText}; Sorted in {ariaSortValue} order"
-                                      token="euiTableHeaderCell.titleTextWithSort"
-                                      values={
-                                        Object {
-                                          "ariaSortValue": "descending",
-                                          "innerText": "Alert start time",
-                                        }
-                                      }
-                                    >
-                                      <span
-                                        className="euiTableCellContent__text"
-                                        title="Alert start time; Sorted in descending order"
-                                      >
-                                        Alert start time
-                                      </span>
-                                    </EuiI18n>
-                                  </EuiInnerText>
-                                  <EuiI18n
-                                    default="Sorted in {ariaSortValue} order"
-                                    token="euiTableHeaderCell.sortedAriaLabel"
-                                    values={
-                                      Object {
-                                        "ariaSortValue": "descending",
-                                      }
-                                    }
+                                  <span
+                                    className="euiTableCellContent"
                                   >
+                                    <EuiInnerText>
+                                      <EuiI18n
+                                        default="{innerText}; {description}"
+                                        token="euiTableHeaderCell.titleTextWithDesc"
+                                        values={
+                                          Object {
+                                            "description": undefined,
+                                            "innerText": "Alert start time",
+                                          }
+                                        }
+                                      >
+                                        <span
+                                          className="euiTableCellContent__text"
+                                          title="Alert start time"
+                                        >
+                                          Alert start time
+                                        </span>
+                                      </EuiI18n>
+                                    </EuiInnerText>
                                     <EuiIcon
-                                      aria-label="Sorted in descending order"
                                       className="euiTableSortIcon"
                                       size="m"
                                       type="sortDown"
@@ -4793,20 +4778,8 @@ exports[`Dashboard renders with per alert view 1`] = `
                                         EuiIconMock
                                       </div>
                                     </EuiIcon>
-                                  </EuiI18n>
-                                  <EuiScreenReaderOnly>
-                                    <span
-                                      className="euiScreenReaderOnly"
-                                    >
-                                      <EuiI18n
-                                        default="Click to sort in ascending order"
-                                        token="euiTableHeaderCell.clickForAscending"
-                                      >
-                                        Click to sort in ascending order
-                                      </EuiI18n>
-                                    </span>
-                                  </EuiScreenReaderOnly>
-                                </span>
+                                  </span>
+                                </CellContents>
                               </button>
                             </th>
                           </EuiTableHeaderCell>
@@ -4836,41 +4809,35 @@ exports[`Dashboard renders with per alert view 1`] = `
                                 onClick={[Function]}
                                 type="button"
                               >
-                                <span
+                                <CellContents
                                   className="euiTableCellContent"
+                                  isSorted={false}
+                                  showSortMsg={true}
                                 >
-                                  <EuiInnerText>
-                                    <EuiI18n
-                                      default="{innerText}; Sorted in {ariaSortValue} order"
-                                      token="euiTableHeaderCell.titleTextWithSort"
-                                      values={
-                                        Object {
-                                          "ariaSortValue": "none",
-                                          "innerText": "Alert end time",
-                                        }
-                                      }
-                                    >
-                                      <span
-                                        className="euiTableCellContent__text"
-                                        title="Alert end time"
-                                      >
-                                        Alert end time
-                                      </span>
-                                    </EuiI18n>
-                                  </EuiInnerText>
-                                  <EuiScreenReaderOnly>
-                                    <span
-                                      className="euiScreenReaderOnly"
-                                    >
+                                  <span
+                                    className="euiTableCellContent"
+                                  >
+                                    <EuiInnerText>
                                       <EuiI18n
-                                        default="Click to sort in ascending order"
-                                        token="euiTableHeaderCell.clickForAscending"
+                                        default="{innerText}; {description}"
+                                        token="euiTableHeaderCell.titleTextWithDesc"
+                                        values={
+                                          Object {
+                                            "description": undefined,
+                                            "innerText": "Alert end time",
+                                          }
+                                        }
                                       >
-                                        Click to sort in ascending order
+                                        <span
+                                          className="euiTableCellContent__text"
+                                          title="Alert end time"
+                                        >
+                                          Alert end time
+                                        </span>
                                       </EuiI18n>
-                                    </span>
-                                  </EuiScreenReaderOnly>
-                                </span>
+                                    </EuiInnerText>
+                                  </span>
+                                </CellContents>
                               </button>
                             </th>
                           </EuiTableHeaderCell>
@@ -4900,41 +4867,35 @@ exports[`Dashboard renders with per alert view 1`] = `
                                 onClick={[Function]}
                                 type="button"
                               >
-                                <span
+                                <CellContents
                                   className="euiTableCellContent"
+                                  isSorted={false}
+                                  showSortMsg={true}
                                 >
-                                  <EuiInnerText>
-                                    <EuiI18n
-                                      default="{innerText}; Sorted in {ariaSortValue} order"
-                                      token="euiTableHeaderCell.titleTextWithSort"
-                                      values={
-                                        Object {
-                                          "ariaSortValue": "none",
-                                          "innerText": "Trigger name",
-                                        }
-                                      }
-                                    >
-                                      <span
-                                        className="euiTableCellContent__text"
-                                        title="Trigger name"
-                                      >
-                                        Trigger name
-                                      </span>
-                                    </EuiI18n>
-                                  </EuiInnerText>
-                                  <EuiScreenReaderOnly>
-                                    <span
-                                      className="euiScreenReaderOnly"
-                                    >
+                                  <span
+                                    className="euiTableCellContent"
+                                  >
+                                    <EuiInnerText>
                                       <EuiI18n
-                                        default="Click to sort in ascending order"
-                                        token="euiTableHeaderCell.clickForAscending"
+                                        default="{innerText}; {description}"
+                                        token="euiTableHeaderCell.titleTextWithDesc"
+                                        values={
+                                          Object {
+                                            "description": undefined,
+                                            "innerText": "Trigger name",
+                                          }
+                                        }
                                       >
-                                        Click to sort in ascending order
+                                        <span
+                                          className="euiTableCellContent__text"
+                                          title="Trigger name"
+                                        >
+                                          Trigger name
+                                        </span>
                                       </EuiI18n>
-                                    </span>
-                                  </EuiScreenReaderOnly>
-                                </span>
+                                    </EuiInnerText>
+                                  </span>
+                                </CellContents>
                               </button>
                             </th>
                           </EuiTableHeaderCell>
@@ -4954,18 +4915,34 @@ exports[`Dashboard renders with per alert view 1`] = `
                                 }
                               }
                             >
-                              <div
+                              <CellContents
                                 className="euiTableCellContent"
+                                showSortMsg={false}
                               >
-                                <EuiInnerText>
-                                  <span
-                                    className="euiTableCellContent__text"
-                                    title="Severity"
-                                  >
-                                    Severity
-                                  </span>
-                                </EuiInnerText>
-                              </div>
+                                <span
+                                  className="euiTableCellContent"
+                                >
+                                  <EuiInnerText>
+                                    <EuiI18n
+                                      default="{innerText}; {description}"
+                                      token="euiTableHeaderCell.titleTextWithDesc"
+                                      values={
+                                        Object {
+                                          "description": undefined,
+                                          "innerText": "Severity",
+                                        }
+                                      }
+                                    >
+                                      <span
+                                        className="euiTableCellContent__text"
+                                        title="Severity"
+                                      >
+                                        Severity
+                                      </span>
+                                    </EuiI18n>
+                                  </EuiInnerText>
+                                </span>
+                              </CellContents>
                             </th>
                           </EuiTableHeaderCell>
                           <EuiTableHeaderCell
@@ -4984,18 +4961,34 @@ exports[`Dashboard renders with per alert view 1`] = `
                                 }
                               }
                             >
-                              <div
+                              <CellContents
                                 className="euiTableCellContent"
+                                showSortMsg={false}
                               >
-                                <EuiInnerText>
-                                  <span
-                                    className="euiTableCellContent__text"
-                                    title="State"
-                                  >
-                                    State
-                                  </span>
-                                </EuiInnerText>
-                              </div>
+                                <span
+                                  className="euiTableCellContent"
+                                >
+                                  <EuiInnerText>
+                                    <EuiI18n
+                                      default="{innerText}; {description}"
+                                      token="euiTableHeaderCell.titleTextWithDesc"
+                                      values={
+                                        Object {
+                                          "description": undefined,
+                                          "innerText": "State",
+                                        }
+                                      }
+                                    >
+                                      <span
+                                        className="euiTableCellContent__text"
+                                        title="State"
+                                      >
+                                        State
+                                      </span>
+                                    </EuiI18n>
+                                  </EuiInnerText>
+                                </span>
+                              </CellContents>
                             </th>
                           </EuiTableHeaderCell>
                           <EuiTableHeaderCell
@@ -5024,41 +5017,35 @@ exports[`Dashboard renders with per alert view 1`] = `
                                 onClick={[Function]}
                                 type="button"
                               >
-                                <span
+                                <CellContents
                                   className="euiTableCellContent"
+                                  isSorted={false}
+                                  showSortMsg={true}
                                 >
-                                  <EuiInnerText>
-                                    <EuiI18n
-                                      default="{innerText}; Sorted in {ariaSortValue} order"
-                                      token="euiTableHeaderCell.titleTextWithSort"
-                                      values={
-                                        Object {
-                                          "ariaSortValue": "none",
-                                          "innerText": "Time acknowledged",
-                                        }
-                                      }
-                                    >
-                                      <span
-                                        className="euiTableCellContent__text"
-                                        title="Time acknowledged"
-                                      >
-                                        Time acknowledged
-                                      </span>
-                                    </EuiI18n>
-                                  </EuiInnerText>
-                                  <EuiScreenReaderOnly>
-                                    <span
-                                      className="euiScreenReaderOnly"
-                                    >
+                                  <span
+                                    className="euiTableCellContent"
+                                  >
+                                    <EuiInnerText>
                                       <EuiI18n
-                                        default="Click to sort in ascending order"
-                                        token="euiTableHeaderCell.clickForAscending"
+                                        default="{innerText}; {description}"
+                                        token="euiTableHeaderCell.titleTextWithDesc"
+                                        values={
+                                          Object {
+                                            "description": undefined,
+                                            "innerText": "Time acknowledged",
+                                          }
+                                        }
                                       >
-                                        Click to sort in ascending order
+                                        <span
+                                          className="euiTableCellContent__text"
+                                          title="Time acknowledged"
+                                        >
+                                          Time acknowledged
+                                        </span>
                                       </EuiI18n>
-                                    </span>
-                                  </EuiScreenReaderOnly>
-                                </span>
+                                    </EuiInnerText>
+                                  </span>
+                                </CellContents>
                               </button>
                             </th>
                           </EuiTableHeaderCell>
@@ -5152,18 +5139,12 @@ exports[`Dashboard renders with per alert view 1`] = `
                                               className="euiSpacer euiSpacer--l"
                                             />
                                           </EuiSpacer>
-                                          <EuiSpacer
-                                            size="s"
-                                          >
-                                            <div
-                                              className="euiSpacer euiSpacer--s"
-                                            />
-                                          </EuiSpacer>
                                           <EuiButton
                                             fill={true}
                                             href="alerting#/create-monitor"
                                           >
                                             <EuiButtonDisplay
+                                              baseClassName="euiButton"
                                               element="a"
                                               fill={true}
                                               href="alerting#/create-monitor"
@@ -5172,8 +5153,14 @@ exports[`Dashboard renders with per alert view 1`] = `
                                             >
                                               <a
                                                 className="euiButton euiButton--primary euiButton--fill"
+                                                disabled={false}
                                                 href="alerting#/create-monitor"
                                                 rel="noreferrer"
+                                                style={
+                                                  Object {
+                                                    "minWidth": undefined,
+                                                  }
+                                                }
                                               >
                                                 <EuiButtonContent
                                                   className="euiButton__content"

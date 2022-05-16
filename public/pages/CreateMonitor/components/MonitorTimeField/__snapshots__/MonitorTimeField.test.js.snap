@@ -79,7 +79,7 @@ exports[`MonitorTimeField renders 1`] = `
     </div>
     <div
       class="euiFormHelpText euiFormRow__text"
-      id="timeField-form-row-help"
+      id="timeField-form-row-help-0"
     >
       Choose the time field you want to use for your x-axis
     </div>

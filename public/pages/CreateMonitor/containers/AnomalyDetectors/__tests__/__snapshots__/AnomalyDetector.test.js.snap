@@ -752,6 +752,7 @@ exports[`AnomalyDetectors renders 1`] = `
                                     </AutosizeInput>
                                   </div>
                                   <EuiFormControlLayoutIcons
+                                    compressed={false}
                                     icon={
                                       Object {
                                         "aria-label": "Open list of options",
@@ -772,6 +773,7 @@ exports[`AnomalyDetectors renders 1`] = `
                                         data-test-subj="comboBoxToggleListButton"
                                         iconRef={[Function]}
                                         onClick={[Function]}
+                                        size="m"
                                         type="arrowDown"
                                       >
                                         <button
@@ -784,6 +786,7 @@ exports[`AnomalyDetectors renders 1`] = `
                                           <EuiIcon
                                             aria-hidden="true"
                                             className="euiFormControlLayoutCustomIcon__icon"
+                                            size="m"
                                             type="arrowDown"
                                           >
                                             <div>

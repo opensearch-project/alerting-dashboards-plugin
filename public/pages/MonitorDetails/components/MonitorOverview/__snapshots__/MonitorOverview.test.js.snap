@@ -2,7 +2,7 @@
 
 exports[`MonitorOverview renders 1`] = `
 <div
-  class="euiPanel euiPanel--paddingMedium"
+  class="euiPanel euiPanel--paddingMedium euiPanel--borderRadiusMedium euiPanel--plain euiPanel--hasShadow"
   style="padding-left:0px;padding-right:0px"
 >
   <div

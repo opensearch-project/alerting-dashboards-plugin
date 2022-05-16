@@ -41,4 +41,5 @@ module.exports = {
   clearMocks: true,
   testPathIgnorePatterns: ['<rootDir>/build/', '<rootDir>/node_modules/'],
   modulePathIgnorePatterns: ['alertingDashboards'],
+  testEnvironment: 'jest-environment-jsdom',
 };
