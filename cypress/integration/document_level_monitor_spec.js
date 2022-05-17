@@ -26,7 +26,6 @@ const addDocumentsToTestIndex = (indexName = '', numOfDocs = 0) => {
 describe('DocumentLevelMonitor', () => {
   before(() => {
     // Load sample data
-    cy.createIndexByName(TESTING_INDEX);
     addDocumentsToTestIndex(TESTING_INDEX, 5);
   });
   beforeEach(() => {
