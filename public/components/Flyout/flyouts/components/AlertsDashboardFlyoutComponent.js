@@ -48,7 +48,7 @@ import queryString from 'query-string';
 import { MAX_ALERT_COUNT } from '../../../../pages/Dashboard/utils/constants';
 import { SEVERITY_OPTIONS } from '../../../../pages/CreateTrigger/utils/constants';
 import {
-  ALERTS_FINDING_COLUMN,
+  getAlertsFindingColumn,
   TABLE_TAB_IDS,
 } from '../../../../pages/Dashboard/components/FindingsDashboard/utils';
 import FindingsDashboard from '../../../../pages/Dashboard/containers/FindingsDashboard';
@@ -318,15 +318,13 @@ export default class AlertsDashboardFlyoutComponent extends Component {
   }
 
   renderAlertsTable() {
-    const { trigger_name } = this.props;
-    const { monitor, monitorType } = this.state;
-    const detectorId = _.get(monitor, MONITOR_INPUT_DETECTOR_ID);
-    const groupBy = _.get(monitor, MONITOR_GROUP_BY);
-
+    const { httpClient, history, location, notifications, trigger_name } = this.props;
     const {
       alerts,
       alertState,
       loading,
+      monitor,
+      monitorType,
       page,
       search,
       selectable,
@@ -337,6 +335,9 @@ export default class AlertsDashboardFlyoutComponent extends Component {
       sortField,
       totalAlerts,
     } = this.state;
+
+    const detectorId = _.get(monitor, MONITOR_INPUT_DETECTOR_ID);
+    const groupBy = _.get(monitor, MONITOR_GROUP_BY);
 
     const getItemId = (item) => {
       switch (monitorType) {
@@ -357,7 +358,11 @@ export default class AlertsDashboardFlyoutComponent extends Component {
           break;
         case MONITOR_TYPE.DOC_LEVEL:
           columns = _.cloneDeep(queryColumns);
-          columns.splice(0, 0, ALERTS_FINDING_COLUMN);
+          columns.splice(
+            0,
+            0,
+            getAlertsFindingColumn(httpClient, history, true, location, notifications)
+          );
           break;
         default:
           columns = queryColumns;
@@ -429,6 +434,7 @@ export default class AlertsDashboardFlyoutComponent extends Component {
           onStateChange={this.onAlertStateChange}
           onPageChange={this.onPageClick}
           isAlertsFlyout={true}
+          monitorType={monitorType}
         />
         <EuiHorizontalRule margin="xs" />
         <EuiBasicTable
@@ -453,10 +459,11 @@ export default class AlertsDashboardFlyoutComponent extends Component {
     );
   }
 
-  renderFindingsTable() {
+  renderFindingsTable(findingId) {
     const { httpClient, history, location, monitor_id, notifications } = this.props;
     return (
       <FindingsDashboard
+        findingId={findingId}
         isAlertsFlyout={true}
         isPreview={false}
         monitorId={monitor_id}
