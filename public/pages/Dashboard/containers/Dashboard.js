@@ -29,7 +29,7 @@ import {
 import { DEFAULT_PAGE_SIZE_OPTIONS } from '../../Monitors/containers/Monitors/utils/constants';
 import { MAX_ALERT_COUNT } from '../utils/constants';
 import AcknowledgeAlertsModal from '../components/AcknowledgeAlertsModal';
-import { getAlertsFindingColumn } from '../components/FindingsDashboard/utils';
+import { getAlertsFindingColumn } from '../components/FindingsDashboard/findingsUtils';
 
 export default class Dashboard extends Component {
   constructor(props) {
@@ -276,16 +276,19 @@ export default class Dashboard extends Component {
   };
 
   openFlyout = (payload) => {
-    this.setState({ ...this.state, flyoutIsOpen: true });
-    this.props.setFlyout({
-      type: 'alertsDashboard',
-      payload: { ...payload },
-    });
+    this.setState({ flyoutIsOpen: true });
+    if (!_.isEmpty(payload)) {
+      this.props.setFlyout({
+        type: 'alertsDashboard',
+        payload: { ...payload },
+      });
+    }
   };
 
   closeFlyout = () => {
-    this.props.setFlyout(null);
-    this.setState({ ...this.state, flyoutIsOpen: false });
+    const { setFlyout } = this.props;
+    if (typeof setFlyout === 'function') setFlyout(null);
+    this.setState({ flyoutIsOpen: false });
   };
 
   refreshDashboard = () => {
@@ -345,6 +348,7 @@ export default class Dashboard extends Component {
       alerts,
       alertsByTriggers,
       alertState,
+      flyoutIsOpen,
       loadingMonitors,
       monitors,
       page,
@@ -385,7 +389,16 @@ export default class Dashboard extends Component {
           columnType.splice(
             0,
             0,
-            getAlertsFindingColumn(httpClient, history, false, location, notifications)
+            getAlertsFindingColumn(
+              httpClient,
+              history,
+              false,
+              location,
+              notifications,
+              flyoutIsOpen,
+              this.openFlyout,
+              this.closeFlyout
+            )
           );
           break;
         default:

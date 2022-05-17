@@ -43,7 +43,10 @@ export const getAlertsFindingColumn = (
   history,
   isAlertsFlyout = false,
   location,
-  notifications
+  notifications,
+  flyoutIsOpen,
+  openFlyout,
+  closeFlyout
 ) => {
   return {
     field: 'related_doc_ids',
@@ -61,6 +64,9 @@ export const getAlertsFindingColumn = (
           history={history}
           location={location}
           notifications={notifications}
+          dashboardFlyoutIsOpen={flyoutIsOpen}
+          openFlyout={openFlyout}
+          closeFlyout={closeFlyout}
         />
       );
     },
@@ -163,14 +169,14 @@ export const parseFindingsForPreview = (previewResponse = {}, index = '', querie
 export const validDocLevelGraphQueries = (queries = []) => {
   // The 'queryName', 'field', 'operator', and 'query' fields are required to execute a doc level query.
   // If any of those fields are undefined for any queries, the monitor cannot be executed.
-  const definedQueries = queries.find(
+  const incompleteQueries = queries.find(
     (query) =>
       _.isEmpty(query.queryName) ||
       _.isEmpty(query.field) ||
       _.isEmpty(query.operator) ||
       _.isEmpty(query.query)
   );
-  return !_.isEmpty(queries) && _.isEmpty(definedQueries);
+  return !_.isEmpty(queries) && _.isEmpty(incompleteQueries);
 };
 
 export async function getFindings({
