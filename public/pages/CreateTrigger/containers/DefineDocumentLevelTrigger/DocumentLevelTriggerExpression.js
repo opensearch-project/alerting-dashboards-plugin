@@ -28,7 +28,6 @@ class DocumentLevelTriggerExpression extends Component {
     const isFirstCondition = index === 0;
     if (index > 0)
       values['andOrCondition'] = values.andOrCondition || AND_OR_CONDITION_OPTIONS[0].value;
-    console.info(`hurneyt formFieldName = ${formFieldName}`);
     return (
       <EuiFlexGroup alignItems={'flexStart'} gutterSize={'m'}>
         {/* Do not display AND/OR selector for the first condition */}
@@ -85,7 +84,7 @@ class DocumentLevelTriggerExpression extends Component {
           />
         </EuiFlexItem>
 
-        {/* Do not display the button for the first condition */}
+        {/* Do not display this button for the first condition */}
         {!isFirstCondition && (
           <EuiFlexItem grow={false}>
             <EuiFormRow hasEmptyLabelSpace={true}>
