@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React from 'react';
+import React, { useState } from 'react';
 import _ from 'lodash';
 import {
   EuiAccordion,
@@ -36,7 +36,9 @@ const Action = ({
   fieldPath,
   values,
   hasNotificationPlugin,
+  loadDestinations,
 }) => {
+  const [loadingDestinations, setLoadingDestinations] = useState(false);
   const selectedDestination = flattenedDestinations.filter(
     (item) => item.value === action.destination_id
   );
@@ -46,6 +48,12 @@ const Action = ({
   const actionLabel = ActionsMap[type].label;
   const manageChannelsUrl = httpClient.basePath.prepend(MANAGE_CHANNELS_PATH);
   const isFirstAction = index !== undefined && index === 0;
+
+  async function refreshDestinations() {
+    setLoadingDestinations(true);
+    await loadDestinations();
+    setLoadingDestinations(false);
+  }
 
   const renderChannels = () => {
     return (
@@ -74,6 +82,7 @@ const Action = ({
                   });
                 },
                 onBlur: (e, field, form) => {
+                  refreshDestinations();
                   form.setFieldTouched(`${fieldPath}actions.${index}.destination_id`, true);
                 },
                 singleSelection: { asPlainText: true },
@@ -87,6 +96,8 @@ const Action = ({
                   </React.Fragment>
                 ),
                 rowHeight: 45,
+                async: true,
+                isLoading: loadingDestinations,
               }}
             />
           </EuiFlexItem>
