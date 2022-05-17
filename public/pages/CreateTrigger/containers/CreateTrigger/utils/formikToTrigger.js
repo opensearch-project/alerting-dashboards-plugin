@@ -73,7 +73,6 @@ export function formikToBucketLevelTrigger(values, monitorUiMetadata) {
 
 export function formikToDocumentLevelTrigger(values, monitorUiMetadata) {
   const condition = formikToDocumentLevelTriggerCondition(values, monitorUiMetadata);
-  // const actions = formikToAction(values); // todo hurneyt
   const actions = formikToBucketLevelTriggerAction(values);
   return {
     document_level_trigger: {
