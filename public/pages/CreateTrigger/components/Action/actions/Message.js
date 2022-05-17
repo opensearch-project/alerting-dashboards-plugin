@@ -149,12 +149,16 @@ export default function Message(
     : actionPath;
   const actionableAlertsSelectionsPath = `${actionExecutionPolicyPath}.action_execution_scope.${NOTIFY_OPTIONS_VALUES.PER_ALERT}.actionable_alerts`;
 
+  let defaultNotifyOption;
+  switch (monitorType) {
+    case MONITOR_TYPE.DOC_LEVEL:
+      defaultNotifyOption = NOTIFY_OPTIONS_VALUES.PER_EXECUTION;
+      break;
+    default:
+      defaultNotifyOption = NOTIFY_OPTIONS_VALUES.PER_ALERT;
+  }
   let actionExecutionScopeId = editableActionExecutionPolicy
-    ? _.get(
-        action,
-        'action_execution_policy.action_execution_scope',
-        NOTIFY_OPTIONS_VALUES.PER_ALERT
-      )
+    ? _.get(action, 'action_execution_policy.action_execution_scope', defaultNotifyOption)
     : '';
   if (!_.isString(actionExecutionScopeId))
     actionExecutionScopeId = _.keys(actionExecutionScopeId)[0];
