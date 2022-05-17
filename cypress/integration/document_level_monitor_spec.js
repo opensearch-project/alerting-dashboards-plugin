@@ -3,6 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+import _ from 'lodash';
 import { PLUGIN_NAME } from '../support/constants';
 import sampleDocumentLevelMonitor from '../fixtures/sample_document_level_monitor.json';
 
@@ -149,7 +150,7 @@ describe('DocumentLevelMonitor', () => {
       cy.get('[data-test-subj="documentLevelQuery_query0"]').type('us-west-2');
 
       // Enter query tags
-      cy.get('[data-test-subj="addDocLevelQueryTagButton_query0"]').click();
+      cy.get('[data-test-subj="addDocLevelQueryTagButton_query0"]').click().click();
       cy.get('[data-test-subj="documentLevelQueryTag_text_field_query0_tag0"]').type(
         sampleDocumentLevelMonitor.inputs[0].doc_level_input.queries[0].tags[0]
       );
@@ -165,10 +166,12 @@ describe('DocumentLevelMonitor', () => {
       // Define the first condition
       cy.get(
         '[data-test-subj="documentLevelTriggerExpression_query_triggerDefinitions[0].triggerConditions.0"]'
-      ).type(sampleDocumentLevelMonitor.inputs[0].doc_level_input.queries[0].tags[0]);
+      ).type(
+        `${sampleDocumentLevelMonitor.inputs[0].doc_level_input.queries[0].tags[0]}{downarrow}{enter}`
+      );
 
       // Add another condition
-      cy.get('[data-test-subj="addTriggerConditionButton"]').click();
+      cy.get('[data-test-subj="addTriggerConditionButton"]').click().click();
 
       // Define a second condition
       cy.get(
@@ -177,7 +180,9 @@ describe('DocumentLevelMonitor', () => {
 
       cy.get(
         '[data-test-subj="documentLevelTriggerExpression_query_triggerDefinitions[0].triggerConditions.1"]'
-      ).type(sampleDocumentLevelMonitor.inputs[0].doc_level_input.queries[0].tags[0]);
+      ).type(
+        `${sampleDocumentLevelMonitor.inputs[0].doc_level_input.queries[0].name}{downarrow}{enter}`
+      );
 
       // TODO: Test with Notifications plugin
 
@@ -203,8 +208,136 @@ describe('DocumentLevelMonitor', () => {
       cy.deleteAllMonitors();
     });
 
-    // todo hurney
-    describe('when defined by visual editor', () => {});
+    describe('when defined with extraction query editor', () => {
+      it('with a new trigger', () => {
+        // Removing ui-metadata so the UX will use the extraction query editor when editing the monitor
+        const extractionQueryMonitor = _.omit(_.cloneDeep(sampleDocumentLevelMonitor), [
+          'ui_metadata',
+        ]);
+
+        // Creating the test monitor
+        cy.createMonitor(extractionQueryMonitor);
+        cy.reload();
+
+        // Confirm the created monitor can be seen
+        cy.contains(SAMPLE_DOCUMENT_LEVEL_MONITOR);
+
+        // Select the monitor
+        cy.get('a').contains(SAMPLE_DOCUMENT_LEVEL_MONITOR).click({ force: true });
+
+        // Click Edit button
+        cy.contains('Edit').click({ force: true });
+
+        // Add a trigger
+        cy.contains('Add another trigger').click({ force: true });
+
+        // Expand the accordion
+        cy.contains('New trigger').click();
+
+        // Type in the trigger name
+        const newTriggerName = 'new-extraction-query-trigger';
+        cy.get('input[name="triggerDefinitions[1].name"]').type(newTriggerName);
+
+        // Clear the default trigger condition source, and type the sample source
+        cy.get('[data-test-subj="triggerQueryCodeEditor"]')
+          .last()
+          .within(() => {
+            cy.get('.ace_text-input')
+              .focus()
+              .clear({ force: true })
+              .type(
+                JSON.stringify(
+                  sampleDocumentLevelMonitor.triggers[0].document_level_trigger.condition.script
+                    .source
+                ),
+                {
+                  force: true,
+                  parseSpecialCharSequences: false,
+                  delay: 5,
+                  timeout: 20000,
+                }
+              )
+              .trigger('blur', { force: true });
+          });
+
+        // TODO: Test with Notifications plugin
+
+        // Click the create button
+        cy.get('button').contains('Update').last().click();
+
+        // Confirm we can see only one row in the trigger list by checking <caption> element
+        cy.contains('This table contains 2 rows');
+
+        // Confirm we can see the new trigger
+        cy.contains(newTriggerName);
+      });
+    });
+
+    describe('when defined with visual editor', () => {
+      it('with a new query and a new trigger', () => {
+        // Creating the test monitor
+        cy.createMonitor(sampleDocumentLevelMonitor);
+        cy.reload();
+
+        // Confirm the created monitor can be seen
+        cy.contains(SAMPLE_DOCUMENT_LEVEL_MONITOR);
+
+        // Select the monitor
+        cy.get('a').contains(SAMPLE_DOCUMENT_LEVEL_MONITOR).click({ force: true });
+
+        // Click Edit button
+        cy.contains('Edit').click({ force: true });
+
+        // Add another query
+        cy.contains('Add another query').click({ force: true });
+
+        // Enter query name
+        const newQueryName = 'new-visual-editor-query';
+        cy.get('[data-test-subj="documentLevelQuery_queryName3"]').type(newQueryName);
+
+        // Enter query field
+        cy.get('[data-test-subj="documentLevelQuery_field3"]').type('message{downarrow}{enter}');
+
+        // Enter query operator
+        cy.get('[data-test-subj="documentLevelQuery_operator3"]').type('is not{enter}');
+
+        // Enter query
+        cy.get('[data-test-subj="documentLevelQuery_query3"]').type('Unknown message');
+
+        // Enter query tags
+        cy.get('[data-test-subj="addDocLevelQueryTagButton_query3"]').click().click();
+        cy.get('[data-test-subj="documentLevelQueryTag_text_field_query3_tag0"]').type('sev1');
+
+        // Remove existing trigger
+        cy.contains('Remove trigger').click({ force: true });
+
+        // Add a trigger
+        cy.contains('Add another trigger').click({ force: true });
+
+        // Expand the accordion
+        cy.contains('New trigger').click();
+
+        // Type in the trigger name
+        const newTriggerName = 'new-visual-editor-trigger';
+        cy.get('input[name="triggerDefinitions[0].name"]').type(newTriggerName);
+
+        // Define the triggere condition
+        cy.get(
+          '[data-test-subj="documentLevelTriggerExpression_query_triggerDefinitions[0].triggerConditions.0"]'
+        ).type(`${newQueryName}{downarrow}{enter}`);
+
+        // TODO: Test with Notifications plugin
+
+        // Click the create button
+        cy.get('button').contains('Update').last().click();
+
+        // Confirm we can see only one row in the trigger list by checking <caption> element
+        cy.contains('This table contains 1 row');
+
+        // Confirm we can see the new trigger
+        cy.contains(newTriggerName);
+      });
+    });
   });
 
   after(() => {
