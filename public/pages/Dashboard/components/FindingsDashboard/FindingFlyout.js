@@ -18,19 +18,45 @@ import {
   EuiText,
   EuiTitle,
 } from '@elastic/eui';
+import _ from 'lodash';
+import { getFindings } from './utils';
+import { DEFAULT_GET_FINDINGS_PARAMS } from '../../../../../server/services/FindingService';
 
 export const NO_FINDING_DOC_ID_TEXT = 'No document ID';
 
 export default class FindingFlyout extends Component {
   constructor(props) {
     super(props);
+    const { alert, document_list = [], finding = {} } = props;
+    const alertDocList = _.isEmpty(alert) ? undefined : [{ id: _.get(alert, 'related_doc_ids.0') }];
     this.state = {
+      docList: alertDocList || document_list,
+      flyout: undefined,
+      finding: finding,
+      flyoutHeight: undefined,
       isFlyoutOpen: false,
     };
   }
 
-  componentDidMount() {
-    this.renderFlyout();
+  async componentDidUpdate(prevProps, prevState) {
+    const { isFlyoutOpen } = this.state;
+    if (prevState.isFlyoutOpen !== isFlyoutOpen && isFlyoutOpen) await this.renderFlyout();
+  }
+
+  async getFinding() {
+    const { alert, httpClient, history, location, notifications } = this.props;
+    const findingId = _.get(alert, 'finding_ids.0', '');
+    const findingResults = await getFindings({
+      ...DEFAULT_GET_FINDINGS_PARAMS,
+      id: findingId,
+      httpClient,
+      history,
+      monitorId: alert.monitor_id,
+      location,
+      notifications,
+    });
+    const finding = findingResults.findings[0];
+    this.setState({ finding: finding, docList: finding.document_list });
   }
 
   onClick = () => {
@@ -42,23 +68,26 @@ export default class FindingFlyout extends Component {
     this.setState({ isFlyoutOpen: false });
   };
 
-  renderFlyout() {
-    const {
-      isAlertsFlyout = false,
-      document_list = [],
-      finding: { id: findingId = '', queries = [] },
-    } = this.props;
-    const { id: docId = '', index = '', document = '' } = document_list[0];
+  async renderFlyout() {
+    const { alert, isAlertsFlyout = false } = this.props;
+    if (!_.isEmpty(alert)) await this.getFinding();
+
+    const { docList, finding } = this.state;
+    const { id: findingId = '', queries = [] } = finding;
+    const { id: docId = '', index = '', document = '' } = docList[0];
     const documentDisplay = JSON.parse(document);
-    const queriesDisplay = queries.map((query, index) => {
+    const queriesDisplay = queries.map((query, indexNum) => {
       return (
-        <p key={`${query.name}${index}`} style={{ paddingTop: index > 0 ? '10px' : undefined }}>
+        <p
+          key={`${query.name}${indexNum}`}
+          style={{ paddingTop: indexNum > 0 ? '10px' : undefined }}
+        >
           {`${query.name} (${query.query})`}
         </p>
       );
     });
 
-    return (
+    const flyout = (
       <EuiFlyout
         type={isAlertsFlyout ? 'overlay' : 'push'}
         onClose={this.closeFlyout}
@@ -136,17 +165,15 @@ export default class FindingFlyout extends Component {
         </EuiFlyoutFooter>
       </EuiFlyout>
     );
+    this.setState({ flyout: flyout });
   }
 
   render() {
-    const { document_list } = this.props;
-    const { isFlyoutOpen } = this.state;
+    const { docList, flyout, isFlyoutOpen } = this.state;
     return (
       <div>
-        <EuiLink onClick={this.onClick}>
-          {_.get(document_list, '0.id', NO_FINDING_DOC_ID_TEXT)}
-        </EuiLink>
-        {isFlyoutOpen && this.renderFlyout()}
+        <EuiLink onClick={this.onClick}>{_.get(docList, '0.id', NO_FINDING_DOC_ID_TEXT)}</EuiLink>
+        {isFlyoutOpen && flyout}
       </div>
     );
   }

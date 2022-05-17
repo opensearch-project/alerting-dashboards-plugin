@@ -29,7 +29,7 @@ import {
 import { DEFAULT_PAGE_SIZE_OPTIONS } from '../../Monitors/containers/Monitors/utils/constants';
 import { MAX_ALERT_COUNT } from '../utils/constants';
 import AcknowledgeAlertsModal from '../components/AcknowledgeAlertsModal';
-import { ALERTS_FINDING_COLUMN } from '../components/FindingsDashboard/utils';
+import { getAlertsFindingColumn } from '../components/FindingsDashboard/utils';
 
 export default class Dashboard extends Component {
   constructor(props) {
@@ -382,7 +382,11 @@ export default class Dashboard extends Component {
           break;
         case MONITOR_TYPE.DOC_LEVEL:
           columnType = _.cloneDeep(queryColumns);
-          columnType.splice(0, 0, ALERTS_FINDING_COLUMN);
+          columnType.splice(
+            0,
+            0,
+            getAlertsFindingColumn(httpClient, history, false, location, notifications)
+          );
           break;
         default:
           columnType = queryColumns;

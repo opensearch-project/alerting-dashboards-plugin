@@ -179,6 +179,7 @@ exports[`AlertsDashboardFlyoutComponent renders 1`] = `
     <DashboardControls
       activePage={0}
       isAlertsFlyout={true}
+      monitorType="query_level_monitor"
       onPageChange={[Function]}
       onSearchChange={[Function]}
       onStateChange={[Function]}
