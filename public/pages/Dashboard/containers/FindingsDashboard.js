@@ -6,9 +6,18 @@
 import React, { Component } from 'react';
 import _ from 'lodash';
 import queryString from 'query-string';
-import { EuiBasicTable, EuiEmptyPrompt, EuiLoadingSpinner, EuiText } from '@elastic/eui';
+import {
+  EuiBasicTable,
+  EuiEmptyPrompt,
+  EuiFieldSearch,
+  EuiFlexGroup,
+  EuiFlexItem,
+  EuiHorizontalRule,
+  EuiLoadingSpinner,
+  EuiPagination,
+  EuiText,
+} from '@elastic/eui';
 import ContentPanel from '../../../components/ContentPanel';
-import { backendErrorNotification } from '../../../utils/helpers';
 import { DEFAULT_PAGE_SIZE_OPTIONS } from '../../Monitors/containers/Monitors/utils/constants';
 import {
   DEFAULT_GET_FINDINGS_PARAMS,
@@ -16,7 +25,7 @@ import {
 } from '../../../../server/services/FindingService';
 import {
   findingsColumnTypes,
-  getFindingsForMonitor,
+  getFindings,
   parseFindingsForPreview,
 } from '../components/FindingsDashboard/utils';
 
@@ -65,9 +74,7 @@ export default class FindingsDashboard extends Component {
   componentDidUpdate(prevProps, prevState) {
     const prevQuery = this.getQueryObjectFromState(prevState);
     const currQuery = this.getQueryObjectFromState(this.state);
-    if (!_.isEqual(prevQuery, currQuery)) this.sortFindings();
-    if (!_.isEqual(prevQuery.sortDirection, currQuery.sortDirection))
-      this.setState({ findings: _.reverse(this.state.findings) });
+    if (!_.isEqual(prevQuery, currQuery)) this.getFindings();
   }
 
   getURLQueryParams() {
@@ -101,70 +108,24 @@ export default class FindingsDashboard extends Component {
     return { id, from, size, search, sortField, sortDirection };
   }
 
-  getFindings = _.debounce(
-    () => {
-      this.setState({ loadingFindings: true });
-      const { id, from, size, search, sortField, sortDirection } = this.state;
-      const params = {
-        id,
-        from,
-        size,
-        search,
-        sortDirection,
-        sortField,
-      };
-      const queryParamsString = queryString.stringify(params);
-
-      // TODO FIXME: Refactor 'size' logic to return all findings for a monitor
-      //  once the backend supports retrieving findings for a monitorId.
-      params['size'] = Math.max(size, MAX_FINDINGS_COUNT);
-
-      location.search;
-      const { httpClient, history, monitorId, notifications } = this.props;
-      history.replace({ ...this.props.location, search: queryParamsString });
-
-      httpClient.get('../api/alerting/findings/_search', { query: params }).then((resp) => {
-        if (resp.ok) {
-          this.setState({ ...getFindingsForMonitor(resp.findings, monitorId) });
-          this.sortFindings();
-        } else {
-          console.log('Error getting findings:', resp);
-          backendErrorNotification(notifications, 'get', 'findings', resp.err);
-        }
-      });
-      this.setState({ loadingFindings: false });
-    },
-    500,
-    { leading: true }
-  );
-
-  sortFindings() {
+  async getFindings() {
     this.setState({ loadingFindings: true });
-    const { findings, sortField } = this.state;
-    let sortedFindings;
-    switch (sortField) {
-      case 'document_list':
-        sortedFindings = _.orderBy(findings, (finding) => _.get(finding, 'document_list.0.id', ''));
-        break;
-      case GET_FINDINGS_SORT_FIELDS.INDEX:
-        sortedFindings = _.orderBy(findings, (finding) =>
-          _.get(finding, GET_FINDINGS_SORT_FIELDS.INDEX, '')
-        );
-        break;
-      case GET_FINDINGS_SORT_FIELDS.MONITOR_NAME:
-        sortedFindings = _.orderBy(findings, (finding) =>
-          _.get(finding, GET_FINDINGS_SORT_FIELDS.MONITOR_NAME, '')
-        );
-        break;
-      case 'queries':
-        sortedFindings = _.orderBy(findings, (finding) => _.get(finding, 'queries', []).length);
-        break;
-      default:
-        sortedFindings = _.orderBy(findings, (finding) =>
-          _.get(finding, GET_FINDINGS_SORT_FIELDS.TIMESTAMP, '')
-        );
-    }
-    this.setState({ findings: sortedFindings, loadingFindings: false });
+    const { httpClient, history, monitorId, location, notifications } = this.props;
+    const { id, from, size, search, sortField, sortDirection } = this.state;
+    const results = await getFindings({
+      id,
+      from,
+      size,
+      search,
+      sortField,
+      sortDirection,
+      httpClient,
+      history,
+      location,
+      monitorId,
+      notifications,
+    });
+    this.setState({ ...results, loadingFindings: false });
   }
 
   getPreviewFindingsDocuments() {
@@ -188,6 +149,7 @@ export default class FindingsDashboard extends Component {
       loadingFindings,
       findings,
       totalFindings,
+      search,
       size,
       sortField,
       sortDirection,
@@ -222,6 +184,30 @@ export default class FindingsDashboard extends Component {
         titleSize={'s'}
         bodyStyles={{ padding: 'initial' }}
       >
+        <EuiFlexGroup style={{ padding: '0px 5px' }}>
+          <EuiFlexItem>
+            <EuiFieldSearch
+              fullWidth={true}
+              placeholder={'Search for a document ID'}
+              onChange={(selection) => {
+                this.setState({ page: 0, search: selection.target.value });
+                this.getFindings();
+              }}
+              value={search}
+            />
+          </EuiFlexItem>
+
+          <EuiFlexItem grow={false} style={{ justifyContent: 'center' }}>
+            <EuiPagination
+              pageCount={Math.ceil(totalFindings / size) || 1}
+              activePage={page}
+              onPageClick={(page) => this.setState({ page: page })}
+            />
+          </EuiFlexItem>
+        </EuiFlexGroup>
+
+        <EuiHorizontalRule margin={'xs'} />
+
         <EuiBasicTable
           items={loadingFindings ? [] : paginatedFindings}
           itemId={getItemId}
