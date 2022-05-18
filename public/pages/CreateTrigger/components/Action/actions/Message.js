@@ -139,42 +139,55 @@ export default function Message(
 ) {
   const [displayPreview, setDisplayPreview] = useState(false);
   const onDisplayPreviewChange = (e) => setDisplayPreview(e.target.checked);
-  const isBucketLevelMonitor =
-    _.get(context, 'ctx.monitor.monitor_type', MONITOR_TYPE.QUERY_LEVEL) ===
-    MONITOR_TYPE.BUCKET_LEVEL;
+  const monitorType = _.get(context, 'ctx.monitor.monitor_type', MONITOR_TYPE.QUERY_LEVEL);
+  const editableActionExecutionPolicy =
+    monitorType === MONITOR_TYPE.BUCKET_LEVEL || MONITOR_TYPE.DOC_LEVEL;
+
   const actionPath = `${fieldPath}actions.${index}`;
-  const actionExecutionPolicyPath = isBucketLevelMonitor
+  const actionExecutionPolicyPath = editableActionExecutionPolicy
     ? `${actionPath}.action_execution_policy`
     : actionPath;
+  const actionableAlertsSelectionsPath = `${actionExecutionPolicyPath}.action_execution_scope.${NOTIFY_OPTIONS_VALUES.PER_ALERT}.actionable_alerts`;
 
-  let actionExecutionScopeId = isBucketLevelMonitor
-    ? _.get(
-        action,
-        'action_execution_policy.action_execution_scope',
-        NOTIFY_OPTIONS_VALUES.PER_ALERT
-      )
+  let defaultNotifyOption;
+  switch (monitorType) {
+    case MONITOR_TYPE.DOC_LEVEL:
+      defaultNotifyOption = NOTIFY_OPTIONS_VALUES.PER_EXECUTION;
+      break;
+    default:
+      defaultNotifyOption = NOTIFY_OPTIONS_VALUES.PER_ALERT;
+  }
+  let actionExecutionScopeId = editableActionExecutionPolicy
+    ? _.get(action, 'action_execution_policy.action_execution_scope', defaultNotifyOption)
     : '';
   if (!_.isString(actionExecutionScopeId))
     actionExecutionScopeId = _.keys(actionExecutionScopeId)[0];
 
-  let actionableAlertsSelections = _.get(
-    values,
-    `${actionExecutionPolicyPath}.action_execution_scope.${NOTIFY_OPTIONS_VALUES.PER_ALERT}.actionable_alerts`
-  );
+  let actionableAlertsSelections;
+  let displayActionableAlertsOptions;
+  let displayThrottlingSettings;
+  switch (monitorType) {
+    case MONITOR_TYPE.BUCKET_LEVEL:
+      displayActionableAlertsOptions = true;
+      actionableAlertsSelections = _.get(values, actionableAlertsSelectionsPath);
+      break;
+    case MONITOR_TYPE.DOC_LEVEL:
+      displayActionableAlertsOptions = false;
+      displayThrottlingSettings = false;
+      actionableAlertsSelections = [];
+      break;
+    default:
+      displayActionableAlertsOptions = false;
+      displayThrottlingSettings = actionExecutionScopeId !== NOTIFY_OPTIONS_VALUES.PER_EXECUTION;
+  }
 
   if (actionExecutionScopeId === NOTIFY_OPTIONS_VALUES.PER_ALERT) {
-    if (_.get(values, `${actionPath}.throttle.value`) === undefined) {
+    if (_.get(values, `${actionPath}.throttle.value`) === undefined)
       _.set(values, `${actionPath}.throttle.value`, 10);
-    }
 
-    if (actionableAlertsSelections === undefined) {
-      _.set(
-        values,
-        `${actionExecutionPolicyPath}.action_execution_scope.${NOTIFY_OPTIONS_VALUES.PER_ALERT}.actionable_alerts`,
-        DEFAULT_ACTIONABLE_ALERTS_SELECTIONS
-      );
+    if (actionableAlertsSelections === undefined)
       actionableAlertsSelections = DEFAULT_ACTIONABLE_ALERTS_SELECTIONS;
-    }
+    _.set(values, actionableAlertsSelectionsPath, actionableAlertsSelections);
   }
 
   let preview = '';
@@ -237,7 +250,7 @@ export default function Message(
         {renderSendTestMessageButton(
           index,
           sendTestMessage,
-          isBucketLevelMonitor,
+          monitorType === MONITOR_TYPE.BUCKET_LEVEL,
           displayPreview,
           onDisplayPreviewChange,
           fieldPath
@@ -264,7 +277,7 @@ export default function Message(
 
       <EuiSpacer size="m" />
 
-      {isBucketLevelMonitor ? (
+      {editableActionExecutionPolicy ? (
         <EuiFormRow
           label={<span style={{ color: '#343741' }}>Perform action</span>}
           style={{ maxWidth: '100%' }}
@@ -279,9 +292,7 @@ export default function Message(
                   value: NOTIFY_OPTIONS_VALUES.PER_EXECUTION,
                   checked: actionExecutionScopeId === NOTIFY_OPTIONS_VALUES.PER_EXECUTION,
                   label: NOTIFY_OPTIONS_LABELS.PER_EXECUTION,
-                  onChange: (e, field, form) => {
-                    field.onChange(e);
-                  },
+                  onChange: (e, field, form) => field.onChange(e),
                 }}
               />
             </EuiFlexItem>
@@ -294,63 +305,49 @@ export default function Message(
                   value: NOTIFY_OPTIONS_VALUES.PER_ALERT,
                   checked: actionExecutionScopeId === NOTIFY_OPTIONS_VALUES.PER_ALERT,
                   label: NOTIFY_OPTIONS_LABELS.PER_ALERT,
-                  onChange: (e, field, form) => {
-                    field.onChange(e);
-                  },
+                  onChange: (e, field, form) => field.onChange(e),
                 }}
               />
             </EuiFlexItem>
 
-            <EuiFlexItem>
-              {actionExecutionScopeId === NOTIFY_OPTIONS_VALUES.PER_ALERT ? (
-                <EuiFormRow style={{ maxWidth: '100%' }}>
-                  <EuiFlexGroup
-                    alignItems="center"
-                    style={{
-                      margin: '0px',
-                      maxWidth: '100%',
+            {actionExecutionScopeId === NOTIFY_OPTIONS_VALUES.PER_ALERT &&
+            displayActionableAlertsOptions ? (
+              <EuiFormRow style={{ maxWidth: '100%' }}>
+                <EuiFlexGroup
+                  alignItems="center"
+                  style={{
+                    margin: '0px',
+                    maxWidth: '100%',
+                  }}
+                >
+                  <FormikComboBox
+                    name={actionableAlertsSelectionsPath}
+                    formRow
+                    fieldProps={{ validate: validateActionableAlertsSelections }}
+                    rowProps={{
+                      label: 'Actionable alerts',
+                      style: { width: '400px' },
+                      isInvalid:
+                        actionExecutionScopeId === NOTIFY_OPTIONS_VALUES.PER_ALERT &&
+                        _.isEmpty(actionableAlertsSelections),
+                      error: NO_ACTIONABLE_ALERT_SELECTIONS,
                     }}
-                  >
-                    <FormikComboBox
-                      name={`${actionExecutionPolicyPath}.action_execution_scope.${NOTIFY_OPTIONS_VALUES.PER_ALERT}.actionable_alerts`}
-                      formRow
-                      fieldProps={{ validate: validateActionableAlertsSelections }}
-                      rowProps={{
-                        label: 'Actionable alerts',
-                        style: { width: '400px' },
-                        isInvalid:
-                          actionExecutionScopeId === NOTIFY_OPTIONS_VALUES.PER_ALERT &&
-                          _.isEmpty(
-                            _.get(
-                              action,
-                              `action_execution_policy.action_execution_scope.${NOTIFY_OPTIONS_VALUES.PER_ALERT}.actionable_alerts`
-                            )
-                          ),
-                        error: NO_ACTIONABLE_ALERT_SELECTIONS,
-                      }}
-                      inputProps={{
-                        placeholder: 'Select alert options',
-                        options: ACTIONABLE_ALERTS_OPTIONS,
-                        onBlur: (e, field, form) => {
-                          form.setFieldTouched(
-                            `${actionExecutionPolicyPath}.action_execution_scope.${NOTIFY_OPTIONS_VALUES.PER_ALERT}.actionable_alerts`,
-                            true
-                          );
-                        },
-                        onChange: (options, field, form) => {
-                          form.setFieldValue(
-                            `${actionExecutionPolicyPath}.action_execution_scope.${NOTIFY_OPTIONS_VALUES.PER_ALERT}.actionable_alerts`,
-                            options
-                          );
-                        },
-                        isClearable: true,
-                        selectedOptions: actionableAlertsSelections,
-                      }}
-                    />
-                  </EuiFlexGroup>
-                </EuiFormRow>
-              ) : null}
-            </EuiFlexItem>
+                    inputProps={{
+                      placeholder: 'Select alert options',
+                      options: ACTIONABLE_ALERTS_OPTIONS,
+                      onBlur: (e, field, form) => {
+                        form.setFieldTouched(actionableAlertsSelectionsPath, true);
+                      },
+                      onChange: (options, field, form) => {
+                        form.setFieldValue(actionableAlertsSelectionsPath, options);
+                      },
+                      isClearable: true,
+                      selectedOptions: actionableAlertsSelections,
+                    }}
+                  />
+                </EuiFlexGroup>
+              </EuiFormRow>
+            ) : null}
           </EuiFlexGroup>
         </EuiFormRow>
       ) : (
@@ -360,7 +357,7 @@ export default function Message(
         </div>
       )}
 
-      {actionExecutionScopeId !== NOTIFY_OPTIONS_VALUES.PER_EXECUTION ? (
+      {displayThrottlingSettings ? (
         <EuiFormRow label={'Throttling'} style={{ paddingBottom: '10px', maxWidth: '100%' }}>
           <EuiFlexGroup direction="column">
             <EuiFlexItem grow={false} style={{ marginBottom: '0px' }}>

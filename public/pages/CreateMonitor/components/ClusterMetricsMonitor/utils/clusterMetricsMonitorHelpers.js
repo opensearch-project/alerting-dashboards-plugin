@@ -6,16 +6,13 @@
 import _ from 'lodash';
 import { formikToClusterMetricsInput } from '../../../containers/CreateMonitor/utils/formikToMonitor';
 import {
-  DEFAULT_CLUSTER_METRICS_SCRIPT,
+  API_TYPES,
+  GET_API_TYPE_DEBUG_TEXT,
   ILLEGAL_PATH_PARAMETER_CHARACTERS,
+  NO_PATH_PARAMS_PLACEHOLDER_TEXT,
   PATH_PARAMETER_ILLEGAL_CHARACTER_TEXT,
   PATH_PARAMETERS_REQUIRED_TEXT,
-  API_TYPES,
-  NO_PATH_PARAMS_PLACEHOLDER_TEXT,
-  GET_API_TYPE_DEBUG_TEXT,
 } from './clusterMetricsMonitorConstants';
-import { SEARCH_TYPE } from '../../../../../utils/constants';
-import { FORMIK_INITIAL_TRIGGER_VALUES } from '../../../../CreateTrigger/containers/CreateTrigger/utils/constants';
 import { FORMIK_INITIAL_VALUES } from '../../../containers/CreateMonitor/utils/constants';
 
 export function buildClusterMetricsRequest(values) {
@@ -64,17 +61,6 @@ export const getApiTypesRequiringPathParams = () => {
       });
   });
   return apiList;
-};
-
-export const getDefaultScript = (monitorValues) => {
-  const searchType = _.get(monitorValues, 'searchType', FORMIK_INITIAL_VALUES.searchType);
-  switch (searchType) {
-    case SEARCH_TYPE.CLUSTER_METRICS:
-      const apiType = _.get(monitorValues, 'uri.api_type');
-      return _.get(API_TYPES, `${apiType}.defaultCondition`, DEFAULT_CLUSTER_METRICS_SCRIPT);
-    default:
-      return FORMIK_INITIAL_TRIGGER_VALUES.script;
-  }
 };
 
 export const getExamplePathParams = (apiType) => {

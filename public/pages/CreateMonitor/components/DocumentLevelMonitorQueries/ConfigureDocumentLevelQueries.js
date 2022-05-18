@@ -50,6 +50,7 @@ class ConfigureDocumentLevelQueries extends Component {
               arrayHelpers.push(_.cloneDeep(FORMIK_INITIAL_DOCUMENT_LEVEL_QUERY_VALUES))
             }
             disabled={numOfQueries >= MAX_QUERIES}
+            data-test-subj={'addDocLevelQueryButton'}
           >
             {numOfQueries === 0 ? 'Add query' : 'Add another query'}
           </EuiButton>

@@ -29,7 +29,7 @@ import { FORMIK_INITIAL_VALUES } from '../CreateMonitor/utils/constants';
 import { API_TYPES } from '../../components/ClusterMetricsMonitor/utils/clusterMetricsMonitorConstants';
 import ConfigureDocumentLevelQueries from '../../components/DocumentLevelMonitorQueries/ConfigureDocumentLevelQueries';
 import FindingsDashboard from '../../../Dashboard/containers/FindingsDashboard';
-import { validDocLevelGraphQueries } from '../../../Dashboard/components/FindingsDashboard/utils';
+import { validDocLevelGraphQueries } from '../../../Dashboard/components/FindingsDashboard/findingsUtils';
 
 function renderEmptyMessage(message) {
   return (
@@ -225,7 +225,13 @@ class DefineMonitor extends Component {
 
   renderGraph() {
     const { errors, history, httpClient, location, notifications, values } = this.props;
-    const { response, performanceResponse, formikSnapshot, dataTypes } = this.state;
+    const {
+      response,
+      performanceResponse,
+      formikSnapshot,
+      dataTypes,
+      loadingResponse,
+    } = this.state;
     const aggregations = _.get(values, 'aggregations');
 
     const monitorExpressions = () => {
@@ -278,6 +284,8 @@ class DefineMonitor extends Component {
             ? renderEmptyMessage(
                 'Invalid input in data filter. Remove data filter or adjust filter '
               )
+            : loadingResponse
+            ? renderEmptyMessage()
             : previewContent()}
         </EuiAccordion>
         <EuiSpacer size="m" />
@@ -286,7 +294,6 @@ class DefineMonitor extends Component {
   }
 
   async onRunQuery() {
-    this.setState({ loadingResponse: true });
     const { httpClient, values, notifications } = this.props;
     const { monitor_type, searchType } = values;
 
@@ -294,8 +301,10 @@ class DefineMonitor extends Component {
     switch (monitor_type) {
       case MONITOR_TYPE.DOC_LEVEL:
         const { queries } = values;
-        if (SEARCH_TYPE.GRAPH && !validDocLevelGraphQueries(queries)) return;
+        const canExecute = searchType === SEARCH_TYPE.GRAPH && validDocLevelGraphQueries(queries);
+        if (!canExecute) return;
     }
+    this.setState({ loadingResponse: true });
 
     const formikSnapshot = _.cloneDeep(values);
     let requests;
