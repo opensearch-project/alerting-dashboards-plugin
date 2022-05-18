@@ -43,7 +43,10 @@ export const getAlertsFindingColumn = (
   history,
   isAlertsFlyout = false,
   location,
-  notifications
+  notifications,
+  flyoutIsOpen,
+  openFlyout,
+  closeFlyout
 ) => {
   return {
     field: 'related_doc_ids',
@@ -61,6 +64,9 @@ export const getAlertsFindingColumn = (
           history={history}
           location={location}
           notifications={notifications}
+          dashboardFlyoutIsOpen={flyoutIsOpen}
+          openFlyout={openFlyout}
+          closeFlyout={closeFlyout}
         />
       );
     },
@@ -112,7 +118,7 @@ export const findingsColumnTypes = (isAlertsFlyout = false) => [
   },
 ];
 
-export const getFindingsForMonitor = (findings, monitorId) => {
+export const getFindingsForMonitor = (findings = [], monitorId = '') => {
   const monitorFindings = [];
   findings.map((finding) => {
     const findingId = _.keys(finding)[0];
@@ -124,7 +130,7 @@ export const getFindingsForMonitor = (findings, monitorId) => {
   return { findings: monitorFindings, totalFindings: monitorFindings.length };
 };
 
-export const parseFindingsForPreview = (previewResponse, index, queries = []) => {
+export const parseFindingsForPreview = (previewResponse = {}, index = '', queries = []) => {
   // TODO FIXME: ExecuteMonitor API currently only returns a list of query names/IDs and the relevant docIds.
   //  As a result, the preview dashboard cannot display document contents.
   const findings = [];
@@ -160,24 +166,17 @@ export const parseFindingsForPreview = (previewResponse, index, queries = []) =>
   return findings;
 };
 
-export const getPreviewResponseDocIds = (response) => {
-  const docIds = [];
-  _.keys(response).map((queryId) => {
-    const docIdsList = _.get(response, queryId, []);
-    docIdsList.forEach((docId) => {
-      if (!_.includes(docIds, docId)) docIds.push(docId);
-    });
-  });
-  return docIds;
-};
-
-export const validDocLevelGraphQueries = (queries) => {
-  // The 'queryName' and 'query' fields are required to execute a doc level query.
-  // If either are undefined for any queries, the monitor cannot be executed.
-  const allQueriesDefined = queries.find(
-    (query) => !_.isEmpty(query.queryName) && !_.isEmpty(query.query)
+export const validDocLevelGraphQueries = (queries = []) => {
+  // The 'queryName', 'field', 'operator', and 'query' fields are required to execute a doc level query.
+  // If any of those fields are undefined for any queries, the monitor cannot be executed.
+  const incompleteQueries = queries.find(
+    (query) =>
+      _.isEmpty(query.queryName) ||
+      _.isEmpty(query.field) ||
+      _.isEmpty(query.operator) ||
+      _.isEmpty(query.query)
   );
-  return !_.isEmpty(allQueriesDefined);
+  return !_.isEmpty(queries) && _.isEmpty(incompleteQueries);
 };
 
 export async function getFindings({

@@ -1,0 +1,113 @@
+{
+  "type": "monitor",
+  "monitor_type": "doc_level_monitor",
+  "name": "sample_document_level_monitor",
+  "enabled": true,
+  "createdBy": "chip",
+  "schedule": {
+    "period": {
+      "interval": 1,
+      "unit": "MINUTES"
+    }
+  },
+  "inputs": [
+    {
+      "doc_level_input": {
+        "description": "windows-powershell",
+        "indices": ["document-level-monitor-test-index"],
+        "queries": [
+          {
+            "id": "sigma-123",
+            "name": "sigma-123",
+            "query": "region:\"us-west-2\"",
+            "tags": ["MITRE:8500"]
+          },
+          {
+            "id": "sigma-456",
+            "name": "sigma-456",
+            "query": "region:\"us-east-1\"",
+            "tags": ["MITRE:8600"]
+          },
+          {
+            "id": "sigma-789",
+            "name": "sigma-789",
+            "query": "message:\"This is an error from IAD region\"",
+            "tags": ["MITRE:8700"]
+          }
+        ]
+      }
+    }
+  ],
+  "triggers": [
+    {
+      "document_level_trigger": {
+        "name": "sample_trigger",
+        "severity": "1",
+        "condition": {
+          "script": {
+            "source": "query[name=sigma-123] || query[name=sigma-456] || query[name=sigma-789]",
+            "lang": "painless"
+          }
+        },
+        "actions": []
+      }
+    }
+  ],
+  "ui_metadata": {
+    "schedule": {
+      "timezone": null,
+      "frequency": "interval",
+      "period": {
+        "interval": 1,
+        "unit": "MINUTES"
+      },
+      "daily": 0,
+      "weekly": {
+        "mon": false,
+        "tue": false,
+        "wed": false,
+        "thur": false,
+        "fri": false,
+        "sat": false,
+        "sun": false
+      },
+      "monthly": {
+        "type": "day",
+        "day": 1
+      },
+      "cronExpression": "0 */1 * * *"
+    },
+    "monitor_type": "doc_level_monitor",
+    "doc_level_input": {
+      "queries": [
+        {
+          "id": "sigma-123",
+          "queryName": "sigma-123",
+          "field": "region",
+          "operator": "==",
+          "query": "us-west-2",
+          "tags": ["MITRE:8500"]
+        },
+        {
+          "id": "sigma-456",
+          "queryName": "sigma-456",
+          "field": "region",
+          "operator": "==",
+          "query": "us-east-1",
+          "tags": ["MITRE:8600"]
+        },
+        {
+          "id": "sigma-789",
+          "queryName": "sigma-789",
+          "field": "message",
+          "operator": "==",
+          "query": "This is an error from IAD region",
+          "tags": ["MITRE:8700"]
+        }
+      ]
+    },
+    "search": {
+      "searchType": "graph"
+    }
+  }
+}

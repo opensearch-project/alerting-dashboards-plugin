@@ -50,7 +50,7 @@ import { SEVERITY_OPTIONS } from '../../../../pages/CreateTrigger/utils/constant
 import {
   getAlertsFindingColumn,
   TABLE_TAB_IDS,
-} from '../../../../pages/Dashboard/components/FindingsDashboard/utils';
+} from '../../../../pages/Dashboard/components/FindingsDashboard/findingsUtils';
 import FindingsDashboard from '../../../../pages/Dashboard/containers/FindingsDashboard';
 
 export const DEFAULT_NUM_FLYOUT_ROWS = 10;

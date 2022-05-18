@@ -48,7 +48,7 @@ class DocumentLevelQueryTag extends Component {
   }
 
   renderPopover() {
-    const { formFieldName } = this.props;
+    const { formFieldName, queryIndex, tagIndex } = this.props;
     return (
       <div
         style={{
@@ -73,6 +73,7 @@ class DocumentLevelQueryTag extends Component {
             placeholder: TAG_PLACEHOLDER_TEXT,
             fullWidth: true,
             isInvalid,
+            'data-test-subj': `documentLevelQueryTag_text_field_query${queryIndex}_tag${tagIndex}`,
           }}
         />
         <EuiSpacer size={'l'} />
@@ -95,6 +96,7 @@ class DocumentLevelQueryTag extends Component {
       formik: { errors },
       arrayHelpers,
       formFieldName,
+      queryIndex,
       tag = '',
       tagIndex = 0,
     } = this.props;
@@ -119,6 +121,7 @@ class DocumentLevelQueryTag extends Component {
               iconOnClickAriaLabel={'Remove tag'}
               onClick={this.openPopover}
               onClickAriaLabel={'Edit tag'}
+              data-test-subj={`documentLevelQueryTag_badge_query${queryIndex}_tag${tagIndex}`}
             >
               {_.isEmpty(tag) ? TAG_PLACEHOLDER_TEXT : tag}
             </EuiBadge>
