@@ -58,6 +58,7 @@ class ConfigureDocumentLevelQueryTags extends Component {
                   <DocumentLevelQueryTag
                     tag={tag}
                     tagIndex={index}
+                    queryIndex={queryIndex}
                     arrayHelpers={arrayHelpers}
                     formFieldName={`${formFieldName}.tags.${index}`}
                   />
@@ -72,6 +73,7 @@ class ConfigureDocumentLevelQueryTags extends Component {
           onClick={() => arrayHelpers.push('')}
           disabled={numOfTags >= MAX_TAGS}
           style={{ paddingTop: '5px' }}
+          data-test-subj={`addDocLevelQueryTagButton_query${queryIndex}`}
         >
           + Add tag
         </EuiButtonEmpty>

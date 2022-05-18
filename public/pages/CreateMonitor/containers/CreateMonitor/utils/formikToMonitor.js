@@ -231,9 +231,7 @@ export function formikToDocLevelInput(values) {
         const formikToQuery =
           query.operator === '=='
             ? `${query.field}:\"${query.query}\"`
-            : JSON.stringify({
-                bool: { must_not: { term: { [query.field]: `\"${query.query}\"` } } },
-              });
+            : `NOT (${query.field}:\"${query.query}\")`;
         return {
           // id: query.id, // TODO FIXME: Refactor to this assignment logic once backend generates its own ID value
           id: query.queryName,

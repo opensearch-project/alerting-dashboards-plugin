@@ -86,14 +86,14 @@ export function queriesToFormik(queries) {
     }
 
     const parsedQuerySource = {};
-    const usesIsNotOperator = _.has(querySource, 'bool');
+    const usesIsNotOperator = _.startsWith(querySource, 'NOT (') && _.endsWith(querySource, ')');
     const operator = usesIsNotOperator ? '!=' : '==';
 
     if (usesIsNotOperator) {
-      const term = _.get(querySource, 'bool.must_not.term');
-      const field = _.keys(term)[0];
-      parsedQuerySource['field'] = _.trim(field, '":');
-      parsedQuerySource['query'] = _.trim(term[field], '"');
+      querySource = querySource.substring(5, querySource.length - 1);
+      querySource = _.split(querySource, ':');
+      parsedQuerySource['field'] = _.trim(querySource[0], '"');
+      parsedQuerySource['query'] = _.trim(querySource[1], '"');
     } else {
       const splitQuery = _.split(querySource, '"');
       parsedQuerySource['field'] = _.trim(splitQuery[0], '":');

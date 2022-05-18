@@ -27,7 +27,7 @@ import {
   findingsColumnTypes,
   getFindings,
   parseFindingsForPreview,
-} from '../components/FindingsDashboard/utils';
+} from '../components/FindingsDashboard/findingsUtils';
 
 export const GET_FINDINGS_PREVIEW_PARAMS = {
   id: DEFAULT_GET_FINDINGS_PARAMS.id,
@@ -72,9 +72,13 @@ export default class FindingsDashboard extends Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
+    const { isPreview = false } = this.props;
     const prevQuery = this.getQueryObjectFromState(prevState);
     const currQuery = this.getQueryObjectFromState(this.state);
-    if (!_.isEqual(prevQuery, currQuery)) this.getFindings();
+    if (!_.isEqual(prevQuery, currQuery)) {
+      if (isPreview) this.sortPreviewFindings(prevState.sortDirection, this.state.sortDirection);
+      else this.getFindings();
+    }
   }
 
   getURLQueryParams() {
@@ -137,8 +141,25 @@ export default class FindingsDashboard extends Component {
     });
   }
 
+  sortPreviewFindings(prevSortDirection, currSortDirection) {
+    const { findings, sortField } = this.state;
+    let sortedFindings;
+    switch (sortField) {
+      case 'document_list':
+        sortedFindings = _.sortBy(findings, `related_doc_id`);
+        break;
+      case 'queries':
+        sortedFindings = _.sortBy(findings, `queries`);
+        break;
+      default:
+        sortedFindings = _.sortBy(findings, `timestamp`);
+    }
+    if (prevSortDirection !== currSortDirection) sortedFindings = _.reverse(sortedFindings);
+    this.setState({ findings: sortedFindings });
+  }
+
   onTableChange = ({ page: tablePage = {}, sort = {} }) => {
-    const { index: page, size } = tablePage;
+    const { index: page = 0, size = 10 } = tablePage;
     const { field: sortField, direction: sortDirection } = sort;
     this.setState({ page, size, sortField, sortDirection });
   };
@@ -184,27 +205,29 @@ export default class FindingsDashboard extends Component {
         titleSize={'s'}
         bodyStyles={{ padding: 'initial' }}
       >
-        <EuiFlexGroup style={{ padding: '0px 5px' }}>
-          <EuiFlexItem>
-            <EuiFieldSearch
-              fullWidth={true}
-              placeholder={'Search for a document ID'}
-              onChange={(selection) => {
-                this.setState({ page: 0, search: selection.target.value });
-                this.getFindings();
-              }}
-              value={search}
-            />
-          </EuiFlexItem>
+        {!isPreview && (
+          <EuiFlexGroup style={{ padding: '0px 5px' }}>
+            <EuiFlexItem>
+              <EuiFieldSearch
+                fullWidth={true}
+                placeholder={'Search for a document ID'}
+                onChange={(selection) => {
+                  this.setState({ page: 0, search: selection.target.value });
+                  this.getFindings();
+                }}
+                value={search}
+              />
+            </EuiFlexItem>
 
-          <EuiFlexItem grow={false} style={{ justifyContent: 'center' }}>
-            <EuiPagination
-              pageCount={Math.ceil(totalFindings / size) || 1}
-              activePage={page}
-              onPageClick={(page) => this.setState({ page: page })}
-            />
-          </EuiFlexItem>
-        </EuiFlexGroup>
+            <EuiFlexItem grow={false} style={{ justifyContent: 'center' }}>
+              <EuiPagination
+                pageCount={Math.ceil(totalFindings / size) || 1}
+                activePage={page}
+                onPageClick={(page) => this.setState({ page: page })}
+              />
+            </EuiFlexItem>
+          </EuiFlexGroup>
+        )}
 
         <EuiHorizontalRule margin={'xs'} />
 

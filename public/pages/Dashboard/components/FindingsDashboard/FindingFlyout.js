@@ -4,6 +4,7 @@
  */
 
 import React, { Component } from 'react';
+import _ from 'lodash';
 import {
   EuiButtonEmpty,
   EuiCodeBlock,
@@ -18,8 +19,7 @@ import {
   EuiText,
   EuiTitle,
 } from '@elastic/eui';
-import _ from 'lodash';
-import { getFindings } from './utils';
+import { getFindings } from './findingsUtils';
 import { DEFAULT_GET_FINDINGS_PARAMS } from '../../../../../server/services/FindingService';
 
 export const NO_FINDING_DOC_ID_TEXT = 'No document ID';
@@ -33,7 +33,6 @@ export default class FindingFlyout extends Component {
       docList: alertDocList || document_list,
       flyout: undefined,
       finding: finding,
-      flyoutHeight: undefined,
       isFlyoutOpen: false,
     };
   }
@@ -60,7 +59,12 @@ export default class FindingFlyout extends Component {
   }
 
   onClick = () => {
+    const { dashboardFlyoutIsOpen = false, openFlyout, closeFlyout } = this.props;
     const { isFlyoutOpen } = this.state;
+    if (typeof openFlyout === 'function' && typeof closeFlyout === 'function') {
+      if (dashboardFlyoutIsOpen) closeFlyout();
+      else openFlyout();
+    }
     this.setState({ isFlyoutOpen: !isFlyoutOpen });
   };
 
@@ -169,11 +173,17 @@ export default class FindingFlyout extends Component {
   }
 
   render() {
+    const { dashboardFlyoutIsOpen } = this.props;
     const { docList, flyout, isFlyoutOpen } = this.state;
+    const openFlyout = _.isUndefined(dashboardFlyoutIsOpen)
+      ? isFlyoutOpen
+      : dashboardFlyoutIsOpen && isFlyoutOpen;
+    let docId = _.get(docList, '0.id', NO_FINDING_DOC_ID_TEXT);
+    docId = _.split(docId, '|')[0];
     return (
       <div>
-        <EuiLink onClick={this.onClick}>{_.get(docList, '0.id', NO_FINDING_DOC_ID_TEXT)}</EuiLink>
-        {isFlyoutOpen && flyout}
+        <EuiLink onClick={this.onClick}>{docId}</EuiLink>
+        {openFlyout && flyout}
       </div>
     );
   }

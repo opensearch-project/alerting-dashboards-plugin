@@ -23,9 +23,9 @@ import DefineDocumentLevelTrigger from '../DefineDocumentLevelTrigger/DefineDocu
 import {
   buildClusterMetricsRequest,
   canExecuteClusterMetricsMonitor,
-  getDefaultScript,
 } from '../../../CreateMonitor/components/ClusterMetricsMonitor/utils/clusterMetricsMonitorHelpers';
 import { FORMIK_INITIAL_VALUES } from '../../../CreateMonitor/containers/CreateMonitor/utils/constants';
+import { getDefaultScript } from '../../utils/helper';
 
 class ConfigureTriggers extends React.Component {
   constructor(props) {
@@ -85,12 +85,8 @@ class ConfigureTriggers extends React.Component {
       FORMIK_INITIAL_VALUES.uri.api_type
     );
     if (prevSearchType !== currSearchType || prevApiType !== currApiType) {
-      switch (currSearchType) {
-        case SEARCH_TYPE.CLUSTER_METRICS:
-          _.set(this.state, 'addTriggerButton', this.prepareAddTriggerButton());
-          _.set(this.state, 'triggerEmptyPrompt', this.prepareTriggerEmptyPrompt());
-          break;
-      }
+      this.setState({ addTriggerButton: this.prepareAddTriggerButton() });
+      this.setState({ triggerEmptyPrompt: this.prepareTriggerEmptyPrompt() });
     }
 
     const prevInputs = prevProps.monitor.inputs[0];
@@ -318,6 +314,7 @@ class ConfigureTriggers extends React.Component {
 
   renderTriggers = (triggerArrayHelpers) => {
     const { monitorValues, triggerValues } = this.props;
+    const { triggerEmptyPrompt } = this.state;
     const hasTriggers = !_.isEmpty(_.get(triggerValues, 'triggerDefinitions'));
 
     const triggerContent = (arrayHelpers, index) => {
@@ -331,18 +328,16 @@ class ConfigureTriggers extends React.Component {
       }
     };
 
-    return hasTriggers ? (
-      triggerValues.triggerDefinitions.map((trigger, index) => {
-        return (
-          <div key={index}>
-            {triggerContent(triggerArrayHelpers, index)}
-            <EuiHorizontalRule margin={'s'} />
-          </div>
-        );
-      })
-    ) : (
-      <TriggerEmptyPrompt arrayHelpers={triggerArrayHelpers} />
-    );
+    return hasTriggers
+      ? triggerValues.triggerDefinitions.map((trigger, index) => {
+          return (
+            <div key={index}>
+              {triggerContent(triggerArrayHelpers, index)}
+              <EuiHorizontalRule margin={'s'} />
+            </div>
+          );
+        })
+      : triggerEmptyPrompt;
   };
 
   render() {

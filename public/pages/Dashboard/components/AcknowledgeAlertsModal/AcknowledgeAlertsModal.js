@@ -44,7 +44,7 @@ import DashboardControls from '../DashboardControls';
 import ContentPanel from '../../../../components/ContentPanel';
 import { queryColumns } from '../../utils/tableUtils';
 import DashboardEmptyPrompt from '../DashboardEmptyPrompt';
-import { getAlertsFindingColumn } from '../FindingsDashboard/utils';
+import { getAlertsFindingColumn } from '../FindingsDashboard/findingsUtils';
 
 export const DEFAULT_NUM_MODAL_ROWS = 10;
 
@@ -66,6 +66,7 @@ export default class AcknowledgeAlertsModal extends Component {
     this.state = {
       alerts: [],
       alertState: alertState,
+      flyoutIsOpen: false,
       loading: true,
       monitors: [],
       monitorIds: [monitor_id],
@@ -324,6 +325,7 @@ export default class AcknowledgeAlertsModal extends Component {
     const {
       alerts = [],
       alertState,
+      flyoutIsOpen,
       loading,
       page,
       search,
@@ -347,7 +349,16 @@ export default class AcknowledgeAlertsModal extends Component {
           columns.splice(
             0,
             0,
-            getAlertsFindingColumn(httpClient, history, false, location, notifications)
+            getAlertsFindingColumn(
+              httpClient,
+              history,
+              false,
+              location,
+              notifications,
+              flyoutIsOpen,
+              () => this.setState({ flyoutIsOpen: true }),
+              () => this.setState({ flyoutIsOpen: false })
+            )
           );
           break;
         default:

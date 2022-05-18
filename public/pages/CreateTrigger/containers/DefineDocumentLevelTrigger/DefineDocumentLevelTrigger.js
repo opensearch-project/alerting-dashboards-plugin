@@ -222,6 +222,7 @@ class DefineDocumentLevelTrigger extends Component {
               }
               disabled={disableAddTriggerConditionButton}
               size={'xs'}
+              data-test-subj={`addTriggerConditionButton`}
             >
               + Add condition
             </EuiButtonEmpty>

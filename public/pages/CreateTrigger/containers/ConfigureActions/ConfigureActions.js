@@ -278,6 +278,7 @@ class ConfigureActions extends React.Component {
           fieldPath={fieldPath}
           values={values}
           hasNotificationPlugin={hasNotificationPlugin}
+          loadDestinations={this.loadDestinations}
         />
       ))
     ) : (
@@ -305,7 +306,7 @@ class ConfigureActions extends React.Component {
           Define actions when trigger conditions are met.
         </EuiText>
         <EuiPanel style={{ backgroundColor: '#F7F7F7', padding: '20px' }}>
-          {loadingDestinations ? (
+          {loadingDestinations && numOfActions < 1 ? (
             <div style={{ display: 'flex', justifyContent: 'center' }}>Loading Destinations...</div>
           ) : (
             this.renderActions(arrayHelpers)

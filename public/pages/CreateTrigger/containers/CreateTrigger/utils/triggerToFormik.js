@@ -175,7 +175,7 @@ export function bucketLevelTriggerToFormik(trigger, monitor) {
     severity,
     script,
     bucketSelector,
-    actions: getBucketLevelTriggerActions(actions),
+    actions: getExecutionPolicyActions(actions),
     triggerConditions,
     minTimeBetweenExecutions,
     rollingWindowSize,
@@ -209,14 +209,14 @@ export function documentLevelTriggerToFormik(trigger, monitor) {
     name,
     severity,
     script,
-    actions,
+    actions: getExecutionPolicyActions(actions),
     minTimeBetweenExecutions,
     rollingWindowSize,
     triggerConditions: triggerUiMetadata,
   };
 }
 
-export function getBucketLevelTriggerActions(actions) {
+export function getExecutionPolicyActions(actions) {
   const executionPolicyPath = 'action_execution_policy.action_execution_scope';
   return _.cloneDeep(actions).map((action) => {
     const actionExecutionPolicy = _.get(action, `${executionPolicyPath}`);

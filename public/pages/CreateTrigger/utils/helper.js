@@ -3,8 +3,18 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+import _ from 'lodash';
 import { DESTINATION_TYPE } from '../../Destinations/utils/constants';
-import { BACKEND_CHANNEL_TYPE } from '../../../utils/constants';
+import { BACKEND_CHANNEL_TYPE, MONITOR_TYPE } from '../../../utils/constants';
+import { FORMIK_INITIAL_VALUES } from '../../CreateMonitor/containers/CreateMonitor/utils/constants';
+import {
+  API_TYPES,
+  DEFAULT_CLUSTER_METRICS_SCRIPT,
+} from '../../CreateMonitor/components/ClusterMetricsMonitor/utils/clusterMetricsMonitorConstants';
+import {
+  FORMIK_INITIAL_DOC_LEVEL_SCRIPT,
+  FORMIK_INITIAL_TRIGGER_VALUES,
+} from '../containers/CreateTrigger/utils/constants';
 
 export const getChannelOptions = (channels, allowedTypes) =>
   allowedTypes.map((type) => ({
@@ -20,4 +30,19 @@ export const toChannelType = (type) => {
   }
 
   return type;
+};
+
+export const getDefaultScript = (monitorValues) => {
+  const monitorType = _.get(monitorValues, 'monitor_type', FORMIK_INITIAL_VALUES.monitor_type);
+  switch (monitorType) {
+    case MONITOR_TYPE.BUCKET_LEVEL:
+      return FORMIK_INITIAL_TRIGGER_VALUES.bucketSelector;
+    case MONITOR_TYPE.CLUSTER_METRICS:
+      const apiType = _.get(monitorValues, 'uri.api_type');
+      return _.get(API_TYPES, `${apiType}.defaultCondition`, DEFAULT_CLUSTER_METRICS_SCRIPT);
+    case MONITOR_TYPE.DOC_LEVEL:
+      return FORMIK_INITIAL_DOC_LEVEL_SCRIPT;
+    default:
+      return FORMIK_INITIAL_TRIGGER_VALUES.script;
+  }
 };
