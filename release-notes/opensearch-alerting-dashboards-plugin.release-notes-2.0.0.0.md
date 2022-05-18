@@ -33,3 +33,4 @@ Compatible with OpenSearch Dashboards 2.0.0
 
 ### Documentation
 * Add release notes for version 2.0.0-rc1 ([#227](https://github.com/opensearch-project/alerting-dashboards-plugin/pull/227))
+* Drafted release notes for 2.0.0. ([#248](https://github.com/opensearch-project/alerting-dashboards-plugin/pull/248))
