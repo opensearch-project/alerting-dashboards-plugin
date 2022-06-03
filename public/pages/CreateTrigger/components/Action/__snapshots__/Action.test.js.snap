@@ -397,101 +397,24 @@ exports[`Action renders with Notifications plugin installed 1`] = `
                 <div
                   class="euiSpacer euiSpacer--m"
                 />
-                <div
-                  class="euiFormRow"
-                  id="generated-id-row"
-                  style="max-width:100%"
-                >
+                <div>
                   <div
-                    class="euiFormRow__labelWrapper"
-                  >
-                    <label
-                      class="euiFormLabel euiFormRow__label"
-                      for="generated-id"
-                    >
-                      <span
-                        style="color:#343741"
-                      >
-                        Perform action
-                      </span>
-                    </label>
-                  </div>
-                  <div
-                    class="euiFormRow__fieldWrapper"
+                    class="euiFlexItem"
                   >
                     <div
-                      class="euiFlexGroup euiFlexGroup--gutterExtraSmall euiFlexGroup--directionColumn euiFlexGroup--responsive"
-                      id="generated-id"
+                      class="euiText euiText--extraSmall"
                     >
-                      <div
-                        class="euiFlexItem"
-                      >
-                        <div
-                          class="euiFormRow"
-                          id="testPathactions.0.action_execution_policy.action_execution_scope-form-row-row"
-                        >
-                          <div
-                            class="euiFormRow__fieldWrapper"
-                          >
-                            <div
-                              class="euiRadio"
-                            >
-                              <input
-                                class="euiRadio__input"
-                                id="testPathactions.0.action_execution_policy.per_execution"
-                                name="testPathactions.0.action_execution_policy.action_execution_scope"
-                                type="radio"
-                                value="per_execution"
-                              />
-                              <div
-                                class="euiRadio__circle"
-                              />
-                              <label
-                                class="euiRadio__label"
-                                for="testPathactions.0.action_execution_policy.per_execution"
-                              >
-                                Per execution
-                              </label>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                      <div
-                        class="euiFlexItem"
-                      >
-                        <div
-                          class="euiFormRow"
-                          id="testPathactions.0.action_execution_policy.action_execution_scope-form-row-row"
-                        >
-                          <div
-                            class="euiFormRow__fieldWrapper"
-                          >
-                            <div
-                              class="euiRadio"
-                            >
-                              <input
-                                checked=""
-                                class="euiRadio__input"
-                                id="testPathactions.0.action_execution_policy.per_alert"
-                                name="testPathactions.0.action_execution_policy.action_execution_scope"
-                                type="radio"
-                                value="per_alert"
-                              />
-                              <div
-                                class="euiRadio__circle"
-                              />
-                              <label
-                                class="euiRadio__label"
-                                for="testPathactions.0.action_execution_policy.per_alert"
-                              >
-                                Per alert
-                              </label>
-                            </div>
-                          </div>
-                        </div>
+                      <strong>
+                        Perform action
+                      </strong>
+                      <div>
+                        Per monitor execution
                       </div>
                     </div>
                   </div>
+                  <div
+                    class="euiSpacer euiSpacer--s"
+                  />
                 </div>
                 <div
                   class="euiFormRow"
@@ -1069,101 +992,24 @@ exports[`Action renders without Notifications plugin installed 1`] = `
                 <div
                   class="euiSpacer euiSpacer--m"
                 />
-                <div
-                  class="euiFormRow"
-                  id="generated-id-row"
-                  style="max-width:100%"
-                >
+                <div>
                   <div
-                    class="euiFormRow__labelWrapper"
-                  >
-                    <label
-                      class="euiFormLabel euiFormRow__label"
-                      for="generated-id"
-                    >
-                      <span
-                        style="color:#343741"
-                      >
-                        Perform action
-                      </span>
-                    </label>
-                  </div>
-                  <div
-                    class="euiFormRow__fieldWrapper"
+                    class="euiFlexItem"
                   >
                     <div
-                      class="euiFlexGroup euiFlexGroup--gutterExtraSmall euiFlexGroup--directionColumn euiFlexGroup--responsive"
-                      id="generated-id"
+                      class="euiText euiText--extraSmall"
                     >
-                      <div
-                        class="euiFlexItem"
-                      >
-                        <div
-                          class="euiFormRow"
-                          id="testPathactions.0.action_execution_policy.action_execution_scope-form-row-row"
-                        >
-                          <div
-                            class="euiFormRow__fieldWrapper"
-                          >
-                            <div
-                              class="euiRadio"
-                            >
-                              <input
-                                class="euiRadio__input"
-                                id="testPathactions.0.action_execution_policy.per_execution"
-                                name="testPathactions.0.action_execution_policy.action_execution_scope"
-                                type="radio"
-                                value="per_execution"
-                              />
-                              <div
-                                class="euiRadio__circle"
-                              />
-                              <label
-                                class="euiRadio__label"
-                                for="testPathactions.0.action_execution_policy.per_execution"
-                              >
-                                Per execution
-                              </label>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                      <div
-                        class="euiFlexItem"
-                      >
-                        <div
-                          class="euiFormRow"
-                          id="testPathactions.0.action_execution_policy.action_execution_scope-form-row-row"
-                        >
-                          <div
-                            class="euiFormRow__fieldWrapper"
-                          >
-                            <div
-                              class="euiRadio"
-                            >
-                              <input
-                                checked=""
-                                class="euiRadio__input"
-                                id="testPathactions.0.action_execution_policy.per_alert"
-                                name="testPathactions.0.action_execution_policy.action_execution_scope"
-                                type="radio"
-                                value="per_alert"
-                              />
-                              <div
-                                class="euiRadio__circle"
-                              />
-                              <label
-                                class="euiRadio__label"
-                                for="testPathactions.0.action_execution_policy.per_alert"
-                              >
-                                Per alert
-                              </label>
-                            </div>
-                          </div>
-                        </div>
+                      <strong>
+                        Perform action
+                      </strong>
+                      <div>
+                        Per monitor execution
                       </div>
                     </div>
                   </div>
+                  <div
+                    class="euiSpacer euiSpacer--s"
+                  />
                 </div>
                 <div
                   class="euiFormRow"
