@@ -261,7 +261,7 @@ describe('DocumentLevelMonitor', () => {
 
         // TODO: Test with Notifications plugin
 
-        // Click the create button
+        // Click the update button
         cy.get('button').contains('Update').last().click();
 
         // Confirm we can see only one row in the trigger list by checking <caption> element
@@ -335,6 +335,38 @@ describe('DocumentLevelMonitor', () => {
 
         // Confirm we can see the new trigger
         cy.contains(newTriggerName);
+      });
+
+      it('with only 1 index', () => {
+        // This test ensures the bug in this issue has been fixed
+        // https://github.com/opensearch-project/alerting-dashboards-plugin/issues/258
+
+        // Creating the test monitor
+        cy.createMonitor(sampleDocumentLevelMonitor);
+        cy.reload();
+
+        // Confirm the created monitor can be seen
+        cy.contains(SAMPLE_DOCUMENT_LEVEL_MONITOR);
+
+        // Select the monitor
+        cy.get('a').contains(SAMPLE_DOCUMENT_LEVEL_MONITOR).click({ force: true });
+
+        // Click Edit button
+        cy.contains('Edit').click({ force: true });
+
+        // Click on the Index field and type in multiple index names to replicate the bug
+        cy.get('#index')
+          .click({ force: true })
+          .type(`indexName1{enter}indexName2{enter}`, { force: true })
+          .trigger('blur', { force: true });
+
+        // Confirm Index field only contains the expected text
+        cy.get('[data-test-subj="indicesComboBox"]').should('not.have.text', TESTING_INDEX);
+        cy.get('[data-test-subj="indicesComboBox"]').should('not.have.text', 'indexName1');
+        cy.get('[data-test-subj="indicesComboBox"]').should('have.text', 'indexName2');
+
+        // Click the update button
+        cy.get('button').contains('Update').last().click();
       });
     });
   });
