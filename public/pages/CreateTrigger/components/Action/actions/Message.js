@@ -175,6 +175,7 @@ export default function Message(
       displayActionableAlertsOptions = false;
       displayThrottlingSettings = false;
       actionableAlertsSelections = [];
+      _.set(action, 'action_execution_policy.action_execution_scope', actionExecutionScopeId);
       break;
     default:
       displayActionableAlertsOptions = false;
