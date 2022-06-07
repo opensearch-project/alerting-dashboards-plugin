@@ -151,11 +151,14 @@ export default function Message(
 
   let defaultNotifyOption;
   switch (monitorType) {
+    case MONITOR_TYPE.BUCKET_LEVEL:
+      defaultNotifyOption = NOTIFY_OPTIONS_VALUES.PER_ALERT;
+      break;
     case MONITOR_TYPE.DOC_LEVEL:
       defaultNotifyOption = NOTIFY_OPTIONS_VALUES.PER_EXECUTION;
       break;
     default:
-      defaultNotifyOption = NOTIFY_OPTIONS_VALUES.PER_ALERT;
+      defaultNotifyOption = NOTIFY_OPTIONS_VALUES.PER_EXECUTION;
   }
   let actionExecutionScopeId = editableActionExecutionPolicy
     ? _.get(action, 'action_execution_policy.action_execution_scope', defaultNotifyOption)
