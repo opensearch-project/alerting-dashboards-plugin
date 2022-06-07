@@ -4,7 +4,7 @@
  */
 
 import _ from 'lodash';
-import { PLUGIN_NAME } from '../support/constants';
+import { INDEX, PLUGIN_NAME } from '../support/constants';
 import sampleDocumentLevelMonitor from '../fixtures/sample_document_level_monitor.json';
 
 const TESTING_INDEX = 'document-level-monitor-test-index';
@@ -26,6 +26,8 @@ const addDocumentsToTestIndex = (indexName = '', numOfDocs = 0) => {
 describe('DocumentLevelMonitor', () => {
   before(() => {
     // Load sample data
+    cy.loadSampleEcommerceData();
+    cy.loadSampleFlightsData();
     addDocumentsToTestIndex(TESTING_INDEX, 5);
   });
   beforeEach(() => {
@@ -354,19 +356,33 @@ describe('DocumentLevelMonitor', () => {
         // Click Edit button
         cy.contains('Edit').click({ force: true });
 
+        // Remove the trigger from the monitor as it's not needed for this test case
+        cy.contains('Remove trigger', { timeout: 20000 }).click({ force: true });
+
         // Click on the Index field and type in multiple index names to replicate the bug
         cy.get('#index')
           .click({ force: true })
-          .type(`indexName1{enter}indexName2{enter}`, { force: true })
+          .type(`${INDEX.SAMPLE_DATA_ECOMMERCE}{enter}${INDEX.SAMPLE_DATA_FLIGHTS}{enter}`, {
+            force: true,
+          })
           .trigger('blur', { force: true });
 
         // Confirm Index field only contains the expected text
         cy.get('[data-test-subj="indicesComboBox"]').should('not.have.text', TESTING_INDEX);
-        cy.get('[data-test-subj="indicesComboBox"]').should('not.have.text', 'indexName1');
-        cy.get('[data-test-subj="indicesComboBox"]').should('have.text', 'indexName2');
+        cy.get('[data-test-subj="indicesComboBox"]').should(
+          'not.have.text',
+          INDEX.SAMPLE_DATA_ECOMMERCE
+        );
+        cy.get('[data-test-subj="indicesComboBox"]').contains(INDEX.SAMPLE_DATA_FLIGHTS, {
+          timeout: 20000,
+        });
+        // cy.get('[data-test-subj="indicesComboBox"]').should('have.text', 'indexName2');
 
         // Click the update button
         cy.get('button').contains('Update').last().click();
+
+        // Confirm we're on the Monitor Details page by searching for the History element
+        cy.contains('History', { timeout: 20000 });
       });
     });
   });
@@ -377,5 +393,7 @@ describe('DocumentLevelMonitor', () => {
 
     // Delete sample data
     cy.deleteIndexByName(TESTING_INDEX);
+    cy.deleteIndexByName(`${INDEX.SAMPLE_DATA_ECOMMERCE}`);
+    cy.deleteIndexByName(`${INDEX.SAMPLE_DATA_FLIGHTS}`);
   });
 });
