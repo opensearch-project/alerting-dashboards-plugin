@@ -102,6 +102,7 @@ describe('Bucket-Level Monitors', () => {
 
     // Load sample data
     cy.loadSampleEcommerceData();
+    cy.loadSampleFlightsData();
   });
 
   beforeEach(() => {
@@ -302,6 +303,40 @@ describe('Bucket-Level Monitors', () => {
         // Confirm we can see only one row in the trigger list by checking <caption> element
         cy.contains('This table contains 1 row');
       });
+
+      it('to have multiple indices', () => {
+        // Confirm we can see the created monitor in the list
+        cy.contains(SAMPLE_VISUAL_EDITOR_MONITOR);
+
+        // Select the existing monitor
+        cy.get('a').contains(SAMPLE_VISUAL_EDITOR_MONITOR).click({ force: true });
+
+        // Click Edit button
+        cy.contains('Edit').click({ force: true });
+
+        // Click on the Index field and type in multiple index names to replicate the bug
+        cy.get('#index')
+          .click({ force: true })
+          .type(`${INDEX.SAMPLE_DATA_ECOMMERCE}{enter}${INDEX.SAMPLE_DATA_FLIGHTS}{enter}`, {
+            force: true,
+          })
+          .trigger('blur', { force: true });
+
+        // Confirm Index field only contains the expected text
+        cy.get('[data-test-subj="indicesComboBox"]').contains('*', { timeout: 20000 });
+        cy.get('[data-test-subj="indicesComboBox"]').contains(INDEX.SAMPLE_DATA_ECOMMERCE, {
+          timeout: 20000,
+        });
+        cy.get('[data-test-subj="indicesComboBox"]').contains(INDEX.SAMPLE_DATA_FLIGHTS, {
+          timeout: 20000,
+        });
+
+        // Click the update button
+        cy.get('button').contains('Update').last().click();
+
+        // Confirm we're on the Monitor Details page by searching for the History element
+        cy.contains('History', { timeout: 20000 });
+      });
     });
   });
 
@@ -311,5 +346,6 @@ describe('Bucket-Level Monitors', () => {
 
     // Delete sample data
     cy.deleteIndexByName(`${INDEX.SAMPLE_DATA_ECOMMERCE}`);
+    cy.deleteIndexByName(`${INDEX.SAMPLE_DATA_FLIGHTS}`);
   });
 });
