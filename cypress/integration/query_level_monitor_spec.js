@@ -71,9 +71,10 @@ const addVisualQueryLevelTrigger = (
 
 describe('Query-Level Monitors', () => {
   before(() => {
-    // Add test indices
-    cy.createIndexByName(TESTING_INDEX_A);
-    cy.createIndexByName(TESTING_INDEX_B);
+    // Load sample data
+    cy.loadSampleEcommerceData();
+    cy.insertDocumentToIndex(TESTING_INDEX_A, undefined, { message: 'This is a test.' });
+    cy.insertDocumentToIndex(TESTING_INDEX_B, undefined, { message: 'This is a test.' });
   });
 
   beforeEach(() => {
@@ -154,20 +155,21 @@ describe('Query-Level Monitors', () => {
   });
 
   describe('can be updated', () => {
-    before(() => {
+    beforeEach(() => {
       cy.deleteAllMonitors();
       cy.createMonitor(sampleQueryLevelMonitor);
+      cy.reload();
     });
 
     it('by changing the name', () => {
       // Confirm we can see the created monitor in the list
-      cy.contains(SAMPLE_MONITOR);
+      cy.contains(SAMPLE_MONITOR, { timeout: 20000 });
 
       // Select the existing monitor
-      cy.get('a').contains(SAMPLE_MONITOR).click({ force: true });
+      cy.get('a').contains(SAMPLE_MONITOR, { timeout: 20000 }).click();
 
       // Click Edit button
-      cy.contains('Edit').click({ force: true });
+      cy.contains('Edit', { timeout: 20000 }).click({ force: true });
 
       // Wait for input to load and then type in the new monitor name
       cy.get('input[name="name"]')
@@ -190,13 +192,13 @@ describe('Query-Level Monitors', () => {
 
     it('to have multiple indices', () => {
       // Confirm we can see the created monitor in the list
-      cy.contains(SAMPLE_MONITOR);
+      cy.contains(SAMPLE_MONITOR, { timeout: 20000 });
 
       // Select the existing monitor
-      cy.get('a').contains(SAMPLE_MONITOR).click({ force: true });
+      cy.get('a').contains(SAMPLE_MONITOR, { timeout: 20000 }).click({ force: true });
 
       // Click Edit button
-      cy.contains('Edit').click({ force: true });
+      cy.contains('Edit', { timeout: 20000 }).click({ force: true });
 
       // Click on the Index field and type in multiple index names to replicate the bug
       cy.get('#index')
@@ -278,7 +280,6 @@ describe('Query-Level Monitors', () => {
   describe('can have triggers', () => {
     before(() => {
       cy.deleteAllMonitors();
-      cy.loadSampleEcommerceData();
       cy.createMonitor(sampleQueryLevelMonitor);
     });
 
@@ -360,6 +361,7 @@ describe('Query-Level Monitors', () => {
   describe('schedule component displays as intended', () => {
     before(() => {
       cy.deleteAllMonitors();
+      cy.reload();
     });
 
     it('for an interval schedule', () => {

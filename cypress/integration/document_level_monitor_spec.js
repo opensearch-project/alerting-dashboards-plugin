@@ -29,8 +29,8 @@ describe('DocumentLevelMonitor', () => {
   before(() => {
     // Load sample data
     addDocumentsToTestIndex(TESTING_INDEX, 5);
-    cy.addDocumentsToTestIndex(TESTING_INDEX_A, 1);
-    cy.addDocumentsToTestIndex(TESTING_INDEX_B, 1);
+    addDocumentsToTestIndex(TESTING_INDEX_A, 1);
+    addDocumentsToTestIndex(TESTING_INDEX_B, 1);
   });
   beforeEach(() => {
     // Set welcome screen tracking to false

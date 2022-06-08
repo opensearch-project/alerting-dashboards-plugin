@@ -105,8 +105,8 @@ describe('Bucket-Level Monitors', () => {
 
     // Load sample data
     cy.loadSampleEcommerceData();
-    cy.createIndexByName(TESTING_INDEX_A);
-    cy.createIndexByName(TESTING_INDEX_B);
+    cy.insertDocumentToIndex(TESTING_INDEX_A, undefined, { message: 'This is a test.' });
+    cy.insertDocumentToIndex(TESTING_INDEX_B, undefined, { message: 'This is a test.' });
   });
 
   beforeEach(() => {
