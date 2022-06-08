@@ -19,6 +19,9 @@ const SAMPLE_TRIGGER = 'sample_trigger';
 const SAMPLE_ACTION = 'sample_action';
 const SAMPLE_DESTINATION = 'sample_destination';
 
+const TESTING_INDEX_A = 'query-level-monitor-test-index-a';
+const TESTING_INDEX_B = 'query-level-monitor-test-index-b';
+
 const addVisualQueryLevelTrigger = (
   triggerName,
   triggerIndex,
@@ -67,11 +70,13 @@ const addVisualQueryLevelTrigger = (
 };
 
 describe('Query-Level Monitors', () => {
-  beforeEach(() => {
-    // Load sample data
-    cy.loadSampleEcommerceData();
-    cy.loadSampleFlightsData();
+  before(() => {
+    // Add test indices
+    cy.createIndexByName(TESTING_INDEX_A);
+    cy.createIndexByName(TESTING_INDEX_B);
+  });
 
+  beforeEach(() => {
     // Set welcome screen tracking to false
     localStorage.setItem('home:welcome:show', 'false');
 
@@ -196,17 +201,17 @@ describe('Query-Level Monitors', () => {
       // Click on the Index field and type in multiple index names to replicate the bug
       cy.get('#index')
         .click({ force: true })
-        .type(`${INDEX.SAMPLE_DATA_ECOMMERCE}{enter}${INDEX.SAMPLE_DATA_FLIGHTS}{enter}`, {
+        .type(`${TESTING_INDEX_A}{enter}${TESTING_INDEX_B}{enter}`, {
           force: true,
         })
         .trigger('blur', { force: true });
 
       // Confirm Index field only contains the expected text
       cy.get('[data-test-subj="indicesComboBox"]').contains('*', { timeout: 20000 });
-      cy.get('[data-test-subj="indicesComboBox"]').contains(INDEX.SAMPLE_DATA_ECOMMERCE, {
+      cy.get('[data-test-subj="indicesComboBox"]').contains(TESTING_INDEX_A, {
         timeout: 20000,
       });
-      cy.get('[data-test-subj="indicesComboBox"]').contains(INDEX.SAMPLE_DATA_FLIGHTS, {
+      cy.get('[data-test-subj="indicesComboBox"]').contains(TESTING_INDEX_B, {
         timeout: 20000,
       });
 
@@ -273,6 +278,7 @@ describe('Query-Level Monitors', () => {
   describe('can have triggers', () => {
     before(() => {
       cy.deleteAllMonitors();
+      cy.loadSampleEcommerceData();
       cy.createMonitor(sampleQueryLevelMonitor);
     });
 
@@ -414,6 +420,7 @@ describe('Query-Level Monitors', () => {
 
     // Delete sample data
     cy.deleteIndexByName(`${INDEX.SAMPLE_DATA_ECOMMERCE}`);
-    cy.deleteIndexByName(`${INDEX.SAMPLE_DATA_FLIGHTS}`);
+    cy.deleteIndexByName(TESTING_INDEX_A);
+    cy.deleteIndexByName(TESTING_INDEX_B);
   });
 });
