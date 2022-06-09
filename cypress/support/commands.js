@@ -153,3 +153,11 @@ Cypress.Commands.add('loadSampleEcommerceData', () => {
     url: `${Cypress.env('opensearch_dashboards')}/api/sample_data/ecommerce`,
   });
 });
+
+Cypress.Commands.add('loadSampleFlightsData', () => {
+  cy.request({
+    method: 'POST',
+    headers: { 'osd-xsrf': 'opensearch-dashboards' },
+    url: `${Cypress.env('opensearch_dashboards')}/api/sample_data/flights`,
+  });
+});
