@@ -6,6 +6,7 @@
 import React from 'react';
 import { EuiText } from '@elastic/eui';
 import { htmlIdGenerator } from '@elastic/eui/lib/services';
+import queryString from 'query-string';
 
 export const makeId = htmlIdGenerator();
 
@@ -46,3 +47,27 @@ export const inputLimitText = (
     </EuiText>
   );
 };
+
+export async function getAlerts({ params, httpClient, notifications, location, history }) {
+  /* const params = {
+    from,
+    size,
+    search,
+    sortField,
+    sortDirection,
+    severityLevel,
+    alertState,
+    monitorIds
+  }; */
+  const queryParamsString = queryString.stringify(params);
+  history.replace({ ...location, search: queryParamsString });
+
+  const resp = await httpClient.get('../api/alerting/alerts', { query: params });
+
+  if (resp.ok) {
+    return { alerts: resp.alerts, totalAlerts: resp.totalAlerts };
+  } else {
+    console.log('Error getting findings:', resp);
+    backendErrorNotification(notifications, 'get', 'findings', resp.err);
+  }
+}

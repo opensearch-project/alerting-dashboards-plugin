@@ -5,7 +5,6 @@
 
 import React, { Component } from 'react';
 import _ from 'lodash';
-import queryString from 'query-string';
 import PropTypes from 'prop-types';
 import {
   EuiBasicTable,
@@ -37,7 +36,7 @@ import {
   insertGroupByColumn,
   removeColumns,
 } from '../../utils/helpers';
-import { backendErrorNotification } from '../../../../utils/helpers';
+import { backendErrorNotification, getAlerts } from '../../../../utils/helpers';
 import { MAX_ALERT_COUNT } from '../../utils/constants';
 import { DEFAULT_PAGE_SIZE_OPTIONS } from '../../../Monitors/containers/Monitors/utils/constants';
 import DashboardControls from '../DashboardControls';
@@ -156,25 +155,21 @@ export default class AcknowledgeAlertsModal extends Component {
       monitorIds,
     };
 
-    const queryParamsString = queryString.stringify(params);
-    history.replace({ ...this.props.location, search: queryParamsString });
-
-    httpClient.get('../api/alerting/alerts', { query: params }).then((resp) => {
-      if (resp.ok) {
-        const { alerts } = resp;
-        const filteredAlerts = _.filter(alerts, { trigger_id: triggerId });
-        this.setState({
-          ...this.state,
-          alerts: filteredAlerts,
-          totalAlerts: filteredAlerts.length,
-        });
-      } else {
-        console.log('error getting alerts:', resp);
-        backendErrorNotification(notifications, 'get', 'alerts', resp.err);
-      }
+    const resp = await getAlerts({
+      params,
+      httpClient,
+      notifications,
+      location: this.props.location,
+      history,
     });
-
-    this.setState({ ...this.state, loading: false });
+    const alerts = _.get(resp, 'alerts', []);
+    const filteredAlerts = _.filter(alerts, { trigger_id: triggerId });
+    this.setState({
+      ...this.state,
+      alerts: filteredAlerts,
+      totalAlerts: filteredAlerts.length,
+      loading: false,
+    });
   };
 
   acknowledgeAlerts = async () => {
