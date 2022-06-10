@@ -85,8 +85,10 @@ class ConfigureActions extends React.Component {
   }
 
   loadDestinations = async (searchText = '') => {
-    const { httpClient, values, arrayHelpers, notifications, fieldPath } = this.props;
-    const { allowList, actionDeleted, hasNotificationPlugin } = this.state;
+    const { httpClient, values, arrayHelpers, notifications, fieldPath, plugins } = this.props;
+    const { allowList, actionDeleted } = this.state;
+    const hasNotificationPlugin = plugins.indexOf(OS_NOTIFICATION_PLUGIN) !== -1;
+
     this.setState({ loadingDestinations: true });
     try {
       const response = await httpClient.get('../api/alerting/destinations', {
