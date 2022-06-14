@@ -8,6 +8,8 @@ import { PLUGIN_NAME } from '../support/constants';
 import sampleDocumentLevelMonitor from '../fixtures/sample_document_level_monitor.json';
 
 const TESTING_INDEX = 'document-level-monitor-test-index';
+const TESTING_INDEX_A = 'document-level-monitor-test-index-a';
+const TESTING_INDEX_B = 'document-level-monitor-test-index-b';
 const SAMPLE_EXTRACTION_QUERY_MONITOR = 'sample_extraction_query_document_level_monitor';
 const SAMPLE_VISUAL_EDITOR_MONITOR = 'sample_visual_editor_document_level_monitor';
 const SAMPLE_DOCUMENT_LEVEL_MONITOR = 'sample_document_level_monitor';
@@ -27,6 +29,8 @@ describe('DocumentLevelMonitor', () => {
   before(() => {
     // Load sample data
     addDocumentsToTestIndex(TESTING_INDEX, 5);
+    addDocumentsToTestIndex(TESTING_INDEX_A, 1);
+    addDocumentsToTestIndex(TESTING_INDEX_B, 1);
   });
   beforeEach(() => {
     // Set welcome screen tracking to false
@@ -261,7 +265,7 @@ describe('DocumentLevelMonitor', () => {
 
         // TODO: Test with Notifications plugin
 
-        // Click the create button
+        // Click the update button
         cy.get('button').contains('Update').last().click();
 
         // Confirm we can see only one row in the trigger list by checking <caption> element
@@ -336,6 +340,46 @@ describe('DocumentLevelMonitor', () => {
         // Confirm we can see the new trigger
         cy.contains(newTriggerName);
       });
+
+      it('with only 1 index', () => {
+        // This test ensures the bug in this issue has been fixed
+        // https://github.com/opensearch-project/alerting-dashboards-plugin/issues/258
+
+        // Creating the test monitor
+        cy.createMonitor(sampleDocumentLevelMonitor);
+        cy.reload();
+
+        // Confirm the created monitor can be seen
+        cy.contains(SAMPLE_DOCUMENT_LEVEL_MONITOR);
+
+        // Select the monitor
+        cy.get('a').contains(SAMPLE_DOCUMENT_LEVEL_MONITOR).click({ force: true });
+
+        // Click Edit button
+        cy.contains('Edit').click({ force: true });
+
+        // Remove the trigger from the monitor as it's not needed for this test case
+        cy.contains('Remove trigger', { timeout: 20000 }).click({ force: true });
+
+        // Click on the Index field and type in multiple index names to replicate the bug
+        cy.get('#index')
+          .click({ force: true })
+          .type(`${TESTING_INDEX_A}{enter}${TESTING_INDEX_B}{enter}`, {
+            force: true,
+          })
+          .trigger('blur', { force: true });
+
+        // Confirm Index field only contains the expected text
+        cy.get('[data-test-subj="indicesComboBox"]').should('not.have.text', TESTING_INDEX);
+        cy.get('[data-test-subj="indicesComboBox"]').should('not.have.text', TESTING_INDEX_A);
+        cy.get('[data-test-subj="indicesComboBox"]').contains(TESTING_INDEX_B, { timeout: 20000 });
+
+        // Click the update button
+        cy.get('button').contains('Update').last().click();
+
+        // Confirm we're on the Monitor Details page by searching for the History element
+        cy.contains('History', { timeout: 20000 });
+      });
     });
   });
 
@@ -345,5 +389,7 @@ describe('DocumentLevelMonitor', () => {
 
     // Delete sample data
     cy.deleteIndexByName(TESTING_INDEX);
+    cy.deleteIndexByName(TESTING_INDEX_A);
+    cy.deleteIndexByName(TESTING_INDEX_B);
   });
 });
