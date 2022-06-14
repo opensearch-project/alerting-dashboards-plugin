@@ -31,7 +31,7 @@ import {
 import { TRIGGER_TYPE } from '../../../../pages/CreateTrigger/containers/CreateTrigger/utils/constants';
 import { UNITS_OF_TIME } from '../../../../pages/CreateMonitor/components/MonitorExpressions/expressions/utils/constants';
 import { DEFAULT_WHERE_EXPRESSION_TEXT } from '../../../../pages/CreateMonitor/components/MonitorExpressions/expressions/utils/whereHelpers';
-import { backendErrorNotification } from '../../../../utils/helpers';
+import { backendErrorNotification, getAlerts } from '../../../../utils/helpers';
 import {
   displayAcknowledgedAlertsToast,
   filterActiveAlerts,
@@ -44,7 +44,6 @@ import DashboardControls from '../../../../pages/Dashboard/components/DashboardC
 import ContentPanel from '../../../ContentPanel';
 import { queryColumns } from '../../../../pages/Dashboard/utils/tableUtils';
 import { DEFAULT_PAGE_SIZE_OPTIONS } from '../../../../pages/Monitors/containers/Monitors/utils/constants';
-import queryString from 'query-string';
 import { MAX_ALERT_COUNT } from '../../../../pages/Dashboard/utils/constants';
 import { SEVERITY_OPTIONS } from '../../../../pages/CreateTrigger/utils/constants';
 import {
@@ -198,25 +197,22 @@ export default class AlertsDashboardFlyoutComponent extends Component {
       monitorIds,
     };
 
-    const queryParamsString = queryString.stringify(params);
-    history.replace({ ...this.props.location, search: queryParamsString });
-
-    httpClient.get('../api/alerting/alerts', { query: params }).then((resp) => {
-      if (resp.ok) {
-        const { alerts } = resp;
-        const filteredAlerts = _.filter(alerts, { trigger_id: triggerID });
-        this.setState({
-          ...this.state,
-          alerts: filteredAlerts,
-          totalAlerts: filteredAlerts.length,
-        });
-      } else {
-        console.log('error getting alerts:', resp);
-        backendErrorNotification(notifications, 'get', 'alerts', resp.err);
-      }
-      this.setState({ tabContent: this.renderAlertsTable() });
+    const resp = await getAlerts({
+      params,
+      httpClient,
+      notifications,
+      location: this.props.location,
+      history,
     });
-    this.setState({ loading: false });
+    const alerts = _.get(resp, 'alerts', []);
+    const filteredAlerts = _.filter(alerts, { trigger_id: triggerID });
+    this.setState({
+      ...this.state,
+      alerts: filteredAlerts,
+      totalAlerts: filteredAlerts.length,
+      loading: false,
+      tabContent: this.renderAlertsTable(),
+    });
   };
 
   acknowledgeAlerts = async () => {
