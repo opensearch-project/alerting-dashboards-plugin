@@ -5,7 +5,6 @@
 
 import React, { Component } from 'react';
 import _ from 'lodash';
-import queryString from 'query-string';
 import { EuiBasicTable, EuiButton, EuiHorizontalRule, EuiIcon } from '@elastic/eui';
 import ContentPanel from '../../../components/ContentPanel';
 import DashboardEmptyPrompt from '../components/DashboardEmptyPrompt';
@@ -16,7 +15,7 @@ import {
   MONITOR_TYPE,
   OPENSEARCH_DASHBOARDS_AD_PLUGIN,
 } from '../../../utils/constants';
-import { backendErrorNotification } from '../../../utils/helpers';
+import { backendErrorNotification, getAlerts } from '../../../utils/helpers';
 import {
   displayAcknowledgedAlertsToast,
   filterActiveAlerts,
@@ -124,7 +123,7 @@ export default class Dashboard extends Component {
   }
 
   getAlerts = _.debounce(
-    (from, size, search, sortField, sortDirection, severityLevel, alertState, monitorIds) => {
+    async (from, size, search, sortField, sortDirection, severityLevel, alertState, monitorIds) => {
       const params = {
         from,
         size,
@@ -135,28 +134,28 @@ export default class Dashboard extends Component {
         alertState,
         monitorIds,
       };
-      const queryParamsString = queryString.stringify(params);
+
       location.search;
       const { httpClient, history, notifications, perAlertView } = this.props;
-      history.replace({ ...this.props.location, search: queryParamsString });
-      httpClient.get('../api/alerting/alerts', { query: params }).then((resp) => {
-        if (resp.ok) {
-          const { alerts, totalAlerts } = resp;
-          this.setState({ alerts, totalAlerts });
-
-          if (!perAlertView) {
-            const alertsByTriggers = groupAlertsByTrigger(alerts);
-            this.setState({
-              totalTriggers: alertsByTriggers.length,
-              alertsByTriggers,
-            });
-            this.getMonitors();
-          }
-        } else {
-          console.log('error getting alerts:', resp);
-          backendErrorNotification(notifications, 'get', 'alerts', resp.err);
-        }
+      const resp = await getAlerts({
+        params,
+        httpClient,
+        notifications,
+        location: this.props.location,
+        history,
       });
+
+      const { alerts, totalAlerts } = resp;
+      this.setState({ alerts, totalAlerts });
+
+      if (!perAlertView) {
+        const alertsByTriggers = groupAlertsByTrigger(alerts);
+        this.setState({
+          totalTriggers: alertsByTriggers.length,
+          alertsByTriggers,
+        });
+        this.getMonitors();
+      }
     },
     500,
     { leading: true }
