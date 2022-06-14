@@ -141,7 +141,7 @@ export default function Message(
   const onDisplayPreviewChange = (e) => setDisplayPreview(e.target.checked);
   const monitorType = _.get(context, 'ctx.monitor.monitor_type', MONITOR_TYPE.QUERY_LEVEL);
   const editableActionExecutionPolicy =
-    monitorType === MONITOR_TYPE.BUCKET_LEVEL || MONITOR_TYPE.DOC_LEVEL;
+    monitorType === MONITOR_TYPE.BUCKET_LEVEL || monitorType === MONITOR_TYPE.DOC_LEVEL;
 
   const actionPath = `${fieldPath}actions.${index}`;
   const actionExecutionPolicyPath = editableActionExecutionPolicy
@@ -151,11 +151,14 @@ export default function Message(
 
   let defaultNotifyOption;
   switch (monitorType) {
+    case MONITOR_TYPE.BUCKET_LEVEL:
+      defaultNotifyOption = NOTIFY_OPTIONS_VALUES.PER_ALERT;
+      break;
     case MONITOR_TYPE.DOC_LEVEL:
       defaultNotifyOption = NOTIFY_OPTIONS_VALUES.PER_EXECUTION;
       break;
     default:
-      defaultNotifyOption = NOTIFY_OPTIONS_VALUES.PER_ALERT;
+      defaultNotifyOption = NOTIFY_OPTIONS_VALUES.PER_EXECUTION;
   }
   let actionExecutionScopeId = editableActionExecutionPolicy
     ? _.get(action, 'action_execution_policy.action_execution_scope', defaultNotifyOption)
@@ -175,6 +178,7 @@ export default function Message(
       displayActionableAlertsOptions = false;
       displayThrottlingSettings = false;
       actionableAlertsSelections = [];
+      _.set(action, 'action_execution_policy.action_execution_scope', actionExecutionScopeId);
       break;
     default:
       displayActionableAlertsOptions = false;

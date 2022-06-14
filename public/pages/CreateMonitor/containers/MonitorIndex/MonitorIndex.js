@@ -67,13 +67,14 @@ class MonitorIndex extends React.Component {
     this.onSearchChange('');
   }
 
-  onCreateOption(searchValue, selectedOptions, setFieldValue) {
+  onCreateOption(searchValue, selectedOptions, setFieldValue, supportMultipleIndices) {
     const normalizedSearchValue = searchValue.trim().toLowerCase();
 
     if (!normalizedSearchValue) return;
 
     const newOption = { label: searchValue };
-    setFieldValue('index', selectedOptions.concat(newOption));
+    if (supportMultipleIndices) setFieldValue('index', selectedOptions.concat(newOption));
+    else setFieldValue('index', [newOption]);
   }
 
   async onSearchChange(searchValue) {
@@ -226,13 +227,13 @@ class MonitorIndex extends React.Component {
         rowProps={{
           label: 'Index',
           helpText:
-            'You can use a * as a wildcard or date math index resolution in your index pattern', // TODO DRAFT: Confirm wildcard wording is appropriate for doc level monitors
+            'You can use a * as a wildcard or date math index resolution in your index pattern',
           isInvalid,
           error: hasError,
           style: { paddingLeft: '10px' },
         }}
         inputProps={{
-          placeholder: supportMultipleIndices ? 'Select indices' : 'Select index',
+          placeholder: supportMultipleIndices ? 'Select indices' : 'Select an index',
           async: true,
           isLoading,
           options: visibleOptions,
@@ -243,7 +244,7 @@ class MonitorIndex extends React.Component {
             form.setFieldValue('index', options);
           },
           onCreateOption: (value, field, form) => {
-            this.onCreateOption(value, field.value, form.setFieldValue);
+            this.onCreateOption(value, field.value, form.setFieldValue, supportMultipleIndices);
           },
           onSearchChange: this.onSearchChange,
           renderOption: this.renderOption,
