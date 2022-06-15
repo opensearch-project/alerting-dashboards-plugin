@@ -49,16 +49,6 @@ export const inputLimitText = (
 };
 
 export async function getAlerts({ params, httpClient, notifications, location, history }) {
-  /* const params = {
-    from,
-    size,
-    search,
-    sortField,
-    sortDirection,
-    severityLevel,
-    alertState,
-    monitorIds
-  }; */
   const queryParamsString = queryString.stringify(params);
   history.replace({ ...location, search: queryParamsString });
 
