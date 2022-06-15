@@ -16,7 +16,7 @@ import { DEFAULT_PAGE_SIZE_OPTIONS, DEFAULT_QUERY_PARAMS } from './utils/constan
 import { getURLQueryParams } from './utils/helpers';
 import { columns as staticColumns } from './utils/tableUtils';
 import { MONITOR_ACTIONS, MONITOR_TYPE } from '../../../../utils/constants';
-import { backendErrorNotification } from '../../../../utils/helpers';
+import { backendErrorNotification, getAlerts } from '../../../../utils/helpers';
 import { displayAcknowledgedAlertsToast } from '../../../Dashboard/utils/helpers';
 
 const MAX_MONITOR_COUNT = 1000;
@@ -332,21 +332,21 @@ export default class Monitors extends Component {
       monitorIds,
     };
 
-    const { httpClient, notifications } = this.props;
+    const { httpClient, notifications, history } = this.props;
 
-    const response = await httpClient.get('../api/alerting/alerts', { query: params });
-
-    if (response.ok) {
-      const { alerts, totalAlerts } = response;
-      this.setState({
-        alerts,
-        totalAlerts,
-        showAcknowledgeModal: true,
-      });
-    } else {
-      console.error(response);
-      backendErrorNotification(notifications, 'get', 'alerts', response.err);
-    }
+    const response = await getAlerts({
+      params,
+      httpClient,
+      notifications,
+      location: this.props.location,
+      history,
+    });
+    const { alerts, totalAlerts } = response;
+    this.setState({
+      alerts,
+      totalAlerts,
+      showAcknowledgeModal: true,
+    });
   }
 
   onClickCancel() {
