@@ -184,7 +184,7 @@ export default class AlertsDashboardFlyoutComponent extends Component {
       monitorIds,
     } = this.state;
 
-    const { httpClient, history, notifications, triggerID } = this.props;
+    const { httpClient, history, notifications, location, triggerID } = this.props;
 
     const params = {
       from,
@@ -201,7 +201,7 @@ export default class AlertsDashboardFlyoutComponent extends Component {
       params,
       httpClient,
       notifications,
-      location: this.props.location,
+      location,
       history,
     });
     const alerts = _.get(resp, 'alerts', []);

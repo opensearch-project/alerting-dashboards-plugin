@@ -142,7 +142,7 @@ export default class AcknowledgeAlertsModal extends Component {
       monitorIds,
     } = this.state;
 
-    const { httpClient, history, notifications, triggerId } = this.props;
+    const { httpClient, history, notifications, location, triggerId } = this.props;
 
     const params = {
       from,
@@ -159,7 +159,7 @@ export default class AcknowledgeAlertsModal extends Component {
       params,
       httpClient,
       notifications,
-      location: this.props.location,
+      location,
       history,
     });
     const alerts = _.get(resp, 'alerts', []);
