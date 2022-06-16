@@ -332,13 +332,13 @@ export default class Monitors extends Component {
       monitorIds,
     };
 
-    const { httpClient, notifications, history } = this.props;
+    const { httpClient, notifications, location, history } = this.props;
 
     const response = await getAlerts({
       params,
       httpClient,
       notifications,
-      location: this.props.location,
+      location,
       history,
     });
     const { alerts, totalAlerts } = response;

@@ -135,13 +135,13 @@ export default class Dashboard extends Component {
         monitorIds,
       };
 
+      const { httpClient, history, notifications, location, perAlertView } = this.props;
       location.search;
-      const { httpClient, history, notifications, perAlertView } = this.props;
       const resp = await getAlerts({
         params,
         httpClient,
         notifications,
-        location: this.props.location,
+        location,
         history,
       });
 
