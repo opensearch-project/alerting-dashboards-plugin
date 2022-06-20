@@ -18,7 +18,7 @@ export const ignoreEscape = (eventHandler) => (event) => {
 };
 
 // A helper function that shows toast messages for backend errors.
-export const backendErrorNotification = (notifications, actionName, objectName, errorMessage) => {
+export const backendErrorNotification = (notifiications, actionName, objectName, errorMessage) => {
   notifications.toasts.addDanger({
     title: `Failed to ${actionName} the ${objectName}`,
     text: errorMessage,
@@ -48,16 +48,32 @@ export const inputLimitText = (
   );
 };
 
+/**
+ * A helper function that makes calls to getAlerts API to retrieve alerts for monitors associated with cluster
+ * @param { Object } params parameters used to retrieve an alert response. The values that go into
+ * { params } object are from, size, search, sortField, sortDirection, severityLevel, alertState,
+ * and monitorID.
+ * @param { Object } httpClient httpClient can submit REST requests to the API
+ * @param { Object } notifications -  a global object from CoreContext.js, allows us to display toast
+ * notifications in the bottom right of the screen.
+ * @param { Object } location - information about the search query from the current URL
+ * @param { Object } history -  the current location object in it
+ * @returns { alerts, totalAlerts }, otherwise log errors
+ */
 export async function getAlerts({ params, httpClient, notifications, location, history }) {
   const queryParamsString = queryString.stringify(params);
   history.replace({ ...location, search: queryParamsString });
 
-  const resp = await httpClient.get('../api/alerting/alerts', { query: params });
-
-  if (resp.ok) {
-    return { alerts: resp.alerts, totalAlerts: resp.totalAlerts };
-  } else {
-    console.log('Error getting findings:', resp);
-    backendErrorNotification(notifications, 'get', 'findings', resp.err);
+  try {
+    const resp = await httpClient.get('../api/alerting/alerts', { query: params });
+    if (resp.ok) {
+      return { alerts: resp.alerts, totalAlerts: resp.totalAlerts };
+    } else {
+      console.log('Error getting alerts:', resp);
+      backendErrorNotification(notifications, 'get', 'alerts', resp.err);
+    }
+  } catch (e) {
+    console.log('Error getting alerts:', e);
+    backendErrorNotification(notifications, 'get,', 'alerts', e);
   }
 }
