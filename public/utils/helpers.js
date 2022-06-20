@@ -18,7 +18,7 @@ export const ignoreEscape = (eventHandler) => (event) => {
 };
 
 // A helper function that shows toast messages for backend errors.
-export const backendErrorNotification = (notifiications, actionName, objectName, errorMessage) => {
+export const backendErrorNotification = (notifications, actionName, objectName, errorMessage) => {
   notifications.toasts.addDanger({
     title: `Failed to ${actionName} the ${objectName}`,
     text: errorMessage,
