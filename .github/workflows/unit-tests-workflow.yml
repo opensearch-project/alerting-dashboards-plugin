@@ -11,7 +11,7 @@ on:
       - 1.x
       - 2.*
 env:
-  OPENSEARCH_DASHBOARDS_VERSION: '2.0'
+  OPENSEARCH_DASHBOARDS_VERSION: '2.x'
 jobs:
   tests:
     name: Run unit tests
