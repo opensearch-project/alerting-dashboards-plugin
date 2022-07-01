@@ -367,7 +367,6 @@ describe('DocumentLevelMonitor', () => {
           .trigger('blur', { force: true });
 
         // Confirm Index field contains the expected indices
-        cy.get('[data-test-subj="indicesComboBox"]').contains('*', { timeout: 20000 });
         cy.get('[data-test-subj="indicesComboBox"]').contains(TESTING_INDEX_A, { timeout: 20000 });
         cy.get('[data-test-subj="indicesComboBox"]').contains(TESTING_INDEX_B, { timeout: 20000 });
 
