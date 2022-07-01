@@ -342,9 +342,6 @@ describe('DocumentLevelMonitor', () => {
       });
 
       it('with only 1 index', () => {
-        // This test ensures the bug in this issue has been fixed
-        // https://github.com/opensearch-project/alerting-dashboards-plugin/issues/258
-
         // Creating the test monitor
         cy.createMonitor(sampleDocumentLevelMonitor);
         cy.reload();
@@ -370,12 +367,9 @@ describe('DocumentLevelMonitor', () => {
           .trigger('blur', { force: true });
 
         // Confirm Index field only contains the expected text
-        cy.get('[data-test-subj="indicesComboBox"]').contains(
-          TESTING_INDEX,
-          TESTING_INDEX_A,
-          TESTING_INDEX_B,
-          { timeout: 20000 }
-        );
+        cy.get('[data-test-subj="indicesComboBox"]').contains(TESTING_INDEX, { timeout: 20000 });
+        cy.get('[data-test-subj="indicesComboBox"]').contains(TESTING_INDEX_A, { timeout: 20000 });
+        cy.get('[data-test-subj="indicesComboBox"]').contains(TESTING_INDEX_B, { timeout: 20000 });
 
         // Click the update button
         cy.get('button').contains('Update').last().click();
