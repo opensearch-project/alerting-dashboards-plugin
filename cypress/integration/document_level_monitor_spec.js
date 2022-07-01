@@ -341,7 +341,7 @@ describe('DocumentLevelMonitor', () => {
         cy.contains(newTriggerName);
       });
 
-      it('with only 1 index', () => {
+      it('to have multiple indices', () => {
         // Creating the test monitor
         cy.createMonitor(sampleDocumentLevelMonitor);
         cy.reload();
@@ -366,8 +366,8 @@ describe('DocumentLevelMonitor', () => {
           })
           .trigger('blur', { force: true });
 
-        // Confirm Index field only contains the expected text
-        cy.get('[data-test-subj="indicesComboBox"]').contains(TESTING_INDEX, { timeout: 20000 });
+        // Confirm Index field contains the expected indices
+        cy.get('[data-test-subj="indicesComboBox"]').contains('*', { timeout: 20000 });
         cy.get('[data-test-subj="indicesComboBox"]').contains(TESTING_INDEX_A, { timeout: 20000 });
         cy.get('[data-test-subj="indicesComboBox"]').contains(TESTING_INDEX_B, { timeout: 20000 });
 
