@@ -370,9 +370,12 @@ describe('DocumentLevelMonitor', () => {
           .trigger('blur', { force: true });
 
         // Confirm Index field only contains the expected text
-        cy.get('[data-test-subj="indicesComboBox"]').should('not.have.text', TESTING_INDEX);
-        cy.get('[data-test-subj="indicesComboBox"]').should('not.have.text', TESTING_INDEX_A);
-        cy.get('[data-test-subj="indicesComboBox"]').contains(TESTING_INDEX_B, { timeout: 20000 });
+        cy.get('[data-test-subj="indicesComboBox"]').contains(
+          TESTING_INDEX,
+          TESTING_INDEX_A,
+          TESTING_INDEX_B,
+          { timeout: 20000 }
+        );
 
         // Click the update button
         cy.get('button').contains('Update').last().click();
