@@ -6,6 +6,7 @@
 import React from 'react';
 import { EuiText } from '@elastic/eui';
 import { htmlIdGenerator } from '@elastic/eui/lib/services';
+import queryString from 'query-string';
 
 export const makeId = htmlIdGenerator();
 
@@ -46,3 +47,33 @@ export const inputLimitText = (
     </EuiText>
   );
 };
+
+/**
+ * A helper function that makes calls to getAlerts API to retrieve alerts for monitors associated with cluster
+ * @param { Object } params parameters used to retrieve an alert response. The values that go into
+ * { params } object are from, size, search, sortField, sortDirection, severityLevel, alertState,
+ * and monitorID.
+ * @param { Object } httpClient httpClient can submit REST requests to the API
+ * @param { Object } notifications -  a global object from CoreContext.js, allows us to display toast
+ * notifications in the bottom right of the screen.
+ * @param { Object } location - information about the search query from the current URL
+ * @param { Object } history -  the current location object in it
+ * @returns { alerts, totalAlerts }, otherwise log errors
+ */
+export async function getAlerts({ params, httpClient, notifications, location, history }) {
+  const queryParamsString = queryString.stringify(params);
+  history.replace({ ...location, search: queryParamsString });
+
+  try {
+    const resp = await httpClient.get('../api/alerting/alerts', { query: params });
+    if (resp.ok) {
+      return { alerts: resp.alerts, totalAlerts: resp.totalAlerts };
+    } else {
+      console.log('Error getting alerts:', resp);
+      backendErrorNotification(notifications, 'get', 'alerts', resp.err);
+    }
+  } catch (e) {
+    console.log('Error getting alerts:', e);
+    backendErrorNotification(notifications, 'get,', 'alerts', e);
+  }
+}
