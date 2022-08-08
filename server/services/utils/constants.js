@@ -20,4 +20,5 @@ export const CLUSTER = {
   AD_ALERTING: 'alerting_ad',
   DATA: 'data',
 };
+
 export const CLUSTER_METRICS = '/.opendistro-alerting-cluster-metrics';

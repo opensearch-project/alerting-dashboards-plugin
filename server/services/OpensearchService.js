@@ -178,6 +178,7 @@ export default class OpensearchService {
         },
       });
     } catch (err) {
+      console.error('err is ', err);
       console.error('Alerting - OpenSearch - getClusterMetrics:', err);
       return res.ok({
         body: {

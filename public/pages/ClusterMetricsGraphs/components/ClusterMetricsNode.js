@@ -84,7 +84,6 @@ export default class ClusterMetricsNode extends Component {
     ];
 
     const { hint, hint2 } = this.state;
-
     const xTitle = 'Time';
 
     return (

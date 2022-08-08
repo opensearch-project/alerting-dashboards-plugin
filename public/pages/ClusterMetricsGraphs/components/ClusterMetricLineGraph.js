@@ -41,7 +41,6 @@ export default class ClusterMetricLineGraph extends Component {
     const yDomain = getYDomain(data);
     const markData = getMarkData(data);
     const { hint } = this.state;
-
     const xTitle = 'Time';
 
     return (

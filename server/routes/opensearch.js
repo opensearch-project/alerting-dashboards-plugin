@@ -70,7 +70,6 @@ export default function (services, router) {
     },
     opensearchService.getSettings
   );
-
   router.get(
     {
       path: `${CLUSTER_METRICS}/_search`,

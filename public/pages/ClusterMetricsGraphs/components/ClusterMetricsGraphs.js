@@ -50,7 +50,6 @@ export default class ClusterMetricsGraphs extends Component {
       },
     };
     const resp = await httpClient.get(`${CLUSTER_METRICS}/_search`, body);
-    console.info(`MESSAGE richfu http = ${JSON.stringify(body, null, 4)}`);
     this.setState({ dataPoints: this.cleanResponse(resp) });
   }
 
@@ -106,7 +105,6 @@ export default class ClusterMetricsGraphs extends Component {
 
   cleanBarData(data) {
     const cleaned = [];
-    console.info(`MESSAGE richfu clean bar data = ${JSON.stringify(data, null, 4)}`);
     for (let i = 0; i < data.length - 1; i++) {
       cleaned.push(this.getXXYValues(data[i], data[i + 1]));
     }

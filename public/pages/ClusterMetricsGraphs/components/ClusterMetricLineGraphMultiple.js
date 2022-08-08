@@ -17,7 +17,6 @@ import {
   MarkSeries,
   XAxis,
   YAxis,
-  HorizontalBarSeries,
   ChartLabel,
   DiscreteColorLegend,
 } from 'react-vis';

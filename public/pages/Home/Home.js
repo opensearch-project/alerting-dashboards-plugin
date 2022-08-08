@@ -126,13 +126,7 @@ export default class Home extends Component {
             <Route
               exact
               path="/metrics"
-              render={(props) => (
-                <ClusterMetricsGraphs
-                  {...props}
-                  httpClient={httpClient}
-                  notifications={notifications}
-                />
-              )}
+              render={(props) => <ClusterMetricsGraphs {...props} httpClient={httpClient} />}
             />
             <Redirect to="/dashboard" />
           </Switch>
