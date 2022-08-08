@@ -4,6 +4,7 @@
  */
 
 import { schema } from '@osd/config-schema';
+import { CLUSTER_METRICS } from '../services/utils/constants';
 
 export default function (services, router) {
   const { opensearchService } = services;
@@ -68,5 +69,13 @@ export default function (services, router) {
       validate: false,
     },
     opensearchService.getSettings
+  );
+
+  router.get(
+    {
+      path: `${CLUSTER_METRICS}/_search`,
+      validate: false,
+    },
+    opensearchService.getClusterMetric
   );
 }

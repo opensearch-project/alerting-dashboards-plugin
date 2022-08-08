@@ -10,10 +10,12 @@ import { EuiTab, EuiTabs } from '@elastic/eui';
 import Dashboard from '../Dashboard/containers/Dashboard';
 import Monitors from '../Monitors/containers/Monitors';
 import DestinationsList from '../Destinations/containers/DestinationsList';
+import ClusterMetricsGraphs from '../ClusterMetricsGraphs/components/ClusterMetricsGraphs';
 
 const getSelectedTabId = (pathname) => {
   if (pathname.includes('monitors')) return 'monitors';
   if (pathname.includes('destinations')) return 'destinations';
+  if (pathname.includes('metrics')) return 'metrics';
   return 'alerts';
 };
 
@@ -41,6 +43,11 @@ export default class Home extends Component {
         id: 'destinations',
         name: 'Destinations',
         route: 'destinations',
+      },
+      {
+        id: 'metrics',
+        name: 'Cluster Metrics Graphs',
+        route: 'metrics',
       },
     ];
   }
@@ -110,6 +117,17 @@ export default class Home extends Component {
               path="/destinations"
               render={(props) => (
                 <DestinationsList
+                  {...props}
+                  httpClient={httpClient}
+                  notifications={notifications}
+                />
+              )}
+            />
+            <Route
+              exact
+              path="/metrics"
+              render={(props) => (
+                <ClusterMetricsGraphs
                   {...props}
                   httpClient={httpClient}
                   notifications={notifications}

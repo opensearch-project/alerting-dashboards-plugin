@@ -150,5 +150,6 @@ export async function getBreadcrumb(route, routeState, httpClient) {
       { text: 'Destinations', href: '/destinations' },
       { text: 'Create destination', href: APP_PATH.CREATE_DESTINATION },
     ],
+    metrics: { text: 'Metrics', href: '/metrics' },
   }[base];
 }
