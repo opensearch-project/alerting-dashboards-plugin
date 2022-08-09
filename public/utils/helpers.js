@@ -59,7 +59,7 @@ export const inputLimitText = (
  * @param { Object } location - information about the search query from the current URL.
  * Includes 3 key-value pairings that map to Strings. The keys are "pathname", "search", and
  * "hash".
- * @param { Object } history -  the current location object in it.
+ * @param { Object } history - the current location object in it.
  * Includes 3 key-value pairings, where all keys are Strings. They key "length" is mapped to an integer,
  * the key "action" is mapped to a String, and the key "location" is mapped to the location object.
  * @returns { Object } returns Object of { alerts, totalAlerts }
