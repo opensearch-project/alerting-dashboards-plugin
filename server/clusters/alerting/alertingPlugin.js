@@ -9,6 +9,7 @@ import {
   DESTINATION_BASE_API,
   EMAIL_ACCOUNT_BASE_API,
   EMAIL_GROUP_BASE_API,
+  CLUSTER_METRICS,
 } from '../../services/utils/constants';
 
 export default function alertingPlugin(Client, config, components) {
@@ -307,4 +308,11 @@ export default function alertingPlugin(Client, config, components) {
     },
     method: 'DELETE',
   });
+  // alerting.getClusterMetrics = ca({
+  //   url: {
+  //     fmt: `${CLUSTER_METRICS}/_search`,
+  //   },
+  //   needBody: true,
+  //   method: 'GET',
+  // });
 }

@@ -13,6 +13,7 @@ export default class OpensearchService {
   search = async (context, req, res) => {
     try {
       const { query, index, size } = req.body;
+      console.info(`MESSAGE richfu search = ${JSON.stringify(query, null, 4)}`);
       const params = { index, size, body: query };
       const { callAsCurrentUser } = this.esDriver.asScoped(req);
       const results = await callAsCurrentUser('search', params);
@@ -155,6 +156,31 @@ export default class OpensearchService {
       });
     } catch (err) {
       console.error('Alerting - OpensearchService - getSettings:', err);
+      return res.ok({
+        body: {
+          ok: false,
+          resp: err.message,
+        },
+      });
+    }
+  };
+  // TODO: Cluster Metrics search API needs to be refactored once
+  // this API has been implemented, since it uses the search API that is going to be deprecated
+  getClusterMetric = async (context, req, res) => {
+    try {
+      const { sort, query, size = 10000 } = req.body;
+      const params = { index: '.opendistro-alerting-cluster-metrics', size, body: { sort, query } };
+      const { callAsCurrentUser } = this.esDriver.asScoped(req);
+      const results = await callAsCurrentUser('search', params);
+      return res.ok({
+        body: {
+          ok: true,
+          resp: results,
+        },
+      });
+    } catch (err) {
+      console.error('err is ', err);
+      console.error('Alerting - OpenSearch - getClusterMetrics:', err);
       return res.ok({
         body: {
           ok: false,
