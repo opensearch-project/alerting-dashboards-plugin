@@ -56,9 +56,14 @@ export const inputLimitText = (
  * @param { Object } httpClient httpClient can submit REST requests to the API
  * @param { Object } notifications -  a global object from CoreContext.js, allows us to display toast
  * notifications in the bottom right of the screen.
- * @param { Object } location - information about the search query from the current URL
- * @param { Object } history -  the current location object in it
- * @returns { alerts, totalAlerts }, otherwise log errors
+ * @param { Object } location - information about the search query from the current URL.
+ * Includes 3 key-value pairings that map to Strings. The keys are "pathname", "search", and
+ * "hash".
+ * @param { Object } history -  the current location object in it.
+ * Includes 3 key-value pairings, where all keys are Strings. They key "length" is mapped to an integer,
+ * the key "action" is mapped to a String, and the key "location" is mapped to the location object.
+ * @returns { Object } returns Object of { alerts, totalAlerts }
+ * where alerts is an array of alerts objects and totalAlerts is a number >=0, otherwise log errors
  */
 export async function getAlerts({ params, httpClient, notifications, location, history }) {
   const queryParamsString = queryString.stringify(params);
