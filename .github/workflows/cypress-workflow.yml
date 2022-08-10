@@ -2,10 +2,10 @@ name: E2E Cypress tests
 on:
   pull_request:
     branches:
-      - *
+      - "*"
   push:
     branches:
-      - *
+      - "*"
 env:
   OPENSEARCH_DASHBOARDS_VERSION: '2.x'
   OPENSEARCH_VERSION: '2.2.0-SNAPSHOT'
