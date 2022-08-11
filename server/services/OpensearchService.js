@@ -3,11 +3,12 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+import { CLUSTER_METRICS } from './utils/constants';
+
 export default class OpensearchService {
   constructor(esDriver) {
     this.esDriver = esDriver;
   }
-
   // TODO: This will be deprecated as we do not want to support accessing alerting indices directly
   //  and that is what this is used for
   search = async (context, req, res) => {
@@ -169,7 +170,7 @@ export default class OpensearchService {
   getClusterMetric = async (context, req, res) => {
     try {
       const { sort, query, size = 10000 } = req.body;
-      const params = { index: '.opendistro-alerting-cluster-metrics', size, body: { sort, query } };
+      const params = { index: CLUSTER_METRICS, size, body: { sort, query } };
       const { callAsCurrentUser } = this.esDriver.asScoped(req);
       const results = await callAsCurrentUser('search', params);
       return res.ok({

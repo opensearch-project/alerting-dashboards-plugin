@@ -21,4 +21,4 @@ export const CLUSTER = {
   DATA: 'data',
 };
 
-export const CLUSTER_METRICS = '/.opendistro-alerting-cluster-metrics';
+export const CLUSTER_METRICS = '.opendistro-alerting-cluster-metrics';

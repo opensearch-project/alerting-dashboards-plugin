@@ -72,7 +72,7 @@ export default function (services, router) {
   );
   router.get(
     {
-      path: `${CLUSTER_METRICS}/_search`,
+      path: `/${CLUSTER_METRICS}/_search`,
       validate: false,
     },
     opensearchService.getClusterMetric

@@ -49,7 +49,7 @@ export default class ClusterMetricsGraphs extends Component {
         match_all: {},
       },
     };
-    const resp = await httpClient.get(`${CLUSTER_METRICS}/_search`, body);
+    const resp = await httpClient.get(`/${CLUSTER_METRICS}/_search`, body);
     this.setState({ dataPoints: this.cleanResponse(resp) });
   }
 
@@ -180,7 +180,7 @@ export default class ClusterMetricsGraphs extends Component {
           {this.renderBarPlot(cleaned_status)}
           <ClusterMetricsNode
             data={number_total_nodes}
-            data2={number_data_nodes}
+            dataNodes={number_data_nodes}
             type={'Nodes Data'}
           />
           <ClusterMetricLineGraphMultiple

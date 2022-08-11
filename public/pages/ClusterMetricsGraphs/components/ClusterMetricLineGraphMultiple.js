@@ -89,8 +89,6 @@ export default class ClusterMetricLineGraphMultiple extends Component {
     ];
 
     const { hint, hintMin, hintMax } = this.state;
-    console.info(`MESSAGE richfu hint = ${JSON.stringify({ hint, hintMin, hintMax }, null, 4)}`);
-
     const xTitle = 'Time';
 
     return (

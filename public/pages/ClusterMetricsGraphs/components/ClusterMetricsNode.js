@@ -32,7 +32,7 @@ export default class ClusterMetricsNode extends Component {
 
     this.state = {
       hint: null,
-      hint2: null,
+      hintDataNode: null,
     };
   }
 
@@ -41,7 +41,7 @@ export default class ClusterMetricsNode extends Component {
   };
 
   onNearestX2 = (value) => {
-    this.setState({ hint2: value });
+    this.setState({ hintDataNode: value });
   };
 
   onValueMouseOver = (data, seriesName) => {
@@ -49,7 +49,7 @@ export default class ClusterMetricsNode extends Component {
   };
 
   resetHint = () => {
-    this.setState({ hint: null, hintMin: null, hintMax: null });
+    this.setState({ hint: null, hintDataNode: null });
   };
 
   getYDomain(data, data2) {
@@ -67,11 +67,11 @@ export default class ClusterMetricsNode extends Component {
     return [minBuffer, maxBuffer];
   }
 
-  renderXYPlot = (data, data2, type) => {
+  renderXYPlot = (data, dataNodes, type) => {
     const xDomain = getXDomain(data);
-    const yDomain = this.getYDomain(data, data2);
+    const yDomain = this.getYDomain(data, dataNodes);
     const markData = getMarkData(data);
-    const markData2 = getMarkData(data2);
+    const markDataNode = getMarkData(dataNodes);
     const legendItems = [
       {
         title: 'Number Nodes',
@@ -83,7 +83,7 @@ export default class ClusterMetricsNode extends Component {
       },
     ];
 
-    const { hint, hint2 } = this.state;
+    const { hint, hintDataNode } = this.state;
     const xTitle = 'Time';
 
     return (
@@ -106,14 +106,14 @@ export default class ClusterMetricsNode extends Component {
           />
           <LineSeries data={data} style={LINE_STYLES} color={'blue'} />
           <MarkSeries data={markData} sizeRange={[3, 3]} onNearestX={this.onNearestX} />
-          <LineSeries data={data2} style={LINE_STYLES} color={'orange'} />
-          <MarkSeries data={markData2} sizeRange={[3, 3]} onNearestX={this.onNearestX2} />
+          <LineSeries data={dataNodes} style={LINE_STYLES} color={'orange'} />
+          <MarkSeries data={markDataNode} sizeRange={[3, 3]} onNearestX={this.onNearestX2} />
           {hint && (
             <Hint value={hint}>
               <div style={HINT_STYLES}>
                 <p>Timestamp: {hint.x.toLocaleString()}</p>
                 <p>Number of Total Nodes: {hint.y.toLocaleString()}</p>
-                <p>Number of Data Nodes: {hint2.y.toLocaleString()}</p>
+                <p>Number of Data Nodes: {hintDataNode.y.toLocaleString()}</p>
               </div>
             </Hint>
           )}
@@ -122,7 +122,7 @@ export default class ClusterMetricsNode extends Component {
     );
   };
   render() {
-    const { data, data2, type } = this.props;
-    return <>{this.renderXYPlot(data, data2, type)}</>;
+    const { data, dataNodes, type } = this.props;
+    return <>{this.renderXYPlot(data, dataNodes, type)}</>;
   }
 }
