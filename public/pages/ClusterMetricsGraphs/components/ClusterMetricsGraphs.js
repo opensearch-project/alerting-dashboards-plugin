@@ -176,7 +176,7 @@ export default class ClusterMetricsGraphs extends Component {
       const number_data_nodes = this.cleanData(dataPoints, 'number_of_data_nodes');
 
       return (
-        <>
+        <div>
           {this.renderBarPlot(cleaned_status)}
           <ClusterMetricsNode
             data={number_total_nodes}
@@ -199,7 +199,7 @@ export default class ClusterMetricsGraphs extends Component {
           <ClusterMetricLineGraph data={active_shards} type={'Active Shards'} />
           <ClusterMetricLineGraph data={relocating_shards} type={'Relocating Shards'} />
           <ClusterMetricLineGraph data={number_pending_tasks} type={'Number of Pending Tasks'} />
-        </>
+        </div>
       );
     } else {
       return 'Loading...';
