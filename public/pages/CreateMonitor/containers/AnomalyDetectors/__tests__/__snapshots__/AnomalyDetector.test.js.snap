@@ -789,9 +789,25 @@ exports[`AnomalyDetectors renders 1`] = `
                                             size="m"
                                             type="arrowDown"
                                           >
-                                            <div>
-                                              EuiIconMock
-                                            </div>
+                                            <EuiIconEmpty
+                                              aria-hidden={true}
+                                              className="euiIcon euiIcon--medium euiIcon-isLoading euiFormControlLayoutCustomIcon__icon"
+                                              focusable="false"
+                                              role="img"
+                                              style={null}
+                                            >
+                                              <svg
+                                                aria-hidden={true}
+                                                className="euiIcon euiIcon--medium euiIcon-isLoading euiFormControlLayoutCustomIcon__icon"
+                                                focusable="false"
+                                                height={16}
+                                                role="img"
+                                                style={null}
+                                                viewBox="0 0 16 16"
+                                                width={16}
+                                                xmlns="http://www.w3.org/2000/svg"
+                                              />
+                                            </EuiIconEmpty>
                                           </EuiIcon>
                                         </button>
                                       </EuiFormControlLayoutCustomIcon>
