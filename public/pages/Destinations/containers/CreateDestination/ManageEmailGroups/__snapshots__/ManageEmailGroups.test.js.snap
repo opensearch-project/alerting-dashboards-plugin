@@ -64,9 +64,20 @@ exports[`ManageEmailGroups renders when email is disallowed 1`] = `
                         class="euiButtonIcon euiButtonIcon--text euiButtonIcon--empty euiButtonIcon--xSmall euiModal__closeIcon"
                         type="button"
                       >
-                        <div>
-                          EuiIconMock
-                        </div>
+                        <svg
+                          aria-hidden="true"
+                          class="euiIcon euiIcon--medium euiIcon--inherit euiButtonIcon__icon"
+                          focusable="false"
+                          height="16"
+                          role="img"
+                          viewBox="0 0 16 16"
+                          width="16"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <path
+                            d="M7.293 8L3.146 3.854a.5.5 0 11.708-.708L8 7.293l4.146-4.147a.5.5 0 01.708.708L8.707 8l4.147 4.146a.5.5 0 01-.708.708L8 8.707l-4.146 4.147a.5.5 0 01-.708-.708L7.293 8z"
+                          />
+                        </svg>
                       </button>
                       <div
                         class="euiModal__flex"
@@ -205,9 +216,20 @@ exports[`ManageEmailGroups renders when email is disallowed 1`] = `
                                 class="euiButtonIcon euiButtonIcon--text euiButtonIcon--empty euiButtonIcon--xSmall euiModal__closeIcon"
                                 type="button"
                               >
-                                <div>
-                                  EuiIconMock
-                                </div>
+                                <svg
+                                  aria-hidden="true"
+                                  class="euiIcon euiIcon--medium euiIcon--inherit euiButtonIcon__icon"
+                                  focusable="false"
+                                  height="16"
+                                  role="img"
+                                  viewBox="0 0 16 16"
+                                  width="16"
+                                  xmlns="http://www.w3.org/2000/svg"
+                                >
+                                  <path
+                                    d="M7.293 8L3.146 3.854a.5.5 0 11.708-.708L8 7.293l4.146-4.147a.5.5 0 01.708.708L8.707 8l4.147 4.146a.5.5 0 01-.708.708L8 8.707l-4.146 4.147a.5.5 0 01-.708-.708L7.293 8z"
+                                  />
+                                </svg>
                               </button>
                               <div
                                 class="euiModal__flex"
@@ -278,9 +300,20 @@ exports[`ManageEmailGroups renders when email is disallowed 1`] = `
                                   class="euiButtonIcon euiButtonIcon--text euiButtonIcon--empty euiButtonIcon--xSmall euiModal__closeIcon"
                                   type="button"
                                 >
-                                  <div>
-                                    EuiIconMock
-                                  </div>
+                                  <svg
+                                    aria-hidden="true"
+                                    class="euiIcon euiIcon--medium euiIcon--inherit euiButtonIcon__icon"
+                                    focusable="false"
+                                    height="16"
+                                    role="img"
+                                    viewBox="0 0 16 16"
+                                    width="16"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                  >
+                                    <path
+                                      d="M7.293 8L3.146 3.854a.5.5 0 11.708-.708L8 7.293l4.146-4.147a.5.5 0 01.708.708L8.707 8l4.147 4.146a.5.5 0 01-.708.708L8 8.707l-4.146 4.147a.5.5 0 01-.708-.708L7.293 8z"
+                                    />
+                                  </svg>
                                 </button>
                                 <div
                                   class="euiModal__flex"
@@ -351,9 +384,20 @@ exports[`ManageEmailGroups renders when email is disallowed 1`] = `
                                     class="euiButtonIcon euiButtonIcon--text euiButtonIcon--empty euiButtonIcon--xSmall euiModal__closeIcon"
                                     type="button"
                                   >
-                                    <div>
-                                      EuiIconMock
-                                    </div>
+                                    <svg
+                                      aria-hidden="true"
+                                      class="euiIcon euiIcon--medium euiIcon--inherit euiButtonIcon__icon"
+                                      focusable="false"
+                                      height="16"
+                                      role="img"
+                                      viewBox="0 0 16 16"
+                                      width="16"
+                                      xmlns="http://www.w3.org/2000/svg"
+                                    >
+                                      <path
+                                        d="M7.293 8L3.146 3.854a.5.5 0 11.708-.708L8 7.293l4.146-4.147a.5.5 0 01.708.708L8.707 8l4.147 4.146a.5.5 0 01-.708.708L8 8.707l-4.146 4.147a.5.5 0 01-.708-.708L7.293 8z"
+                                      />
+                                    </svg>
                                   </button>
                                   <div
                                     class="euiModal__flex"
@@ -412,9 +456,20 @@ exports[`ManageEmailGroups renders when email is disallowed 1`] = `
                                       class="euiButtonIcon euiButtonIcon--text euiButtonIcon--empty euiButtonIcon--xSmall euiModal__closeIcon"
                                       type="button"
                                     >
-                                      <div>
-                                        EuiIconMock
-                                      </div>
+                                      <svg
+                                        aria-hidden="true"
+                                        class="euiIcon euiIcon--medium euiIcon--inherit euiButtonIcon__icon"
+                                        focusable="false"
+                                        height="16"
+                                        role="img"
+                                        viewBox="0 0 16 16"
+                                        width="16"
+                                        xmlns="http://www.w3.org/2000/svg"
+                                      >
+                                        <path
+                                          d="M7.293 8L3.146 3.854a.5.5 0 11.708-.708L8 7.293l4.146-4.147a.5.5 0 01.708.708L8.707 8l4.147 4.146a.5.5 0 01-.708.708L8 8.707l-4.146 4.147a.5.5 0 01-.708-.708L7.293 8z"
+                                        />
+                                      </svg>
                                     </button>
                                     <div
                                       class="euiModal__flex"
@@ -513,9 +568,29 @@ exports[`ManageEmailGroups renders when email is disallowed 1`] = `
                                     size="m"
                                     type="cross"
                                   >
-                                    <div>
-                                      EuiIconMock
-                                    </div>
+                                    <EuiIconCross
+                                      aria-hidden={true}
+                                      className="euiIcon euiIcon--medium euiIcon--inherit euiButtonIcon__icon"
+                                      focusable="false"
+                                      role="img"
+                                      style={null}
+                                    >
+                                      <svg
+                                        aria-hidden={true}
+                                        className="euiIcon euiIcon--medium euiIcon--inherit euiButtonIcon__icon"
+                                        focusable="false"
+                                        height={16}
+                                        role="img"
+                                        style={null}
+                                        viewBox="0 0 16 16"
+                                        width={16}
+                                        xmlns="http://www.w3.org/2000/svg"
+                                      >
+                                        <path
+                                          d="M7.293 8L3.146 3.854a.5.5 0 11.708-.708L8 7.293l4.146-4.147a.5.5 0 01.708.708L8.707 8l4.147 4.146a.5.5 0 01-.708.708L8 8.707l-4.146 4.147a.5.5 0 01-.708-.708L7.293 8z"
+                                        />
+                                      </svg>
+                                    </EuiIconCross>
                                   </EuiIcon>
                                 </button>
                               </EuiButtonIcon>
@@ -752,9 +827,16 @@ exports[`ManageEmailGroups renders when visible 1`] = `
                         class="euiButtonIcon euiButtonIcon--text euiButtonIcon--empty euiButtonIcon--xSmall euiModal__closeIcon"
                         type="button"
                       >
-                        <div>
-                          EuiIconMock
-                        </div>
+                        <svg
+                          aria-hidden="true"
+                          class="euiIcon euiIcon--medium euiIcon--inherit euiIcon-isLoading euiButtonIcon__icon"
+                          focusable="false"
+                          height="16"
+                          role="img"
+                          viewBox="0 0 16 16"
+                          width="16"
+                          xmlns="http://www.w3.org/2000/svg"
+                        />
                       </button>
                       <div
                         class="euiModal__flex"
@@ -893,9 +975,16 @@ exports[`ManageEmailGroups renders when visible 1`] = `
                                 class="euiButtonIcon euiButtonIcon--text euiButtonIcon--empty euiButtonIcon--xSmall euiModal__closeIcon"
                                 type="button"
                               >
-                                <div>
-                                  EuiIconMock
-                                </div>
+                                <svg
+                                  aria-hidden="true"
+                                  class="euiIcon euiIcon--medium euiIcon--inherit euiIcon-isLoading euiButtonIcon__icon"
+                                  focusable="false"
+                                  height="16"
+                                  role="img"
+                                  viewBox="0 0 16 16"
+                                  width="16"
+                                  xmlns="http://www.w3.org/2000/svg"
+                                />
                               </button>
                               <div
                                 class="euiModal__flex"
@@ -966,9 +1055,16 @@ exports[`ManageEmailGroups renders when visible 1`] = `
                                   class="euiButtonIcon euiButtonIcon--text euiButtonIcon--empty euiButtonIcon--xSmall euiModal__closeIcon"
                                   type="button"
                                 >
-                                  <div>
-                                    EuiIconMock
-                                  </div>
+                                  <svg
+                                    aria-hidden="true"
+                                    class="euiIcon euiIcon--medium euiIcon--inherit euiIcon-isLoading euiButtonIcon__icon"
+                                    focusable="false"
+                                    height="16"
+                                    role="img"
+                                    viewBox="0 0 16 16"
+                                    width="16"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                  />
                                 </button>
                                 <div
                                   class="euiModal__flex"
@@ -1039,9 +1135,16 @@ exports[`ManageEmailGroups renders when visible 1`] = `
                                     class="euiButtonIcon euiButtonIcon--text euiButtonIcon--empty euiButtonIcon--xSmall euiModal__closeIcon"
                                     type="button"
                                   >
-                                    <div>
-                                      EuiIconMock
-                                    </div>
+                                    <svg
+                                      aria-hidden="true"
+                                      class="euiIcon euiIcon--medium euiIcon--inherit euiIcon-isLoading euiButtonIcon__icon"
+                                      focusable="false"
+                                      height="16"
+                                      role="img"
+                                      viewBox="0 0 16 16"
+                                      width="16"
+                                      xmlns="http://www.w3.org/2000/svg"
+                                    />
                                   </button>
                                   <div
                                     class="euiModal__flex"
@@ -1100,9 +1203,16 @@ exports[`ManageEmailGroups renders when visible 1`] = `
                                       class="euiButtonIcon euiButtonIcon--text euiButtonIcon--empty euiButtonIcon--xSmall euiModal__closeIcon"
                                       type="button"
                                     >
-                                      <div>
-                                        EuiIconMock
-                                      </div>
+                                      <svg
+                                        aria-hidden="true"
+                                        class="euiIcon euiIcon--medium euiIcon--inherit euiIcon-isLoading euiButtonIcon__icon"
+                                        focusable="false"
+                                        height="16"
+                                        role="img"
+                                        viewBox="0 0 16 16"
+                                        width="16"
+                                        xmlns="http://www.w3.org/2000/svg"
+                                      />
                                     </button>
                                     <div
                                       class="euiModal__flex"
@@ -1201,9 +1311,25 @@ exports[`ManageEmailGroups renders when visible 1`] = `
                                     size="m"
                                     type="cross"
                                   >
-                                    <div>
-                                      EuiIconMock
-                                    </div>
+                                    <EuiIconEmpty
+                                      aria-hidden={true}
+                                      className="euiIcon euiIcon--medium euiIcon--inherit euiIcon-isLoading euiButtonIcon__icon"
+                                      focusable="false"
+                                      role="img"
+                                      style={null}
+                                    >
+                                      <svg
+                                        aria-hidden={true}
+                                        className="euiIcon euiIcon--medium euiIcon--inherit euiIcon-isLoading euiButtonIcon__icon"
+                                        focusable="false"
+                                        height={16}
+                                        role="img"
+                                        style={null}
+                                        viewBox="0 0 16 16"
+                                        width={16}
+                                        xmlns="http://www.w3.org/2000/svg"
+                                      />
+                                    </EuiIconEmpty>
                                   </EuiIcon>
                                 </button>
                               </EuiButtonIcon>
