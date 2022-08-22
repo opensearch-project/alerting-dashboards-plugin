@@ -17,16 +17,9 @@ exports[`MonitorExpressions renders 1`] = `
       <span
         class="euiToolTipAnchor"
       >
-        <svg
-          aria-hidden="true"
-          class="euiIcon euiIcon--medium euiIcon-isLoading"
-          focusable="false"
-          height="16"
-          role="img"
-          viewBox="0 0 16 16"
-          width="16"
-          xmlns="http://www.w3.org/2000/svg"
-        />
+        <div>
+          EuiIconMock
+        </div>
       </span>
     </div>
     <div
@@ -100,16 +93,9 @@ exports[`MonitorExpressions renders 1`] = `
       <span
         class="euiToolTipAnchor"
       >
-        <svg
-          aria-hidden="true"
-          class="euiIcon euiIcon--medium euiIcon-isLoading"
-          focusable="false"
-          height="16"
-          role="img"
-          viewBox="0 0 16 16"
-          width="16"
-          xmlns="http://www.w3.org/2000/svg"
-        />
+        <div>
+          EuiIconMock
+        </div>
       </span>
     </div>
     <div
@@ -186,16 +172,9 @@ exports[`MonitorExpressions renders 1`] = `
               <span
                 class="euiFormControlLayoutCustomIcon"
               >
-                <svg
-                  aria-hidden="true"
-                  class="euiIcon euiIcon--medium euiIcon-isLoading euiFormControlLayoutCustomIcon__icon"
-                  focusable="false"
-                  height="16"
-                  role="img"
-                  viewBox="0 0 16 16"
-                  width="16"
-                  xmlns="http://www.w3.org/2000/svg"
-                />
+                <div>
+                  EuiIconMock
+                </div>
               </span>
             </div>
           </div>
@@ -219,16 +198,9 @@ exports[`MonitorExpressions renders 1`] = `
       <span
         class="euiToolTipAnchor"
       >
-        <svg
-          aria-hidden="true"
-          class="euiIcon euiIcon--medium euiIcon-isLoading"
-          focusable="false"
-          height="16"
-          role="img"
-          viewBox="0 0 16 16"
-          width="16"
-          xmlns="http://www.w3.org/2000/svg"
-        />
+        <div>
+          EuiIconMock
+        </div>
       </span>
     </div>
     <div
@@ -286,16 +258,9 @@ exports[`MonitorExpressions renders 1`] = `
       <span
         class="euiToolTipAnchor"
       >
-        <svg
-          aria-hidden="true"
-          class="euiIcon euiIcon--medium euiIcon-isLoading"
-          focusable="false"
-          height="16"
-          role="img"
-          viewBox="0 0 16 16"
-          width="16"
-          xmlns="http://www.w3.org/2000/svg"
-        />
+        <div>
+          EuiIconMock
+        </div>
       </span>
     </div>
     <div
