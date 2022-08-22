@@ -361,29 +361,9 @@ exports[`Dashboard renders in flyout 1`] = `
                                       size="m"
                                       type="search"
                                     >
-                                      <EuiIconSearch
-                                        aria-hidden={true}
-                                        className="euiIcon euiIcon--medium euiFormControlLayoutCustomIcon__icon"
-                                        focusable="false"
-                                        role="img"
-                                        style={null}
-                                      >
-                                        <svg
-                                          aria-hidden={true}
-                                          className="euiIcon euiIcon--medium euiFormControlLayoutCustomIcon__icon"
-                                          focusable="false"
-                                          height={16}
-                                          role="img"
-                                          style={null}
-                                          viewBox="0 0 16 16"
-                                          width={16}
-                                          xmlns="http://www.w3.org/2000/svg"
-                                        >
-                                          <path
-                                            d="M11.271 11.978l3.872 3.873a.502.502 0 00.708 0 .502.502 0 000-.708l-3.565-3.564c2.38-2.747 2.267-6.923-.342-9.532-2.73-2.73-7.17-2.73-9.898 0-2.728 2.729-2.728 7.17 0 9.9a6.955 6.955 0 004.949 2.05.5.5 0 000-1 5.96 5.96 0 01-4.242-1.757 6.01 6.01 0 010-8.486c2.337-2.34 6.143-2.34 8.484 0a6.01 6.01 0 010 8.486.5.5 0 00.034.738z"
-                                          />
-                                        </svg>
-                                      </EuiIconSearch>
+                                      <div>
+                                        EuiIconMock
+                                      </div>
                                     </EuiIcon>
                                   </span>
                                 </EuiFormControlLayoutCustomIcon>
@@ -523,30 +503,9 @@ exports[`Dashboard renders in flyout 1`] = `
                                       size="m"
                                       type="arrowDown"
                                     >
-                                      <EuiIconArrowDown
-                                        aria-hidden={true}
-                                        className="euiIcon euiIcon--medium euiFormControlLayoutCustomIcon__icon"
-                                        focusable="false"
-                                        role="img"
-                                        style={null}
-                                      >
-                                        <svg
-                                          aria-hidden={true}
-                                          className="euiIcon euiIcon--medium euiFormControlLayoutCustomIcon__icon"
-                                          focusable="false"
-                                          height={16}
-                                          role="img"
-                                          style={null}
-                                          viewBox="0 0 16 16"
-                                          width={16}
-                                          xmlns="http://www.w3.org/2000/svg"
-                                        >
-                                          <path
-                                            d="M13.069 5.157L8.384 9.768a.546.546 0 01-.768 0L2.93 5.158a.552.552 0 00-.771 0 .53.53 0 000 .759l4.684 4.61c.641.631 1.672.63 2.312 0l4.684-4.61a.53.53 0 000-.76.552.552 0 00-.771 0z"
-                                            fillRule="non-zero"
-                                          />
-                                        </svg>
-                                      </EuiIconArrowDown>
+                                      <div>
+                                        EuiIconMock
+                                      </div>
                                     </EuiIcon>
                                   </span>
                                 </EuiFormControlLayoutCustomIcon>
@@ -618,30 +577,9 @@ exports[`Dashboard renders in flyout 1`] = `
                                   size="m"
                                   type="arrowLeft"
                                 >
-                                  <EuiIconArrowLeft
-                                    aria-hidden={true}
-                                    className="euiIcon euiIcon--medium euiIcon--inherit euiButtonIcon__icon"
-                                    focusable="false"
-                                    role="img"
-                                    style={null}
-                                  >
-                                    <svg
-                                      aria-hidden={true}
-                                      className="euiIcon euiIcon--medium euiIcon--inherit euiButtonIcon__icon"
-                                      focusable="false"
-                                      height={16}
-                                      role="img"
-                                      style={null}
-                                      viewBox="0 0 16 16"
-                                      width={16}
-                                      xmlns="http://www.w3.org/2000/svg"
-                                    >
-                                      <path
-                                        d="M10.843 13.069L6.232 8.384a.546.546 0 010-.768l4.61-4.685a.552.552 0 000-.771.53.53 0 00-.759 0l-4.61 4.684a1.65 1.65 0 000 2.312l4.61 4.684a.53.53 0 00.76 0 .552.552 0 000-.771z"
-                                        fillRule="nonzero"
-                                      />
-                                    </svg>
-                                  </EuiIconArrowLeft>
+                                  <div>
+                                    EuiIconMock
+                                  </div>
                                 </EuiIcon>
                               </button>
                             </EuiButtonIcon>
@@ -766,30 +704,9 @@ exports[`Dashboard renders in flyout 1`] = `
                                   size="m"
                                   type="arrowRight"
                                 >
-                                  <EuiIconArrowRight
-                                    aria-hidden={true}
-                                    className="euiIcon euiIcon--medium euiIcon--inherit euiButtonIcon__icon"
-                                    focusable="false"
-                                    role="img"
-                                    style={null}
-                                  >
-                                    <svg
-                                      aria-hidden={true}
-                                      className="euiIcon euiIcon--medium euiIcon--inherit euiButtonIcon__icon"
-                                      focusable="false"
-                                      height={16}
-                                      role="img"
-                                      style={null}
-                                      viewBox="0 0 16 16"
-                                      width={16}
-                                      xmlns="http://www.w3.org/2000/svg"
-                                    >
-                                      <path
-                                        d="M5.157 13.069l4.611-4.685a.546.546 0 000-.768L5.158 2.93a.552.552 0 010-.771.53.53 0 01.759 0l4.61 4.684c.631.641.63 1.672 0 2.312l-4.61 4.684a.53.53 0 01-.76 0 .552.552 0 010-.771z"
-                                        fillRule="nonzero"
-                                      />
-                                    </svg>
-                                  </EuiIconArrowRight>
+                                  <div>
+                                    EuiIconMock
+                                  </div>
                                 </EuiIcon>
                               </button>
                             </EuiButtonIcon>
@@ -1063,30 +980,9 @@ exports[`Dashboard renders in flyout 1`] = `
                                                 size="s"
                                                 type="arrowDown"
                                               >
-                                                <EuiIconArrowDown
-                                                  aria-hidden={true}
-                                                  className="euiIcon euiIcon--small euiIcon--inherit euiButtonContent__icon"
-                                                  focusable="false"
-                                                  role="img"
-                                                  style={null}
-                                                >
-                                                  <svg
-                                                    aria-hidden={true}
-                                                    className="euiIcon euiIcon--small euiIcon--inherit euiButtonContent__icon"
-                                                    focusable="false"
-                                                    height={16}
-                                                    role="img"
-                                                    style={null}
-                                                    viewBox="0 0 16 16"
-                                                    width={16}
-                                                    xmlns="http://www.w3.org/2000/svg"
-                                                  >
-                                                    <path
-                                                      d="M13.069 5.157L8.384 9.768a.546.546 0 01-.768 0L2.93 5.158a.552.552 0 00-.771 0 .53.53 0 000 .759l4.684 4.61c.641.631 1.672.63 2.312 0l4.684-4.61a.53.53 0 000-.76.552.552 0 00-.771 0z"
-                                                      fillRule="non-zero"
-                                                    />
-                                                  </svg>
-                                                </EuiIconArrowDown>
+                                                <div>
+                                                  EuiIconMock
+                                                </div>
                                               </EuiIcon>
                                               <span
                                                 className="euiButtonEmpty__text"
@@ -1248,29 +1144,9 @@ exports[`Dashboard renders in flyout 1`] = `
                                       size="m"
                                       type="sortDown"
                                     >
-                                      <EuiIconSortDown
-                                        aria-hidden={true}
-                                        className="euiIcon euiIcon--medium euiTableSortIcon"
-                                        focusable="false"
-                                        role="img"
-                                        style={null}
-                                      >
-                                        <svg
-                                          aria-hidden={true}
-                                          className="euiIcon euiIcon--medium euiTableSortIcon"
-                                          focusable="false"
-                                          height={16}
-                                          role="img"
-                                          style={null}
-                                          viewBox="0 0 16 16"
-                                          width={16}
-                                          xmlns="http://www.w3.org/2000/svg"
-                                        >
-                                          <path
-                                            d="M7 11.692V3.556C7 3.249 7.224 3 7.5 3s.5.249.5.556v8.136l4.096-4.096a.5.5 0 01.707.707l-4.242 4.243a1.494 1.494 0 01-.925.433.454.454 0 01-.272 0 1.494 1.494 0 01-.925-.433L2.197 8.303a.5.5 0 11.707-.707L7 11.692z"
-                                          />
-                                        </svg>
-                                      </EuiIconSortDown>
+                                      <div>
+                                        EuiIconMock
+                                      </div>
                                     </EuiIcon>
                                   </span>
                                 </CellContents>
@@ -2080,29 +1956,9 @@ exports[`Dashboard renders with alert by triggers view 1`] = `
                                       size="m"
                                       type="search"
                                     >
-                                      <EuiIconSearch
-                                        aria-hidden={true}
-                                        className="euiIcon euiIcon--medium euiFormControlLayoutCustomIcon__icon"
-                                        focusable="false"
-                                        role="img"
-                                        style={null}
-                                      >
-                                        <svg
-                                          aria-hidden={true}
-                                          className="euiIcon euiIcon--medium euiFormControlLayoutCustomIcon__icon"
-                                          focusable="false"
-                                          height={16}
-                                          role="img"
-                                          style={null}
-                                          viewBox="0 0 16 16"
-                                          width={16}
-                                          xmlns="http://www.w3.org/2000/svg"
-                                        >
-                                          <path
-                                            d="M11.271 11.978l3.872 3.873a.502.502 0 00.708 0 .502.502 0 000-.708l-3.565-3.564c2.38-2.747 2.267-6.923-.342-9.532-2.73-2.73-7.17-2.73-9.898 0-2.728 2.729-2.728 7.17 0 9.9a6.955 6.955 0 004.949 2.05.5.5 0 000-1 5.96 5.96 0 01-4.242-1.757 6.01 6.01 0 010-8.486c2.337-2.34 6.143-2.34 8.484 0a6.01 6.01 0 010 8.486.5.5 0 00.034.738z"
-                                          />
-                                        </svg>
-                                      </EuiIconSearch>
+                                      <div>
+                                        EuiIconMock
+                                      </div>
                                     </EuiIcon>
                                   </span>
                                 </EuiFormControlLayoutCustomIcon>
@@ -2240,30 +2096,9 @@ exports[`Dashboard renders with alert by triggers view 1`] = `
                                       size="m"
                                       type="arrowDown"
                                     >
-                                      <EuiIconArrowDown
-                                        aria-hidden={true}
-                                        className="euiIcon euiIcon--medium euiFormControlLayoutCustomIcon__icon"
-                                        focusable="false"
-                                        role="img"
-                                        style={null}
-                                      >
-                                        <svg
-                                          aria-hidden={true}
-                                          className="euiIcon euiIcon--medium euiFormControlLayoutCustomIcon__icon"
-                                          focusable="false"
-                                          height={16}
-                                          role="img"
-                                          style={null}
-                                          viewBox="0 0 16 16"
-                                          width={16}
-                                          xmlns="http://www.w3.org/2000/svg"
-                                        >
-                                          <path
-                                            d="M13.069 5.157L8.384 9.768a.546.546 0 01-.768 0L2.93 5.158a.552.552 0 00-.771 0 .53.53 0 000 .759l4.684 4.61c.641.631 1.672.63 2.312 0l4.684-4.61a.53.53 0 000-.76.552.552 0 00-.771 0z"
-                                            fillRule="non-zero"
-                                          />
-                                        </svg>
-                                      </EuiIconArrowDown>
+                                      <div>
+                                        EuiIconMock
+                                      </div>
                                     </EuiIcon>
                                   </span>
                                 </EuiFormControlLayoutCustomIcon>
@@ -2403,30 +2238,9 @@ exports[`Dashboard renders with alert by triggers view 1`] = `
                                       size="m"
                                       type="arrowDown"
                                     >
-                                      <EuiIconArrowDown
-                                        aria-hidden={true}
-                                        className="euiIcon euiIcon--medium euiFormControlLayoutCustomIcon__icon"
-                                        focusable="false"
-                                        role="img"
-                                        style={null}
-                                      >
-                                        <svg
-                                          aria-hidden={true}
-                                          className="euiIcon euiIcon--medium euiFormControlLayoutCustomIcon__icon"
-                                          focusable="false"
-                                          height={16}
-                                          role="img"
-                                          style={null}
-                                          viewBox="0 0 16 16"
-                                          width={16}
-                                          xmlns="http://www.w3.org/2000/svg"
-                                        >
-                                          <path
-                                            d="M13.069 5.157L8.384 9.768a.546.546 0 01-.768 0L2.93 5.158a.552.552 0 00-.771 0 .53.53 0 000 .759l4.684 4.61c.641.631 1.672.63 2.312 0l4.684-4.61a.53.53 0 000-.76.552.552 0 00-.771 0z"
-                                            fillRule="non-zero"
-                                          />
-                                        </svg>
-                                      </EuiIconArrowDown>
+                                      <div>
+                                        EuiIconMock
+                                      </div>
                                     </EuiIcon>
                                   </span>
                                 </EuiFormControlLayoutCustomIcon>
@@ -2498,30 +2312,9 @@ exports[`Dashboard renders with alert by triggers view 1`] = `
                                   size="m"
                                   type="arrowLeft"
                                 >
-                                  <EuiIconArrowLeft
-                                    aria-hidden={true}
-                                    className="euiIcon euiIcon--medium euiIcon--inherit euiButtonIcon__icon"
-                                    focusable="false"
-                                    role="img"
-                                    style={null}
-                                  >
-                                    <svg
-                                      aria-hidden={true}
-                                      className="euiIcon euiIcon--medium euiIcon--inherit euiButtonIcon__icon"
-                                      focusable="false"
-                                      height={16}
-                                      role="img"
-                                      style={null}
-                                      viewBox="0 0 16 16"
-                                      width={16}
-                                      xmlns="http://www.w3.org/2000/svg"
-                                    >
-                                      <path
-                                        d="M10.843 13.069L6.232 8.384a.546.546 0 010-.768l4.61-4.685a.552.552 0 000-.771.53.53 0 00-.759 0l-4.61 4.684a1.65 1.65 0 000 2.312l4.61 4.684a.53.53 0 00.76 0 .552.552 0 000-.771z"
-                                        fillRule="nonzero"
-                                      />
-                                    </svg>
-                                  </EuiIconArrowLeft>
+                                  <div>
+                                    EuiIconMock
+                                  </div>
                                 </EuiIcon>
                               </button>
                             </EuiButtonIcon>
@@ -2646,30 +2439,9 @@ exports[`Dashboard renders with alert by triggers view 1`] = `
                                   size="m"
                                   type="arrowRight"
                                 >
-                                  <EuiIconArrowRight
-                                    aria-hidden={true}
-                                    className="euiIcon euiIcon--medium euiIcon--inherit euiButtonIcon__icon"
-                                    focusable="false"
-                                    role="img"
-                                    style={null}
-                                  >
-                                    <svg
-                                      aria-hidden={true}
-                                      className="euiIcon euiIcon--medium euiIcon--inherit euiButtonIcon__icon"
-                                      focusable="false"
-                                      height={16}
-                                      role="img"
-                                      style={null}
-                                      viewBox="0 0 16 16"
-                                      width={16}
-                                      xmlns="http://www.w3.org/2000/svg"
-                                    >
-                                      <path
-                                        d="M5.157 13.069l4.611-4.685a.546.546 0 000-.768L5.158 2.93a.552.552 0 010-.771.53.53 0 01.759 0l4.61 4.684c.631.641.63 1.672 0 2.312l-4.61 4.684a.53.53 0 01-.76 0 .552.552 0 010-.771z"
-                                        fillRule="nonzero"
-                                      />
-                                    </svg>
-                                  </EuiIconArrowRight>
+                                  <div>
+                                    EuiIconMock
+                                  </div>
                                 </EuiIcon>
                               </button>
                             </EuiButtonIcon>
@@ -2976,30 +2748,9 @@ exports[`Dashboard renders with alert by triggers view 1`] = `
                                                 size="s"
                                                 type="arrowDown"
                                               >
-                                                <EuiIconArrowDown
-                                                  aria-hidden={true}
-                                                  className="euiIcon euiIcon--small euiIcon--inherit euiButtonContent__icon"
-                                                  focusable="false"
-                                                  role="img"
-                                                  style={null}
-                                                >
-                                                  <svg
-                                                    aria-hidden={true}
-                                                    className="euiIcon euiIcon--small euiIcon--inherit euiButtonContent__icon"
-                                                    focusable="false"
-                                                    height={16}
-                                                    role="img"
-                                                    style={null}
-                                                    viewBox="0 0 16 16"
-                                                    width={16}
-                                                    xmlns="http://www.w3.org/2000/svg"
-                                                  >
-                                                    <path
-                                                      d="M13.069 5.157L8.384 9.768a.546.546 0 01-.768 0L2.93 5.158a.552.552 0 00-.771 0 .53.53 0 000 .759l4.684 4.61c.641.631 1.672.63 2.312 0l4.684-4.61a.53.53 0 000-.76.552.552 0 00-.771 0z"
-                                                      fillRule="non-zero"
-                                                    />
-                                                  </svg>
-                                                </EuiIconArrowDown>
+                                                <div>
+                                                  EuiIconMock
+                                                </div>
                                               </EuiIcon>
                                               <span
                                                 className="euiButtonEmpty__text"
@@ -3451,29 +3202,9 @@ exports[`Dashboard renders with alert by triggers view 1`] = `
                                       size="m"
                                       type="sortDown"
                                     >
-                                      <EuiIconSortDown
-                                        aria-hidden={true}
-                                        className="euiIcon euiIcon--medium euiTableSortIcon"
-                                        focusable="false"
-                                        role="img"
-                                        style={null}
-                                      >
-                                        <svg
-                                          aria-hidden={true}
-                                          className="euiIcon euiIcon--medium euiTableSortIcon"
-                                          focusable="false"
-                                          height={16}
-                                          role="img"
-                                          style={null}
-                                          viewBox="0 0 16 16"
-                                          width={16}
-                                          xmlns="http://www.w3.org/2000/svg"
-                                        >
-                                          <path
-                                            d="M7 11.692V3.556C7 3.249 7.224 3 7.5 3s.5.249.5.556v8.136l4.096-4.096a.5.5 0 01.707.707l-4.242 4.243a1.494 1.494 0 01-.925.433.454.454 0 01-.272 0 1.494 1.494 0 01-.925-.433L2.197 8.303a.5.5 0 11.707-.707L7 11.692z"
-                                          />
-                                        </svg>
-                                      </EuiIconSortDown>
+                                      <div>
+                                        EuiIconMock
+                                      </div>
                                     </EuiIcon>
                                   </span>
                                 </CellContents>
@@ -4120,25 +3851,9 @@ exports[`Dashboard renders with per alert view 1`] = `
                                       size="m"
                                       type="search"
                                     >
-                                      <EuiIconEmpty
-                                        aria-hidden={true}
-                                        className="euiIcon euiIcon--medium euiIcon-isLoading euiFormControlLayoutCustomIcon__icon"
-                                        focusable="false"
-                                        role="img"
-                                        style={null}
-                                      >
-                                        <svg
-                                          aria-hidden={true}
-                                          className="euiIcon euiIcon--medium euiIcon-isLoading euiFormControlLayoutCustomIcon__icon"
-                                          focusable="false"
-                                          height={16}
-                                          role="img"
-                                          style={null}
-                                          viewBox="0 0 16 16"
-                                          width={16}
-                                          xmlns="http://www.w3.org/2000/svg"
-                                        />
-                                      </EuiIconEmpty>
+                                      <div>
+                                        EuiIconMock
+                                      </div>
                                     </EuiIcon>
                                   </span>
                                 </EuiFormControlLayoutCustomIcon>
@@ -4276,25 +3991,9 @@ exports[`Dashboard renders with per alert view 1`] = `
                                       size="m"
                                       type="arrowDown"
                                     >
-                                      <EuiIconEmpty
-                                        aria-hidden={true}
-                                        className="euiIcon euiIcon--medium euiIcon-isLoading euiFormControlLayoutCustomIcon__icon"
-                                        focusable="false"
-                                        role="img"
-                                        style={null}
-                                      >
-                                        <svg
-                                          aria-hidden={true}
-                                          className="euiIcon euiIcon--medium euiIcon-isLoading euiFormControlLayoutCustomIcon__icon"
-                                          focusable="false"
-                                          height={16}
-                                          role="img"
-                                          style={null}
-                                          viewBox="0 0 16 16"
-                                          width={16}
-                                          xmlns="http://www.w3.org/2000/svg"
-                                        />
-                                      </EuiIconEmpty>
+                                      <div>
+                                        EuiIconMock
+                                      </div>
                                     </EuiIcon>
                                   </span>
                                 </EuiFormControlLayoutCustomIcon>
@@ -4434,25 +4133,9 @@ exports[`Dashboard renders with per alert view 1`] = `
                                       size="m"
                                       type="arrowDown"
                                     >
-                                      <EuiIconEmpty
-                                        aria-hidden={true}
-                                        className="euiIcon euiIcon--medium euiIcon-isLoading euiFormControlLayoutCustomIcon__icon"
-                                        focusable="false"
-                                        role="img"
-                                        style={null}
-                                      >
-                                        <svg
-                                          aria-hidden={true}
-                                          className="euiIcon euiIcon--medium euiIcon-isLoading euiFormControlLayoutCustomIcon__icon"
-                                          focusable="false"
-                                          height={16}
-                                          role="img"
-                                          style={null}
-                                          viewBox="0 0 16 16"
-                                          width={16}
-                                          xmlns="http://www.w3.org/2000/svg"
-                                        />
-                                      </EuiIconEmpty>
+                                      <div>
+                                        EuiIconMock
+                                      </div>
                                     </EuiIcon>
                                   </span>
                                 </EuiFormControlLayoutCustomIcon>
@@ -4524,25 +4207,9 @@ exports[`Dashboard renders with per alert view 1`] = `
                                   size="m"
                                   type="arrowLeft"
                                 >
-                                  <EuiIconEmpty
-                                    aria-hidden={true}
-                                    className="euiIcon euiIcon--medium euiIcon--inherit euiIcon-isLoading euiButtonIcon__icon"
-                                    focusable="false"
-                                    role="img"
-                                    style={null}
-                                  >
-                                    <svg
-                                      aria-hidden={true}
-                                      className="euiIcon euiIcon--medium euiIcon--inherit euiIcon-isLoading euiButtonIcon__icon"
-                                      focusable="false"
-                                      height={16}
-                                      role="img"
-                                      style={null}
-                                      viewBox="0 0 16 16"
-                                      width={16}
-                                      xmlns="http://www.w3.org/2000/svg"
-                                    />
-                                  </EuiIconEmpty>
+                                  <div>
+                                    EuiIconMock
+                                  </div>
                                 </EuiIcon>
                               </button>
                             </EuiButtonIcon>
@@ -4667,25 +4334,9 @@ exports[`Dashboard renders with per alert view 1`] = `
                                   size="m"
                                   type="arrowRight"
                                 >
-                                  <EuiIconEmpty
-                                    aria-hidden={true}
-                                    className="euiIcon euiIcon--medium euiIcon--inherit euiIcon-isLoading euiButtonIcon__icon"
-                                    focusable="false"
-                                    role="img"
-                                    style={null}
-                                  >
-                                    <svg
-                                      aria-hidden={true}
-                                      className="euiIcon euiIcon--medium euiIcon--inherit euiIcon-isLoading euiButtonIcon__icon"
-                                      focusable="false"
-                                      height={16}
-                                      role="img"
-                                      style={null}
-                                      viewBox="0 0 16 16"
-                                      width={16}
-                                      xmlns="http://www.w3.org/2000/svg"
-                                    />
-                                  </EuiIconEmpty>
+                                  <div>
+                                    EuiIconMock
+                                  </div>
                                 </EuiIcon>
                               </button>
                             </EuiButtonIcon>
@@ -4959,25 +4610,9 @@ exports[`Dashboard renders with per alert view 1`] = `
                                                 size="s"
                                                 type="arrowDown"
                                               >
-                                                <EuiIconEmpty
-                                                  aria-hidden={true}
-                                                  className="euiIcon euiIcon--small euiIcon--inherit euiIcon-isLoading euiButtonContent__icon"
-                                                  focusable="false"
-                                                  role="img"
-                                                  style={null}
-                                                >
-                                                  <svg
-                                                    aria-hidden={true}
-                                                    className="euiIcon euiIcon--small euiIcon--inherit euiIcon-isLoading euiButtonContent__icon"
-                                                    focusable="false"
-                                                    height={16}
-                                                    role="img"
-                                                    style={null}
-                                                    viewBox="0 0 16 16"
-                                                    width={16}
-                                                    xmlns="http://www.w3.org/2000/svg"
-                                                  />
-                                                </EuiIconEmpty>
+                                                <div>
+                                                  EuiIconMock
+                                                </div>
                                               </EuiIcon>
                                               <span
                                                 className="euiButtonEmpty__text"
@@ -5139,25 +4774,9 @@ exports[`Dashboard renders with per alert view 1`] = `
                                       size="m"
                                       type="sortDown"
                                     >
-                                      <EuiIconEmpty
-                                        aria-hidden={true}
-                                        className="euiIcon euiIcon--medium euiIcon-isLoading euiTableSortIcon"
-                                        focusable="false"
-                                        role="img"
-                                        style={null}
-                                      >
-                                        <svg
-                                          aria-hidden={true}
-                                          className="euiIcon euiIcon--medium euiIcon-isLoading euiTableSortIcon"
-                                          focusable="false"
-                                          height={16}
-                                          role="img"
-                                          style={null}
-                                          viewBox="0 0 16 16"
-                                          width={16}
-                                          xmlns="http://www.w3.org/2000/svg"
-                                        />
-                                      </EuiIconEmpty>
+                                      <div>
+                                        EuiIconMock
+                                      </div>
                                     </EuiIcon>
                                   </span>
                                 </CellContents>
