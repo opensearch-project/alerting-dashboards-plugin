@@ -73,17 +73,9 @@ exports[`Message renders 1`] = `
                 target="_blank"
               >
                 Learn more
-                <svg
-                  aria-hidden="true"
-                  aria-label="External link"
-                  class="euiIcon euiIcon--small euiIcon-isLoading euiLink__externalIcon"
-                  focusable="false"
-                  height="16"
-                  role="img"
-                  viewBox="0 0 16 16"
-                  width="16"
-                  xmlns="http://www.w3.org/2000/svg"
-                />
+                <div>
+                  EuiIconMock
+                </div>
                 <span
                   class="euiScreenReaderOnly"
                 >
