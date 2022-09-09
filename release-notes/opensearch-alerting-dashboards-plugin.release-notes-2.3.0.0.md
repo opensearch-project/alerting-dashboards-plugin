@@ -10,4 +10,4 @@ Compatible with OpenSearch Dashboards 2.3.0
 * Fixed snapshot-related unit tests. ([#311](https://github.com/opensearch-project/alerting-dashboards-plugin/pull/311))
 
 ### Documentation
-* Added 2.3 release notes. ([#]())
+* Added 2.3 release notes. ([#326](https://github.com/opensearch-project/alerting-dashboards-plugin/pull/326))
