@@ -17,8 +17,6 @@ import { getPathsPerDataType } from '../../../CreateMonitor/containers/DefineMon
 import monitorToFormik from '../../../CreateMonitor/containers/CreateMonitor/utils/monitorToFormik';
 import { buildRequest } from '../../../CreateMonitor/containers/DefineMonitor/utils/searchRequests';
 import { backendErrorNotification, inputLimitText } from '../../../../utils/helpers';
-import moment from 'moment';
-import { formikToTrigger } from '../CreateTrigger/utils/formikToTrigger';
 import DefineDocumentLevelTrigger from '../DefineDocumentLevelTrigger/DefineDocumentLevelTrigger';
 import {
   buildClusterMetricsRequest,
@@ -34,9 +32,6 @@ class ConfigureTriggers extends React.Component {
     this.state = {
       dataTypes: {},
       executeResponse: null,
-      isBucketLevelMonitor:
-        _.get(props, 'monitor.monitor_type', MONITOR_TYPE.QUERY_LEVEL) ===
-        MONITOR_TYPE.BUCKET_LEVEL,
       triggerDeleted: false,
       addTriggerButton: this.prepareAddTriggerButton(),
       triggerEmptyPrompt: this.prepareTriggerEmptyPrompt(),
@@ -50,20 +45,20 @@ class ConfigureTriggers extends React.Component {
 
   componentDidMount() {
     const {
-      monitorValues: { searchType, uri },
+      monitor: { monitor_type },
+      monitorValues: { uri },
     } = this.props;
-    const { isBucketLevelMonitor } = this.state;
-    if (searchType === SEARCH_TYPE.CLUSTER_METRICS && canExecuteClusterMetricsMonitor(uri))
-      this.onRunExecute();
-    if (isBucketLevelMonitor) this.onQueryMappings();
+    switch (monitor_type) {
+      case MONITOR_TYPE.BUCKET_LEVEL:
+        this.onQueryMappings();
+        break;
+      case MONITOR_TYPE.CLUSTER_METRICS:
+        if (canExecuteClusterMetricsMonitor(uri)) this.onRunExecute();
+        break;
+    }
   }
 
   componentDidUpdate(prevProps) {
-    const prevMonitorType = _.get(prevProps, 'monitor.monitor_type', MONITOR_TYPE.QUERY_LEVEL);
-    const currMonitorType = _.get(this.props, 'monitor.monitor_type', MONITOR_TYPE.QUERY_LEVEL);
-    if (prevMonitorType !== currMonitorType)
-      _.set(this.state, 'isBucketLevelMonitor', currMonitorType === MONITOR_TYPE.BUCKET_LEVEL);
-
     const prevSearchType = _.get(
       prevProps,
       'monitorValues.searchType',
@@ -92,8 +87,18 @@ class ConfigureTriggers extends React.Component {
     const prevInputs = prevProps.monitor.inputs[0];
     const currInputs = this.props.monitor.inputs[0];
     if (!_.isEqual(prevInputs, currInputs)) {
-      const { isBucketLevelMonitor } = this.state;
-      if (isBucketLevelMonitor) this.onQueryMappings();
+      const {
+        monitor: { monitor_type },
+        monitorValues: { uri },
+      } = this.props;
+      switch (monitor_type) {
+        case MONITOR_TYPE.BUCKET_LEVEL:
+          this.onQueryMappings();
+          break;
+        case MONITOR_TYPE.CLUSTER_METRICS:
+          if (canExecuteClusterMetricsMonitor(uri)) this.onRunExecute();
+          break;
+      }
     }
   }
 
@@ -186,18 +191,6 @@ class ConfigureTriggers extends React.Component {
     }
   }
 
-  getTriggerContext = (executeResponse, monitor, values) => {
-    return {
-      periodStart: moment.utc(_.get(executeResponse, 'period_start', Date.now())).format(),
-      periodEnd: moment.utc(_.get(executeResponse, 'period_end', Date.now())).format(),
-      results: [_.get(executeResponse, 'input_results.results[0]')].filter((result) => !!result),
-      trigger: formikToTrigger(values, _.get(this.props.monitor, 'ui_metadata', {})),
-      alert: null,
-      error: null,
-      monitor: monitor,
-    };
-  };
-
   renderDefineTrigger = (triggerArrayHelpers, index) => {
     const {
       edit,
@@ -212,13 +205,11 @@ class ConfigureTriggers extends React.Component {
       notificationService,
       plugins,
     } = this.props;
-
     const { executeResponse } = this.state;
     return (
       <DefineTrigger
         edit={edit}
         triggerArrayHelpers={triggerArrayHelpers}
-        context={this.getTriggerContext(executeResponse, monitor, triggerValues)}
         executeResponse={executeResponse}
         monitor={monitor}
         monitorValues={monitorValues}
@@ -255,7 +246,6 @@ class ConfigureTriggers extends React.Component {
       <DefineBucketLevelTrigger
         edit={edit}
         triggerArrayHelpers={triggerArrayHelpers}
-        context={this.getTriggerContext(executeResponse, monitor, triggerValues)}
         executeResponse={executeResponse}
         monitor={monitor}
         monitorValues={monitorValues}
@@ -293,7 +283,6 @@ class ConfigureTriggers extends React.Component {
       <DefineDocumentLevelTrigger
         edit={edit}
         triggerArrayHelpers={triggerArrayHelpers}
-        context={this.getTriggerContext(executeResponse, monitor, triggerValues)}
         executeResponse={executeResponse}
         monitor={monitor}
         monitorValues={monitorValues}
