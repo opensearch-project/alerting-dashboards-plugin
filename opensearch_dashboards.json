@@ -3,7 +3,7 @@
   "version": "2.3.0.0",
   "opensearchDashboardsVersion": "2.3.0",
   "configPath": ["opensearch_alerting"],
-  "requiredPlugins": [],
+  "requiredPlugins": ["uiActions", "dashboard", "embeddable"],
   "server": true,
   "ui": true
 }
