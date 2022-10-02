@@ -141,7 +141,6 @@ class ConfigureTriggers extends React.Component {
         console.log(`Unsupported searchType found: ${JSON.stringify(searchType)}`, searchType);
     }
 
-    // compare the body here to that in define mnitor
     httpClient
       .post('../api/alerting/monitors/_execute', { body: JSON.stringify(monitorToExecute) })
       .then((resp) => {
