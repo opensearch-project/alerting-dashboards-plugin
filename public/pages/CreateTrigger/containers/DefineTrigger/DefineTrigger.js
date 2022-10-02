@@ -81,12 +81,14 @@ class DefineTrigger extends Component {
   componentDidMount() {
     const {
       monitorValues: { searchType, uri },
+      onRun,
     } = this.props;
     switch (searchType) {
       case SEARCH_TYPE.CLUSTER_METRICS:
         if (canExecuteClusterMetricsMonitor(uri)) this.onRunExecute();
         break;
       default:
+        onRun();
         this.onRunExecute();
     }
   }

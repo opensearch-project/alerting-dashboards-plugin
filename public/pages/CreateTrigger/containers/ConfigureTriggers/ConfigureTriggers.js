@@ -131,7 +131,7 @@ class ConfigureTriggers extends React.Component {
       case SEARCH_TYPE.QUERY:
       case SEARCH_TYPE.GRAPH:
         const searchRequest = buildRequest(formikValues);
-        _.set(monitorToExecute, 'inputs[0].search', searchRequest);
+        _.set(monitorToExecute, 'inputs[0]', searchRequest);
         break;
       case SEARCH_TYPE.CLUSTER_METRICS:
         const clusterMetricsRequest = buildClusterMetricsRequest(formikValues);
@@ -141,6 +141,7 @@ class ConfigureTriggers extends React.Component {
         console.log(`Unsupported searchType found: ${JSON.stringify(searchType)}`, searchType);
     }
 
+    // compare the body here to that in define mnitor
     httpClient
       .post('../api/alerting/monitors/_execute', { body: JSON.stringify(monitorToExecute) })
       .then((resp) => {
