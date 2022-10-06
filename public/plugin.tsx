@@ -3,20 +3,23 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+import React from 'react';
 import { PLUGIN_NAME } from '../utils/constants';
-import {
-  AlertingPluginPluginSetup,
-  // AppPluginSetupDependencies,
-  AlertingPluginPluginStart,
-} from './type';
 import { AppMountParameters, CoreSetup, CoreStart, Plugin } from '../../../src/core/public';
 import { DashboardSetup } from '../../../src/plugins/dashboard/public';
-import { ACTION_ALERTING, AlertingAction, AlertingActionContext } from './actions/alerting_dashboard_action';
-import { AppPluginStartDependencies } from './type';
+import {
+  ACTION_ALERTING,
+  AlertingAction,
+  AlertingActionContext,
+} from './actions/alerting_dashboard_action';
 import { CONTEXT_MENU_TRIGGER } from '../../../src/plugins/embeddable/public';
 import { UiActionsSetup, UiActionsStart } from '../../../src/plugins/ui_actions/public';
+import { createOpenSearchDashboardsReactContext } from '../../../src/plugins/opensearch_dashboards_react/public';
+import DashboardMenu from './components/DashboardMenu';
 
 export class AlertingPlugin implements Plugin {
+  private exampleEmbeddableFactories = {};
+
   constructor(initializerContext) {
     // can retrieve config from initializerContext
   }
@@ -45,15 +48,20 @@ export class AlertingPlugin implements Plugin {
     uiActions.registerAction(alertingAction);
     uiActions.attachAction(CONTEXT_MENU_TRIGGER, alertingAction.id);
 
-    // uiActions.registerAction(alertingAction);
-    // uiActions.attachAction(CONTEXT_MENU_TRIGGER, alertingAction.id);
-
-    // dashboardDashboards.registerOption("Alerting Monitor Creation", ACTION_ALERTING, AlertingAction);
+    const context = createOpenSearchDashboardsReactContext({ ...core, ...plugins });
 
     return {};
   }
 
-  start(core) {
-    return {};
+  public start(core, deps) {
+    const {
+      value: { overlays },
+    } = createOpenSearchDashboardsReactContext(core);
+
+    overlays.openFlyout(<DashboardMenu />);
+
+    return {
+      factories: this.exampleEmbeddableFactories,
+    };
   }
 }

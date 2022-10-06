@@ -2,7 +2,13 @@ import { i18n } from '@osd/i18n';
 // import { IEmbeddable } from '../../../../src/plugins/dashboard/public/embeddable_plugin';
 // import { ActionByType, IncompatibleActionError } from '../../../../src/plugins/dashboard/public/ui_actions_plugin';
 // import { DASHBOARD_CONTAINER_TYPE, DashboardContainer } from '../../../../src/plugins/dashboard/public/application/embeddable';
-import { IEmbeddable, ActionByType, IncompatibleActionError, DASHBOARD_CONTAINER_TYPE, DashboardContainer } from '../../../../src/plugins/dashboard/public';
+import {
+  IEmbeddable,
+  ActionByType,
+  IncompatibleActionError,
+  DASHBOARD_CONTAINER_TYPE,
+  DashboardContainer,
+} from '../../../../src/plugins/dashboard/public';
 
 export const ACTION_ALERTING = 'alerting';
 
@@ -10,13 +16,13 @@ function isDashboard(embeddable: IEmbeddable): embeddable is DashboardContainer 
   return embeddable.type === DASHBOARD_CONTAINER_TYPE;
 }
 
-// function isExpanded(embeddable: IEmbeddable) {
-//   if (!embeddable.parent || !isDashboard(embeddable.parent)) {
-//     throw new IncompatibleActionError();
-//   }
+function isExpanded(embeddable: IEmbeddable) {
+  if (!embeddable.parent || !isDashboard(embeddable.parent)) {
+    throw new IncompatibleActionError();
+  }
 
-//   return embeddable.id === embeddable.parent.getInput().expandedPanelId;
-// }
+  return embeddable.id === embeddable.parent.getInput().expandedPanelId;
+}
 
 export interface AlertingActionContext {
   embeddable: IEmbeddable;
@@ -35,7 +41,7 @@ export class AlertingAction implements ActionByType<typeof ACTION_ALERTING> {
       throw new IncompatibleActionError();
     }
     return i18n.translate('dashboard.actions.alertingMenuItem.displayName', {
-      defaultMessage: 'Create Monitors',
+      defaultMessage: 'Alerts',
     });
   }
 
@@ -44,7 +50,7 @@ export class AlertingAction implements ActionByType<typeof ACTION_ALERTING> {
     if (!embeddable.parent || !isDashboard(embeddable.parent)) {
       throw new IncompatibleActionError();
     }
-    return 'outlierDetectionJob';
+    return 'bell';
   }
 
   // @ts-ignore
@@ -68,9 +74,9 @@ export class AlertingAction implements ActionByType<typeof ACTION_ALERTING> {
     // such that the subscription on the input reads this new field, updates state, and will render the specific panel
     // in an expanded fashion.
 
-    //   const newValue = isExpanded(embeddable) ? undefined : embeddable.id;
-    //   embeddable.parent.updateInput({
-    //     expandedPanelId: newValue,
-    //   });
+    const newValue = isExpanded(embeddable) ? undefined : embeddable.id;
+    embeddable.parent.updateInput({
+      expandedPanelId: newValue,
+    });
   }
 }
