@@ -7,10 +7,12 @@ import {
   EuiCallOut,
   EuiSpacer,
 } from '@elastic/eui';
-import { views } from '../helpers';
 import ManageMonitors from './ManageMonitors';
+import ViewAlerts from './ViewAlerts';
+import CreateAlertingMonitor from './CreateAlertingMonitor';
+import './styles.scss';
 
-const InitialMenu = ({ setView, monitors }) => (
+const InitialMenu = ({ setView, monitors, alerts, setAlerts, setMonitors }) => (
   <EuiContextMenu
     {...{
       initialPanelId: 0,
@@ -23,18 +25,20 @@ const InitialMenu = ({ setView, monitors }) => (
             {
               name: 'Create alerting monitor',
               icon: 'plusInCircle',
-              onClick: () => setView(views.createAlertingMonitor),
+              panel: 1,
             },
-            ...(monitors.length
-              ? [
-                  {
-                    name: `Manage monitors (${monitors.length})`,
-                    icon: 'wrench',
-                    panel: 1,
-                  },
-                ]
-              : []),
             {
+              name: `View alerts${alerts.length ? ` (${alerts.length})` : ''}`,
+              icon: 'bell',
+              panel: 2,
+            },
+            {
+              name: `Manage monitors${monitors.length ? ` (${monitors.length})` : ''}`,
+              icon: 'wrench',
+              panel: 3,
+            },
+            {
+              className: 'initial-menu__text-content',
               name: (
                 <>
                   <EuiHorizontalRule margin="none" />
@@ -63,8 +67,22 @@ const InitialMenu = ({ setView, monitors }) => (
           id: 1,
           initialFocusedItemIndex: 0,
           width: 400,
+          title: 'Create Alerting Monitor',
+          content: <CreateAlertingMonitor {...{ setView, setAlerts, setMonitors }} />,
+        },
+        {
+          id: 2,
+          initialFocusedItemIndex: 0,
+          width: 400,
+          title: 'View Alerts',
+          content: <ViewAlerts {...{ alerts }} />,
+        },
+        {
+          id: 3,
+          initialFocusedItemIndex: 0,
+          width: 400,
           title: 'Manage Monitors',
-          content: <ManageMonitors monitors={monitors} />,
+          content: <ManageMonitors {...{ setView, monitors }} />,
         },
       ],
     }}

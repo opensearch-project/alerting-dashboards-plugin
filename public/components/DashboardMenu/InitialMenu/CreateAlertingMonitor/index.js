@@ -9,6 +9,8 @@ import {
   EuiPanel,
 } from '@elastic/eui';
 
-const CreateAlertingMonitor = ({ setMonitors }) => <div>setMonitors</div>;
+const CreateAlertingMonitor = ({ setMonitors, setAlerts }) => (
+  <div>Screen 5. CreateAlertingMonitor goes here</div>
+);
 
 export default CreateAlertingMonitor;

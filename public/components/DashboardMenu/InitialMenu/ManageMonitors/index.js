@@ -13,7 +13,7 @@ import {
   EuiSpacer,
 } from '@elastic/eui';
 import { views, dateOptions } from '../../helpers';
-import './index.scss';
+import './styles.scss';
 
 const ManageMonitors = ({ monitors, setView }) => (
   <EuiListGroup gutterSize="none" className="manage-monitors">

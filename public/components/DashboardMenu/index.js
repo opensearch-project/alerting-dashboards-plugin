@@ -1,17 +1,18 @@
 import React, { useState } from 'react';
 import InitialMenu from './InitialMenu';
-import CreateAlertingMonitor from './CreateAlertingMonitor';
-import { getInitialMonitors, views } from './helpers';
+import CreateAlertingMonitorExpanded from './CreateAlertingMonitorExpanded';
+import { getInitialMonitors, views, getInitialAlerts } from './helpers';
 
 const DashboardMenu = () => {
   const [view, setView] = useState('home');
+  const [alerts, setAlerts] = useState(getInitialAlerts());
   const [monitors, setMonitors] = useState(getInitialMonitors());
 
-  if (view === views.createAlertingMonitor) {
-    return <CreateAlertingMonitor {...{ setMonitors }} />;
+  if (view === views.createAlertingMonitorExpanded) {
+    return <CreateAlertingMonitorExpanded {...{ setMonitors }} />;
   }
 
-  return <InitialMenu {...{ setView, monitors }} />;
+  return <InitialMenu {...{ setMonitors, setView, monitors, alerts, setAlerts }} />;
 };
 
 export default DashboardMenu;

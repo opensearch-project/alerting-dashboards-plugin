@@ -2,7 +2,6 @@
  * Copyright OpenSearch Contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-
 import React from 'react';
 import { PLUGIN_NAME } from '../utils/constants';
 import { AppMountParameters, CoreSetup, CoreStart, Plugin } from '../../../src/core/public';
@@ -42,18 +41,28 @@ export class AlertingPlugin implements Plugin {
       },
     });
 
-    const { uiActions } = plugins;
+    const context = createOpenSearchDashboardsReactContext({ ...core, ...plugins });
+    const {
+      value: { overlays },
+    } = context;
 
-    const alertingAction = new AlertingAction();
+    // This does not work
+    const openMenu = async () => {
+      const services = await core.getStartServices();
+      console.log({ services });
+      const openFlyout = services[0].overlays.openFlyout;
+      openFlyout(<DashboardMenu />);
+    };
+    const alertingAction = new AlertingAction({ openMenu });
+    const { uiActions } = plugins;
     uiActions.registerAction(alertingAction);
     uiActions.attachAction(CONTEXT_MENU_TRIGGER, alertingAction.id);
-
-    const context = createOpenSearchDashboardsReactContext({ ...core, ...plugins });
 
     return {};
   }
 
   public start(core, deps) {
+    // Open menu at start for now
     const {
       value: { overlays },
     } = createOpenSearchDashboardsReactContext(core);

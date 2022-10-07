@@ -32,8 +32,11 @@ export class AlertingAction implements ActionByType<typeof ACTION_ALERTING> {
   public readonly type = ACTION_ALERTING;
   public readonly id = ACTION_ALERTING;
   public order = 8;
+  public services = {};
 
-  constructor() {}
+  constructor(services) {
+    this.services = services;
+  }
 
   // @ts-ignore
   public getDisplayName({ embeddable }: AlertingActionContext) {
@@ -59,7 +62,12 @@ export class AlertingAction implements ActionByType<typeof ACTION_ALERTING> {
   }
 
   // @ts-ignore
-  public async execute({ embeddable }: AlertingActionContext) {
+  public async execute(context: AlertingActionContext) {
+    const {
+      embeddable,
+      // value: { overlays },
+    } = context;
+
     if (!embeddable.parent || !isDashboard(embeddable.parent)) {
       console.log('Alerting action is incompatible');
       throw new IncompatibleActionError();
@@ -73,10 +81,12 @@ export class AlertingAction implements ActionByType<typeof ACTION_ALERTING> {
     // See below example of the expand panel action. It calls back to the parent embeddable and updates the expanded panel ID,
     // such that the subscription on the input reads this new field, updates state, and will render the specific panel
     // in an expanded fashion.
+    // const newValue = isExpanded(embeddable) ? undefined : embeddable.id;
+    // embeddable.parent.updateInput({
+    //   expandedPanelId: newValue,
+    // });
 
-    const newValue = isExpanded(embeddable) ? undefined : embeddable.id;
-    embeddable.parent.updateInput({
-      expandedPanelId: newValue,
-    });
+    // embeddable.parent.options.overlays.openFlyout(<DashboardMenu />);
+    this.services.openMenu();
   }
 }

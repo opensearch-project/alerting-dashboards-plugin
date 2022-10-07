@@ -1,6 +1,6 @@
 export const views = {
   home: 'home',
-  createAlertingMonitor: 'create-alerting-monitor',
+  createAlertingMonitorExpanded: 'create-alerting-monitor-expanded',
   manageMonitor: 'manage-monitor',
 };
 
@@ -20,3 +20,5 @@ export const dateOptions = {
   hour12: true,
   timeZone: 'America/Los_Angeles',
 };
+
+export const getInitialAlerts = () => [];

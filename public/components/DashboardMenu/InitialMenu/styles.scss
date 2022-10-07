@@ -1,0 +1,9 @@
+@import '@elastic/eui/src/global_styling/variables/index';
+
+.initial-menu {
+  &__text-content {
+    &:hover {
+      text-decoration: none;
+    }
+  }
+}
