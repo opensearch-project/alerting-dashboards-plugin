@@ -7,10 +7,12 @@ export const DESTINATION_TYPE = {
   CHIME: 'chime',
   SLACK: 'slack',
   CUSTOM_HOOK: 'custom_webhook',
+  SNS: 'sns',
   EMAIL: 'email',
 };
 
 export const DESTINATION_OPTIONS = [
+  { value: DESTINATION_TYPE.SNS, text: 'Amazon SNS' },
   { value: DESTINATION_TYPE.CHIME, text: 'Amazon Chime' },
   { value: DESTINATION_TYPE.SLACK, text: 'Slack' },
   { value: DESTINATION_TYPE.CUSTOM_HOOK, text: 'Custom webhook' },
@@ -18,6 +20,3 @@ export const DESTINATION_OPTIONS = [
 ];
 
 export const ALLOW_LIST_SETTING_PATH = 'plugins.alerting.destination.allow_list';
-
-export const NOTIFICATIONS_LEARN_MORE_HREF =
-  'https://opensearch.org/docs/monitoring-plugins/alerting/monitors/#questions-about-destinations';

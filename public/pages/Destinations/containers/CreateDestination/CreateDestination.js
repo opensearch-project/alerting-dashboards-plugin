@@ -24,7 +24,7 @@ import { DESTINATION_OPTIONS, DESTINATION_TYPE } from '../../utils/constants';
 import { validateDestinationName, validateDestinationType } from './utils/validations';
 import { formikToDestination } from './utils/formikToDestination';
 import { destinationToFormik } from './utils/destinationToFormik';
-import { Webhook, CustomWebhook, Email } from '../../components/createDestinations';
+import { Webhook, CustomWebhook, SNS, Email } from '../../components/createDestinations';
 import { SubmitErrorHandler } from '../../../../utils/SubmitErrorHandler';
 import { getAllowList } from '../../utils/helpers';
 import { backendErrorNotification } from '../../../../utils/helpers';
@@ -33,6 +33,7 @@ const destinationType = {
   [DESTINATION_TYPE.SLACK]: (props) => <Webhook {...props} />,
   [DESTINATION_TYPE.CHIME]: (props) => <Webhook {...props} />,
   [DESTINATION_TYPE.CUSTOM_HOOK]: (props) => <CustomWebhook {...props} />,
+  [DESTINATION_TYPE.SNS]: (props) => <SNS {...props} />,
   [DESTINATION_TYPE.EMAIL]: (props) => <Email {...props} />,
 };
 

@@ -53,6 +53,11 @@ exports[`<DestinationsControls /> should render DestinationsControls 1`] = `
             All type
           </option>
           <option
+            value="sns"
+          >
+            Amazon SNS
+          </option>
+          <option
             value="chime"
           >
             Amazon Chime
