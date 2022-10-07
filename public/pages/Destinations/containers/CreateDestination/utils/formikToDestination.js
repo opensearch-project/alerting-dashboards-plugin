@@ -59,6 +59,7 @@ export const formikToDestination = (values) => {
     case DESTINATION_TYPE.EMAIL:
       destinationValues[type] = getEmailValues(values[type]);
       break;
+    case DESTINATION_TYPE.SNS:
     case DESTINATION_TYPE.SLACK:
     case DESTINATION_TYPE.CHIME:
       destinationValues[type] = values[type];

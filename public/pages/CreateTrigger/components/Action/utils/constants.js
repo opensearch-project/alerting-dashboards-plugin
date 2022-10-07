@@ -7,6 +7,10 @@ import React from 'react';
 import Message from '../actions/index';
 
 export const ActionsMap = {
+  sns: {
+    label: 'Amazon SNS notification',
+    component: (props) => <Message {...props} />,
+  },
   slack: {
     label: 'Slack notification',
     component: (props) => <Message {...props} />,

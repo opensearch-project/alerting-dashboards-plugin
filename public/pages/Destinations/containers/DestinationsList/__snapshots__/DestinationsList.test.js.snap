@@ -457,6 +457,7 @@ exports[`DestinationsList renders when Notification plugin is installed 1`] = `
                 "chime",
                 "slack",
                 "custom_webhook",
+                "sns",
                 "email",
               ]
             }
@@ -568,6 +569,10 @@ exports[`DestinationsList renders when Notification plugin is installed 1`] = `
                             "value": "ALL",
                           },
                           Object {
+                            "text": "Amazon SNS",
+                            "value": "sns",
+                          },
+                          Object {
                             "text": "Amazon Chime",
                             "value": "chime",
                           },
@@ -619,24 +624,30 @@ exports[`DestinationsList renders when Notification plugin is installed 1`] = `
                                 </option>
                                 <option
                                   key="1"
+                                  value="sns"
+                                >
+                                  Amazon SNS
+                                </option>
+                                <option
+                                  key="2"
                                   value="chime"
                                 >
                                   Amazon Chime
                                 </option>
                                 <option
-                                  key="2"
+                                  key="3"
                                   value="slack"
                                 >
                                   Slack
                                 </option>
                                 <option
-                                  key="3"
+                                  key="4"
                                   value="custom_webhook"
                                 >
                                   Custom webhook
                                 </option>
                                 <option
-                                  key="4"
+                                  key="5"
                                   value="email"
                                 >
                                   Email
