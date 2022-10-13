@@ -24,7 +24,7 @@ You will need to install [node.js](https://nodejs.org/en/), [nvm](https://github
 1. Download and install the appropriate [OpenSearch Alerting plugin](https://github.com/opensearch-project/alerting).
 1. Download the OpenSearch-Dashboards source code for the [version specified in package.json](./package.json#L9) you want to set up.
 
-   See the [OpenSearch Dashboards developer guide](https://github.com/opensearch-project/OpenSearch/blob/main/DEVELOPER_GUIDE.md) for more instructions on setting up your development environment.
+   See the [OpenSearch Dashboards developer guide](https://github.com/opensearch-project/OpenSearch-Dashboards/blob/main/DEVELOPER_GUIDE.md) for more instructions on setting up your development environment.
 
 1. Change your node version to the version specified in `.node-version` inside the OpenSearch-Dashboards root directory.
 1. cd into the `plugins` directory of the OpenSearch-Dashboards source code directory.
