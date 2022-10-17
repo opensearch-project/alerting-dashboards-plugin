@@ -42,4 +42,9 @@ module.exports = {
   testPathIgnorePatterns: ['<rootDir>/build/', '<rootDir>/node_modules/'],
   modulePathIgnorePatterns: ['alertingDashboards'],
   testEnvironment: 'jest-environment-jsdom',
+  transformIgnorePatterns: [
+    // ignore all node_modules except d3-color which requires babel transforms to handle export statement
+    // since ESM modules are not natively supported in Jest yet (https://github.com/facebook/jest/issues/4842)
+    '[/\\\\]node_modules(?![\\/\\\\](d3-color))[/\\\\].+\\.js$',
+  ],
 };
