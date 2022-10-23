@@ -3,16 +3,17 @@ import {
   EuiContextMenu,
   EuiLink,
   EuiText,
-  EuiHorizontalRule,
   EuiCallOut,
   EuiSpacer,
+  EuiIcon,
+  EuiToolTip,
 } from '@elastic/eui';
 import ManageMonitors from './ManageMonitors';
 import ViewAlerts from './ViewAlerts';
 import CreateAlertingMonitor from './CreateAlertingMonitor';
 import './styles.scss';
 
-const InitialMenu = ({ setView, monitors, alerts, setAlerts, setMonitors }) => (
+const InitialMenu = ({ setView, monitors, alerts }) => (
   <EuiContextMenu
     {...{
       initialPanelId: 0,
@@ -20,16 +21,53 @@ const InitialMenu = ({ setView, monitors, alerts, setAlerts, setMonitors }) => (
         {
           id: 0,
           width: 300,
+          title: 'Options',
+          items: [
+            {
+              name: 'Alerts',
+              icon: 'bell',
+              panel: 1,
+            },
+            {
+              isSeparator: true,
+              key: 'sep',
+            },
+            {
+              name: (
+                <EuiText color="success" className="initial-menu__view-events-text">
+                  <h5>View events:</h5>
+                </EuiText>
+              ),
+              className: 'initial-menu__no-action',
+            },
+            {
+              name: alerts.length ? (
+                `Alerts (${alerts.length})`
+              ) : (
+                <EuiText>
+                  Alerts{' '}
+                  <EuiToolTip position="left" content="Here is some tooltip text">
+                    <EuiLink href="#">
+                      <EuiIcon type="questionInCircle" />
+                    </EuiLink>
+                  </EuiToolTip>
+                </EuiText>
+              ),
+              icon: 'bell',
+              panel: 4,
+              className: alerts.length ? '' : 'initial-menu__no-action',
+              disabled: !alerts.length,
+            },
+          ],
+        },
+        {
+          id: 1,
+          width: 300,
           title: 'Alerts',
           items: [
             {
               name: 'Create alerting monitor',
               icon: 'plusInCircle',
-              panel: 1,
-            },
-            {
-              name: `View alerts${alerts.length ? ` (${alerts.length})` : ''}`,
-              icon: 'bell',
               panel: 2,
             },
             {
@@ -38,11 +76,13 @@ const InitialMenu = ({ setView, monitors, alerts, setAlerts, setMonitors }) => (
               panel: 3,
             },
             {
+              isSeparator: true,
+              key: 'sep',
+            },
+            {
               className: 'initial-menu__text-content',
               name: (
                 <>
-                  <EuiHorizontalRule margin="none" />
-                  <EuiSpacer size="m" />
                   <EuiText size="xs">
                     Learn more about{' '}
                     <EuiLink href="#" external>
@@ -64,25 +104,22 @@ const InitialMenu = ({ setView, monitors, alerts, setAlerts, setMonitors }) => (
           ],
         },
         {
-          id: 1,
-          initialFocusedItemIndex: 0,
+          id: 2,
           width: 400,
           title: 'Create Alerting Monitor',
-          content: <CreateAlertingMonitor {...{ setView, setAlerts, setMonitors }} />,
-        },
-        {
-          id: 2,
-          initialFocusedItemIndex: 0,
-          width: 400,
-          title: 'View Alerts',
-          content: <ViewAlerts {...{ alerts }} />,
+          content: <CreateAlertingMonitor {...{ setView }} />,
         },
         {
           id: 3,
-          initialFocusedItemIndex: 0,
           width: 400,
           title: 'Manage Monitors',
           content: <ManageMonitors {...{ setView, monitors }} />,
+        },
+        {
+          id: 4,
+          width: 400,
+          title: 'View Alerts by Trigger',
+          content: <ViewAlerts {...{ alerts }} />,
         },
       ],
     }}

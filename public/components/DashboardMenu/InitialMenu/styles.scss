@@ -6,4 +6,18 @@
       text-decoration: none;
     }
   }
+
+  &__no-action {
+    cursor: default;
+
+    &:hover {
+      text-decoration: none;
+    }
+  }
+
+  &__view-events-text {
+    h5 {
+      color: inherit;
+    }
+  }
 }
