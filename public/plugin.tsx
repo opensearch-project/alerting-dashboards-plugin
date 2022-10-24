@@ -10,10 +10,15 @@ import {
   ACTION_ALERTING,
   AlertingAction,
   AlertingActionContext,
+  // createAlertingAction
 } from './actions/alerting_dashboard_action';
 import { CONTEXT_MENU_TRIGGER } from '../../../src/plugins/embeddable/public';
 import { UiActionsSetup, UiActionsStart } from '../../../src/plugins/ui_actions/public';
-import { createOpenSearchDashboardsReactContext } from '../../../src/plugins/opensearch_dashboards_react/public';
+import {
+  createOpenSearchDashboardsReactContext,
+  toMountPoint,
+  reactToUiComponent,
+} from '../../../src/plugins/opensearch_dashboards_react/public';
 import DashboardMenu from './components/DashboardMenu';
 
 export class AlertingPlugin implements Plugin {
@@ -49,14 +54,12 @@ export class AlertingPlugin implements Plugin {
     // This does not work
     const openMenu = async () => {
       const services = await core.getStartServices();
-      console.log({ services });
       const openFlyout = services[0].overlays.openFlyout;
-      openFlyout(<DashboardMenu />);
+      openFlyout(toMountPoint(<DashboardMenu />));
     };
     const alertingAction = new AlertingAction({ openMenu });
     const { uiActions } = plugins;
-    uiActions.registerAction(alertingAction);
-    uiActions.attachAction(CONTEXT_MENU_TRIGGER, alertingAction.id);
+    uiActions.addTriggerAction(CONTEXT_MENU_TRIGGER, alertingAction);
 
     return {};
   }
@@ -67,7 +70,7 @@ export class AlertingPlugin implements Plugin {
       value: { overlays },
     } = createOpenSearchDashboardsReactContext(core);
 
-    overlays.openFlyout(<DashboardMenu />);
+    // overlays.openFlyout(<DashboardMenu />);
 
     return {
       factories: this.exampleEmbeddableFactories,
