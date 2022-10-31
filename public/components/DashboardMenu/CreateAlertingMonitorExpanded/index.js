@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import {
   EuiText,
   EuiHorizontalRule,
-  EuiPanel,
   EuiFlexItem,
   EuiFlexGroup,
   EuiFlyout,
@@ -17,13 +16,14 @@ import { useField } from 'formik';
 import MonitorDetails from './MonitorDetails';
 import Advanced from './Advanced';
 import Triggers from './Triggers';
+import { EmbeddablePanel } from '../../../../../../src/plugins/embeddable/public';
 
 const accordions = ['monitorDetails', 'advanced', 'triggers'].reduce(
   (acc, cur) => ({ ...acc, [cur]: cur }),
   {}
 );
 
-const CreateAlertingMonitorExpanded = ({ setView }) => {
+const CreateAlertingMonitorExpanded = ({ setView, context }) => {
   const [accordionOpen, setAccordionOpen] = useState(accordions.triggers);
   const [name] = useField('name');
   const [frequency] = useField('frequency');
@@ -47,7 +47,20 @@ const CreateAlertingMonitorExpanded = ({ setView }) => {
       <EuiFlyoutBody>
         <EuiFlexGroup>
           <EuiFlexItem>
-            <EuiPanel hasShadow={false}>Chart goes here</EuiPanel>
+            <div className="create-alerting-monitor-expanded__vis">
+              <EmbeddablePanel
+                hideHeader={false}
+                embeddable={context.embeddable}
+                getActions={() => Promise.resolve([])}
+                getAllEmbeddableFactories={() => []}
+                getEmbeddableFactory={() => null}
+                notifications={{}}
+                application={{}}
+                overlays={{}}
+                inspector={{ isAvailable: () => null }}
+                SavedObjectFinder={() => null}
+              />
+            </div>
           </EuiFlexItem>
           <EuiFlexItem className="create-alerting-monitor-expanded__aside">
             <EuiAccordion

@@ -80,8 +80,8 @@ export class AlertingAction implements ActionByType<typeof ACTION_ALERTING> {
 
     // TODO: here is where the logic for handling the action being clicked should be handled - e.g., open some side panel
     // to construct and run an anomaly detector.
-    console.log('executing Alerting action');
-    console.log('context: ', context);
+    // console.log('executing Alerting action');
+    // console.log('context: ', context);
 
     // See below example of the expand panel action. It calls back to the parent embeddable and updates the expanded panel ID,
     // such that the subscription on the input reads this new field, updates state, and will render the specific panel
@@ -93,6 +93,6 @@ export class AlertingAction implements ActionByType<typeof ACTION_ALERTING> {
     // });
 
     // embeddable.parent.options.overlays.openFlyout(<DashboardMenu />);
-    this.services.openMenu();
+    this.services.openMenu({ context });
   }
 }

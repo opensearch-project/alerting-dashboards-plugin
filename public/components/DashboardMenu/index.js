@@ -4,8 +4,8 @@ import CreateAlertingMonitorExpanded from './CreateAlertingMonitorExpanded';
 import { getInitialMonitors, views, getInitialAlerts, getInitialValues } from './helpers';
 import { useFormik, FormikProvider } from 'formik';
 
-const DashboardMenu = () => {
-  const [view, setView] = useState(views.home);
+const DashboardMenu = ({ context }) => {
+  const [view, setView] = useState(views.createAlertingMonitorExpanded);
   const [alerts, setAlerts] = useState(getInitialAlerts());
   const [monitors, setMonitors] = useState(getInitialMonitors());
   const formik = useFormik({
@@ -17,7 +17,7 @@ const DashboardMenu = () => {
   let child = <InitialMenu {...{ setMonitors, setView, monitors, alerts, setAlerts }} />;
 
   if (view === views.createAlertingMonitorExpanded) {
-    child = <CreateAlertingMonitorExpanded {...{ setView }} />;
+    child = <CreateAlertingMonitorExpanded {...{ setView, context }} />;
   }
 
   return <FormikProvider value={formik}>{child}</FormikProvider>;

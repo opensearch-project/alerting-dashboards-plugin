@@ -52,10 +52,10 @@ export class AlertingPlugin implements Plugin {
     } = context;
 
     // This does not work
-    const openMenu = async () => {
+    const openMenu = async (options) => {
       const services = await core.getStartServices();
       const openFlyout = services[0].overlays.openFlyout;
-      openFlyout(toMountPoint(<DashboardMenu />));
+      openFlyout(toMountPoint(<DashboardMenu {...options} />));
     };
     const alertingAction = new AlertingAction({ openMenu });
     const { uiActions } = plugins;

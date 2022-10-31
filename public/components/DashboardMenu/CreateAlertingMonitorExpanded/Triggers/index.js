@@ -8,6 +8,7 @@ import {
   EuiAccordion,
   EuiFormRow,
   EuiFieldText,
+  EuiButton,
 } from '@elastic/eui';
 import Notifications from '../../common/Notifications';
 import SeverityLevel from '../../common/SeverityLevel';
@@ -43,6 +44,12 @@ const Triggers = () => {
         severity: '1',
       },
     ]);
+  };
+
+  const removeTrigger = (index) => {
+    const newTriggers = [...triggers.value];
+    newTriggers.splice(index, 1);
+    helpers.setValue(newTriggers);
   };
 
   const toggleAccordions = useCallback(
@@ -81,6 +88,11 @@ const Triggers = () => {
               }
               forceState={accordions[index] ? 'open' : 'closed'}
               onToggle={() => toggleAccordions(index)}
+              extraAction={
+                <EuiButton color="danger" onClick={() => removeTrigger(index)} size="s">
+                  Remove trigger
+                </EuiButton>
+              }
             >
               <EuiSpacer />
               <Field name={`triggers.${index}.name`}>
@@ -138,14 +150,18 @@ const Triggers = () => {
           </EuiText>
         </>
       )}
-      <EuiSpacer size="s" />
-      <EuiPanel paddingSize="none">
-        <EuiText textAlign="center" size="s">
-          <EuiLink onClick={addTrigger} className="triggers__add-trigger">
-            <EuiIcon type="plusInCircle" /> Add trigger
-          </EuiLink>
-        </EuiText>
-      </EuiPanel>
+      {triggers.value.length < 10 && (
+        <>
+          <EuiSpacer size="s" />
+          <EuiPanel paddingSize="none">
+            <EuiText textAlign="center" size="s">
+              <EuiLink onClick={addTrigger} className="triggers__add-trigger">
+                <EuiIcon type="plusInCircle" /> Add trigger
+              </EuiLink>
+            </EuiText>
+          </EuiPanel>
+        </>
+      )}
     </>
   );
 };

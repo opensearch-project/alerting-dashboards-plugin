@@ -1,10 +1,18 @@
 import { useMemo } from 'react';
 import { unitOptions as intervalUnitOptions } from '../../pages/CreateMonitor/components/Schedule/Frequencies/Interval';
 import { FORMIK_INITIAL_VALUES } from '../../pages/CreateMonitor/containers/CreateMonitor/utils/constants';
+import { FORMIK_INITIAL_TRIGGER_CONDITION_VALUES } from '../../pages/CreateTrigger/containers/CreateTrigger/utils/constants';
 
 export const getInitialValues = () => ({
   ...{ ...FORMIK_INITIAL_VALUES, name: 'Monitor 1' },
-  triggers: [],
+  triggers: [
+    {
+      ...FORMIK_INITIAL_TRIGGER_CONDITION_VALUES,
+      name: 'New trigger',
+      id: Date.now(),
+      severity: '1',
+    },
+  ],
 });
 
 export const views = {
