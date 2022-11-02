@@ -49,15 +49,16 @@ jobs:
         run: |
           cd OpenSearch-Dashboards/plugins/alerting-dashboards-plugin
           yarn osd bootstrap
-      - name: Run tests
+      - name: Run window tests
+        if: ${{ matrix.os == 'windows-latest' }}
         run: |
           cd OpenSearch-Dashboards/plugins/alerting-dashboards-plugin
-          if ${{ matrix.os == 'windows-latest'}}
-          then
-            yarn run test:jest:windows --coverage
-          else
+          yarn run test:jest:windows --coverage
+      - name: Run non-window tests
+          if: ${{ matrix.os != 'windows-latest' }}
+          run: |
+            cd OpenSearch-Dashboards/plugins/alerting-dashboards-plugin
             yarn run test:jest --coverage
-          fi
       - name: Uploads coverage
         if: ${{ matrix.os == 'ubuntu-latest' }}
         uses: codecov/codecov-action@v1
