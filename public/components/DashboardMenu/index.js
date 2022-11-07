@@ -5,7 +5,7 @@ import { getInitialMonitors, views, getInitialAlerts, getInitialValues } from '.
 import { useFormik, FormikProvider } from 'formik';
 
 const DashboardMenu = ({ context }) => {
-  const [view, setView] = useState(views.createAlertingMonitorExpanded);
+  const [view, setView] = useState(views.home);
   const [alerts, setAlerts] = useState(getInitialAlerts());
   const [monitors, setMonitors] = useState(getInitialMonitors());
   const formik = useFormik({

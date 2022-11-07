@@ -14,6 +14,7 @@ import {
   toMountPoint,
   reactToUiComponent,
 } from '../../../../src/plugins/opensearch_dashboards_react/public';
+import { getContextMenuData } from '../components/DashboardMenu/InitialMenu';
 
 export const ACTION_ALERTING = 'alerting';
 
@@ -38,6 +39,9 @@ export class AlertingAction implements ActionByType<typeof ACTION_ALERTING> {
   public readonly id = ACTION_ALERTING;
   public order = 8;
   public services = {};
+  // This contains items that will be placed on the context menu and
+  // any panels that might be required
+  public contextMenuData = getContextMenuData();
 
   constructor(services) {
     this.services = services;
