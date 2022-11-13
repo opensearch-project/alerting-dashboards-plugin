@@ -9,17 +9,21 @@ import {
   EuiToolTip,
 } from '@elastic/eui';
 import { v4 as uuid } from 'uuid';
-import ManageMonitors from './ManageMonitors';
-import ViewAlerts from './ViewAlerts';
-import CreateAlertingMonitor from './CreateAlertingMonitor';
+import ManageMonitors from '../../components/ContextMenu/ManageMonitors';
+import ViewAlerts from '../../components/ContextMenu/ViewAlerts';
+import CreateAlertingMonitor from '../../components/ContextMenu/CreateAlertingMonitor';
 import './styles.scss';
 
-export const getContextMenuData = ({ setView = () => null, monitors = [], alerts = [] } = {}) => {
+export function getContextMenuData(context) {
+  const alerts = [];
+  const monitors = [];
+  const setView = () => null;
+
   const alertsId = uuid();
   const createAlertingMonitorId = uuid();
   const manageMonitorsId = uuid();
   const viewAlertsByTriggerId = uuid();
-  const items = [
+  const additionalFirstPanelItems = [
     {
       name: 'Alerts',
       icon: 'bell',
@@ -31,11 +35,11 @@ export const getContextMenuData = ({ setView = () => null, monitors = [], alerts
     },
     {
       name: (
-        <EuiText color="success" className="initial-menu__view-events-text">
+        <EuiText color="success" className="alerting-dashboards-context-menu__view-events-text">
           <h5>View events:</h5>
         </EuiText>
       ),
-      className: 'initial-menu__no-action',
+      className: 'alerting-dashboards-context-menu__no-action',
     },
     {
       name: alerts.length ? (
@@ -52,11 +56,11 @@ export const getContextMenuData = ({ setView = () => null, monitors = [], alerts
       ),
       icon: 'bell',
       panel: viewAlertsByTriggerId,
-      className: alerts.length ? '' : 'initial-menu__no-action',
+      className: alerts.length ? '' : 'alerting-dashboards-context-menu__no-action',
       disabled: !alerts.length,
     },
   ];
-  const panels = [
+  const additionalPanels = [
     {
       id: alertsId,
       width: 300,
@@ -77,7 +81,7 @@ export const getContextMenuData = ({ setView = () => null, monitors = [], alerts
           key: 'sep',
         },
         {
-          className: 'initial-menu__text-content',
+          className: 'alerting-dashboards-context-menu__text-content',
           name: (
             <>
               <EuiText size="xs">
@@ -119,29 +123,5 @@ export const getContextMenuData = ({ setView = () => null, monitors = [], alerts
       content: <ViewAlerts {...{ alerts }} />,
     },
   ];
-  return { items, panels, order: 100 };
-};
-
-const InitialMenu = ({ setView, monitors, alerts }) => {
-  const { panels, items } = getContextMenuData({ setView, monitors, alerts });
-  const allPanels = [
-    {
-      id: uuid(),
-      width: 300,
-      name: 'Options',
-      items,
-    },
-    ...panels,
-  ];
-
-  return (
-    <EuiContextMenu
-      {...{
-        initialPanelId: allPanels[0].id,
-        panels: allPanels,
-      }}
-    />
-  );
-};
-
-export default InitialMenu;
+  return { additionalFirstPanelItems, additionalPanels, additionalFirstPanelItemsOrder: 100 };
+}

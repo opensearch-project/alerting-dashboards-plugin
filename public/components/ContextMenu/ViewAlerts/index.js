@@ -13,7 +13,7 @@ import {
   EuiIcon,
   EuiFacetButton,
 } from '@elastic/eui';
-import { dateOptions } from '../../helpers';
+import { dateOptions } from '../../../utils/getContextMenuData/helpers';
 import './styles.scss';
 
 const statusToSev = {

@@ -12,11 +12,11 @@ import {
   EuiButton,
 } from '@elastic/eui';
 import { useField } from 'formik';
-import { views } from '../../helpers';
-import Notifications from '../../common/Notifications';
-import SeverityLevel from '../../common/SeverityLevel';
+import { views } from '../../../utils/getContextMenuData/helpers';
+import Notifications from '../Notifications';
+import SeverityLevel from '../SeverityLevel';
 import './styles.scss';
-import TriggerExpressions from '../../../../pages/CreateTrigger/components/TriggerExpressions';
+import TriggerExpressions from '../../../pages/CreateTrigger/components/TriggerExpressions';
 
 const CreateAlertingMonitor = ({ setView }) => {
   const [name] = useField('name');

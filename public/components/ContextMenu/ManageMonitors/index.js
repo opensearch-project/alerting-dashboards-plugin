@@ -12,7 +12,7 @@ import {
   EuiButton,
   EuiSpacer,
 } from '@elastic/eui';
-import { views, dateOptions } from '../../helpers';
+import { views, dateOptions } from '../../../utils/getContextMenuData/helpers';
 import './styles.scss';
 
 const ManageMonitors = ({ monitors, setView }) => (

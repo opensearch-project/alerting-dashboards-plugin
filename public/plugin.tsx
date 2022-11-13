@@ -19,7 +19,6 @@ import {
   toMountPoint,
   reactToUiComponent,
 } from '../../../src/plugins/opensearch_dashboards_react/public';
-import DashboardMenu from './components/DashboardMenu';
 
 export class AlertingPlugin implements Plugin {
   private exampleEmbeddableFactories = {};
@@ -57,7 +56,7 @@ export class AlertingPlugin implements Plugin {
       const openFlyout = services[0].overlays.openFlyout;
       openFlyout(toMountPoint(<DashboardMenu {...options} />));
     };
-    const alertingAction = new AlertingAction({ openMenu });
+    const alertingAction = new AlertingAction({ context });
     const { uiActions } = plugins;
     uiActions.addTriggerAction(CONTEXT_MENU_TRIGGER, alertingAction);
 
@@ -66,9 +65,11 @@ export class AlertingPlugin implements Plugin {
 
   public start(core, deps) {
     // Open menu at start for now
+    const context = createOpenSearchDashboardsReactContext(core);
+
     const {
       value: { overlays },
-    } = createOpenSearchDashboardsReactContext(core);
+    } = context;
 
     // overlays.openFlyout(<DashboardMenu />);
 
