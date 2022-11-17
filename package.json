@@ -48,6 +48,7 @@
     "fstream": "1.0.12",
     "glob-parent": "^5.1.2",
     "json-schema": "^0.4.0",
+    "loader-utils": "1.4.1",
     "minimist": "^1.2.6",
     "moment": "^2.29.4",
     "terser": "^4.8.1",
