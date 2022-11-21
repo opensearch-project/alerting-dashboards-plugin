@@ -9,7 +9,6 @@ export const getInitialMonitors = () => [
   { name: 'Additional monitor', last: Date.now(), status: 'danger', id: 3 },
 ];
 
-// export const getInitialAlerts = () => [];
 export const getInitialAlerts = () => [
   {
     name: 'Some_alert',
