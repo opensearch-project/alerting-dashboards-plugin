@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
+import { cloneDeep } from 'lodash';
 import {
   EuiText,
   EuiHorizontalRule,
@@ -10,7 +11,7 @@ import {
   EuiTitle,
   EuiAccordion,
 } from '@elastic/eui';
-import { views, useMonitorFrequencyText } from '../helpers';
+import { useMonitorFrequencyText } from '../../../utils/contextMenu/helpers';
 import './styles.scss';
 import { useField } from 'formik';
 import MonitorDetails from './MonitorDetails';
@@ -23,21 +24,22 @@ const accordions = ['monitorDetails', 'advanced', 'triggers'].reduce(
   {}
 );
 
-const CreateAlertingMonitorExpanded = ({ setView, context }) => {
+const CreateAlertingMonitorExpanded = ({ context, onClose }) => {
   const [accordionOpen, setAccordionOpen] = useState(accordions.triggers);
   const [name] = useField('name');
   const [frequency] = useField('frequency');
   const [interval] = useField('period.interval');
   const [unit] = useField('period.unit');
   const monitorFrequencyText = useMonitorFrequencyText({ frequency, interval, unit });
+  const embeddable = useMemo(() => cloneDeep(context.embeddable), [context]);
 
   return (
     <EuiFlyout
       ownFocus
-      onClose={() => setView(views.home)}
-      aria-labelledby="create-alerting-monitor-expanded"
+      aria-labelledby="create-alerting-monitor-expanded__title"
       size="l"
       className="create-alerting-monitor-expanded"
+      onClose={onClose}
     >
       <EuiFlyoutHeader hasBorder>
         <EuiTitle>
@@ -49,8 +51,8 @@ const CreateAlertingMonitorExpanded = ({ setView, context }) => {
           <EuiFlexItem>
             <div className="create-alerting-monitor-expanded__vis">
               <EmbeddablePanel
-                hideHeader={false}
-                embeddable={context.embeddable}
+                hideHeader
+                embeddable={embeddable}
                 getActions={() => Promise.resolve([])}
                 getAllEmbeddableFactories={() => []}
                 getEmbeddableFactory={() => null}

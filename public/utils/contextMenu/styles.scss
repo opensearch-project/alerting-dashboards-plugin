@@ -10,8 +10,10 @@
   &__no-action {
     cursor: default;
 
-    &:hover {
+    &:hover,
+    &:active {
       text-decoration: none;
+      background-color: inherit;
     }
   }
 

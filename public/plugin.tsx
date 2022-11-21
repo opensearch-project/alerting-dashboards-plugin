@@ -2,32 +2,21 @@
  * Copyright OpenSearch Contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-import React from 'react';
+
 import { PLUGIN_NAME } from '../utils/constants';
-import { AppMountParameters, CoreSetup, CoreStart, Plugin } from '../../../src/core/public';
-import { DashboardSetup } from '../../../src/plugins/dashboard/public';
-import {
-  ACTION_ALERTING,
-  AlertingAction,
-  AlertingActionContext,
-  // createAlertingAction
-} from './actions/alerting_dashboard_action';
+import { Plugin } from '../../../src/core/public';
+import { createAlertingAction, ACTION_ALERTING } from './actions/alerting_dashboard_action';
 import { CONTEXT_MENU_TRIGGER } from '../../../src/plugins/embeddable/public';
-import { UiActionsSetup, UiActionsStart } from '../../../src/plugins/ui_actions/public';
-import {
-  createOpenSearchDashboardsReactContext,
-  toMountPoint,
-  reactToUiComponent,
-} from '../../../src/plugins/opensearch_dashboards_react/public';
+import { IEmbeddable } from '../../../src/plugins/dashboard/public/embeddable_plugin';
+
+declare module '../../../src/plugins/ui_actions/public' {
+  export interface ActionContextMapping {
+    [ACTION_ALERTING]: {};
+  }
+}
 
 export class AlertingPlugin implements Plugin {
-  private exampleEmbeddableFactories = {};
-
-  constructor(initializerContext) {
-    // can retrieve config from initializerContext
-  }
-
-  setup(core, plugins) {
+  public setup(core, plugins) {
     core.application.register({
       id: PLUGIN_NAME,
       title: 'Alerting',
@@ -45,36 +34,12 @@ export class AlertingPlugin implements Plugin {
       },
     });
 
-    const context = createOpenSearchDashboardsReactContext({ ...core, ...plugins });
-    const {
-      value: { overlays },
-    } = context;
-
-    // This does not work
-    const openMenu = async (options) => {
-      const services = await core.getStartServices();
-      const openFlyout = services[0].overlays.openFlyout;
-      openFlyout(toMountPoint(<DashboardMenu {...options} />));
-    };
-    const alertingAction = new AlertingAction({ context });
+    const alertingAction = createAlertingAction();
     const { uiActions } = plugins;
     uiActions.addTriggerAction(CONTEXT_MENU_TRIGGER, alertingAction);
-
-    return {};
   }
 
-  public start(core, deps) {
-    // Open menu at start for now
-    const context = createOpenSearchDashboardsReactContext(core);
+  public start() {}
 
-    const {
-      value: { overlays },
-    } = context;
-
-    // overlays.openFlyout(<DashboardMenu />);
-
-    return {
-      factories: this.exampleEmbeddableFactories,
-    };
-  }
+  public stop() {}
 }

@@ -11,15 +11,39 @@ import {
   EuiFlexGroup,
   EuiButton,
 } from '@elastic/eui';
-import { useField } from 'formik';
-import { views } from '../../../utils/getContextMenuData/helpers';
+import { useField, useFormikContext } from 'formik';
 import Notifications from '../Notifications';
 import SeverityLevel from '../SeverityLevel';
+import CreateAlertingMonitorExpanded from '../CreateAlertingMonitorExpanded';
+import FormikWrapper from '../FormikWrapper';
 import './styles.scss';
 import TriggerExpressions from '../../../pages/CreateTrigger/components/TriggerExpressions';
+import { toMountPoint } from '../../../../../../src/plugins/opensearch_dashboards_react/public';
 
-const CreateAlertingMonitor = ({ setView }) => {
+const CreateAlertingMonitor = (props) => {
+  const { overlays, closeMenu } = props;
+  const { values } = useFormikContext();
   const [name] = useField('name');
+  const onOpenAdvanced = () => {
+    // Prepare advanced flyout with new formik provider of current values
+    const getFormikOptions = () => ({
+      initialValues: values,
+      onSubmit: (values) => {
+        console.log(values);
+      },
+    });
+
+    const flyout = overlays.openFlyout(
+      toMountPoint(
+        <FormikWrapper {...{ getFormikOptions }}>
+          <CreateAlertingMonitorExpanded {...{ ...props, onClose: () => flyout.close() }} />
+        </FormikWrapper>
+      )
+    );
+
+    // Close context menu
+    closeMenu();
+  };
 
   return (
     <>
@@ -53,7 +77,7 @@ const CreateAlertingMonitor = ({ setView }) => {
         <EuiFlexGroup justifyContent="spaceBetween" alignItems="center">
           <EuiFlexItem>
             <EuiText size="s">
-              <EuiLink onClick={() => setView(views.createAlertingMonitorExpanded)}>
+              <EuiLink onClick={onOpenAdvanced}>
                 <EuiIcon type="menuLeft" /> Advanced settings
               </EuiLink>
             </EuiText>

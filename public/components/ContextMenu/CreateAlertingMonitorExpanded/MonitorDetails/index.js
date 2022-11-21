@@ -1,29 +1,5 @@
 import React from 'react';
-import {
-  EuiContextMenu,
-  EuiLink,
-  EuiText,
-  EuiHorizontalRule,
-  EuiCallOut,
-  EuiSpacer,
-  EuiPanel,
-  EuiIcon,
-  EuiToolTip,
-  EuiSelect,
-  EuiForm,
-  EuiFormRow,
-  EuiFlexItem,
-  EuiFlexGroup,
-  EuiFieldText,
-  EuiFilterGroup,
-  EuiFilterButton,
-  EuiButton,
-  EuiFlyout,
-  EuiFlyoutHeader,
-  EuiFlyoutBody,
-  EuiTitle,
-  EuiAccordion,
-} from '@elastic/eui';
+import { EuiSpacer, EuiFormRow, EuiFieldText } from '@elastic/eui';
 import {
   Frequency,
   FrequencyPicker,

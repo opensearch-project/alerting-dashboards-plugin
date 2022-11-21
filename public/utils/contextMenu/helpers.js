@@ -3,40 +3,11 @@ import { unitOptions as intervalUnitOptions } from '../../pages/CreateMonitor/co
 import { FORMIK_INITIAL_VALUES } from '../../pages/CreateMonitor/containers/CreateMonitor/utils/constants';
 import { FORMIK_INITIAL_TRIGGER_CONDITION_VALUES } from '../../pages/CreateTrigger/containers/CreateTrigger/utils/constants';
 
-export const getInitialValues = () => ({
-  ...{ ...FORMIK_INITIAL_VALUES, name: 'Monitor 1' },
-  triggers: [
-    {
-      ...FORMIK_INITIAL_TRIGGER_CONDITION_VALUES,
-      name: 'New trigger',
-      id: Date.now(),
-      severity: '1',
-    },
-  ],
-});
-
-export const views = {
-  home: 'home',
-  createAlertingMonitorExpanded: 'create-alerting-monitor-expanded',
-  manageMonitor: 'manage-monitor',
-};
-
 export const getInitialMonitors = () => [
   { name: 'Some monitor', last: Date.now(), status: 'success', id: 1 },
   { name: 'Another monitor here', last: Date.now(), status: 'warning', id: 2 },
   { name: 'Additional monitor', last: Date.now(), status: 'danger', id: 3 },
 ];
-
-export const dateOptions = {
-  year: '2-digit',
-  month: 'numeric',
-  day: 'numeric',
-  hour: 'numeric',
-  minute: 'numeric',
-  second: 'numeric',
-  hour12: true,
-  timeZone: 'America/Los_Angeles',
-};
 
 // export const getInitialAlerts = () => [];
 export const getInitialAlerts = () => [
@@ -113,6 +84,31 @@ export const getInitialAlerts = () => [
     alarms: 12,
   },
 ];
+
+export const getInitialValues = () => ({
+  ...{ ...FORMIK_INITIAL_VALUES, name: 'Monitor 1' },
+  triggers: [
+    {
+      ...FORMIK_INITIAL_TRIGGER_CONDITION_VALUES,
+      name: 'New trigger',
+      id: Date.now(),
+      severity: '1',
+    },
+  ],
+  monitors: getInitialMonitors(),
+  alerts: getInitialAlerts(),
+});
+
+export const dateOptions = {
+  year: '2-digit',
+  month: 'numeric',
+  day: 'numeric',
+  hour: 'numeric',
+  minute: 'numeric',
+  second: 'numeric',
+  hour12: true,
+  timeZone: 'America/Los_Angeles',
+};
 
 export const useMonitorFrequencyText = ({ frequency, interval, unit }) => {
   const text = useMemo(() => {
