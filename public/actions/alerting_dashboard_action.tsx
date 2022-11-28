@@ -30,7 +30,15 @@ export const createAlertingAction = () =>
     },
     type: ACTION_ALERTING,
     isCompatible: async ({ embeddable }: ActionContext) => {
-      return Boolean(embeddable.parent && isDashboard(embeddable.parent));
+      const paramsType = embeddable.vis?.params?.type;
+      const seriesParams = embeddable.vis?.params?.seriesParams || [];
+      const series = embeddable.vis?.params?.series || [];
+      const isLineGraph =
+        seriesParams.find((item) => item.type === 'line') ||
+        series.find((item) => item.chart_type === 'line');
+      const isValidVis = isLineGraph && paramsType !== 'table';
+
+      return Boolean(embeddable.parent && isDashboard(embeddable.parent) && isValidVis);
     },
     execute: async ({ embeddable }: ActionContext) => {
       if (!isReferenceOrValueEmbeddable(embeddable)) {
