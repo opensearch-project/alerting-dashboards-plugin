@@ -73,8 +73,8 @@ export default class FindingFlyout extends Component {
 
     const { dashboardFlyoutIsOpen = false, closeFlyout } = this.props;
 
-    if (typeof closeFlyout === 'function') {
-      if (dashboardFlyoutIsOpen) closeFlyout();
+    if (typeof closeFlyout === 'function' && dashboardFlyoutIsOpen) {
+      closeFlyout();
     }
   };
 
