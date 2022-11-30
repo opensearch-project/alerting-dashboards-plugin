@@ -15,7 +15,6 @@ const alertsDashboard = (payload) => {
       size: 'm',
       hideCloseButton: true,
       'data-test-subj': `alertsDashboardFlyout_${trigger_name}`,
-      type: 'push',
     },
     headerProps: { hasBorder: true },
     header: (

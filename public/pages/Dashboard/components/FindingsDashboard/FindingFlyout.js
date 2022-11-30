@@ -70,10 +70,16 @@ export default class FindingFlyout extends Component {
 
   closeFlyout = () => {
     this.setState({ isFlyoutOpen: false });
+
+    const { dashboardFlyoutIsOpen = false, closeFlyout } = this.props;
+
+    if (typeof closeFlyout === 'function') {
+      if (dashboardFlyoutIsOpen) closeFlyout();
+    }
   };
 
   async renderFlyout() {
-    const { alert, isAlertsFlyout = false } = this.props;
+    const { alert } = this.props;
     if (!_.isEmpty(alert)) await this.getFinding();
 
     const { docList, finding } = this.state;
@@ -93,9 +99,8 @@ export default class FindingFlyout extends Component {
 
     const flyout = (
       <EuiFlyout
-        type={isAlertsFlyout ? 'overlay' : 'push'}
         onClose={this.closeFlyout}
-        ownFocus={false}
+        ownFocus={true}
         hideCloseButton={true}
         side={'right'}
         size={'m'}

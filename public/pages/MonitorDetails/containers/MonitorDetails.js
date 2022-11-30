@@ -262,6 +262,7 @@ export default class MonitorDetails extends Component {
       history,
       httpClient,
       notifications,
+      setFlyout,
     } = this.props;
     const detectorId = _.get(monitor, MONITOR_INPUT_DETECTOR_ID, undefined);
     const groupBy = _.get(monitor, MONITOR_GROUP_BY);
@@ -277,6 +278,7 @@ export default class MonitorDetails extends Component {
         monitorType={monitor.monitor_type}
         perAlertView={true}
         groupBy={groupBy}
+        setFlyout={setFlyout}
       />
     );
   };
@@ -344,6 +346,7 @@ export default class MonitorDetails extends Component {
       httpClient,
       notifications,
       isDarkMode,
+      setFlyout,
     } = this.props;
     const { action } = queryString.parse(location.search);
     const updatingMonitor = action === MONITOR_ACTIONS.UPDATE_MONITOR;
@@ -365,6 +368,7 @@ export default class MonitorDetails extends Component {
           monitorToEdit={monitor}
           detectorId={detectorId}
           notifications={notifications}
+          setFlyout={setFlyout}
           {...this.props}
         />
       );
