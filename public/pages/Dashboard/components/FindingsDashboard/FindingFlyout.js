@@ -18,6 +18,8 @@ import {
   EuiLink,
   EuiText,
   EuiTitle,
+  EuiFlexGroup,
+  EuiButtonIcon,
 } from '@elastic/eui';
 import { getFindings } from './findingsUtils';
 import { DEFAULT_GET_FINDINGS_PARAMS } from '../../../../../server/services/FindingService';
@@ -106,9 +108,25 @@ export default class FindingFlyout extends Component {
         size={'m'}
       >
         <EuiFlyoutHeader hasBorder>
-          <EuiTitle size={'m'}>
-            <h2 id={findingId || `temp_finding_${docId}`}>Document finding</h2>
-          </EuiTitle>
+          <EuiFlexGroup justifyContent="flexStart" alignItems="center">
+            <EuiFlexItem>
+              <EuiFlexGroup alignItems="center">
+                <EuiFlexItem>
+                  <EuiTitle size={'m'}>
+                    <h3 id={findingId || `temp_finding_${docId}`}>Document finding</h3>
+                  </EuiTitle>
+                </EuiFlexItem>
+              </EuiFlexGroup>
+            </EuiFlexItem>
+            <EuiFlexItem grow={false}>
+              <EuiButtonIcon
+                iconType="cross"
+                display="empty"
+                iconSize="m"
+                onClick={this.closeFlyout}
+              />
+            </EuiFlexItem>
+          </EuiFlexGroup>
         </EuiFlyoutHeader>
 
         <EuiFlyoutBody>
@@ -162,16 +180,6 @@ export default class FindingFlyout extends Component {
             {JSON.stringify(documentDisplay, null, 3)}
           </EuiCodeBlock>
         </EuiFlyoutBody>
-
-        <EuiFlyoutFooter>
-          <EuiButtonEmpty
-            iconType={'cross'}
-            onClick={this.closeFlyout}
-            style={{ paddingLeft: '0px', marginLeft: '0px' }}
-          >
-            Close
-          </EuiButtonEmpty>
-        </EuiFlyoutFooter>
       </EuiFlyout>
     );
     this.setState({ flyout: flyout });

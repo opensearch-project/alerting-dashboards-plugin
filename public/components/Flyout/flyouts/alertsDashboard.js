@@ -4,7 +4,15 @@
  */
 
 import React from 'react';
-import { EuiButtonEmpty, EuiText } from '@elastic/eui';
+import {
+  EuiButtonEmpty,
+  EuiText,
+  EuiFlexGroup,
+  EuiButtonIcon,
+  EuiTitle,
+  EuiFlexItem,
+  EuiButton,
+} from '@elastic/eui';
 import AlertsDashboardFlyoutComponent from './components/AlertsDashboardFlyoutComponent';
 
 const alertsDashboard = (payload) => {
@@ -18,21 +26,22 @@ const alertsDashboard = (payload) => {
     },
     headerProps: { hasBorder: true },
     header: (
-      <EuiText data-test-subj={`alertsDashboardFlyout_header_${trigger_name}`}>
-        <h2>{`Alerts by ${trigger_name}`}</h2>
-      </EuiText>
+      <EuiFlexGroup justifyContent="flexStart" alignItems="center">
+        <EuiFlexItem>
+          <EuiFlexGroup alignItems="center">
+            <EuiFlexItem>
+              <EuiTitle size={'m'}>
+                <h3>{`Alerts by ${trigger_name}`}</h3>
+              </EuiTitle>
+            </EuiFlexItem>
+          </EuiFlexGroup>
+        </EuiFlexItem>
+        <EuiFlexItem grow={false}>
+          <EuiButtonIcon iconType="cross" display="empty" iconSize="m" onClick={closeFlyout} />
+        </EuiFlexItem>
+      </EuiFlexGroup>
     ),
     footerProps: { style: { backgroundColor: '#F5F7FA' } },
-    footer: (
-      <EuiButtonEmpty
-        iconType={'cross'}
-        onClick={() => closeFlyout()}
-        style={{ paddingLeft: '0px', marginLeft: '0px' }}
-        data-test-subj={`alertsDashboardFlyout_closeButton_${trigger_name}`}
-      >
-        Close
-      </EuiButtonEmpty>
-    ),
     body: <AlertsDashboardFlyoutComponent {...payload} />,
   };
 };

@@ -9,31 +9,40 @@ Object {
     "hideCloseButton": true,
     "size": "m",
   },
-  "footer": <EuiButtonEmpty
-    data-test-subj="alertsDashboardFlyout_closeButton_undefined"
-    iconType="cross"
-    onClick={[Function]}
-    style={
-      Object {
-        "marginLeft": "0px",
-        "paddingLeft": "0px",
-      }
-    }
-  >
-    Close
-  </EuiButtonEmpty>,
   "footerProps": Object {
     "style": Object {
       "backgroundColor": "#F5F7FA",
     },
   },
-  "header": <EuiText
-    data-test-subj="alertsDashboardFlyout_header_undefined"
+  "header": <EuiFlexGroup
+    alignItems="center"
+    justifyContent="flexStart"
   >
-    <h2>
-      Alerts by undefined
-    </h2>
-  </EuiText>,
+    <EuiFlexItem>
+      <EuiFlexGroup
+        alignItems="center"
+      >
+        <EuiFlexItem>
+          <EuiTitle
+            size="m"
+          >
+            <h3>
+              Alerts by undefined
+            </h3>
+          </EuiTitle>
+        </EuiFlexItem>
+      </EuiFlexGroup>
+    </EuiFlexItem>
+    <EuiFlexItem
+      grow={false}
+    >
+      <EuiButtonIcon
+        display="empty"
+        iconSize="m"
+        iconType="cross"
+      />
+    </EuiFlexItem>
+  </EuiFlexGroup>,
   "headerProps": Object {
     "hasBorder": true,
   },
