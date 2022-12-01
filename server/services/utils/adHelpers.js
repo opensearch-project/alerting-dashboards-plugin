@@ -22,7 +22,7 @@ export const anomalyResultMapper = (anomalyResults) => {
           ? Number.parseFloat(rest.anomalyGrade).toFixed(2)
           : 0,
       confidence:
-        rest.anomalyGrade != null && rest.anomalyGrade > 0
+        rest.confidence != null && rest.confidence > 0
           ? Number.parseFloat(rest.confidence).toFixed(2)
           : 0,
       plotTime: rest.dataStartTime + Math.floor((rest.dataEndTime - rest.dataStartTime) / 2),
