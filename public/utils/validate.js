@@ -137,7 +137,9 @@ export const validateDetector = (detectorId, selectedDetector) => {
     return 'Must choose detector which has features.';
 };
 
-export const validateIndex = (options) => {
+export const validateIndex = (options, isOptionCreated = false) => {
+  console.log('options', options, isOptionCreated);
+  if (options.length > 0 && !isOptionCreated) return undefined;
   if (!Array.isArray(options)) return 'Must specify an index.';
   if (!options.length) return 'Must specify an index.';
 

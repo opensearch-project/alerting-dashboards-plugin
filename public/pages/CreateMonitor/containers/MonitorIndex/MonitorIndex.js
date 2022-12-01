@@ -53,6 +53,7 @@ class MonitorIndex extends React.Component {
       allAliases: [],
       partialMatchedAliases: [],
       exactMatchedAliases: [],
+      isOptionCreated: false,
     };
 
     this.onCreateOption = this.onCreateOption.bind(this);
@@ -68,6 +69,7 @@ class MonitorIndex extends React.Component {
   }
 
   onCreateOption(searchValue, selectedOptions, setFieldValue, supportMultipleIndices) {
+    console.log('onCreateOption called...');
     const normalizedSearchValue = searchValue.trim().toLowerCase();
 
     if (!normalizedSearchValue) return;
@@ -75,6 +77,7 @@ class MonitorIndex extends React.Component {
     const newOption = { label: searchValue };
     if (supportMultipleIndices) setFieldValue('index', selectedOptions.concat(newOption));
     else setFieldValue('index', [newOption]);
+    this.setState({ isOptionCreated: true });
   }
 
   async onSearchChange(searchValue) {
@@ -205,6 +208,7 @@ class MonitorIndex extends React.Component {
       allAliases,
       partialMatchedAliases,
       exactMatchedAliases,
+      isOptionCreated,
     } = this.state;
 
     const { visibleOptions } = getMatchedOptions(
@@ -223,7 +227,7 @@ class MonitorIndex extends React.Component {
       <FormikComboBox
         name="index"
         formRow
-        fieldProps={{ validate: validateIndex }}
+        fieldProps={{ validate: (options) => validateIndex(options, isOptionCreated) }}
         rowProps={{
           label: 'Index',
           helpText:
@@ -241,6 +245,7 @@ class MonitorIndex extends React.Component {
             form.setFieldTouched('index', true);
           },
           onChange: (options, field, form) => {
+            if (options.length === 0) this.setState({ isOptionCreated: false });
             form.setFieldValue('index', options);
           },
           onCreateOption: (value, field, form) => {
