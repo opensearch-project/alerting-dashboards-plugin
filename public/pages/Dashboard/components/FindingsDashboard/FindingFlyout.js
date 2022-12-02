@@ -107,7 +107,7 @@ export default class FindingFlyout extends Component {
       >
         <EuiFlyoutHeader hasBorder>
           <EuiFlexGroup justifyContent="flexStart" alignItems="center">
-            <EuiFlexItem>
+            <EuiFlexItem className="eui-xScrollWithShadows">
               <EuiTitle size={'m'}>
                 <h3 id={findingId || `temp_finding_${docId}`}>Document finding</h3>
               </EuiTitle>
