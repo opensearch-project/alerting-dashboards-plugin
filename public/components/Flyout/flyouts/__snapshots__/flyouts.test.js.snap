@@ -18,8 +18,11 @@ Object {
     alignItems="center"
     justifyContent="flexStart"
   >
-    <EuiFlexItem>
+    <EuiFlexItem
+      className="eui-xScrollWithShadows"
+    >
       <EuiTitle
+        data-test-subj="alertsDashboardFlyout_header_undefined"
         size="m"
       >
         <h3>
@@ -31,6 +34,7 @@ Object {
       grow={false}
     >
       <EuiButtonIcon
+        data-test-subj="alertsDashboardFlyout_closeButton_undefined"
         display="empty"
         iconSize="m"
         iconType="cross"
