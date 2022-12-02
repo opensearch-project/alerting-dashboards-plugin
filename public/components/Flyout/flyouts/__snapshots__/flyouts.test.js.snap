@@ -19,19 +19,13 @@ Object {
     justifyContent="flexStart"
   >
     <EuiFlexItem>
-      <EuiFlexGroup
-        alignItems="center"
+      <EuiTitle
+        size="m"
       >
-        <EuiFlexItem>
-          <EuiTitle
-            size="m"
-          >
-            <h3>
-              Alerts by undefined
-            </h3>
-          </EuiTitle>
-        </EuiFlexItem>
-      </EuiFlexGroup>
+        <h3>
+          Alerts by undefined
+        </h3>
+      </EuiTitle>
     </EuiFlexItem>
     <EuiFlexItem
       grow={false}
