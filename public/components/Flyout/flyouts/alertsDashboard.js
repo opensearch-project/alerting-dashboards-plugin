@@ -20,7 +20,7 @@ const alertsDashboard = (payload) => {
     header: (
       <EuiFlexGroup justifyContent="flexStart" alignItems="center">
         <EuiFlexItem>
-          <EuiTitle size={'m'}>
+          <EuiTitle size={'m'} data-test-subj={`alertsDashboardFlyout_header_${trigger_name}`}>
             <h3>{`Alerts by ${trigger_name}`}</h3>
           </EuiTitle>
         </EuiFlexItem>
