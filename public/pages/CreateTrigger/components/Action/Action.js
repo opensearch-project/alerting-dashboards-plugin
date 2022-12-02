@@ -78,7 +78,7 @@ const Action = ({
                   // Just a swap correct fields.
                   arrayHelpers.replace(index, {
                     ...action,
-                    destination_id: options[0].value,
+                    destination_id: options[0]?.value,
                   });
                 },
                 onBlur: (e, field, form) => {
@@ -96,7 +96,6 @@ const Action = ({
                   </React.Fragment>
                 ),
                 rowHeight: 45,
-                async: true,
                 isLoading: loadingDestinations,
               }}
             />
