@@ -4,15 +4,7 @@
  */
 
 import React from 'react';
-import {
-  EuiButtonEmpty,
-  EuiText,
-  EuiFlexGroup,
-  EuiButtonIcon,
-  EuiTitle,
-  EuiFlexItem,
-  EuiButton,
-} from '@elastic/eui';
+import { EuiFlexGroup, EuiButtonIcon, EuiTitle, EuiFlexItem } from '@elastic/eui';
 import AlertsDashboardFlyoutComponent from './components/AlertsDashboardFlyoutComponent';
 
 const alertsDashboard = (payload) => {
@@ -28,13 +20,9 @@ const alertsDashboard = (payload) => {
     header: (
       <EuiFlexGroup justifyContent="flexStart" alignItems="center">
         <EuiFlexItem>
-          <EuiFlexGroup alignItems="center">
-            <EuiFlexItem>
-              <EuiTitle size={'m'}>
-                <h3>{`Alerts by ${trigger_name}`}</h3>
-              </EuiTitle>
-            </EuiFlexItem>
-          </EuiFlexGroup>
+          <EuiTitle size={'m'}>
+            <h3>{`Alerts by ${trigger_name}`}</h3>
+          </EuiTitle>
         </EuiFlexItem>
         <EuiFlexItem grow={false}>
           <EuiButtonIcon iconType="cross" display="empty" iconSize="m" onClick={closeFlyout} />

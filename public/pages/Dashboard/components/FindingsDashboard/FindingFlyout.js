@@ -6,13 +6,11 @@
 import React, { Component } from 'react';
 import _ from 'lodash';
 import {
-  EuiButtonEmpty,
   EuiCodeBlock,
   EuiFlexGrid,
   EuiFlexItem,
   EuiFlyout,
   EuiFlyoutBody,
-  EuiFlyoutFooter,
   EuiFlyoutHeader,
   EuiHorizontalRule,
   EuiLink,
@@ -110,13 +108,9 @@ export default class FindingFlyout extends Component {
         <EuiFlyoutHeader hasBorder>
           <EuiFlexGroup justifyContent="flexStart" alignItems="center">
             <EuiFlexItem>
-              <EuiFlexGroup alignItems="center">
-                <EuiFlexItem>
-                  <EuiTitle size={'m'}>
-                    <h3 id={findingId || `temp_finding_${docId}`}>Document finding</h3>
-                  </EuiTitle>
-                </EuiFlexItem>
-              </EuiFlexGroup>
+              <EuiTitle size={'m'}>
+                <h3 id={findingId || `temp_finding_${docId}`}>Document finding</h3>
+              </EuiTitle>
             </EuiFlexItem>
             <EuiFlexItem grow={false}>
               <EuiButtonIcon
