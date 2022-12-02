@@ -17,6 +17,7 @@ import {
 import { getAllowList } from '../../../Destinations/utils/helpers';
 import {
   MAX_QUERY_RESULT_SIZE,
+  MAX_CHANNELS_RESULT_SIZE,
   MONITOR_TYPE,
   OS_NOTIFICATION_PLUGIN,
 } from '../../../../utils/constants';
@@ -97,7 +98,7 @@ class ConfigureActions extends React.Component {
     const getChannels = async () => {
       const getChannelsQuery = {
         from_index: index,
-        max_items: MAX_QUERY_RESULT_SIZE,
+        max_items: MAX_CHANNELS_RESULT_SIZE,
         config_type: CHANNEL_TYPES,
         sort_field: 'name',
         sort_order: 'asc',
@@ -117,7 +118,7 @@ class ConfigureActions extends React.Component {
       );
 
       if (channelsResponse.total && channels.length < channelsResponse.total) {
-        index += MAX_QUERY_RESULT_SIZE;
+        index += MAX_CHANNELS_RESULT_SIZE;
         await getChannels();
       }
     };
