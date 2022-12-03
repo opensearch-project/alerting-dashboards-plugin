@@ -9,6 +9,7 @@ on:
 env:
   OPENSEARCH_DASHBOARDS_VERSION: '2.2'
   OPENSEARCH_VERSION: '2.2.1-SNAPSHOT'
+  ALERTING_PLUGIN_BRANCH: '2.2'
 jobs:
   tests:
     name: Run Cypress E2E tests
@@ -29,7 +30,7 @@ jobs:
         with:
           path: alerting
           repository: opensearch-project/alerting
-          ref: 'main'
+          ref: ${{ env.ALERTING_PLUGIN_BRANCH }}
       - name: Run Opensearch with plugin
         run: |
           cd alerting
