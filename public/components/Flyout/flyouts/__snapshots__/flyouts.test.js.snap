@@ -19,9 +19,10 @@ Object {
     justifyContent="flexStart"
   >
     <EuiFlexItem
-      className="eui-xScrollWithShadows"
+      className="eui-textTruncate"
     >
       <EuiTitle
+        className="eui-textTruncate"
         data-test-subj="alertsDashboardFlyout_header_undefined"
         size="m"
       >

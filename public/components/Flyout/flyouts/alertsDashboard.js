@@ -19,8 +19,12 @@ const alertsDashboard = (payload) => {
     headerProps: { hasBorder: true },
     header: (
       <EuiFlexGroup justifyContent="flexStart" alignItems="center">
-        <EuiFlexItem className="eui-xScrollWithShadows">
-          <EuiTitle size={'m'} data-test-subj={`alertsDashboardFlyout_header_${trigger_name}`}>
+        <EuiFlexItem className="eui-textTruncate">
+          <EuiTitle
+            className="eui-textTruncate"
+            size={'m'}
+            data-test-subj={`alertsDashboardFlyout_header_${trigger_name}`}
+          >
             <h3>{`Alerts by ${trigger_name}`}</h3>
           </EuiTitle>
         </EuiFlexItem>
