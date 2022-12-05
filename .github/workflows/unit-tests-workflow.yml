@@ -32,7 +32,6 @@ jobs:
         run: |
           echo "::set-output name=node_version::$(node -p "(require('./OpenSearch-Dashboards/package.json').engines.node).match(/[.0-9]+/)[0]")"
           echo "::set-output name=yarn_version::$(node -p "(require('./OpenSearch-Dashboards/package.json').engines.yarn).match(/[.0-9]+/)[0]")"
-        shell: bash
       - name: Setup node
         uses: actions/setup-node@v1
         with:
@@ -43,7 +42,6 @@ jobs:
           npm uninstall -g yarn
           echo "Installing yarn ${{ steps.versions_step.outputs.yarn_version }}"
           npm i -g yarn@${{ steps.versions_step.outputs.yarn_version }}
-        shell: bash
       - name: Checkout Alerting OpenSearch Dashboards plugin
         uses: actions/checkout@v2
         with:
