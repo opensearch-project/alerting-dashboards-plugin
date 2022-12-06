@@ -17,6 +17,7 @@ import {
 import { getAllowList } from '../../../Destinations/utils/helpers';
 import {
   MAX_QUERY_RESULT_SIZE,
+  MAX_CHANNELS_RESULT_SIZE,
   MONITOR_TYPE,
   OS_NOTIFICATION_PLUGIN,
 } from '../../../../utils/constants';
@@ -84,10 +85,54 @@ class ConfigureActions extends React.Component {
     }
   }
 
-  loadDestinations = async (searchText = '') => {
-    const { httpClient, values, arrayHelpers, notifications, fieldPath, plugins } = this.props;
-    const { allowList, actionDeleted } = this.state;
+  /**
+   * Returns all channels in consecutive requests until all channels are returned
+   * @returns {Promise<*[]>}
+   */
+  getChannels = async () => {
+    const { plugins } = this.props;
     const hasNotificationPlugin = plugins.indexOf(OS_NOTIFICATION_PLUGIN) !== -1;
+
+    let channels = [];
+    let index = 0;
+    const getChannels = async () => {
+      const getChannelsQuery = {
+        from_index: index,
+        max_items: MAX_CHANNELS_RESULT_SIZE,
+        config_type: CHANNEL_TYPES,
+        sort_field: 'name',
+        sort_order: 'asc',
+      };
+
+      const channelsResponse = await this.props.notificationService.getChannels(getChannelsQuery);
+
+      // TODO: Might still need to filter the allowed channel types here if the backend doesn't
+      //   since Notifications uses its own setting
+      channels = channels.concat(
+        channelsResponse.items.map((channel) => ({
+          label: `[Channel] ${channel.name}`,
+          value: channel.config_id,
+          type: channel.config_type,
+          description: channel.description,
+        }))
+      );
+
+      if (channelsResponse.total && channels.length < channelsResponse.total) {
+        index += MAX_CHANNELS_RESULT_SIZE;
+        await getChannels();
+      }
+    };
+
+    if (hasNotificationPlugin) {
+      await getChannels();
+    }
+
+    return channels;
+  };
+
+  loadDestinations = async (searchText = '') => {
+    const { httpClient, values, arrayHelpers, notifications, fieldPath } = this.props;
+    const { allowList, actionDeleted } = this.state;
 
     this.setState({ loadingDestinations: true });
     try {
@@ -109,27 +154,7 @@ class ConfigureActions extends React.Component {
         backendErrorNotification(notifications, 'load', 'destinations', response.err);
       }
 
-      let channels = [];
-      if (hasNotificationPlugin) {
-        // Fetch Notification Channels
-        const getChannelsQuery = {
-          from_index: 0,
-          max_items: MAX_QUERY_RESULT_SIZE,
-          query: searchText,
-          config_type: CHANNEL_TYPES,
-          sort_field: 'name',
-          sort_order: 'asc',
-        };
-        const channelsResponse = await this.props.notificationService.getChannels(getChannelsQuery);
-        // TODO: Might still need to filter the allowed channel types here if the backend doesn't
-        //   since Notifications uses its own setting
-        channels = channelsResponse.items.map((channel) => ({
-          label: `[Channel] ${channel.name}`,
-          value: channel.config_id,
-          type: channel.config_type,
-          description: channel.description,
-        }));
-      }
+      let channels = await this.getChannels();
 
       const destinationsAndChannels = destinations.concat(channels);
       const channelOptionsByType = getChannelOptions(destinationsAndChannels, CHANNEL_TYPES);
