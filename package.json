@@ -45,6 +45,7 @@
   "resolutions": {
     "ansi-regex": "^5.0.1",
     "async": "^3.2.3",
+    "decode-uri-component": "^0.2.1",
     "fstream": "1.0.12",
     "glob-parent": "^5.1.2",
     "json-schema": "^0.4.0",
