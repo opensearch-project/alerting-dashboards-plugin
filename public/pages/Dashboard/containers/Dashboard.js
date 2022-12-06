@@ -392,7 +392,6 @@ export default class Dashboard extends Component {
             getAlertsFindingColumn(
               httpClient,
               history,
-              false,
               location,
               notifications,
               flyoutIsOpen,

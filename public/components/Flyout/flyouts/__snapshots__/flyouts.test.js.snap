@@ -8,33 +8,40 @@ Object {
     "data-test-subj": "alertsDashboardFlyout_undefined",
     "hideCloseButton": true,
     "size": "m",
-    "type": "push",
   },
-  "footer": <EuiButtonEmpty
-    data-test-subj="alertsDashboardFlyout_closeButton_undefined"
-    iconType="cross"
-    onClick={[Function]}
-    style={
-      Object {
-        "marginLeft": "0px",
-        "paddingLeft": "0px",
-      }
-    }
-  >
-    Close
-  </EuiButtonEmpty>,
   "footerProps": Object {
     "style": Object {
       "backgroundColor": "#F5F7FA",
     },
   },
-  "header": <EuiText
-    data-test-subj="alertsDashboardFlyout_header_undefined"
+  "header": <EuiFlexGroup
+    alignItems="center"
+    justifyContent="flexStart"
   >
-    <h2>
-      Alerts by undefined
-    </h2>
-  </EuiText>,
+    <EuiFlexItem
+      className="eui-textTruncate"
+    >
+      <EuiTitle
+        className="eui-textTruncate"
+        data-test-subj="alertsDashboardFlyout_header_undefined"
+        size="m"
+      >
+        <h3>
+          Alerts by undefined
+        </h3>
+      </EuiTitle>
+    </EuiFlexItem>
+    <EuiFlexItem
+      grow={false}
+    >
+      <EuiButtonIcon
+        data-test-subj="alertsDashboardFlyout_closeButton_undefined"
+        display="empty"
+        iconSize="m"
+        iconType="cross"
+      />
+    </EuiFlexItem>
+  </EuiFlexGroup>,
   "headerProps": Object {
     "hasBorder": true,
   },

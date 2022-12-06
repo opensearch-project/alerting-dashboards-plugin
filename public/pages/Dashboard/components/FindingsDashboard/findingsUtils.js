@@ -41,7 +41,6 @@ export const ALERTS_FINDING_COLUMN = {
 export const getAlertsFindingColumn = (
   httpClient,
   history,
-  isAlertsFlyout = false,
   location,
   notifications,
   flyoutIsOpen,
@@ -58,7 +57,6 @@ export const getAlertsFindingColumn = (
         console.log('Alerts index contains an entry with 0 related document IDs:', alert);
       return (
         <FindingFlyout
-          isAlertsFlyout={isAlertsFlyout}
           alert={alert}
           httpClient={httpClient}
           history={history}

@@ -352,7 +352,6 @@ export default class AcknowledgeAlertsModal extends Component {
             getAlertsFindingColumn(
               httpClient,
               history,
-              false,
               location,
               notifications,
               flyoutIsOpen,
