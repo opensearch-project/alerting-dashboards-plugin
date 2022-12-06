@@ -172,6 +172,7 @@ export default function Message(
   switch (monitorType) {
     case MONITOR_TYPE.BUCKET_LEVEL:
       displayActionableAlertsOptions = true;
+      displayThrottlingSettings = actionExecutionScopeId === NOTIFY_OPTIONS_VALUES.PER_ALERT;
       actionableAlertsSelections = _.get(values, actionableAlertsSelectionsPath);
       break;
     case MONITOR_TYPE.DOC_LEVEL:
@@ -193,6 +194,8 @@ export default function Message(
       actionableAlertsSelections = DEFAULT_ACTIONABLE_ALERTS_SELECTIONS;
     _.set(values, actionableAlertsSelectionsPath, actionableAlertsSelections);
   }
+
+  if (!displayThrottlingSettings) _.set(values, `${actionPath}.throttle_enabled`, false);
 
   let preview = '';
   try {
