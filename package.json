@@ -16,6 +16,7 @@
     "osd": "node ../../scripts/osd",
     "opensearch": "node ../../scripts/opensearch",
     "lint": "../../node_modules/.bin/eslint '**/*.js' -c .eslintrc --ignore-path .gitignore",
+    "test:jest:windows": "SET TZ=UTC ../../node_modules/.bin/jest --config ./test/jest.config.js",
     "test:jest": "TZ=UTC ../../node_modules/.bin/jest --config ./test/jest.config.js",
     "build": "yarn plugin-helpers build",
     "plugin-helpers": "node ../../scripts/plugin_helpers",

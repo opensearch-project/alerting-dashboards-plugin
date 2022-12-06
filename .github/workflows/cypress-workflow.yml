@@ -2,15 +2,14 @@ name: E2E Cypress tests
 on:
   pull_request:
     branches:
-      - main
-      - 1.x
+      - "*"
   push:
     branches:
-      - main
-      - 1.x
+      - "*"
 env:
   OPENSEARCH_DASHBOARDS_VERSION: '1.3'
   OPENSEARCH_VERSION: '1.3.7-SNAPSHOT'
+  ALERTING_PLUGIN_BRANCH: '1.3'
 jobs:
   tests:
     name: Run Cypress E2E tests
@@ -31,7 +30,7 @@ jobs:
         with:
           path: alerting
           repository: opensearch-project/alerting
-          ref: 'main'
+          ref: ${{ env.ALERTING_PLUGIN_BRANCH }}
       - name: Run Opensearch with plugin
         run: |
           cd alerting
