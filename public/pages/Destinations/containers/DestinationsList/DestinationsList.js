@@ -15,7 +15,7 @@ import {
   DestinationsControls,
   DeleteConfirmation,
 } from '../../components/DestinationsList';
-import { staticColumns, MAX_DESTINATIONS } from './utils/constants';
+import { staticColumns } from './utils/constants';
 import { getURLQueryParams } from './utils/helpers';
 import { isDeleteAllowedQuery } from './utils/deleteHelpers';
 import { INDEX } from '../../../../../utils/constants';
@@ -280,7 +280,7 @@ class DestinationsList extends React.Component {
     const pagination = {
       pageIndex: page,
       pageSize: size,
-      totalItemCount: Math.min(MAX_DESTINATIONS, totalDestinations),
+      totalItemCount: totalDestinations,
       pageSizeOptions: [5, 10, 20, 50],
     };
     const sorting = {
