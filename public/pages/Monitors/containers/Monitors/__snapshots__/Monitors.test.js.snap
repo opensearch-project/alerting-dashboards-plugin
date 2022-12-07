@@ -40,7 +40,6 @@ exports[`Monitors renders 1`] = `
           "render": [Function],
           "sortable": true,
           "textOnly": true,
-          "truncateText": true,
         },
         Object {
           "field": "user",
