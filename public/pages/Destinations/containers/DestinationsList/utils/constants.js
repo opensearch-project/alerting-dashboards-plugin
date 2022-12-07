@@ -14,7 +14,7 @@ export const DEFAULT_QUERY_PARAMS = {
   type: 'ALL',
 };
 
-export const MAX_DESTINATIONS = 200;
+export const MAX_DESTINATIONS = 5000;
 
 export const staticColumns = [
   {
