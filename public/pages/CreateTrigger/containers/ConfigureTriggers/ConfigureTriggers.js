@@ -44,18 +44,7 @@ class ConfigureTriggers extends React.Component {
   }
 
   componentDidMount() {
-    const {
-      monitor: { monitor_type },
-      monitorValues: { uri },
-    } = this.props;
-    switch (monitor_type) {
-      case MONITOR_TYPE.BUCKET_LEVEL:
-        this.onQueryMappings();
-        break;
-      case MONITOR_TYPE.CLUSTER_METRICS:
-        if (canExecuteClusterMetricsMonitor(uri)) this.onRunExecute();
-        break;
-    }
+    this.monitorSetupByType();
   }
 
   componentDidUpdate(prevProps) {
@@ -86,21 +75,23 @@ class ConfigureTriggers extends React.Component {
 
     const prevInputs = prevProps.monitor.inputs[0];
     const currInputs = this.props.monitor.inputs[0];
-    if (!_.isEqual(prevInputs, currInputs)) {
-      const {
-        monitor: { monitor_type },
-        monitorValues: { uri },
-      } = this.props;
-      switch (monitor_type) {
-        case MONITOR_TYPE.BUCKET_LEVEL:
-          this.onQueryMappings();
-          break;
-        case MONITOR_TYPE.CLUSTER_METRICS:
-          if (canExecuteClusterMetricsMonitor(uri)) this.onRunExecute();
-          break;
-      }
-    }
+    if (!_.isEqual(prevInputs, currInputs)) this.monitorSetupByType();
   }
+
+  monitorSetupByType = () => {
+    const {
+      monitor: { monitor_type },
+      monitorValues: { uri },
+    } = this.props;
+    switch (monitor_type) {
+      case MONITOR_TYPE.BUCKET_LEVEL:
+        this.onQueryMappings();
+        break;
+      case MONITOR_TYPE.CLUSTER_METRICS:
+        if (canExecuteClusterMetricsMonitor(uri)) this.onRunExecute();
+        break;
+    }
+  };
 
   prepareAddTriggerButton = () => {
     const { monitorValues, triggerArrayHelpers, triggerValues } = this.props;
