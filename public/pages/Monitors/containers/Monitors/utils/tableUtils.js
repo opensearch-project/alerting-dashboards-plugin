@@ -20,9 +20,12 @@ export const columns = [
     field: 'name',
     name: 'Monitor name',
     sortable: true,
-    truncateText: true,
     textOnly: true,
-    render: (name, item) => <EuiLink href={`${PLUGIN_NAME}#/monitors/${item.id}`}>{name}</EuiLink>,
+    render: (name, item) => (
+      <EuiLink data-test-subj={name} href={`${PLUGIN_NAME}#/monitors/${item.id}`}>
+        {name}
+      </EuiLink>
+    ),
   },
   {
     field: 'user',
