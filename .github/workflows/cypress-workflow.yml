@@ -23,7 +23,6 @@ jobs:
         os: [ ubuntu-latest, windows-latest ]
         include:
           - os: windows-latest
-            os_java_options: -Xmx4096M
             cypress_cache_folder: ~/AppData/Local/Cypress/Cache
           - os: ubuntu-latest
             cypress_cache_folder: ~/.cache/Cypress
