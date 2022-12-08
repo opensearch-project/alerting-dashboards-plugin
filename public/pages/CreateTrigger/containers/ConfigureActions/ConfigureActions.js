@@ -12,10 +12,11 @@ import AddActionButton from '../../components/AddActionButton';
 import { DEFAULT_MESSAGE_SOURCE, FORMIK_INITIAL_ACTION_VALUES } from '../../utils/constants';
 import { DESTINATION_OPTIONS } from '../../../Destinations/utils/constants';
 import { getAllowList } from '../../../Destinations/utils/helpers';
-import { MAX_QUERY_RESULT_SIZE, MONITOR_TYPE } from '../../../../utils/constants';
+import { MONITOR_TYPE } from '../../../../utils/constants';
 import { backendErrorNotification } from '../../../../utils/helpers';
 import { TRIGGER_TYPE } from '../CreateTrigger/utils/constants';
 import { formikToTrigger } from '../CreateTrigger/utils/formikToTrigger';
+import { MAX_DESTINATIONS } from '../../../Destinations/containers/DestinationsList/utils/constants';
 
 const createActionContext = (context, action) => ({
   ctx: {
@@ -59,59 +60,86 @@ class ConfigureActions extends React.Component {
     this.loadDestinations();
   }
 
-  loadDestinations = async (searchText = '') => {
-    const { httpClient, values, arrayHelpers, notifications, fieldPath } = this.props;
-    const { allowList, actionDeleted } = this.state;
-    this.setState({ loadingDestinations: true });
+  /**
+   * Returns all destinations in consecutive requests until all destinations are returned
+   * @returns {Promise<*[]>}
+   */
+  getDestinations = async () => {
+    const { httpClient } = this.props;
+    const { allowList } = this.state;
     const getDestinationLabel = (destination) => {
       const foundDestination = DESTINATION_OPTIONS.find(({ value }) => value === destination.type);
       if (foundDestination) return foundDestination.text;
       return destination.type;
     };
-    try {
-      const response = await httpClient.get('../api/alerting/destinations', {
-        query: { search: searchText, size: MAX_QUERY_RESULT_SIZE },
+
+    let destinations = [];
+    let index = 0;
+    const getDestinations = async () => {
+      const getDestinationsQuery = {
+        from: index,
+        size: MAX_DESTINATIONS,
+      };
+
+      const destinationsResponse = await httpClient.get('../api/alerting/destinations', {
+        query: getDestinationsQuery,
       });
-      if (response.ok) {
-        const destinations = response.destinations
+
+      destinations = destinations.concat(
+        destinationsResponse.destinations
           .map((destination) => ({
             label: `${destination.name} - (${getDestinationLabel(destination)})`,
             value: destination.id,
             type: destination.type,
           }))
-          .filter(({ type }) => allowList.includes(type));
-        this.setState({ destinations, loadingDestinations: false });
+          .filter(({ type }) => allowList.includes(type))
+      );
 
-        const monitorType = _.get(
-          arrayHelpers,
-          'form.values.monitor_type',
-          MONITOR_TYPE.QUERY_LEVEL
-        );
-        const initialActionValues = _.cloneDeep(FORMIK_INITIAL_ACTION_VALUES);
-        switch (monitorType) {
-          case MONITOR_TYPE.BUCKET_LEVEL:
-            _.set(
-              initialActionValues,
-              'message_template.source',
-              DEFAULT_MESSAGE_SOURCE.BUCKET_LEVEL_MONITOR
-            );
-            break;
-          case MONITOR_TYPE.QUERY_LEVEL:
-          case MONITOR_TYPE.CLUSTER_METRICS:
-            _.set(
-              initialActionValues,
-              'message_template.source',
-              DEFAULT_MESSAGE_SOURCE.QUERY_LEVEL_MONITOR
-            );
-            break;
-        }
+      if (
+        destinationsResponse.totalDestinations &&
+        destinations.length < destinationsResponse.totalDestinations
+      ) {
+        index += MAX_DESTINATIONS;
+        await getDestinations();
+      }
+    };
 
-        // If actions is not defined  If user choose to delete actions, it will not override customer's preferences.
-        if (destinations.length > 0 && !_.get(values, `${fieldPath}actions`) && !actionDeleted) {
-          arrayHelpers.insert(0, initialActionValues);
-        }
-      } else {
-        backendErrorNotification(notifications, 'load', 'destinations', response.err);
+    await getDestinations();
+
+    return destinations;
+  };
+
+  loadDestinations = async () => {
+    const { values, arrayHelpers, fieldPath } = this.props;
+    const { actionDeleted } = this.state;
+    this.setState({ loadingDestinations: true });
+    try {
+      const destinations = await this.getDestinations();
+      this.setState({ destinations, loadingDestinations: false });
+
+      const monitorType = _.get(arrayHelpers, 'form.values.monitor_type', MONITOR_TYPE.QUERY_LEVEL);
+      const initialActionValues = _.cloneDeep(FORMIK_INITIAL_ACTION_VALUES);
+      switch (monitorType) {
+        case MONITOR_TYPE.BUCKET_LEVEL:
+          _.set(
+            initialActionValues,
+            'message_template.source',
+            DEFAULT_MESSAGE_SOURCE.BUCKET_LEVEL_MONITOR
+          );
+          break;
+        case MONITOR_TYPE.QUERY_LEVEL:
+        case MONITOR_TYPE.CLUSTER_METRICS:
+          _.set(
+            initialActionValues,
+            'message_template.source',
+            DEFAULT_MESSAGE_SOURCE.QUERY_LEVEL_MONITOR
+          );
+          break;
+      }
+
+      // If actions is not defined  If user choose to delete actions, it will not override customer's preferences.
+      if (destinations.length > 0 && !_.get(values, `${fieldPath}actions`) && !actionDeleted) {
+        arrayHelpers.insert(0, initialActionValues);
       }
     } catch (err) {
       console.error(err);
