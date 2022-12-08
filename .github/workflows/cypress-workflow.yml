@@ -13,7 +13,11 @@ env:
 jobs:
   tests:
     name: Run Cypress E2E tests
-    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ ubuntu-latest, windows-latest ]
+    runs-on: ${{ matrix.os }}
     env:
       # prevents extra Cypress installation progress messages
       CI: 1
