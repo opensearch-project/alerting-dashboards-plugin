@@ -15,6 +15,8 @@ import {
   FORMIK_INITIAL_DOC_LEVEL_SCRIPT,
   FORMIK_INITIAL_TRIGGER_VALUES,
 } from '../containers/CreateTrigger/utils/constants';
+import moment from 'moment';
+import { formikToTrigger } from '../containers/CreateTrigger/utils/formikToTrigger';
 
 export const getChannelOptions = (channels, allowedTypes) =>
   allowedTypes.map((type) => ({
@@ -45,4 +47,18 @@ export const getDefaultScript = (monitorValues) => {
     default:
       return FORMIK_INITIAL_TRIGGER_VALUES.script;
   }
+};
+
+export const getTriggerContext = (executeResponse, monitor, values, triggerIndex) => {
+  let trigger = formikToTrigger(values, _.get(monitor, 'ui_metadata', {}));
+  if (_.isArray(trigger) && triggerIndex >= 0) trigger = trigger[triggerIndex];
+  return {
+    periodStart: moment.utc(_.get(executeResponse, 'period_start', Date.now())).format(),
+    periodEnd: moment.utc(_.get(executeResponse, 'period_end', Date.now())).format(),
+    results: [_.get(executeResponse, 'input_results.results[0]')].filter((result) => !!result),
+    trigger: trigger,
+    alert: null,
+    error: null,
+    monitor: monitor,
+  };
 };
