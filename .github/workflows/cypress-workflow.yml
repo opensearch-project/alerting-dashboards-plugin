@@ -65,6 +65,13 @@ jobs:
           npm uninstall -g yarn
           echo "Installing yarn ${{ steps.versions_step.outputs.yarn_version }}"
           npm i -g yarn@${{ steps.versions.outputs.yarn_version }}
+
+      - name: Reset npm's script shell
+        if: ${{ matrix.os == 'windows-latest' }}
+        run: |
+          # Resetting npm's script shell for Windows so `yarn run cypress` doesn't have conflicts
+          npm config delete script-shell
+
       - name: Bootstrap OpenSearch Dashboards with plugin
         run: |
           cd OpenSearch-Dashboards/plugins/alerting-dashboards-plugin
@@ -75,6 +82,13 @@ jobs:
           yarn start --no-base-path --no-watch &
           sleep 300
         # timeout 300 bash -c 'while [[ "$(curl -s -o /dev/null -w ''%{http_code}'' localhost:5601/api/status)" != "200" ]]; do sleep 5; done'
+
+      - name: Reset npm's script shell
+        if: ${{ matrix.os == 'windows-latest' }}
+        run: |
+          # Resetting npm's script shell for Windows so `yarn run cypress` doesn't have conflicts
+          npm config delete script-shell
+
       - name: Run Cypress tests
         uses: cypress-io/github-action@v2
         with:
