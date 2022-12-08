@@ -21,67 +21,95 @@ jobs:
       fail-fast: false
       matrix:
         os: [ ubuntu-latest, windows-latest ]
-    name: Run Cypress E2E tests
+        include:
+          - os: windows-latest
+            os_java_options: -Xmx4096M
+            cypress_cache_folder: ~/AppData/Local/Cypress/Cache
+          - os: ubuntu-latest
+            cypress_cache_folder: ~/.cache/Cypress
+          # TODO: Add back when macos-latest is back in the test matrix
+#          - os: macos-latest
+#            cypress_cache_folder: ~/Library/Caches/Cypress
+    name: Run Cypress E2E tests on ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
+
     steps:
       - name: Set up JDK
         uses: actions/setup-java@v1
         with:
           # TODO: Parse this from alerting plugin
           java-version: 14
-      - name: Checkout
+
+      - name: Checkout backend plugin
         uses: actions/checkout@v2
         with:
           path: alerting
           repository: opensearch-project/alerting
           ref: ${{ env.ALERTING_PLUGIN_BRANCH }}
+
       - name: Run Opensearch with plugin
         run: |
           cd alerting
           ./gradlew run -Dopensearch.version=${{ env.OPENSEARCH_VERSION }} &
           timeout 300 bash -c 'while [[ "$(curl -s -o /dev/null -w ''%{http_code}'' localhost:9200)" != "200" ]]; do sleep 5; done'
+        shell: bash
+        env:
+          _JAVA_OPTIONS: ${{ matrix.os_java_options }}
+
       - name: Checkout OpenSearch Dashboards
         uses: actions/checkout@v2
         with:
           repository: opensearch-project/OpenSearch-Dashboards
           ref: ${{ env.OPENSEARCH_DASHBOARDS_VERSION }}
           path: OpenSearch-Dashboards
+
       - name: Checkout Alerting OpenSearch Dashboards plugin
         uses: actions/checkout@v2
         with:
           path: OpenSearch-Dashboards/plugins/alerting-dashboards-plugin
+
       - name: Get node and yarn versions
         id: versions
         run: |
           echo "::set-output name=node_version::$(node -p "(require('./OpenSearch-Dashboards/package.json').engines.node).match(/[.0-9]+/)[0]")"
           echo "::set-output name=yarn_version::$(node -p "(require('./OpenSearch-Dashboards/package.json').engines.yarn).match(/[.0-9]+/)[0]")"
+
       - name: Setup node
         uses: actions/setup-node@v1
         with:
           node-version: ${{ steps.versions.outputs.node_version }}
           registry-url: 'https://registry.npmjs.org'
+
       - name: Install correct yarn version for OpenSearch Dashboards
         run: |
           npm uninstall -g yarn
           echo "Installing yarn ${{ steps.versions_step.outputs.yarn_version }}"
           npm i -g yarn@${{ steps.versions.outputs.yarn_version }}
 
-      - name: Reset npm's script shell
-        if: ${{ matrix.os == 'windows-latest' }}
-        run: |
-          # Resetting npm's script shell for Windows so `yarn run cypress` doesn't have conflicts
-          npm config delete script-shell
+      - name: Set npm to use bash for shell
+          if: ${{ matrix.os == 'windows-latest' }}
+          run: |
+            # Sets Windows to use bash for npm shell so the script commands work as intended
+            npm config set script-shell "C:\\Program Files\\git\\bin\\bash.exe"
 
       - name: Bootstrap OpenSearch Dashboards with plugin
         run: |
           cd OpenSearch-Dashboards/plugins/alerting-dashboards-plugin
           yarn osd bootstrap
+
       - name: Run OpenSearch Dashboards server
         run: |
           cd OpenSearch-Dashboards
           yarn start --no-base-path --no-watch &
           sleep 300
         # timeout 300 bash -c 'while [[ "$(curl -s -o /dev/null -w ''%{http_code}'' localhost:5601/api/status)" != "200" ]]; do sleep 5; done'
+
+      - name: Cache Cypress
+          id: cache-cypress
+          uses: actions/cache@v2
+          with:
+            path: ${{ matrix.cypress_cache_folder }}
+            key: cypress-cache-v2-${{ runner.os }}-${{ hashFiles('**/package.json') }}
 
       - name: Reset npm's script shell
         if: ${{ matrix.os == 'windows-latest' }}
