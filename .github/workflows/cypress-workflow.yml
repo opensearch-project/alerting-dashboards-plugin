@@ -12,17 +12,17 @@ env:
   ALERTING_PLUGIN_BRANCH: '1.3'
 jobs:
   tests:
-    name: Run Cypress E2E tests
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [ ubuntu-latest, windows-latest ]
-    runs-on: ${{ matrix.os }}
     env:
       # prevents extra Cypress installation progress messages
       CI: 1
       # avoid warnings like "tput: No value for $TERM and no -T specified"
       TERM: xterm
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ ubuntu-latest, windows-latest ]
+    name: Run Cypress E2E tests
+    runs-on: ${{ matrix.os }}
     steps:
       - name: Set up JDK
         uses: actions/setup-java@v1
