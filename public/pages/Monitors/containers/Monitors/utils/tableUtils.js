@@ -20,10 +20,12 @@ export const columns = [
     field: 'name',
     name: 'Monitor name',
     sortable: true,
-    truncateText: true,
     textOnly: true,
-    width: '150px',
-    render: (name, item) => <EuiLink href={`${PLUGIN_NAME}#/monitors/${item.id}`}>{name}</EuiLink>,
+    render: (name, item) => (
+      <EuiLink data-test-subj={name} href={`${PLUGIN_NAME}#/monitors/${item.id}`}>
+        {name}
+      </EuiLink>
+    ),
   },
   {
     field: 'user',
@@ -31,7 +33,6 @@ export const columns = [
     sortable: true,
     truncateText: true,
     textOnly: true,
-    width: '100px',
     /* There are 3 cases:
     1. Monitors created by older versions and never updated.
        These monitors won’t have User details in the monitor object. `monitor.user` will be null.
@@ -47,14 +48,12 @@ export const columns = [
     sortable: false,
     truncateText: true,
     textOnly: true,
-    width: '150px',
   },
   {
     field: 'enabled',
     name: 'State',
     sortable: false,
     truncateText: false,
-    width: '100px',
     render: (enabled) => (enabled ? 'Enabled' : 'Disabled'),
   },
   {
@@ -64,34 +63,29 @@ export const columns = [
     truncateText: false,
     render: renderTime,
     dataType: 'date',
-    width: '150px',
   },
   {
     field: 'active',
     name: 'Active',
     sortable: true,
     truncateText: false,
-    width: '100px',
   },
   {
     field: 'acknowledged',
     name: 'Acknowledged',
     sortable: true,
     truncateText: false,
-    width: '100px',
   },
   {
     field: 'errors',
     name: 'Errors',
     sortable: true,
     truncateText: false,
-    width: '100px',
   },
   {
     field: 'ignored',
     name: 'Ignored',
     sortable: true,
     truncateText: false,
-    width: '100px',
   },
 ];
