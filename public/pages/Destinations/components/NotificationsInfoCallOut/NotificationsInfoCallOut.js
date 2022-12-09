@@ -43,7 +43,7 @@ const hasNotificationsBodyText = (
   </p>
 );
 const hasNotificationsButton = (
-  <EuiButton href={MANAGE_CHANNELS_PATH}>View Notifications</EuiButton>
+  <EuiButton href={MANAGE_CHANNELS_PATH}>View in Notifications</EuiButton>
 );
 
 const NotificationsInfoCallOut = ({ hasNotificationPlugin }) => {
