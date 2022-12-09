@@ -319,7 +319,7 @@ class DestinationsList extends React.Component {
           />
         ) : null}
 
-        {destinations.length > 0 ? (
+        {destinations.length === 0 ? (
           <FullPageNotificationsInfoCallOut hasNotificationPlugin={hasNotificationPlugin} />
         ) : (
           <div>
