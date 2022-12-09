@@ -40,8 +40,6 @@ exports[`Monitors renders 1`] = `
           "render": [Function],
           "sortable": true,
           "textOnly": true,
-          "truncateText": true,
-          "width": "150px",
         },
         Object {
           "field": "user",
@@ -50,7 +48,6 @@ exports[`Monitors renders 1`] = `
           "sortable": true,
           "textOnly": true,
           "truncateText": true,
-          "width": "100px",
         },
         Object {
           "field": "latestAlert",
@@ -58,7 +55,6 @@ exports[`Monitors renders 1`] = `
           "sortable": false,
           "textOnly": true,
           "truncateText": true,
-          "width": "150px",
         },
         Object {
           "field": "enabled",
@@ -66,7 +62,6 @@ exports[`Monitors renders 1`] = `
           "render": [Function],
           "sortable": false,
           "truncateText": false,
-          "width": "100px",
         },
         Object {
           "dataType": "date",
@@ -75,35 +70,30 @@ exports[`Monitors renders 1`] = `
           "render": [Function],
           "sortable": true,
           "truncateText": false,
-          "width": "150px",
         },
         Object {
           "field": "active",
           "name": "Active",
           "sortable": true,
           "truncateText": false,
-          "width": "100px",
         },
         Object {
           "field": "acknowledged",
           "name": "Acknowledged",
           "sortable": true,
           "truncateText": false,
-          "width": "100px",
         },
         Object {
           "field": "errors",
           "name": "Errors",
           "sortable": true,
           "truncateText": false,
-          "width": "100px",
         },
         Object {
           "field": "ignored",
           "name": "Ignored",
           "sortable": true,
           "truncateText": false,
-          "width": "100px",
         },
         Object {
           "actions": Array [
@@ -113,11 +103,13 @@ exports[`Monitors renders 1`] = `
               "onClick": [Function],
             },
             Object {
+              "available": [Function],
               "description": "Enable this Monitor",
               "name": "Enable",
               "onClick": [Function],
             },
             Object {
+              "available": [Function],
               "description": "Disable this Monitor",
               "name": "Disable",
               "onClick": [Function],
@@ -129,7 +121,7 @@ exports[`Monitors renders 1`] = `
             },
           ],
           "name": "Actions",
-          "width": "75px",
+          "width": "60px",
         },
       ]
     }

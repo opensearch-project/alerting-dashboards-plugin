@@ -75,7 +75,7 @@ export default class Monitors extends Component {
       ...staticColumns,
       {
         name: 'Actions',
-        width: '75px',
+        width: '60px',
         actions: [
           {
             name: 'Acknowledge',
@@ -86,11 +86,13 @@ export default class Monitors extends Component {
             name: 'Enable',
             description: 'Enable this Monitor',
             onClick: this.onClickEnable,
+            available: (item) => !item.enabled,
           },
           {
             name: 'Disable',
             description: 'Disable this Monitor',
             onClick: this.onClickDisable,
+            available: (item) => item.enabled,
           },
           {
             name: 'Delete',
