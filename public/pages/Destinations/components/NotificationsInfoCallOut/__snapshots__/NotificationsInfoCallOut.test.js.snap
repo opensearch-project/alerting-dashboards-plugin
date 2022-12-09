@@ -68,7 +68,7 @@ exports[`NotificationsInfoCallOut renders when Notifications plugin is installed
             <span
               class="euiButton__text"
             >
-              View Notifications
+              View in Notifications
             </span>
           </span>
         </a>
