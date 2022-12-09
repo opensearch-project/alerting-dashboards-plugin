@@ -319,9 +319,7 @@ class DestinationsList extends React.Component {
           />
         ) : null}
 
-        {destinations.length === 0 ? (
-          <FullPageNotificationsInfoCallOut hasNotificationPlugin={hasNotificationPlugin} />
-        ) : (
+        {isDestinationLoading || totalDestinations > 0 || isFilterApplied ? (
           <div>
             <EuiTitle size={'l'}>
               <h3>Destinations (deprecated)</h3>
@@ -417,6 +415,8 @@ class DestinationsList extends React.Component {
               />
             </ContentPanel>
           </div>
+        ) : (
+          <FullPageNotificationsInfoCallOut hasNotificationPlugin={hasNotificationPlugin} />
         )}
       </React.Fragment>
     );
