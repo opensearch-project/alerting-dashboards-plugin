@@ -82,14 +82,14 @@ exports[`DestinationsList renders when Notification plugin is installed 1`] = `
                 >
                   <p>
                     Your destinations have been migrated to Notifications, a new centralized place to manage your notification channels. Destinations will be deprecated going forward.
-                    <EuiSpacer
-                      size="l"
-                    >
-                      <div
-                        className="euiSpacer euiSpacer--l"
-                      />
-                    </EuiSpacer>
                   </p>
+                  <EuiSpacer
+                    size="l"
+                  >
+                    <div
+                      className="euiSpacer euiSpacer--l"
+                    />
+                  </EuiSpacer>
                 </div>
               </EuiTextColor>
             </div>
@@ -1556,14 +1556,14 @@ exports[`DestinationsList renders when Notification plugin is not installed 1`] 
                 >
                   <p>
                     Your destinations have been migrated to Notifications, a new centralized place to manage your notification channels. Destinations will be deprecated going forward.
-                    <EuiSpacer
-                      size="l"
-                    >
-                      <div
-                        className="euiSpacer euiSpacer--l"
-                      />
-                    </EuiSpacer>
                   </p>
+                  <EuiSpacer
+                    size="l"
+                  >
+                    <div
+                      className="euiSpacer euiSpacer--l"
+                    />
+                  </EuiSpacer>
                 </div>
               </EuiTextColor>
             </div>
@@ -2888,14 +2888,14 @@ exports[`DestinationsList renders when email is disallowed 1`] = `
                 >
                   <p>
                     Your destinations have been migrated to Notifications, a new centralized place to manage your notification channels. Destinations will be deprecated going forward.
-                    <EuiSpacer
-                      size="l"
-                    >
-                      <div
-                        className="euiSpacer euiSpacer--l"
-                      />
-                    </EuiSpacer>
                   </p>
+                  <EuiSpacer
+                    size="l"
+                  >
+                    <div
+                      className="euiSpacer euiSpacer--l"
+                    />
+                  </EuiSpacer>
                 </div>
               </EuiTextColor>
             </div>
