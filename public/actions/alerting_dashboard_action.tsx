@@ -37,7 +37,6 @@ export const createAlertingAction = () =>
         seriesParams.find((item) => item.type === 'line') ||
         series.find((item) => item.chart_type === 'line');
       const isValidVis = isLineGraph && paramsType !== 'table';
-
       return Boolean(embeddable.parent && isDashboard(embeddable.parent) && isValidVis);
     },
     execute: async ({ embeddable }: ActionContext) => {

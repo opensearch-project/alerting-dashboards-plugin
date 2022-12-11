@@ -10,7 +10,6 @@ import {
 } from '@elastic/eui';
 import { v4 as uuid } from 'uuid';
 import ManageMonitors from '../../components/contextMenu/ManageMonitors';
-import ViewAlerts from '../../components/contextMenu/ViewAlerts';
 import CreateAlertingMonitor from '../../components/contextMenu/CreateAlertingMonitor';
 import FormikWrapper from '../../components/contextMenu/FormikWrapper';
 import './styles.scss';
@@ -21,7 +20,7 @@ export const getContextMenuData: Action['getContextMenuData'] = (
   options: GetActionContextMenuDataArgs
 ) => {
   const initialValues = getInitialValues();
-  const { alerts, monitors } = initialValues;
+  const { monitors } = initialValues;
   const getFormikOptions = () => ({
     initialValues,
     onSubmit: (values) => {
@@ -31,7 +30,6 @@ export const getContextMenuData: Action['getContextMenuData'] = (
   const alertsId = uuid();
   const createAlertingMonitorId = uuid();
   const manageMonitorsId = uuid();
-  const viewAlertsByTriggerId = uuid();
   const additionalFirstPanelGroups = [
     {
       name: 'Initial group',
@@ -41,31 +39,6 @@ export const getContextMenuData: Action['getContextMenuData'] = (
           name: 'Alerts',
           icon: 'bell',
           panel: alertsId,
-        },
-      ],
-    },
-    {
-      name: 'View events',
-      isTitleVisible: true,
-      order: 10,
-      items: [
-        {
-          name: alerts.length ? (
-            `Alerts (${alerts.length})`
-          ) : (
-            <EuiText>
-              Alerts{' '}
-              <EuiToolTip position="left" content="Here is some tooltip text">
-                <EuiLink href="#">
-                  <EuiIcon type="questionInCircle" />
-                </EuiLink>
-              </EuiToolTip>
-            </EuiText>
-          ),
-          icon: 'bell',
-          panel: viewAlertsByTriggerId,
-          className: alerts.length ? '' : 'alerting-dashboards-context-menu__no-action',
-          disabled: !alerts.length,
         },
       ],
     },
@@ -131,16 +104,6 @@ export const getContextMenuData: Action['getContextMenuData'] = (
       content: (
         <FormikWrapper {...{ getFormikOptions }}>
           <ManageMonitors />
-        </FormikWrapper>
-      ),
-    },
-    {
-      id: viewAlertsByTriggerId,
-      width: 400,
-      title: 'View Alerts by Trigger',
-      content: (
-        <FormikWrapper {...{ getFormikOptions }}>
-          <ViewAlerts />
         </FormikWrapper>
       ),
     },

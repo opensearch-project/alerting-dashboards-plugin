@@ -156,6 +156,7 @@ export default class Monitors extends Component {
       const { httpClient, history } = this.props;
       history.replace({ ...this.props.location, search: queryParamsString });
       const response = await httpClient.get('../api/alerting/monitors', { query: params });
+      console.log({ response });
       if (response.ok) {
         const { monitors, totalMonitors } = response;
         this.setState({ monitors: this.formatGetMonitorsResponse(monitors), totalMonitors });
