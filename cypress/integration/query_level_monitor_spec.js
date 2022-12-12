@@ -166,7 +166,7 @@ describe('Query-Level Monitors', () => {
       cy.contains(SAMPLE_MONITOR, { timeout: 20000 });
 
       // Select the existing monitor
-      cy.get('a').contains(SAMPLE_MONITOR, { timeout: 20000 }).click();
+      cy.get(`[data-test-subj="${SAMPLE_MONITOR}"]`).click();
 
       // Click Edit button
       cy.contains('Edit', { timeout: 20000 }).click({ force: true });
@@ -195,7 +195,7 @@ describe('Query-Level Monitors', () => {
       cy.contains(SAMPLE_MONITOR, { timeout: 20000 });
 
       // Select the existing monitor
-      cy.get('a').contains(SAMPLE_MONITOR, { timeout: 20000 }).click({ force: true });
+      cy.get(`[data-test-subj="${SAMPLE_MONITOR}"]`).click({ force: true });
 
       // Click Edit button
       cy.contains('Edit', { timeout: 20000 }).click({ force: true });
@@ -304,7 +304,7 @@ describe('Query-Level Monitors', () => {
       cy.contains(SAMPLE_MONITOR);
 
       // Select the existing monitor
-      cy.get('a').contains(SAMPLE_MONITOR).click();
+      cy.get(`[data-test-subj="${SAMPLE_MONITOR}"]`).click();
 
       // Click Edit button
       cy.contains('Edit').click({ force: true });
@@ -373,7 +373,7 @@ describe('Query-Level Monitors', () => {
       cy.contains(SAMPLE_DAYS_INTERVAL_MONITOR, { timeout: 20000 });
 
       // Select the existing monitor
-      cy.get('a').contains(SAMPLE_DAYS_INTERVAL_MONITOR).click({ force: true });
+      cy.get(`[data-test-subj="${SAMPLE_DAYS_INTERVAL_MONITOR}"]`).click({ force: true });
 
       // Click Edit button
       cy.contains('Edit').click({ force: true });
@@ -398,7 +398,7 @@ describe('Query-Level Monitors', () => {
       cy.contains(SAMPLE_CRON_EXPRESSION_MONITOR, { timeout: 20000 });
 
       // Select the existing monitor
-      cy.get('a').contains(SAMPLE_CRON_EXPRESSION_MONITOR).click({ force: true });
+      cy.get(`[data-test-subj="${SAMPLE_CRON_EXPRESSION_MONITOR}"]`).click({ force: true });
 
       // Click Edit button
       cy.contains('Edit').click({ force: true });

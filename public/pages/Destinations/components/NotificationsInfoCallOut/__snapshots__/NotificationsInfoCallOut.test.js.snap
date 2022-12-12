@@ -41,7 +41,6 @@ exports[`NotificationsInfoCallOut renders when Notifications plugin is installed
             </span>
           </span>
         </a>
-        <p />
       </div>
     </div>
   </div>
@@ -77,7 +76,6 @@ exports[`NotificationsInfoCallOut renders when Notifications plugin is not insta
         <div
           class="euiSpacer euiSpacer--l"
         />
-        <p />
       </div>
     </div>
   </div>
