@@ -14,7 +14,7 @@ Compatible with OpenSearch Dashboards 2.4.1
 * Adjusted alerting plugin branch used by test workflows ([#390](https://github.com/opensearch-project/alerting-dashboards-plugin/pull/390))
 
 ### Documentation
-* Add 2.4.1 release notes ([#357](https://github.com/opensearch-project/alerting-dashboards-plugin/pull/357))
+* Add 2.4.1 release notes ([#419](https://github.com/opensearch-project/alerting-dashboards-plugin/pull/419))
 
 ### Features
 * Align all flyout components to be overlay kind and add close button X in header ([#373](https://github.com/opensearch-project/alerting-dashboards-plugin/pull/373))
