@@ -18,12 +18,12 @@ Compatible with OpenSearch Dashboards 2.4.1
 
 ### Features
 * Align all flyout components to be overlay kind and add close button X in header ([#373](https://github.com/opensearch-project/alerting-dashboards-plugin/pull/373))
-* Sort data by date for query visualization ([#385](https://github.com/opensearch-project/alerting-dashboards-plugin/pull/385))
-* Avoid nesting search inside search when executing trigger condition for preview during create monitor ([#382](https://github.com/opensearch-project/alerting-dashboards-plugin/pull/382))
-* Keep monitor table cell width flexible; Check for whether monitor is enabled when displaying related action ([#402](https://github.com/opensearch-project/alerting-dashboards-plugin/pull/402))
 
 ### Bug Fixes
 * Fix confidence bug ([#360](https://github.com/opensearch-project/alerting-dashboards-plugin/pull/360))
 * Validation bug when defining the index for a monitor ([#381](https://github.com/opensearch-project/alerting-dashboards-plugin/pull/381))
 * Issues in the UI above 200 destinations ([#386](https://github.com/opensearch-project/alerting-dashboards-plugin/pull/386))
 * Fixed a bug that prevented the throttling settings from displaying for PER_ALERT bucket level trigger actions ([#397](https://github.com/opensearch-project/alerting-dashboards-plugin/pull/397))
+* Sort data by date for query visualization ([#385](https://github.com/opensearch-project/alerting-dashboards-plugin/pull/385))
+* Avoid nesting search inside search when executing trigger condition for preview during create monitor ([#382](https://github.com/opensearch-project/alerting-dashboards-plugin/pull/382))
+* Keep monitor table cell width flexible; Check for whether monitor is enabled when displaying related action ([#402](https://github.com/opensearch-project/alerting-dashboards-plugin/pull/402))
