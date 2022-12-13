@@ -5,7 +5,6 @@ Compatible with OpenSearch Dashboards 2.4.1
 * Bumped version to 2.4.1.0 ([#409](https://github.com/opensearch-project/alerting-dashboards-plugin/pull/409))
 * Bumped loader-utils version to 1.4.1 ([#361](https://github.com/opensearch-project/alerting-dashboards-plugin/pull/361))
 * Adjusted OpenSearch-Dashboards version used by test workflows to 2.4.0 ([#363](https://github.com/opensearch-project/alerting-dashboards-plugin/pull/363))
-* Bumped Open Search Dashboards version to 1.3.7 ([#374](https://github.com/opensearch-project/alerting-dashboards-plugin/pull/374))
 * Bumped decode-uri-component from 0.2.0 to 0.2.2 ([#384](https://github.com/opensearch-project/alerting-dashboards-plugin/pull/384))
 * Bumped decode-uri-component version to address CVE-2022-38900 ([#400](https://github.com/opensearch-project/alerting-dashboards-plugin/pull/400))
 
