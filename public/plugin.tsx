@@ -5,9 +5,9 @@
 
 import { PLUGIN_NAME } from '../utils/constants';
 import { Plugin } from '../../../src/core/public';
-import { createAlertingAction, ACTION_ALERTING } from './actions/alerting_dashboard_action';
+import { ACTION_ALERTING } from './actions/alerting_dashboard_action';
 import { CONTEXT_MENU_TRIGGER } from '../../../src/plugins/embeddable/public';
-import { IEmbeddable } from '../../../src/plugins/dashboard/public/embeddable_plugin';
+import { getActions } from './utils/contextMenu/actions';
 
 declare module '../../../src/plugins/ui_actions/public' {
   export interface ActionContextMapping {
@@ -34,9 +34,13 @@ export class AlertingPlugin implements Plugin {
       },
     });
 
-    const alertingAction = createAlertingAction();
-    const { uiActions } = plugins;
-    uiActions.addTriggerAction(CONTEXT_MENU_TRIGGER, alertingAction);
+    // Create context menu actions. Pass core, to access service for flyouts.
+    const actions = getActions({ core });
+
+    // Add  actions to uiActions
+    actions.forEach((action) => {
+      plugins.uiActions.addTriggerAction(CONTEXT_MENU_TRIGGER, action);
+    });
   }
 
   public start() {}

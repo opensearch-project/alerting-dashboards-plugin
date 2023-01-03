@@ -10,8 +10,8 @@ import {
   EuiFieldText,
   EuiButton,
 } from '@elastic/eui';
-import Notifications from '../../Notifications';
-import SeverityLevel from '../../SeverityLevel';
+import Notifications from './Notifications';
+import SeverityLevel from './SeverityLevel';
 import TriggerExpressions from '../../../../pages/CreateTrigger/components/TriggerExpressions';
 import { useField, Field, useFormikContext } from 'formik';
 import './styles.scss';

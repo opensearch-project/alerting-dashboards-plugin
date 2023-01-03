@@ -1,11 +1,9 @@
-import React, { useState, useMemo } from 'react';
-import { cloneDeep } from 'lodash';
+import React, { useState } from 'react';
 import {
   EuiText,
   EuiHorizontalRule,
   EuiFlexItem,
   EuiFlexGroup,
-  EuiFlyout,
   EuiFlyoutHeader,
   EuiFlyoutBody,
   EuiTitle,
@@ -24,32 +22,25 @@ const accordions = ['monitorDetails', 'advanced', 'triggers'].reduce(
   {}
 );
 
-const CreateAlertingMonitorExpanded = ({ context, onClose }) => {
+function CreateAlertingMonitor({ embeddable }) {
   const [accordionOpen, setAccordionOpen] = useState(accordions.triggers);
   const [name] = useField('name');
   const [frequency] = useField('frequency');
   const [interval] = useField('period.interval');
   const [unit] = useField('period.unit');
   const monitorFrequencyText = useMonitorFrequencyText({ frequency, interval, unit });
-  const embeddable = useMemo(() => cloneDeep(context.embeddable), [context]);
 
   return (
-    <EuiFlyout
-      ownFocus
-      aria-labelledby="create-alerting-monitor-expanded__title"
-      size="l"
-      className="create-alerting-monitor-expanded"
-      onClose={onClose}
-    >
+    <div className="create-alerting-monitor">
       <EuiFlyoutHeader hasBorder>
         <EuiTitle>
-          <h2 id="create-alerting-monitor-expanded__title">Create alerting monitor</h2>
+          <h2 id="create-alerting-monitor__title">Create alerting monitor</h2>
         </EuiTitle>
       </EuiFlyoutHeader>
       <EuiFlyoutBody>
         <EuiFlexGroup>
           <EuiFlexItem>
-            <div className="create-alerting-monitor-expanded__vis">
+            <div className="create-alerting-monitor__vis">
               <EmbeddablePanel
                 hideHeader
                 embeddable={embeddable}
@@ -64,7 +55,7 @@ const CreateAlertingMonitorExpanded = ({ context, onClose }) => {
               />
             </div>
           </EuiFlexItem>
-          <EuiFlexItem className="create-alerting-monitor-expanded__aside">
+          <EuiFlexItem className="create-alerting-monitor__aside">
             <EuiAccordion
               id={accordions.monitorDetails}
               buttonContent={
@@ -122,8 +113,8 @@ const CreateAlertingMonitorExpanded = ({ context, onClose }) => {
           </EuiFlexItem>
         </EuiFlexGroup>
       </EuiFlyoutBody>
-    </EuiFlyout>
+    </div>
   );
-};
+}
 
-export default CreateAlertingMonitorExpanded;
+export default CreateAlertingMonitor;
