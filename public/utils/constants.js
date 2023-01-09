@@ -63,6 +63,7 @@ export const MONITOR_INPUT_DETECTOR_ID = `inputs.${INPUTS_DETECTOR_ID}`;
 export const AD_PREVIEW_DAYS = 7;
 
 export const MAX_QUERY_RESULT_SIZE = 200;
+export const MAX_CHANNELS_RESULT_SIZE = 5000;
 
 export const MONITOR_GROUP_BY = 'ui_metadata.search.groupBy';
 

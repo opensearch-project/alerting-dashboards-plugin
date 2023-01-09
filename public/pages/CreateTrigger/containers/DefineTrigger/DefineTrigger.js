@@ -26,6 +26,7 @@ import {
   canExecuteClusterMetricsMonitor,
 } from '../../../CreateMonitor/components/ClusterMetricsMonitor/utils/clusterMetricsMonitorHelpers';
 import { DEFAULT_TRIGGER_NAME, SEVERITY_OPTIONS } from '../../utils/constants';
+import { getTriggerContext } from '../../utils/helper';
 
 const defaultRowProps = {
   label: 'Trigger name',
@@ -59,7 +60,6 @@ const selectInputProps = {
 };
 
 const propTypes = {
-  context: PropTypes.object.isRequired,
   executeResponse: PropTypes.object,
   monitorValues: PropTypes.object.isRequired,
   onRun: PropTypes.func.isRequired,
@@ -134,7 +134,7 @@ class DefineTrigger extends Component {
     const {
       edit,
       triggerArrayHelpers,
-      context,
+      monitor,
       monitorValues,
       onRun,
       setFlyout,
@@ -148,6 +148,7 @@ class DefineTrigger extends Component {
       plugins,
     } = this.props;
     const executeResponse = _.get(this.state, 'executeResponse', this.props.executeResponse);
+    const context = getTriggerContext(executeResponse, monitor, triggerValues, triggerIndex);
     const fieldPath = triggerIndex !== undefined ? `triggerDefinitions[${triggerIndex}].` : '';
     const isGraph = _.get(monitorValues, 'searchType') === SEARCH_TYPE.GRAPH;
     const isAd = _.get(monitorValues, 'searchType') === SEARCH_TYPE.AD;

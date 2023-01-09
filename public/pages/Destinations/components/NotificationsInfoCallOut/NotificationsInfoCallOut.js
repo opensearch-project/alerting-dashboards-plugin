@@ -47,7 +47,6 @@ const hasNotificationsButton = (
 );
 
 const NotificationsInfoCallOut = ({ hasNotificationPlugin }) => {
-  console.log(`NotificationsInfoCallOut: ${hasNotificationPlugin}`);
   return (
     <div>
       <EuiCallOut
