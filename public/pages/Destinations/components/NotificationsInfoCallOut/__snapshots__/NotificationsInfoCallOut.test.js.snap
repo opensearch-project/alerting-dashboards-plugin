@@ -21,8 +21,39 @@ exports[`NotificationsInfoCallOut renders when Notifications plugin is installed
         class="euiTextColor euiTextColor--default"
       >
         <p>
-          Your destinations have been migrated to Notifications, a new centralized place to manage your notification channels. Destinations will be deprecated going forward.
+          Your destinations have been migrated to Notifications, a new centralized place to manage your notification channels. Destinations will be deprecated going forward. 
+          <a
+            class="euiLink euiLink--primary"
+            href="https://opensearch.org/docs/monitoring-plugins/alerting/monitors/#questions-about-destinations"
+            rel="noopener noreferrer"
+            target="_blank"
+          >
+            Learn more
+          </a>
         </p>
+        <div>
+          <a
+            class="euiLink euiLink--primary"
+            href="https://opensearch.org/docs/monitoring-plugins/alerting/monitors/#questions-about-destinations"
+            rel="noopener noreferrer"
+            target="_blank"
+          >
+            EuiIconMock
+          </a>
+        </div>
+        <a
+          class="euiLink euiLink--primary"
+          href="https://opensearch.org/docs/monitoring-plugins/alerting/monitors/#questions-about-destinations"
+          rel="noopener noreferrer"
+          target="_blank"
+        >
+          <span
+            class="euiScreenReaderOnly"
+          >
+            (opens in a new tab or window)
+          </span>
+        </a>
+        <p />
         <div
           class="euiSpacer euiSpacer--l"
         />
@@ -37,7 +68,7 @@ exports[`NotificationsInfoCallOut renders when Notifications plugin is installed
             <span
               class="euiButton__text"
             >
-              View Notifications
+              View in Notifications
             </span>
           </span>
         </a>
@@ -53,15 +84,18 @@ exports[`NotificationsInfoCallOut renders when Notifications plugin is installed
 exports[`NotificationsInfoCallOut renders when Notifications plugin is not installed 1`] = `
 <div>
   <div
-    class="euiCallOut euiCallOut--primary"
+    class="euiCallOut euiCallOut--danger"
   >
     <div
       class="euiCallOutHeader"
     >
+      <div>
+        EuiIconMock
+      </div>
       <span
         class="euiCallOutHeader__title"
       >
-        Destinations have become channels in Notifications.
+        Unable to send notifications. Notifications plugin is required.
       </span>
     </div>
     <div
@@ -71,11 +105,33 @@ exports[`NotificationsInfoCallOut renders when Notifications plugin is not insta
         class="euiTextColor euiTextColor--default"
       >
         <p>
-          Your destinations have been migrated to Notifications, a new centralized place to manage your notification channels. Destinations will be deprecated going forward.
+          Destinations will be deprecated going forward. Install the Notifications plugin for a new centralized place to manage your notification channels.
+        </p>
+        <p>
+          Existing destinations will be automatically migrated once Notifications plugin is installed.
         </p>
         <div
           class="euiSpacer euiSpacer--l"
         />
+        <a
+          class="euiButton euiButton--primary"
+          href="https://opensearch.org/docs/monitoring-plugins/alerting/monitors/#questions-about-destinations"
+          rel="noopener noreferrer"
+          target="_blank"
+        >
+          <span
+            class="euiButtonContent euiButtonContent--iconRight euiButton__content"
+          >
+            <div>
+              EuiIconMock
+            </div>
+            <span
+              class="euiButton__text"
+            >
+              View install instructions
+            </span>
+          </span>
+        </a>
       </div>
     </div>
   </div>
