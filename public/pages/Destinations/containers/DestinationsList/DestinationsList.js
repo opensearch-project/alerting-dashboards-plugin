@@ -5,7 +5,14 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import { EuiBasicTable, EuiHorizontalRule, EuiCallOut } from '@elastic/eui';
+import {
+  EuiBasicTable,
+  EuiCallOut,
+  EuiHorizontalRule,
+  EuiSpacer,
+  EuiText,
+  EuiTitle,
+} from '@elastic/eui';
 import queryString from 'query-string';
 import _ from 'lodash';
 import ContentPanel from '../../../../components/ContentPanel';
@@ -26,7 +33,7 @@ import { getAllowList } from '../../utils/helpers';
 import { DESTINATION_TYPE } from '../../utils/constants';
 import { backendErrorNotification } from '../../../../utils/helpers';
 import NotificationsInfoCallOut from '../../components/NotificationsInfoCallOut';
-import NotificationsCallOut from '../../../CreateTrigger/components/NotificationsCallOut';
+import FullPageNotificationsInfoCallOut from '../../components/FullPageNotificationsInfoCallOut';
 
 class DestinationsList extends React.Component {
   constructor(props) {
@@ -279,6 +286,7 @@ class DestinationsList extends React.Component {
   render() {
     const { httpClient, notifications } = this.props;
     const {
+      destinations,
       destinationToDelete,
       page,
       queryParams: { size, search, type, sortDirection, sortField },
@@ -310,80 +318,106 @@ class DestinationsList extends React.Component {
             color="danger"
           />
         ) : null}
-        <NotificationsInfoCallOut hasNotificationPlugin={hasNotificationPlugin} />
-        {!hasNotificationPlugin && <NotificationsCallOut />}
-        <ContentPanel
-          bodyStyles={{ padding: 'initial' }}
-          title="Destinations (deprecated)"
-          actions={
-            <DestinationsActions
-              isEmailAllowed={this.isEmailAllowed()}
-              onClickManageSenders={() => {
-                this.setState({ showManageSenders: true });
-              }}
-              onClickManageEmailGroups={() => {
-                this.setState({ showManageEmailGroups: true });
-              }}
-            />
-          }
-        >
-          <DeleteConfirmation
-            isVisible={this.state.showDeleteConfirmation}
-            onCancel={() => {
-              this.setState({ showDeleteConfirmation: false });
-            }}
-            onConfirm={this.handleDeleteDestination}
-          />
 
-          <ManageSenders
-            httpClient={httpClient}
-            isEmailAllowed={this.isEmailAllowed()}
-            isVisible={this.state.showManageSenders}
-            onClickCancel={this.hideManageSendersModal}
-            onClickSave={this.hideManageSendersModal}
-            notifications={notifications}
-          />
-
-          <ManageEmailGroups
-            httpClient={httpClient}
-            isEmailAllowed={this.isEmailAllowed()}
-            isVisible={this.state.showManageEmailGroups}
-            onClickCancel={this.hideManageEmailGroupsModal}
-            onClickSave={this.hideManageEmailGroupsModal}
-            notifications={notifications}
-          />
-
-          <DestinationsControls
-            activePage={page}
-            pageCount={Math.ceil(totalDestinations / size) || 1}
-            search={search}
-            type={type}
-            onSearchChange={this.handleSearchChange}
-            onTypeChange={this.handleTypeChange}
-            onPageClick={this.handlePageClick}
-            allowList={allowList}
-          />
-          <EuiHorizontalRule margin="xs" />
-          <EuiBasicTable
-            columns={this.columns}
-            hasActions={true}
-            isSelectable={true}
-            items={this.state.destinations}
-            pagination={pagination}
-            noItemsMessage={
-              isDestinationLoading ? (
-                'Loading destinations...'
-              ) : (
-                <EmptyDestinations
-                  isFilterApplied={isFilterApplied}
-                  onResetFilters={this.handleResetFilter}
+        {isDestinationLoading || totalDestinations > 0 || isFilterApplied ? (
+          <div>
+            <EuiTitle size={'l'}>
+              <h3>Destinations (deprecated)</h3>
+            </EuiTitle>
+            <EuiSpacer size={'l'} />
+            <NotificationsInfoCallOut hasNotificationPlugin={hasNotificationPlugin} />
+            <ContentPanel
+              bodyStyles={{ padding: 'initial' }}
+              title={
+                <div>
+                  <EuiTitle size={'s'} style={{ paddingBottom: '0px', marginBottom: '0px' }}>
+                    <h3>Destinations pending for migration</h3>
+                  </EuiTitle>
+                  {hasNotificationPlugin ? (
+                    <EuiText
+                      color={'subdued'}
+                      size={'s'}
+                      style={{ paddingTop: '0px', marginTop: '0px' }}
+                    >
+                      Destinations that are pending migration will continue to work.
+                    </EuiText>
+                  ) : null}
+                </div>
+              }
+              actions={
+                <DestinationsActions
+                  isEmailAllowed={this.isEmailAllowed()}
+                  onClickManageSenders={() => {
+                    this.setState({ showManageSenders: true });
+                  }}
+                  onClickManageEmailGroups={() => {
+                    this.setState({ showManageEmailGroups: true });
+                  }}
                 />
-              )
-            }
-            onChange={this.handlePageChange}
-            sorting={sorting}
-          />
-        </ContentPanel>
+              }
+            >
+              <DeleteConfirmation
+                isVisible={this.state.showDeleteConfirmation}
+                onCancel={() => {
+                  this.setState({ showDeleteConfirmation: false });
+                }}
+                onConfirm={this.handleDeleteDestination}
+              />
+
+              <ManageSenders
+                httpClient={httpClient}
+                isEmailAllowed={this.isEmailAllowed()}
+                isVisible={this.state.showManageSenders}
+                onClickCancel={this.hideManageSendersModal}
+                onClickSave={this.hideManageSendersModal}
+                notifications={notifications}
+              />
+
+              <ManageEmailGroups
+                httpClient={httpClient}
+                isEmailAllowed={this.isEmailAllowed()}
+                isVisible={this.state.showManageEmailGroups}
+                onClickCancel={this.hideManageEmailGroupsModal}
+                onClickSave={this.hideManageEmailGroupsModal}
+                notifications={notifications}
+              />
+
+              <DestinationsControls
+                activePage={page}
+                pageCount={Math.ceil(totalDestinations / size) || 1}
+                search={search}
+                type={type}
+                onSearchChange={this.handleSearchChange}
+                onTypeChange={this.handleTypeChange}
+                onPageClick={this.handlePageClick}
+                allowList={allowList}
+              />
+              <EuiHorizontalRule margin="xs" />
+              <EuiBasicTable
+                columns={this.columns}
+                hasActions={true}
+                isSelectable={true}
+                items={destinations}
+                pagination={pagination}
+                noItemsMessage={
+                  isDestinationLoading ? (
+                    'Loading destinations...'
+                  ) : (
+                    <EmptyDestinations
+                      hasNotificationPlugin={hasNotificationPlugin}
+                      isFilterApplied={isFilterApplied}
+                      onResetFilters={this.handleResetFilter}
+                    />
+                  )
+                }
+                onChange={this.handlePageChange}
+                sorting={sorting}
+              />
+            </ContentPanel>
+          </div>
+        ) : (
+          <FullPageNotificationsInfoCallOut hasNotificationPlugin={hasNotificationPlugin} />
+        )}
       </React.Fragment>
     );
   }
