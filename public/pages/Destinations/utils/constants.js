@@ -18,3 +18,6 @@ export const DESTINATION_OPTIONS = [
 ];
 
 export const ALLOW_LIST_SETTING_PATH = 'plugins.alerting.destination.allow_list';
+
+export const NOTIFICATIONS_LEARN_MORE_HREF =
+  'https://opensearch.org/docs/monitoring-plugins/alerting/monitors/#questions-about-destinations';
