@@ -47,13 +47,19 @@ const ManageMonitors = () => {
                   alignItems="center"
                 >
                   <EuiFlexItem grow={false}>
-                    <EuiText size="s">
-                      <EuiLink onClick={() => console.log('disable')}>Disable</EuiLink>
-                    </EuiText>
+                    <EuiButton
+                      className="manage-monitors__compressed-button"
+                      fill
+                      size="s"
+                      color="danger"
+                      onClick={() => null}
+                    >
+                      Unlink Monitor
+                    </EuiButton>
                   </EuiFlexItem>
                   <EuiFlexItem grow={false}>
                     <EuiButton
-                      className="manage-monitors__edit-monitor"
+                      className="manage-monitors__compressed-button"
                       fill
                       size="s"
                       onClick={() => null}
