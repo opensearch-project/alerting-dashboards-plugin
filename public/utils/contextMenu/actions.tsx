@@ -1,4 +1,5 @@
 import React from 'react';
+import { EuiIcon, EuiFlexItem, EuiFlexGroup, EuiToolTip, EuiTextColor } from '@elastic/eui';
 import { i18n } from '@osd/i18n';
 import { EuiIconType } from '@elastic/eui/src/components/icon/icon';
 import { toMountPoint } from '../../../../../src/plugins/opensearch_dashboards_react/public';
@@ -19,8 +20,44 @@ const grouping: Action['grouping'] = [
   },
 ];
 
-export const getActions = ({ core }) =>
-  [
+const ManageMonitorsTitle = ({ isSubdued }) => {
+  const onClickStop = (e) => e.stopPropagation();
+
+  return (
+    <span>
+      <EuiTextColor color={isSubdued ? 'subdued' : 'default'}>
+        {i18n.translate('dashboard.actions.alertingMenuItem.manageMonitors.displayName', {
+          defaultMessage: 'Manage monitors',
+        })}
+      </EuiTextColor>{' '}
+      <a
+        href="https://opensearch.org/docs/latest/monitoring-plugins/alerting/index/"
+        target="_blank"
+        onClick={onClickStop}
+      >
+        <EuiIcon type="questionInCircle" />
+      </a>
+    </span>
+  );
+};
+
+const DocumentationTitle = () => (
+  <EuiFlexGroup>
+    <EuiFlexItem>
+      {i18n.translate('dashboard.actions.alertingMenuItem.documentation.displayName', {
+        defaultMessage: 'Documentation',
+      })}
+    </EuiFlexItem>
+    <EuiFlexItem grow={false}>
+      <EuiIcon type="popout" />
+    </EuiFlexItem>
+  </EuiFlexGroup>
+);
+
+export const getActions = ({ core }) => {
+  const monitors = [];
+
+  return [
     {
       grouping,
       id: 'createAlertingMonitor',
@@ -56,9 +93,7 @@ export const getActions = ({ core }) =>
     {
       grouping,
       id: 'manageMonitors',
-      title: i18n.translate('dashboard.actions.alertingMenuItem.manageMonitors.displayName', {
-        defaultMessage: 'Manage monitors',
-      }),
+      title: <ManageMonitorsTitle isSubdued={monitors.length === 0} />,
       icon: 'wrench' as EuiIconType,
       order: 99,
       onClick: async ({ embeddable }) => {
@@ -80,9 +115,7 @@ export const getActions = ({ core }) =>
     },
     {
       id: 'documentation',
-      title: i18n.translate('dashboard.actions.alertingMenuItem.documentation.displayName', {
-        defaultMessage: 'Documentation',
-      }),
+      title: <DocumentationTitle />,
       icon: 'documentation' as EuiIconType,
       order: 98,
       onClick: () => {
@@ -93,3 +126,4 @@ export const getActions = ({ core }) =>
       },
     },
   ].map((options) => createAlertingAction({ ...options, grouping }));
+};
