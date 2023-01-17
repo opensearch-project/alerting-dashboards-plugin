@@ -8,6 +8,7 @@ import {
   EuiFlyoutBody,
   EuiTitle,
   EuiAccordion,
+  EuiSpacer,
 } from '@elastic/eui';
 import { useMonitorFrequencyText } from '../../../utils/contextMenu/helpers';
 import './styles.scss';
@@ -29,6 +30,7 @@ function CreateAlertingMonitor({ embeddable }) {
   const [interval] = useField('period.interval');
   const [unit] = useField('period.unit');
   const monitorFrequencyText = useMonitorFrequencyText({ frequency, interval, unit });
+  const title = embeddable.getTitle();
 
   return (
     <div className="create-alerting-monitor">
@@ -41,17 +43,15 @@ function CreateAlertingMonitor({ embeddable }) {
         <EuiFlexGroup>
           <EuiFlexItem>
             <div className="create-alerting-monitor__vis">
+              <EuiTitle size="xxs">
+                <h4>{title}</h4>
+              </EuiTitle>
+              <EuiSpacer size="s" />
               <EmbeddablePanel
-                hideHeader
                 embeddable={embeddable}
                 getActions={() => Promise.resolve([])}
-                getAllEmbeddableFactories={() => []}
-                getEmbeddableFactory={() => null}
-                notifications={{}}
-                application={{}}
-                overlays={{}}
-                inspector={{ isAvailable: () => null }}
-                SavedObjectFinder={() => null}
+                inspector={{ isAvailable: () => false }}
+                hideHeader
               />
             </div>
           </EuiFlexItem>

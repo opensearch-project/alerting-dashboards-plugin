@@ -35,9 +35,9 @@ export class AlertingPlugin implements Plugin {
     });
 
     // Create context menu actions. Pass core, to access service for flyouts.
-    const actions = getActions({ core });
+    const actions = getActions({ core, plugins });
 
-    // Add  actions to uiActions
+    // Add actions to uiActions
     actions.forEach((action) => {
       plugins.uiActions.addTriggerAction(CONTEXT_MENU_TRIGGER, action);
     });

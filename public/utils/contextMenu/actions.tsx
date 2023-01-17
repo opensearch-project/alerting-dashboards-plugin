@@ -54,7 +54,7 @@ const DocumentationTitle = () => (
   </EuiFlexGroup>
 );
 
-export const getActions = ({ core }) => {
+export const getActions = ({ core, plugins }) => {
   const monitors = [];
 
   return [
@@ -83,7 +83,7 @@ export const getActions = ({ core }) => {
         openFlyout(
           toMountPoint(
             <FormikWrapper {...{ getFormikOptions }}>
-              <CreateAlertingMonitor {...{ embeddable }} />
+              <CreateAlertingMonitor {...{ embeddable, plugins }} />
             </FormikWrapper>
           ),
           { size: 'l' }
