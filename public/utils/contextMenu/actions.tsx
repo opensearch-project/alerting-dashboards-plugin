@@ -106,7 +106,7 @@ export const getActions = ({ core }) => {
         openFlyout(
           toMountPoint(
             <FormikWrapper {...{ getFormikOptions }}>
-              <ManageMonitors />
+              <ManageMonitors {...{ embeddable }} />
             </FormikWrapper>
           ),
           { size: 's' }
