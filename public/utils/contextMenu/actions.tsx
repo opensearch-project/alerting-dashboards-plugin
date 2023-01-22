@@ -86,7 +86,7 @@ export const getActions = ({ core, plugins }) => {
               <CreateAlertingMonitor {...{ embeddable, plugins }} />
             </FormikWrapper>
           ),
-          { size: 'l' }
+          { size: 'l', className: 'create-alerting-monitor__flyout' }
         );
       },
     },

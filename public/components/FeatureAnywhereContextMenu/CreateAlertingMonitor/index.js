@@ -9,6 +9,7 @@ import {
   EuiTitle,
   EuiAccordion,
   EuiSpacer,
+  EuiButton,
 } from '@elastic/eui';
 import { useMonitorFrequencyText } from '../../../utils/contextMenu/helpers';
 import './styles.scss';
@@ -24,6 +25,7 @@ const accordions = ['monitorDetails', 'advanced', 'triggers'].reduce(
 );
 
 function CreateAlertingMonitor({ embeddable }) {
+  const [isShowVis, setIsShowVis] = useState(true);
   const [accordionOpen, setAccordionOpen] = useState(accordions.triggers);
   const [name] = useField('name');
   const [frequency] = useField('frequency');
@@ -31,6 +33,22 @@ function CreateAlertingMonitor({ embeddable }) {
   const [unit] = useField('period.unit');
   const monitorFrequencyText = useMonitorFrequencyText({ frequency, interval, unit });
   const title = embeddable.getTitle();
+  const toggleVis = () => {
+    const flyoutEl = document.querySelector('.create-alerting-monitor__flyout');
+    const small = 'euiFlyout--small';
+    const large = 'euiFlyout--large';
+
+    // If we want to make small
+    if (isShowVis) {
+      flyoutEl.classList.remove(large);
+      flyoutEl.classList.add(small);
+    } else {
+      flyoutEl.classList.remove(small);
+      flyoutEl.classList.add(large);
+    }
+
+    setIsShowVis(!isShowVis);
+  };
 
   return (
     <div className="create-alerting-monitor">
@@ -40,8 +58,12 @@ function CreateAlertingMonitor({ embeddable }) {
         </EuiTitle>
       </EuiFlyoutHeader>
       <EuiFlyoutBody>
-        <EuiFlexGroup>
-          <EuiFlexItem>
+        <EuiFlexGroup className="create-alerting-monitor__flex-group">
+          <EuiFlexItem
+            className={`create-alerting-monitor__vis ${
+              !isShowVis && 'create-alerting-monitor__vis--hidden'
+            }`}
+          >
             <div className="create-alerting-monitor__vis">
               <EuiTitle size="xxs">
                 <h4>{title}</h4>
@@ -55,61 +77,72 @@ function CreateAlertingMonitor({ embeddable }) {
               />
             </div>
           </EuiFlexItem>
-          <EuiFlexItem className="create-alerting-monitor__aside">
-            <EuiAccordion
-              id={accordions.monitorDetails}
-              buttonContent={
-                <EuiText>
-                  <h6>Monitor Details</h6>
-                  {accordionOpen !== accordions.monitorDetails && (
-                    <>
-                      <EuiText size="s">{name.value}</EuiText>
-                      <EuiText size="xs" color="subdued">
-                        {monitorFrequencyText}
-                      </EuiText>
-                    </>
-                  )}
-                </EuiText>
-              }
-              forceState={accordionOpen === accordions.monitorDetails ? 'open' : 'closed'}
-              onToggle={() =>
-                setAccordionOpen(
-                  accordionOpen !== accordions.monitorDetails && accordions.monitorDetails
-                )
-              }
-            >
-              <MonitorDetails />
-            </EuiAccordion>
-            <EuiHorizontalRule margin="s" />
-            <EuiAccordion
-              id={accordions.monitorDetails}
-              buttonContent={
-                <EuiText>
-                  <h6>Advanced Data Source Settings</h6>
-                </EuiText>
-              }
-              forceState={accordionOpen === accordions.advanced ? 'open' : 'closed'}
-              onToggle={() =>
-                setAccordionOpen(accordionOpen !== accordions.advanced && accordions.advanced)
-              }
-            >
-              <Advanced />
-            </EuiAccordion>
-            <EuiHorizontalRule margin="s" />
-            <EuiAccordion
-              id={accordions.triggers}
-              buttonContent={
-                <EuiText>
-                  <h6>Triggers</h6>
-                </EuiText>
-              }
-              forceState={accordionOpen === accordions.triggers ? 'open' : 'closed'}
-              onToggle={() =>
-                setAccordionOpen(accordionOpen !== accordions.triggers && accordions.triggers)
-              }
-            >
-              <Triggers />
-            </EuiAccordion>
+          <EuiFlexItem
+            className={`create-alerting-monitor__aside ${
+              !isShowVis && 'create-alerting-monitor__aside--full'
+            }`}
+          >
+            <div className="create-alerting-monitor__scroll">
+              <EuiSpacer size="xs" />
+              <EuiButton size="s" onClick={toggleVis}>
+                Toggle Visualization
+              </EuiButton>
+              <EuiSpacer />
+              <EuiAccordion
+                id={accordions.monitorDetails}
+                buttonContent={
+                  <EuiText>
+                    <h6>Monitor Details</h6>
+                    {accordionOpen !== accordions.monitorDetails && (
+                      <>
+                        <EuiText size="s">{name.value}</EuiText>
+                        <EuiText size="xs" color="subdued">
+                          {monitorFrequencyText}
+                        </EuiText>
+                      </>
+                    )}
+                  </EuiText>
+                }
+                forceState={accordionOpen === accordions.monitorDetails ? 'open' : 'closed'}
+                onToggle={() =>
+                  setAccordionOpen(
+                    accordionOpen !== accordions.monitorDetails && accordions.monitorDetails
+                  )
+                }
+              >
+                <MonitorDetails />
+              </EuiAccordion>
+              <EuiHorizontalRule margin="s" />
+              <EuiAccordion
+                id={accordions.monitorDetails}
+                buttonContent={
+                  <EuiText>
+                    <h6>Advanced Data Source Settings</h6>
+                  </EuiText>
+                }
+                forceState={accordionOpen === accordions.advanced ? 'open' : 'closed'}
+                onToggle={() =>
+                  setAccordionOpen(accordionOpen !== accordions.advanced && accordions.advanced)
+                }
+              >
+                <Advanced />
+              </EuiAccordion>
+              <EuiHorizontalRule margin="s" />
+              <EuiAccordion
+                id={accordions.triggers}
+                buttonContent={
+                  <EuiText>
+                    <h6>Triggers</h6>
+                  </EuiText>
+                }
+                forceState={accordionOpen === accordions.triggers ? 'open' : 'closed'}
+                onToggle={() =>
+                  setAccordionOpen(accordionOpen !== accordions.triggers && accordions.triggers)
+                }
+              >
+                <Triggers />
+              </EuiAccordion>
+            </div>
           </EuiFlexItem>
         </EuiFlexGroup>
       </EuiFlyoutBody>
