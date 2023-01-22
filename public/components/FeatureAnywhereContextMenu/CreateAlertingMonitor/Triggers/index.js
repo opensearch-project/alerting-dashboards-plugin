@@ -10,13 +10,12 @@ import {
   EuiFieldText,
   EuiButton,
 } from '@elastic/eui';
-import Notifications from './Notifications';
 import SeverityLevel from './SeverityLevel';
 import TriggerExpressions from '../../../../pages/CreateTrigger/components/TriggerExpressions';
-import { useField, Field, useFormikContext } from 'formik';
+import { useField, Field, FieldArray, useFormikContext } from 'formik';
 import './styles.scss';
 import { FORMIK_INITIAL_TRIGGER_CONDITION_VALUES } from '../../../../pages/CreateTrigger/containers/CreateTrigger/utils/constants.js';
-// import ConfigureActions from '../../../../pages/CreateTrigger/containers/ConfigureActions';
+import ConfigureActions from '../../../../pages/CreateTrigger/containers/ConfigureActions';
 
 // Returns an objects of accordions, but the keys are indexes
 const getClosedAccordions = (triggersValue, keyToOpen = -1) => {
@@ -117,8 +116,7 @@ const Triggers = () => {
                 }}
               />
               <EuiSpacer size="s" />
-              <Notifications />
-              {/* <FieldArray name={`triggers.${index}.actions`} validateOnChange={true}>
+              <FieldArray name={`triggers.${index}.actions`} validateOnChange={true}>
                 {(arrayHelpers) => (
                   <ConfigureActions
                     {...{
@@ -135,7 +133,7 @@ const Triggers = () => {
                     }}
                   />
                 )}
-              </FieldArray> */}
+              </FieldArray>
             </EuiAccordion>
           </EuiPanel>
           <EuiSpacer size="s" />
