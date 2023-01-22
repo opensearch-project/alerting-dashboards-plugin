@@ -20,26 +20,13 @@ const grouping: Action['grouping'] = [
   },
 ];
 
-const ManageMonitorsTitle = ({ isSubdued }) => {
-  const onClickStop = (e) => e.stopPropagation();
-
-  return (
-    <span>
-      <EuiTextColor color={isSubdued ? 'subdued' : 'default'}>
-        {i18n.translate('dashboard.actions.alertingMenuItem.manageMonitors.displayName', {
-          defaultMessage: 'Manage monitors',
-        })}
-      </EuiTextColor>{' '}
-      <a
-        href="https://opensearch.org/docs/latest/monitoring-plugins/alerting/index/"
-        target="_blank"
-        onClick={onClickStop}
-      >
-        <EuiIcon type="questionInCircle" />
-      </a>
-    </span>
-  );
-};
+const ManageMonitorsTitle = ({ isSubdued }) => (
+  <EuiTextColor color={isSubdued ? 'subdued' : 'default'}>
+    {i18n.translate('dashboard.actions.alertingMenuItem.manageMonitors.displayName', {
+      defaultMessage: 'Manage monitors',
+    })}
+  </EuiTextColor>
+);
 
 const DocumentationTitle = () => (
   <EuiFlexGroup>
