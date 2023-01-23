@@ -13,8 +13,6 @@
  *   permissions and limitations under the License.
  */
 
-// TODO: As mentioned in this CR (https://code.amazon.com/reviews/CR-71978933/revisions/3#/comments),
-//  we should ideally refactor this to use the AWS SDK instead of these regexes.
 export const getSNSTopicARNRegExpPattern = () =>
   `^arn:aws(-[^:]+)?:sns:([a-zA-Z0-9-]+):([0-9]{12}):([a-zA-Z0-9-_]+)(\\.fifo)?$`;
 
