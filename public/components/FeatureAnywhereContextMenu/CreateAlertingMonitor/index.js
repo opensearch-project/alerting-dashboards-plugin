@@ -6,10 +6,12 @@ import {
   EuiFlexGroup,
   EuiFlyoutHeader,
   EuiFlyoutBody,
+  EuiFlyoutFooter,
   EuiTitle,
   EuiAccordion,
   EuiSpacer,
   EuiButton,
+  EuiButtonEmpty,
 } from '@elastic/eui';
 import { useMonitorFrequencyText } from '../../../utils/contextMenu/helpers';
 import './styles.scss';
@@ -24,7 +26,7 @@ const accordions = ['monitorDetails', 'advanced', 'triggers'].reduce(
   {}
 );
 
-function CreateAlertingMonitor({ embeddable }) {
+function CreateAlertingMonitor({ embeddable, closeFlyout }) {
   const [isShowVis, setIsShowVis] = useState(true);
   const [accordionOpen, setAccordionOpen] = useState(accordions.triggers);
   const [name] = useField('name');
@@ -48,6 +50,9 @@ function CreateAlertingMonitor({ embeddable }) {
     }
 
     setIsShowVis(!isShowVis);
+  };
+  const onCreate = () => {
+    closeFlyout();
   };
 
   return (
@@ -144,6 +149,18 @@ function CreateAlertingMonitor({ embeddable }) {
           </EuiFlexItem>
         </EuiFlexGroup>
       </EuiFlyoutBody>
+      <EuiFlyoutFooter>
+        <EuiFlexGroup justifyContent="spaceBetween">
+          <EuiFlexItem grow={false}>
+            <EuiButtonEmpty onClick={closeFlyout}>Cancel</EuiButtonEmpty>
+          </EuiFlexItem>
+          <EuiFlexItem grow={false}>
+            <EuiButton onClick={onCreate} fill>
+              Create monitor
+            </EuiButton>
+          </EuiFlexItem>
+        </EuiFlexGroup>
+      </EuiFlyoutFooter>
     </div>
   );
 }

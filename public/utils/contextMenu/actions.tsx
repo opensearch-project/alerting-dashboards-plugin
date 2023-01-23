@@ -67,10 +67,12 @@ export const getActions = ({ core, plugins }) => {
           },
         });
 
-        openFlyout(
+        const overlay = openFlyout(
           toMountPoint(
             <FormikWrapper {...{ getFormikOptions }}>
-              <CreateAlertingMonitor {...{ embeddable, plugins }} />
+              <CreateAlertingMonitor
+                {...{ embeddable, plugins, closeFlyout: () => overlay.close() }}
+              />
             </FormikWrapper>
           ),
           { size: 'l', className: 'create-alerting-monitor__flyout' }
