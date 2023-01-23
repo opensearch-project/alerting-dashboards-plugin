@@ -14,9 +14,9 @@ import {
 import { useMonitorFrequencyText } from '../../../utils/contextMenu/helpers';
 import './styles.scss';
 import { useField } from 'formik';
-import MonitorDetails from './MonitorDetails';
-import Advanced from './Advanced';
-import Triggers from './Triggers';
+import { MonitorDetails } from './MonitorDetails';
+import { Advanced } from './Advanced';
+import { Triggers } from './Triggers';
 import { EmbeddablePanel } from '../../../../../../src/plugins/embeddable/public';
 
 const accordions = ['monitorDetails', 'advanced', 'triggers'].reduce(

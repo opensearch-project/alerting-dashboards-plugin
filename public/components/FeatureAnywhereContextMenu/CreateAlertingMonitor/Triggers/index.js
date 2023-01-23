@@ -28,7 +28,7 @@ const getClosedAccordions = (triggersValue, keyToOpen = -1) => {
   return newAccordions;
 };
 
-const Triggers = () => {
+export const Triggers = () => {
   const { setFieldValue, values } = useFormikContext();
   const [triggers, , helpers] = useField('triggers');
   const [accordions, setAccordions] = useState(getClosedAccordions(triggers.value, 0));
@@ -163,5 +163,3 @@ const Triggers = () => {
     </>
   );
 };
-
-export default Triggers;

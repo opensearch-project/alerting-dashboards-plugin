@@ -5,6 +5,10 @@
 
 import { AlertingPlugin } from './plugin';
 
+export { MonitorDetails } from './components/FeatureAnywhereContextMenu/CreateAlertingMonitor/MonitorDetails';
+export { Triggers } from './components/FeatureAnywhereContextMenu/CreateAlertingMonitor/Triggers';
+export { Advanced } from './components/FeatureAnywhereContextMenu/CreateAlertingMonitor/Advanced';
+
 export function plugin(initializerContext) {
   return new AlertingPlugin(initializerContext);
 }

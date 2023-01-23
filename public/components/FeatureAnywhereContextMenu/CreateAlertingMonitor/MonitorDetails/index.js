@@ -6,7 +6,7 @@ import {
 } from '../../../../pages/CreateMonitor/components/Schedule/Frequencies';
 import { useField } from 'formik';
 
-const MonitorDetails = () => {
+export const MonitorDetails = () => {
   const [name] = useField('name');
 
   return (
@@ -22,5 +22,3 @@ const MonitorDetails = () => {
     </>
   );
 };
-
-export default MonitorDetails;
