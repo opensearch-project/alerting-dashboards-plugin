@@ -7,7 +7,7 @@ on:
     branches:
       - "*"
 env:
-  OPENSEARCH_DASHBOARDS_VERSION: '2.5'
+  OPENSEARCH_DASHBOARDS_VERSION: '2.5.0'
 jobs:
   tests:
     name: Run unit tests
