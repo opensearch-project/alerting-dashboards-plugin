@@ -66,12 +66,11 @@ export const getActions = ({ core, plugins }) => {
             console.log(values);
           },
         });
-
         const overlay = openFlyout(
           toMountPoint(
             <FormikWrapper {...{ getFormikOptions }}>
               <CreateAlertingMonitor
-                {...{ embeddable, plugins, closeFlyout: () => overlay.close() }}
+                {...{ embeddable, plugins, closeFlyout: () => overlay.close(), core, services }}
               />
             </FormikWrapper>
           ),

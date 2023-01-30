@@ -19,19 +19,6 @@
     }
   }
 
-  .euiAccordion__button {
-    align-items: flex-start;
-
-    &:hover,
-    &:focus {
-      text-decoration: none;
-
-      h6 {
-        text-decoration: underline;
-      }
-    }
-  }
-
   &__flex-group {
     height: 100%;
   }

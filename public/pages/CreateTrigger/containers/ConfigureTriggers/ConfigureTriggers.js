@@ -341,18 +341,26 @@ class ConfigureTriggers extends React.Component {
   };
 
   render() {
-    const { triggerArrayHelpers, triggerValues } = this.props;
+    const { triggerArrayHelpers, triggerValues, isMinimal } = this.props;
     const { addTriggerButton } = this.state;
     const numOfTriggers = _.get(triggerValues, 'triggerDefinitions', []).length;
     const displayAddTriggerButton = numOfTriggers > 0;
+    const Container = isMinimal
+      ? ({ children }) => <>{children}</>
+      : ({ children }) => (
+          <ContentPanel
+            title={`Triggers (${numOfTriggers})`}
+            titleSize={'s'}
+            panelStyles={{ paddingBottom: '0px', paddingLeft: '20px', paddingRight: '20px' }}
+            bodyStyles={{ paddingLeft: '0px', padding: '10px' }}
+            horizontalRuleClassName={'accordion-horizontal-rule'}
+          >
+            {children}
+          </ContentPanel>
+        );
+
     return (
-      <ContentPanel
-        title={`Triggers (${numOfTriggers})`}
-        titleSize={'s'}
-        panelStyles={{ paddingBottom: '0px', paddingLeft: '20px', paddingRight: '20px' }}
-        bodyStyles={{ paddingLeft: '0px', padding: '10px' }}
-        horizontalRuleClassName={'accordion-horizontal-rule'}
-      >
+      <Container>
         {this.renderTriggers(triggerArrayHelpers)}
 
         {displayAddTriggerButton ? (
@@ -362,7 +370,7 @@ class ConfigureTriggers extends React.Component {
             {inputLimitText(numOfTriggers, MAX_TRIGGERS, 'trigger', 'triggers')}
           </div>
         ) : null}
-      </ContentPanel>
+      </Container>
     );
   }
 }

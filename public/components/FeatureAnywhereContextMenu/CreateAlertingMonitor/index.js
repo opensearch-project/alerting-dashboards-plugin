@@ -1,46 +1,28 @@
 import React, { useState } from 'react';
 import {
-  EuiText,
-  EuiHorizontalRule,
   EuiFlexItem,
   EuiFlexGroup,
   EuiFlyoutHeader,
   EuiFlyoutBody,
   EuiFlyoutFooter,
   EuiTitle,
-  EuiAccordion,
   EuiSpacer,
   EuiButton,
   EuiButtonEmpty,
 } from '@elastic/eui';
-import { useMonitorFrequencyText } from '../../../utils/contextMenu/helpers';
 import './styles.scss';
-import { useField } from 'formik';
-import { MonitorDetails } from './MonitorDetails';
-import { Advanced } from './Advanced';
-import { Triggers } from './Triggers';
+import CreateMonitor from '../../../pages/CreateMonitor';
 import { EmbeddablePanel } from '../../../../../../src/plugins/embeddable/public';
 
-const accordions = ['monitorDetails', 'advanced', 'triggers'].reduce(
-  (acc, cur) => ({ ...acc, [cur]: cur }),
-  {}
-);
-
-function CreateAlertingMonitor({ embeddable, closeFlyout }) {
+function CreateAlertingMonitor({ embeddable, closeFlyout, core, services }) {
   const [isShowVis, setIsShowVis] = useState(true);
-  const [accordionOpen, setAccordionOpen] = useState(accordions.triggers);
-  const [name] = useField('name');
-  const [frequency] = useField('frequency');
-  const [interval] = useField('period.interval');
-  const [unit] = useField('period.unit');
-  const monitorFrequencyText = useMonitorFrequencyText({ frequency, interval, unit });
   const title = embeddable.getTitle();
   const toggleVis = () => {
     const flyoutEl = document.querySelector('.create-alerting-monitor__flyout');
     const small = 'euiFlyout--small';
     const large = 'euiFlyout--large';
 
-    // If we want to make small
+    // If currently showing vis, then shrink width of flyout
     if (isShowVis) {
       flyoutEl.classList.remove(large);
       flyoutEl.classList.add(small);
@@ -53,6 +35,26 @@ function CreateAlertingMonitor({ embeddable, closeFlyout }) {
   };
   const onCreate = () => {
     closeFlyout();
+  };
+  const history = {
+    location: { pathname: '/create-monitor', search: '', hash: '', state: undefined },
+    push: (value) => console.log('pushed', value),
+    goBack: closeFlyout,
+  };
+  const createMonitorProps = {
+    ...history,
+    history,
+    httpClient: core.http,
+    // This is not expected to be used
+    setFlyout: () => null,
+    notifications: core.notifications,
+    isDarkMode: core.isDarkMode,
+    notificationService: services.notificationService,
+    edit: false,
+    monitorToEdit: false,
+    updateMonitor: () => null,
+    staticContext: undefined,
+    isMinimal: true,
   };
 
   return (
@@ -92,60 +94,7 @@ function CreateAlertingMonitor({ embeddable, closeFlyout }) {
               Toggle Visualization
             </EuiButton>
             <EuiSpacer />
-            <EuiAccordion
-              id={accordions.monitorDetails}
-              buttonContent={
-                <EuiText>
-                  <h6>Monitor Details</h6>
-                  {accordionOpen !== accordions.monitorDetails && (
-                    <>
-                      <EuiText size="s">{name.value}</EuiText>
-                      <EuiText size="xs" color="subdued">
-                        {monitorFrequencyText}
-                      </EuiText>
-                    </>
-                  )}
-                </EuiText>
-              }
-              forceState={accordionOpen === accordions.monitorDetails ? 'open' : 'closed'}
-              onToggle={() =>
-                setAccordionOpen(
-                  accordionOpen !== accordions.monitorDetails && accordions.monitorDetails
-                )
-              }
-            >
-              <MonitorDetails />
-            </EuiAccordion>
-            <EuiHorizontalRule margin="s" />
-            <EuiAccordion
-              id={accordions.monitorDetails}
-              buttonContent={
-                <EuiText>
-                  <h6>Advanced Data Source Settings</h6>
-                </EuiText>
-              }
-              forceState={accordionOpen === accordions.advanced ? 'open' : 'closed'}
-              onToggle={() =>
-                setAccordionOpen(accordionOpen !== accordions.advanced && accordions.advanced)
-              }
-            >
-              <Advanced />
-            </EuiAccordion>
-            <EuiHorizontalRule margin="s" />
-            <EuiAccordion
-              id={accordions.triggers}
-              buttonContent={
-                <EuiText>
-                  <h6>Triggers</h6>
-                </EuiText>
-              }
-              forceState={accordionOpen === accordions.triggers ? 'open' : 'closed'}
-              onToggle={() =>
-                setAccordionOpen(accordionOpen !== accordions.triggers && accordions.triggers)
-              }
-            >
-              <Triggers />
-            </EuiAccordion>
+            <CreateMonitor {...createMonitorProps} />
           </EuiFlexItem>
         </EuiFlexGroup>
       </EuiFlyoutBody>
