@@ -3,11 +3,12 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+import { CLUSTER_METRICS } from './utils/constants';
+
 export default class OpensearchService {
   constructor(esDriver) {
     this.esDriver = esDriver;
   }
-
   // TODO: This will be deprecated as we do not want to support accessing alerting indices directly
   //  and that is what this is used for
   search = async (context, req, res) => {
@@ -155,6 +156,31 @@ export default class OpensearchService {
       });
     } catch (err) {
       console.error('Alerting - OpensearchService - getSettings:', err);
+      return res.ok({
+        body: {
+          ok: false,
+          resp: err.message,
+        },
+      });
+    }
+  };
+  // TODO: Cluster Metrics search API needs to be refactored once
+  // this API has been implemented, since it uses the search API that is going to be deprecated
+  getClusterMetric = async (context, req, res) => {
+    try {
+      const { sort, query, size = 10000 } = req.body;
+      const params = { index: CLUSTER_METRICS, size, body: { sort, query } };
+      const { callAsCurrentUser } = this.esDriver.asScoped(req);
+      const results = await callAsCurrentUser('search', params);
+      return res.ok({
+        body: {
+          ok: true,
+          resp: results,
+        },
+      });
+    } catch (err) {
+      console.error('err is ', err);
+      console.error('Alerting - OpenSearch - getClusterMetrics:', err);
       return res.ok({
         body: {
           ok: false,
