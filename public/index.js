@@ -5,10 +5,7 @@
 
 import { AlertingPlugin } from './plugin';
 
-export { MonitorDetails } from './components/FeatureAnywhereContextMenu/CreateAlertingMonitor/MonitorDetails';
-export { Triggers } from './components/FeatureAnywhereContextMenu/CreateAlertingMonitor/Triggers';
-export { Advanced } from './components/FeatureAnywhereContextMenu/CreateAlertingMonitor/Advanced';
-export { getInitialValues, useMonitorFrequencyText } from './utils/contextMenu/helpers';
+export { default as CreateMonitor } from './pages/CreateMonitor';
 
 export function plugin(initializerContext) {
   return new AlertingPlugin(initializerContext);
