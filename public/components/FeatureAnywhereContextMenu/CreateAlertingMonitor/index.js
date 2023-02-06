@@ -81,6 +81,7 @@ function CreateAlertingMonitor({ embeddable, closeFlyout, core, services }) {
                 getActions={() => Promise.resolve([])}
                 inspector={{ isAvailable: () => false }}
                 hideHeader
+                isRetained
               />
             </div>
           </EuiFlexItem>
