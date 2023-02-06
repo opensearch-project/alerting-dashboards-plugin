@@ -1,14 +1,12 @@
 import React from 'react';
-import { EuiIcon, EuiFlexItem, EuiFlexGroup, EuiToolTip, EuiTextColor } from '@elastic/eui';
+import { EuiIcon, EuiFlexItem, EuiFlexGroup } from '@elastic/eui';
 import { i18n } from '@osd/i18n';
 import { EuiIconType } from '@elastic/eui/src/components/icon/icon';
-import { toMountPoint } from '../../../../../src/plugins/opensearch_dashboards_react/public';
-import CreateAlertingMonitor from '../../components/FeatureAnywhereContextMenu/CreateAlertingMonitor';
-import ManageMonitors from '../../components/FeatureAnywhereContextMenu/ManageMonitors';
-import FormikWrapper from '../../components/FeatureAnywhereContextMenu/FormikWrapper';
-import { getInitialValues } from './helpers';
-import { createAlertingAction } from '../../actions/alerting_dashboard_action';
-import { Action } from '../../../../../src/plugins/ui_actions/public';
+import { toMountPoint } from '../../../../src/plugins/opensearch_dashboards_react/public';
+import CreateAlertingMonitor from '../components/FeatureAnywhereContextMenu/CreateAlertingMonitor';
+import ManageMonitors from '../components/FeatureAnywhereContextMenu/ManageMonitors';
+import { createAlertingAction } from '../actions/alerting_dashboard_action';
+import { Action } from '../../../../src/plugins/ui_actions/public';
 
 // This is used to create all actions in the same context menu
 const grouping: Action['grouping'] = [
@@ -19,14 +17,6 @@ const grouping: Action['grouping'] = [
     order: 100,
   },
 ];
-
-const ManageMonitorsTitle = ({ isSubdued }) => (
-  <EuiTextColor color={isSubdued ? 'subdued' : 'default'}>
-    {i18n.translate('dashboard.actions.alertingMenuItem.manageMonitors.displayName', {
-      defaultMessage: 'Manage monitors',
-    })}
-  </EuiTextColor>
-);
 
 const DocumentationTitle = () => (
   <EuiFlexGroup>
@@ -41,10 +31,8 @@ const DocumentationTitle = () => (
   </EuiFlexGroup>
 );
 
-export const getActions = ({ core, plugins }) => {
-  const monitors = [];
-
-  return [
+export const getActions = ({ core, plugins }) =>
+  [
     {
       grouping,
       id: 'createAlertingMonitor',
@@ -59,20 +47,11 @@ export const getActions = ({ core, plugins }) => {
       onClick: async ({ embeddable }) => {
         const services = await core.getStartServices();
         const openFlyout = services[0].overlays.openFlyout;
-        const getFormikOptions = () => ({
-          initialValues: getInitialValues(),
-          onSubmit: (values) => {
-            console.log('Submitting createAlertingMonitor');
-            console.log(values);
-          },
-        });
         const overlay = openFlyout(
           toMountPoint(
-            <FormikWrapper {...{ getFormikOptions }}>
-              <CreateAlertingMonitor
-                {...{ embeddable, plugins, closeFlyout: () => overlay.close(), core, services }}
-              />
-            </FormikWrapper>
+            <CreateAlertingMonitor
+              {...{ embeddable, plugins, closeFlyout: () => overlay.close(), core, services }}
+            />
           ),
           { size: 'l', className: 'create-alerting-monitor__flyout' }
         );
@@ -81,24 +60,15 @@ export const getActions = ({ core, plugins }) => {
     {
       grouping,
       id: 'manageMonitors',
-      title: <ManageMonitorsTitle isSubdued={monitors.length === 0} />,
+      title: i18n.translate('dashboard.actions.alertingMenuItem.manageMonitors.displayName', {
+        defaultMessage: 'Manage monitors',
+      }),
       icon: 'wrench' as EuiIconType,
       order: 99,
       onClick: async ({ embeddable }) => {
         const services = await core.getStartServices();
         const openFlyout = services[0].overlays.openFlyout;
-        const getFormikOptions = () => ({
-          initialValues: getInitialValues(),
-        });
-
-        openFlyout(
-          toMountPoint(
-            <FormikWrapper {...{ getFormikOptions }}>
-              <ManageMonitors {...{ embeddable }} />
-            </FormikWrapper>
-          ),
-          { size: 's' }
-        );
+        openFlyout(toMountPoint(<ManageMonitors {...{ embeddable }} />), { size: 's' });
       },
     },
     {
@@ -114,4 +84,3 @@ export const getActions = ({ core, plugins }) => {
       },
     },
   ].map((options) => createAlertingAction({ ...options, grouping }));
-};

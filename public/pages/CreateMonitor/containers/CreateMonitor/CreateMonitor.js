@@ -371,29 +371,32 @@ export default class CreateMonitor extends Component {
                   )}
                 </FieldArray>
               </Section>
-              {/*
-              <EuiSpacer />
-              <EuiFlexGroup alignItems="center" justifyContent="flexEnd">
-                <EuiFlexItem grow={false}>
-                  <EuiButtonEmpty onClick={this.onCancel}>Cancel</EuiButtonEmpty>
-                </EuiFlexItem>
-                <EuiFlexItem grow={false}>
-                  <EuiButton fill onClick={handleSubmit} isLoading={isSubmitting}>
-                    {edit ? 'Update' : 'Create'}
-                  </EuiButton>
-                </EuiFlexItem>
-              </EuiFlexGroup>
-              <SubmitErrorHandler
-                errors={errors}
-                isSubmitting={isSubmitting}
-                isValid={isValid}
-                onSubmitError={() =>
-                  notifications.toasts.addDanger({
-                    title: `Failed to ${edit ? 'update' : 'create'} the monitor`,
-                    text: 'Fix all highlighted error(s) before continuing.',
-                  })
-                }
-              /> */}
+              {!isMinimal && (
+                <>
+                  <EuiSpacer />
+                  <EuiFlexGroup alignItems="center" justifyContent="flexEnd">
+                    <EuiFlexItem grow={false}>
+                      <EuiButtonEmpty onClick={this.onCancel}>Cancel</EuiButtonEmpty>
+                    </EuiFlexItem>
+                    <EuiFlexItem grow={false}>
+                      <EuiButton fill onClick={handleSubmit} isLoading={isSubmitting}>
+                        {edit ? 'Update' : 'Create'}
+                      </EuiButton>
+                    </EuiFlexItem>
+                  </EuiFlexGroup>
+                  <SubmitErrorHandler
+                    errors={errors}
+                    isSubmitting={isSubmitting}
+                    isValid={isValid}
+                    onSubmitError={() =>
+                      notifications.toasts.addDanger({
+                        title: `Failed to ${edit ? 'update' : 'create'} the monitor`,
+                        text: 'Fix all highlighted error(s) before continuing.',
+                      })
+                    }
+                  />
+                </>
+              )}
             </Fragment>
           )}
         </Formik>

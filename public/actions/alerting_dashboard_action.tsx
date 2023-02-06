@@ -4,10 +4,9 @@ import {
   DASHBOARD_CONTAINER_TYPE,
   DashboardContainer,
 } from '../../../../src/plugins/dashboard/public';
-import { getContextMenuData as getMenuData } from '../utils/contextMenu/getContextMenuData';
 import { IncompatibleActionError, createAction } from '../../../../src/plugins/ui_actions/public';
 import { isReferenceOrValueEmbeddable } from '../../../../src/plugins/embeddable/public';
-import { Action } from '../../../../src/plugins/ui_actions/public';
+import { Action, DEFAULT_ACTION } from '../../../../src/plugins/ui_actions/public';
 
 export const ACTION_ALERTING = 'alerting';
 
@@ -21,7 +20,7 @@ export interface ActionContext {
 
 export interface CreateOptions {
   grouping: Action['grouping'];
-  title: string;
+  title: JSX.Element | string;
   icon: EuiIconType;
   id: string;
   order: number;
@@ -46,7 +45,7 @@ export const createAlertingAction = ({
       return title;
     },
     getIconType: () => icon,
-    type: ACTION_ALERTING,
+    type: DEFAULT_ACTION,
     grouping,
     isCompatible: async ({ embeddable }: ActionContext) => {
       const paramsType = embeddable.vis?.params?.type;

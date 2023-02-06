@@ -14,12 +14,21 @@ import {
   EuiSpacer,
   EuiIcon,
 } from '@elastic/eui';
-import { dateOptions } from '../../../utils/contextMenu/helpers';
 import './styles.scss';
-import { useField } from 'formik';
+
+export const dateOptions = {
+  year: '2-digit',
+  month: 'numeric',
+  day: 'numeric',
+  hour: 'numeric',
+  minute: 'numeric',
+  second: 'numeric',
+  hour12: true,
+  timeZone: 'America/Los_Angeles',
+};
 
 const ManageMonitors = ({ embeddable }) => {
-  const [monitors] = useField('monitors');
+  const monitors = [];
   const title = embeddable.getTitle();
 
   return (
@@ -43,61 +52,68 @@ const ManageMonitors = ({ embeddable }) => {
           </h4>
         </EuiText>
       </EuiPanel>
-      <EuiListGroup gutterSize="none">
-        {monitors.value.map((monitor) => (
-          <div key={monitor.id}>
-            <EuiListGroupItem
-              className="manage-monitors__item"
-              label={
-                <EuiPanel color="transparent" hasBorder={false} paddingSize="s">
-                  <EuiText size="s">
-                    <strong>
-                      <EuiHealth textSize="inherit" color={monitor.status}>
-                        {monitor.name}
-                      </EuiHealth>
-                    </strong>
-                  </EuiText>
-                  <EuiSpacer size="s" />
-                  <div className="manage-monitors__time">
-                    <EuiText size="xs">
-                      last alert:{' '}
-                      {new Intl.DateTimeFormat('default', dateOptions).format(monitor.last)}
+      {monitors.length === 0 && (
+        <EuiPanel color="transparent" hasBorder={false} paddingSize="m">
+          <EuiText>No monitors to display</EuiText>
+        </EuiPanel>
+      )}
+      {monitors.length !== 0 && (
+        <EuiListGroup gutterSize="none">
+          {monitors.map((monitor) => (
+            <div key={monitor.id}>
+              <EuiListGroupItem
+                className="manage-monitors__item"
+                label={
+                  <EuiPanel color="transparent" hasBorder={false} paddingSize="s">
+                    <EuiText size="s">
+                      <strong>
+                        <EuiHealth textSize="inherit" color={monitor.status}>
+                          {monitor.name}
+                        </EuiHealth>
+                      </strong>
                     </EuiText>
-                  </div>
-                  <EuiFlexGroup
-                    className="manage-monitors__actions"
-                    justifyContent="spaceBetween"
-                    alignItems="center"
-                  >
-                    <EuiFlexItem grow={false}>
-                      <EuiButton
-                        className="manage-monitors__compressed-button"
-                        fill
-                        size="s"
-                        color="danger"
-                        onClick={() => null}
-                      >
-                        Unlink Monitor
-                      </EuiButton>
-                    </EuiFlexItem>
-                    <EuiFlexItem grow={false}>
-                      <EuiButton
-                        className="manage-monitors__compressed-button"
-                        fill
-                        size="s"
-                        onClick={() => null}
-                      >
-                        Edit Monitor
-                      </EuiButton>
-                    </EuiFlexItem>
-                  </EuiFlexGroup>
-                </EuiPanel>
-              }
-            />
-            <EuiHorizontalRule margin="none" />
-          </div>
-        ))}
-      </EuiListGroup>
+                    <EuiSpacer size="s" />
+                    <div className="manage-monitors__time">
+                      <EuiText size="xs">
+                        last alert:{' '}
+                        {new Intl.DateTimeFormat('default', dateOptions).format(monitor.last)}
+                      </EuiText>
+                    </div>
+                    <EuiFlexGroup
+                      className="manage-monitors__actions"
+                      justifyContent="spaceBetween"
+                      alignItems="center"
+                    >
+                      <EuiFlexItem grow={false}>
+                        <EuiButton
+                          className="manage-monitors__compressed-button"
+                          fill
+                          size="s"
+                          color="danger"
+                          onClick={() => null}
+                        >
+                          Unlink Monitor
+                        </EuiButton>
+                      </EuiFlexItem>
+                      <EuiFlexItem grow={false}>
+                        <EuiButton
+                          className="manage-monitors__compressed-button"
+                          fill
+                          size="s"
+                          onClick={() => null}
+                        >
+                          Edit Monitor
+                        </EuiButton>
+                      </EuiFlexItem>
+                    </EuiFlexGroup>
+                  </EuiPanel>
+                }
+              />
+              <EuiHorizontalRule margin="none" />
+            </div>
+          ))}
+        </EuiListGroup>
+      )}
     </div>
   );
 };

@@ -211,6 +211,7 @@ class ConfigureTriggers extends React.Component {
       httpClient,
       notificationService,
       plugins,
+      isMinimal,
     } = this.props;
 
     const { executeResponse } = this.state;
@@ -232,6 +233,7 @@ class ConfigureTriggers extends React.Component {
         notifications={notifications}
         notificationService={notificationService}
         plugins={plugins}
+        isMinimal={isMinimal}
       />
     );
   };
