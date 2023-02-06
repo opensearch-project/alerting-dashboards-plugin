@@ -34,6 +34,8 @@ function CreateAlertingMonitor({ embeddable, closeFlyout, core, services }) {
     setIsShowVis(!isShowVis);
   };
   const onCreate = () => {
+    const event = new Event('createMonitor');
+    document.dispatchEvent(event);
     closeFlyout();
   };
   const history = {

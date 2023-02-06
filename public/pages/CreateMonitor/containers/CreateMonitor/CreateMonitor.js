@@ -82,11 +82,18 @@ export default class CreateMonitor extends Component {
     this.onSubmit = this.onSubmit.bind(this);
     this.onUpdate = this.onUpdate.bind(this);
     this.getPlugins = this.getPlugins.bind(this);
+    this.formikRef = React.createRef();
+  }
+
+  handleCreateMonitorEvent() {
+    this.formikRef.current.submitForm();
   }
 
   componentDidMount() {
     this.getPlugins();
     this.setSchedule();
+
+    document.addEventListener('createMonitor', () => this.handleCreateMonitorEvent());
   }
 
   async getPlugins() {
@@ -263,6 +270,8 @@ export default class CreateMonitor extends Component {
 
   componentWillUnmount() {
     this.props.setFlyout(null);
+
+    document.removeEventListener('createMonitor', () => this.handleCreateMonitorEvent());
   }
 
   render() {
@@ -284,7 +293,12 @@ export default class CreateMonitor extends Component {
 
     return (
       <div style={isMinimal ? {} : { padding: '25px 50px' }}>
-        <Formik initialValues={initialValues} onSubmit={this.onSubmit} validateOnChange={false}>
+        <Formik
+          initialValues={initialValues}
+          onSubmit={this.onSubmit}
+          validateOnChange={false}
+          innerRef={this.formikRef}
+        >
           {({ values, errors, handleSubmit, isSubmitting, isValid, touched }) => (
             <Fragment>
               {!isMinimal && (
