@@ -6,18 +6,18 @@
 import React, { Component } from 'react';
 import _ from 'lodash';
 import {
-  EuiButtonEmpty,
   EuiCodeBlock,
   EuiFlexGrid,
   EuiFlexItem,
   EuiFlyout,
   EuiFlyoutBody,
-  EuiFlyoutFooter,
   EuiFlyoutHeader,
   EuiHorizontalRule,
   EuiLink,
   EuiText,
   EuiTitle,
+  EuiFlexGroup,
+  EuiButtonIcon,
 } from '@elastic/eui';
 import { getFindings } from './findingsUtils';
 import { DEFAULT_GET_FINDINGS_PARAMS } from '../../../../../server/services/FindingService';
@@ -70,10 +70,16 @@ export default class FindingFlyout extends Component {
 
   closeFlyout = () => {
     this.setState({ isFlyoutOpen: false });
+
+    const { dashboardFlyoutIsOpen = false, closeFlyout } = this.props;
+
+    if (typeof closeFlyout === 'function' && dashboardFlyoutIsOpen) {
+      closeFlyout();
+    }
   };
 
   async renderFlyout() {
-    const { alert, isAlertsFlyout = false } = this.props;
+    const { alert } = this.props;
     if (!_.isEmpty(alert)) await this.getFinding();
 
     const { docList, finding } = this.state;
@@ -93,17 +99,28 @@ export default class FindingFlyout extends Component {
 
     const flyout = (
       <EuiFlyout
-        type={isAlertsFlyout ? 'overlay' : 'push'}
         onClose={this.closeFlyout}
-        ownFocus={false}
+        ownFocus={true}
         hideCloseButton={true}
         side={'right'}
         size={'m'}
       >
         <EuiFlyoutHeader hasBorder>
-          <EuiTitle size={'m'}>
-            <h2 id={findingId || `temp_finding_${docId}`}>Document finding</h2>
-          </EuiTitle>
+          <EuiFlexGroup justifyContent="flexStart" alignItems="center">
+            <EuiFlexItem className="eui-textTruncate">
+              <EuiTitle size={'m'} className="eui-textTruncate">
+                <h3 id={findingId || `temp_finding_${docId}`}>Document finding</h3>
+              </EuiTitle>
+            </EuiFlexItem>
+            <EuiFlexItem grow={false}>
+              <EuiButtonIcon
+                iconType="cross"
+                display="empty"
+                iconSize="m"
+                onClick={this.closeFlyout}
+              />
+            </EuiFlexItem>
+          </EuiFlexGroup>
         </EuiFlyoutHeader>
 
         <EuiFlyoutBody>
@@ -157,16 +174,6 @@ export default class FindingFlyout extends Component {
             {JSON.stringify(documentDisplay, null, 3)}
           </EuiCodeBlock>
         </EuiFlyoutBody>
-
-        <EuiFlyoutFooter>
-          <EuiButtonEmpty
-            iconType={'cross'}
-            onClick={this.closeFlyout}
-            style={{ paddingLeft: '0px', marginLeft: '0px' }}
-          >
-            Close
-          </EuiButtonEmpty>
-        </EuiFlyoutFooter>
       </EuiFlyout>
     );
     this.setState({ flyout: flyout });

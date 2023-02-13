@@ -30,6 +30,7 @@ import DocumentLevelTriggerExpression from './DocumentLevelTriggerExpression';
 import { backendErrorNotification, inputLimitText } from '../../../../utils/helpers';
 import monitorToFormik from '../../../CreateMonitor/containers/CreateMonitor/utils/monitorToFormik';
 import { buildRequest } from '../../../CreateMonitor/containers/DefineMonitor/utils/searchRequests';
+import { getTriggerContext } from '../../utils/helper';
 
 const MAX_TRIGGER_CONDITIONS = 10;
 
@@ -58,7 +59,6 @@ const selectInputProps = {
 };
 
 const propTypes = {
-  context: PropTypes.object.isRequired,
   executeResponse: PropTypes.object,
   monitorValues: PropTypes.object.isRequired,
   onRun: PropTypes.func.isRequired,
@@ -166,7 +166,6 @@ class DefineDocumentLevelTrigger extends Component {
     const {
       edit,
       triggerArrayHelpers,
-      context,
       monitor,
       monitorValues,
       onRun,
@@ -181,6 +180,7 @@ class DefineDocumentLevelTrigger extends Component {
       plugins,
     } = this.props;
     const executeResponse = _.get(this.state, 'executeResponse', this.props.executeResponse);
+    const context = getTriggerContext(executeResponse, monitor, triggerValues, triggerIndex);
     const fieldPath = triggerIndex !== undefined ? `triggerDefinitions[${triggerIndex}].` : '';
     const isGraph = _.get(monitorValues, 'searchType') === SEARCH_TYPE.GRAPH;
     const response = _.get(executeResponse, 'input_results.results[0]');

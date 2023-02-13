@@ -91,7 +91,8 @@ export function getDataFromResponse(response, fieldName, monitorType) {
     const buckets = _.get(response, 'aggregations.composite_agg.buckets', []);
     return buckets
       .map((bucket) => getXYValuesByFieldName(bucket, fieldName))
-      .filter(filterInvalidYValues);
+      .filter(filterInvalidYValues)
+      .sort((a, b) => a.x - b.x);
   }
 }
 

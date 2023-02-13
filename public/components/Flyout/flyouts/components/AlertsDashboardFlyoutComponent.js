@@ -361,7 +361,7 @@ export default class AlertsDashboardFlyoutComponent extends Component {
           columns.splice(
             0,
             0,
-            getAlertsFindingColumn(httpClient, history, true, location, notifications)
+            getAlertsFindingColumn(httpClient, history, location, notifications)
           );
           break;
         default:

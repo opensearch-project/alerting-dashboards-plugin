@@ -21,6 +21,7 @@ import { FieldArray } from 'formik';
 import ConfigureActions from '../ConfigureActions';
 import { inputLimitText } from '../../../../utils/helpers';
 import { DEFAULT_TRIGGER_NAME, SEVERITY_OPTIONS } from '../../utils/constants';
+import { getTriggerContext } from '../../utils/helper';
 
 const defaultRowProps = {
   label: 'Trigger name',
@@ -49,7 +50,6 @@ const selectInputProps = {
 };
 
 const propTypes = {
-  context: PropTypes.object.isRequired,
   executeResponse: PropTypes.object,
   monitorValues: PropTypes.object.isRequired,
   onRun: PropTypes.func.isRequired,
@@ -205,7 +205,6 @@ class DefineBucketLevelTrigger extends Component {
     const {
       edit,
       triggerArrayHelpers,
-      context,
       executeResponse,
       monitor,
       monitorValues,
@@ -222,6 +221,7 @@ class DefineBucketLevelTrigger extends Component {
       plugins,
     } = this.props;
     const fieldPath = triggerIndex !== undefined ? `triggerDefinitions[${triggerIndex}].` : '';
+    const context = getTriggerContext(executeResponse, monitor, triggerValues, triggerIndex);
     const isGraph = _.get(monitorValues, 'searchType') === SEARCH_TYPE.GRAPH;
     const response = _.get(executeResponse, 'input_results.results[0]');
     const triggerName = _.get(triggerValues, `${fieldPath}name`, DEFAULT_TRIGGER_NAME);
