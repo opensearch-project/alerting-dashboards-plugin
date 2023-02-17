@@ -24,9 +24,7 @@ export class AlertingPlugin implements Plugin {
       category: {
         id: 'opensearch',
         label: 'OpenSearch Plugins',
-        order: 2000,
       },
-      order: 4000,
       mount: async (params) => {
         const { renderApp } = await import('./app');
         const [coreStart] = await core.getStartServices();

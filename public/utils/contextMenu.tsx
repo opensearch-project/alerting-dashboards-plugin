@@ -4,7 +4,7 @@ import { i18n } from '@osd/i18n';
 import { EuiIconType } from '@elastic/eui/src/components/icon/icon';
 import { toMountPoint } from '../../../../src/plugins/opensearch_dashboards_react/public';
 import CreateAlertingMonitor from '../components/FeatureAnywhereContextMenu/CreateAlertingMonitor';
-import ManageMonitors from '../components/FeatureAnywhereContextMenu/ManageMonitors';
+import AssociatedMonitors from '../components/FeatureAnywhereContextMenu/AssociatedMonitors';
 import { createAlertingAction } from '../actions/alerting_dashboard_action';
 import { Action } from '../../../../src/plugins/ui_actions/public';
 
@@ -14,7 +14,6 @@ const grouping: Action['grouping'] = [
     id: 'alerting-dashboard-context-menu',
     getDisplayName: () => 'Alerting',
     getIconType: () => 'bell',
-    order: 100,
   },
 ];
 
@@ -39,7 +38,7 @@ export const getActions = ({ core, plugins }) =>
       title: i18n.translate(
         'dashboard.actions.alertingMenuItem.createAlertingMonitor.displayName',
         {
-          defaultMessage: 'Create alerting monitor',
+          defaultMessage: 'Add alerting monitor',
         }
       ),
       icon: 'plusInCircle' as EuiIconType,
@@ -61,14 +60,21 @@ export const getActions = ({ core, plugins }) =>
       grouping,
       id: 'manageMonitors',
       title: i18n.translate('dashboard.actions.alertingMenuItem.manageMonitors.displayName', {
-        defaultMessage: 'Manage monitors',
+        defaultMessage: 'Associated monitors',
       }),
-      icon: 'wrench' as EuiIconType,
+      icon: 'gear' as EuiIconType,
       order: 99,
       onClick: async ({ embeddable }) => {
         const services = await core.getStartServices();
         const openFlyout = services[0].overlays.openFlyout;
-        openFlyout(toMountPoint(<ManageMonitors {...{ embeddable }} />), { size: 's' });
+        const overlay = openFlyout(
+          toMountPoint(
+            <AssociatedMonitors
+              {...{ embeddable, plugins, closeFlyout: () => overlay.close(), core, services }}
+            />
+          ),
+          { size: 'm' }
+        );
       },
     },
     {
