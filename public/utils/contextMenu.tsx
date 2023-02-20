@@ -5,6 +5,7 @@ import { EuiIconType } from '@elastic/eui/src/components/icon/icon';
 import { toMountPoint } from '../../../../src/plugins/opensearch_dashboards_react/public';
 import { createAlertingAction } from '../actions/alerting_dashboard_action';
 import { Action } from '../../../../src/plugins/ui_actions/public';
+import AddAlertingMonitor from '../components/FeatureAnywhereContextMenu/AddAlertingMonitor';
 
 // This is used to create all actions in the same context menu
 const grouping: Action['grouping'] = [
@@ -32,22 +33,26 @@ export const getActions = ({ core, plugins }) =>
   [
     {
       grouping,
-      id: 'createAlertingMonitor',
-      title: i18n.translate(
-        'dashboard.actions.alertingMenuItem.createAlertingMonitor.displayName',
-        {
-          defaultMessage: 'Add alerting monitor',
-        }
-      ),
+      id: 'addAlertingMonitor',
+      title: i18n.translate('dashboard.actions.alertingMenuItem.addAlertingMonitor.displayName', {
+        defaultMessage: 'Add alerting monitor',
+      }),
       icon: 'plusInCircle' as EuiIconType,
       order: 100,
       onClick: async ({ embeddable }) => {
         const services = await core.getStartServices();
         const openFlyout = services[0].overlays.openFlyout;
-        const overlay = openFlyout(toMountPoint(<div />), {
-          size: 'l',
-          className: 'create-alerting-monitor__flyout',
-        });
+        const overlay = openFlyout(
+          toMountPoint(
+            <AddAlertingMonitor
+              {...{ embeddable, plugins, closeFlyout: () => overlay.close(), core, services }}
+            />
+          ),
+          {
+            size: 'l',
+            className: 'add-alerting-monitor__flyout',
+          }
+        );
       },
     },
     {

@@ -1,0 +1,39 @@
+.add-alerting-monitor {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+
+  .euiFlyoutBody__overflowContent {
+    height: 100%;
+    padding-bottom: 0;
+  }
+
+  .euiFlexItem.add-alerting-monitor__aside {
+    flex: 0 0 auto;
+    width: 400px;
+    overflow-y: auto;
+
+    &--full {
+      width: 100%;
+      flex: 1 1 auto;
+    }
+  }
+
+  &__flex-group {
+    height: 100%;
+  }
+
+  &__vis {
+    height: 400px;
+
+    &--hidden {
+      display: none;
+    }
+  }
+
+  &__flyout {
+    &.euiFlyout--small {
+      width: calc(400px + 72px);
+    }
+  }
+}

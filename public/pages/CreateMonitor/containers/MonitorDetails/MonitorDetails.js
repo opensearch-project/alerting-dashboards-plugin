@@ -50,22 +50,32 @@ const MonitorDetails = ({
   isAd,
   plugins,
   detectorId,
+  isMinimal,
 }) => {
   const anomalyDetectorContent = isAd && renderAnomalyDetector(httpClient, values, detectorId);
   const displayMonitorDefinitionCards = values.monitor_type !== MONITOR_TYPE.CLUSTER_METRICS;
+  const Container = ({ children }) =>
+    isMinimal ? (
+      <>{children}</>
+    ) : (
+      <ContentPanel
+        title="Monitor details"
+        titleSize="s"
+        panelStyles={{
+          paddingBottom: '20px',
+          paddingLeft: '10px',
+          paddingRight: '10px',
+          paddingTop: '20px',
+        }}
+        actions={anomalyDetectorContent.actions}
+      >
+        {children}
+      </ContentPanel>
+    );
+
   return (
-    <ContentPanel
-      title="Monitor details"
-      titleSize="s"
-      panelStyles={{
-        paddingBottom: '20px',
-        paddingLeft: '10px',
-        paddingRight: '10px',
-        paddingTop: '20px',
-      }}
-      actions={anomalyDetectorContent.actions}
-    >
-      <EuiSpacer size="s" />
+    <Container>
+      {!isMinimal && <EuiSpacer size="s" />}
       <FormikFieldText
         name="name"
         formRow
@@ -87,9 +97,9 @@ const MonitorDetails = ({
         }}
       />
       <EuiSpacer size="m" />
-      <MonitorType values={values} />
+      {!isMinimal && <MonitorType values={values} />}
 
-      {displayMonitorDefinitionCards ? (
+      {!isMinimal && displayMonitorDefinitionCards ? (
         <div>
           <EuiSpacer size="m" />
           <MonitorDefinitionCard values={values} plugins={plugins} />
@@ -103,9 +113,9 @@ const MonitorDetails = ({
         </div>
       ) : null}
 
-      <EuiSpacer size="l" />
+      <EuiSpacer size={isMinimal ? 's' : 'l'} />
       <Schedule isAd={isAd} />
-    </ContentPanel>
+    </Container>
   );
 };
 
