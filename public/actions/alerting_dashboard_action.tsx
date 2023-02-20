@@ -47,6 +47,7 @@ export const createAlertingAction = ({
     getIconType: () => icon,
     type: DEFAULT_ACTION,
     grouping,
+    // Do not show actions for certin visualizations
     isCompatible: async ({ embeddable }: ActionContext) => {
       const paramsType = embeddable.vis?.params?.type;
       const seriesParams = embeddable.vis?.params?.seriesParams || [];
