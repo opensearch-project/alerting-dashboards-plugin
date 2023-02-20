@@ -5,6 +5,7 @@ import { EuiIconType } from '@elastic/eui/src/components/icon/icon';
 import { toMountPoint } from '../../../../src/plugins/opensearch_dashboards_react/public';
 import { createAlertingAction } from '../actions/alerting_dashboard_action';
 import { Action } from '../../../../src/plugins/ui_actions/public';
+import AssociatedMonitors from '../components/FeatureAnywhereContextMenu/AssociatedMonitors';
 
 // This is used to create all actions in the same context menu
 const grouping: Action['grouping'] = [
@@ -61,7 +62,14 @@ export const getActions = ({ core, plugins }) =>
       onClick: async ({ embeddable }) => {
         const services = await core.getStartServices();
         const openFlyout = services[0].overlays.openFlyout;
-        const overlay = openFlyout(toMountPoint(<div />), { size: 'm' });
+        const overlay = openFlyout(
+          toMountPoint(
+            <AssociatedMonitors
+              {...{ embeddable, plugins, closeFlyout: () => overlay.close(), core, services }}
+            />
+          ),
+          { size: 'm' }
+        );
       },
     },
     {
