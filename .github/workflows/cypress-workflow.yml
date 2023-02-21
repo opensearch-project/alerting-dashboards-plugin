@@ -9,7 +9,7 @@ on:
 env:
   OPENSEARCH_DASHBOARDS_VERSION: '2.x'
   OPENSEARCH_VERSION: '2.6.0-SNAPSHOT'
-  ALERTING_PLUGIN_BRANCH: '2.6'
+  ALERTING_PLUGIN_BRANCH: '2.x'
 jobs:
   tests:
     name: Run Cypress E2E tests
