@@ -6,4 +6,4 @@ Compatible with OpenSearch Dashboards 2.6.0
 * Bumped version to 2.6. ([#492](https://github.com/opensearch-project/alerting-dashboards-plugin/pull/492))
 
 ### Documentation
-* Add 2.6.0 release notes. ([#]())
+* Add 2.6.0 release notes. ([#493](https://github.com/opensearch-project/alerting-dashboards-plugin/pull/493))
