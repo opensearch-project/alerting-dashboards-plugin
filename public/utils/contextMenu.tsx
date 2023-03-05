@@ -10,6 +10,7 @@ import { toMountPoint } from '../../../../src/plugins/opensearch_dashboards_reac
 import { createAlertingAction } from '../actions/alerting_dashboard_action';
 import { Action } from '../../../../src/plugins/ui_actions/public';
 import DocumentationTitle from '../components/FeatureAnywhereContextMenu/DocumentationTitle';
+import Container from '../components/FeatureAnywhereContextMenu/Container';
 
 // This is used to create all actions in the same context menu
 const grouping: Action['grouping'] = [
@@ -20,8 +21,28 @@ const grouping: Action['grouping'] = [
   },
 ];
 
-export const getActions = ({ core }) =>
-  [
+export const getActions = ({ core, plugins }) => {
+  const getOnClick = (startingPanel) => async ({ embeddable }) => {
+    const services = await core.getStartServices();
+    const openFlyout = services[0].overlays.openFlyout;
+    const overlay = openFlyout(
+      toMountPoint(
+        <Container
+          {...{
+            startingPanel,
+            embeddable,
+            plugins,
+            closeFlyout: () => overlay.close(),
+            core,
+            services,
+          }}
+        />
+      ),
+      { size: 'm' }
+    );
+  };
+
+  return [
     {
       grouping,
       id: 'addAlertingMonitor',
@@ -30,14 +51,7 @@ export const getActions = ({ core }) =>
       }),
       icon: 'plusInCircle' as EuiIconType,
       order: 100,
-      onClick: async ({ embeddable }) => {
-        const services = await core.getStartServices();
-        const openFlyout = services[0].overlays.openFlyout;
-        const overlay = openFlyout(toMountPoint(<div />), {
-          size: 'l',
-          className: 'add-alerting-monitor__flyout',
-        });
-      },
+      onClick: getOnClick('add'),
     },
     {
       grouping,
@@ -47,11 +61,7 @@ export const getActions = ({ core }) =>
       }),
       icon: 'gear' as EuiIconType,
       order: 99,
-      onClick: async ({ embeddable }) => {
-        const services = await core.getStartServices();
-        const openFlyout = services[0].overlays.openFlyout;
-        const overlay = openFlyout(toMountPoint(<div />), { size: 'm' });
-      },
+      onClick: getOnClick('associated'),
     },
     {
       id: 'documentation',
@@ -66,3 +76,4 @@ export const getActions = ({ core }) =>
       },
     },
   ].map((options) => createAlertingAction({ ...options, grouping }));
+};
