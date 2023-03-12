@@ -13,7 +13,7 @@ import uuidv4 from 'uuid/v4';
 import './styles.scss';
 import { getColumns } from './helpers';
 
-const AssociatedMonitors = ({ embeddable, closeFlyout, setPanel }) => {
+const AssociatedMonitors = ({ embeddable, closeFlyout, setFlyout }) => {
   const title = embeddable.getTitle();
   const onUnlink = useCallback(
     (item) => {
@@ -70,7 +70,7 @@ const AssociatedMonitors = ({ embeddable, closeFlyout, setPanel }) => {
       titleSize="s"
       body={`There are no alerting monitors associated with ${title} visualization. You will need to add a monitor to the visualization to be able to list it here`}
       actions={
-        <EuiButton fill onClick={() => setPanel('add')}>
+        <EuiButton fill onClick={() => setFlyout('add')}>
           Add alerting monitor
         </EuiButton>
       }

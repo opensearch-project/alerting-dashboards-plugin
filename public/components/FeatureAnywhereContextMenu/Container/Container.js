@@ -1,14 +1,17 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import AssociatedMonitors from '../AssociatedMonitors';
+import AddAlertingMonitor from '../AddAlertingMonitor';
+import './styles.scss';
 
-const Container = ({ startingPanel, ...props }) => {
-  const [panel, setPanel] = useState(startingPanel);
-  const Panel = {
+const Container = ({ startingFlyout, startingFlyoutSize, ...props }) => {
+  const [flyout, setFlyout] = useState(startingFlyout);
+
+  const Flyout = {
     associated: AssociatedMonitors,
-    add: () => <div />,
-  }[panel];
+    add: AddAlertingMonitor,
+  }[flyout];
 
-  return <Panel {...{ setPanel, ...props }} />;
+  return <Flyout {...{ setFlyout, ...props }} />;
 };
 
 export default Container;

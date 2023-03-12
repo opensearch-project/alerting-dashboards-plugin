@@ -1,0 +1,18 @@
+.create-new {
+  &__vis {
+    height: 400px;
+
+    &--hidden {
+      display: none;
+    }
+  }
+
+  &__title-and-toggle {
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .visualization {
+    padding: 0;
+  }
+}

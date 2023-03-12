@@ -14,7 +14,7 @@ import {
   validateUnit,
 } from '../../../../../utils/validate';
 
-const unitOptions = [
+export const unitOptions = [
   { value: 'MINUTES', text: 'Minutes' },
   { value: 'HOURS', text: 'Hours' },
   { value: 'DAYS', text: 'Days' },

@@ -3,6 +3,6 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import Container from './Container';
+import CreateNew from './CreateNew';
 
-export default Container;
+export default CreateNew;

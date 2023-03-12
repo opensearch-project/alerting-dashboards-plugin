@@ -22,25 +22,27 @@ const grouping: Action['grouping'] = [
 ];
 
 export const getActions = ({ core, plugins }) => {
-  const getOnClick = (startingPanel) => async ({ embeddable }) => {
-    const services = await core.getStartServices();
-    const openFlyout = services[0].overlays.openFlyout;
-    const overlay = openFlyout(
-      toMountPoint(
-        <Container
-          {...{
-            startingPanel,
-            embeddable,
-            plugins,
-            closeFlyout: () => overlay.close(),
-            core,
-            services,
-          }}
-        />
-      ),
-      { size: 'm' }
-    );
-  };
+  const getOnClick =
+    (startingFlyout) =>
+    async ({ embeddable }) => {
+      const services = await core.getStartServices();
+      const openFlyout = services[0].overlays.openFlyout;
+      const overlay = openFlyout(
+        toMountPoint(
+          <Container
+            {...{
+              startingFlyout,
+              embeddable,
+              plugins,
+              closeFlyout: () => overlay.close(),
+              core,
+              services,
+            }}
+          />
+        ),
+        { size: 'm', className: 'context-menu__flyout' }
+      );
+    };
 
   return [
     {
