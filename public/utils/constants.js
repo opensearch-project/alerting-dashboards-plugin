@@ -86,3 +86,5 @@ export const CHANNEL_TYPE = Object.freeze({
   [BACKEND_CHANNEL_TYPE.SES]: 'Amazon SES',
   [BACKEND_CHANNEL_TYPE.SNS]: 'Amazon SNS',
 });
+
+export const DEFAULT_PREVIEW_ERROR_MSG = 'There was a problem previewing the detector';

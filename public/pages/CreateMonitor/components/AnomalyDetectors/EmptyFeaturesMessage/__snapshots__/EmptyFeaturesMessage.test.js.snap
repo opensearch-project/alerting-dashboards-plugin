@@ -1,11 +1,12 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`EmptyFeaturesMessage renders  1`] = `
+exports[`EmptyFeaturesMessage renders no feature 1`] = `
 <div
   style="border-radius:5px;padding:10px;border:1px solid #D9D9D9;height:250px;width:100%"
 >
   <div
     class="euiEmptyPrompt"
+    data-test-subj="empty-prompt"
     style="max-width:45em"
   >
     <span

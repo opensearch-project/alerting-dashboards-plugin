@@ -18,7 +18,7 @@ const OverviewStat = ({ header, value }) => (
 
 OverviewStat.propTypes = {
   header: PropTypes.string.isRequired,
-  value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+  value: PropTypes.oneOfType([PropTypes.string, PropTypes.number, PropTypes.element]).isRequired,
 };
 
 export default OverviewStat;

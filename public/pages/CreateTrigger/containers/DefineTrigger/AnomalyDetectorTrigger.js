@@ -23,6 +23,9 @@ class AnomalyDetectorTrigger extends React.Component {
         <AnomalyDetectorData
           detectorId={detectorId}
           render={(anomalyData) => {
+            const features = _.get(anomalyData, 'detector.featureAttributes', []);
+            const isHCDetector = !_.isEmpty(_.get(anomalyData, 'detector.categoryField', []));
+
             // using lodash.get without worrying about whether an intermediate property is null or undefined.
             if (_.get(anomalyData, 'anomalyResult.anomalies', []).length > 0) {
               return (
@@ -70,7 +73,13 @@ class AnomalyDetectorTrigger extends React.Component {
               return _.isEmpty(detectorId) ? (
                 <EmptyDetectorMessage />
               ) : (
-                <EmptyFeaturesMessage detectorId={detectorId} isLoading={anomalyData.isLoading} />
+                <EmptyFeaturesMessage
+                  detectorId={detectorId}
+                  isLoading={anomalyData.isLoading}
+                  error={anomalyData.error}
+                  isHCDetector={isHCDetector}
+                  features={features}
+                />
               );
             }
           }}
