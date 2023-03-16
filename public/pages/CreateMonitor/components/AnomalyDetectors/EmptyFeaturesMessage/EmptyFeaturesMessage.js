@@ -33,7 +33,7 @@ function getErrorMsg(errorType, err, isHCDetector) {
     case ErrorType.SPARSE_DATA:
       return `No sample anomaly result generated. Please check detector interval and make sure you have >400 data points${
         isHCDetector ? ' for some entities ' : ' '
-      }in the last ${AD_PREVIEW_DAYS} days`;
+      }in the last ${AD_PREVIEW_DAYS} days.`;
     default:
       console.log('unexpected error type: ' + errorType);
       return '';
