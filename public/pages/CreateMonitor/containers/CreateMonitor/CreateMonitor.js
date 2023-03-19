@@ -14,8 +14,8 @@ import {
   EuiFlexItem,
   EuiSpacer,
   EuiTitle,
+  EuiText,
 } from '@elastic/eui';
-
 import DefineMonitor from '../DefineMonitor';
 import { FORMIK_INITIAL_VALUES } from './utils/constants';
 import monitorToFormik from './utils/monitorToFormik';
@@ -31,8 +31,14 @@ import {
   formikToTriggerUiMetadata,
 } from '../../../CreateTrigger/containers/CreateTrigger/utils/formikToTrigger';
 import { triggerToFormik } from '../../../CreateTrigger/containers/CreateTrigger/utils/triggerToFormik';
-import { TRIGGER_TYPE } from '../../../CreateTrigger/containers/CreateTrigger/utils/constants';
+import {
+  TRIGGER_TYPE,
+  FORMIK_INITIAL_TRIGGER_VALUES,
+} from '../../../CreateTrigger/containers/CreateTrigger/utils/constants';
 import MinimalAccordion from '../../../../components/MinimalAccordion';
+import { unitToLabel } from '../../../CreateMonitor/components/Schedule/Frequencies/Interval';
+import { getDefaultScript } from '../../../CreateTrigger/utils/helper';
+import './styles.scss';
 
 export default class CreateMonitor extends Component {
   static defaultProps = {
@@ -42,6 +48,7 @@ export default class CreateMonitor extends Component {
     updateMonitor: () => {},
     isMinimal: false,
     defaultName: '',
+    isDefaultTriggerEnabled: false,
   };
 
   constructor(props) {
@@ -63,9 +70,7 @@ export default class CreateMonitor extends Component {
       plugins: [],
       response: null,
       performanceResponse: null,
-      accordionsOpen: {
-        monitorDetails: true,
-      },
+      accordionsOpen: {},
     };
 
     if (this.props.edit && this.props.monitorToEdit) {
@@ -78,6 +83,13 @@ export default class CreateMonitor extends Component {
         ...monitorToFormik(this.props.monitorToEdit),
         triggerDefinitions: triggers.triggerDefinitions,
       };
+    }
+
+    // Adds an initial trigger if needed
+    if (props.isDefaultTriggerEnabled) {
+      const values = _.cloneDeep(FORMIK_INITIAL_TRIGGER_VALUES);
+      values.name = 'Trigger 1';
+      initialValues.triggerDefinitions = [values];
     }
 
     _.set(this.state, 'initialValues', initialValues);
@@ -297,7 +309,7 @@ export default class CreateMonitor extends Component {
       : ({ children }) => <>{children}</>;
 
     return (
-      <div style={isMinimal ? {} : { padding: '25px 50px' }}>
+      <div style={isMinimal ? {} : { padding: '25px 50px' }} className="create-monitor">
         <Formik
           initialValues={initialValues}
           onSubmit={this.onSubmit}
@@ -319,11 +331,22 @@ export default class CreateMonitor extends Component {
                   id: 'monitorDetails',
                   isOpen: accordionsOpen.monitorDetails,
                   onToggle: this.onAccordionToggle,
-                  title: 'Monitor Details',
+                  title: values.name,
                   titleAdditional: null,
                   isFirst: true,
                 }}
               >
+                {isMinimal && values.frequency === 'interval' && (
+                  <>
+                    <EuiText size="m" className="create-monitor__frequency">
+                      <p>
+                        Runs every {values.period.interval}{' '}
+                        <span>{unitToLabel[values.period.unit]}</span>
+                      </p>
+                    </EuiText>
+                    <EuiSpacer size="m" />
+                  </>
+                )}
                 <MonitorDetails
                   values={values}
                   errors={errors}
@@ -344,7 +367,7 @@ export default class CreateMonitor extends Component {
                       id: 'advancedData',
                       isOpen: accordionsOpen.advancedData,
                       onToggle: this.onAccordionToggle,
-                      title: 'Advanced Data Source Settings',
+                      title: 'Advanced data source configuration',
                     }}
                   >
                     <DefineMonitor
@@ -362,34 +385,33 @@ export default class CreateMonitor extends Component {
                   {!isMinimal && <EuiSpacer />}
                 </div>
               )}
-              <Section
-                {...{
-                  id: 'triggersSection',
-                  isOpen: accordionsOpen.triggersSection,
-                  onToggle: this.onAccordionToggle,
-                  title: 'Triggers',
-                }}
-              >
-                <FieldArray name={'triggerDefinitions'} validateOnChange={true}>
-                  {(triggerArrayHelpers) => (
-                    <ConfigureTriggers
-                      edit={edit}
-                      triggerArrayHelpers={triggerArrayHelpers}
-                      monitor={formikToMonitor(values)}
-                      monitorValues={values}
-                      setFlyout={this.props.setFlyout}
-                      triggers={_.get(formikToMonitor(values), 'triggers', [])}
-                      triggerValues={values}
-                      isDarkMode={this.props.isDarkMode}
-                      httpClient={httpClient}
-                      notifications={notifications}
-                      notificationService={notificationService}
-                      plugins={plugins}
-                      isMinimal={isMinimal}
-                    />
-                  )}
-                </FieldArray>
-              </Section>
+              {isMinimal && (
+                <>
+                  <EuiSpacer size="xl" />
+                  <EuiTitle size="s">
+                    <h3>Triggers</h3>
+                  </EuiTitle>
+                </>
+              )}
+              <FieldArray name={'triggerDefinitions'} validateOnChange={true}>
+                {(triggerArrayHelpers) => (
+                  <ConfigureTriggers
+                    edit={edit}
+                    triggerArrayHelpers={triggerArrayHelpers}
+                    monitor={formikToMonitor(values)}
+                    monitorValues={values}
+                    setFlyout={this.props.setFlyout}
+                    triggers={_.get(formikToMonitor(values), 'triggers', [])}
+                    triggerValues={values}
+                    isDarkMode={this.props.isDarkMode}
+                    httpClient={httpClient}
+                    notifications={notifications}
+                    notificationService={notificationService}
+                    plugins={plugins}
+                    isMinimal={isMinimal}
+                  />
+                )}
+              </FieldArray>
               {!isMinimal && (
                 <>
                   <EuiSpacer />

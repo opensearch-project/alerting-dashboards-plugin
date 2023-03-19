@@ -7,7 +7,7 @@ import { PLUGIN_NAME } from '../utils/constants';
 import { Plugin } from '../../../src/core/public';
 import { ACTION_ALERTING } from './actions/alerting_dashboard_action';
 import { CONTEXT_MENU_TRIGGER } from '../../../src/plugins/embeddable/public';
-import { getActions } from './utils/contextMenu';
+import { getActions } from './utils/contextMenu/getActions';
 
 declare module '../../../src/plugins/ui_actions/public' {
   export interface ActionContextMapping {

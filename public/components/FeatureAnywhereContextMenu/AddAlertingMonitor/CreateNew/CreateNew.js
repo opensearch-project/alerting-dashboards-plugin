@@ -32,6 +32,7 @@ function CreateNew({ embeddable, closeFlyout, core, services }) {
     staticContext: undefined,
     isMinimal: true,
     defaultName: `${title} monitor 1`,
+    // isDefaultTriggerEnabled: true,
   };
 
   return (
@@ -74,6 +75,10 @@ function CreateNew({ embeddable, closeFlyout, core, services }) {
         />
       </div>
       <EuiSpacer size="l" />
+      <EuiTitle size="s">
+        <h3>Monitor details</h3>
+      </EuiTitle>
+      <EuiSpacer size="m" />
       <CreateMonitor {...createMonitorProps} />
     </div>
   );

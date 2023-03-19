@@ -15,10 +15,18 @@ import {
 } from '../../../../../utils/validate';
 
 export const unitOptions = [
-  { value: 'MINUTES', text: 'Minutes' },
+  { value: 'MINUTES', text: 'Minute(s)' },
   { value: 'HOURS', text: 'Hours' },
   { value: 'DAYS', text: 'Days' },
 ];
+
+export const unitToLabel = unitOptions.reduce(
+  (acc, cur) => ({
+    ...acc,
+    [cur.value]: cur.text,
+  }),
+  {}
+);
 
 const Interval = () => (
   <EuiFlexGroup alignItems="flexStart" gutterSize="m">

@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useState } from 'react';
+import React from 'react';
 import {
   EuiFlexItem,
   EuiFlexGroup,
@@ -19,10 +19,21 @@ import {
 } from '@elastic/eui';
 import './styles.scss';
 import CreateNew from './CreateNew';
+import AssociateExisting from './AssociateExisting';
 
-function AddAlertingMonitor({ embeddable, closeFlyout, core, services }) {
-  const [mode, setMode] = useState('create');
+function AddAlertingMonitor({
+  embeddable,
+  closeFlyout,
+  core,
+  services,
+  mode,
+  setMode,
+  monitors,
+  selectedMonitorId,
+  setSelectedMonitorId,
+}) {
   const onCreate = () => {
+    console.log(`Current mode: ${mode}`);
     const event = new Event('createMonitor');
     document.dispatchEvent(event);
     closeFlyout();
@@ -55,9 +66,9 @@ function AddAlertingMonitor({ embeddable, closeFlyout, core, services }) {
                 value: 'create',
               },
               {
-                id: 'add-alerting-monitor__associate',
+                id: 'add-alerting-monitor__existing',
                 label: 'Associate existing monitor',
-                value: 'associate',
+                value: 'existing',
               },
             ].map((option) => (
               <EuiCheckableCard
@@ -73,6 +84,19 @@ function AddAlertingMonitor({ embeddable, closeFlyout, core, services }) {
           </EuiFormFieldset>
           <EuiSpacer size="m" />
           {mode === 'create' && <CreateNew {...{ embeddable, closeFlyout, core, services }} />}
+          {mode === 'existing' && (
+            <AssociateExisting
+              {...{
+                embeddable,
+                closeFlyout,
+                core,
+                services,
+                monitors,
+                selectedMonitorId,
+                setSelectedMonitorId,
+              }}
+            />
+          )}
         </div>
       </EuiFlyoutBody>
       <EuiFlyoutFooter>
@@ -82,7 +106,7 @@ function AddAlertingMonitor({ embeddable, closeFlyout, core, services }) {
           </EuiFlexItem>
           <EuiFlexItem grow={false}>
             <EuiButton onClick={onCreate} fill>
-              Create monitor
+              {mode === 'existing' ? 'Associate' : 'Create'} monitor
             </EuiButton>
           </EuiFlexItem>
         </EuiFlexGroup>

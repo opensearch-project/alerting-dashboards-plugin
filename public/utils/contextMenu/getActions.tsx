@@ -6,11 +6,11 @@
 import React from 'react';
 import { i18n } from '@osd/i18n';
 import { EuiIconType } from '@elastic/eui/src/components/icon/icon';
-import { toMountPoint } from '../../../../src/plugins/opensearch_dashboards_react/public';
-import { createAlertingAction } from '../actions/alerting_dashboard_action';
-import { Action } from '../../../../src/plugins/ui_actions/public';
-import DocumentationTitle from '../components/FeatureAnywhereContextMenu/DocumentationTitle';
-import Container from '../components/FeatureAnywhereContextMenu/Container';
+import { toMountPoint } from '../../../../../src/plugins/opensearch_dashboards_react/public';
+import { createAlertingAction } from '../../actions/alerting_dashboard_action';
+import { Action } from '../../../../../src/plugins/ui_actions/public';
+import DocumentationTitle from '../../components/FeatureAnywhereContextMenu/DocumentationTitle';
+import Container from '../../components/FeatureAnywhereContextMenu/Container';
 
 // This is used to create all actions in the same context menu
 const grouping: Action['grouping'] = [
@@ -53,7 +53,7 @@ export const getActions = ({ core, plugins }) => {
       }),
       icon: 'plusInCircle' as EuiIconType,
       order: 100,
-      onClick: getOnClick('add'),
+      onClick: getOnClick('create'),
     },
     {
       grouping,

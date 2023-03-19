@@ -1,17 +1,32 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import AssociatedMonitors from '../AssociatedMonitors';
 import AddAlertingMonitor from '../AddAlertingMonitor';
+import { useMonitors } from '../../../utils/contextMenu/monitors';
 import './styles.scss';
 
-const Container = ({ startingFlyout, startingFlyoutSize, ...props }) => {
-  const [flyout, setFlyout] = useState(startingFlyout);
+const Container = ({ startingFlyout, ...props }) => {
+  const [mode, setMode] = useState(startingFlyout);
+  const [selectedMonitorId, setSelectedMonitorId] = useState();
+  const monitors = useMonitors();
 
   const Flyout = {
     associated: AssociatedMonitors,
-    add: AddAlertingMonitor,
-  }[flyout];
+    create: AddAlertingMonitor,
+    existing: AddAlertingMonitor,
+  }[mode];
 
-  return <Flyout {...{ setFlyout, ...props }} />;
+  return (
+    <Flyout
+      {...{
+        ...props,
+        monitors,
+        selectedMonitorId,
+        setSelectedMonitorId,
+        setMode,
+        mode,
+      }}
+    />
+  );
 };
 
 export default Container;

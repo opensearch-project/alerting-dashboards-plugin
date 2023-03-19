@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback } from 'react';
 import {
   EuiFlyoutHeader,
   EuiTitle,
@@ -8,12 +8,15 @@ import {
   EuiFlyoutBody,
   EuiEmptyPrompt,
   EuiButton,
+  EuiFlexGroup,
+  EuiFlexItem,
+  EuiLoadingSpinner,
+  EuiTextColor,
 } from '@elastic/eui';
-import uuidv4 from 'uuid/v4';
 import './styles.scss';
-import { getColumns } from './helpers';
+import { useColumns } from './helpers';
 
-const AssociatedMonitors = ({ embeddable, closeFlyout, setFlyout }) => {
+const AssociatedMonitors = ({ embeddable, closeFlyout, setMode, monitors }) => {
   const title = embeddable.getTitle();
   const onUnlink = useCallback(
     (item) => {
@@ -29,59 +32,21 @@ const AssociatedMonitors = ({ embeddable, closeFlyout, setFlyout }) => {
     },
     [closeFlyout]
   );
-  const onView = useCallback(
-    (item) => {
-      console.log('onView', item);
-      closeFlyout();
-    },
-    [closeFlyout]
-  );
-  const columns = useMemo(() => getColumns({ onUnlink, onEdit, onView }), [
-    onUnlink,
-    onEdit,
-    onView,
-  ]);
-  const monitors = [
-    // { name: 'CPU usage across world', state: 'enabled', date: Date.now(), id: uuidv4() },
-    // { name: 'Memory usage across world', state: 'disabled', date: Date.now(), id: uuidv4() },
-    // { name: 'Memory usage across world 2', state: 'disabled', date: Date.now(), id: uuidv4() },
-    // { name: 'Memory usage across world 3', state: 'disabled', date: Date.now(), id: uuidv4() },
-    // { name: 'Memory usage across world 4', state: 'disabled', date: Date.now(), id: uuidv4() },
-    // { name: 'Memory usage across world 5', state: 'disabled', date: Date.now(), id: uuidv4() },
-    // { name: 'Memory usage across world 6', state: 'disabled', date: Date.now(), id: uuidv4() },
-    // { name: 'Memory usage across world 7', state: 'disabled', date: Date.now(), id: uuidv4() },
-    // { name: 'Memory usage across world 8', state: 'disabled', date: Date.now(), id: uuidv4() },
-    // { name: 'Memory usage across world 9', state: 'disabled', date: Date.now(), id: uuidv4() },
-    // { name: 'Memory usage across world 10', state: 'disabled', date: Date.now(), id: uuidv4() },
-    // { name: 'Memory usage across world 11', state: 'disabled', date: Date.now(), id: uuidv4() },
-    // { name: 'Memory usage across world 12', state: 'disabled', date: Date.now(), id: uuidv4() },
-    // { name: 'Memory usage across world 13', state: 'disabled', date: Date.now(), id: uuidv4() },
-    // { name: 'Memory usage across world 14', state: 'disabled', date: Date.now(), id: uuidv4() },
-    // { name: 'Memory usage across world 15', state: 'disabled', date: Date.now(), id: uuidv4() },
-    // { name: 'Memory usage across world 16', state: 'disabled', date: Date.now(), id: uuidv4() },
-    // { name: 'Memory usage across world 17', state: 'disabled', date: Date.now(), id: uuidv4() },
-    // { name: 'Memory usage across world 18', state: 'disabled', date: Date.now(), id: uuidv4() },
-    // { name: 'Memory usage across world 19', state: 'disabled', date: Date.now(), id: uuidv4() },
-    // { name: 'Memory usage across world 20', state: 'disabled', date: Date.now(), id: uuidv4() },
-  ];
+  const columns = useColumns({ onUnlink, onEdit });
   const empty = (
     <EuiEmptyPrompt
       title={<h3>No monitors to display</h3>}
       titleSize="s"
-      body={`There are no alerting monitors associated with ${title} visualization. You will need to add a monitor to the visualization to be able to list it here`}
-      actions={
-        <EuiButton fill onClick={() => setFlyout('add')}>
-          Add alerting monitor
-        </EuiButton>
-      }
+      body={`There are no alerting monitors associated with ${title} visualization.`}
     />
   );
+  const loading = <EuiEmptyPrompt body={<EuiLoadingSpinner size="l" />} />;
   const tableProps = {
-    items: monitors,
+    items: monitors || [],
     columns,
     search: {
       box: {
-        disabled: monitors.length === 0,
+        disabled: !monitors || monitors.length === 0,
         incremental: true,
         schema: true,
       },
@@ -89,22 +54,36 @@ const AssociatedMonitors = ({ embeddable, closeFlyout, setFlyout }) => {
     hasActions: true,
     pagination: true,
     sorting: true,
-    message: empty,
+    message: monitors ? empty : loading,
   };
 
   return (
     <div className="associated-monitors">
       <EuiFlyoutHeader hasBorder>
-        <EuiTitle size="s">
+        <EuiTitle>
           <h2 id="associated-monitors__title">
-            Associated monitors {monitors.length > 0 ? `(${monitors.length})` : ''}
+            Associated monitors{' '}
+            {monitors && (
+              <EuiTextColor color={monitors.length > 0 ? 'default' : 'subdued'}>
+                ({monitors.length})
+              </EuiTextColor>
+            )}
           </h2>
         </EuiTitle>
       </EuiFlyoutHeader>
       <EuiFlyoutBody>
-        <EuiText>
-          <h4>{title}</h4>
-        </EuiText>
+        <EuiFlexGroup justifyContent="spaceBetween" alignItems="center">
+          <EuiFlexItem>
+            <EuiText>
+              <h4>{title}</h4>
+            </EuiText>
+          </EuiFlexItem>
+          <EuiFlexItem grow={false}>
+            <EuiButton iconType="link" fill onClick={() => setMode('existing')}>
+              Associate a monitor
+            </EuiButton>
+          </EuiFlexItem>
+        </EuiFlexGroup>
         <EuiSpacer size="l" />
         <EuiInMemoryTable {...tableProps} />
       </EuiFlyoutBody>

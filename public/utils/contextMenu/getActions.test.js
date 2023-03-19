@@ -3,9 +3,9 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { getActions } from './contextMenu';
+import { getActions } from './getActions';
 
-describe('contextMenu', () => {
+describe('getActions', () => {
   test('actions', () => {
     const actions = getActions({});
     expect(actions.length).toEqual(3);

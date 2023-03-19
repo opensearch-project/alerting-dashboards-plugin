@@ -113,8 +113,8 @@ const MonitorDetails = ({
         </div>
       ) : null}
 
-      <EuiSpacer size={isMinimal ? 's' : 'l'} />
-      <Schedule isAd={isAd} />
+      {!isMinimal && <EuiSpacer size="l" />}
+      <Schedule isAd={isAd} isMinimal={isMinimal} />
     </Container>
   );
 };
