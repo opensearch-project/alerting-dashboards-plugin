@@ -31,6 +31,7 @@ function AddAlertingMonitor({
   monitors,
   selectedMonitorId,
   setSelectedMonitorId,
+  index,
 }) {
   const onCreate = () => {
     console.log(`Current mode: ${mode}`);
@@ -83,7 +84,9 @@ function AddAlertingMonitor({
             ))}
           </EuiFormFieldset>
           <EuiSpacer size="m" />
-          {mode === 'create' && <CreateNew {...{ embeddable, closeFlyout, core, services }} />}
+          {mode === 'create' && (
+            <CreateNew {...{ embeddable, closeFlyout, core, services, index }} />
+          )}
           {mode === 'existing' && (
             <AssociateExisting
               {...{

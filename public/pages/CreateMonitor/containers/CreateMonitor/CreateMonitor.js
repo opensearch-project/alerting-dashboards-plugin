@@ -37,7 +37,6 @@ import {
 } from '../../../CreateTrigger/containers/CreateTrigger/utils/constants';
 import MinimalAccordion from '../../../../components/MinimalAccordion';
 import { unitToLabel } from '../../../CreateMonitor/components/Schedule/Frequencies/Interval';
-import { getDefaultScript } from '../../../CreateTrigger/utils/helper';
 import './styles.scss';
 
 export default class CreateMonitor extends Component {
@@ -48,7 +47,10 @@ export default class CreateMonitor extends Component {
     updateMonitor: () => {},
     isMinimal: false,
     defaultName: '',
+    defaultIndex: undefined,
     isDefaultTriggerEnabled: false,
+    defaultTimeField: '',
+    isDarkMode: false,
   };
 
   constructor(props) {
@@ -64,6 +66,14 @@ export default class CreateMonitor extends Component {
 
     if (props.defaultName) {
       initialValues.name = props.defaultName;
+    }
+
+    if (props.defaultIndex) {
+      initialValues.index = props.defaultIndex;
+    }
+
+    if (props.defaultTimeField) {
+      initialValues.timeField = props.defaultTimeField;
     }
 
     this.state = {

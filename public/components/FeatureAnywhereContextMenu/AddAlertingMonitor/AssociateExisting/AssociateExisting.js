@@ -3,13 +3,13 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useState, useMemo } from 'react';
+import React, { useMemo } from 'react';
 import {
   EuiTitle,
   EuiSpacer,
   EuiIcon,
   EuiText,
-  EuiSelect,
+  EuiComboBox,
   EuiLoadingSpinner,
   EuiLink,
   EuiFlexGroup,
@@ -22,6 +22,14 @@ import { dateOptionsShort } from '../../../../utils/contextMenu/helpers';
 import './styles.scss';
 
 function AssociateExisting({ monitors, selectedMonitorId, setSelectedMonitorId }) {
+  const selectedOptions = useMemo(() => {
+    if (!monitors || !selectedMonitorId) {
+      return [];
+    }
+
+    const monitor = (monitors || []).find((monitor) => monitor.id === selectedMonitorId);
+    return monitor ? [{ label: monitor.name }] : [];
+  }, [selectedMonitorId, monitors]);
   const monitor = useMemo(
     () =>
       monitors && selectedMonitorId && monitors.find((monitor) => monitor.id === selectedMonitorId),
@@ -32,14 +40,9 @@ function AssociateExisting({ monitors, selectedMonitorId, setSelectedMonitorId }
       return [];
     }
 
-    const ops = monitors.map((monitor) => ({
-      value: monitor.id,
-      text: monitor.name,
+    return monitors.map((monitor) => ({
+      label: monitor.name,
     }));
-
-    ops.unshift({ value: 'none', text: '' });
-
-    return ops;
   }, [monitors]);
 
   return (
@@ -63,12 +66,24 @@ function AssociateExisting({ monitors, selectedMonitorId, setSelectedMonitorId }
       <EuiSpacer size="m" />
       {!monitors && <EuiLoadingSpinner size="l" />}
       {monitors && (
-        <EuiSelect
+        <EuiComboBox
           id="associate-existing__select"
           options={options}
-          value={selectedMonitorId}
-          onChange={(e) => setSelectedMonitorId(e.target.value)}
+          selectedOptions={selectedOptions}
+          onChange={(selectedOptions) => {
+            let id = null;
+
+            if (selectedOptions && selectedOptions.length) {
+              const match = monitors.find((monitor) => monitor.name === selectedOptions[0].label);
+              id = match && match.id;
+            }
+
+            setSelectedMonitorId(id);
+          }}
           aria-label="Select monitor to associate"
+          isClearable
+          singleSelection
+          placeholder="Search a monitor"
         />
       )}
       <EuiSpacer size="xl" />

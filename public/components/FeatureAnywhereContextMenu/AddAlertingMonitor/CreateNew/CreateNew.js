@@ -4,12 +4,12 @@
  */
 
 import React, { useState } from 'react';
-import { EuiTitle, EuiSpacer, EuiIcon, EuiText, EuiSwitch } from '@elastic/eui';
+import { EuiTitle, EuiSpacer, EuiIcon, EuiText, EuiSwitch, EuiLoadingSpinner } from '@elastic/eui';
 import CreateMonitor from '../../../../pages/CreateMonitor';
 import { EmbeddablePanel } from '../../../../../../../src/plugins/embeddable/public';
 import './styles.scss';
 
-function CreateNew({ embeddable, closeFlyout, core, services }) {
+function CreateNew({ embeddable, closeFlyout, core, services, index }) {
   const [isShowVis, setIsShowVis] = useState(false);
   const title = embeddable.getTitle();
   const history = {
@@ -32,7 +32,9 @@ function CreateNew({ embeddable, closeFlyout, core, services }) {
     staticContext: undefined,
     isMinimal: true,
     defaultName: `${title} monitor 1`,
-    // isDefaultTriggerEnabled: true,
+    defaultIndex: index,
+    defaultTimeField: embeddable.vis.params.time_field,
+    isDefaultTriggerEnabled: true,
   };
 
   return (
@@ -79,7 +81,9 @@ function CreateNew({ embeddable, closeFlyout, core, services }) {
         <h3>Monitor details</h3>
       </EuiTitle>
       <EuiSpacer size="m" />
-      <CreateMonitor {...createMonitorProps} />
+      {!index && <EuiLoadingSpinner size="l" />}
+      {/* Do not initialize until index is available */}
+      {index && <CreateMonitor {...createMonitorProps} />}
     </div>
   );
 }
