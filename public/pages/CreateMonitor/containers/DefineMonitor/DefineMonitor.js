@@ -50,9 +50,11 @@ const propTypes = {
   touched: PropTypes.object,
   detectorId: PropTypes.object,
   notifications: PropTypes.object.isRequired,
+  isMinimal: PropTypes.bool,
 };
 const defaultProps = {
   errors: {},
+  isMinimal: false,
 };
 
 class DefineMonitor extends Component {
@@ -585,7 +587,15 @@ class DefineMonitor extends Component {
   }
 
   render() {
-    const { values, errors, httpClient, detectorId, notifications, isDarkMode } = this.props;
+    const {
+      values,
+      errors,
+      httpClient,
+      detectorId,
+      notifications,
+      isDarkMode,
+      isMinimal,
+    } = this.props;
     const { dataTypes } = this.state;
     const monitorContent = this.getMonitorContent();
     const { searchType } = this.props.values;
@@ -603,35 +613,37 @@ class DefineMonitor extends Component {
               detectorId={detectorId}
               notifications={notifications}
               isDarkMode={isDarkMode}
+              isMinimal={isMinimal}
             />
             <EuiSpacer />
           </div>
         )}
+        {!isMinimal && (
+          <ContentPanel
+            title="Query"
+            titleSize="s"
+            panelStyles={{
+              paddingLeft: '10px',
+              paddingRight: '10px',
+            }}
+            bodyStyles={{ padding: 'initial' }}
+            actions={monitorContent.actions}
+          >
+            {this.showPluginWarning()
+              ? [
+                  <EuiCallOut
+                    color="warning"
+                    title="Anomaly detector plugin is not installed on OpenSearch, This monitor will not functional properly."
+                    iconType="help"
+                    size="s"
+                  />,
+                  <EuiSpacer size="s" />,
+                ]
+              : null}
 
-        <ContentPanel
-          title="Query"
-          titleSize="s"
-          panelStyles={{
-            paddingLeft: '10px',
-            paddingRight: '10px',
-          }}
-          bodyStyles={{ padding: 'initial' }}
-          actions={monitorContent.actions}
-        >
-          {this.showPluginWarning()
-            ? [
-                <EuiCallOut
-                  color="warning"
-                  title="Anomaly detector plugin is not installed on OpenSearch, This monitor will not functional properly."
-                  iconType="help"
-                  size="s"
-                />,
-                <EuiSpacer size="s" />,
-              ]
-            : null}
-
-          {monitorContent.content}
-        </ContentPanel>
+            {monitorContent.content}
+          </ContentPanel>
+        )}
       </div>
     );
   }

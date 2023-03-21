@@ -14,8 +14,8 @@ import {
   EuiFlexItem,
   EuiSpacer,
   EuiTitle,
+  EuiText,
 } from '@elastic/eui';
-
 import DefineMonitor from '../DefineMonitor';
 import { FORMIK_INITIAL_VALUES } from './utils/constants';
 import monitorToFormik from './utils/monitorToFormik';
@@ -31,7 +31,13 @@ import {
   formikToTriggerUiMetadata,
 } from '../../../CreateTrigger/containers/CreateTrigger/utils/formikToTrigger';
 import { triggerToFormik } from '../../../CreateTrigger/containers/CreateTrigger/utils/triggerToFormik';
-import { TRIGGER_TYPE } from '../../../CreateTrigger/containers/CreateTrigger/utils/constants';
+import {
+  TRIGGER_TYPE,
+  FORMIK_INITIAL_TRIGGER_VALUES,
+} from '../../../CreateTrigger/containers/CreateTrigger/utils/constants';
+import MinimalAccordion from '../../../../components/MinimalAccordion';
+import { unitToLabel } from '../../../CreateMonitor/components/Schedule/Frequencies/Interval';
+import './styles.scss';
 
 export default class CreateMonitor extends Component {
   static defaultProps = {
@@ -39,6 +45,12 @@ export default class CreateMonitor extends Component {
     monitorToEdit: null,
     detectorId: null,
     updateMonitor: () => {},
+    isMinimal: false,
+    defaultName: '',
+    defaultIndex: undefined,
+    isDefaultTriggerEnabled: false,
+    defaultTimeField: '',
+    isDarkMode: false,
   };
 
   constructor(props) {
@@ -52,10 +64,23 @@ export default class CreateMonitor extends Component {
       (initialValue, queryValue) => (_.isEmpty(queryValue) ? initialValue : queryValue)
     );
 
+    if (props.defaultName) {
+      initialValues.name = props.defaultName;
+    }
+
+    if (props.defaultIndex) {
+      initialValues.index = props.defaultIndex;
+    }
+
+    if (props.defaultTimeField) {
+      initialValues.timeField = props.defaultTimeField;
+    }
+
     this.state = {
       plugins: [],
       response: null,
       performanceResponse: null,
+      accordionsOpen: {},
     };
 
     if (this.props.edit && this.props.monitorToEdit) {
@@ -70,6 +95,13 @@ export default class CreateMonitor extends Component {
       };
     }
 
+    // Adds an initial trigger if needed
+    if (props.isDefaultTriggerEnabled) {
+      const values = _.cloneDeep(FORMIK_INITIAL_TRIGGER_VALUES);
+      values.name = 'Trigger 1';
+      initialValues.triggerDefinitions = [values];
+    }
+
     _.set(this.state, 'initialValues', initialValues);
 
     this.onCancel = this.onCancel.bind(this);
@@ -77,11 +109,18 @@ export default class CreateMonitor extends Component {
     this.onSubmit = this.onSubmit.bind(this);
     this.onUpdate = this.onUpdate.bind(this);
     this.getPlugins = this.getPlugins.bind(this);
+    this.formikRef = React.createRef();
+  }
+
+  handleCreateMonitorEvent() {
+    this.formikRef.current.submitForm();
   }
 
   componentDidMount() {
     this.getPlugins();
     this.setSchedule();
+
+    document.addEventListener('createMonitor', () => this.handleCreateMonitorEvent());
   }
 
   async getPlugins() {
@@ -250,8 +289,16 @@ export default class CreateMonitor extends Component {
     this.props.history.push({ ...this.props.location, search: '' });
   };
 
+  onAccordionToggle = (key) => {
+    const accordionsOpen = { ...this.state.accordionsOpen };
+    accordionsOpen[key] = !accordionsOpen[key];
+    this.setState({ accordionsOpen });
+  };
+
   componentWillUnmount() {
     this.props.setFlyout(null);
+
+    document.removeEventListener('createMonitor', () => this.handleCreateMonitorEvent());
   }
 
   render() {
@@ -264,48 +311,98 @@ export default class CreateMonitor extends Component {
       notifications,
       isDarkMode,
       notificationService,
+      isMinimal,
     } = this.props;
-    const { initialValues, plugins } = this.state;
+    const { initialValues, plugins, accordionsOpen } = this.state;
+    const Section = isMinimal
+      ? (props) => <MinimalAccordion {...props} />
+      : ({ children }) => <>{children}</>;
 
     return (
-      <div style={{ padding: '25px 50px' }}>
-        <Formik initialValues={initialValues} onSubmit={this.onSubmit} validateOnChange={false}>
+      <div style={isMinimal ? {} : { padding: '25px 50px' }} className="create-monitor">
+        <Formik
+          initialValues={initialValues}
+          onSubmit={this.onSubmit}
+          validateOnChange={false}
+          innerRef={this.formikRef}
+        >
           {({ values, errors, handleSubmit, isSubmitting, isValid, touched }) => (
             <Fragment>
-              <EuiTitle size="l">
-                <h1>{edit ? 'Edit' : 'Create'} monitor</h1>
-              </EuiTitle>
-              <EuiSpacer />
-
-              <MonitorDetails
-                values={values}
-                errors={errors}
-                history={history}
-                httpClient={httpClient}
-                monitorToEdit={monitorToEdit}
-                plugins={plugins}
-                isAd={values.searchType === SEARCH_TYPE.AD}
-                detectorId={this.props.detectorId}
-                setFlyout={this.props.setFlyout}
-              />
-              <EuiSpacer />
-
+              {!isMinimal && (
+                <>
+                  <EuiTitle size="l">
+                    <h1>{edit ? 'Edit' : 'Create'} monitor</h1>
+                  </EuiTitle>
+                  <EuiSpacer />
+                </>
+              )}
+              <Section
+                {...{
+                  id: 'monitorDetails',
+                  isOpen: accordionsOpen.monitorDetails,
+                  onToggle: this.onAccordionToggle,
+                  title: values.name,
+                  titleAdditional: null,
+                  isFirst: true,
+                }}
+              >
+                {isMinimal && values.frequency === 'interval' && (
+                  <>
+                    <EuiText size="m" className="create-monitor__frequency">
+                      <p>
+                        Runs every {values.period.interval}{' '}
+                        <span>{unitToLabel[values.period.unit]}</span>
+                      </p>
+                    </EuiText>
+                    <EuiSpacer size="m" />
+                  </>
+                )}
+                <MonitorDetails
+                  values={values}
+                  errors={errors}
+                  history={history}
+                  httpClient={httpClient}
+                  monitorToEdit={monitorToEdit}
+                  plugins={plugins}
+                  isAd={values.searchType === SEARCH_TYPE.AD}
+                  detectorId={this.props.detectorId}
+                  isMinimal={isMinimal}
+                />
+              </Section>
+              {!isMinimal && <EuiSpacer />}
               {values.searchType !== SEARCH_TYPE.AD && (
                 <div>
-                  <DefineMonitor
-                    values={values}
-                    errors={errors}
-                    touched={touched}
-                    httpClient={httpClient}
-                    location={location}
-                    detectorId={this.props.detectorId}
-                    notifications={notifications}
-                    isDarkMode={isDarkMode}
-                  />
-                  <EuiSpacer />
+                  <Section
+                    {...{
+                      id: 'advancedData',
+                      isOpen: accordionsOpen.advancedData,
+                      onToggle: this.onAccordionToggle,
+                      title: 'Advanced data source configuration',
+                    }}
+                  >
+                    <DefineMonitor
+                      values={values}
+                      errors={errors}
+                      touched={touched}
+                      httpClient={httpClient}
+                      location={location}
+                      detectorId={this.props.detectorId}
+                      notifications={notifications}
+                      isDarkMode={isDarkMode}
+                      isMinimal={isMinimal}
+                    />
+                  </Section>
+                  {!isMinimal && <EuiSpacer />}
                 </div>
               )}
-
+              {isMinimal && (
+                <>
+                  <EuiSpacer size="xl" />
+                  <EuiTitle size="s">
+                    <h3>Triggers</h3>
+                  </EuiTitle>
+                </>
+              )}
               <FieldArray name={'triggerDefinitions'} validateOnChange={true}>
                 {(triggerArrayHelpers) => (
                   <ConfigureTriggers
@@ -321,32 +418,36 @@ export default class CreateMonitor extends Component {
                     notifications={notifications}
                     notificationService={notificationService}
                     plugins={plugins}
+                    isMinimal={isMinimal}
                   />
                 )}
               </FieldArray>
-
-              <EuiSpacer />
-              <EuiFlexGroup alignItems="center" justifyContent="flexEnd">
-                <EuiFlexItem grow={false}>
-                  <EuiButtonEmpty onClick={this.onCancel}>Cancel</EuiButtonEmpty>
-                </EuiFlexItem>
-                <EuiFlexItem grow={false}>
-                  <EuiButton fill onClick={handleSubmit} isLoading={isSubmitting}>
-                    {edit ? 'Update' : 'Create'}
-                  </EuiButton>
-                </EuiFlexItem>
-              </EuiFlexGroup>
-              <SubmitErrorHandler
-                errors={errors}
-                isSubmitting={isSubmitting}
-                isValid={isValid}
-                onSubmitError={() =>
-                  notifications.toasts.addDanger({
-                    title: `Failed to ${edit ? 'update' : 'create'} the monitor`,
-                    text: 'Fix all highlighted error(s) before continuing.',
-                  })
-                }
-              />
+              {!isMinimal && (
+                <>
+                  <EuiSpacer />
+                  <EuiFlexGroup alignItems="center" justifyContent="flexEnd">
+                    <EuiFlexItem grow={false}>
+                      <EuiButtonEmpty onClick={this.onCancel}>Cancel</EuiButtonEmpty>
+                    </EuiFlexItem>
+                    <EuiFlexItem grow={false}>
+                      <EuiButton fill onClick={handleSubmit} isLoading={isSubmitting}>
+                        {edit ? 'Update' : 'Create'}
+                      </EuiButton>
+                    </EuiFlexItem>
+                  </EuiFlexGroup>
+                  <SubmitErrorHandler
+                    errors={errors}
+                    isSubmitting={isSubmitting}
+                    isValid={isValid}
+                    onSubmitError={() =>
+                      notifications.toasts.addDanger({
+                        title: `Failed to ${edit ? 'update' : 'create'} the monitor`,
+                        text: 'Fix all highlighted error(s) before continuing.',
+                      })
+                    }
+                  />
+                </>
+              )}
             </Fragment>
           )}
         </Formik>

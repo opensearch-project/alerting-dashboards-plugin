@@ -1,0 +1,117 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`AssociatedMonitors renders 1`] = `
+<div
+  className="associated-monitors"
+>
+  <EuiFlyoutHeader
+    hasBorder={true}
+  >
+    <EuiTitle
+      size="s"
+    >
+      <h2
+        id="associated-monitors__title"
+      >
+        Associated monitors 
+      </h2>
+    </EuiTitle>
+  </EuiFlyoutHeader>
+  <EuiFlyoutBody>
+    <EuiText>
+      <h4 />
+    </EuiText>
+    <EuiSpacer
+      size="l"
+    />
+    <EuiInMemoryTable
+      columns={
+        Array [
+          Object {
+            "field": "name",
+            "name": "Monitor Name",
+            "sortable": true,
+            "truncateText": true,
+            "width": "50%",
+          },
+          Object {
+            "field": "state",
+            "name": "State",
+            "render": [Function],
+            "sortable": true,
+            "width": "105px",
+          },
+          Object {
+            "field": "date",
+            "name": "Last alert",
+            "render": [Function],
+            "sortable": true,
+            "truncateText": true,
+            "width": "50%",
+          },
+          Object {
+            "actions": Array [
+              Object {
+                "description": "Unlink monitor",
+                "icon": "unlink",
+                "name": "Unlink monitor",
+                "onClick": [Function],
+                "type": "icon",
+              },
+              Object {
+                "description": "Edit monitor",
+                "icon": "pencil",
+                "name": "Edit monitor",
+                "onClick": [Function],
+                "type": "icon",
+              },
+              Object {
+                "description": "View configuration",
+                "icon": "popout",
+                "name": "View configuration",
+                "onClick": [Function],
+                "type": "icon",
+              },
+            ],
+            "name": "Actions",
+          },
+        ]
+      }
+      hasActions={true}
+      items={Array []}
+      message={
+        <EuiEmptyPrompt
+          actions={
+            <EuiButton
+              fill={true}
+              onClick={[Function]}
+            >
+              Add alerting monitor
+            </EuiButton>
+          }
+          body="There are no alerting monitors associated with  visualization. You will need to add a monitor to the visualization to be able to list it here"
+          title={
+            <h3>
+              No monitors to display
+            </h3>
+          }
+          titleSize="s"
+        />
+      }
+      pagination={true}
+      responsive={true}
+      search={
+        Object {
+          "box": Object {
+            "disabled": true,
+            "incremental": true,
+            "schema": true,
+          },
+        }
+      }
+      sorting={true}
+      tableLayout="fixed"
+    />
+  </EuiFlyoutBody>
+</div>
+`;

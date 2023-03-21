@@ -6,14 +6,18 @@
 import React from 'react';
 import { shallow } from 'enzyme';
 import AlertsDashboardFlyoutComponent from './AlertsDashboardFlyoutComponent';
+import { historyMock, httpClientMock } from '../../../../../test/mocks';
 
 describe('AlertsDashboardFlyoutComponent', () => {
   test('renders', () => {
+    httpClientMock.get.mockResolvedValue({ ok: true, resp: { name: 'random_name' } });
     const wrapper = shallow(
       <AlertsDashboardFlyoutComponent
         location={{ pathname: '/dashboard', search: '' }}
         flyout={{ type: 'message', payload: null }}
         onClose={jest.fn()}
+        history={historyMock}
+        httpClient={httpClientMock}
       />
     );
     expect(wrapper).toMatchSnapshot();

@@ -1,0 +1,18 @@
+.minimal-accordion {
+  .euiAccordion__button {
+    align-items: flex-start;
+
+    h5 {
+      margin-top: -5px;
+    }
+
+    &:hover,
+    &:focus {
+      text-decoration: none;
+
+      h5 {
+        text-decoration: underline;
+      }
+    }
+  }
+}
