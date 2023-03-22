@@ -46,3 +46,13 @@ export const inputLimitText = (
     </EuiText>
   );
 };
+
+// A helper function that recursively flattens objects to dot notation format.
+export function flattenObject(object = {}, prefix = '') {
+  return Object.keys(object).reduce((obj, key) => {
+    const pre = prefix.length ? prefix + '.' : '';
+    if (typeof object[key] === 'object') Object.assign(obj, flattenObject(object[key], pre + key));
+    else obj[pre + key] = object[key];
+    return obj;
+  }, {});
+}

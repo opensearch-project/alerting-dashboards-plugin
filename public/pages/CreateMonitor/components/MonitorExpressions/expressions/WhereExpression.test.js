@@ -44,7 +44,7 @@ describe('WhereExpression', () => {
   });
   test('calls openExpression when clicking expression', () => {
     const wrapper = mount(getMountWrapper());
-    const button = wrapper.find('[data-test-subj="where.addFilterButton"]').first();
+    const button = wrapper.find('[data-test-subj="addFilterButton"]').first();
     button.simulate('click');
     wrapper.update();
     expect(openExpression).toHaveBeenCalled();
@@ -63,6 +63,8 @@ describe('WhereExpression', () => {
 
   test('should render text input for the text data types', async () => {
     const wrapper = mount(getMountWrapper(true));
+    wrapper.find('[data-test-subj="addFilterButton"]').hostNodes().simulate('click');
+
     wrapper
       .find('[data-test-subj="comboBoxSearchInput"]')
       .hostNodes()
@@ -73,8 +75,8 @@ describe('WhereExpression', () => {
 
     wrapper.update();
     const values = wrapper.find(WhereExpression).props().formik.values;
-    expect(values.where.fieldName).toEqual([{ label: 'cityName', type: 'text' }]);
-    expect(values.where.operator).toEqual(OPERATORS_MAP.IS.value);
+    expect(values.filters[0].fieldName).toEqual([{ label: 'cityName', type: 'text' }]);
+    expect(values.filters[0].operator).toEqual(OPERATORS_MAP.IS.value);
     expect(wrapper.find(FormikFieldText).length).toBe(1);
     expect(wrapper.find(FormikFieldNumber).length).toBe(0);
   });

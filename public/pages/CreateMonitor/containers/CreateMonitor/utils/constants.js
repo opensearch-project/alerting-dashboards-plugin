@@ -11,6 +11,14 @@ export const BUCKET_COUNT = 5;
 
 export const MATCH_ALL_QUERY = JSON.stringify({ size: 0, query: { match_all: {} } }, null, 4);
 
+export const FORMIK_INITIAL_WHERE_EXPRESSION_VALUES = {
+  fieldName: [{ label: '', type: ALLOWED_TYPES[0] }], // This is an array because the EuiCombobox returns an array of {label: string, type: string} objects.
+  operator: OPERATORS_MAP.IS,
+  fieldValue: '',
+  fieldRangeStart: 0,
+  fieldRangeEnd: 0,
+};
+
 export const FORMIK_INITIAL_VALUES = {
   /* CONFIGURE MONITOR */
   name: '',
@@ -47,13 +55,7 @@ export const FORMIK_INITIAL_VALUES = {
   groupedOverFieldName: 'bytes',
   bucketValue: 1,
   bucketUnitOfTime: 'h', // m = minute, h = hour, d = day
-  where: {
-    fieldName: [],
-    operator: OPERATORS_MAP.IS.value,
-    fieldValue: '',
-    fieldRangeStart: 0,
-    fieldRangeEnd: 0,
-  },
+  filters: [], // array of FORMIK_INITIAL_WHERE_EXPRESSION_VALUES
   detectorId: '',
 };
 

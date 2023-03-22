@@ -121,13 +121,7 @@
       "groupBy": ["customer_gender", "user"],
       "bucketValue": 10,
       "bucketUnitOfTime": "d",
-      "where": {
-        "fieldName": [],
-        "fieldRangeEnd": 0,
-        "fieldRangeStart": 0,
-        "fieldValue": "",
-        "operator": "is"
-      }
+      "filters": []
     },
     "monitor_type": "bucket_level_monitor"
   }

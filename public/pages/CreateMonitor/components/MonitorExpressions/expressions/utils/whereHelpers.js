@@ -7,6 +7,7 @@ import _ from 'lodash';
 import { OPERATORS_MAP } from './constants';
 import { TRIGGER_COMPARISON_OPERATORS } from '../../../../../CreateTrigger/containers/DefineBucketLevelTrigger/DefineBucketLevelTrigger';
 import { DATA_TYPES } from '../../../../../../utils/constants';
+import { FORMIK_INITIAL_WHERE_EXPRESSION_VALUES } from '../../../../containers/CreateMonitor/utils/constants';
 
 export const DEFAULT_WHERE_EXPRESSION_TEXT = 'All fields are included';
 
@@ -59,4 +60,18 @@ export const validateRange = (value, whereFilters) => {
   if (value < whereFilters.fieldRangeStart) {
     return 'End should be greater than start range';
   }
+};
+
+export const validateWhereFilter = (filter = FORMIK_INITIAL_WHERE_EXPRESSION_VALUES) => {
+  const fieldName = _.get(filter, 'fieldName', '');
+  const fieldOperator = _.get(filter, 'operator', 'is');
+  const fieldValue = _.get(filter, 'fieldValue', '');
+  return !(
+    _.isEmpty(fieldName) ||
+    (!isNullOperator(fieldOperator) && _.isEmpty(fieldValue.toString()))
+  );
+};
+
+export const validateWhereFilters = (filters = []) => {
+  return filters.filter((filter) => validateWhereFilter(filter)).length === filters.length;
 };
