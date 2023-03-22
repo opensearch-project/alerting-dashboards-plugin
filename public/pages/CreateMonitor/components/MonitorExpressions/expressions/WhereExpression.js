@@ -29,7 +29,7 @@ const propTypes = {
   openExpression: PropTypes.func.isRequired,
 };
 
-const MAX_NUM_WHERE_EXPRESSION = {
+export const MAX_NUM_WHERE_EXPRESSION = {
   DATA_FILTERS: 10,
   KEYWORD_FILTERS: 1,
 };
