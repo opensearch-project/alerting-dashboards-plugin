@@ -17,9 +17,7 @@ exports[`EmptyFeaturesMessage renders no feature 1`] = `
       >
         <div
           class="euiText euiText--medium"
-        >
-          No features have been added to this anomaly detector. A feature is a metric that is used for anomaly detection. A detector can discover anomalies across one or more features.
-        </div>
+        />
       </div>
     </span>
     <div
@@ -31,23 +29,12 @@ exports[`EmptyFeaturesMessage renders no feature 1`] = `
       <div
         class="euiFlexItem euiFlexItem--flexGrowZero"
       >
-        <a
-          class="euiButton euiButton--primary"
-          data-test-subj="createButton"
-          href="anomaly-detection-dashboards#/detectors/tempId/features"
-          rel="noopener noreferrer"
-          target="_blank"
+        <div
+          class="euiText euiText--medium"
+          data-test-subj="callOut"
         >
-          <span
-            class="euiButtonContent euiButton__content"
-          >
-            <span
-              class="euiButton__text"
-            >
-              Add Feature
-            </span>
-          </span>
-        </a>
+          ''
+        </div>
       </div>
     </div>
   </div>
