@@ -63,7 +63,7 @@ export const FORMIK_INITIAL_TRIGGER_VALUES = {
     anomalyConfidenceThresholdValue: 0.7,
     anomalyConfidenceThresholdEnum: 'ABOVE',
   },
-  filters: [], // array of FORMIK_INITIAL_WHERE_EXPRESSION_VALUES with default 'operator' of 'include'
+  filters: [], // array of FORMIK_INITIAL_WHERE_EXPRESSION_VALUES with default 'operator' of 'includes'
   actions: undefined,
 };
 

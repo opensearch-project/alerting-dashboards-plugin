@@ -304,7 +304,7 @@ export function formikToCompositeAggregation(values) {
 
 // For aggregations of query-level monitor
 export function formikToAggregation(values) {
-  const { aggregations, filters, groupBy } = values;
+  const { aggregations, groupBy } = values;
 
   let aggs = {};
   aggregations.map((aggItem) => {

@@ -9,14 +9,12 @@ import { connect, FieldArray } from 'formik';
 import { EuiButtonEmpty, EuiText, EuiSpacer } from '@elastic/eui';
 import _ from 'lodash';
 import { Expressions } from './utils/constants';
-import { isNullOperator } from './utils/whereHelpers';
 import {
   FILTERS_TOOLTIP_TEXT,
   FORMIK_INITIAL_WHERE_EXPRESSION_VALUES,
   FORMIK_INITIAL_VALUES,
 } from '../../../containers/CreateMonitor/utils/constants';
 import { TRIGGER_OPERATORS_MAP } from '../../../../CreateTrigger/containers/DefineBucketLevelTrigger/DefineBucketLevelTrigger';
-import { FORMIK_INITIAL_TRIGGER_VALUES } from '../../../../CreateTrigger/containers/CreateTrigger/utils/constants';
 import { inputLimitText } from '../../../../../utils/helpers';
 import IconToolTip from '../../../../../components/IconToolTip';
 import WherePopover from './WherePopover';
