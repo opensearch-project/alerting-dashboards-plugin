@@ -78,7 +78,7 @@ export default function getOverviewStats(
               href={`${OPENSEARCH_DASHBOARDS_AD_PLUGIN}#/detectors/${detectorId}`}
               target="_blank"
             >
-              {detector.name} <EuiIcon size="s" type="popout" />
+              {detector.name}
             </EuiLink>
           ),
         },
