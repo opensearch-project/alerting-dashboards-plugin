@@ -35,8 +35,9 @@ import {
   TRIGGER_TYPE,
   FORMIK_INITIAL_TRIGGER_VALUES,
 } from '../../../CreateTrigger/containers/CreateTrigger/utils/constants';
-import MinimalAccordion from '../../../../components/MinimalAccordion';
+import { FORMIK_INITIAL_AGG_VALUES } from '../CreateMonitor/utils/constants';
 import { unitToLabel } from '../../../CreateMonitor/components/Schedule/Frequencies/Interval';
+import EnhancedAccordion from '../../../../components/FeatureAnywhereContextMenu/EnhancedAccordion';
 import './styles.scss';
 
 export default class CreateMonitor extends Component {
@@ -45,12 +46,13 @@ export default class CreateMonitor extends Component {
     monitorToEdit: null,
     detectorId: null,
     updateMonitor: () => {},
-    isMinimal: false,
+    flyoutMode: null,
     defaultName: '',
     defaultIndex: undefined,
     isDefaultTriggerEnabled: false,
     defaultTimeField: '',
     isDarkMode: false,
+    isDefaultMetricsEnabled: false,
   };
 
   constructor(props) {
@@ -81,6 +83,9 @@ export default class CreateMonitor extends Component {
       response: null,
       performanceResponse: null,
       accordionsOpen: {},
+      Section: props.flyoutMode
+        ? (props) => <EnhancedAccordion {...props} />
+        : ({ children }) => <>{children}</>,
     };
 
     if (this.props.edit && this.props.monitorToEdit) {
@@ -100,6 +105,11 @@ export default class CreateMonitor extends Component {
       const values = _.cloneDeep(FORMIK_INITIAL_TRIGGER_VALUES);
       values.name = 'Trigger 1';
       initialValues.triggerDefinitions = [values];
+    }
+
+    // Add default metrics
+    if (props.isDefaultMetricsEnabled) {
+      initialValues.aggregations = [FORMIK_INITIAL_AGG_VALUES];
     }
 
     _.set(this.state, 'initialValues', initialValues);
@@ -311,15 +321,12 @@ export default class CreateMonitor extends Component {
       notifications,
       isDarkMode,
       notificationService,
-      isMinimal,
+      flyoutMode,
     } = this.props;
-    const { initialValues, plugins, accordionsOpen } = this.state;
-    const Section = isMinimal
-      ? (props) => <MinimalAccordion {...props} />
-      : ({ children }) => <>{children}</>;
+    const { initialValues, plugins, accordionsOpen, Section } = this.state;
 
     return (
-      <div style={isMinimal ? {} : { padding: '25px 50px' }} className="create-monitor">
+      <div style={flyoutMode ? {} : { padding: '25px 50px' }} className="create-monitor">
         <Formik
           initialValues={initialValues}
           onSubmit={this.onSubmit}
@@ -328,7 +335,7 @@ export default class CreateMonitor extends Component {
         >
           {({ values, errors, handleSubmit, isSubmitting, isValid, touched }) => (
             <Fragment>
-              {!isMinimal && (
+              {!flyoutMode && (
                 <>
                   <EuiTitle size="l">
                     <h1>{edit ? 'Edit' : 'Create'} monitor</h1>
@@ -340,23 +347,20 @@ export default class CreateMonitor extends Component {
                 {...{
                   id: 'monitorDetails',
                   isOpen: accordionsOpen.monitorDetails,
-                  onToggle: this.onAccordionToggle,
+                  onToggle: () => this.onAccordionToggle('monitorDetails'),
                   title: values.name,
-                  titleAdditional: null,
-                  isFirst: true,
+                  subTitle: flyoutMode && values.frequency === 'interval' && (
+                    <>
+                      <EuiText size="m" className="create-monitor__frequency">
+                        <p>
+                          Runs every {values.period.interval}{' '}
+                          <span>{unitToLabel[values.period.unit]}</span>
+                        </p>
+                      </EuiText>
+                    </>
+                  ),
                 }}
               >
-                {isMinimal && values.frequency === 'interval' && (
-                  <>
-                    <EuiText size="m" className="create-monitor__frequency">
-                      <p>
-                        Runs every {values.period.interval}{' '}
-                        <span>{unitToLabel[values.period.unit]}</span>
-                      </p>
-                    </EuiText>
-                    <EuiSpacer size="m" />
-                  </>
-                )}
                 <MonitorDetails
                   values={values}
                   errors={errors}
@@ -366,10 +370,10 @@ export default class CreateMonitor extends Component {
                   plugins={plugins}
                   isAd={values.searchType === SEARCH_TYPE.AD}
                   detectorId={this.props.detectorId}
-                  isMinimal={isMinimal}
+                  flyoutMode={flyoutMode}
                 />
               </Section>
-              {!isMinimal && <EuiSpacer />}
+              <EuiSpacer size={flyoutMode ? 'm' : 'l'} />
               {values.searchType !== SEARCH_TYPE.AD && (
                 <div>
                   <Section
@@ -377,6 +381,7 @@ export default class CreateMonitor extends Component {
                       id: 'advancedData',
                       isOpen: accordionsOpen.advancedData,
                       onToggle: this.onAccordionToggle,
+                      onToggle: () => this.onAccordionToggle('advancedData'),
                       title: 'Advanced data source configuration',
                     }}
                   >
@@ -389,13 +394,13 @@ export default class CreateMonitor extends Component {
                       detectorId={this.props.detectorId}
                       notifications={notifications}
                       isDarkMode={isDarkMode}
-                      isMinimal={isMinimal}
+                      flyoutMode={flyoutMode}
                     />
                   </Section>
-                  {!isMinimal && <EuiSpacer />}
+                  {!flyoutMode && <EuiSpacer />}
                 </div>
               )}
-              {isMinimal && (
+              {flyoutMode && (
                 <>
                   <EuiSpacer size="xl" />
                   <EuiTitle size="s">
@@ -418,11 +423,11 @@ export default class CreateMonitor extends Component {
                     notifications={notifications}
                     notificationService={notificationService}
                     plugins={plugins}
-                    isMinimal={isMinimal}
+                    flyoutMode={flyoutMode}
                   />
                 )}
               </FieldArray>
-              {!isMinimal && (
+              {!flyoutMode && (
                 <>
                   <EuiSpacer />
                   <EuiFlexGroup alignItems="center" justifyContent="flexEnd">

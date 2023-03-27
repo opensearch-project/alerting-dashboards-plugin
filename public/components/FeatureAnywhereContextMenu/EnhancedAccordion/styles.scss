@@ -1,0 +1,33 @@
+.enhanced-accordion {
+  &__container-one {
+    display: grid;
+  }
+
+  &__container-two {
+    display: flex;
+    flex-direction: column;
+  }
+
+  &__content-inner {
+    flex-basis: 0;
+    overflow: hidden;
+    transition: .3s;
+
+    &--open {
+      flex: 1;
+    }
+  }
+
+  &__title-panel {
+    padding: 12px 16px;
+  }
+
+  &__arrow {
+    transition: rotate .3s;
+    rotate: 0deg;
+
+    &--open {
+      rotate: 90deg;
+    }
+  }
+}

@@ -26,15 +26,14 @@ function AddAlertingMonitor({
   closeFlyout,
   core,
   services,
-  mode,
-  setMode,
+  flyoutMode,
+  setFlyoutMode,
   monitors,
   selectedMonitorId,
   setSelectedMonitorId,
   index,
 }) {
   const onCreate = () => {
-    console.log(`Current mode: ${mode}`);
     const event = new Event('createMonitor');
     document.dispatchEvent(event);
     closeFlyout();
@@ -77,17 +76,17 @@ function AddAlertingMonitor({
                   ...option,
                   key: option.id,
                   name: option.id,
-                  checked: option.value === mode,
-                  onChange: () => setMode(option.value),
+                  checked: option.value === flyoutMode,
+                  onChange: () => setFlyoutMode(option.value),
                 }}
               />
             ))}
           </EuiFormFieldset>
           <EuiSpacer size="m" />
-          {mode === 'create' && (
-            <CreateNew {...{ embeddable, closeFlyout, core, services, index }} />
+          {flyoutMode === 'create' && (
+            <CreateNew {...{ embeddable, closeFlyout, core, services, index, flyoutMode }} />
           )}
-          {mode === 'existing' && (
+          {flyoutMode === 'existing' && (
             <AssociateExisting
               {...{
                 embeddable,
@@ -109,7 +108,7 @@ function AddAlertingMonitor({
           </EuiFlexItem>
           <EuiFlexItem grow={false}>
             <EuiButton onClick={onCreate} fill>
-              {mode === 'existing' ? 'Associate' : 'Create'} monitor
+              {flyoutMode === 'existing' ? 'Associate' : 'Create'} monitor
             </EuiButton>
           </EuiFlexItem>
         </EuiFlexGroup>

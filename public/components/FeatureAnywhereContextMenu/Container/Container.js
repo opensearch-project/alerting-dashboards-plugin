@@ -2,14 +2,12 @@ import React, { useState } from 'react';
 import AssociatedMonitors from '../AssociatedMonitors';
 import AddAlertingMonitor from '../AddAlertingMonitor';
 import { useMonitors } from '../../../utils/contextMenu/monitors';
-import { useIndex } from '../../../utils/contextMenu/indexes';
 import './styles.scss';
 
-const Container = ({ startingFlyout, ...props }) => {
+const Container = ({ defaultFlyoutMode, ...props }) => {
   const { embeddable } = props;
-  console.log({ embeddable });
-  const index = useIndex(embeddable);
-  const [mode, setMode] = useState(startingFlyout);
+  const index = [{ label: embeddable?.vis?.params?.index_pattern }];
+  const [flyoutMode, setFlyoutMode] = useState(defaultFlyoutMode);
   const [selectedMonitorId, setSelectedMonitorId] = useState();
   const monitors = useMonitors();
 
@@ -17,7 +15,8 @@ const Container = ({ startingFlyout, ...props }) => {
     associated: AssociatedMonitors,
     create: AddAlertingMonitor,
     existing: AddAlertingMonitor,
-  }[mode];
+    adMonitor: AddAlertingMonitor,
+  }[flyoutMode];
 
   return (
     <Flyout
@@ -26,8 +25,8 @@ const Container = ({ startingFlyout, ...props }) => {
         monitors,
         selectedMonitorId,
         setSelectedMonitorId,
-        setMode,
-        mode,
+        flyoutMode,
+        setFlyoutMode,
         index,
       }}
     />

@@ -211,7 +211,7 @@ class ConfigureTriggers extends React.Component {
       httpClient,
       notificationService,
       plugins,
-      isMinimal,
+      flyoutMode,
     } = this.props;
 
     const { executeResponse } = this.state;
@@ -233,7 +233,7 @@ class ConfigureTriggers extends React.Component {
         notifications={notifications}
         notificationService={notificationService}
         plugins={plugins}
-        isMinimal={isMinimal}
+        flyoutMode={flyoutMode}
       />
     );
   };
@@ -343,11 +343,11 @@ class ConfigureTriggers extends React.Component {
   };
 
   render() {
-    const { triggerArrayHelpers, triggerValues, isMinimal } = this.props;
+    const { triggerArrayHelpers, triggerValues, flyoutMode } = this.props;
     const { addTriggerButton } = this.state;
     const numOfTriggers = _.get(triggerValues, 'triggerDefinitions', []).length;
     const displayAddTriggerButton = numOfTriggers > 0;
-    const Container = isMinimal
+    const Container = flyoutMode
       ? ({ children }) => <>{children}</>
       : ({ children }) => (
           <ContentPanel

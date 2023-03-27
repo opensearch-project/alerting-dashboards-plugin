@@ -9,7 +9,7 @@ import CreateMonitor from '../../../../pages/CreateMonitor';
 import { EmbeddablePanel } from '../../../../../../../src/plugins/embeddable/public';
 import './styles.scss';
 
-function CreateNew({ embeddable, closeFlyout, core, services, index }) {
+function CreateNew({ embeddable, closeFlyout, core, services, index, flyoutMode }) {
   const [isShowVis, setIsShowVis] = useState(false);
   const title = embeddable.getTitle();
   const history = {
@@ -30,11 +30,12 @@ function CreateNew({ embeddable, closeFlyout, core, services, index }) {
     monitorToEdit: false,
     updateMonitor: () => null,
     staticContext: undefined,
-    isMinimal: true,
+    flyoutMode,
     defaultName: `${title} monitor 1`,
     defaultIndex: index,
     defaultTimeField: embeddable.vis.params.time_field,
     isDefaultTriggerEnabled: true,
+    isDefaultMetricsEnabled: true,
   };
 
   return (

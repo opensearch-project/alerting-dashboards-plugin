@@ -50,12 +50,12 @@ const MonitorDetails = ({
   isAd,
   plugins,
   detectorId,
-  isMinimal,
+  flyoutMode,
 }) => {
   const anomalyDetectorContent = isAd && renderAnomalyDetector(httpClient, values, detectorId);
   const displayMonitorDefinitionCards = values.monitor_type !== MONITOR_TYPE.CLUSTER_METRICS;
   const Container = ({ children }) =>
-    isMinimal ? (
+    flyoutMode ? (
       <>{children}</>
     ) : (
       <ContentPanel
@@ -75,7 +75,7 @@ const MonitorDetails = ({
 
   return (
     <Container>
-      {!isMinimal && <EuiSpacer size="s" />}
+      {!flyoutMode && <EuiSpacer size="s" />}
       <FormikFieldText
         name="name"
         formRow
@@ -97,9 +97,9 @@ const MonitorDetails = ({
         }}
       />
       <EuiSpacer size="m" />
-      {!isMinimal && <MonitorType values={values} />}
+      {!flyoutMode && <MonitorType values={values} />}
 
-      {!isMinimal && displayMonitorDefinitionCards ? (
+      {!flyoutMode && displayMonitorDefinitionCards ? (
         <div>
           <EuiSpacer size="m" />
           <MonitorDefinitionCard values={values} plugins={plugins} />
@@ -113,8 +113,8 @@ const MonitorDetails = ({
         </div>
       ) : null}
 
-      {!isMinimal && <EuiSpacer size="l" />}
-      <Schedule isAd={isAd} isMinimal={isMinimal} />
+      {!flyoutMode && <EuiSpacer size="l" />}
+      <Schedule isAd={isAd} flyoutMode={flyoutMode} />
     </Container>
   );
 };

@@ -12,7 +12,7 @@ export const useMonitors = () => {
   useEffect(() => {
     const getMonitors = async () => {
       await new Promise((resolve) => {
-        setTimeout(resolve, 4000);
+        setTimeout(resolve, 1000);
       });
 
       // Fake monitors

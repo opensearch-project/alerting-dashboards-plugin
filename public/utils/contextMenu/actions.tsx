@@ -12,6 +12,25 @@ import { Action } from '../../../../../src/plugins/ui_actions/public';
 import DocumentationTitle from '../../components/FeatureAnywhereContextMenu/DocumentationTitle';
 import Container from '../../components/FeatureAnywhereContextMenu/Container';
 
+export const openContainerInFlyout = async ({ core, defaultFlyoutMode, embeddable }) => {
+  const services = await core.getStartServices();
+  const openFlyout = services[0].overlays.openFlyout;
+  const overlay = openFlyout(
+    toMountPoint(
+      <Container
+        {...{
+          defaultFlyoutMode,
+          embeddable,
+          closeFlyout: () => overlay.close(),
+          core,
+          services,
+        }}
+      />
+    ),
+    { size: 'm', className: 'context-menu__flyout' }
+  );
+};
+
 // This is used to create all actions in the same context menu
 const grouping: Action['grouping'] = [
   {
@@ -21,30 +40,8 @@ const grouping: Action['grouping'] = [
   },
 ];
 
-export const getActions = ({ core, plugins }) => {
-  const getOnClick =
-    (startingFlyout) =>
-    async ({ embeddable }) => {
-      const services = await core.getStartServices();
-      const openFlyout = services[0].overlays.openFlyout;
-      const overlay = openFlyout(
-        toMountPoint(
-          <Container
-            {...{
-              startingFlyout,
-              embeddable,
-              plugins,
-              closeFlyout: () => overlay.close(),
-              core,
-              services,
-            }}
-          />
-        ),
-        { size: 'm', className: 'context-menu__flyout' }
-      );
-    };
-
-  return [
+export const getActions = ({ core }) =>
+  [
     {
       grouping,
       id: 'addAlertingMonitor',
@@ -53,7 +50,8 @@ export const getActions = ({ core, plugins }) => {
       }),
       icon: 'plusInCircle' as EuiIconType,
       order: 100,
-      onClick: getOnClick('create'),
+      onClick: ({ embeddable }) =>
+        openContainerInFlyout({ core, embeddable, defaultFlyoutMode: 'create' }),
     },
     {
       grouping,
@@ -63,7 +61,8 @@ export const getActions = ({ core, plugins }) => {
       }),
       icon: 'gear' as EuiIconType,
       order: 99,
-      onClick: getOnClick('associated'),
+      onClick: ({ embeddable }) =>
+        openContainerInFlyout({ core, embeddable, defaultFlyoutMode: 'associated' }),
     },
     {
       id: 'documentation',
@@ -78,4 +77,3 @@ export const getActions = ({ core, plugins }) => {
       },
     },
   ].map((options) => createAlertingAction({ ...options, grouping }));
-};

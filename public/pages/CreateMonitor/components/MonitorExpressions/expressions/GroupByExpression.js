@@ -8,6 +8,7 @@ import { connect } from 'formik';
 import { EuiText, EuiButtonEmpty, EuiSpacer } from '@elastic/eui';
 import { getIndexFields } from './utils/dataTypes';
 import { getGroupByExpressionAllowedTypes } from './utils/helpers';
+import { MAX_NUM_QUERY_LEVEL_GROUP_BYS, MAX_NUM_BUCKET_LEVEL_GROUP_BYS } from './utils/constants';
 import GroupByItem from './GroupByItem';
 import { GROUP_BY_ERROR, QUERY_TYPE_GROUP_BY_ERROR } from './utils/constants';
 import { MONITOR_TYPE } from '../../../../../utils/constants';
@@ -18,13 +19,11 @@ import {
 } from '../../../containers/CreateMonitor/utils/constants';
 import IconToolTip from '../../../../../components/IconToolTip';
 
-export const MAX_NUM_QUERY_LEVEL_GROUP_BYS = 1;
-export const MAX_NUM_BUCKET_LEVEL_GROUP_BYS = 2;
-
 class GroupByExpression extends Component {
   renderFieldItems = (arrayHelpers, fieldOptions, expressionWidth) => {
     const {
       formik: { values },
+      flyoutMode,
     } = this.props;
     return values.groupBy.map((groupByItem, index) => {
       return (
@@ -36,6 +35,7 @@ class GroupByExpression extends Component {
             expressionWidth={expressionWidth}
             groupByItem={groupByItem}
             index={index}
+            flyoutMode={flyoutMode}
           />
         </span>
       );
@@ -48,6 +48,7 @@ class GroupByExpression extends Component {
       errors,
       arrayHelpers,
       dataTypes,
+      flyoutMode,
     } = this.props;
     const { monitor_type: monitorType, groupBy } = values;
 
@@ -88,21 +89,25 @@ class GroupByExpression extends Component {
 
     return (
       <div id="groupBy">
-        <EuiText size="xs">
-          <strong>Group by </strong>
-          {!isBucketLevelMonitor ? <i>- optional </i> : null}
-          <IconToolTip content={GROUP_BY_TOOLTIP_TEXT} iconType="questionInCircle" />
-        </EuiText>
-        <EuiSpacer size={'s'} />
+        {!flyoutMode && (
+          <>
+            <EuiText size="xs">
+              <strong>Group by </strong>
+              {!isBucketLevelMonitor ? <i>- optional </i> : null}
+              <IconToolTip content={GROUP_BY_TOOLTIP_TEXT} iconType="questionInCircle" />
+            </EuiText>
+            <EuiSpacer size={'s'} />
 
-        {values.groupBy.length === 0 && (
-          <div>
-            <EuiText size={'xs'}>No group bys defined.</EuiText>
-          </div>
+            {values.groupBy.length === 0 && (
+              <div>
+                <EuiText size={'xs'}>No group bys defined.</EuiText>
+              </div>
+            )}
+          </>
         )}
 
         {this.renderFieldItems(arrayHelpers, fieldOptions, expressionWidth)}
-        <EuiSpacer size="xs" />
+        {!flyoutMode && <EuiSpacer size="xs" />}
 
         {showAddButtonFlag && (
           <EuiButtonEmpty
@@ -111,7 +116,7 @@ class GroupByExpression extends Component {
               arrayHelpers.push('');
             }}
             data-test-subj="addGroupByButton"
-            style={{ paddingTop: '5px' }}
+            style={flyoutMode ? {} : { paddingTop: '5px' }}
           >
             + Add group by
           </EuiButtonEmpty>
@@ -121,7 +126,7 @@ class GroupByExpression extends Component {
           {errors.groupBy}
         </EuiText>
 
-        {limitText}
+        {!flyoutMode && limitText}
       </div>
     );
   }

@@ -16,7 +16,7 @@ import {
 import './styles.scss';
 import { useColumns } from './helpers';
 
-const AssociatedMonitors = ({ embeddable, closeFlyout, setMode, monitors }) => {
+const AssociatedMonitors = ({ embeddable, closeFlyout, setFlyoutMode, monitors }) => {
   const title = embeddable.getTitle();
   const onUnlink = useCallback(
     (item) => {
@@ -33,14 +33,21 @@ const AssociatedMonitors = ({ embeddable, closeFlyout, setMode, monitors }) => {
     [closeFlyout]
   );
   const columns = useColumns({ onUnlink, onEdit });
-  const empty = (
+  const emptyMsg = (
     <EuiEmptyPrompt
       title={<h3>No monitors to display</h3>}
       titleSize="s"
       body={`There are no alerting monitors associated with ${title} visualization.`}
     />
   );
-  const loading = <EuiEmptyPrompt body={<EuiLoadingSpinner size="l" />} />;
+  const noResultsMsg = (
+    <EuiEmptyPrompt
+      title={<h3>No monitors to display</h3>}
+      titleSize="s"
+      body="There are no alerting monitors that match the search result."
+    />
+  );
+  const loadingMsg = <EuiEmptyPrompt body={<EuiLoadingSpinner size="l" />} />;
   const tableProps = {
     items: monitors || [],
     columns,
@@ -54,7 +61,8 @@ const AssociatedMonitors = ({ embeddable, closeFlyout, setMode, monitors }) => {
     hasActions: true,
     pagination: true,
     sorting: true,
-    message: monitors ? empty : loading,
+    message: monitors ? (monitors.length ? noResultsMsg : emptyMsg) : loadingMsg,
+    loading: !monitors,
   };
 
   return (
@@ -79,7 +87,7 @@ const AssociatedMonitors = ({ embeddable, closeFlyout, setMode, monitors }) => {
             </EuiText>
           </EuiFlexItem>
           <EuiFlexItem grow={false}>
-            <EuiButton iconType="link" fill onClick={() => setMode('existing')}>
+            <EuiButton iconType="link" fill onClick={() => setFlyoutMode('existing')}>
               Associate a monitor
             </EuiButton>
           </EuiFlexItem>

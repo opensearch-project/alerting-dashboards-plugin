@@ -8,9 +8,9 @@ import { EuiSpacer, EuiText } from '@elastic/eui';
 import { Frequency, FrequencyPicker } from './Frequencies';
 import Interval from './Frequencies/Interval';
 
-const Schedule = ({ isAd, isMinimal }) => (
+const Schedule = ({ isAd, flyoutMode }) => (
   <Fragment>
-    {!isMinimal && (
+    {!flyoutMode && (
       <EuiText style={{ marginBottom: '0px' }}>
         <h4>Schedule</h4>
       </EuiText>
@@ -26,14 +26,14 @@ const Schedule = ({ isAd, isMinimal }) => (
       </EuiText>
     ) : null}
 
-    {!isMinimal && <EuiSpacer size="m" />}
+    {!flyoutMode && <EuiSpacer size="m" />}
     <div style={{ maxWidth: '400px' }}>
       {isAd ? (
         <Interval />
       ) : (
         <div>
           <Frequency />
-          <EuiSpacer size={isMinimal ? 'm' : 's'} />
+          <EuiSpacer size={flyoutMode ? 'm' : 's'} />
           <FrequencyPicker />
         </div>
       )}

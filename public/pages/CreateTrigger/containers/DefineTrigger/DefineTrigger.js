@@ -67,11 +67,11 @@ const propTypes = {
   triggers: PropTypes.arrayOf(PropTypes.object).isRequired,
   triggerValues: PropTypes.object.isRequired,
   isDarkMode: PropTypes.bool.isRequired,
-  isMinimal: PropTypes.bool,
+  flyoutMode: PropTypes.string,
 };
 
 const defaultProps = {
-  isMinimal: false,
+  flyoutMode: null,
 };
 
 class DefineTrigger extends Component {
@@ -151,7 +151,7 @@ class DefineTrigger extends Component {
       notifications,
       notificationService,
       plugins,
-      isMinimal,
+      flyoutMode,
     } = this.props;
     const executeResponse = _.get(this.state, 'executeResponse', this.props.executeResponse);
     const fieldPath = triggerIndex !== undefined ? `triggerDefinitions[${triggerIndex}].` : '';
@@ -186,7 +186,7 @@ class DefineTrigger extends Component {
       );
     }
     if (isGraph) {
-      triggerContent = isMinimal ? null : (
+      triggerContent = flyoutMode ? null : (
         <TriggerGraph
           monitorValues={monitorValues}
           response={response}

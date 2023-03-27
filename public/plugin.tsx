@@ -7,7 +7,7 @@ import { PLUGIN_NAME } from '../utils/constants';
 import { Plugin } from '../../../src/core/public';
 import { ACTION_ALERTING } from './actions/alerting_dashboard_action';
 import { CONTEXT_MENU_TRIGGER } from '../../../src/plugins/embeddable/public';
-import { getActions } from './utils/contextMenu/getActions';
+import { getActions, openContainerInFlyout } from './utils/contextMenu/actions';
 
 declare module '../../../src/plugins/ui_actions/public' {
   export interface ActionContextMapping {
@@ -35,12 +35,25 @@ export class AlertingPlugin implements Plugin {
     });
 
     // Create context menu actions. Pass core, to access service for flyouts.
-    const actions = getActions({ core, plugins });
+    const actions = getActions({ core });
 
     // Add actions to uiActions
     actions.forEach((action) => {
       plugins.uiActions.addTriggerAction(CONTEXT_MENU_TRIGGER, action);
     });
+
+    // Listen for external actions...can be used by other plugins like this:
+    // const event = new CustomEvent('alertingOpenFlyout', {
+    //   detail: { defaultFlyoutMode: 'adMonitor', embeddable: someEmbeddable },
+    // });
+    // document.dispatchEvent(event);
+    document.addEventListener('alertingOpenFlyout', ((event: CustomEvent) => {
+      openContainerInFlyout({
+        core,
+        defaultFlyoutMode: event.detail.defaultFlyoutMode,
+        embeddable: event.detail.embeddable,
+      });
+    }) as EventListener);
   }
 
   public start() {}
