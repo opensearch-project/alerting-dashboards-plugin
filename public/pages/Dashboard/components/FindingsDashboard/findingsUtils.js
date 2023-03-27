@@ -11,11 +11,8 @@ import FindingsPopover from './FindingsPopover';
 import queryString from 'query-string';
 import { backendErrorNotification } from '../../../../utils/helpers';
 import { MAX_FINDINGS_COUNT } from '../../containers/FindingsDashboard';
-
-export const QUERY_OPERATORS = [
-  { text: 'is', value: '==' },
-  { text: 'is not', value: '!=' },
-];
+import { OPERATORS_MAP } from '../../../CreateMonitor/components/MonitorExpressions/expressions/utils/constants';
+import { validDocLevelGraphQueries } from '../../../CreateMonitor/components/DocumentLevelMonitorQueries/utils/helpers';
 
 export const TABLE_TAB_IDS = {
   ALERTS: { id: 'alerts', name: 'Alerts' },
@@ -144,7 +141,7 @@ export const parseFindingsForPreview = (previewResponse = {}, index = '', querie
             docIdsToQueries[id].push({ name: queryName, query: query.query });
           } else {
             const query = _.find(queries, { queryName: queryName });
-            const operator = _.find(QUERY_OPERATORS, { value: query.operator }).text;
+            const operator = OPERATORS_MAP[_.toUpper(query.operator)].text;
             const querySource = `${query.field} ${operator} ${query.query}`;
             docIdsToQueries[id] = [{ name: queryName, query: querySource }];
           }
@@ -162,19 +159,6 @@ export const parseFindingsForPreview = (previewResponse = {}, index = '', querie
     });
   }
   return findings;
-};
-
-export const validDocLevelGraphQueries = (queries = []) => {
-  // The 'queryName', 'field', 'operator', and 'query' fields are required to execute a doc level query.
-  // If any of those fields are undefined for any queries, the monitor cannot be executed.
-  const incompleteQueries = queries.find(
-    (query) =>
-      _.isEmpty(query.queryName) ||
-      _.isEmpty(query.field) ||
-      _.isEmpty(query.operator) ||
-      _.isEmpty(query.query)
-  );
-  return !_.isEmpty(queries) && _.isEmpty(incompleteQueries);
 };
 
 export async function getFindings({

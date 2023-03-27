@@ -5,7 +5,7 @@
 
 import { OPERATORS_MAP } from '../../../components/MonitorExpressions/expressions/utils/constants';
 import { MONITOR_TYPE } from '../../../../../utils/constants';
-import { QUERY_OPERATORS } from '../../../../Dashboard/components/FindingsDashboard/findingsUtils';
+import { SUPPORTED_DOC_LEVEL_QUERY_OPERATORS } from '../../../components/DocumentLevelMonitorQueries/utils/constants';
 
 export const BUCKET_COUNT = 5;
 
@@ -49,7 +49,7 @@ export const FORMIK_INITIAL_VALUES = {
   bucketUnitOfTime: 'h', // m = minute, h = hour, d = day
   where: {
     fieldName: [],
-    operator: OPERATORS_MAP.IS,
+    operator: OPERATORS_MAP.IS.value,
     fieldValue: '',
     fieldRangeStart: 0,
     fieldRangeEnd: 0,
@@ -66,7 +66,7 @@ export const FORMIK_INITIAL_DOCUMENT_LEVEL_QUERY_VALUES = {
   id: undefined,
   queryName: '',
   field: '',
-  operator: QUERY_OPERATORS[0].value,
+  operator: SUPPORTED_DOC_LEVEL_QUERY_OPERATORS[0],
   query: '',
   tags: [],
 };

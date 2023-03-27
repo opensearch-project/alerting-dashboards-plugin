@@ -29,7 +29,7 @@ import { FORMIK_INITIAL_VALUES } from '../CreateMonitor/utils/constants';
 import { API_TYPES } from '../../components/ClusterMetricsMonitor/utils/clusterMetricsMonitorConstants';
 import ConfigureDocumentLevelQueries from '../../components/DocumentLevelMonitorQueries/ConfigureDocumentLevelQueries';
 import FindingsDashboard from '../../../Dashboard/containers/FindingsDashboard';
-import { validDocLevelGraphQueries } from '../../../Dashboard/components/FindingsDashboard/findingsUtils';
+import { validDocLevelGraphQueries } from '../../components/DocumentLevelMonitorQueries/utils/helpers';
 
 function renderEmptyMessage(message) {
   return (

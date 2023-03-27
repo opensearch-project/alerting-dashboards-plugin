@@ -13,6 +13,10 @@ import {
   getApiPath,
   getApiType,
 } from '../../../components/ClusterMetricsMonitor/utils/clusterMetricsMonitorHelpers';
+import {
+  DOC_LEVEL_INPUT_FIELD,
+  DOC_LEVEL_QUERY_MAP,
+} from '../../../components/DocumentLevelMonitorQueries/utils/constants';
 
 export function formikToMonitor(values) {
   const uiSchedule = formikToUiSchedule(values);
@@ -22,7 +26,7 @@ export function formikToMonitor(values) {
     switch (values.monitor_type) {
       case MONITOR_TYPE.DOC_LEVEL:
         return {
-          doc_level_input: formikToDocLevelQueriesUiMetadata(values),
+          [DOC_LEVEL_INPUT_FIELD]: formikToDocLevelQueriesUiMetadata(values),
           search: { searchType: values.searchType },
         };
       default:
@@ -228,13 +232,9 @@ export function formikToDocLevelInput(values) {
     case SEARCH_TYPE.GRAPH:
       description = values.description;
       queries = queries.map((query) => {
-        const formikToQuery =
-          query.operator === '=='
-            ? `${query.field}:\"${query.query}\"`
-            : `NOT (${query.field}:\"${query.query}\")`;
+        const formikToQuery = DOC_LEVEL_QUERY_MAP[query.operator].query(query);
         return {
-          // id: query.id, // TODO FIXME: Refactor to this assignment logic once backend generates its own ID value
-          id: query.queryName,
+          id: query.id,
           name: query.queryName,
           query: formikToQuery,
           tags: query.tags,
@@ -261,7 +261,7 @@ export function formikToDocLevelInput(values) {
   }
 
   return {
-    doc_level_input: {
+    [DOC_LEVEL_INPUT_FIELD]: {
       description: description,
       indices: indices,
       queries: queries,
