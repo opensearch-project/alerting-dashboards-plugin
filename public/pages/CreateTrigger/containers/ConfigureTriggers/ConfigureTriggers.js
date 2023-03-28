@@ -4,7 +4,7 @@
  */
 
 import React from 'react';
-import { EuiHorizontalRule, EuiSpacer } from '@elastic/eui';
+import { EuiHorizontalRule, EuiSpacer, EuiBadge, EuiFlexGroup, EuiFlexItem } from '@elastic/eui';
 import ContentPanel from '../../../../components/ContentPanel';
 import _ from 'lodash';
 import DefineBucketLevelTrigger from '../DefineBucketLevelTrigger';
@@ -26,6 +26,7 @@ import {
 } from '../../../CreateMonitor/components/ClusterMetricsMonitor/utils/clusterMetricsMonitorHelpers';
 import { FORMIK_INITIAL_VALUES } from '../../../CreateMonitor/containers/CreateMonitor/utils/constants';
 import { getDefaultScript } from '../../utils/helper';
+import EnhancedAccordion from '../../../../components/FeatureAnywhereContextMenu/EnhancedAccordion';
 
 class ConfigureTriggers extends React.Component {
   constructor(props) {
@@ -40,6 +41,11 @@ class ConfigureTriggers extends React.Component {
       triggerDeleted: false,
       addTriggerButton: this.prepareAddTriggerButton(),
       triggerEmptyPrompt: this.prepareTriggerEmptyPrompt(),
+      accordionsOpen: {},
+      TriggerContainer: props.flyoutMode
+        ? (props) => <EnhancedAccordion {...props} />
+        : ({ children }) => <>{children}</>,
+      ContentPanelStructure: props.flyoutMode ? ({ children }) => <>{children}</> : ContentPanel,
     };
 
     this.onQueryMappings = this.onQueryMappings.bind(this);
@@ -98,7 +104,7 @@ class ConfigureTriggers extends React.Component {
   }
 
   prepareAddTriggerButton = () => {
-    const { monitorValues, triggerArrayHelpers, triggerValues } = this.props;
+    const { monitorValues, triggerArrayHelpers, triggerValues, flyoutMode } = this.props;
     const disableAddTriggerButton =
       _.get(triggerValues, 'triggerDefinitions', []).length >= MAX_TRIGGERS;
     return (
@@ -106,6 +112,7 @@ class ConfigureTriggers extends React.Component {
         arrayHelpers={triggerArrayHelpers}
         disabled={disableAddTriggerButton}
         script={getDefaultScript(monitorValues)}
+        flyoutMode={flyoutMode}
       />
     );
   };
@@ -315,8 +322,8 @@ class ConfigureTriggers extends React.Component {
   };
 
   renderTriggers = (triggerArrayHelpers) => {
-    const { monitorValues, triggerValues } = this.props;
-    const { triggerEmptyPrompt } = this.state;
+    const { monitorValues, triggerValues, flyoutMode } = this.props;
+    const { triggerEmptyPrompt, TriggerContainer, accordionsOpen } = this.state;
     const hasTriggers = !_.isEmpty(_.get(triggerValues, 'triggerDefinitions'));
 
     const triggerContent = (arrayHelpers, index) => {
@@ -332,47 +339,70 @@ class ConfigureTriggers extends React.Component {
 
     return hasTriggers
       ? triggerValues.triggerDefinitions.map((trigger, index) => {
+          const triggerKey = `trigger${index}`;
           return (
-            <div key={index}>
-              {triggerContent(triggerArrayHelpers, index)}
-              <EuiHorizontalRule margin={'s'} />
+            <div key={triggerKey}>
+              <TriggerContainer
+                {...{
+                  id: `configure-trigger__${triggerKey}`,
+                  isOpen: accordionsOpen[triggerKey],
+                  onToggle: () => this.onAccordionToggle(triggerKey),
+                  title: (
+                    <EuiFlexGroup alignItems="center" justifyContent="flexStart" gutterSize="s">
+                      <EuiFlexItem grow={false}>
+                        {trigger.name || `Trigger ${index + 1}`}
+                      </EuiFlexItem>
+                      <EuiFlexItem grow={false}>
+                        <EuiBadge color="hollow">SEV{trigger.severity}</EuiBadge>
+                      </EuiFlexItem>
+                    </EuiFlexGroup>
+                  ),
+                }}
+              >
+                {triggerContent(triggerArrayHelpers, index)}
+              </TriggerContainer>
+              {!flyoutMode && <EuiHorizontalRule margin={'s'} />}
+              {flyoutMode && <EuiSpacer size="m" />}
             </div>
           );
         })
       : triggerEmptyPrompt;
   };
 
+  onAccordionToggle = (key) => {
+    const accordionsOpen = { ...this.state.accordionsOpen };
+    accordionsOpen[key] = !accordionsOpen[key];
+    this.setState({ accordionsOpen });
+  };
+
   render() {
     const { triggerArrayHelpers, triggerValues, flyoutMode } = this.props;
-    const { addTriggerButton } = this.state;
+    const { addTriggerButton, ContentPanelStructure } = this.state;
     const numOfTriggers = _.get(triggerValues, 'triggerDefinitions', []).length;
     const displayAddTriggerButton = numOfTriggers > 0;
-    const Container = flyoutMode
-      ? ({ children }) => <>{children}</>
-      : ({ children }) => (
-          <ContentPanel
-            title={`Triggers (${numOfTriggers})`}
-            titleSize={'s'}
-            panelStyles={{ paddingBottom: '0px', paddingLeft: '20px', paddingRight: '20px' }}
-            bodyStyles={{ paddingLeft: '0px', padding: '10px' }}
-            horizontalRuleClassName={'accordion-horizontal-rule'}
-          >
-            {children}
-          </ContentPanel>
-        );
 
     return (
-      <Container>
+      <ContentPanelStructure
+        title={`Triggers (${numOfTriggers})`}
+        titleSize={'s'}
+        panelStyles={{ paddingBottom: '0px', paddingLeft: '20px', paddingRight: '20px' }}
+        bodyStyles={{ paddingLeft: '0px', padding: '10px' }}
+        horizontalRuleClassName={'accordion-horizontal-rule'}
+      >
         {this.renderTriggers(triggerArrayHelpers)}
 
         {displayAddTriggerButton ? (
-          <div style={{ paddingBottom: '20px', paddingTop: '15px' }}>
+          <div style={flyoutMode ? {} : { paddingBottom: '20px', paddingTop: '15px' }}>
             {addTriggerButton}
-            <EuiSpacer size={'s'} />
-            {inputLimitText(numOfTriggers, MAX_TRIGGERS, 'trigger', 'triggers')}
+            {!flyoutMode && (
+              <>
+                <EuiSpacer size={'s'} />
+                {inputLimitText(numOfTriggers, MAX_TRIGGERS, 'trigger', 'triggers')}
+              </>
+            )}
           </div>
         ) : null}
-      </Container>
+      </ContentPanelStructure>
     );
   }
 }

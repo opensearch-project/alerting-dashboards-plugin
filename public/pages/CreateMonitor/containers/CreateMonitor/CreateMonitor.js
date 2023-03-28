@@ -406,6 +406,7 @@ export default class CreateMonitor extends Component {
                   <EuiTitle size="s">
                     <h3>Triggers</h3>
                   </EuiTitle>
+                  <EuiSpacer size="m" />
                 </>
               )}
               <FieldArray name={'triggerDefinitions'} validateOnChange={true}>

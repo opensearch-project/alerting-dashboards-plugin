@@ -34,7 +34,7 @@ function MinimalAccordion({ id, isOpen, onToggle, title, subTitle, children, isU
           </>
         }
         forceState={isOpen ? 'open' : 'closed'}
-        onToggle={() => onToggle(id)}
+        onToggle={onToggle}
       >
         <EuiPanel
           hasShadow={false}
