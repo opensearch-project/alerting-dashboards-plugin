@@ -42,8 +42,10 @@ function CreateNew({ embeddable, closeFlyout, core, services, index, flyoutMode 
     <div className="create-new">
       <EuiText size="xs">
         <p>
-          Create query level monitor, associated with the visualization. Learn more in the
-          documentation.{' '}
+          {flyoutMode === 'create' &&
+            'Create query level monitor, associated with the visualization. Learn more in the documentation.'}
+          {flyoutMode === 'adMonitor' &&
+            'Set up and configure alerting monitor for the anomaly detector to receive notifications on visualization when anomalies detected.'}{' '}
           <a
             href="https://opensearch.org/docs/latest/monitoring-plugins/alerting/index/"
             target="_blank"

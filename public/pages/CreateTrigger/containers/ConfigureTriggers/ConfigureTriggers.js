@@ -4,7 +4,14 @@
  */
 
 import React from 'react';
-import { EuiHorizontalRule, EuiSpacer, EuiBadge, EuiFlexGroup, EuiFlexItem } from '@elastic/eui';
+import {
+  EuiHorizontalRule,
+  EuiSpacer,
+  EuiBadge,
+  EuiFlexGroup,
+  EuiFlexItem,
+  EuiButtonIcon,
+} from '@elastic/eui';
 import ContentPanel from '../../../../components/ContentPanel';
 import _ from 'lodash';
 import DefineBucketLevelTrigger from '../DefineBucketLevelTrigger';
@@ -41,7 +48,7 @@ class ConfigureTriggers extends React.Component {
       triggerDeleted: false,
       addTriggerButton: this.prepareAddTriggerButton(),
       triggerEmptyPrompt: this.prepareTriggerEmptyPrompt(),
-      accordionsOpen: {},
+      accordionsOpen: { trigger1: true },
       TriggerContainer: props.flyoutMode
         ? (props) => <EnhancedAccordion {...props} />
         : ({ children }) => <>{children}</>,
@@ -325,6 +332,9 @@ class ConfigureTriggers extends React.Component {
     const { monitorValues, triggerValues, flyoutMode } = this.props;
     const { triggerEmptyPrompt, TriggerContainer, accordionsOpen } = this.state;
     const hasTriggers = !_.isEmpty(_.get(triggerValues, 'triggerDefinitions'));
+    const onDelete = (index) => {
+      console.log('delete', index);
+    };
 
     const triggerContent = (arrayHelpers, index) => {
       switch (monitorValues.monitor_type) {
@@ -339,7 +349,8 @@ class ConfigureTriggers extends React.Component {
 
     return hasTriggers
       ? triggerValues.triggerDefinitions.map((trigger, index) => {
-          const triggerKey = `trigger${index}`;
+          const triggerKey = `trigger${index + 1}`;
+          const name = trigger.name || `Trigger ${index + 1}`;
           return (
             <div key={triggerKey}>
               <TriggerContainer
@@ -349,13 +360,19 @@ class ConfigureTriggers extends React.Component {
                   onToggle: () => this.onAccordionToggle(triggerKey),
                   title: (
                     <EuiFlexGroup alignItems="center" justifyContent="flexStart" gutterSize="s">
-                      <EuiFlexItem grow={false}>
-                        {trigger.name || `Trigger ${index + 1}`}
-                      </EuiFlexItem>
+                      <EuiFlexItem grow={false}>{name}</EuiFlexItem>
                       <EuiFlexItem grow={false}>
                         <EuiBadge color="hollow">SEV{trigger.severity}</EuiBadge>
                       </EuiFlexItem>
                     </EuiFlexGroup>
+                  ),
+                  extraAction: (
+                    <EuiButtonIcon
+                      iconType="trash"
+                      color="text"
+                      aria-label={`Delete ${name}`}
+                      onClick={() => triggerArrayHelpers.remove(index)}
+                    />
                   ),
                 }}
               >

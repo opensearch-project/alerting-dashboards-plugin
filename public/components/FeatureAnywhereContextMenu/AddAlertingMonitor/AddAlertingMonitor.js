@@ -43,47 +43,53 @@ function AddAlertingMonitor({
     <div className="add-alerting-monitor">
       <EuiFlyoutHeader hasBorder>
         <EuiTitle>
-          <h2 id="add-alerting-monitor__title">Add alerting monitor</h2>
+          <h2 id="add-alerting-monitor__title">
+            {flyoutMode === 'adMonitor' ? 'Set up alerts' : 'Add alerting monitor'}
+          </h2>
         </EuiTitle>
       </EuiFlyoutHeader>
       <EuiFlyoutBody>
         <div className="add-alerting-monitor__scroll">
-          <EuiFormFieldset
-            legend={{
-              display: 'hidden',
-              children: (
-                <EuiTitle>
-                  <span>Options to create a new monitor or associate an existing monitor</span>
-                </EuiTitle>
-              ),
-            }}
-            className="add-alerting-monitor__modes"
-          >
-            {[
-              {
-                id: 'add-alerting-monitor__create',
-                label: 'Create new monitor',
-                value: 'create',
-              },
-              {
-                id: 'add-alerting-monitor__existing',
-                label: 'Associate existing monitor',
-                value: 'existing',
-              },
-            ].map((option) => (
-              <EuiCheckableCard
-                {...{
-                  ...option,
-                  key: option.id,
-                  name: option.id,
-                  checked: option.value === flyoutMode,
-                  onChange: () => setFlyoutMode(option.value),
+          {flyoutMode !== 'adMonitor' && (
+            <>
+              <EuiFormFieldset
+                legend={{
+                  display: 'hidden',
+                  children: (
+                    <EuiTitle>
+                      <span>Options to create a new monitor or associate an existing monitor</span>
+                    </EuiTitle>
+                  ),
                 }}
-              />
-            ))}
-          </EuiFormFieldset>
-          <EuiSpacer size="m" />
-          {flyoutMode === 'create' && (
+                className="add-alerting-monitor__modes"
+              >
+                {[
+                  {
+                    id: 'add-alerting-monitor__create',
+                    label: 'Create new monitor',
+                    value: 'create',
+                  },
+                  {
+                    id: 'add-alerting-monitor__existing',
+                    label: 'Associate existing monitor',
+                    value: 'existing',
+                  },
+                ].map((option) => (
+                  <EuiCheckableCard
+                    {...{
+                      ...option,
+                      key: option.id,
+                      name: option.id,
+                      checked: option.value === flyoutMode,
+                      onChange: () => setFlyoutMode(option.value),
+                    }}
+                  />
+                ))}
+              </EuiFormFieldset>
+              <EuiSpacer size="m" />
+            </>
+          )}
+          {['create', 'adMonitor'].includes(flyoutMode) && (
             <CreateNew {...{ embeddable, closeFlyout, core, services, index, flyoutMode }} />
           )}
           {flyoutMode === 'existing' && (
@@ -99,6 +105,7 @@ function AddAlertingMonitor({
               }}
             />
           )}
+          <EuiSpacer size="l" />
         </div>
       </EuiFlyoutBody>
       <EuiFlyoutFooter>

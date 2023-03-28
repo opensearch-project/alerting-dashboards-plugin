@@ -14,21 +14,20 @@ import MonitorType from '../../components/MonitorType';
 import AnomalyDetectors from '../AnomalyDetectors/AnomalyDetectors';
 import { MONITOR_TYPE } from '../../../../utils/constants';
 
-const renderAnomalyDetector = (httpClient, values, detectorId) => {
-  return {
-    actions: [],
-    content: (
-      <React.Fragment>
-        <AnomalyDetectors
-          httpClient={httpClient}
-          values={values}
-          renderEmptyMessage={renderEmptyMessage}
-          detectorId={detectorId}
-        />
-      </React.Fragment>
-    ),
-  };
-};
+const renderAnomalyDetector = ({ httpClient, values, detectorId, flyoutMode }) => ({
+  actions: [],
+  content: (
+    <React.Fragment>
+      <AnomalyDetectors
+        httpClient={httpClient}
+        values={values}
+        renderEmptyMessage={renderEmptyMessage}
+        detectorId={detectorId}
+        flyoutMode={flyoutMode}
+      />
+    </React.Fragment>
+  ),
+});
 
 function renderEmptyMessage(message) {
   return (
@@ -52,7 +51,8 @@ const MonitorDetails = ({
   detectorId,
   flyoutMode,
 }) => {
-  const anomalyDetectorContent = isAd && renderAnomalyDetector(httpClient, values, detectorId);
+  const anomalyDetectorContent =
+    isAd && renderAnomalyDetector({ httpClient, values, detectorId, flyoutMode });
   const displayMonitorDefinitionCards = values.monitor_type !== MONITOR_TYPE.CLUSTER_METRICS;
   const Container = ({ children }) =>
     flyoutMode ? (
@@ -108,8 +108,9 @@ const MonitorDetails = ({
 
       {isAd ? (
         <div>
-          <EuiSpacer size="l" />
+          {!flyoutMode && <EuiSpacer size="l" />}
           {anomalyDetectorContent.content}
+          {flyoutMode && <EuiSpacer size="m" />}
         </div>
       ) : null}
 

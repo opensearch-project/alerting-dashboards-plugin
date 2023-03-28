@@ -51,7 +51,7 @@ class AnomalyDetectors extends React.Component {
 
   render() {
     const { detectorOptions } = this.state;
-    const { values, detectorId } = this.props;
+    const { values, detectorId, flyoutMode } = this.props;
     //Default to empty
     let selectedOptions = [];
     if (detectorOptions.length > 0) {
@@ -64,7 +64,7 @@ class AnomalyDetectors extends React.Component {
     return (
       <div
         style={{
-          maxWidth: '390px',
+          maxWidth: flyoutMode ? '400px' : '390px',
         }}
       >
         <FormikComboBox

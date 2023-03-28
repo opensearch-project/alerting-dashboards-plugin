@@ -16,7 +16,7 @@ const Schedule = ({ isAd, flyoutMode }) => (
       </EuiText>
     )}
 
-    {isAd ? (
+    {isAd && !flyoutMode ? (
       <EuiText color={'subdued'} size={'xs'} style={{ maxWidth: '400px' }}>
         <p>
           Define how often the monitor collects data and how often you may receive alerts. We

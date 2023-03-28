@@ -1,5 +1,12 @@
 import React from 'react';
-import { EuiTitle, EuiSpacer, EuiButtonIcon, EuiButtonEmpty } from '@elastic/eui';
+import {
+  EuiTitle,
+  EuiSpacer,
+  EuiButtonIcon,
+  EuiButtonEmpty,
+  EuiAccordion,
+  EuiPanel,
+} from '@elastic/eui';
 import './styles.scss';
 
 const EnhancedAccordion = ({
@@ -11,12 +18,10 @@ const EnhancedAccordion = ({
   children,
   isButton,
   iconType,
+  extraAction,
 }) => (
-  <div
-    id={id}
-    className="euiPanel euiPanel--borderRadiusMedium euiPanel--plain euiPanel--hasShadow euiPanel--hasBorder euiPanel--flexGrowZero euiSplitPanel euiSplitPanel--row euiCheckableCard"
-  >
-    <div className="euiPanel euiPanel--paddingMedium euiPanel--borderRadiusNone euiPanel--subdued euiPanel--noShadow euiPanel--noBorder euiPanel--flexGrowZero euiPanel--isClickable euiSplitPanel__inner">
+  <div className="euiPanel euiPanel--borderRadiusMedium euiPanel--plain euiPanel--hasShadow euiPanel--hasBorder euiPanel--flexGrowZero euiSplitPanel euiSplitPanel--row euiCheckableCard">
+    <div className="euiPanel euiPanel--paddingMedium euiPanel--borderRadiusNone euiPanel--subdued euiPanel--noShadow euiPanel--noBorder euiPanel--flexGrowZero euiSplitPanel__inner">
       <EuiButtonIcon
         color="text"
         onClick={onToggle}
@@ -27,11 +32,40 @@ const EnhancedAccordion = ({
         }`}
       />
     </div>
-    <div
-      className={`enhanced-accordion__title-panel ${
-        isButton ? 'enhanced-accordion__title-panel--is-button' : ''
-      } euiPanel euiPanel--paddingMedium euiPanel--borderRadiusNone euiPanel--transparent euiPanel--noShadow euiPanel--noBorder euiSplitPanel__inner`}
-    >
+    <div className="enhanced-accordion__title-panel euiPanel euiPanel--borderRadiusNone euiPanel--transparent euiPanel--noShadow euiPanel--noBorder euiSplitPanel__inner">
+      {!isButton && (
+        <EuiAccordion
+          id={id}
+          arrowDisplay="none"
+          extraAction={<div className="enhanced-accordion__extra">{extraAction}</div>}
+          forceState={isOpen ? 'open' : 'closed'}
+          onToggle={onToggle}
+          buttonContent={
+            <div className="enhanced-accordion__title">
+              <EuiTitle
+                size="s"
+                onClick={onToggle}
+                role="button"
+                aria-pressed={isOpen ? 'true' : 'false'}
+                aria-expanded={isOpen ? 'true' : 'false'}
+              >
+                <h3>{title}</h3>
+              </EuiTitle>
+
+              {subTitle && (
+                <>
+                  <EuiSpacer size="s" />
+                  {subTitle}
+                </>
+              )}
+            </div>
+          }
+        >
+          <EuiPanel hasShadow={false} hasBorder={false}>
+            {children}
+          </EuiPanel>
+        </EuiAccordion>
+      )}
       {isButton && (
         <EuiButtonEmpty
           onClick={onToggle}
@@ -40,38 +74,6 @@ const EnhancedAccordion = ({
         >
           Add trigger
         </EuiButtonEmpty>
-      )}
-      {!isButton && (
-        <EuiTitle
-          size="s"
-          onClick={onToggle}
-          role="button"
-          aria-pressed={isOpen ? 'true' : 'false'}
-          aria-expanded={isOpen ? 'true' : 'false'}
-        >
-          <h3>{title}</h3>
-        </EuiTitle>
-      )}
-      {subTitle && (
-        <>
-          <EuiSpacer size="s" />
-          {subTitle}
-        </>
-      )}
-      {children && (
-        <div className="enhanced-accordion__container-one">
-          <div className="enhanced-accordion__container-two">
-            <div
-              className={`enhanced-accordion__content-inner ${
-                isOpen ? 'enhanced-accordion__content-inner--open' : ''
-              }`}
-            >
-              <EuiSpacer size="m" />
-              {children}
-              <EuiSpacer size="m" />
-            </div>
-          </div>
-        </div>
       )}
     </div>
   </div>
