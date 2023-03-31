@@ -15,8 +15,8 @@ export const FORMIK_INITIAL_WHERE_EXPRESSION_VALUES = {
   fieldName: [{ label: '', type: ALLOWED_TYPES[0] }], // This is an array because the EuiCombobox returns an array of {label: string, type: string} objects.
   operator: OPERATORS_MAP.IS,
   fieldValue: '',
-  fieldRangeStart: 0,
-  fieldRangeEnd: 0,
+  fieldRangeStart: undefined,
+  fieldRangeEnd: undefined,
 };
 
 export const FORMIK_INITIAL_VALUES = {

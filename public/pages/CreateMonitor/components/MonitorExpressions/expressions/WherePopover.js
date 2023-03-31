@@ -49,7 +49,6 @@ export default class WherePopover extends Component {
 
   handleFieldChange = (option, field, form) => {
     this.props.onMadeChanges();
-    // this.resetValues();
     form.setFieldValue(field.name, option);
     // User can remove where condition
     if (option.length === 0) {
@@ -77,9 +76,13 @@ export default class WherePopover extends Component {
           <FormikFieldNumber
             name={`${fieldPath}fieldRangeStart`}
             fieldProps={{
-              validate: (value) => validateRange(value, _.get(values, fieldPath)),
+              validate: (value) => validateRange(value, values),
             }}
-            inputProps={{ onChange: this.handleChangeWrapper, isInvalid }}
+            inputProps={{
+              placeholder: 'Enter a value',
+              onChange: this.handleChangeWrapper,
+              isInvalid,
+            }}
           />
         </EuiFlexItem>
         <EuiFlexItem grow={false}>
@@ -89,9 +92,13 @@ export default class WherePopover extends Component {
           <FormikFieldNumber
             name={`${fieldPath}fieldRangeEnd`}
             fieldProps={{
-              validate: (value) => validateRange(value, _.get(values, fieldPath)),
+              validate: (value) => validateRange(value, values),
             }}
-            inputProps={{ onChange: this.handleChangeWrapper, isInvalid }}
+            inputProps={{
+              placeholder: 'Enter a value',
+              onChange: this.handleChangeWrapper,
+              isInvalid,
+            }}
           />
         </EuiFlexItem>
       </EuiFlexGroup>
@@ -106,7 +113,10 @@ export default class WherePopover extends Component {
       ) : (
         <FormikFieldNumber
           name={`${fieldPath}fieldValue`}
-          inputProps={{ onChange: this.handleChangeWrapper }}
+          inputProps={{
+            placeholder: 'Enter a value',
+            onChange: this.handleChangeWrapper,
+          }}
           formRow
           rowProps={{ isInvalid, error: hasError }}
         />
@@ -126,7 +136,11 @@ export default class WherePopover extends Component {
       return (
         <FormikFieldText
           name={`${fieldPath}fieldValue`}
-          inputProps={{ onChange: this.handleChangeWrapper, isInvalid }}
+          inputProps={{
+            placeholder: 'Enter a value',
+            onChange: this.handleChangeWrapper,
+            isInvalid,
+          }}
         />
       );
     }

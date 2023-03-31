@@ -172,16 +172,16 @@ describe('whereHelpers', () => {
   describe('validateRange', () => {
     test('should return validation error invalid StartRange', () => {
       expect(validateRange(100, { fieldRangeStart: 100, fieldRangeEnd: 50 })).toBe(
-        'Start should be less than end range'
+        'Start should be less than end range.'
       );
     });
     test('should return validation error invalid endRange', () => {
       expect(validateRange(200, { fieldRangeStart: 300, fieldRangeEnd: 200 })).toBe(
-        'End should be greater than start range'
+        'End should be greater than start range.'
       );
     });
     test('should return Required for undefined/null values', () => {
-      expect(validateRange('', { fieldRangeStart: '', fieldRangeEnd: 200 })).toBe('Required');
+      expect(validateRange('', { fieldRangeStart: '', fieldRangeEnd: 200 })).toBe('Required.');
     });
 
     test('should return undefined for valid range', () => {
