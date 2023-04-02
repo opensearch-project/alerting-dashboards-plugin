@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React from 'react';
+import React, { useMemo } from 'react';
 import { EuiSpacer } from '@elastic/eui';
 import ContentPanel from '../../../../components/ContentPanel';
 import FormikFieldText from '../../../../components/FormControls/FormikFieldText';
@@ -54,27 +54,22 @@ const MonitorDetails = ({
   const anomalyDetectorContent =
     isAd && renderAnomalyDetector({ httpClient, values, detectorId, flyoutMode });
   const displayMonitorDefinitionCards = values.monitor_type !== MONITOR_TYPE.CLUSTER_METRICS;
-  const Container = ({ children }) =>
-    flyoutMode ? (
-      <>{children}</>
-    ) : (
-      <ContentPanel
-        title="Monitor details"
-        titleSize="s"
-        panelStyles={{
-          paddingBottom: '20px',
-          paddingLeft: '10px',
-          paddingRight: '10px',
-          paddingTop: '20px',
-        }}
-        actions={anomalyDetectorContent.actions}
-      >
-        {children}
-      </ContentPanel>
-    );
+  const Container = useMemo(() => (flyoutMode ? ({ children }) => <>{children}</> : ContentPanel), [
+    flyoutMode,
+  ]);
 
   return (
-    <Container>
+    <Container
+      title="Monitor details"
+      titleSize="s"
+      panelStyles={{
+        paddingBottom: '20px',
+        paddingLeft: '10px',
+        paddingRight: '10px',
+        paddingTop: '20px',
+      }}
+      actions={anomalyDetectorContent.actions}
+    >
       {!flyoutMode && <EuiSpacer size="s" />}
       <FormikFieldText
         name="name"

@@ -3,13 +3,14 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { EuiTitle, EuiSpacer, EuiIcon, EuiText, EuiSwitch, EuiLoadingSpinner } from '@elastic/eui';
 import CreateMonitor from '../../../../pages/CreateMonitor';
 import { EmbeddablePanel } from '../../../../../../../src/plugins/embeddable/public';
+import { NotificationService } from '../../../../services';
 import './styles.scss';
 
-function CreateNew({ embeddable, closeFlyout, core, services, index, flyoutMode }) {
+function CreateNew({ embeddable, closeFlyout, core, index, flyoutMode }) {
   const [isShowVis, setIsShowVis] = useState(false);
   const title = embeddable.getTitle();
   const history = {
@@ -17,6 +18,7 @@ function CreateNew({ embeddable, closeFlyout, core, services, index, flyoutMode 
     push: (value) => console.log('pushed', value),
     goBack: closeFlyout,
   };
+  const notificationService = useMemo(() => new NotificationService(core.http), [core]);
   const createMonitorProps = {
     ...history,
     history,
@@ -25,7 +27,7 @@ function CreateNew({ embeddable, closeFlyout, core, services, index, flyoutMode 
     setFlyout: () => null,
     notifications: core.notifications,
     isDarkMode: core.isDarkMode,
-    notificationService: services.notificationService,
+    notificationService,
     edit: false,
     monitorToEdit: false,
     updateMonitor: () => null,
@@ -36,6 +38,7 @@ function CreateNew({ embeddable, closeFlyout, core, services, index, flyoutMode 
     defaultTimeField: embeddable.vis.params.time_field,
     isDefaultTriggerEnabled: true,
     isDefaultMetricsEnabled: true,
+    isDefaultNotificationEnabled: true,
   };
 
   return (

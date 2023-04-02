@@ -111,7 +111,14 @@ class WhereExpression extends Component {
   };
 
   resetValues = () => {
-    const { fieldPath, formik, useTriggerFieldOperators = false } = this.props;
+    const {
+      fieldPath,
+      formik,
+      useTriggerFieldOperators = false,
+      flyoutMode,
+      closeExpression,
+    } = this.props;
+
     if (useTriggerFieldOperators) {
       _.set(formik, `values.${fieldPath}where`, FORMIK_INITIAL_TRIGGER_VALUES.where);
       formik.setValues({ ...formik.values });
@@ -120,6 +127,10 @@ class WhereExpression extends Component {
         ...formik.values,
         where: { ...FORMIK_INITIAL_VALUES.where },
       });
+    }
+
+    if (flyoutMode) {
+      closeExpression(Expressions.WHERE);
     }
   };
 
@@ -275,9 +286,7 @@ class WhereExpression extends Component {
         iconType="cross"
         iconOnClick={() => this.resetValues()}
         iconOnClickAriaLabel="Remove filter"
-        onClick={() => {
-          openExpression(Expressions.WHERE);
-        }}
+        onClick={() => openExpression(Expressions.WHERE)}
         onClickAriaLabel="Edit where filter"
       >
         {displayText(_.get(values, `${fieldPath}where`))}

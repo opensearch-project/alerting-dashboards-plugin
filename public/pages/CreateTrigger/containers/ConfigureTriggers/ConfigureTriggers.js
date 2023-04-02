@@ -46,7 +46,6 @@ class ConfigureTriggers extends React.Component {
         _.get(props, 'monitor.monitor_type', MONITOR_TYPE.QUERY_LEVEL) ===
         MONITOR_TYPE.BUCKET_LEVEL,
       triggerDeleted: false,
-      addTriggerButton: this.prepareAddTriggerButton(),
       triggerEmptyPrompt: this.prepareTriggerEmptyPrompt(),
       accordionsOpen: { trigger1: true },
       TriggerContainer: props.flyoutMode
@@ -57,7 +56,6 @@ class ConfigureTriggers extends React.Component {
 
     this.onQueryMappings = this.onQueryMappings.bind(this);
     this.onRunExecute = this.onRunExecute.bind(this);
-    this.prepareAddTriggerButton = this.prepareAddTriggerButton.bind(this);
     this.prepareTriggerEmptyPrompt = this.prepareTriggerEmptyPrompt.bind(this);
   }
 
@@ -98,7 +96,6 @@ class ConfigureTriggers extends React.Component {
       FORMIK_INITIAL_VALUES.uri.api_type
     );
     if (prevSearchType !== currSearchType || prevApiType !== currApiType) {
-      this.setState({ addTriggerButton: this.prepareAddTriggerButton() });
       this.setState({ triggerEmptyPrompt: this.prepareTriggerEmptyPrompt() });
     }
 
@@ -109,20 +106,6 @@ class ConfigureTriggers extends React.Component {
       if (isBucketLevelMonitor) this.onQueryMappings();
     }
   }
-
-  prepareAddTriggerButton = () => {
-    const { monitorValues, triggerArrayHelpers, triggerValues, flyoutMode } = this.props;
-    const disableAddTriggerButton =
-      _.get(triggerValues, 'triggerDefinitions', []).length >= MAX_TRIGGERS;
-    return (
-      <AddTriggerButton
-        arrayHelpers={triggerArrayHelpers}
-        disabled={disableAddTriggerButton}
-        script={getDefaultScript(monitorValues)}
-        flyoutMode={flyoutMode}
-      />
-    );
-  };
 
   prepareTriggerEmptyPrompt = () => {
     const { monitorValues, triggerArrayHelpers } = this.props;
@@ -332,9 +315,6 @@ class ConfigureTriggers extends React.Component {
     const { monitorValues, triggerValues, flyoutMode } = this.props;
     const { triggerEmptyPrompt, TriggerContainer, accordionsOpen } = this.state;
     const hasTriggers = !_.isEmpty(_.get(triggerValues, 'triggerDefinitions'));
-    const onDelete = (index) => {
-      console.log('delete', index);
-    };
 
     const triggerContent = (arrayHelpers, index) => {
       switch (monitorValues.monitor_type) {
@@ -386,17 +366,20 @@ class ConfigureTriggers extends React.Component {
       : triggerEmptyPrompt;
   };
 
-  onAccordionToggle = (key) => {
-    const accordionsOpen = { ...this.state.accordionsOpen };
+  onAccordionToggle = (key, isOnlyOpen) => {
+    let accordionsOpen = isOnlyOpen ? {} : { ...this.state.accordionsOpen };
     accordionsOpen[key] = !accordionsOpen[key];
     this.setState({ accordionsOpen });
   };
 
   render() {
-    const { triggerArrayHelpers, triggerValues, flyoutMode } = this.props;
-    const { addTriggerButton, ContentPanelStructure } = this.state;
+    const { triggerArrayHelpers, triggerValues, flyoutMode, monitorValues } = this.props;
+    const { ContentPanelStructure } = this.state;
     const numOfTriggers = _.get(triggerValues, 'triggerDefinitions', []).length;
     const displayAddTriggerButton = numOfTriggers > 0;
+    const disableAddTriggerButton =
+      _.get(triggerValues, 'triggerDefinitions', []).length >= MAX_TRIGGERS;
+    const monitorType = monitorValues.monitor_type;
 
     return (
       <ContentPanelStructure
@@ -410,7 +393,19 @@ class ConfigureTriggers extends React.Component {
 
         {displayAddTriggerButton ? (
           <div style={flyoutMode ? {} : { paddingBottom: '20px', paddingTop: '15px' }}>
-            {addTriggerButton}
+            <AddTriggerButton
+              arrayHelpers={triggerArrayHelpers}
+              disabled={disableAddTriggerButton}
+              script={getDefaultScript(monitorValues)}
+              flyoutMode={flyoutMode}
+              monitorType={monitorType}
+              onAddTrigger={() =>
+                this.onAccordionToggle(
+                  `trigger${triggerValues.triggerDefinitions.length + 1}`,
+                  true
+                )
+              }
+            />
             {!flyoutMode && (
               <>
                 <EuiSpacer size={'s'} />

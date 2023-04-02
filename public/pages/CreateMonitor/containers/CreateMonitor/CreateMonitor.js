@@ -38,6 +38,7 @@ import {
 import { FORMIK_INITIAL_AGG_VALUES } from '../CreateMonitor/utils/constants';
 import { unitToLabel } from '../../../CreateMonitor/components/Schedule/Frequencies/Interval';
 import EnhancedAccordion from '../../../../components/FeatureAnywhereContextMenu/EnhancedAccordion';
+import { getInitialActionValues } from '../../../CreateTrigger/components/AddActionButton/utils';
 import './styles.scss';
 
 export default class CreateMonitor extends Component {
@@ -53,6 +54,7 @@ export default class CreateMonitor extends Component {
     defaultTimeField: '',
     isDarkMode: false,
     isDefaultMetricsEnabled: false,
+    isDefaultNotificationEnabled: false,
   };
 
   constructor(props) {
@@ -82,7 +84,7 @@ export default class CreateMonitor extends Component {
       plugins: [],
       response: null,
       performanceResponse: null,
-      accordionsOpen: { monitorDetails: true },
+      accordionsOpen: {},
       Section: props.flyoutMode
         ? (props) => <EnhancedAccordion {...props} />
         : ({ children }) => <>{children}</>,
@@ -105,6 +107,14 @@ export default class CreateMonitor extends Component {
       const values = _.cloneDeep(FORMIK_INITIAL_TRIGGER_VALUES);
       values.name = 'Trigger 1';
       initialValues.triggerDefinitions = [values];
+
+      // Adds an initial notification if needed
+      if (props.isDefaultNotificationEnabled) {
+        const monitorType = initialValues.monitor_type;
+        initialValues.triggerDefinitions[0].actions = [
+          getInitialActionValues({ monitorType, numOfActions: 0, flyoutMode: props.flyoutMode }),
+        ];
+      }
     }
 
     // Add default metrics
