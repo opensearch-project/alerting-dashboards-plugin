@@ -6,7 +6,7 @@ import {
 } from '../../../../src/plugins/dashboard/public';
 import { IncompatibleActionError, createAction } from '../../../../src/plugins/ui_actions/public';
 import { isReferenceOrValueEmbeddable } from '../../../../src/plugins/embeddable/public';
-import { Action, DEFAULT_ACTION } from '../../../../src/plugins/ui_actions/public';
+import { Action } from '../../../../src/plugins/ui_actions/public';
 
 export const ACTION_ALERTING = 'alerting';
 
@@ -23,8 +23,9 @@ export interface CreateOptions {
   title: JSX.Element | string;
   icon: EuiIconType;
   id: string;
+  type: Action['type'];
   order: number;
-  onClick: Function;
+  onExecute: Function;
 }
 
 export const createAlertingAction = ({
@@ -33,7 +34,8 @@ export const createAlertingAction = ({
   icon,
   id,
   order,
-  onClick,
+  onExecute,
+  type,
 }: CreateOptions) =>
   createAction({
     id,
@@ -45,7 +47,7 @@ export const createAlertingAction = ({
       return title;
     },
     getIconType: () => icon,
-    type: DEFAULT_ACTION,
+    type,
     grouping,
     // Do not show actions for certin visualizations
     isCompatible: async ({ embeddable }: ActionContext) => {
@@ -63,6 +65,6 @@ export const createAlertingAction = ({
         throw new IncompatibleActionError();
       }
 
-      onClick({ embeddable });
+      onExecute({ embeddable });
     },
   });

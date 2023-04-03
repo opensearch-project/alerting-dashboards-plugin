@@ -1,0 +1,88 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`CreateNew renders 1`] = `
+<div
+  className="create-new"
+>
+  <EuiText
+    size="xs"
+  >
+    <p>
+       
+      <a
+        href="https://opensearch.org/docs/latest/monitoring-plugins/alerting/index/"
+        target="_blank"
+      >
+        Learn more 
+        <EuiIcon
+          type="popout"
+        />
+      </a>
+    </p>
+  </EuiText>
+  <EuiSpacer
+    size="m"
+  />
+  <div
+    className="create-new__title-and-toggle"
+  >
+    <EuiTitle
+      size="xxs"
+    >
+      <h4>
+        <EuiIcon
+          className="create-new__title-icon"
+          type="visLine"
+        />
+      </h4>
+    </EuiTitle>
+    <EuiSwitch
+      checked={false}
+      label="Show visualization"
+      onChange={[Function]}
+    />
+  </div>
+  <div
+    className="create-new__vis create-new__vis--hidden"
+  >
+    <EuiSpacer
+      size="s"
+    />
+    <EmbeddablePanel
+      embeddable={
+        Object {
+          "getTitle": [Function],
+          "vis": Object {
+            "params": Object {},
+          },
+        }
+      }
+      getActions={[Function]}
+      hideHeader={true}
+      inspector={
+        Object {
+          "isAvailable": [Function],
+        }
+      }
+      isBorderless={true}
+      isRetained={true}
+    />
+  </div>
+  <EuiSpacer
+    size="l"
+  />
+  <EuiTitle
+    size="s"
+  >
+    <h3>
+      Monitor details
+    </h3>
+  </EuiTitle>
+  <EuiSpacer
+    size="m"
+  />
+  <EuiLoadingSpinner
+    size="l"
+  />
+</div>
+`;

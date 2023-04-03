@@ -9,7 +9,11 @@ import CreateNew from './CreateNew';
 
 describe('CreateNew', () => {
   test('renders', () => {
-    const wrapper = shallow(<CreateNew {...{ embeddable: { getTitle: () => '' } }} />);
+    const wrapper = shallow(
+      <CreateNew
+        {...{ embeddable: { getTitle: () => '', vis: { params: {} } }, core: { http: {} } }}
+      />
+    );
     expect(wrapper).toMatchSnapshot();
   });
 });

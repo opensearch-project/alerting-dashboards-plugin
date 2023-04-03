@@ -1,0 +1,44 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`AssociateExisting renders 1`] = `
+<div
+  className="associate-existing"
+>
+  <EuiText
+    size="xs"
+  >
+    <p>
+      This is a short description of the feature to get users excited. Learn more in the documentation.
+       
+      <a
+        href="https://opensearch.org/docs/latest/monitoring-plugins/alerting/index/"
+        target="_blank"
+      >
+        Learn more 
+        <EuiIcon
+          type="popout"
+        />
+      </a>
+    </p>
+  </EuiText>
+  <EuiSpacer
+    size="l"
+  />
+  <EuiTitle
+    size="s"
+  >
+    <h3>
+      Select monitor to associate
+    </h3>
+  </EuiTitle>
+  <EuiSpacer
+    size="m"
+  />
+  <EuiLoadingSpinner
+    size="l"
+  />
+  <EuiSpacer
+    size="xl"
+  />
+</div>
+`;

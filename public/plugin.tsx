@@ -7,7 +7,8 @@ import { PLUGIN_NAME } from '../utils/constants';
 import { Plugin } from '../../../src/core/public';
 import { ACTION_ALERTING } from './actions/alerting_dashboard_action';
 import { CONTEXT_MENU_TRIGGER } from '../../../src/plugins/embeddable/public';
-import { getActions, openContainerInFlyout } from './utils/contextMenu/actions';
+import { getActions, getAdAction } from './utils/contextMenu/actions';
+import { alertingTriggerAd } from './utils/contextMenu/triggers';
 
 declare module '../../../src/plugins/ui_actions/public' {
   export interface ActionContextMapping {
@@ -35,25 +36,18 @@ export class AlertingPlugin implements Plugin {
     });
 
     // Create context menu actions. Pass core, to access service for flyouts.
-    const actions = getActions({ core });
+    const actions = getActions({ core, plugins });
 
     // Add actions to uiActions
     actions.forEach((action) => {
       plugins.uiActions.addTriggerAction(CONTEXT_MENU_TRIGGER, action);
     });
 
-    // Listen for external actions...can be used by other plugins like this:
-    // const event = new CustomEvent('alertingOpenFlyout', {
-    //   detail: { defaultFlyoutMode: 'adMonitor', embeddable: someEmbeddable },
-    // });
-    // document.dispatchEvent(event);
-    document.addEventListener('alertingOpenFlyout', ((event: CustomEvent) => {
-      openContainerInFlyout({
-        core,
-        defaultFlyoutMode: event.detail.defaultFlyoutMode,
-        embeddable: event.detail.embeddable,
-      });
-    }) as EventListener);
+    // Create trigger for other plugins to open flyout. Can be used by other plugins like this:
+    // plugins.uiActions.executeTriggerActions('ALERTING_TRIGGER_AD_ID', { embeddable });
+    const adAction = getAdAction({ core, plugins });
+    plugins.uiActions.registerTrigger(alertingTriggerAd);
+    plugins.uiActions.addTriggerAction(alertingTriggerAd.id, adAction);
   }
 
   public start() {}

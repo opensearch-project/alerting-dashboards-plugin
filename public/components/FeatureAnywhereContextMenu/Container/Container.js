@@ -26,7 +26,6 @@ const Container = ({ defaultFlyoutMode, ...props }) => {
         selectedMonitorId,
         setSelectedMonitorId,
         flyoutMode,
-        // flyoutMode: 'adMonitor',
         setFlyoutMode,
         index,
       }}
