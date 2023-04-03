@@ -78,7 +78,7 @@ function CreateNew({ embeddable, closeFlyout, core, index, flyoutMode }) {
           getActions={() => Promise.resolve([])}
           inspector={{ isAvailable: () => false }}
           hideHeader
-          isRetained
+          isDestroyPrevented
           isBorderless
         />
       </div>
