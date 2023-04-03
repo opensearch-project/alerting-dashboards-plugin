@@ -108,7 +108,8 @@ export function getDocumentLevelScriptSource(conditions) {
     }
     if (!_.isEmpty(query) && !_.isEmpty(query.queryName)) {
       const queryExpression = _.get(query, 'expression');
-      scriptSourceContents.push(`query[${queryExpression}]`);
+      const operator = query.operator === '!=' ? '!' : '';
+      scriptSourceContents.push(`${operator}query[${queryExpression}]`);
     }
   });
   return scriptSourceContents.join(' ');
