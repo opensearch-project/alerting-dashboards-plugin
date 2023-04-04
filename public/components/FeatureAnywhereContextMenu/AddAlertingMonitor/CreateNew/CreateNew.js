@@ -10,7 +10,15 @@ import { EmbeddablePanel } from '../../../../../../../src/plugins/embeddable/pub
 import { NotificationService } from '../../../../services';
 import './styles.scss';
 
-function CreateNew({ embeddable, closeFlyout, core, index, flyoutMode }) {
+function CreateNew({
+  embeddable,
+  closeFlyout,
+  core,
+  index,
+  flyoutMode,
+  onPreSubmitCallback,
+  onPostSubmitCallback,
+}) {
   const [isShowVis, setIsShowVis] = useState(false);
   const title = embeddable.getTitle();
   const history = {
@@ -39,6 +47,8 @@ function CreateNew({ embeddable, closeFlyout, core, index, flyoutMode }) {
     isDefaultTriggerEnabled: true,
     isDefaultMetricsEnabled: true,
     isDefaultNotificationEnabled: true,
+    onPreSubmitCallback,
+    onPostSubmitCallback,
   };
 
   return (
