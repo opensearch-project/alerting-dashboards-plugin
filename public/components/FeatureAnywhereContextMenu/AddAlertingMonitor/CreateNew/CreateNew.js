@@ -35,7 +35,7 @@ function CreateNew({ embeddable, closeFlyout, core, index, flyoutMode }) {
     flyoutMode,
     defaultName: `${title} monitor 1`,
     defaultIndex: index,
-    defaultTimeField: embeddable.vis.params.time_field,
+    defaultTimeField: embeddable.vis.data?.aggs.aggs[1].params.field.displayName,
     isDefaultTriggerEnabled: true,
     isDefaultMetricsEnabled: true,
     isDefaultNotificationEnabled: true,
