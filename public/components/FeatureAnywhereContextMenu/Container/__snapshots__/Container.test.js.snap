@@ -1,0 +1,41 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Container renders add 1`] = `
+<Component
+  embeddable={
+    Object {
+      "getTitle": [Function],
+    }
+  }
+  index={
+    Array [
+      Object {
+        "label": undefined,
+      },
+    ]
+  }
+  setFlyoutMode={[Function]}
+  setSelectedMonitorId={[Function]}
+  startingPanel="add"
+/>
+`;
+
+exports[`Container renders associated 1`] = `
+<Component
+  embeddable={
+    Object {
+      "getTitle": [Function],
+    }
+  }
+  index={
+    Array [
+      Object {
+        "label": undefined,
+      },
+    ]
+  }
+  setFlyoutMode={[Function]}
+  setSelectedMonitorId={[Function]}
+  startingPanel="associated"
+/>
+`;

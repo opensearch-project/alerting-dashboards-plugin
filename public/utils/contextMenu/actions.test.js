@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { getActions } from './getActions';
+import { getActions } from './actions';
 
 describe('getActions', () => {
   test('actions', () => {

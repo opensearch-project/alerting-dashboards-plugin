@@ -4,7 +4,7 @@
  */
 
 import _ from 'lodash';
-import { COMPARISON_OPERATORS, OPERATORS_MAP } from './constants';
+import { COMPARISON_OPERATORS, OPERATORS_MAP, Expressions } from './constants';
 import { TRIGGER_COMPARISON_OPERATORS } from '../../../../../CreateTrigger/containers/DefineBucketLevelTrigger/DefineBucketLevelTrigger';
 
 export const DEFAULT_WHERE_EXPRESSION_TEXT = 'All fields are included';
@@ -55,4 +55,10 @@ export const validateRange = (value, whereFilters) => {
   if (value < whereFilters.fieldRangeStart) {
     return 'End should be greater than start range';
   }
+};
+
+export const getIsDataFilterActive = ({ formik: { values }, openedStates, fieldPath = '' }) => {
+  const whereValues = _.get(values, `${fieldPath}where`);
+  const whereFieldName = _.get(whereValues, 'fieldName[0].label', undefined);
+  return openedStates[Expressions.WHERE] || whereFieldName;
 };

@@ -8,15 +8,15 @@ import { EuiSpacer, EuiText } from '@elastic/eui';
 import { Frequency, FrequencyPicker } from './Frequencies';
 import Interval from './Frequencies/Interval';
 
-const Schedule = ({ isAd, isMinimal }) => (
+const Schedule = ({ isAd, flyoutMode }) => (
   <Fragment>
-    {!isMinimal && (
+    {!flyoutMode && (
       <EuiText style={{ marginBottom: '0px' }}>
         <h4>Schedule</h4>
       </EuiText>
     )}
 
-    {isAd ? (
+    {isAd && !flyoutMode ? (
       <EuiText color={'subdued'} size={'xs'} style={{ maxWidth: '400px' }}>
         <p>
           Define how often the monitor collects data and how often you may receive alerts. We
@@ -26,14 +26,14 @@ const Schedule = ({ isAd, isMinimal }) => (
       </EuiText>
     ) : null}
 
-    {!isMinimal && <EuiSpacer size="m" />}
+    {!flyoutMode && <EuiSpacer size="m" />}
     <div style={{ maxWidth: '400px' }}>
       {isAd ? (
         <Interval />
       ) : (
         <div>
           <Frequency />
-          <EuiSpacer size={isMinimal ? 'm' : 's'} />
+          <EuiSpacer size={flyoutMode ? 'm' : 's'} />
           <FrequencyPicker />
         </div>
       )}

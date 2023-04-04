@@ -10,38 +10,48 @@ import { MANAGE_CHANNELS_PATH } from '../../utils/constants';
 
 const actionEmptyText = 'Add an action to perform when this trigger is triggered.';
 const destinationEmptyText = 'There are no existing channels. Add a channel to create an action.';
-const manageChannelsButton = (httpClient, hasNotificationPlugin) => (
-  <EuiButton
-    fill
-    disabled={!hasNotificationPlugin}
-    iconType="popout"
-    iconSide="right"
-    onClick={() => window.open(httpClient.basePath.prepend(MANAGE_CHANNELS_PATH))}
-  >
-    Manage channels
-  </EuiButton>
-);
-const addActionButton = (arrayHelpers) => <AddActionButton arrayHelpers={arrayHelpers} />;
 
 const ActionEmptyPrompt = ({
   arrayHelpers,
   hasDestinations,
   httpClient,
   hasNotificationPlugin,
-}) => (
-  <EuiEmptyPrompt
-    style={{ maxWidth: '45em' }}
-    body={
-      <EuiText>
-        <p>{hasDestinations ? actionEmptyText : destinationEmptyText}</p>
-      </EuiText>
-    }
-    actions={
-      hasDestinations
-        ? addActionButton(arrayHelpers)
-        : manageChannelsButton(httpClient, hasNotificationPlugin)
-    }
-  />
-);
+  flyoutMode,
+  onAddTrigger,
+}) =>
+  flyoutMode ? (
+    <>
+      {!hasDestinations && (
+        <EuiText>
+          <p>{destinationEmptyText}</p>
+        </EuiText>
+      )}
+      {hasDestinations && <AddActionButton {...{ arrayHelpers, flyoutMode, onAddTrigger }} />}
+    </>
+  ) : (
+    <EuiEmptyPrompt
+      style={{ maxWidth: '45em' }}
+      body={
+        <EuiText>
+          <p>{hasDestinations ? actionEmptyText : destinationEmptyText}</p>
+        </EuiText>
+      }
+      actions={
+        hasDestinations ? (
+          <AddActionButton {...{ arrayHelpers, flyoutMode, onAddTrigger }} />
+        ) : (
+          <EuiButton
+            fill
+            disabled={!hasNotificationPlugin}
+            iconType="popout"
+            iconSide="right"
+            onClick={() => window.open(httpClient.basePath.prepend(MANAGE_CHANNELS_PATH))}
+          >
+            Manage channels
+          </EuiButton>
+        )
+      }
+    />
+  );
 
 export default ActionEmptyPrompt;

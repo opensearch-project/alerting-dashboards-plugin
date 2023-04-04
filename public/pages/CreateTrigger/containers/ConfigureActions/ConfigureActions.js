@@ -5,7 +5,7 @@
 
 import React from 'react';
 import _ from 'lodash';
-import { EuiPanel, EuiText } from '@elastic/eui';
+import { EuiPanel, EuiText, EuiSpacer } from '@elastic/eui';
 import Action from '../../components/Action';
 import ActionEmptyPrompt from '../../components/ActionEmptyPrompt';
 import AddActionButton from '../../components/AddActionButton';
@@ -58,6 +58,7 @@ class ConfigureActions extends React.Component {
       loadingDestinations: true,
       actionDeleted: false,
       hasNotificationPlugin: false,
+      accordionsOpen: { notification1: true },
     };
   }
 
@@ -84,6 +85,12 @@ class ConfigureActions extends React.Component {
       this.loadDestinations();
     }
   }
+
+  onAccordionToggle = (key, isOnlyOpen) => {
+    let accordionsOpen = isOnlyOpen ? {} : { ...this.state.accordionsOpen };
+    accordionsOpen[key] = !accordionsOpen[key];
+    this.setState({ accordionsOpen });
+  };
 
   /**
    * Returns all channels in consecutive requests until all channels are returned
@@ -278,72 +285,100 @@ class ConfigureActions extends React.Component {
   };
 
   renderActions = (arrayHelpers) => {
-    const { context, setFlyout, values, fieldPath, httpClient, plugins } = this.props;
-    const { destinations, flattenedDestinations } = this.state;
+    const { context, setFlyout, values, fieldPath, httpClient, plugins, flyoutMode } = this.props;
+    const { destinations, flattenedDestinations, accordionsOpen } = this.state;
     const hasDestinations = !_.isEmpty(destinations);
     const hasActions = !_.isEmpty(_.get(values, `${fieldPath}actions`));
     const shouldRenderActions = hasActions || (hasDestinations && hasActions);
     const hasNotificationPlugin = plugins.indexOf(OS_NOTIFICATION_PLUGIN) !== -1;
+    const numOfActions = _.get(values, `${fieldPath}actions`, []).length;
 
     return shouldRenderActions ? (
-      _.get(values, `${fieldPath}actions`).map((action, index) => (
-        <Action
-          key={index}
-          action={action}
-          arrayHelpers={arrayHelpers}
-          context={createActionContext(context, action)}
-          destinations={destinations}
-          flattenedDestinations={flattenedDestinations}
-          index={index}
-          onDelete={() => {
-            this.setState({ actionDeleted: true });
-            arrayHelpers.remove(index);
-          }}
-          sendTestMessage={this.sendTestMessage}
-          setFlyout={setFlyout}
-          httpClient={httpClient}
-          fieldPath={fieldPath}
-          values={values}
-          hasNotificationPlugin={hasNotificationPlugin}
-          loadDestinations={this.loadDestinations}
-        />
-      ))
+      _.get(values, `${fieldPath}actions`).map((action, index) => {
+        const key = `notification${index + 1}`;
+        return (
+          <Action
+            key={index}
+            action={action}
+            arrayHelpers={arrayHelpers}
+            context={createActionContext(context, action)}
+            destinations={destinations}
+            flattenedDestinations={flattenedDestinations}
+            index={index}
+            onDelete={() => {
+              this.setState({ actionDeleted: true });
+              arrayHelpers.remove(index);
+            }}
+            sendTestMessage={this.sendTestMessage}
+            setFlyout={setFlyout}
+            httpClient={httpClient}
+            fieldPath={fieldPath}
+            values={values}
+            hasNotificationPlugin={hasNotificationPlugin}
+            loadDestinations={this.loadDestinations}
+            flyoutMode={flyoutMode}
+            accordionProps={{
+              isOpen: accordionsOpen[key],
+              onToggle: () => this.onAccordionToggle(key),
+            }}
+          />
+        );
+      })
     ) : (
       <ActionEmptyPrompt
         arrayHelpers={arrayHelpers}
         hasDestinations={hasDestinations}
         httpClient={httpClient}
         hasNotificationPlugin={hasNotificationPlugin}
+        flyoutMode={flyoutMode}
+        onAddTrigger={() => this.onAccordionToggle('notification1', true)}
       />
     );
   };
 
   render() {
     const { loadingDestinations } = this.state;
-    const { arrayHelpers, values, fieldPath } = this.props;
+    const { arrayHelpers, values, fieldPath, flyoutMode } = this.props;
     const numOfActions = _.get(values, `${fieldPath}actions`, []).length;
     const displayAddActionButton = numOfActions > 0;
     //TODO:: Handle loading Destinations inside the Action which will be more intuitive for customers.
     return (
-      <div style={{ paddingLeft: '10px', paddingRight: '10px' }}>
-        <EuiText>
-          <h4>{`Actions (${numOfActions})`}</h4>
-        </EuiText>
-        <EuiText color={'subdued'} size={'xs'} style={{ paddingBottom: '5px' }}>
-          Define actions when trigger conditions are met.
-        </EuiText>
-        <EuiPanel style={{ backgroundColor: '#F7F7F7', padding: '20px' }}>
+      <div style={flyoutMode ? {} : { paddingLeft: '10px', paddingRight: '10px' }}>
+        {!flyoutMode && (
+          <>
+            <EuiText>
+              <h4>{`Actions (${numOfActions})`}</h4>
+            </EuiText>
+            <EuiText color={'subdued'} size={'xs'} style={{ paddingBottom: '5px' }}>
+              Define actions when trigger conditions are met.
+            </EuiText>
+          </>
+        )}
+        <EuiPanel
+          style={flyoutMode ? {} : { backgroundColor: '#F7F7F7', padding: '20px' }}
+          paddingSize="none"
+          hasShadow={!flyoutMode}
+          hasBorder={!flyoutMode}
+        >
           {loadingDestinations && numOfActions < 1 ? (
             <div style={{ display: 'flex', justifyContent: 'center' }}>Loading Destinations...</div>
           ) : (
-            this.renderActions(arrayHelpers)
+            <>
+              {this.renderActions(arrayHelpers)}
+              {flyoutMode && <EuiSpacer size="m" />}
+            </>
           )}
 
-          {displayAddActionButton ? (
-            <div style={{ paddingBottom: '5px', paddingTop: '20px' }}>
-              <AddActionButton arrayHelpers={arrayHelpers} numOfActions={numOfActions} />
+          {displayAddActionButton && (
+            <div style={flyoutMode ? {} : { paddingBottom: '5px', paddingTop: '20px' }}>
+              <AddActionButton
+                arrayHelpers={arrayHelpers}
+                numOfActions={numOfActions}
+                flyoutMode={flyoutMode}
+                onAddTrigger={() => this.onAccordionToggle(`notification${numOfActions + 1}`, true)}
+              />
             </div>
-          ) : null}
+          )}
         </EuiPanel>
       </div>
     );

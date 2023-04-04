@@ -26,15 +26,14 @@ function AddAlertingMonitor({
   closeFlyout,
   core,
   services,
-  mode,
-  setMode,
+  flyoutMode,
+  setFlyoutMode,
   monitors,
   selectedMonitorId,
   setSelectedMonitorId,
   index,
 }) {
   const onCreate = () => {
-    console.log(`Current mode: ${mode}`);
     const event = new Event('createMonitor');
     document.dispatchEvent(event);
     closeFlyout();
@@ -44,50 +43,56 @@ function AddAlertingMonitor({
     <div className="add-alerting-monitor">
       <EuiFlyoutHeader hasBorder>
         <EuiTitle>
-          <h2 id="add-alerting-monitor__title">Add alerting monitor</h2>
+          <h2 id="add-alerting-monitor__title">
+            {flyoutMode === 'adMonitor' ? 'Set up alerts' : 'Add alerting monitor'}
+          </h2>
         </EuiTitle>
       </EuiFlyoutHeader>
       <EuiFlyoutBody>
         <div className="add-alerting-monitor__scroll">
-          <EuiFormFieldset
-            legend={{
-              display: 'hidden',
-              children: (
-                <EuiTitle>
-                  <span>Options to create a new monitor or associate an existing monitor</span>
-                </EuiTitle>
-              ),
-            }}
-            className="add-alerting-monitor__modes"
-          >
-            {[
-              {
-                id: 'add-alerting-monitor__create',
-                label: 'Create new monitor',
-                value: 'create',
-              },
-              {
-                id: 'add-alerting-monitor__existing',
-                label: 'Associate existing monitor',
-                value: 'existing',
-              },
-            ].map((option) => (
-              <EuiCheckableCard
-                {...{
-                  ...option,
-                  key: option.id,
-                  name: option.id,
-                  checked: option.value === mode,
-                  onChange: () => setMode(option.value),
+          {flyoutMode !== 'adMonitor' && (
+            <>
+              <EuiFormFieldset
+                legend={{
+                  display: 'hidden',
+                  children: (
+                    <EuiTitle>
+                      <span>Options to create a new monitor or associate an existing monitor</span>
+                    </EuiTitle>
+                  ),
                 }}
-              />
-            ))}
-          </EuiFormFieldset>
-          <EuiSpacer size="m" />
-          {mode === 'create' && (
-            <CreateNew {...{ embeddable, closeFlyout, core, services, index }} />
+                className="add-alerting-monitor__modes"
+              >
+                {[
+                  {
+                    id: 'add-alerting-monitor__create',
+                    label: 'Create new monitor',
+                    value: 'create',
+                  },
+                  {
+                    id: 'add-alerting-monitor__existing',
+                    label: 'Associate existing monitor',
+                    value: 'existing',
+                  },
+                ].map((option) => (
+                  <EuiCheckableCard
+                    {...{
+                      ...option,
+                      key: option.id,
+                      name: option.id,
+                      checked: option.value === flyoutMode,
+                      onChange: () => setFlyoutMode(option.value),
+                    }}
+                  />
+                ))}
+              </EuiFormFieldset>
+              <EuiSpacer size="m" />
+            </>
           )}
-          {mode === 'existing' && (
+          {['create', 'adMonitor'].includes(flyoutMode) && (
+            <CreateNew {...{ embeddable, closeFlyout, core, services, index, flyoutMode }} />
+          )}
+          {flyoutMode === 'existing' && (
             <AssociateExisting
               {...{
                 embeddable,
@@ -100,6 +105,7 @@ function AddAlertingMonitor({
               }}
             />
           )}
+          <EuiSpacer size="l" />
         </div>
       </EuiFlyoutBody>
       <EuiFlyoutFooter>
@@ -109,7 +115,7 @@ function AddAlertingMonitor({
           </EuiFlexItem>
           <EuiFlexItem grow={false}>
             <EuiButton onClick={onCreate} fill>
-              {mode === 'existing' ? 'Associate' : 'Create'} monitor
+              {flyoutMode === 'existing' ? 'Associate' : 'Create'} monitor
             </EuiButton>
           </EuiFlexItem>
         </EuiFlexGroup>

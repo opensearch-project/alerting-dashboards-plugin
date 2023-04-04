@@ -18,7 +18,7 @@ import { EXPRESSION_STYLE, POPOVER_STYLE } from './utils/constants';
 import { FormikComboBox } from '../../../../../components/FormControls';
 
 export default function GroupByPopover(
-  { values, options, closePopover, expressionWidth, index } = this.props
+  { values, options, closePopover, expressionWidth, index, flyoutMode } = this.props
 ) {
   const disableOption = (label) => {
     options[0].options.forEach((element) => {
@@ -40,9 +40,9 @@ export default function GroupByPopover(
     <div
       style={{
         width: Math.max(expressionWidth, 250),
-        height: 160,
-        ...POPOVER_STYLE,
-        ...EXPRESSION_STYLE,
+        height: flyoutMode ? 'auto' : 160,
+        ...(flyoutMode ? {} : POPOVER_STYLE),
+        ...(flyoutMode ? {} : EXPRESSION_STYLE),
       }}
     >
       <EuiFlexGroup direction="column" gutterSize="xs">
@@ -65,19 +65,21 @@ export default function GroupByPopover(
           />
         </EuiFlexItem>
       </EuiFlexGroup>
-
-      <EuiSpacer size="l" />
-
-      <EuiFlexGroup alignItems="center" justifyContent="flexEnd">
-        <EuiFlexItem grow={false}>
-          <EuiButtonEmpty onClick={closePopover}>Cancel</EuiButtonEmpty>
-        </EuiFlexItem>
-        <EuiFlexItem grow={false}>
-          <EuiButton fill onClick={closePopover}>
-            Save
-          </EuiButton>
-        </EuiFlexItem>
-      </EuiFlexGroup>
+      {!flyoutMode && (
+        <>
+          <EuiSpacer size="l" />
+          <EuiFlexGroup alignItems="center" justifyContent="flexEnd">
+            <EuiFlexItem grow={false}>
+              <EuiButtonEmpty onClick={closePopover}>Cancel</EuiButtonEmpty>
+            </EuiFlexItem>
+            <EuiFlexItem grow={false}>
+              <EuiButton fill onClick={closePopover}>
+                Save
+              </EuiButton>
+            </EuiFlexItem>
+          </EuiFlexGroup>
+        </>
+      )}
     </div>
   );
 }

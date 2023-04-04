@@ -50,11 +50,11 @@ const propTypes = {
   touched: PropTypes.object,
   detectorId: PropTypes.object,
   notifications: PropTypes.object.isRequired,
-  isMinimal: PropTypes.bool,
+  flyoutMode: PropTypes.string,
 };
 const defaultProps = {
   errors: {},
-  isMinimal: false,
+  flyoutMode: false,
 };
 
 class DefineMonitor extends Component {
@@ -68,6 +68,7 @@ class DefineMonitor extends Component {
       formikSnapshot: this.props.values,
       plugins: [],
       loadingResponse: false,
+      PanelComponent: props.flyoutMode ? ({ children }) => <>{children}</> : ContentPanel,
     };
 
     this.renderGraph = this.renderGraph.bind(this);
@@ -226,7 +227,7 @@ class DefineMonitor extends Component {
   };
 
   renderGraph() {
-    const { errors, history, httpClient, location, notifications, values } = this.props;
+    const { errors, history, httpClient, location, notifications, values, flyoutMode } = this.props;
     const {
       response,
       performanceResponse,
@@ -235,13 +236,14 @@ class DefineMonitor extends Component {
       loadingResponse,
     } = this.state;
     const aggregations = _.get(values, 'aggregations');
-
     const monitorExpressions = () => {
       switch (values.monitor_type) {
         case MONITOR_TYPE.DOC_LEVEL:
           return <ConfigureDocumentLevelQueries errors={errors} dataTypes={dataTypes} />;
         default:
-          return <MonitorExpressions errors={errors} dataTypes={dataTypes} />;
+          return (
+            <MonitorExpressions errors={errors} dataTypes={dataTypes} flyoutMode={flyoutMode} />
+          );
       }
     };
 
@@ -273,24 +275,28 @@ class DefineMonitor extends Component {
 
     return (
       <Fragment>
-        <EuiSpacer size="s" />
+        {!flyoutMode && <EuiSpacer size="s" />}
         {monitorExpressions()}
-        <EuiSpacer size="xl" />
+        {!flyoutMode && (
+          <>
+            <EuiSpacer size="xl" />
 
-        <EuiAccordion id="preview-query-performance-accordion" buttonContent={accordionTitle}>
-          <EuiSpacer size="s" />
-          <QueryPerformance response={performanceResponse} />
-          <EuiSpacer size="m" />
+            <EuiAccordion id="preview-query-performance-accordion" buttonContent={accordionTitle}>
+              <EuiSpacer size="s" />
+              <QueryPerformance response={performanceResponse} />
+              <EuiSpacer size="m" />
 
-          {errors.where
-            ? renderEmptyMessage(
-                'Invalid input in data filter. Remove data filter or adjust filter '
-              )
-            : loadingResponse
-            ? renderEmptyMessage()
-            : previewContent()}
-        </EuiAccordion>
-        <EuiSpacer size="m" />
+              {errors.where
+                ? renderEmptyMessage(
+                    'Invalid input in data filter. Remove data filter or adjust filter '
+                  )
+                : loadingResponse
+                ? renderEmptyMessage()
+                : previewContent()}
+            </EuiAccordion>
+            <EuiSpacer size="m" />
+          </>
+        )}
       </Fragment>
     );
   }
@@ -429,7 +435,7 @@ class DefineMonitor extends Component {
   }
 
   renderVisualMonitor() {
-    const { values } = this.props;
+    const { values, flyoutMode } = this.props;
     const { index, timeField } = values;
     let content;
     const supportsTimeField = values.monitor_type !== MONITOR_TYPE.DOC_LEVEL;
@@ -445,7 +451,7 @@ class DefineMonitor extends Component {
       actions: [],
       content: (
         <React.Fragment>
-          <div style={{ padding: '0px 10px' }}>{content}</div>
+          <div style={flyoutMode ? {} : { padding: '0px 10px' }}>{content}</div>
         </React.Fragment>
       ),
     };
@@ -594,16 +600,16 @@ class DefineMonitor extends Component {
       detectorId,
       notifications,
       isDarkMode,
-      isMinimal,
+      flyoutMode,
     } = this.props;
-    const { dataTypes } = this.state;
+    const { dataTypes, PanelComponent } = this.state;
     const monitorContent = this.getMonitorContent();
     const { searchType } = this.props.values;
     const isGraphOrQuery = searchType === SEARCH_TYPE.GRAPH || searchType === SEARCH_TYPE.QUERY;
 
     return (
       <div>
-        {isGraphOrQuery && (
+        {!flyoutMode && isGraphOrQuery && (
           <div>
             <DataSource
               values={values}
@@ -613,37 +619,33 @@ class DefineMonitor extends Component {
               detectorId={detectorId}
               notifications={notifications}
               isDarkMode={isDarkMode}
-              isMinimal={isMinimal}
             />
             <EuiSpacer />
           </div>
         )}
-        {!isMinimal && (
-          <ContentPanel
-            title="Query"
-            titleSize="s"
-            panelStyles={{
-              paddingLeft: '10px',
-              paddingRight: '10px',
-            }}
-            bodyStyles={{ padding: 'initial' }}
-            actions={monitorContent.actions}
-          >
-            {this.showPluginWarning()
-              ? [
-                  <EuiCallOut
-                    color="warning"
-                    title="Anomaly detector plugin is not installed on OpenSearch, This monitor will not functional properly."
-                    iconType="help"
-                    size="s"
-                  />,
-                  <EuiSpacer size="s" />,
-                ]
-              : null}
-
-            {monitorContent.content}
-          </ContentPanel>
-        )}
+        <PanelComponent
+          title="Query"
+          titleSize="s"
+          panelStyles={{
+            paddingLeft: '10px',
+            paddingRight: '10px',
+          }}
+          bodyStyles={{ padding: 'initial' }}
+          actions={monitorContent.actions}
+        >
+          {this.showPluginWarning()
+            ? [
+                <EuiCallOut
+                  color="warning"
+                  title="Anomaly detector plugin is not installed on OpenSearch, This monitor will not functional properly."
+                  iconType="help"
+                  size="s"
+                />,
+                <EuiSpacer size="s" />,
+              ]
+            : null}
+          {monitorContent.content}
+        </PanelComponent>
       </div>
     );
   }

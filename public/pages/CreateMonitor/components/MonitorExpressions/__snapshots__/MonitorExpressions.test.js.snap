@@ -3,179 +3,311 @@
 exports[`MonitorExpressions renders 1`] = `
 <div>
   <div
-    id="aggregations"
+    class="minimal-accordion"
   >
     <div
-      class="euiText euiText--extraSmall"
+      class="euiAccordion"
     >
-      <strong>
-        Metrics
-      </strong>
-      <i>
-         - optional 
-      </i>
-      <span
-        class="euiToolTipAnchor"
+      <div
+        class="euiAccordion__triggerWrapper"
       >
-        <div>
-          EuiIconMock
-        </div>
-      </span>
-    </div>
-    <div
-      class="euiSpacer euiSpacer--s"
-    />
-    <span
-      style="padding-right:5px"
-    >
-      <span
-        class="euiBadge euiBadge--hollow euiBadge--iconLeft"
-        style="padding-right:5px"
-      >
-        <span
-          class="euiBadge__content"
+        <button
+          aria-controls="metric-expression__metrics"
+          aria-expanded="false"
+          class="euiAccordion__button"
+          id="generated-id"
+          type="button"
         >
           <span
-            class="euiBadge__text"
+            class="euiAccordion__iconWrapper"
           >
-            COUNT OF documents
+            <div>
+              EuiIconMock
+            </div>
           </span>
-        </span>
-      </span>
-    </span>
-    <div
-      class="euiSpacer euiSpacer--xs"
-    />
-    <div
-      class="euiText euiText--extraSmall"
-    >
+          <span
+            class="euiIEFlexWrapFix"
+          >
+            <h5
+              class="euiTitle euiTitle--xxsmall minimal-accordion__title"
+            >
+              Metrics
+            </h5>
+            <div
+              class="euiText euiText--extraSmall"
+            >
+              <span
+                class="euiTextColor euiTextColor--subdued"
+              >
+                COUNT OF documents. You can add up to 1 metric.
+              </span>
+            </div>
+          </span>
+        </button>
+      </div>
       <div
-        class="euiTextColor euiTextColor--danger"
-      />
-    </div>
-    <button
-      class="euiButtonEmpty euiButtonEmpty--primary euiButtonEmpty--xSmall"
-      data-test-subj="addMetricButton"
-      style="padding-top:5px"
-      type="button"
-    >
-      <span
-        class="euiButtonContent euiButtonEmpty__content"
+        aria-labelledby="generated-id"
+        class="euiAccordion__childWrapper"
+        id="metric-expression__metrics"
+        role="region"
+        tabindex="-1"
       >
-        <span
-          class="euiButtonEmpty__text"
-        >
-          + Add metric
-        </span>
-      </span>
-    </button>
-    <div
-      class="euiText euiText--extraSmall"
-      style="padding-left:10px"
-    >
-      <div
-        class="euiTextColor euiTextColor--subdued"
-      >
-        You can add up to 1  metric.
+        <div>
+          <div
+            class=""
+          >
+            <div
+              class="euiPanel euiPanel--paddingLarge euiPanel--borderRadiusMedium euiPanel--plain euiPanel--noShadow euiPanel--noBorder minimal-accordion__panel"
+            >
+              <div
+                id="aggregations"
+              >
+                <div
+                  class="euiText euiText--extraSmall"
+                >
+                  <strong>
+                    Metrics
+                  </strong>
+                  <i>
+                     - optional 
+                  </i>
+                  <span
+                    class="euiToolTipAnchor"
+                  >
+                    <div>
+                      EuiIconMock
+                    </div>
+                  </span>
+                </div>
+                <div
+                  class="euiSpacer euiSpacer--s"
+                />
+                <span
+                  style="padding-right:5px"
+                >
+                  <span
+                    class="euiBadge euiBadge--hollow euiBadge--iconLeft"
+                    style="padding-right:5px"
+                  >
+                    <span
+                      class="euiBadge__content"
+                    >
+                      <span
+                        class="euiBadge__text"
+                      >
+                        COUNT OF documents
+                      </span>
+                    </span>
+                  </span>
+                </span>
+                <div
+                  class="euiSpacer euiSpacer--xs"
+                />
+                <div
+                  class="euiText euiText--extraSmall"
+                >
+                  <div
+                    class="euiTextColor euiTextColor--danger"
+                  />
+                </div>
+                <button
+                  class="euiButtonEmpty euiButtonEmpty--primary euiButtonEmpty--xSmall"
+                  data-test-subj="addMetricButton"
+                  style="padding-top:5px"
+                  type="button"
+                >
+                  <span
+                    class="euiButtonContent euiButtonEmpty__content"
+                  >
+                    <span
+                      class="euiButtonEmpty__text"
+                    >
+                      + Add metric
+                    </span>
+                  </span>
+                </button>
+                <div
+                  class="euiText euiText--extraSmall"
+                  style="padding-left:10px"
+                >
+                  <div
+                    class="euiTextColor euiTextColor--subdued"
+                  >
+                    You can add up to 1  metric.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
   <div
     class="euiSpacer euiSpacer--m"
   />
-  <div>
-    <div
-      class="euiText euiText--extraSmall"
-    >
-      <strong>
-        Time range for the last 
-      </strong>
-      <span
-        class="euiToolTipAnchor"
-      >
-        <div>
-          EuiIconMock
-        </div>
-      </span>
-    </div>
-    <div
-      class="euiSpacer euiSpacer--s"
+  <div
+    class="minimal-accordion"
+  >
+    <hr
+      class="euiHorizontalRule euiHorizontalRule--full euiHorizontalRule--marginMedium"
     />
     <div
-      class="euiFlexGroup euiFlexGroup--gutterLarge euiFlexGroup--directionRow euiFlexGroup--responsive"
-      style="max-width:600px"
+      class="euiSpacer euiSpacer--xs"
+    />
+    <div
+      class="euiAccordion"
     >
       <div
-        class="euiFlexItem euiFlexItem--flexGrowZero"
-        style="width:150px"
+        class="euiAccordion__triggerWrapper"
       >
-        <div
-          class="euiFormRow"
-          id="bucketValue-form-row-row"
+        <button
+          aria-controls="metric-expression__time-range"
+          aria-expanded="false"
+          class="euiAccordion__button"
+          id="generated-id"
+          type="button"
         >
-          <div
-            class="euiFormRow__fieldWrapper"
+          <span
+            class="euiAccordion__iconWrapper"
           >
-            <div
-              class="euiFormControlLayout"
-            >
-              <div
-                class="euiFormControlLayout__childrenWrapper"
-              >
-                <input
-                  class="euiFieldNumber"
-                  min="1"
-                  name="bucketValue"
-                  type="number"
-                  value="1"
-                />
-              </div>
+            <div>
+              EuiIconMock
             </div>
-          </div>
-        </div>
-      </div>
-      <div
-        class="euiFlexItem euiFlexItem--flexGrowZero"
-        style="width:150px"
-      >
-        <div
-          class="euiFormControlLayout"
-        >
-          <div
-            class="euiFormControlLayout__childrenWrapper"
+          </span>
+          <span
+            class="euiIEFlexWrapFix"
           >
-            <select
-              class="euiSelect"
-              id="bucketUnitOfTime"
-              name="bucketUnitOfTime"
+            <h5
+              class="euiTitle euiTitle--xxsmall minimal-accordion__title"
             >
-              <option
-                value="m"
-              >
-                minute(s)
-              </option>
-              <option
-                selected=""
-                value="h"
-              >
-                hour(s)
-              </option>
-              <option
-                value="d"
-              >
-                day(s)
-              </option>
-            </select>
+              Time range
+            </h5>
             <div
-              class="euiFormControlLayoutIcons euiFormControlLayoutIcons--right"
+              class="euiText euiText--extraSmall"
             >
               <span
-                class="euiFormControlLayoutCustomIcon"
+                class="euiTextColor euiTextColor--subdued"
               >
-                <div>
-                  EuiIconMock
-                </div>
+                Last 1 hour(s)
               </span>
+            </div>
+          </span>
+        </button>
+      </div>
+      <div
+        aria-labelledby="generated-id"
+        class="euiAccordion__childWrapper"
+        id="metric-expression__time-range"
+        role="region"
+        tabindex="-1"
+      >
+        <div>
+          <div
+            class=""
+          >
+            <div
+              class="euiPanel euiPanel--paddingLarge euiPanel--borderRadiusMedium euiPanel--plain euiPanel--noShadow euiPanel--noBorder minimal-accordion__panel"
+            >
+              <div>
+                <div
+                  class="euiText euiText--extraSmall"
+                >
+                  <strong>
+                    Time range for the last 
+                  </strong>
+                  <span
+                    class="euiToolTipAnchor"
+                  >
+                    <div>
+                      EuiIconMock
+                    </div>
+                  </span>
+                </div>
+                <div
+                  class="euiSpacer euiSpacer--s"
+                />
+                <div
+                  class="euiFlexGroup euiFlexGroup--gutterLarge euiFlexGroup--directionRow euiFlexGroup--responsive"
+                  style="max-width:600px"
+                >
+                  <div
+                    class="euiFlexItem euiFlexItem--flexGrowZero"
+                    style="width:150px"
+                  >
+                    <div
+                      class="euiFormRow"
+                      id="bucketValue-form-row-row"
+                    >
+                      <div
+                        class="euiFormRow__fieldWrapper"
+                      >
+                        <div
+                          class="euiFormControlLayout"
+                        >
+                          <div
+                            class="euiFormControlLayout__childrenWrapper"
+                          >
+                            <input
+                              class="euiFieldNumber"
+                              min="1"
+                              name="bucketValue"
+                              type="number"
+                              value="1"
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div
+                    class="euiFlexItem euiFlexItem--flexGrowZero"
+                    style="width:150px"
+                  >
+                    <div
+                      class="euiFormControlLayout"
+                    >
+                      <div
+                        class="euiFormControlLayout__childrenWrapper"
+                      >
+                        <select
+                          class="euiSelect"
+                          id="bucketUnitOfTime"
+                          name="bucketUnitOfTime"
+                        >
+                          <option
+                            value="m"
+                          >
+                            minute(s)
+                          </option>
+                          <option
+                            selected=""
+                            value="h"
+                          >
+                            hour(s)
+                          </option>
+                          <option
+                            value="d"
+                          >
+                            day(s)
+                          </option>
+                        </select>
+                        <div
+                          class="euiFormControlLayoutIcons euiFormControlLayoutIcons--right"
+                        >
+                          <span
+                            class="euiFormControlLayoutCustomIcon"
+                          >
+                            <div>
+                              EuiIconMock
+                            </div>
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -185,58 +317,127 @@ exports[`MonitorExpressions renders 1`] = `
   <div
     class="euiSpacer euiSpacer--l"
   />
-  <div>
+  <div
+    class="minimal-accordion"
+  >
+    <hr
+      class="euiHorizontalRule euiHorizontalRule--full euiHorizontalRule--marginMedium"
+    />
     <div
-      class="euiText euiText--extraSmall"
+      class="euiSpacer euiSpacer--xs"
+    />
+    <div
+      class="euiAccordion"
     >
-      <strong>
-        Data filter
-      </strong>
-      <i>
-         - optional 
-      </i>
-      <span
-        class="euiToolTipAnchor"
+      <div
+        class="euiAccordion__triggerWrapper"
+      >
+        <button
+          aria-controls="metric-expression__data-filter"
+          aria-expanded="false"
+          class="euiAccordion__button"
+          id="generated-id"
+          type="button"
+        >
+          <span
+            class="euiAccordion__iconWrapper"
+          >
+            <div>
+              EuiIconMock
+            </div>
+          </span>
+          <span
+            class="euiIEFlexWrapFix"
+          >
+            <h5
+              class="euiTitle euiTitle--xxsmall minimal-accordion__title"
+            >
+              Data filter
+            </h5>
+            <div
+              class="euiText euiText--extraSmall"
+            >
+              <span
+                class="euiTextColor euiTextColor--subdued"
+              >
+                No filter defined. You can add up to 1 filter.
+              </span>
+            </div>
+          </span>
+        </button>
+      </div>
+      <div
+        aria-labelledby="generated-id"
+        class="euiAccordion__childWrapper"
+        id="metric-expression__data-filter"
+        role="region"
+        tabindex="-1"
       >
         <div>
-          EuiIconMock
+          <div
+            class=""
+          >
+            <div
+              class="euiPanel euiPanel--paddingLarge euiPanel--borderRadiusMedium euiPanel--plain euiPanel--noShadow euiPanel--noBorder minimal-accordion__panel"
+            >
+              <div>
+                <div
+                  class="euiText euiText--extraSmall"
+                >
+                  <strong>
+                    Data filter
+                  </strong>
+                  <i>
+                     - optional 
+                  </i>
+                  <span
+                    class="euiToolTipAnchor"
+                  >
+                    <div>
+                      EuiIconMock
+                    </div>
+                  </span>
+                </div>
+                <div
+                  class="euiSpacer euiSpacer--s"
+                />
+                <div>
+                  <div
+                    class="euiText euiText--extraSmall"
+                  >
+                    No filters defined.
+                  </div>
+                </div>
+                <button
+                  class="euiButtonEmpty euiButtonEmpty--primary euiButtonEmpty--xSmall"
+                  data-test-subj="where.addFilterButton"
+                  style="padding-top:5px"
+                  type="button"
+                >
+                  <span
+                    class="euiButtonContent euiButtonEmpty__content"
+                  >
+                    <span
+                      class="euiButtonEmpty__text"
+                    >
+                      + Add filter
+                    </span>
+                  </span>
+                </button>
+                <div
+                  class="euiText euiText--extraSmall"
+                  style="padding-left:10px"
+                >
+                  <div
+                    class="euiTextColor euiTextColor--subdued"
+                  >
+                    You can add up to 1  data filter.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
-      </span>
-    </div>
-    <div
-      class="euiSpacer euiSpacer--s"
-    />
-    <div>
-      <div
-        class="euiText euiText--extraSmall"
-      >
-        No filters defined.
-      </div>
-    </div>
-    <button
-      class="euiButtonEmpty euiButtonEmpty--primary euiButtonEmpty--xSmall"
-      data-test-subj="where.addFilterButton"
-      style="padding-top:5px"
-      type="button"
-    >
-      <span
-        class="euiButtonContent euiButtonEmpty__content"
-      >
-        <span
-          class="euiButtonEmpty__text"
-        >
-          + Add filter
-        </span>
-      </span>
-    </button>
-    <div
-      class="euiText euiText--extraSmall"
-      style="padding-left:10px"
-    >
-      <div
-        class="euiTextColor euiTextColor--subdued"
-      >
-        You can add up to 1  data filter.
       </div>
     </div>
   </div>
@@ -244,69 +445,138 @@ exports[`MonitorExpressions renders 1`] = `
     class="euiSpacer euiSpacer--m"
   />
   <div
-    id="groupBy"
+    class="minimal-accordion"
   >
-    <div
-      class="euiText euiText--extraSmall"
-    >
-      <strong>
-        Group by 
-      </strong>
-      <i>
-        - optional 
-      </i>
-      <span
-        class="euiToolTipAnchor"
-      >
-        <div>
-          EuiIconMock
-        </div>
-      </span>
-    </div>
-    <div
-      class="euiSpacer euiSpacer--s"
+    <hr
+      class="euiHorizontalRule euiHorizontalRule--full euiHorizontalRule--marginMedium"
     />
-    <div>
-      <div
-        class="euiText euiText--extraSmall"
-      >
-        No group bys defined.
-      </div>
-    </div>
     <div
       class="euiSpacer euiSpacer--xs"
     />
-    <button
-      class="euiButtonEmpty euiButtonEmpty--primary euiButtonEmpty--xSmall"
-      data-test-subj="addGroupByButton"
-      style="padding-top:5px"
-      type="button"
+    <div
+      class="euiAccordion"
     >
-      <span
-        class="euiButtonContent euiButtonEmpty__content"
+      <div
+        class="euiAccordion__triggerWrapper"
       >
-        <span
-          class="euiButtonEmpty__text"
+        <button
+          aria-controls="metric-expression__group-by"
+          aria-expanded="false"
+          class="euiAccordion__button"
+          id="generated-id"
+          type="button"
         >
-          + Add group by
-        </span>
-      </span>
-    </button>
-    <div
-      class="euiText euiText--extraSmall"
-    >
+          <span
+            class="euiAccordion__iconWrapper"
+          >
+            <div>
+              EuiIconMock
+            </div>
+          </span>
+          <span
+            class="euiIEFlexWrapFix"
+          >
+            <h5
+              class="euiTitle euiTitle--xxsmall minimal-accordion__title"
+            >
+              Group by
+            </h5>
+            <div
+              class="euiText euiText--extraSmall"
+            >
+              <span
+                class="euiTextColor euiTextColor--subdued"
+              >
+                No group bys defined. You can add up to 1 group bys.
+              </span>
+            </div>
+          </span>
+        </button>
+      </div>
       <div
-        class="euiTextColor euiTextColor--danger"
-      />
-    </div>
-    <div
-      class="euiText euiText--extraSmall"
-      style="padding-left:10px"
-    >
-      <div
-        class="euiTextColor euiTextColor--subdued"
+        aria-labelledby="generated-id"
+        class="euiAccordion__childWrapper"
+        id="metric-expression__group-by"
+        role="region"
+        tabindex="-1"
       >
-        You can add up to 1  group by.
+        <div>
+          <div
+            class=""
+          >
+            <div
+              class="euiPanel euiPanel--paddingLarge euiPanel--borderRadiusMedium euiPanel--plain euiPanel--noShadow euiPanel--noBorder minimal-accordion__panel"
+            >
+              <div
+                id="groupBy"
+              >
+                <div
+                  class="euiText euiText--extraSmall"
+                >
+                  <strong>
+                    Group by 
+                  </strong>
+                  <i>
+                    - optional 
+                  </i>
+                  <span
+                    class="euiToolTipAnchor"
+                  >
+                    <div>
+                      EuiIconMock
+                    </div>
+                  </span>
+                </div>
+                <div
+                  class="euiSpacer euiSpacer--s"
+                />
+                <div>
+                  <div
+                    class="euiText euiText--extraSmall"
+                  >
+                    No group bys defined.
+                  </div>
+                </div>
+                <div
+                  class="euiSpacer euiSpacer--xs"
+                />
+                <button
+                  class="euiButtonEmpty euiButtonEmpty--primary euiButtonEmpty--xSmall"
+                  data-test-subj="addGroupByButton"
+                  style="padding-top:5px"
+                  type="button"
+                >
+                  <span
+                    class="euiButtonContent euiButtonEmpty__content"
+                  >
+                    <span
+                      class="euiButtonEmpty__text"
+                    >
+                      + Add group by
+                    </span>
+                  </span>
+                </button>
+                <div
+                  class="euiText euiText--extraSmall"
+                >
+                  <div
+                    class="euiTextColor euiTextColor--danger"
+                  />
+                </div>
+                <div
+                  class="euiText euiText--extraSmall"
+                  style="padding-left:10px"
+                >
+                  <div
+                    class="euiTextColor euiTextColor--subdued"
+                  >
+                    You can add up to 1  group by.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>

@@ -18,7 +18,7 @@ import { AGGREGATION_TYPES, EXPRESSION_STYLE, POPOVER_STYLE } from './utils/cons
 import { FormikComboBox, FormikSelect } from '../../../../../components/FormControls';
 
 export default function MetricPopover(
-  { options, closePopover, expressionWidth, index } = this.props
+  { options, closePopover, expressionWidth, index, flyoutMode } = this.props
 ) {
   const onChangeFieldWrapper = (options, field, form) => {
     form.setFieldValue(`aggregations.${index}.fieldName`, options[0].label);
@@ -28,13 +28,13 @@ export default function MetricPopover(
     <div
       style={{
         width: Math.max(expressionWidth, 280) + 120,
-        height: 160,
-        ...POPOVER_STYLE,
-        ...EXPRESSION_STYLE,
+        height: flyoutMode ? 'auto' : 160,
+        ...(flyoutMode ? {} : POPOVER_STYLE),
+        ...(flyoutMode ? {} : EXPRESSION_STYLE),
       }}
     >
       <EuiFlexGroup gutterSize="s">
-        <EuiFlexItem grow={false}>
+        <EuiFlexItem grow={flyoutMode ? true : false}>
           <EuiFlexGroup direction="column" gutterSize="xs">
             <EuiFlexItem>
               <EuiText size="xs">
@@ -76,30 +76,33 @@ export default function MetricPopover(
           </EuiFlexGroup>
         </EuiFlexItem>
       </EuiFlexGroup>
+      {!flyoutMode && (
+        <>
+          <EuiSpacer size="l" />
 
-      <EuiSpacer size="l" />
-
-      <EuiFlexGroup alignItems="center" justifyContent="flexEnd">
-        <EuiFlexItem>
-          <EuiButtonEmpty
-            onClick={() => {
-              closePopover();
-            }}
-          >
-            Cancel
-          </EuiButtonEmpty>
-        </EuiFlexItem>
-        <EuiFlexItem>
-          <EuiButton
-            fill
-            onClick={() => {
-              closePopover();
-            }}
-          >
-            Save
-          </EuiButton>
-        </EuiFlexItem>
-      </EuiFlexGroup>
+          <EuiFlexGroup alignItems="center" justifyContent="flexEnd">
+            <EuiFlexItem>
+              <EuiButtonEmpty
+                onClick={() => {
+                  closePopover();
+                }}
+              >
+                Cancel
+              </EuiButtonEmpty>
+            </EuiFlexItem>
+            <EuiFlexItem>
+              <EuiButton
+                fill
+                onClick={() => {
+                  closePopover();
+                }}
+              >
+                Save
+              </EuiButton>
+            </EuiFlexItem>
+          </EuiFlexGroup>
+        </>
+      )}
     </div>
   );
 }

@@ -7,7 +7,8 @@ import { PLUGIN_NAME } from '../utils/constants';
 import { Plugin } from '../../../src/core/public';
 import { ACTION_ALERTING } from './actions/alerting_dashboard_action';
 import { CONTEXT_MENU_TRIGGER } from '../../../src/plugins/embeddable/public';
-import { getActions } from './utils/contextMenu/getActions';
+import { getActions, getAdAction } from './utils/contextMenu/actions';
+import { alertingTriggerAd } from './utils/contextMenu/triggers';
 
 declare module '../../../src/plugins/ui_actions/public' {
   export interface ActionContextMapping {
@@ -41,6 +42,12 @@ export class AlertingPlugin implements Plugin {
     actions.forEach((action) => {
       plugins.uiActions.addTriggerAction(CONTEXT_MENU_TRIGGER, action);
     });
+
+    // Create trigger for other plugins to open flyout. Can be used by other plugins like this:
+    // plugins.uiActions.executeTriggerActions('ALERTING_TRIGGER_AD_ID', { embeddable });
+    const adAction = getAdAction({ core, plugins });
+    plugins.uiActions.registerTrigger(alertingTriggerAd);
+    plugins.uiActions.addTriggerAction(alertingTriggerAd.id, adAction);
   }
 
   public start() {}

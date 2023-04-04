@@ -2,6 +2,7 @@
 
 exports[`CreateMonitor renders 1`] = `
 <div
+  className="create-monitor"
   style={
     Object {
       "padding": "25px 50px",
@@ -75,6 +76,11 @@ exports[`CreateMonitor renders 1`] = `
           "fieldValue": "",
           "operator": "is",
         },
+      }
+    }
+    innerRef={
+      Object {
+        "current": null,
       }
     }
     onSubmit={[Function]}

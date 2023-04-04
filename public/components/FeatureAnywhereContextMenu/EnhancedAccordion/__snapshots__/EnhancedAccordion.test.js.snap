@@ -1,0 +1,54 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`EnhancedAccordion renders 1`] = `
+<div
+  className="euiPanel euiPanel--borderRadiusMedium euiPanel--plain euiPanel--hasShadow euiPanel--hasBorder euiPanel--flexGrowZero euiSplitPanel euiSplitPanel--row euiCheckableCard"
+>
+  <div
+    className="euiPanel euiPanel--paddingMedium euiPanel--borderRadiusNone euiPanel--subdued euiPanel--noShadow euiPanel--noBorder euiPanel--flexGrowZero euiSplitPanel__inner"
+  >
+    <EuiButtonIcon
+      aria-label="Expand"
+      className="enhanced-accordion__arrow  "
+      color="text"
+      iconType="arrowRight"
+    />
+  </div>
+  <div
+    className="enhanced-accordion__title-panel euiPanel euiPanel--borderRadiusNone euiPanel--transparent euiPanel--noShadow euiPanel--noBorder euiSplitPanel__inner"
+  >
+    <EuiAccordion
+      arrowDisplay="none"
+      buttonContent={
+        <div
+          className="enhanced-accordion__title"
+        >
+          <EuiTitle
+            aria-expanded="false"
+            aria-pressed="false"
+            role="button"
+            size="s"
+          >
+            <h3 />
+          </EuiTitle>
+        </div>
+      }
+      extraAction={
+        <div
+          className="enhanced-accordion__extra"
+        />
+      }
+      forceState="closed"
+      initialIsOpen={false}
+      isLoading={false}
+      isLoadingMessage={false}
+      paddingSize="none"
+    >
+      <EuiPanel
+        hasBorder={false}
+        hasShadow={false}
+      />
+    </EuiAccordion>
+  </div>
+</div>
+`;

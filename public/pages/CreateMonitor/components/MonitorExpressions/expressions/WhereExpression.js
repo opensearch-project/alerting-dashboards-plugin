@@ -21,6 +21,7 @@ import {
   POPOVER_STYLE,
   EXPRESSION_STYLE,
   WHERE_BOOLEAN_FILTERS,
+  MAX_NUM_WHERE_EXPRESSION,
 } from './utils/constants';
 import {
   getOperators,
@@ -28,6 +29,7 @@ import {
   validateRange,
   isNullOperator,
   isRangeOperator,
+  getIsDataFilterActive,
 } from './utils/whereHelpers';
 import { hasError, isInvalid } from '../../../../../utils/validate';
 import {
@@ -59,8 +61,6 @@ const propTypes = {
 };
 
 const ALLOWED_TYPES = ['number', 'text', 'keyword', 'boolean'];
-
-const MAX_NUM_WHERE_EXPRESSION = 1;
 
 class WhereExpression extends Component {
   constructor(props) {
@@ -111,7 +111,14 @@ class WhereExpression extends Component {
   };
 
   resetValues = () => {
-    const { fieldPath, formik, useTriggerFieldOperators = false } = this.props;
+    const {
+      fieldPath,
+      formik,
+      useTriggerFieldOperators = false,
+      flyoutMode,
+      closeExpression,
+    } = this.props;
+
     if (useTriggerFieldOperators) {
       _.set(formik, `values.${fieldPath}where`, FORMIK_INITIAL_TRIGGER_VALUES.where);
       formik.setValues({ ...formik.values });
@@ -120,6 +127,10 @@ class WhereExpression extends Component {
         ...formik.values,
         where: { ...FORMIK_INITIAL_VALUES.where },
       });
+    }
+
+    if (flyoutMode) {
+      closeExpression(Expressions.WHERE);
     }
   };
 
@@ -191,21 +202,23 @@ class WhereExpression extends Component {
 
   render() {
     const {
-      formik: { values },
+      formik,
       openedStates,
       openExpression,
       dataTypes,
       indexFieldFilters,
       useTriggerFieldOperators = false,
       fieldPath = '',
+      flyoutMode,
     } = this.props;
-
+    const { values } = formik;
     const indexFields =
       indexFieldFilters !== undefined
         ? getFilteredIndexFields(dataTypes, ALLOWED_TYPES, indexFieldFilters)
         : getIndexFields(dataTypes, ALLOWED_TYPES);
     const fieldType = _.get(values, `${fieldPath}where.fieldName[0].type`, 'number');
     let fieldOperator = _.get(values, `${fieldPath}where.operator`, 'is');
+
     if (useTriggerFieldOperators && !_.includes(_.values(TRIGGER_OPERATORS_MAP), fieldOperator)) {
       fieldOperator = TRIGGER_OPERATORS_MAP.INCLUDE;
       _.set(values, `${fieldPath}where.operator`, fieldOperator);
@@ -214,102 +227,146 @@ class WhereExpression extends Component {
     const fieldOperators = useTriggerFieldOperators
       ? TRIGGER_COMPARISON_OPERATORS
       : getOperators(fieldType);
-
     const whereFilterHeader = useTriggerFieldOperators ? 'Keyword filter' : 'Data filter';
-
-    const whereValues = _.get(values, `${fieldPath}where`);
-    const whereFieldName = _.get(whereValues, 'fieldName[0].label', undefined);
-
-    const showAddButtonFlag = !openedStates[Expressions.WHERE] && !whereFieldName;
+    const showAddButtonFlag = !getIsDataFilterActive({ formik, openedStates, fieldPath });
+    const inputs = (
+      <EuiFlexGroup style={flyoutMode ? {} : { ...EXPRESSION_STYLE }} alignItems="flexEnd">
+        <EuiFlexItem grow={false} style={{ width: 200 }}>
+          <EuiFlexGroup direction="column" gutterSize="xs">
+            {flyoutMode && (
+              <EuiFlexItem>
+                <EuiText size="xs">
+                  <h4>Field</h4>
+                </EuiText>
+              </EuiFlexItem>
+            )}
+            <EuiFlexItem>
+              <FormikComboBox
+                name={`${fieldPath}where.fieldName`}
+                inputProps={{
+                  placeholder: 'Select a field',
+                  options: indexFields,
+                  onChange: this.handleFieldChange,
+                  isClearable: false,
+                  singleSelection: { asPlainText: true },
+                }}
+              />
+            </EuiFlexItem>
+          </EuiFlexGroup>
+        </EuiFlexItem>
+        <EuiFlexItem grow={false}>
+          <EuiFlexGroup direction="column" gutterSize="xs">
+            {flyoutMode && (
+              <EuiFlexItem>
+                <EuiText size="xs">
+                  <h4>Operator</h4>
+                </EuiText>
+              </EuiFlexItem>
+            )}
+            <EuiFlexItem>
+              <FormikSelect
+                name={`${fieldPath}where.operator`}
+                inputProps={{
+                  onChange: this.handleOperatorChange,
+                  options: fieldOperators,
+                }}
+              />
+            </EuiFlexItem>
+          </EuiFlexGroup>
+        </EuiFlexItem>
+        {!isNullOperator(fieldOperator) && (
+          <EuiFlexItem>{this.renderValueField(fieldType, fieldOperator)}</EuiFlexItem>
+        )}
+      </EuiFlexGroup>
+    );
+    const badge = (
+      <EuiBadge
+        color="hollow"
+        iconSide="right"
+        iconType="cross"
+        iconOnClick={() => this.resetValues()}
+        iconOnClickAriaLabel="Remove filter"
+        onClick={() => openExpression(Expressions.WHERE)}
+        onClickAriaLabel="Edit where filter"
+      >
+        {displayText(_.get(values, `${fieldPath}where`))}
+      </EuiBadge>
+    );
 
     return (
       <div>
-        <EuiText size="xs">
-          <strong>{whereFilterHeader}</strong>
-          <i> - optional </i>
-          <IconToolTip content={FILTERS_TOOLTIP_TEXT} iconType="questionInCircle" />
-        </EuiText>
-        <EuiSpacer size={'s'} />
-
-        {showAddButtonFlag ? (
-          <div>
-            <EuiText size={'xs'}>No filters defined.</EuiText>
-          </div>
-        ) : (
-          <EuiPopover
-            id={`${whereFilterHeader}-badge-popover`}
-            button={
-              <div style={{ paddingBottom: '5px' }}>
-                <EuiBadge
-                  color="hollow"
-                  iconSide="right"
-                  iconType="cross"
-                  iconOnClick={() => this.resetValues()}
-                  iconOnClickAriaLabel="Remove filter"
-                  onClick={() => {
-                    openExpression(Expressions.WHERE);
-                  }}
-                  onClickAriaLabel="Edit where filter"
-                >
-                  {displayText(_.get(values, `${fieldPath}where`))}
-                </EuiBadge>
-              </div>
-            }
-            isOpen={openedStates.WHERE}
-            closePopover={this.handleClosePopOver}
-            panelPaddingSize="none"
-            ownFocus
-            withTitle
-            anchorPosition="downLeft"
-          >
-            <div style={POPOVER_STYLE}>
-              <EuiFlexGroup style={{ ...EXPRESSION_STYLE }}>
-                <EuiFlexItem grow={false} style={{ width: 200 }}>
-                  <FormikComboBox
-                    name={`${fieldPath}where.fieldName`}
-                    inputProps={{
-                      placeholder: 'Select a field',
-                      options: indexFields,
-                      onChange: this.handleFieldChange,
-                      isClearable: false,
-                      singleSelection: { asPlainText: true },
-                    }}
-                  />
-                </EuiFlexItem>
-                <EuiFlexItem grow={false}>
-                  <FormikSelect
-                    name={`${fieldPath}where.operator`}
-                    inputProps={{
-                      onChange: this.handleOperatorChange,
-                      options: fieldOperators,
-                    }}
-                  />
-                </EuiFlexItem>
-                {!isNullOperator(fieldOperator) && (
-                  <EuiFlexItem>{this.renderValueField(fieldType, fieldOperator)}</EuiFlexItem>
-                )}
-              </EuiFlexGroup>
-            </div>
-          </EuiPopover>
+        {flyoutMode && !showAddButtonFlag && (
+          <>
+            {badge}
+            <EuiSpacer size="s" />
+            {inputs}
+          </>
         )}
+        {!flyoutMode && (
+          <>
+            <EuiText size="xs">
+              <strong>{whereFilterHeader}</strong>
+              <i> - optional </i>
+              <IconToolTip content={FILTERS_TOOLTIP_TEXT} iconType="questionInCircle" />
+            </EuiText>
+            <EuiSpacer size={'s'} />
 
+            {showAddButtonFlag ? (
+              <div>
+                <EuiText size={'xs'}>No filters defined.</EuiText>
+              </div>
+            ) : (
+              <EuiPopover
+                id={`${whereFilterHeader}-badge-popover`}
+                button={
+                  <div style={{ paddingBottom: '5px' }}>
+                    <EuiBadge
+                      color="hollow"
+                      iconSide="right"
+                      iconType="cross"
+                      iconOnClick={() => this.resetValues()}
+                      iconOnClickAriaLabel="Remove filter"
+                      onClick={() => {
+                        openExpression(Expressions.WHERE);
+                      }}
+                      onClickAriaLabel="Edit where filter"
+                    >
+                      {displayText(_.get(values, `${fieldPath}where`))}
+                    </EuiBadge>
+                  </div>
+                }
+                isOpen={openedStates.WHERE}
+                closePopover={this.handleClosePopOver}
+                panelPaddingSize="none"
+                ownFocus
+                withTitle
+                anchorPosition="downLeft"
+              >
+                <div style={POPOVER_STYLE}>{inputs}</div>
+              </EuiPopover>
+            )}
+          </>
+        )}
         {showAddButtonFlag && (
           <EuiButtonEmpty
             size="xs"
             data-test-subj={`${fieldPath}where.addFilterButton`}
             onClick={() => openExpression(Expressions.WHERE)}
-            style={{ paddingTop: '5px' }}
+            style={flyoutMode ? {} : { paddingTop: '5px' }}
           >
             + Add filter
           </EuiButtonEmpty>
         )}
-
-        {inputLimitText(
-          showAddButtonFlag ? 0 : 1,
-          MAX_NUM_WHERE_EXPRESSION,
-          _.lowerCase(whereFilterHeader),
-          _.lowerCase(`${whereFilterHeader}s`),
-          { paddingLeft: '10px' }
+        {!flyoutMode && (
+          <>
+            {inputLimitText(
+              showAddButtonFlag ? 0 : 1,
+              MAX_NUM_WHERE_EXPRESSION,
+              _.lowerCase(whereFilterHeader),
+              _.lowerCase(`${whereFilterHeader}s`),
+              { paddingLeft: '10px' }
+            )}
+          </>
         )}
       </div>
     );

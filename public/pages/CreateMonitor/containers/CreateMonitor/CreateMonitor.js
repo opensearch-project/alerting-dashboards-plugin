@@ -35,8 +35,10 @@ import {
   TRIGGER_TYPE,
   FORMIK_INITIAL_TRIGGER_VALUES,
 } from '../../../CreateTrigger/containers/CreateTrigger/utils/constants';
-import MinimalAccordion from '../../../../components/MinimalAccordion';
+import { FORMIK_INITIAL_AGG_VALUES } from '../CreateMonitor/utils/constants';
 import { unitToLabel } from '../../../CreateMonitor/components/Schedule/Frequencies/Interval';
+import EnhancedAccordion from '../../../../components/FeatureAnywhereContextMenu/EnhancedAccordion';
+import { getInitialActionValues } from '../../../CreateTrigger/components/AddActionButton/utils';
 import './styles.scss';
 
 export default class CreateMonitor extends Component {
@@ -45,12 +47,14 @@ export default class CreateMonitor extends Component {
     monitorToEdit: null,
     detectorId: null,
     updateMonitor: () => {},
-    isMinimal: false,
+    flyoutMode: null,
     defaultName: '',
     defaultIndex: undefined,
     isDefaultTriggerEnabled: false,
     defaultTimeField: '',
     isDarkMode: false,
+    isDefaultMetricsEnabled: false,
+    isDefaultNotificationEnabled: false,
   };
 
   constructor(props) {
@@ -81,6 +85,9 @@ export default class CreateMonitor extends Component {
       response: null,
       performanceResponse: null,
       accordionsOpen: {},
+      Section: props.flyoutMode
+        ? (props) => <EnhancedAccordion {...props} />
+        : ({ children }) => <>{children}</>,
     };
 
     if (this.props.edit && this.props.monitorToEdit) {
@@ -100,6 +107,19 @@ export default class CreateMonitor extends Component {
       const values = _.cloneDeep(FORMIK_INITIAL_TRIGGER_VALUES);
       values.name = 'Trigger 1';
       initialValues.triggerDefinitions = [values];
+
+      // Adds an initial notification if needed
+      if (props.isDefaultNotificationEnabled) {
+        const monitorType = initialValues.monitor_type;
+        initialValues.triggerDefinitions[0].actions = [
+          getInitialActionValues({ monitorType, numOfActions: 0, flyoutMode: props.flyoutMode }),
+        ];
+      }
+    }
+
+    // Add default metrics
+    if (props.isDefaultMetricsEnabled) {
+      initialValues.aggregations = [FORMIK_INITIAL_AGG_VALUES];
     }
 
     _.set(this.state, 'initialValues', initialValues);
@@ -311,145 +331,145 @@ export default class CreateMonitor extends Component {
       notifications,
       isDarkMode,
       notificationService,
-      isMinimal,
+      flyoutMode,
     } = this.props;
-    const { initialValues, plugins, accordionsOpen } = this.state;
-    const Section = isMinimal
-      ? (props) => <MinimalAccordion {...props} />
-      : ({ children }) => <>{children}</>;
+    const { initialValues, plugins, accordionsOpen, Section } = this.state;
 
     return (
-      <div style={isMinimal ? {} : { padding: '25px 50px' }} className="create-monitor">
+      <div style={flyoutMode ? {} : { padding: '25px 50px' }} className="create-monitor">
         <Formik
           initialValues={initialValues}
           onSubmit={this.onSubmit}
           validateOnChange={false}
           innerRef={this.formikRef}
         >
-          {({ values, errors, handleSubmit, isSubmitting, isValid, touched }) => (
-            <Fragment>
-              {!isMinimal && (
-                <>
-                  <EuiTitle size="l">
-                    <h1>{edit ? 'Edit' : 'Create'} monitor</h1>
-                  </EuiTitle>
-                  <EuiSpacer />
-                </>
-              )}
-              <Section
-                {...{
-                  id: 'monitorDetails',
-                  isOpen: accordionsOpen.monitorDetails,
-                  onToggle: this.onAccordionToggle,
-                  title: values.name,
-                  titleAdditional: null,
-                  isFirst: true,
-                }}
-              >
-                {isMinimal && values.frequency === 'interval' && (
+          {({ values, errors, handleSubmit, isSubmitting, isValid, touched }) => {
+            const isAd = values.searchType === SEARCH_TYPE.AD;
+
+            return (
+              <Fragment>
+                {!flyoutMode && (
                   <>
-                    <EuiText size="m" className="create-monitor__frequency">
-                      <p>
-                        Runs every {values.period.interval}{' '}
-                        <span>{unitToLabel[values.period.unit]}</span>
-                      </p>
-                    </EuiText>
+                    <EuiTitle size="l">
+                      <h1>{edit ? 'Edit' : 'Create'} monitor</h1>
+                    </EuiTitle>
+                    <EuiSpacer />
+                  </>
+                )}
+                <Section
+                  {...{
+                    id: 'monitorDetails',
+                    isOpen: accordionsOpen.monitorDetails,
+                    onToggle: () => this.onAccordionToggle('monitorDetails'),
+                    title: values.name,
+                    subTitle: flyoutMode && values.frequency === 'interval' && (
+                      <>
+                        <EuiText size="m" className="create-monitor__frequency">
+                          <p>
+                            Runs every {values.period.interval}{' '}
+                            <span>{unitToLabel[values.period.unit]}</span>
+                          </p>
+                        </EuiText>
+                      </>
+                    ),
+                  }}
+                >
+                  <MonitorDetails
+                    values={values}
+                    errors={errors}
+                    history={history}
+                    httpClient={httpClient}
+                    monitorToEdit={monitorToEdit}
+                    plugins={plugins}
+                    isAd={isAd}
+                    detectorId={this.props.detectorId}
+                    flyoutMode={flyoutMode}
+                  />
+                </Section>
+                <EuiSpacer size={flyoutMode ? 'm' : 'l'} />
+                {!isAd && (
+                  <div>
+                    <Section
+                      {...{
+                        id: 'advancedData',
+                        isOpen: accordionsOpen.advancedData,
+                        onToggle: this.onAccordionToggle,
+                        onToggle: () => this.onAccordionToggle('advancedData'),
+                        title: 'Advanced data source configuration',
+                      }}
+                    >
+                      <DefineMonitor
+                        values={values}
+                        errors={errors}
+                        touched={touched}
+                        httpClient={httpClient}
+                        location={location}
+                        detectorId={this.props.detectorId}
+                        notifications={notifications}
+                        isDarkMode={isDarkMode}
+                        flyoutMode={flyoutMode}
+                      />
+                    </Section>
+                    {!flyoutMode && <EuiSpacer />}
+                  </div>
+                )}
+                {flyoutMode && (
+                  <>
+                    <EuiSpacer size="xl" />
+                    <EuiTitle size="s">
+                      <h3>Triggers</h3>
+                    </EuiTitle>
                     <EuiSpacer size="m" />
                   </>
                 )}
-                <MonitorDetails
-                  values={values}
-                  errors={errors}
-                  history={history}
-                  httpClient={httpClient}
-                  monitorToEdit={monitorToEdit}
-                  plugins={plugins}
-                  isAd={values.searchType === SEARCH_TYPE.AD}
-                  detectorId={this.props.detectorId}
-                  isMinimal={isMinimal}
-                />
-              </Section>
-              {!isMinimal && <EuiSpacer />}
-              {values.searchType !== SEARCH_TYPE.AD && (
-                <div>
-                  <Section
-                    {...{
-                      id: 'advancedData',
-                      isOpen: accordionsOpen.advancedData,
-                      onToggle: this.onAccordionToggle,
-                      title: 'Advanced data source configuration',
-                    }}
-                  >
-                    <DefineMonitor
-                      values={values}
-                      errors={errors}
-                      touched={touched}
+                <FieldArray name={'triggerDefinitions'} validateOnChange={true}>
+                  {(triggerArrayHelpers) => (
+                    <ConfigureTriggers
+                      edit={edit}
+                      triggerArrayHelpers={triggerArrayHelpers}
+                      monitor={formikToMonitor(values)}
+                      monitorValues={values}
+                      setFlyout={this.props.setFlyout}
+                      triggers={_.get(formikToMonitor(values), 'triggers', [])}
+                      triggerValues={values}
+                      isDarkMode={this.props.isDarkMode}
                       httpClient={httpClient}
-                      location={location}
-                      detectorId={this.props.detectorId}
                       notifications={notifications}
-                      isDarkMode={isDarkMode}
-                      isMinimal={isMinimal}
+                      notificationService={notificationService}
+                      plugins={plugins}
+                      flyoutMode={flyoutMode}
                     />
-                  </Section>
-                  {!isMinimal && <EuiSpacer />}
-                </div>
-              )}
-              {isMinimal && (
-                <>
-                  <EuiSpacer size="xl" />
-                  <EuiTitle size="s">
-                    <h3>Triggers</h3>
-                  </EuiTitle>
-                </>
-              )}
-              <FieldArray name={'triggerDefinitions'} validateOnChange={true}>
-                {(triggerArrayHelpers) => (
-                  <ConfigureTriggers
-                    edit={edit}
-                    triggerArrayHelpers={triggerArrayHelpers}
-                    monitor={formikToMonitor(values)}
-                    monitorValues={values}
-                    setFlyout={this.props.setFlyout}
-                    triggers={_.get(formikToMonitor(values), 'triggers', [])}
-                    triggerValues={values}
-                    isDarkMode={this.props.isDarkMode}
-                    httpClient={httpClient}
-                    notifications={notifications}
-                    notificationService={notificationService}
-                    plugins={plugins}
-                    isMinimal={isMinimal}
-                  />
+                  )}
+                </FieldArray>
+                {!flyoutMode && (
+                  <>
+                    <EuiSpacer />
+                    <EuiFlexGroup alignItems="center" justifyContent="flexEnd">
+                      <EuiFlexItem grow={false}>
+                        <EuiButtonEmpty onClick={this.onCancel}>Cancel</EuiButtonEmpty>
+                      </EuiFlexItem>
+                      <EuiFlexItem grow={false}>
+                        <EuiButton fill onClick={handleSubmit} isLoading={isSubmitting}>
+                          {edit ? 'Update' : 'Create'}
+                        </EuiButton>
+                      </EuiFlexItem>
+                    </EuiFlexGroup>
+                    <SubmitErrorHandler
+                      errors={errors}
+                      isSubmitting={isSubmitting}
+                      isValid={isValid}
+                      onSubmitError={() =>
+                        notifications.toasts.addDanger({
+                          title: `Failed to ${edit ? 'update' : 'create'} the monitor`,
+                          text: 'Fix all highlighted error(s) before continuing.',
+                        })
+                      }
+                    />
+                  </>
                 )}
-              </FieldArray>
-              {!isMinimal && (
-                <>
-                  <EuiSpacer />
-                  <EuiFlexGroup alignItems="center" justifyContent="flexEnd">
-                    <EuiFlexItem grow={false}>
-                      <EuiButtonEmpty onClick={this.onCancel}>Cancel</EuiButtonEmpty>
-                    </EuiFlexItem>
-                    <EuiFlexItem grow={false}>
-                      <EuiButton fill onClick={handleSubmit} isLoading={isSubmitting}>
-                        {edit ? 'Update' : 'Create'}
-                      </EuiButton>
-                    </EuiFlexItem>
-                  </EuiFlexGroup>
-                  <SubmitErrorHandler
-                    errors={errors}
-                    isSubmitting={isSubmitting}
-                    isValid={isValid}
-                    onSubmitError={() =>
-                      notifications.toasts.addDanger({
-                        title: `Failed to ${edit ? 'update' : 'create'} the monitor`,
-                        text: 'Fix all highlighted error(s) before continuing.',
-                      })
-                    }
-                  />
-                </>
-              )}
-            </Fragment>
-          )}
+              </Fragment>
+            );
+          }}
         </Formik>
       </div>
     );

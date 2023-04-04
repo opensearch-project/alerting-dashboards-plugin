@@ -1,0 +1,34 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`MinimalAccordion renders 1`] = `
+<div
+  className="minimal-accordion"
+>
+  <EuiAccordion
+    arrowDisplay="left"
+    buttonContent={
+      <React.Fragment>
+        <EuiTitle
+          size="xxs"
+        >
+          <h5
+            className="minimal-accordion__title"
+          />
+        </EuiTitle>
+      </React.Fragment>
+    }
+    forceState="closed"
+    initialIsOpen={false}
+    isLoading={false}
+    isLoadingMessage={false}
+    paddingSize="none"
+  >
+    <EuiPanel
+      className="minimal-accordion__panel"
+      hasBorder={false}
+      hasShadow={false}
+      paddingSize="l"
+    />
+  </EuiAccordion>
+</div>
+`;

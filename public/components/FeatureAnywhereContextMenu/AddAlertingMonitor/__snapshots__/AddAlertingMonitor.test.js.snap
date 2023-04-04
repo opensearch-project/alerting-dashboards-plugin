@@ -1,0 +1,87 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`AddAlertingMonitor renders 1`] = `
+<div
+  className="add-alerting-monitor"
+>
+  <EuiFlyoutHeader
+    hasBorder={true}
+  >
+    <EuiTitle>
+      <h2
+        id="add-alerting-monitor__title"
+      >
+        Add alerting monitor
+      </h2>
+    </EuiTitle>
+  </EuiFlyoutHeader>
+  <EuiFlyoutBody>
+    <div
+      className="add-alerting-monitor__scroll"
+    >
+      <EuiFormFieldset
+        className="add-alerting-monitor__modes"
+        legend={
+          Object {
+            "children": <EuiTitle>
+              <span>
+                Options to create a new monitor or associate an existing monitor
+              </span>
+            </EuiTitle>,
+            "display": "hidden",
+          }
+        }
+      >
+        <EuiCheckableCard
+          checked={false}
+          id="add-alerting-monitor__create"
+          key="add-alerting-monitor__create"
+          label="Create new monitor"
+          name="add-alerting-monitor__create"
+          onChange={[Function]}
+          value="create"
+        />
+        <EuiCheckableCard
+          checked={false}
+          id="add-alerting-monitor__existing"
+          key="add-alerting-monitor__existing"
+          label="Associate existing monitor"
+          name="add-alerting-monitor__existing"
+          onChange={[Function]}
+          value="existing"
+        />
+      </EuiFormFieldset>
+      <EuiSpacer
+        size="m"
+      />
+      <EuiSpacer
+        size="l"
+      />
+    </div>
+  </EuiFlyoutBody>
+  <EuiFlyoutFooter>
+    <EuiFlexGroup
+      justifyContent="spaceBetween"
+    >
+      <EuiFlexItem
+        grow={false}
+      >
+        <EuiButtonEmpty>
+          Cancel
+        </EuiButtonEmpty>
+      </EuiFlexItem>
+      <EuiFlexItem
+        grow={false}
+      >
+        <EuiButton
+          fill={true}
+          onClick={[Function]}
+        >
+          Create
+           monitor
+        </EuiButton>
+      </EuiFlexItem>
+    </EuiFlexGroup>
+  </EuiFlyoutFooter>
+</div>
+`;

@@ -7,20 +7,37 @@ exports[`AssociatedMonitors renders 1`] = `
   <EuiFlyoutHeader
     hasBorder={true}
   >
-    <EuiTitle
-      size="s"
-    >
+    <EuiTitle>
       <h2
         id="associated-monitors__title"
       >
-        Associated monitors 
+        Associated monitors
+         
       </h2>
     </EuiTitle>
   </EuiFlyoutHeader>
   <EuiFlyoutBody>
-    <EuiText>
-      <h4 />
-    </EuiText>
+    <EuiFlexGroup
+      alignItems="center"
+      justifyContent="spaceBetween"
+    >
+      <EuiFlexItem>
+        <EuiText>
+          <h4 />
+        </EuiText>
+      </EuiFlexItem>
+      <EuiFlexItem
+        grow={false}
+      >
+        <EuiButton
+          fill={true}
+          iconType="link"
+          onClick={[Function]}
+        >
+          Associate a monitor
+        </EuiButton>
+      </EuiFlexItem>
+    </EuiFlexGroup>
     <EuiSpacer
       size="l"
     />
@@ -52,13 +69,6 @@ exports[`AssociatedMonitors renders 1`] = `
           Object {
             "actions": Array [
               Object {
-                "description": "Unlink monitor",
-                "icon": "unlink",
-                "name": "Unlink monitor",
-                "onClick": [Function],
-                "type": "icon",
-              },
-              Object {
                 "description": "Edit monitor",
                 "icon": "pencil",
                 "name": "Edit monitor",
@@ -66,9 +76,9 @@ exports[`AssociatedMonitors renders 1`] = `
                 "type": "icon",
               },
               Object {
-                "description": "View configuration",
-                "icon": "popout",
-                "name": "View configuration",
+                "description": "Unlink monitor",
+                "icon": "unlink",
+                "name": "Unlink monitor",
                 "onClick": [Function],
                 "type": "icon",
               },
@@ -79,23 +89,14 @@ exports[`AssociatedMonitors renders 1`] = `
       }
       hasActions={true}
       items={Array []}
+      loading={true}
       message={
         <EuiEmptyPrompt
-          actions={
-            <EuiButton
-              fill={true}
-              onClick={[Function]}
-            >
-              Add alerting monitor
-            </EuiButton>
+          body={
+            <EuiLoadingSpinner
+              size="l"
+            />
           }
-          body="There are no alerting monitors associated with  visualization. You will need to add a monitor to the visualization to be able to list it here"
-          title={
-            <h3>
-              No monitors to display
-            </h3>
-          }
-          titleSize="s"
         />
       }
       pagination={true}

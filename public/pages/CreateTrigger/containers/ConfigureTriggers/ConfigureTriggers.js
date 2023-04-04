@@ -4,7 +4,14 @@
  */
 
 import React from 'react';
-import { EuiHorizontalRule, EuiSpacer } from '@elastic/eui';
+import {
+  EuiHorizontalRule,
+  EuiSpacer,
+  EuiBadge,
+  EuiFlexGroup,
+  EuiFlexItem,
+  EuiButtonIcon,
+} from '@elastic/eui';
 import ContentPanel from '../../../../components/ContentPanel';
 import _ from 'lodash';
 import DefineBucketLevelTrigger from '../DefineBucketLevelTrigger';
@@ -26,6 +33,7 @@ import {
 } from '../../../CreateMonitor/components/ClusterMetricsMonitor/utils/clusterMetricsMonitorHelpers';
 import { FORMIK_INITIAL_VALUES } from '../../../CreateMonitor/containers/CreateMonitor/utils/constants';
 import { getDefaultScript } from '../../utils/helper';
+import EnhancedAccordion from '../../../../components/FeatureAnywhereContextMenu/EnhancedAccordion';
 
 class ConfigureTriggers extends React.Component {
   constructor(props) {
@@ -38,13 +46,16 @@ class ConfigureTriggers extends React.Component {
         _.get(props, 'monitor.monitor_type', MONITOR_TYPE.QUERY_LEVEL) ===
         MONITOR_TYPE.BUCKET_LEVEL,
       triggerDeleted: false,
-      addTriggerButton: this.prepareAddTriggerButton(),
       triggerEmptyPrompt: this.prepareTriggerEmptyPrompt(),
+      accordionsOpen: { trigger1: true },
+      TriggerContainer: props.flyoutMode
+        ? (props) => <EnhancedAccordion {...props} />
+        : ({ children }) => <>{children}</>,
+      ContentPanelStructure: props.flyoutMode ? ({ children }) => <>{children}</> : ContentPanel,
     };
 
     this.onQueryMappings = this.onQueryMappings.bind(this);
     this.onRunExecute = this.onRunExecute.bind(this);
-    this.prepareAddTriggerButton = this.prepareAddTriggerButton.bind(this);
     this.prepareTriggerEmptyPrompt = this.prepareTriggerEmptyPrompt.bind(this);
   }
 
@@ -85,7 +96,6 @@ class ConfigureTriggers extends React.Component {
       FORMIK_INITIAL_VALUES.uri.api_type
     );
     if (prevSearchType !== currSearchType || prevApiType !== currApiType) {
-      this.setState({ addTriggerButton: this.prepareAddTriggerButton() });
       this.setState({ triggerEmptyPrompt: this.prepareTriggerEmptyPrompt() });
     }
 
@@ -96,19 +106,6 @@ class ConfigureTriggers extends React.Component {
       if (isBucketLevelMonitor) this.onQueryMappings();
     }
   }
-
-  prepareAddTriggerButton = () => {
-    const { monitorValues, triggerArrayHelpers, triggerValues } = this.props;
-    const disableAddTriggerButton =
-      _.get(triggerValues, 'triggerDefinitions', []).length >= MAX_TRIGGERS;
-    return (
-      <AddTriggerButton
-        arrayHelpers={triggerArrayHelpers}
-        disabled={disableAddTriggerButton}
-        script={getDefaultScript(monitorValues)}
-      />
-    );
-  };
 
   prepareTriggerEmptyPrompt = () => {
     const { monitorValues, triggerArrayHelpers } = this.props;
@@ -211,7 +208,7 @@ class ConfigureTriggers extends React.Component {
       httpClient,
       notificationService,
       plugins,
-      isMinimal,
+      flyoutMode,
     } = this.props;
 
     const { executeResponse } = this.state;
@@ -233,7 +230,7 @@ class ConfigureTriggers extends React.Component {
         notifications={notifications}
         notificationService={notificationService}
         plugins={plugins}
-        isMinimal={isMinimal}
+        flyoutMode={flyoutMode}
       />
     );
   };
@@ -315,8 +312,8 @@ class ConfigureTriggers extends React.Component {
   };
 
   renderTriggers = (triggerArrayHelpers) => {
-    const { monitorValues, triggerValues } = this.props;
-    const { triggerEmptyPrompt } = this.state;
+    const { monitorValues, triggerValues, flyoutMode } = this.props;
+    const { triggerEmptyPrompt, TriggerContainer, accordionsOpen } = this.state;
     const hasTriggers = !_.isEmpty(_.get(triggerValues, 'triggerDefinitions'));
 
     const triggerContent = (arrayHelpers, index) => {
@@ -332,47 +329,92 @@ class ConfigureTriggers extends React.Component {
 
     return hasTriggers
       ? triggerValues.triggerDefinitions.map((trigger, index) => {
+          const triggerKey = `trigger${index + 1}`;
+          const name = trigger.name || `Trigger ${index + 1}`;
           return (
-            <div key={index}>
-              {triggerContent(triggerArrayHelpers, index)}
-              <EuiHorizontalRule margin={'s'} />
+            <div key={triggerKey}>
+              <TriggerContainer
+                {...{
+                  id: `configure-trigger__${triggerKey}`,
+                  isOpen: accordionsOpen[triggerKey],
+                  onToggle: () => this.onAccordionToggle(triggerKey),
+                  title: (
+                    <EuiFlexGroup alignItems="center" justifyContent="flexStart" gutterSize="s">
+                      <EuiFlexItem grow={false}>{name}</EuiFlexItem>
+                      <EuiFlexItem grow={false}>
+                        <EuiBadge color="hollow">SEV{trigger.severity}</EuiBadge>
+                      </EuiFlexItem>
+                    </EuiFlexGroup>
+                  ),
+                  extraAction: (
+                    <EuiButtonIcon
+                      iconType="trash"
+                      color="text"
+                      aria-label={`Delete ${name}`}
+                      onClick={() => triggerArrayHelpers.remove(index)}
+                    />
+                  ),
+                }}
+              >
+                {triggerContent(triggerArrayHelpers, index)}
+              </TriggerContainer>
+              {!flyoutMode && <EuiHorizontalRule margin={'s'} />}
+              {flyoutMode && <EuiSpacer size="m" />}
             </div>
           );
         })
       : triggerEmptyPrompt;
   };
 
+  onAccordionToggle = (key, isOnlyOpen) => {
+    let accordionsOpen = isOnlyOpen ? {} : { ...this.state.accordionsOpen };
+    accordionsOpen[key] = !accordionsOpen[key];
+    this.setState({ accordionsOpen });
+  };
+
   render() {
-    const { triggerArrayHelpers, triggerValues, isMinimal } = this.props;
-    const { addTriggerButton } = this.state;
+    const { triggerArrayHelpers, triggerValues, flyoutMode, monitorValues } = this.props;
+    const { ContentPanelStructure } = this.state;
     const numOfTriggers = _.get(triggerValues, 'triggerDefinitions', []).length;
     const displayAddTriggerButton = numOfTriggers > 0;
-    const Container = isMinimal
-      ? ({ children }) => <>{children}</>
-      : ({ children }) => (
-          <ContentPanel
-            title={`Triggers (${numOfTriggers})`}
-            titleSize={'s'}
-            panelStyles={{ paddingBottom: '0px', paddingLeft: '20px', paddingRight: '20px' }}
-            bodyStyles={{ paddingLeft: '0px', padding: '10px' }}
-            horizontalRuleClassName={'accordion-horizontal-rule'}
-          >
-            {children}
-          </ContentPanel>
-        );
+    const disableAddTriggerButton =
+      _.get(triggerValues, 'triggerDefinitions', []).length >= MAX_TRIGGERS;
+    const monitorType = monitorValues.monitor_type;
 
     return (
-      <Container>
+      <ContentPanelStructure
+        title={`Triggers (${numOfTriggers})`}
+        titleSize={'s'}
+        panelStyles={{ paddingBottom: '0px', paddingLeft: '20px', paddingRight: '20px' }}
+        bodyStyles={{ paddingLeft: '0px', padding: '10px' }}
+        horizontalRuleClassName={'accordion-horizontal-rule'}
+      >
         {this.renderTriggers(triggerArrayHelpers)}
 
         {displayAddTriggerButton ? (
-          <div style={{ paddingBottom: '20px', paddingTop: '15px' }}>
-            {addTriggerButton}
-            <EuiSpacer size={'s'} />
-            {inputLimitText(numOfTriggers, MAX_TRIGGERS, 'trigger', 'triggers')}
+          <div style={flyoutMode ? {} : { paddingBottom: '20px', paddingTop: '15px' }}>
+            <AddTriggerButton
+              arrayHelpers={triggerArrayHelpers}
+              disabled={disableAddTriggerButton}
+              script={getDefaultScript(monitorValues)}
+              flyoutMode={flyoutMode}
+              monitorType={monitorType}
+              onAddTrigger={() =>
+                this.onAccordionToggle(
+                  `trigger${triggerValues.triggerDefinitions.length + 1}`,
+                  true
+                )
+              }
+            />
+            {!flyoutMode && (
+              <>
+                <EuiSpacer size={'s'} />
+                {inputLimitText(numOfTriggers, MAX_TRIGGERS, 'trigger', 'triggers')}
+              </>
+            )}
           </div>
         ) : null}
-      </Container>
+      </ContentPanelStructure>
     );
   }
 }
