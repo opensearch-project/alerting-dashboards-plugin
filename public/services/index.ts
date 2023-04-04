@@ -4,6 +4,6 @@
  */
 
 import NotificationService from './NotificationService';
-import { ServicesConsumer, ServicesContext } from './services';
+import { ServicesConsumer, ServicesContext, getClient, setClient, getSavedFeatureAnywhereLoader, setSavedFeatureAnywhereLoader } from './services';
 
-export { ServicesConsumer, ServicesContext, NotificationService };
+export { ServicesConsumer, ServicesContext, NotificationService, getClient, setClient, getSavedFeatureAnywhereLoader, setSavedFeatureAnywhereLoader };
