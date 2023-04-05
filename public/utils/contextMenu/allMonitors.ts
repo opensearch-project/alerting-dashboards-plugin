@@ -1,27 +1,28 @@
+/*
+* Copyright OpenSearch Contributors
+* SPDX-License-Identifier: Apache-2.0
+*/
+
 import { useState, useEffect } from 'react';
 import _ from 'lodash';
 import { getSavedAugmentVisLoader, getAugmentVisSavedObjs } from '../../../../../src/plugins/vis_augmenter/public'
 
-export const stateToLabel = {
-  enabled: { label: 'Enabled', color: 'success' },
-  disabled: { label: 'Disabled', color: 'danger' },
-};
 
-export const useMonitors = (embeddable) => {
-  const [monitors, setMonitors] = useState<any[] | null>();
+export const useAllMonitors = (embeddable) => {
+  const [allMonitors, setAllMonitors] = useState<any[] | null>();
 
   useEffect(() => {
-    const getMonitors = async () => {
-      await new Promise((resolve) => {
-        setTimeout(resolve, 1000);
-      });
+    const getAllMonitors = async () => {
+      // await new Promise((resolve) => {
+      //   setTimeout(resolve, 1000);
+      // });
 
       const loader = getSavedAugmentVisLoader();
       const associatedObjects = await getAugmentVisSavedObjs(embeddable.vis.id, loader);
-      const monitorIds: string[] = [];
+      const associatedMonitorIds: string[] = [];
       for (const associatedObject of associatedObjects) {
         if (associatedObject.visLayerExpressionFn.name === 'overlay_alerts')
-          monitorIds.push(associatedObject.pluginResourceId)
+          associatedMonitorIds.push(associatedObject.pluginResourceId)
       }
 
       let mons;
@@ -30,9 +31,7 @@ export const useMonitors = (embeddable) => {
         const params = {
           query: {
             query: {
-              ids: {
-                values: monitorIds,
-              },
+              match_all: {}
             },
           },
         }
@@ -56,29 +55,31 @@ export const useMonitors = (embeddable) => {
           const parsedMonitors: any[] = [];
           mons.forEach((mon, index) => {
             const state = mon._source.enabled ? 'enabled' : 'disabled';
-            parsedMonitors.push({
-              name: mon._source.name,
-              state: state,
-              date: mon._source.last_update_time, // this is the last alert time
-              id: mon._id,
-              type: mon._source.monitor_type,
-              indexes: mon._source.inputs[0].search.indices,
-              triggers: [{ name: 'example trigger' }],
-              activeAlerts: index,
-            })
+            if (!associatedMonitorIds.includes(mon._id)) {
+              parsedMonitors.push({
+                name: mon._source.name,
+                state: state,
+                date: mon._source.last_update_time, // this is the last alert time
+                id: mon._id,
+                type: mon._source.monitor_type,
+                indexes: mon._source.inputs[0].search.indices,
+                triggers: [{ name: 'example trigger' }],
+                activeAlerts: index,
+              })
+            }
           });
 
-          setMonitors(parsedMonitors);
+          setAllMonitors(parsedMonitors);
         } else {
-          console.log('error getting monitors:', response);
+          console.log('error getting all monitors:', response);
         }
       } catch (err) {
         console.error(err);
       }
     };
 
-    getMonitors();
+    getAllMonitors();
   }, []);
 
-  return monitors;
-};
+  return allMonitors;
+}
