@@ -32,31 +32,16 @@ import { get, cloneDeep } from 'lodash';
 import { i18n } from '@osd/i18n';
 import {
   OpenSearchDashboardsDatatable,
-  OpenSearchDashboardsDatatableRow,
   OpenSearchDashboardsDatatableColumn,
   ExpressionFunctionDefinition,
   ExprVisLayers,
 } from '../../../../src/plugins/expressions/public';
 import {
-  VisLayer,
-  VisLayers,
-  PointInTimeEvent,
-  PointInTimeEventsVisLayer,
-} from '../../../../src/plugins/visualizations/public';
-import {
-  Filter,
-  Query,
   TimeRange,
   calculateBounds,
 } from '../../../../src/plugins/data/common';
-//import { getParsedValue } from '../../../../src/plugins/expressions/common';
-// import {
-//   getAnomalySummaryQuery,
-//   parsePureAnomalies,
-// } from '../pages/utils/anomalyResultUtils';
-// import { AD_NODE_API } from '../../utils/constants';
-// import { AnomalyData } from '../models/interfaces';
 import { getClient } from '../services';
+import { VisLayers, VisLayerTypes, PointInTimeEventsVisLayer } from '../../../../src/plugins/vis_augmenter/public';
 
 type Input = ExprVisLayers;
 type Output = Promise<ExprVisLayers>;
@@ -82,20 +67,24 @@ const getAlerts = async (
     sortDirection: 'asc',
     // severityLevel,
     // alertState,
-    monitorIds: [monitorId],
+    // monitorIds: [monitorId],
   };
+
+  console.log('getting alerts');
 
   const resp = await getClient().get( '/api/alerting/alerts', { query: params } );
 
   if (resp.ok) {
     const { alerts } = resp;
+
+    // added filter for monitor id since there is a bug in the backend for the alerts api
     alerts.filter((alert) => (alert.start_time >= startTime && alert.start_time <= endTime))
-
-
+      .filter((alert) => (alert.monitorId == monitorId))
+    return alerts;
   } else {
     console.log('error getting alerts:', resp);
   }
-  return alerts;
+  return '';
 };
 
 const convertAlertsToLayer = (
@@ -105,12 +94,13 @@ const convertAlertsToLayer = (
     return {
       timestamp: alert.start_time + (alert.end_time - alert.start_time) / 2,
       metadata: {},
-    } as PointInTimeEvent;
+    };
   });
   return {
-    name: 'alert-events',
+    originPlugin: 'Alerting',
     events: events,
-    format: 'some-format',
+    pluginResource: 'AlertingPlugin',
+    type: VisLayerTypes.PointInTimeEvents
   } as PointInTimeEventsVisLayer;
 };
 
