@@ -9,7 +9,7 @@ const Container = ({ defaultFlyoutMode, ...props }) => {
   const index = [{ label: embeddable?.vis?.params?.index_pattern }];
   const [flyoutMode, setFlyoutMode] = useState(defaultFlyoutMode);
   const [selectedMonitorId, setSelectedMonitorId] = useState();
-  const monitors = useMonitors();
+  const monitors = useMonitors(embeddable);
 
   const Flyout = {
     associated: AssociatedMonitors,

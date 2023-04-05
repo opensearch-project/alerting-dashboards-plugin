@@ -1,12 +1,12 @@
 import { useState, useEffect } from 'react';
-import uuidv4 from 'uuid/v4';
+import { getSavedAugmentVisLoader, getAugmentVisSavedObjs } from '../../../../../src/plugins/vis_augmenter/public'
 
 export const stateToLabel = {
   enabled: { label: 'Enabled', color: 'success' },
   disabled: { label: 'Disabled', color: 'danger' },
 };
 
-export const useMonitors = () => {
+export const useMonitors = (embeddable) => {
   const [monitors, setMonitors] = useState<any[] | null>();
 
   useEffect(() => {
@@ -15,34 +15,65 @@ export const useMonitors = () => {
         setTimeout(resolve, 1000);
       });
 
-      // Fake monitors
-      const newMons = [
-        { name: 'CPU usage across world', state: 'enabled', date: Date.now(), id: uuidv4() },
-        { name: 'Memory usage across world', state: 'disabled', date: Date.now(), id: uuidv4() },
-        { name: 'Memory usage across world 2', state: 'disabled', date: Date.now(), id: uuidv4() },
-        { name: 'Memory usage across world 3', state: 'disabled', date: Date.now(), id: uuidv4() },
-        { name: 'Memory usage across world 4', state: 'disabled', date: Date.now(), id: uuidv4() },
-        { name: 'Memory usage across world 5', state: 'disabled', date: Date.now(), id: uuidv4() },
-        { name: 'Memory usage across world 6', state: 'disabled', date: Date.now(), id: uuidv4() },
-        { name: 'Memory usage across world 7', state: 'disabled', date: Date.now(), id: uuidv4() },
-        { name: 'Memory usage across world 8', state: 'disabled', date: Date.now(), id: uuidv4() },
-        { name: 'Memory usage across world 9', state: 'disabled', date: Date.now(), id: uuidv4() },
-        { name: 'Memory usage across world 10', state: 'disabled', date: Date.now(), id: uuidv4() },
-        { name: 'Memory usage across world 11', state: 'disabled', date: Date.now(), id: uuidv4() },
-        { name: 'Memory usage across world 12', state: 'disabled', date: Date.now(), id: uuidv4() },
-      ];
+      const loader = getSavedAugmentVisLoader();
+      const associatedObjects = await getAugmentVisSavedObjs(embeddable.vis.id, loader);
+      const monitorIds = [];
+      for (const associatedObject of associatedObjects) {
+        if (associatedObject.visLayerExpressionFn.name === 'overlay_alerts')
+          monitorIds.push(associatedObject.pluginResourceId)
+      }
 
-      // Additional data for them
-      newMons.forEach((mon, index) => {
-        Object.assign(mon, {
-          type: 'Per query monitor',
-          indexes: 'sample-host-health',
-          triggers: [{ name: 'example trigger' }],
-          activeAlerts: index,
-        });
-      });
+      let mons;
 
-      setMonitors(newMons);
+      try {
+        const params = {
+          query: {
+            query: {
+              ids: {
+                values: monitorIds,
+              },
+            },
+          },
+        }
+        const response = await fetch('../api/alerting/monitors/_search', {
+          method: 'post', // Default is 'get'
+          body: JSON.stringify(params),
+          // mode: 'cors',
+          headers: new Headers({
+            'Content-Type': 'application/json',
+            'osd-xsrf': 'true'
+          })
+        })
+          .then(response => response.json())
+
+
+        if (response.ok) {
+          mons = _.get(response, 'resp.hits.hits', []);
+          console.log('monitors');
+          console.log(mons);
+
+          const parsedMonitors = [];
+          mons.forEach((mon, index) => {
+            const state = mon._source.enabled ? 'enabled' : 'disabled';
+            parsedMonitors.push({
+              name: mon._source.name,
+              state: state,
+              date: mon._source.last_update_time, // this is the last alert time
+              id: mon._id,
+              type: mon._source.monitor_type,
+              indexes: mon._source.inputs[0].search.indices,
+              triggers: [{ name: 'example trigger' }],
+              activeAlerts: index,
+            })
+          });
+
+          setMonitors(parsedMonitors);
+        } else {
+          console.log('error getting monitors:', response);
+        }
+      } catch (err) {
+        console.error(err);
+      }
     };
 
     getMonitors();
