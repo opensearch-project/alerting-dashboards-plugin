@@ -34,7 +34,8 @@ const AssociatedMonitors = ({ embeddable, closeFlyout, setFlyoutMode, monitors }
   const onEdit = useCallback(
     (item) => {
       console.log('onEdit', item);
-      closeFlyout();
+      window.open(`alerting#/monitors/${item.id}?action=update-monitor`, '_blank');
+      // closeFlyout();
     },
     [closeFlyout]
   );
