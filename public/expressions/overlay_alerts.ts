@@ -57,7 +57,6 @@ import {
 // import { AD_NODE_API } from '../../utils/constants';
 // import { AnomalyData } from '../models/interfaces';
 import { getClient } from '../services';
-import { MAX_ALERT_COUNT } from '../../utils/constants';
 
 type Input = ExprVisLayers;
 type Output = Promise<ExprVisLayers>;
@@ -76,57 +75,26 @@ const getAlerts = async (
   startTime: number,
   endTime: number
 ): Promise<String> => {
-  // get the raw anomalies + aggs (aggs may not be needed, but leave in for now)
-  // const anomalySummaryQuery = getAnomalySummaryQuery(
-  //   startTime,
-  //   endTime,
-  //   detectorId,
-  //   undefined,
-  //   // regularly this should be false. setting to true to use historical
-  //   // to quickly get some results
-  //   // false
-  //   // TODO: remove this and set to false when done testing
-  //   true
-  // );
 
   const params = {
-    size: MAX_ALERT_COUNT,
-    // sortField,
-    // sortDirection,
+    size: 1000,
+    sortField: 'start_time',
+    sortDirection: 'asc',
     // severityLevel,
     // alertState,
     monitorIds: [monitorId],
   };
 
-  const resp = await getClient().post( '/api/alerting/alerts', { query: params } );
+  const resp = await getClient().get( '/api/alerting/alerts', { query: params } );
 
   if (resp.ok) {
     const { alerts } = resp;
     alerts.filter((alert) => (alert.start_time >= startTime && alert.start_time <= endTime))
 
 
-    // const filteredAlerts = _.filter(alerts, { trigger_id: triggerId });
-    // this.setState({
-    //   ...this.state,
-    //   alerts: filteredAlerts,
-    //   totalAlerts: filteredAlerts.length,
-    // });
   } else {
     console.log('error getting alerts:', resp);
-    // backendErrorNotification(notifications, 'get', 'alerts', resp.err);
   }
-
-  // We set the http client in the plugin.ts setup() fn. We pull it in here to make a
-  // server-side call directly.
-  //
-  // Note we can't use the redux fns here (e.g., searchResults()) since it requires
-  // hooks (e.g., useDispatch()) which doesn't make sense in this context, plus is not allowed by React.
-  // const anomalySummaryResponse = await getClient().post(
-  //   `..${AD_NODE_API.DETECTOR}/results/_search`,
-  //   {
-  //     body: JSON.stringify(anomalySummaryQuery),
-  //   }
-  // );
   return alerts;
 };
 
@@ -271,29 +239,6 @@ export const overlayAlertsFunction =
       );
 
       const alertLayer = convertAlertsToLayer(alerts);
-
-      // const augmentedTable = appendAnomaliesToTable(origDatatable, anomalies);
-      // const updatedVisConfig = appendAdDimensionToConfig(
-      //   origVisConfig,
-      //   augmentedTable
-      // );
-
-      // const table: OpenSearchDashboardsdatatable = {
-      //   type: 'opensearch_dashboards_datatable',
-      //   rows: augmentedTable.rows,
-      //   columns: augmentedTable.columns.map((column: any) => {
-      //     const cleanedColumn: OpenSearchDashboardsdatatableColumn = {
-      //       id: column.id,
-      //       name: column.name,
-      //       meta: serializeAggConfig(column.aggConfig),
-      //     };
-      //     if (args.includeFormatHints) {
-      //       cleanedColumn.formatHint =
-      //         column.aggConfig.toSerializedFieldFormat();
-      //     }
-      //     return cleanedColumn;
-      //   }),
-      // };
 
       // adding the anomaly layer to the list of VisLayers
       return {
