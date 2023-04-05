@@ -6,7 +6,7 @@ import './styles.scss';
 
 const Container = ({ defaultFlyoutMode, ...props }) => {
   const { embeddable } = props;
-  const index = [{ label: embeddable?.vis?.data?.index_pattern }];
+  const index = [{ label: embeddable?.vis?.data?.indexPattern?.title }];
   const [flyoutMode, setFlyoutMode] = useState(defaultFlyoutMode);
   const [selectedMonitorId, setSelectedMonitorId] = useState();
   const monitors = useMonitors();
