@@ -9,7 +9,10 @@
     "embeddable",
     "opensearchDashboardsReact",
     "savedObjects",
-    "visAugmenter"
+    "expressions",
+    "data",
+    "visAugmenter",
+    "opensearchDashboardsUtils"
   ],
   "server": true,
   "ui": true
