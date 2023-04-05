@@ -20,6 +20,7 @@ import {
 import './styles.scss';
 import CreateNew from './CreateNew';
 import AssociateExisting from './AssociateExisting';
+import { createSavedObjectAssociation } from './utils';
 
 function AddAlertingMonitor({
   embeddable,
@@ -33,7 +34,7 @@ function AddAlertingMonitor({
   setSelectedMonitorId,
   index,
 }) {
-  const onCreate = () => {
+  const onCreate = async () => {
     if (flyoutMode === 'create') {
       const event = new Event('createMonitor');
       document.dispatchEvent(event);
@@ -41,6 +42,11 @@ function AddAlertingMonitor({
 
     if (flyoutMode === 'existing') {
       // create saved object or dispatch an event that will create the obj
+      const res = await createSavedObjectAssociation(selectedMonitorId, embeddable.vis.id);
+
+      if (res) {
+        closeFlyout();
+      }
     }
   };
   const [isSubmitting, setIsSubmitting] = useState(false);
