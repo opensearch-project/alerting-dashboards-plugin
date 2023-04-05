@@ -49,6 +49,7 @@ function CreateNew({
     isDefaultNotificationEnabled: true,
     onPreSubmitCallback,
     onPostSubmitCallback,
+    visualizationId: embeddable.vis.id,
   };
 
   return (

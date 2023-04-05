@@ -40,6 +40,7 @@ import { unitToLabel } from '../../../CreateMonitor/components/Schedule/Frequenc
 import EnhancedAccordion from '../../../../components/FeatureAnywhereContextMenu/EnhancedAccordion';
 import { getInitialActionValues } from '../../../CreateTrigger/components/AddActionButton/utils';
 import './styles.scss';
+import { createAugmentVisSavedObject } from '../../../../../../../src/plugins/vis_augmenter/public';
 
 export default class CreateMonitor extends Component {
   static defaultProps = {
@@ -58,6 +59,7 @@ export default class CreateMonitor extends Component {
     onSubmitCallback: null,
     onPreSubmitCallback: null,
     onPostSubmitCallback: null,
+    visualizationId: '',
   };
 
   constructor(props) {
@@ -189,6 +191,8 @@ export default class CreateMonitor extends Component {
         notifications.toasts.addSuccess(`Monitor "${monitor.name}" successfully created.`);
         this.props.history.push(`/monitors/${_id}`);
         isSuccessful = true;
+
+        this.createSavedObjectAssociation(_id);
       } else {
         console.log('Failed to create:', resp);
         backendErrorNotification(notifications, 'create', 'monitor', resp.resp);
@@ -203,6 +207,43 @@ export default class CreateMonitor extends Component {
       onPostSubmitCallback(isSuccessful);
     }
   }
+
+  createSavedObjectAssociation = async (monitorId) => {
+    console.log('creating saved obj for this monitor...');
+
+    // create the fields needed for the saved obj
+    const savedObjectToCreate = {
+      title: `${monitorId}-association`,
+      pluginResourceId: monitorId,
+      visName: 'Vis name title',
+      visId: this.props.visualizationId,
+      visLayerExpressionFn: {
+        type: 'PointInTimeEventsVisLayer',
+        name: 'overlay_alerts',
+        args: {
+          monitorId: monitorId,
+        },
+      },
+    };
+
+    //console.log('saved obj to create: ', savedObjectToCreate);
+
+    // helper fn to create the saved object given an object implementing the
+    // ISavedFeatureAnywhere interface.
+    // Note that we actually don't have a hard dep on the feature anywhere loader yet,
+    // since we have a dependency on visualizations which has a dependency on the
+    // feature anywhere loader. But we will probably need later when
+    // using the loader's search functionalities within the UI components.
+
+    // TODO: handle failures if it fails to create
+    let newSavedObj = await createAugmentVisSavedObject(savedObjectToCreate);
+
+    console.log('savedOecjts: ', newSavedObj);
+
+    // calling save() on the newly-created saved object to actually save it to the system index
+    const response = await newSavedObj.save({});
+    console.log('response: ', response);
+  };
 
   setSchedule = () => {
     const { edit, monitorToEdit } = this.props;

@@ -34,8 +34,14 @@ function AddAlertingMonitor({
   index,
 }) {
   const onCreate = () => {
-    const event = new Event('createMonitor');
-    document.dispatchEvent(event);
+    if (flyoutMode === 'create') {
+      const event = new Event('createMonitor');
+      document.dispatchEvent(event);
+    }
+
+    if (flyoutMode === 'existing') {
+      // create saved object or dispatch an event that will create the obj
+    }
   };
   const [isSubmitting, setIsSubmitting] = useState(false);
   const onPreSubmitCallback = () => setIsSubmitting(true);
