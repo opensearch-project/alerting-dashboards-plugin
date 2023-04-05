@@ -55,6 +55,9 @@ export default class CreateMonitor extends Component {
     isDarkMode: false,
     isDefaultMetricsEnabled: false,
     isDefaultNotificationEnabled: false,
+    onSubmitCallback: null,
+    onPreSubmitCallback: null,
+    onPostSubmitCallback: null,
   };
 
   constructor(props) {
@@ -129,18 +132,21 @@ export default class CreateMonitor extends Component {
     this.onSubmit = this.onSubmit.bind(this);
     this.onUpdate = this.onUpdate.bind(this);
     this.getPlugins = this.getPlugins.bind(this);
+    this.handleCreateMonitorEvent = this.handleCreateMonitorEvent.bind(this);
     this.formikRef = React.createRef();
-  }
-
-  handleCreateMonitorEvent() {
-    this.formikRef.current.submitForm();
   }
 
   componentDidMount() {
     this.getPlugins();
     this.setSchedule();
 
-    document.addEventListener('createMonitor', () => this.handleCreateMonitorEvent());
+    document.addEventListener('createMonitor', () => {
+      this.handleCreateMonitorEvent();
+    });
+  }
+
+  handleCreateMonitorEvent() {
+    this.formikRef.current.submitForm();
   }
 
   async getPlugins() {
@@ -167,7 +173,9 @@ export default class CreateMonitor extends Component {
   }
 
   async onCreate(monitor, { setSubmitting, setErrors }) {
-    const { httpClient, notifications } = this.props;
+    const { httpClient, notifications, onPostSubmitCallback } = this.props;
+    let isSuccessful = false;
+
     try {
       const resp = await httpClient.post('../api/alerting/monitors', {
         body: JSON.stringify(monitor),
@@ -180,6 +188,7 @@ export default class CreateMonitor extends Component {
       if (ok) {
         notifications.toasts.addSuccess(`Monitor "${monitor.name}" successfully created.`);
         this.props.history.push(`/monitors/${_id}`);
+        isSuccessful = true;
       } else {
         console.log('Failed to create:', resp);
         backendErrorNotification(notifications, 'create', 'monitor', resp.resp);
@@ -188,6 +197,10 @@ export default class CreateMonitor extends Component {
       console.error(err);
       setSubmitting(false);
       // TODO: setErrors
+    }
+
+    if (onPostSubmitCallback) {
+      onPostSubmitCallback(isSuccessful);
     }
   }
 
@@ -287,8 +300,12 @@ export default class CreateMonitor extends Component {
   }
 
   onSubmit(values, formikBag) {
-    const { edit } = this.props;
+    const { edit, onPreSubmitCallback } = this.props;
     let monitor = formikToMonitor(values);
+
+    if (onPreSubmitCallback) {
+      onPreSubmitCallback();
+    }
 
     if (!_.isEmpty(_.get(values, 'triggerDefinitions'))) {
       const monitorUiMetadata = _.get(monitor, 'ui_metadata', {});
@@ -301,8 +318,11 @@ export default class CreateMonitor extends Component {
       monitor = { ...monitor, ...triggers };
     }
 
-    if (edit) this.onUpdate(monitor, formikBag);
-    else this.onCreate(monitor, formikBag);
+    if (edit) {
+      this.onUpdate(monitor, formikBag);
+    } else {
+      this.onCreate(monitor, formikBag);
+    }
   }
 
   onCloseTrigger = () => {

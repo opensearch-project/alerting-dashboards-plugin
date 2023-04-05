@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React from 'react';
+import React, { useState } from 'react';
 import {
   EuiFlexItem,
   EuiFlexGroup,
@@ -36,7 +36,15 @@ function AddAlertingMonitor({
   const onCreate = () => {
     const event = new Event('createMonitor');
     document.dispatchEvent(event);
-    closeFlyout();
+  };
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const onPreSubmitCallback = () => setIsSubmitting(true);
+  const onPostSubmitCallback = (isSuccessful) => {
+    setIsSubmitting(false);
+
+    if (isSuccessful) {
+      closeFlyout();
+    }
   };
 
   return (
@@ -90,7 +98,18 @@ function AddAlertingMonitor({
             </>
           )}
           {['create', 'adMonitor'].includes(flyoutMode) && (
-            <CreateNew {...{ embeddable, closeFlyout, core, services, index, flyoutMode }} />
+            <CreateNew
+              {...{
+                embeddable,
+                closeFlyout,
+                core,
+                services,
+                index,
+                flyoutMode,
+                onPreSubmitCallback,
+                onPostSubmitCallback,
+              }}
+            />
           )}
           {flyoutMode === 'existing' && (
             <AssociateExisting
@@ -102,6 +121,8 @@ function AddAlertingMonitor({
                 monitors,
                 selectedMonitorId,
                 setSelectedMonitorId,
+                onPreSubmitCallback,
+                onPostSubmitCallback,
               }}
             />
           )}
@@ -114,7 +135,7 @@ function AddAlertingMonitor({
             <EuiButtonEmpty onClick={closeFlyout}>Cancel</EuiButtonEmpty>
           </EuiFlexItem>
           <EuiFlexItem grow={false}>
-            <EuiButton onClick={onCreate} fill>
+            <EuiButton onClick={onCreate} fill isLoading={isSubmitting}>
               {flyoutMode === 'existing' ? 'Associate' : 'Create'} monitor
             </EuiButton>
           </EuiFlexItem>

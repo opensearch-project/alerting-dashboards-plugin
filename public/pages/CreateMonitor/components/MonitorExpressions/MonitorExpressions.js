@@ -69,8 +69,7 @@ class MonitorExpressions extends Component {
   });
 
   onAccordionToggle = (key) => {
-    const accordionsOpen = { ...this.state.accordionsOpen };
-    accordionsOpen[key] = !accordionsOpen[key];
+    const accordionsOpen = { [key]: !this.state.accordionsOpen[key] };
     this.setState({ accordionsOpen });
   };
 

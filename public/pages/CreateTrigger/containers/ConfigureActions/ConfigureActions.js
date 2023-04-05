@@ -86,9 +86,8 @@ class ConfigureActions extends React.Component {
     }
   }
 
-  onAccordionToggle = (key, isOnlyOpen) => {
-    let accordionsOpen = isOnlyOpen ? {} : { ...this.state.accordionsOpen };
-    accordionsOpen[key] = !accordionsOpen[key];
+  onAccordionToggle = (key) => {
+    const accordionsOpen = { [key]: !this.state.accordionsOpen[key] };
     this.setState({ accordionsOpen });
   };
 
