@@ -4,6 +4,7 @@
  */
 
 import React, { useState, useMemo } from 'react';
+import uuidv4 from 'uuid/v4';
 import { EuiTitle, EuiSpacer, EuiIcon, EuiText, EuiSwitch, EuiLoadingSpinner } from '@elastic/eui';
 import CreateMonitor from '../../../../pages/CreateMonitor';
 import { EmbeddablePanel } from '../../../../../../../src/plugins/embeddable/public';
@@ -33,7 +34,7 @@ function CreateNew({ embeddable, closeFlyout, core, index, flyoutMode }) {
     updateMonitor: () => null,
     staticContext: undefined,
     flyoutMode,
-    defaultName: `${title} monitor 1`,
+    defaultName: `${title} monitor ${uuidv4().substring(0, 4)}`,
     defaultIndex: index,
     defaultTimeField: embeddable.vis.params.time_field,
     isDefaultTriggerEnabled: true,
