@@ -110,14 +110,14 @@ export function queriesToFormik(queries) {
 
 export function getQueryOperator(query = FORMIK_INITIAL_DOCUMENT_LEVEL_QUERY_VALUES.query) {
   if (_.startsWith(query, 'NOT (') && _.endsWith(query, ')')) return OPERATORS_MAP.IS_NOT.value;
-  if (_.includes(query, QUERY_STRING_QUERY_OPERATORS[OPERATORS_MAP.IS_GREATER.value]))
-    return OPERATORS_MAP.IS_GREATER.value;
   if (_.includes(query, QUERY_STRING_QUERY_OPERATORS[OPERATORS_MAP.IS_GREATER_EQUAL.value]))
     return OPERATORS_MAP.IS_GREATER_EQUAL.value;
-  if (_.includes(query, QUERY_STRING_QUERY_OPERATORS[OPERATORS_MAP.IS_LESS.value]))
-    return OPERATORS_MAP.IS_LESS.value;
+  if (_.includes(query, QUERY_STRING_QUERY_OPERATORS[OPERATORS_MAP.IS_GREATER.value]))
+    return OPERATORS_MAP.IS_GREATER.value;
   if (_.includes(query, QUERY_STRING_QUERY_OPERATORS[OPERATORS_MAP.IS_LESS_EQUAL.value]))
     return OPERATORS_MAP.IS_LESS_EQUAL.value;
+  if (_.includes(query, QUERY_STRING_QUERY_OPERATORS[OPERATORS_MAP.IS_LESS.value]))
+    return OPERATORS_MAP.IS_LESS.value;
   return OPERATORS_MAP.IS.value;
 }
 
