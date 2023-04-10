@@ -46,3 +46,8 @@ export const inputLimitText = (
     </EuiText>
   );
 };
+
+export const getDigitId = (length = 6) =>
+  Math.floor(Date.now() * Math.random())
+    .toString()
+    .slice(-length);

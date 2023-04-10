@@ -23,7 +23,7 @@ import { formikToMonitor } from './utils/formikToMonitor';
 import { MONITOR_TYPE, SEARCH_TYPE } from '../../../../utils/constants';
 import { initializeFromQueryParams } from './utils/monitorQueryParams';
 import { SubmitErrorHandler } from '../../../../utils/SubmitErrorHandler';
-import { backendErrorNotification } from '../../../../utils/helpers';
+import { backendErrorNotification, getDigitId } from '../../../../utils/helpers';
 import MonitorDetails from '../MonitorDetails';
 import ConfigureTriggers from '../../../CreateTrigger/containers/ConfigureTriggers';
 import {
@@ -39,6 +39,8 @@ import { FORMIK_INITIAL_AGG_VALUES } from '../CreateMonitor/utils/constants';
 import { unitToLabel } from '../../../CreateMonitor/components/Schedule/Frequencies/Interval';
 import EnhancedAccordion from '../../../../components/FeatureAnywhereContextMenu/EnhancedAccordion';
 import { getInitialActionValues } from '../../../CreateTrigger/components/AddActionButton/utils';
+import { getInitialTriggerValues } from '../../../CreateTrigger/components/AddTriggerButton/utils';
+
 import './styles.scss';
 
 export default class CreateMonitor extends Component {
@@ -107,16 +109,22 @@ export default class CreateMonitor extends Component {
 
     // Adds an initial trigger if needed
     if (props.isDefaultTriggerEnabled) {
-      const values = _.cloneDeep(FORMIK_INITIAL_TRIGGER_VALUES);
-      values.name = 'Trigger 1';
-      initialValues.triggerDefinitions = [values];
+      const monitorType = initialValues.monitor_type;
+      const initialTrigger = getInitialTriggerValues({
+        flyoutMode: props.flyoutMode,
+        monitorType,
+        numTriggers: 0,
+      });
+      initialValues.triggerDefinitions = [initialTrigger];
 
       // Adds an initial notification if needed
       if (props.isDefaultNotificationEnabled) {
-        const monitorType = initialValues.monitor_type;
-        initialValues.triggerDefinitions[0].actions = [
-          getInitialActionValues({ monitorType, numOfActions: 0, flyoutMode: props.flyoutMode }),
-        ];
+        const initialAction = getInitialActionValues({
+          monitorType,
+          numActions: 0,
+          flyoutMode: props.flyoutMode,
+        });
+        initialValues.triggerDefinitions[0].actions = [initialAction];
       }
     }
 

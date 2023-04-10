@@ -110,19 +110,16 @@ const Action = ({
                 ),
                 rowHeight: 45,
                 isLoading: loadingDestinations,
+                append: flyoutMode && (
+                  <EuiButtonIcon
+                    iconType="refresh"
+                    onClick={refreshDestinations}
+                    aria-label="Refresh channels"
+                  />
+                ),
               }}
             />
           </EuiFlexItem>
-          {flyoutMode && (
-            <EuiFlexItem grow={false}>
-              <EuiSpacer size="xl" />
-              <EuiButtonIcon
-                iconType="refresh"
-                onClick={refreshDestinations}
-                aria-label="Refresh channels"
-              />
-            </EuiFlexItem>
-          )}
           <EuiFlexItem grow={false}>
             <EuiSpacer size="l" />
             <ManageButton

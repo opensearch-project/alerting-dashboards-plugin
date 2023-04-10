@@ -5,7 +5,7 @@
 
 import React from 'react';
 import _ from 'lodash';
-import { EuiPanel, EuiText, EuiSpacer } from '@elastic/eui';
+import { EuiPanel, EuiText, EuiSpacer, EuiLoadingSpinner } from '@elastic/eui';
 import Action from '../../components/Action';
 import ActionEmptyPrompt from '../../components/ActionEmptyPrompt';
 import AddActionButton from '../../components/AddActionButton';
@@ -25,6 +25,7 @@ import { backendErrorNotification } from '../../../../utils/helpers';
 import { TRIGGER_TYPE } from '../CreateTrigger/utils/constants';
 import { formikToTrigger } from '../CreateTrigger/utils/formikToTrigger';
 import { getChannelOptions, toChannelType } from '../../utils/helper';
+import { getInitialActionValues } from '../../components/AddActionButton/utils';
 
 const createActionContext = (context, action) => ({
   ctx: {
@@ -51,6 +52,10 @@ export const checkForError = (response, error) => {
 class ConfigureActions extends React.Component {
   constructor(props) {
     super(props);
+    const { values, fieldPath } = props;
+    const firstActionId = _.get(values, `${fieldPath}actions[0].id`, '');
+    const accordionsOpen = firstActionId ? { [firstActionId]: true } : {};
+
     this.state = {
       destinations: [],
       flattenedDestinations: [],
@@ -58,7 +63,8 @@ class ConfigureActions extends React.Component {
       loadingDestinations: true,
       actionDeleted: false,
       hasNotificationPlugin: false,
-      accordionsOpen: { notification1: true },
+      accordionsOpen,
+      isInitialLoading: true,
     };
   }
 
@@ -137,7 +143,7 @@ class ConfigureActions extends React.Component {
   };
 
   loadDestinations = async (searchText = '') => {
-    const { httpClient, values, arrayHelpers, notifications, fieldPath } = this.props;
+    const { httpClient, values, arrayHelpers, notifications, fieldPath, flyoutMode } = this.props;
     const { allowList, actionDeleted } = this.state;
 
     this.setState({ loadingDestinations: true });
@@ -168,26 +174,11 @@ class ConfigureActions extends React.Component {
         destinations: channelOptionsByType,
         flattenedDestinations: destinationsAndChannels,
         loadingDestinations: false,
+        isInitialLoading: false,
       });
 
       const monitorType = _.get(arrayHelpers, 'form.values.monitor_type', MONITOR_TYPE.QUERY_LEVEL);
-      const initialActionValues = _.cloneDeep(FORMIK_INITIAL_ACTION_VALUES);
-      switch (monitorType) {
-        case MONITOR_TYPE.BUCKET_LEVEL:
-          _.set(
-            initialActionValues,
-            'message_template.source',
-            DEFAULT_MESSAGE_SOURCE.BUCKET_LEVEL_MONITOR
-          );
-          break;
-        default:
-          _.set(
-            initialActionValues,
-            'message_template.source',
-            DEFAULT_MESSAGE_SOURCE.QUERY_LEVEL_MONITOR
-          );
-          break;
-      }
+      const initialActionValues = getInitialActionValues({ monitorType, flyoutMode });
 
       // If actions is not defined  If user choose to delete actions, it will not override customer's preferences.
       if (
@@ -290,14 +281,15 @@ class ConfigureActions extends React.Component {
     const hasActions = !_.isEmpty(_.get(values, `${fieldPath}actions`));
     const shouldRenderActions = hasActions || (hasDestinations && hasActions);
     const hasNotificationPlugin = plugins.indexOf(OS_NOTIFICATION_PLUGIN) !== -1;
-    const numOfActions = _.get(values, `${fieldPath}actions`, []).length;
+    const numActions = _.get(values, `${fieldPath}actions`, []).length;
 
     return shouldRenderActions ? (
       _.get(values, `${fieldPath}actions`).map((action, index) => {
-        const key = `notification${index + 1}`;
+        const key = action.id;
+
         return (
           <Action
-            key={index}
+            key={key}
             action={action}
             arrayHelpers={arrayHelpers}
             context={createActionContext(context, action)}
@@ -330,23 +322,24 @@ class ConfigureActions extends React.Component {
         httpClient={httpClient}
         hasNotificationPlugin={hasNotificationPlugin}
         flyoutMode={flyoutMode}
-        onAddTrigger={() => this.onAccordionToggle('notification1', true)}
+        onPostAdd={(initialValues) => this.onAccordionToggle(initialValues.id)}
+        numActions={numActions}
       />
     );
   };
 
   render() {
-    const { loadingDestinations } = this.state;
+    const { loadingDestinations, isInitialLoading } = this.state;
     const { arrayHelpers, values, fieldPath, flyoutMode } = this.props;
-    const numOfActions = _.get(values, `${fieldPath}actions`, []).length;
-    const displayAddActionButton = numOfActions > 0;
+    const numActions = _.get(values, `${fieldPath}actions`, []).length;
+    const displayAddActionButton = numActions > 0;
     //TODO:: Handle loading Destinations inside the Action which will be more intuitive for customers.
     return (
       <div style={flyoutMode ? {} : { paddingLeft: '10px', paddingRight: '10px' }}>
         {!flyoutMode && (
           <>
             <EuiText>
-              <h4>{`Actions (${numOfActions})`}</h4>
+              <h4>{`Actions (${numActions})`}</h4>
             </EuiText>
             <EuiText color={'subdued'} size={'xs'} style={{ paddingBottom: '5px' }}>
               Define actions when trigger conditions are met.
@@ -359,22 +352,27 @@ class ConfigureActions extends React.Component {
           hasShadow={!flyoutMode}
           hasBorder={!flyoutMode}
         >
-          {loadingDestinations && numOfActions < 1 ? (
+          {loadingDestinations && numActions < 1 ? (
             <div style={{ display: 'flex', justifyContent: 'center' }}>Loading Destinations...</div>
           ) : (
             <>
-              {this.renderActions(arrayHelpers)}
+              {isInitialLoading && (
+                <>
+                  <EuiLoadingSpinner size="l" />
+                  <EuiSpacer size="m" />
+                </>
+              )}
+              {!isInitialLoading && this.renderActions(arrayHelpers)}
               {flyoutMode && <EuiSpacer size="m" />}
             </>
           )}
-
           {displayAddActionButton && (
             <div style={flyoutMode ? {} : { paddingBottom: '5px', paddingTop: '20px' }}>
               <AddActionButton
                 arrayHelpers={arrayHelpers}
-                numOfActions={numOfActions}
+                numActions={numActions}
                 flyoutMode={flyoutMode}
-                onAddTrigger={() => this.onAccordionToggle(`notification${numOfActions + 1}`, true)}
+                onPostAdd={(initialValues) => this.onAccordionToggle(initialValues.id)}
               />
             </div>
           )}

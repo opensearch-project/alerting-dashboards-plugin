@@ -4,10 +4,11 @@
  */
 
 import React, { useState, useMemo } from 'react';
-import { EuiTitle, EuiSpacer, EuiIcon, EuiText, EuiSwitch, EuiLoadingSpinner } from '@elastic/eui';
+import { EuiTitle, EuiSpacer, EuiIcon, EuiText, EuiSwitch } from '@elastic/eui';
 import CreateMonitor from '../../../../pages/CreateMonitor';
 import { EmbeddablePanel } from '../../../../../../../src/plugins/embeddable/public';
 import { NotificationService } from '../../../../services';
+import { getDigitId } from '../../../../utils/helpers';
 import './styles.scss';
 
 function CreateNew({
@@ -41,7 +42,7 @@ function CreateNew({
     updateMonitor: () => null,
     staticContext: undefined,
     flyoutMode,
-    defaultName: `${title} monitor 1`,
+    defaultName: `${title} ${getDigitId()}`,
     defaultIndex: index,
     defaultTimeField: embeddable.vis.params.time_field,
     isDefaultTriggerEnabled: true,
@@ -97,9 +98,7 @@ function CreateNew({
         <h3>Monitor details</h3>
       </EuiTitle>
       <EuiSpacer size="m" />
-      {!index && <EuiLoadingSpinner size="l" />}
-      {/* Do not initialize until index is available */}
-      {index && <CreateMonitor {...createMonitorProps} />}
+      <CreateMonitor {...createMonitorProps} />
     </div>
   );
 }

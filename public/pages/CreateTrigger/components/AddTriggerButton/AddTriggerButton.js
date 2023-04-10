@@ -8,32 +8,28 @@ import _ from 'lodash';
 import { EuiButton } from '@elastic/eui';
 import { FORMIK_INITIAL_TRIGGER_VALUES } from '../../containers/CreateTrigger/utils/constants';
 import EnhancedAccordion from '../../../../components/FeatureAnywhereContextMenu/EnhancedAccordion';
-import { getInitialActionValues } from '../../../CreateTrigger/components/AddActionButton/utils';
+import { getInitialTriggerValues } from './utils';
 
 const AddTriggerButton = ({
   arrayHelpers,
   disabled,
   script = FORMIK_INITIAL_TRIGGER_VALUES.script,
   flyoutMode,
-  onAddTrigger,
+  onPostAdd,
   monitorType,
 }) => {
+  const numTriggers = _.get(arrayHelpers, 'form.values.triggerDefinitions', []).length;
   const buttonText =
     _.get(arrayHelpers, 'form.values.triggerDefinitions', []).length === 0
       ? 'Add trigger'
       : 'Add another trigger';
   const onClick = () => {
-    if (onAddTrigger) {
-      onAddTrigger();
-    }
-
-    const values = _.cloneDeep({ ...FORMIK_INITIAL_TRIGGER_VALUES, script });
-
-    if (flyoutMode) {
-      values.actions = [getInitialActionValues({ monitorType, numOfActions: 0, flyoutMode })];
-    }
-
+    const values = getInitialTriggerValues({ script, flyoutMode, monitorType, numTriggers });
     arrayHelpers.push(values);
+
+    if (onPostAdd) {
+      onPostAdd(values);
+    }
   };
 
   if (flyoutMode) {

@@ -17,7 +17,8 @@ const ActionEmptyPrompt = ({
   httpClient,
   hasNotificationPlugin,
   flyoutMode,
-  onAddTrigger,
+  onPostAdd,
+  numActions,
 }) =>
   flyoutMode ? (
     <>
@@ -26,7 +27,9 @@ const ActionEmptyPrompt = ({
           <p>{destinationEmptyText}</p>
         </EuiText>
       )}
-      {hasDestinations && <AddActionButton {...{ arrayHelpers, flyoutMode, onAddTrigger }} />}
+      {hasDestinations && (
+        <AddActionButton {...{ arrayHelpers, flyoutMode, onPostAdd, numActions }} />
+      )}
     </>
   ) : (
     <EuiEmptyPrompt
@@ -38,7 +41,7 @@ const ActionEmptyPrompt = ({
       }
       actions={
         hasDestinations ? (
-          <AddActionButton {...{ arrayHelpers, flyoutMode, onAddTrigger }} />
+          <AddActionButton {...{ arrayHelpers, flyoutMode, onPostAdd, numActions }} />
         ) : (
           <EuiButton
             fill

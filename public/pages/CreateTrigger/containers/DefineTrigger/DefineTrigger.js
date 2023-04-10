@@ -341,8 +341,6 @@ class DefineTrigger extends Component {
                 notificationService={notificationService}
                 plugins={plugins}
                 flyoutMode={flyoutMode}
-                accordionsOpen={accordionsOpen}
-                onAccordionToggle={this.onAccordionToggle}
               />
             )}
           </FieldArray>
