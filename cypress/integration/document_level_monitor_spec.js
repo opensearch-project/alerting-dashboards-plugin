@@ -21,10 +21,66 @@ const sampleDocument = {
   numberField: 100,
 };
 
+const queryOperators = [
+  {
+    text: 'is',
+    value: 'is',
+  },
+  {
+    text: 'is not',
+    value: 'is_not',
+  },
+  {
+    text: 'is greater than',
+    value: 'is_greater',
+  },
+  {
+    text: 'is greater than equal',
+    value: 'is_greater_equal',
+  },
+  {
+    text: 'is less than',
+    value: 'is_less',
+  },
+  {
+    text: 'is less than equal',
+    value: 'is_less_equal',
+  },
+];
+
 const addDocumentsToTestIndex = (indexName = '', numOfDocs = 0) => {
   for (let i = 0; i < numOfDocs; i++) {
     cy.insertDocumentToIndex(indexName, undefined, sampleDocument);
   }
+};
+
+const addQuery = ({ queryIndex = 0, queryName, queryField, operator, query, tags = [] }) => {
+  // Add another query
+  if (queryIndex > 0) cy.get('[data-test-subj="addDocLevelQueryButton"]').click({ force: true });
+
+  // Enter query name
+  cy.get(`[data-test-subj="documentLevelQuery_queryName${queryIndex}"]`).type(queryName);
+
+  // Enter query field
+  cy.get(`[data-test-subj="documentLevelQuery_field${queryIndex}"]`).type(
+    `${queryField}{downarrow}{enter}`
+  );
+
+  // Select query operator
+  cy.get(`[data-test-subj="documentLevelQuery_operator${queryIndex}"]`).select(operator);
+
+  // Enter query
+  cy.get(`[data-test-subj="documentLevelQuery_query${queryIndex}"]`).type(query);
+
+  // Enter tags
+  tags.forEach((tag, tagIndex) => {
+    cy.get(`[data-test-subj="addDocLevelQueryTagButton_query${queryIndex}"]`).click({
+      force: true,
+    });
+    cy.get(
+      `[data-test-subj="documentLevelQueryTag_text_field_query${queryIndex}_tag${tagIndex}"]`
+    ).type(tag);
+  });
 };
 
 describe('DocumentLevelMonitor', () => {
@@ -140,42 +196,35 @@ describe('DocumentLevelMonitor', () => {
       // Wait for input to load and then type in the index name
       cy.get('#index').type(`${TESTING_INDEX}{enter}`, { force: true });
 
-      // Enter first query name
-      cy.get('[data-test-subj="documentLevelQuery_queryName0"]').type(
-        sampleDocumentLevelMonitor.inputs[0].doc_level_input.queries[0].name
-      );
-
-      // Enter first query field
-      cy.get('[data-test-subj="documentLevelQuery_field0"]').type('region{downarrow}{enter}');
-
-      // Enter first query operator
-      cy.get('[data-test-subj="documentLevelQuery_operator0"]').select('is');
+      const testQueries = [
+        {
+          queryName: sampleDocumentLevelMonitor.inputs[0].doc_level_input.queries[0].name,
+          queryField: 'region',
+          operator: 'is',
+          operatorValue: 'is',
+          query: 'us-west-2',
+          tags: [sampleDocumentLevelMonitor.inputs[0].doc_level_input.queries[0].tags[0]],
+        },
+      ];
 
       // Enter first query
-      cy.get('[data-test-subj="documentLevelQuery_query0"]').type('us-west-2');
+      addQuery(testQueries[0]);
 
-      // Enter first query tags
-      cy.get('[data-test-subj="addDocLevelQueryTagButton_query0"]').click({ force: true });
-      cy.get('[data-test-subj="documentLevelQueryTag_text_field_query0_tag0"]').type(
-        sampleDocumentLevelMonitor.inputs[0].doc_level_input.queries[0].tags[0]
-      );
-
-      // Add a second query
-      cy.get('[data-test-subj="addDocLevelQueryButton"]').click({ force: true });
-
-      // Enter second query name
-      cy.get('[data-test-subj="documentLevelQuery_queryName1"]').type(
-        sampleDocumentLevelMonitor.inputs[0].doc_level_input.queries[1].name
-      );
-
-      // Enter second query field
-      cy.get('[data-test-subj="documentLevelQuery_field1"]').type('numberField{downarrow}{enter}');
-
-      // Enter second query operator
-      cy.get('[data-test-subj="documentLevelQuery_operator1"]').select('is less than');
-
-      // Enter second query
-      cy.get('[data-test-subj="documentLevelQuery_query1"]').type(1000);
+      // Create queries for each supported query operator
+      queryOperators.forEach((operator, index) => {
+        // Incrementing the query index by 1 to account for the query created above.
+        const queryIndex = index + 1;
+        const newQuery = {
+          queryIndex: queryIndex,
+          queryName: `Query${queryIndex}-${operator.value}`,
+          queryField: 'numberField',
+          operator: operator.text,
+          operatorValue: operator.value,
+          query: 1000 + queryIndex,
+        };
+        addQuery(newQuery);
+        testQueries.push(newQuery);
+      });
 
       // Add a trigger
       cy.contains('Add trigger').click({ force: true });
@@ -220,26 +269,36 @@ describe('DocumentLevelMonitor', () => {
       // Click the 'Edit' button to confirm the monitor has the expected configuration
       cy.contains('Edit').click({ force: true });
 
-      // Confirm the first query has been configured correctly
-      cy.get('[data-test-subj="documentLevelQuery_queryName0"]').should(
-        'have.value',
-        sampleDocumentLevelMonitor.inputs[0].doc_level_input.queries[0].name
-      );
-      cy.get('[data-test-subj="documentLevelQuery_field0"]').contains('region');
-      cy.get('[data-test-subj="documentLevelQuery_operator0"]').should('have.value', 'is');
-      cy.get('[data-test-subj="documentLevelQuery_query0"]').should('have.value', 'us-west-2');
-      cy.get('[data-test-subj="documentLevelQueryTag_badge_query0_tag0"]').contains(
-        sampleDocumentLevelMonitor.inputs[0].doc_level_input.queries[0].tags[0]
-      );
+      // Confirm each query has been configured correctly
+      testQueries.forEach((query, index) => {
+        // Confirm query name
+        cy.get(`[data-test-subj="documentLevelQuery_queryName${index}"]`).should(
+          'have.value',
+          query.queryName
+        );
 
-      // Confirm the second query has been configured correctly
-      cy.get('[data-test-subj="documentLevelQuery_queryName1"]').should(
-        'have.value',
-        sampleDocumentLevelMonitor.inputs[0].doc_level_input.queries[1].name
-      );
-      cy.get('[data-test-subj="documentLevelQuery_field1"]').contains('numberField');
-      cy.get('[data-test-subj="documentLevelQuery_operator1"]').should('have.value', 'is_less');
-      cy.get('[data-test-subj="documentLevelQuery_query1"]').should('have.value', 1000);
+        // Confirm query field
+        cy.get(`[data-test-subj="documentLevelQuery_field${index}"]`).contains(query.queryField);
+
+        // Confirm query operator
+        cy.get(`[data-test-subj="documentLevelQuery_operator${index}"]`).should(
+          'have.value',
+          query.operatorValue
+        );
+
+        // Confirm query
+        cy.get(`[data-test-subj="documentLevelQuery_query${index}"]`).should(
+          'have.value',
+          query.query.toString()
+        );
+
+        // Confirm tags
+        query.tags?.forEach((tag, tagIndex) => {
+          cy.get(
+            `[data-test-subj="documentLevelQueryTag_badge_query${index}_tag${tagIndex}"]`
+          ).contains(tag);
+        });
+      });
 
       // Confirm the first trigger condition has been configured correctly
       cy.get(
