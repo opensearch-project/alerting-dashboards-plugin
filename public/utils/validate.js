@@ -60,28 +60,30 @@ export const required = (value) => {
 };
 
 export const requiredNumber = (value) => {
-  return _.isEmpty(value?.toString()) ? 'Required.' : undefined;
+  if (isNaN(parseFloat(value))) return 'Requires numerical value.';
 };
 
-export const validateIllegalCharacters = (illegalCharacters = ILLEGAL_CHARACTERS) => (value) => {
-  if (_.isEmpty(value)) return required(value);
+export const validateIllegalCharacters =
+  (illegalCharacters = ILLEGAL_CHARACTERS) =>
+  (value) => {
+    if (_.isEmpty(value)) return required(value);
 
-  const illegalCharactersString = illegalCharacters.join(' ');
-  let errorText = `Contains invalid characters. Cannot contain: ${illegalCharactersString}`;
+    const illegalCharactersString = illegalCharacters.join(' ');
+    let errorText = `Contains invalid characters. Cannot contain: ${illegalCharactersString}`;
 
-  if (_.includes(illegalCharacters, ' ')) {
-    errorText =
-      illegalCharacters.length === 1
-        ? 'Cannot contain spaces.'
-        : `Contains invalid characters or spaces. Cannot contain: ${illegalCharactersString}`;
-  }
+    if (_.includes(illegalCharacters, ' ')) {
+      errorText =
+        illegalCharacters.length === 1
+          ? 'Cannot contain spaces.'
+          : `Contains invalid characters or spaces. Cannot contain: ${illegalCharactersString}`;
+    }
 
-  let includesIllegalCharacter = false;
-  illegalCharacters.forEach((character) => {
-    if (_.includes(value, character)) includesIllegalCharacter = true;
-  });
-  if (includesIllegalCharacter) return errorText;
-};
+    let includesIllegalCharacter = false;
+    illegalCharacters.forEach((character) => {
+      if (_.includes(value, character)) includesIllegalCharacter = true;
+    });
+    if (includesIllegalCharacter) return errorText;
+  };
 
 export const validateRequiredNumber = (value) => {
   if (value === undefined || typeof value === 'string') return 'Provide a value.';
