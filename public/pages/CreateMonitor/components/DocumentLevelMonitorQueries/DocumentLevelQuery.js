@@ -41,14 +41,14 @@ class DocumentLevelQuery extends Component {
   }
 
   componentDidMount() {
-    this.getFieldDataType();
+    this.initializeFieldDataType();
   }
 
   componentDidUpdate(prevProps) {
-    if (prevProps.dataTypes !== this.props.dataTypes) this.getFieldDataType();
+    if (prevProps.dataTypes !== this.props.dataTypes) this.initializeFieldDataType();
   }
 
-  getFieldDataType() {
+  initializeFieldDataType() {
     const { dataTypes, query } = this.props;
     const indexFieldOptions = getIndexFields(dataTypes, ALLOWED_DATA_TYPES);
     const fieldDataType = getTypeForField(query.field, indexFieldOptions);
