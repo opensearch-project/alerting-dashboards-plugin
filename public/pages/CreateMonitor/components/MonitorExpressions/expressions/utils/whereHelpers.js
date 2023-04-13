@@ -52,8 +52,9 @@ export const displayText = (whereValues) => {
 };
 
 export const validateRange = (value = '', filter = FORMIK_INITIAL_WHERE_EXPRESSION_VALUES) => {
-  if (_.isEmpty(value.toString())) return 'Required.';
-  if (filter.fieldRangeEnd < value) return 'Start should be less than end range.';
+  if (_.isEmpty(value?.toString())) return 'Required.';
+  if (filter.fieldRangeEnd < value || filter.fieldRangeStart === filter.fieldRangeEnd)
+    return 'Start should be less than end range.';
   if (value < filter.fieldRangeStart) return 'End should be greater than start range.';
   return undefined;
 };
@@ -65,7 +66,7 @@ export const validateWhereFilter = (filter = FORMIK_INITIAL_WHERE_EXPRESSION_VAL
     FORMIK_INITIAL_WHERE_EXPRESSION_VALUES.fieldName[0]
   );
   const fieldOperator = _.get(filter, 'operator', FORMIK_INITIAL_WHERE_EXPRESSION_VALUES.operator);
-  let filterIsValid = !_.isEmpty(fieldName[0].label);
+  let filterIsValid = !_.isEmpty(fieldName.label);
   switch (fieldOperator) {
     case OPERATORS_MAP.IS:
     case OPERATORS_MAP.IS_NOT:
@@ -89,8 +90,8 @@ export const validateWhereFilter = (filter = FORMIK_INITIAL_WHERE_EXPRESSION_VAL
       // Both of those values need to be validated.
       filterIsValid =
         filterIsValid &&
-        validateRange(filter.fieldRangeStart, filter) &&
-        validateRange(filter.fieldRangeEnd, filter);
+        !validateRange(filter.fieldRangeStart, filter) &&
+        !validateRange(filter.fieldRangeEnd, filter);
       break;
     case OPERATORS_MAP.IS_NULL:
     case OPERATORS_MAP.IS_NOT_NULL:

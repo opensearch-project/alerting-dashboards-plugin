@@ -39,12 +39,8 @@ export default class WherePopover extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      isOpen: false,
+      isOpen: props.openedState || false,
     };
-  }
-
-  componentDidMount() {
-    this.setState({ isOpen: this.props.openedState });
   }
 
   handleFieldChange = (option, field, form) => {
@@ -78,10 +74,14 @@ export default class WherePopover extends Component {
             fieldProps={{
               validate: (value) => validateRange(value, values),
             }}
+            formRow
+            rowProps={{
+              isInvalid,
+              error: hasError,
+            }}
             inputProps={{
               placeholder: 'Enter a value',
               onChange: this.handleChangeWrapper,
-              isInvalid,
             }}
           />
         </EuiFlexItem>
@@ -94,10 +94,14 @@ export default class WherePopover extends Component {
             fieldProps={{
               validate: (value) => validateRange(value, values),
             }}
+            formRow
+            rowProps={{
+              isInvalid,
+              error: hasError,
+            }}
             inputProps={{
               placeholder: 'Enter a value',
               onChange: this.handleChangeWrapper,
-              isInvalid,
             }}
           />
         </EuiFlexItem>
