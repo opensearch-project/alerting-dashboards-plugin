@@ -40,6 +40,7 @@ import { unitToLabel } from '../../../CreateMonitor/components/Schedule/Frequenc
 import EnhancedAccordion from '../../../../components/FeatureAnywhereContextMenu/EnhancedAccordion';
 import { getInitialActionValues } from '../../../CreateTrigger/components/AddActionButton/utils';
 import './styles.scss';
+import { createSavedObjectAssociation } from '../../../../components/FeatureAnywhereContextMenu/AddAlertingMonitor/utils';
 
 export default class CreateMonitor extends Component {
   static defaultProps = {
@@ -58,6 +59,7 @@ export default class CreateMonitor extends Component {
     onSubmitCallback: null,
     onPreSubmitCallback: null,
     onPostSubmitCallback: null,
+    visualizationId: '',
   };
 
   constructor(props) {
@@ -189,6 +191,8 @@ export default class CreateMonitor extends Component {
         notifications.toasts.addSuccess(`Monitor "${monitor.name}" successfully created.`);
         this.props.history.push(`/monitors/${_id}`);
         isSuccessful = true;
+
+        createSavedObjectAssociation(_id, this.props.visualizationId);
       } else {
         console.log('Failed to create:', resp);
         backendErrorNotification(notifications, 'create', 'monitor', resp.resp);

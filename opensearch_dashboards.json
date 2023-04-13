@@ -8,7 +8,11 @@
     "dashboard",
     "embeddable",
     "opensearchDashboardsReact",
-    "savedObjects"
+    "savedObjects",
+    "expressions",
+    "data",
+    "visAugmenter",
+    "opensearchDashboardsUtils"
   ],
   "server": true,
   "ui": true

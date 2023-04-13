@@ -9,6 +9,8 @@ import { ACTION_ALERTING } from './actions/alerting_dashboard_action';
 import { CONTEXT_MENU_TRIGGER } from '../../../src/plugins/embeddable/public';
 import { getActions, getAdAction } from './utils/contextMenu/actions';
 import { alertingTriggerAd } from './utils/contextMenu/triggers';
+import { overlayAlertsFunction } from './expressions/overlay_alerts';
+import { setClient } from './services';
 
 declare module '../../../src/plugins/ui_actions/public' {
   export interface ActionContextMapping {
@@ -34,6 +36,13 @@ export class AlertingPlugin implements Plugin {
         return renderApp(coreStart, params);
       },
     });
+
+    // Set the HTTP client so it can be pulled into expression fns to make
+    // direct server-side calls
+    setClient(core.http);
+
+    // registers the expression function used to render anomalies on an Augmented Visualization
+    plugins.expressions.registerFunction(overlayAlertsFunction());
 
     // Create context menu actions. Pass core, to access service for flyouts.
     const actions = getActions({ core, plugins });
