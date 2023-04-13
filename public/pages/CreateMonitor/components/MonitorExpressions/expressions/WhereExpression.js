@@ -93,7 +93,7 @@ class WhereExpression extends Component {
                       ...FORMIK_INITIAL_WHERE_EXPRESSION_VALUES,
                       operator: TRIGGER_OPERATORS_MAP.INCLUDE,
                     }
-                  : FORMIK_INITIAL_WHERE_EXPRESSION_VALUES
+                  : { ...FORMIK_INITIAL_WHERE_EXPRESSION_VALUES }
               );
             }}
             style={{ paddingTop: '5px' }}
