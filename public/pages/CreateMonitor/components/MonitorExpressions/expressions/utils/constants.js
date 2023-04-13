@@ -124,3 +124,4 @@ export const GROUP_BY_ERROR = 'Must specify at least 1 group by expression.';
 export const QUERY_TYPE_GROUP_BY_ERROR = 'Can have a maximum of 1 group by selections.';
 
 export const QUERY_TYPE_METRIC_ERROR = 'Can have a maximum of 1 metric selections.';
+export const WHERE_FILTER_ALLOWED_TYPES = ['number', 'text', 'keyword', 'boolean'];

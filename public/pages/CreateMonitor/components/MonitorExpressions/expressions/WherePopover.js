@@ -5,35 +5,38 @@
 
 import React, { Component } from 'react';
 import {
+  EuiBadge,
   EuiFlexGroup,
   EuiFlexItem,
   EuiPopover,
   EuiPopoverTitle,
   EuiText,
-  EuiBadge,
 } from '@elastic/eui';
 import _ from 'lodash';
-import { POPOVER_STYLE, EXPRESSION_STYLE, WHERE_BOOLEAN_FILTERS } from './utils/constants';
 import {
-  getOperators,
+  WHERE_FILTER_ALLOWED_TYPES,
+  EXPRESSION_STYLE,
+  POPOVER_STYLE,
+  WHERE_BOOLEAN_FILTERS,
+} from './utils/constants';
+import {
   displayText,
-  validateRange,
+  getOperators,
   isNullOperator,
   isRangeOperator,
+  validateRange,
   validateWhereFilter,
 } from './utils/whereHelpers';
 import { hasError, isInvalid } from '../../../../../utils/validate';
 import {
   FormikComboBox,
-  FormikSelect,
   FormikFieldNumber,
   FormikFieldText,
+  FormikSelect,
 } from '../../../../../components/FormControls';
 import { getFilteredIndexFields, getIndexFields } from './utils/dataTypes';
 import { TRIGGER_COMPARISON_OPERATORS } from '../../../../CreateTrigger/containers/DefineBucketLevelTrigger/DefineBucketLevelTrigger';
 import { DATA_TYPES } from '../../../../../utils/constants';
-
-export const ALLOWED_TYPES = ['number', 'text', 'keyword', 'boolean'];
 
 export default class WherePopover extends Component {
   constructor(props) {
@@ -187,8 +190,8 @@ export default class WherePopover extends Component {
 
     const indexFields =
       indexFieldFilters !== undefined
-        ? getFilteredIndexFields(dataTypes, ALLOWED_TYPES, indexFieldFilters)
-        : getIndexFields(dataTypes, ALLOWED_TYPES);
+        ? getFilteredIndexFields(dataTypes, WHERE_FILTER_ALLOWED_TYPES, indexFieldFilters)
+        : getIndexFields(dataTypes, WHERE_FILTER_ALLOWED_TYPES);
     const fieldType = _.get(values, `fieldName[0].type`, 'number');
     const fieldOperator = _.get(values, `operator`, 'is');
     const fieldOperators = useTriggerFieldOperators
