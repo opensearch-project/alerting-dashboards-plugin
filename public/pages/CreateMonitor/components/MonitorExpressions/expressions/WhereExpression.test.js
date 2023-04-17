@@ -74,7 +74,7 @@ describe('WhereExpression', () => {
     wrapper.update();
     const values = wrapper.find(WhereExpression).props().formik.values;
     expect(values.where.fieldName).toEqual([{ label: 'cityName', type: 'text' }]);
-    expect(values.where.operator).toEqual(OPERATORS_MAP.IS);
+    expect(values.where.operator).toEqual(OPERATORS_MAP.IS.value);
     expect(wrapper.find(FormikFieldText).length).toBe(1);
     expect(wrapper.find(FormikFieldNumber).length).toBe(0);
   });
