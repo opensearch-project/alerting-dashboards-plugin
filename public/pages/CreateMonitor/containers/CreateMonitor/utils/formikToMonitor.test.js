@@ -253,6 +253,8 @@ describe('formikToWhereClause', () => {
       { bool: { must_not: { query_string: { query: `*Se*`, default_field: 'city' } } } },
     ],
   ])('.formikToWhereClause (%j,  %S)', (fieldName, operator, fieldValue, expected) => {
-    expect(formikToWhereClause({ where: { fieldName, operator, fieldValue } })).toEqual(expected);
+    expect(formikToWhereClause({ filters: [{ fieldName, operator, fieldValue }] })[0]).toEqual(
+      expected
+    );
   });
 });

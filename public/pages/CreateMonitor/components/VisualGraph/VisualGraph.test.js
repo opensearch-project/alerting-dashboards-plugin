@@ -55,7 +55,7 @@ const bucketMonitorValues = {
   groupedOverFieldName: 'bytes',
   bucketValue: 1,
   bucketUnitOfTime: 'h',
-  where: { fieldName: [], operator: 'is', fieldValue: '', fieldRangeStart: 0, fieldRangeEnd: 0 },
+  filters: [],
   detectorId: '',
   triggerDefinitions: [],
 };

@@ -16,6 +16,7 @@ import {
 import { MONITOR_TYPE, SEARCH_TYPE } from '../../../../../utils/constants';
 import { NOTIFY_OPTIONS_VALUES } from '../../../components/Action/actions/Message';
 import { FORMIK_INITIAL_ACTION_VALUES } from '../../../utils/constants';
+import { FORMIK_INITIAL_WHERE_EXPRESSION_VALUES } from '../../../../CreateMonitor/containers/CreateMonitor/utils/constants';
 
 export function formikToTrigger(values, monitorUiMetadata = {}) {
   const triggerDefinitions = _.get(values, 'triggerDefinitions');
@@ -333,15 +334,17 @@ export function getResultsPath(isCount) {
   return isCount ? HITS_TOTAL_RESULTS_PATH : AGGREGATION_RESULTS_PATH;
 }
 
-export function getCompositeAggFilter({ where }) {
-  const fieldName = _.get(where, 'fieldName', FORMIK_INITIAL_TRIGGER_VALUES.where.fieldName);
+export function getCompositeAggFilter({ filters = [] }) {
   const composite_agg_filter = {};
-  if (fieldName.length > 0) {
-    composite_agg_filter[where.fieldName[0].label] = {
-      [where.operator]: where.fieldValue,
-    };
-    return composite_agg_filter;
-  }
+  filters.forEach((filter) => {
+    const fieldName = _.get(filter, 'fieldName', FORMIK_INITIAL_WHERE_EXPRESSION_VALUES.fieldName);
+    if (fieldName.length > 0) {
+      composite_agg_filter[fieldName[0].label] = {
+        [filter.operator]: filter.fieldValue,
+      };
+    }
+  });
+  if (!_.isEmpty(composite_agg_filter)) return composite_agg_filter;
 }
 
 export function getRelationalOperator(thresholdEnum) {
