@@ -151,7 +151,7 @@ export function formikToUiSearch(values) {
     groupBy,
     bucketValue,
     bucketUnitOfTime,
-    where,
+    filters,
   } = values;
   return {
     searchType,
@@ -160,7 +160,7 @@ export function formikToUiSearch(values) {
     groupBy,
     bucketValue,
     bucketUnitOfTime,
-    where,
+    filters,
   };
 }
 
@@ -196,9 +196,8 @@ export function formikToGraphQuery(values) {
         return formikToAggregation(values);
     }
   };
-
   const timeField = values.timeField;
-  const filters = [
+  let filters = [
     {
       range: {
         [timeField]: {
@@ -209,10 +208,8 @@ export function formikToGraphQuery(values) {
       },
     },
   ];
-  const whereClause = formikToWhereClause(values);
-  if (whereClause) {
-    filters.push({ ...whereClause });
-  }
+  const whereFilters = formikToWhereClause(values);
+  if (whereFilters.length) filters = filters.concat(whereFilters);
   return {
     size: 0,
     aggregations: aggregation(),
@@ -334,7 +331,7 @@ export function formikToUiGraphQuery(values) {
     ? formikToUiCompositeAggregation(values)
     : formikToUiOverAggregation(values);
   const timeField = values.timeField;
-  const filters = [
+  let filters = [
     {
       range: {
         [timeField]: {
@@ -345,10 +342,8 @@ export function formikToUiGraphQuery(values) {
       },
     },
   ];
-  const whereClause = formikToWhereClause(values);
-  if (whereClause) {
-    filters.push({ ...whereClause });
-  }
+  const whereFilters = formikToWhereClause(values);
+  if (whereFilters.length) filters = filters.concat(whereFilters);
   return {
     size: 0,
     aggregations: aggregation,
@@ -392,10 +387,8 @@ export function formikToUiOverAggregation(values) {
   };
 }
 
-export function formikToWhereClause({ where }) {
-  if (where.fieldName.length > 0) {
-    return OPERATORS_QUERY_MAP[where.operator].query(where);
-  }
+export function formikToWhereClause({ filters = [] }) {
+  return filters.map((filter) => OPERATORS_QUERY_MAP[filter.operator].query(filter));
 }
 
 // For query-level monitor single metric selection

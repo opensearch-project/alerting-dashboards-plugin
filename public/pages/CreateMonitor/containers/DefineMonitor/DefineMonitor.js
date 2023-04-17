@@ -30,6 +30,7 @@ import { API_TYPES } from '../../components/ClusterMetricsMonitor/utils/clusterM
 import ConfigureDocumentLevelQueries from '../../components/DocumentLevelMonitorQueries/ConfigureDocumentLevelQueries';
 import FindingsDashboard from '../../../Dashboard/containers/FindingsDashboard';
 import { validDocLevelGraphQueries } from '../../components/DocumentLevelMonitorQueries/utils/helpers';
+import { validateWhereFilters } from '../../components/MonitorExpressions/expressions/utils/whereHelpers';
 
 function renderEmptyMessage(message) {
   return (
@@ -105,7 +106,7 @@ class DefineMonitor extends Component {
       aggregations: prevAggregations,
       bucketValue: prevBucketValue,
       bucketUnitOfTime: prevBucketUnitOfTime,
-      where: prevWhere,
+      filters: prevFilters,
       queries: prevQueries,
     } = prevProps.values;
     const {
@@ -117,7 +118,7 @@ class DefineMonitor extends Component {
       aggregations,
       bucketValue,
       bucketUnitOfTime,
-      where,
+      filters,
       queries,
     } = this.props.values;
     const isGraph = searchType === SEARCH_TYPE.GRAPH;
@@ -155,7 +156,7 @@ class DefineMonitor extends Component {
       prevAggregations !== aggregations ||
       prevBucketValue !== bucketValue ||
       prevBucketUnitOfTime !== bucketUnitOfTime ||
-      prevWhere !== where ||
+      (prevFilters !== filters && validateWhereFilters(filters)) ||
       prevGroupBy !== groupBy
     )
       this.onRunQuery();
@@ -280,9 +281,9 @@ class DefineMonitor extends Component {
           <QueryPerformance response={performanceResponse} />
           <EuiSpacer size="m" />
 
-          {errors.where
+          {errors.filters
             ? renderEmptyMessage(
-                'Invalid input in data filter. Remove data filter or adjust filter '
+                'Invalid input in data filters. Remove data filter or adjust filters.'
               )
             : loadingResponse
             ? renderEmptyMessage()
