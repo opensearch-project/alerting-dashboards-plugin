@@ -170,18 +170,36 @@ describe('whereHelpers', () => {
   });
 
   describe('validateRange', () => {
-    test('should return validation error invalid StartRange', () => {
+    test('should return validation error invalid start range', () => {
       expect(validateRange(100, { fieldRangeStart: 100, fieldRangeEnd: 50 })).toBe(
-        'Start should be less than end range'
+        'Start should be less than end range.'
       );
     });
-    test('should return validation error invalid endRange', () => {
+
+    test('should return validation error equal start and end range', () => {
+      expect(validateRange(100, { fieldRangeStart: 100, fieldRangeEnd: 50 })).toBe(
+        'Start should be less than end range.'
+      );
+    });
+
+    test('should return validation error invalid end range', () => {
       expect(validateRange(200, { fieldRangeStart: 300, fieldRangeEnd: 200 })).toBe(
-        'End should be greater than start range'
+        'End should be greater than start range.'
       );
     });
-    test('should return Required for undefined/null values', () => {
-      expect(validateRange('', { fieldRangeStart: '', fieldRangeEnd: 200 })).toBe('Required');
+
+    test('should return Required for empty values', () => {
+      expect(validateRange('', { fieldRangeStart: '', fieldRangeEnd: 200 })).toBe('Required.');
+    });
+
+    test('should return Required for undefined values', () => {
+      expect(validateRange(undefined, { fieldRangeStart: '', fieldRangeEnd: 200 })).toBe(
+        'Required.'
+      );
+    });
+
+    test('should return Required for null values', () => {
+      expect(validateRange(null, { fieldRangeStart: '', fieldRangeEnd: 200 })).toBe('Required.');
     });
 
     test('should return undefined for valid range', () => {

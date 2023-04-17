@@ -28,31 +28,34 @@ exports[`WhereExpression renders 1`] = `
     >
       No filters defined.
     </div>
-  </div>
-  <button
-    class="euiButtonEmpty euiButtonEmpty--primary euiButtonEmpty--xSmall"
-    data-test-subj="where.addFilterButton"
-    style="padding-top:5px"
-    type="button"
-  >
-    <span
-      class="euiButtonContent euiButtonEmpty__content"
+    <div
+      class="euiSpacer euiSpacer--xs"
+    />
+    <button
+      class="euiButtonEmpty euiButtonEmpty--primary euiButtonEmpty--xSmall"
+      data-test-subj="addFilterButton"
+      style="padding-top:5px"
+      type="button"
     >
       <span
-        class="euiButtonEmpty__text"
+        class="euiButtonContent euiButtonEmpty__content"
       >
-        + Add filter
+        <span
+          class="euiButtonEmpty__text"
+        >
+          + Add filter
+        </span>
       </span>
-    </span>
-  </button>
-  <div
-    class="euiText euiText--extraSmall"
-    style="padding-left:10px"
-  >
+    </button>
     <div
-      class="euiTextColor euiTextColor--subdued"
+      class="euiText euiText--extraSmall"
+      style="padding-left:10px"
     >
-      You can add up to 1  data filter.
+      <div
+        class="euiTextColor euiTextColor--subdued"
+      >
+        You can add up to 10 more data filters.
+      </div>
     </div>
   </div>
 </div>
