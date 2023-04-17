@@ -64,7 +64,6 @@ class ConfigureActions extends React.Component {
       actionDeleted: false,
       hasNotificationPlugin: false,
       accordionsOpen,
-      isInitialLoading: true,
     };
   }
 
@@ -174,11 +173,15 @@ class ConfigureActions extends React.Component {
         destinations: channelOptionsByType,
         flattenedDestinations: destinationsAndChannels,
         loadingDestinations: false,
-        isInitialLoading: false,
       });
 
       const monitorType = _.get(arrayHelpers, 'form.values.monitor_type', MONITOR_TYPE.QUERY_LEVEL);
-      const initialActionValues = getInitialActionValues({ monitorType, flyoutMode });
+      const initialActionValues = getInitialActionValues({
+        monitorType,
+        flyoutMode,
+        values,
+        fieldPath,
+      });
 
       // If actions is not defined  If user choose to delete actions, it will not override customer's preferences.
       if (
@@ -329,7 +332,7 @@ class ConfigureActions extends React.Component {
   };
 
   render() {
-    const { loadingDestinations, isInitialLoading } = this.state;
+    const { loadingDestinations } = this.state;
     const { arrayHelpers, values, fieldPath, flyoutMode } = this.props;
     const numActions = _.get(values, `${fieldPath}actions`, []).length;
     const displayAddActionButton = numActions > 0;
@@ -352,17 +355,11 @@ class ConfigureActions extends React.Component {
           hasShadow={!flyoutMode}
           hasBorder={!flyoutMode}
         >
-          {loadingDestinations && numActions < 1 ? (
+          {!flyoutMode && !loadingDestinations && numActions < 1 ? (
             <div style={{ display: 'flex', justifyContent: 'center' }}>Loading Destinations...</div>
           ) : (
             <>
-              {isInitialLoading && (
-                <>
-                  <EuiLoadingSpinner size="l" />
-                  <EuiSpacer size="m" />
-                </>
-              )}
-              {!isInitialLoading && this.renderActions(arrayHelpers)}
+              {this.renderActions(arrayHelpers)}
               {flyoutMode && <EuiSpacer size="m" />}
             </>
           )}
@@ -370,6 +367,8 @@ class ConfigureActions extends React.Component {
             <div style={flyoutMode ? {} : { paddingBottom: '5px', paddingTop: '20px' }}>
               <AddActionButton
                 arrayHelpers={arrayHelpers}
+                values={values}
+                fieldPath={fieldPath}
                 numActions={numActions}
                 flyoutMode={flyoutMode}
                 onPostAdd={(initialValues) => this.onAccordionToggle(initialValues.id)}

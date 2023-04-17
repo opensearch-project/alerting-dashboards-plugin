@@ -10,12 +10,20 @@ import { getInitialActionValues } from './utils';
 import { MONITOR_TYPE } from '../../../../utils/constants';
 import './styles.scss';
 
-const AddActionButton = ({ arrayHelpers, type = 'slack', numActions, flyoutMode, onPostAdd }) => {
+const AddActionButton = ({
+  arrayHelpers,
+  type = 'slack',
+  numActions,
+  flyoutMode,
+  onPostAdd,
+  values,
+  fieldPath,
+}) => {
   const buttonText =
     numActions === undefined || numActions === 0 ? 'Add action' : 'Add another action';
   const monitorType = _.get(arrayHelpers, 'form.values.monitor_type', MONITOR_TYPE.QUERY_LEVEL);
   const onClick = () => {
-    const initialValues = getInitialActionValues({ monitorType, numActions, flyoutMode });
+    const initialValues = getInitialActionValues({ monitorType, flyoutMode, values, fieldPath });
     arrayHelpers.push(initialValues);
 
     if (onPostAdd) {

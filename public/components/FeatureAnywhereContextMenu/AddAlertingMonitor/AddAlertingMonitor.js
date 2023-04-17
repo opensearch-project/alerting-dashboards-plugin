@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useState } from 'react';
+import React, { useMemo } from 'react';
 import {
   EuiFlexItem,
   EuiFlexGroup,
@@ -20,12 +20,17 @@ import {
 import './styles.scss';
 import CreateNew from './CreateNew';
 import AssociateExisting from './AssociateExisting';
+import _ from 'lodash';
+import { Formik } from 'formik';
+import {
+  getInitialValues,
+  submit,
+} from '../../../pages/CreateMonitor/containers/CreateMonitor/utils/helpers';
 
 function AddAlertingMonitor({
   embeddable,
   closeFlyout,
   core,
-  services,
   flyoutMode,
   setFlyoutMode,
   monitors,
@@ -33,114 +38,139 @@ function AddAlertingMonitor({
   setSelectedMonitorId,
   index,
 }) {
-  const onCreate = () => {
-    const event = new Event('createMonitor');
-    document.dispatchEvent(event);
+  const history = {
+    location: { pathname: '/create-monitor', search: '', hash: '', state: undefined },
+    push: () => null,
+    goBack: closeFlyout,
   };
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const onPreSubmitCallback = () => setIsSubmitting(true);
-  const onPostSubmitCallback = (isSuccessful) => {
-    setIsSubmitting(false);
-
-    if (isSuccessful) {
-      closeFlyout();
-    }
+  const setFlyout = () => null;
+  const { notifications, http: httpClient } = core;
+  const title = embeddable.getTitle();
+  const timeField = embeddable.vis.params.time_field;
+  const initialValues = useMemo(
+    () => getInitialValues({ ...history, title, index, timeField, flyoutMode }),
+    []
+  );
+  const onCreate = (values, formikBag) =>
+    submit({
+      values,
+      formikBag,
+      history,
+      updateMonitor: () => null,
+      notifications,
+      httpClient,
+      onSuccess: closeFlyout,
+    });
+  const onAssociateExisting = () => {
+    console.log('onAssociateExisting');
   };
 
   return (
     <div className="add-alerting-monitor">
-      <EuiFlyoutHeader hasBorder>
-        <EuiTitle>
-          <h2 id="add-alerting-monitor__title">
-            {flyoutMode === 'adMonitor' ? 'Set up alerts' : 'Add alerting monitor'}
-          </h2>
-        </EuiTitle>
-      </EuiFlyoutHeader>
-      <EuiFlyoutBody>
-        <div className="add-alerting-monitor__scroll">
-          {flyoutMode !== 'adMonitor' && (
+      <Formik initialValues={initialValues} onSubmit={onCreate} validateOnChange={false}>
+        {(formikProps) => {
+          const { handleSubmit, isSubmitting, validateForm } = formikProps;
+
+          return (
             <>
-              <EuiFormFieldset
-                legend={{
-                  display: 'hidden',
-                  children: (
-                    <EuiTitle>
-                      <span>Options to create a new monitor or associate an existing monitor</span>
-                    </EuiTitle>
-                  ),
-                }}
-                className="add-alerting-monitor__modes"
-              >
-                {[
-                  {
-                    id: 'add-alerting-monitor__create',
-                    label: 'Create new monitor',
-                    value: 'create',
-                  },
-                  {
-                    id: 'add-alerting-monitor__existing',
-                    label: 'Associate existing monitor',
-                    value: 'existing',
-                  },
-                ].map((option) => (
-                  <EuiCheckableCard
-                    {...{
-                      ...option,
-                      key: option.id,
-                      name: option.id,
-                      checked: option.value === flyoutMode,
-                      onChange: () => setFlyoutMode(option.value),
-                    }}
-                  />
-                ))}
-              </EuiFormFieldset>
-              <EuiSpacer size="m" />
+              <EuiFlyoutHeader hasBorder>
+                <EuiTitle>
+                  <h2 id="add-alerting-monitor__title">
+                    {flyoutMode === 'adMonitor' ? 'Set up alerts' : 'Add alerting monitor'}
+                  </h2>
+                </EuiTitle>
+              </EuiFlyoutHeader>
+              <EuiFlyoutBody>
+                <div className="add-alerting-monitor__scroll">
+                  {flyoutMode !== 'adMonitor' && (
+                    <>
+                      <EuiFormFieldset
+                        legend={{
+                          display: 'hidden',
+                          children: (
+                            <EuiTitle>
+                              <span>
+                                Options to create a new monitor or associate an existing monitor
+                              </span>
+                            </EuiTitle>
+                          ),
+                        }}
+                        className="add-alerting-monitor__modes"
+                      >
+                        {[
+                          {
+                            id: 'add-alerting-monitor__create',
+                            label: 'Create new monitor',
+                            value: 'create',
+                          },
+                          {
+                            id: 'add-alerting-monitor__existing',
+                            label: 'Associate existing monitor',
+                            value: 'existing',
+                          },
+                        ].map((option) => (
+                          <EuiCheckableCard
+                            {...{
+                              ...option,
+                              key: option.id,
+                              name: option.id,
+                              checked: option.value === flyoutMode,
+                              onChange: () => setFlyoutMode(option.value),
+                            }}
+                          />
+                        ))}
+                      </EuiFormFieldset>
+                      <EuiSpacer size="m" />
+                    </>
+                  )}
+                  {['create', 'adMonitor'].includes(flyoutMode) && (
+                    <CreateNew
+                      {...{ embeddable, core, flyoutMode, formikProps, history, setFlyout }}
+                    />
+                  )}
+                  {flyoutMode === 'existing' && (
+                    <AssociateExisting {...{ monitors, selectedMonitorId, setSelectedMonitorId }} />
+                  )}
+                  <EuiSpacer size="l" />
+                </div>
+              </EuiFlyoutBody>
+              <EuiFlyoutFooter>
+                <EuiFlexGroup justifyContent="spaceBetween">
+                  <EuiFlexItem grow={false}>
+                    <EuiButtonEmpty onClick={closeFlyout}>Cancel</EuiButtonEmpty>
+                  </EuiFlexItem>
+                  <EuiFlexItem grow={false}>
+                    <EuiButton
+                      onClick={async () => {
+                        if (['create', 'adMonitor'].includes(flyoutMode)) {
+                          const errors = await validateForm();
+
+                          if (Object.keys(errors).length > 0) {
+                            // Delay to allow errors to render
+                            setTimeout(() => {
+                              document
+                                .querySelector('.euiFlyoutBody__overflow')
+                                .scrollTo({ top: 0, behavior: 'smooth' });
+                            }, 300);
+                          }
+
+                          handleSubmit();
+                        } else if (flyoutMode === 'existing') {
+                          onAssociateExisting();
+                        }
+                      }}
+                      fill
+                      isLoading={isSubmitting}
+                    >
+                      {flyoutMode === 'existing' ? 'Associate' : 'Create'} monitor
+                    </EuiButton>
+                  </EuiFlexItem>
+                </EuiFlexGroup>
+              </EuiFlyoutFooter>
             </>
-          )}
-          {['create', 'adMonitor'].includes(flyoutMode) && (
-            <CreateNew
-              {...{
-                embeddable,
-                closeFlyout,
-                core,
-                services,
-                index,
-                flyoutMode,
-                onPreSubmitCallback,
-                onPostSubmitCallback,
-              }}
-            />
-          )}
-          {flyoutMode === 'existing' && (
-            <AssociateExisting
-              {...{
-                embeddable,
-                closeFlyout,
-                core,
-                services,
-                monitors,
-                selectedMonitorId,
-                setSelectedMonitorId,
-                onPreSubmitCallback,
-                onPostSubmitCallback,
-              }}
-            />
-          )}
-          <EuiSpacer size="l" />
-        </div>
-      </EuiFlyoutBody>
-      <EuiFlyoutFooter>
-        <EuiFlexGroup justifyContent="spaceBetween">
-          <EuiFlexItem grow={false}>
-            <EuiButtonEmpty onClick={closeFlyout}>Cancel</EuiButtonEmpty>
-          </EuiFlexItem>
-          <EuiFlexItem grow={false}>
-            <EuiButton onClick={onCreate} fill isLoading={isSubmitting}>
-              {flyoutMode === 'existing' ? 'Associate' : 'Create'} monitor
-            </EuiButton>
-          </EuiFlexItem>
-        </EuiFlexGroup>
-      </EuiFlyoutFooter>
+          );
+        }}
+      </Formik>
     </div>
   );
 }

@@ -51,3 +51,19 @@ export const getDigitId = (length = 6) =>
   Math.floor(Date.now() * Math.random())
     .toString()
     .slice(-length);
+
+// Assumes that values is an array of objects with "name" inside
+export const getUniqueName = (values, prefix) => {
+  const lastValue = values.at(-1);
+  const lastName = lastValue ? lastValue.name : '';
+  const lastDigit = Number.parseInt(lastName.match(/\d+$/)?.[0] || 0, 10);
+
+  // Checks if value is already in use
+  const getUniqueName = (digit) => {
+    const name = `${prefix}${digit + 1}`;
+    const duplicate = values.find((value) => value.name === name);
+    return duplicate ? getUniqueName(digit + 1) : name;
+  };
+
+  return getUniqueName(lastDigit);
+};

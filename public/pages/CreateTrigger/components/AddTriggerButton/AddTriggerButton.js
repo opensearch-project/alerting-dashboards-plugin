@@ -16,15 +16,14 @@ const AddTriggerButton = ({
   script = FORMIK_INITIAL_TRIGGER_VALUES.script,
   flyoutMode,
   onPostAdd,
-  monitorType,
 }) => {
-  const numTriggers = _.get(arrayHelpers, 'form.values.triggerDefinitions', []).length;
+  const triggers = _.get(arrayHelpers, 'form.values.triggerDefinitions', []);
   const buttonText =
     _.get(arrayHelpers, 'form.values.triggerDefinitions', []).length === 0
       ? 'Add trigger'
       : 'Add another trigger';
   const onClick = () => {
-    const values = getInitialTriggerValues({ script, flyoutMode, monitorType, numTriggers });
+    const values = getInitialTriggerValues({ script, flyoutMode, triggers });
     arrayHelpers.push(values);
 
     if (onPostAdd) {

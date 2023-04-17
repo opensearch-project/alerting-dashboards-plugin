@@ -74,7 +74,7 @@ const MonitorDetails = ({
       <FormikFieldText
         name="name"
         formRow
-        fieldProps={{ validate: validateMonitorName(httpClient, monitorToEdit) }}
+        fieldProps={{ validate: validateMonitorName(httpClient, monitorToEdit, flyoutMode) }}
         rowProps={{
           label: 'Monitor name',
           isInvalid,

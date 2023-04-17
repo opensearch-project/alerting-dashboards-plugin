@@ -21,16 +21,7 @@ const ActionEmptyPrompt = ({
   numActions,
 }) =>
   flyoutMode ? (
-    <>
-      {!hasDestinations && (
-        <EuiText>
-          <p>{destinationEmptyText}</p>
-        </EuiText>
-      )}
-      {hasDestinations && (
-        <AddActionButton {...{ arrayHelpers, flyoutMode, onPostAdd, numActions }} />
-      )}
-    </>
+    <AddActionButton {...{ arrayHelpers, flyoutMode, onPostAdd, numActions }} />
   ) : (
     <EuiEmptyPrompt
       style={{ maxWidth: '45em' }}
