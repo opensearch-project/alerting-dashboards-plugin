@@ -17,7 +17,7 @@ export const MATCH_ALL_QUERY = JSON.stringify({ size: 0, query: { match_all: {} 
 
 export const FORMIK_INITIAL_WHERE_EXPRESSION_VALUES = {
   fieldName: [{ label: '', type: WHERE_FILTER_ALLOWED_TYPES[0] }], // This is an array because the EuiCombobox returns an array of {label: string, type: string} objects.
-  operator: OPERATORS_MAP.IS,
+  operator: OPERATORS_MAP.IS.value,
   fieldValue: '',
   fieldRangeStart: undefined,
   fieldRangeEnd: undefined,

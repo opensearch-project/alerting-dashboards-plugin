@@ -104,7 +104,7 @@ describe('WhereExpression', () => {
     const values = wrapper.find(WhereExpression).props().formik.values;
     for (let i = 0; i < MAX_NUM_WHERE_EXPRESSION.DATA_FILTERS; i++) {
       expect(values.filters[i].fieldName).toEqual([{ label: `cityName${i}`, type: 'text' }]);
-      expect(values.filters[i].operator).toEqual(OPERATORS_MAP.IS);
+      expect(values.filters[i].operator).toEqual(OPERATORS_MAP.IS.value);
     }
     expect(wrapper.find(FormikFieldText).length).toBe(MAX_NUM_WHERE_EXPRESSION.DATA_FILTERS);
     expect(wrapper.find(FormikFieldNumber).length).toBe(0);
