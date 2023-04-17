@@ -26,6 +26,7 @@ import {
   getInitialValues,
   submit,
 } from '../../../pages/CreateMonitor/containers/CreateMonitor/utils/helpers';
+import { createSavedObjectAssociation } from './utils';
 
 function AddAlertingMonitor({
   embeddable,
@@ -46,7 +47,7 @@ function AddAlertingMonitor({
   const setFlyout = () => null;
   const { notifications, http: httpClient } = core;
   const title = embeddable.getTitle();
-  const timeField = embeddable.vis.params.time_field;
+  const timeField = embeddable.vis.data?.aggs.aggs[1].params.field.displayName;
   const initialValues = useMemo(
     () => getInitialValues({ ...history, title, index, timeField, flyoutMode }),
     []
@@ -59,10 +60,19 @@ function AddAlertingMonitor({
       updateMonitor: () => null,
       notifications,
       httpClient,
-      onSuccess: closeFlyout,
+      onSuccess: async ({ monitorId }) => {
+        console.log({ monitorId });
+        await createSavedObjectAssociation(monitorId, embeddable.vis.id);
+        closeFlyout();
+      },
     });
-  const onAssociateExisting = () => {
-    console.log('onAssociateExisting');
+  const onAssociateExisting = async () => {
+    // create saved object or dispatch an event that will create the obj
+    const res = await createSavedObjectAssociation(selectedMonitorId, embeddable.vis.id);
+
+    if (res) {
+      closeFlyout();
+    }
   };
 
   return (

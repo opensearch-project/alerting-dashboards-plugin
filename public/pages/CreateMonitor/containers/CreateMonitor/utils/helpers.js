@@ -159,7 +159,7 @@ export const create = async ({
       history.push(`/monitors/${_id}`);
 
       if (onSuccess) {
-        onSuccess();
+        onSuccess({ monitorId: _id });
       }
     } else {
       console.log('Failed to create:', resp);

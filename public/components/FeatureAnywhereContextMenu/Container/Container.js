@@ -2,14 +2,16 @@ import React, { useState } from 'react';
 import AssociatedMonitors from '../AssociatedMonitors';
 import AddAlertingMonitor from '../AddAlertingMonitor';
 import { useMonitors } from '../../../utils/contextMenu/monitors';
+import { useAllMonitors } from '../../../utils/contextMenu/allMonitors';
 import './styles.scss';
 
 const Container = ({ defaultFlyoutMode, ...props }) => {
   const { embeddable } = props;
-  const index = [{ label: embeddable?.vis?.params?.index_pattern }];
+  const index = [{ label: embeddable?.vis?.data?.indexPattern?.title }];
   const [flyoutMode, setFlyoutMode] = useState(defaultFlyoutMode);
   const [selectedMonitorId, setSelectedMonitorId] = useState();
-  const monitors = useMonitors();
+  const monitors = useMonitors(embeddable);
+  const allMonitors = useAllMonitors(embeddable);
 
   const Flyout = {
     associated: AssociatedMonitors,
@@ -22,7 +24,7 @@ const Container = ({ defaultFlyoutMode, ...props }) => {
     <Flyout
       {...{
         ...props,
-        monitors,
+        monitors: flyoutMode === 'existing' ? allMonitors : monitors,
         selectedMonitorId,
         setSelectedMonitorId,
         flyoutMode,
