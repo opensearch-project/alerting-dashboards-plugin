@@ -6,16 +6,24 @@
 import React, { Component } from 'react';
 import { connect } from 'formik';
 import { EuiButton, EuiFlexGroup, EuiFlexItem, EuiHorizontalRule, EuiSpacer } from '@elastic/eui';
-import { FormikComboBox, FormikFieldText, FormikSelect } from '../../../../components/FormControls';
+import {
+  FormikComboBox,
+  FormikFieldNumber,
+  FormikFieldText,
+  FormikSelect,
+} from '../../../../components/FormControls';
 import {
   hasError,
   isInvalid,
   required,
+  requiredNumber,
   validateIllegalCharacters,
 } from '../../../../utils/validate';
 import ConfigureDocumentLevelQueryTags from './ConfigureDocumentLevelQueryTags';
-import { getIndexFields } from '../MonitorExpressions/expressions/utils/dataTypes';
-import { QUERY_OPERATORS } from '../../../Dashboard/components/FindingsDashboard/findingsUtils';
+import { getIndexFields, getTypeForField } from '../MonitorExpressions/expressions/utils/dataTypes';
+import { DATA_TYPES } from '../../../../utils/constants';
+import { getOperators } from '../MonitorExpressions/expressions/utils/whereHelpers';
+import { getDocLevelQueryOperators } from './utils/helpers';
 
 const ALLOWED_DATA_TYPES = ['number', 'text', 'keyword', 'boolean'];
 
@@ -25,11 +33,31 @@ export const ILLEGAL_QUERY_NAME_CHARACTERS = [' '];
 class DocumentLevelQuery extends Component {
   constructor(props) {
     super(props);
-    this.state = {};
+    this.state = {
+      fieldDataType: DATA_TYPES.TEXT,
+      indexFieldOptions: [],
+      supportedOperators: getDocLevelQueryOperators(),
+    };
+  }
+
+  componentDidMount() {
+    this.initializeFieldDataType();
+  }
+
+  componentDidUpdate(prevProps) {
+    if (prevProps.dataTypes !== this.props.dataTypes) this.initializeFieldDataType();
+  }
+
+  initializeFieldDataType() {
+    const { dataTypes, query } = this.props;
+    const indexFieldOptions = getIndexFields(dataTypes, ALLOWED_DATA_TYPES);
+    const fieldDataType = getTypeForField(query.field, indexFieldOptions);
+    this.setState({ fieldDataType, indexFieldOptions });
   }
 
   render() {
-    const { dataTypes, formFieldName = '', query, queryIndex, queriesArrayHelpers } = this.props;
+    const { formFieldName = '', query, queryIndex, queriesArrayHelpers } = this.props;
+    const { fieldDataType, indexFieldOptions, supportedOperators } = this.state;
     return (
       <div style={{ padding: '0px 10px' }}>
         <EuiFlexGroup>
@@ -83,8 +111,11 @@ class DocumentLevelQuery extends Component {
               }}
               inputProps={{
                 placeholder: 'Enter the field to query',
-                options: getIndexFields(dataTypes, ALLOWED_DATA_TYPES),
-                onChange: (e, field, form) => form.setFieldValue(field.name, e[0].label),
+                options: indexFieldOptions,
+                onChange: (e, field, form) => {
+                  this.setState({ fieldDataType: e[0].type });
+                  form.setFieldValue(field.name, e[0].label);
+                },
                 onBlur: (e, field, form) => form.setFieldTouched(field.name, true),
                 singleSelection: { asPlainText: true },
                 isClearable: false,
@@ -97,33 +128,56 @@ class DocumentLevelQuery extends Component {
             <FormikSelect
               name={`${formFieldName}.operator`}
               formRow={true}
-              rowProps={{ hasEmptyLabelSpace: true }}
+              rowProps={{
+                hasEmptyLabelSpace: true,
+                style: { width: '200px' },
+              }}
               inputProps={{
                 onChange: (e, field) => field.onChange(e),
-                options: QUERY_OPERATORS,
+                options: getOperators(fieldDataType, supportedOperators),
                 'data-test-subj': `documentLevelQuery_operator${queryIndex}`,
               }}
             />
           </EuiFlexItem>
 
           <EuiFlexItem grow={false}>
-            <FormikFieldText
-              name={`${formFieldName}.query`}
-              formRow
-              fieldProps={{ validate: required }} // TODO DRAFT: What constraints should we implement?
-              rowProps={{
-                hasEmptyLabelSpace: true,
-                style: { width: '300px' },
-                isInvalid,
-                error: hasError,
-              }}
-              inputProps={{
-                placeholder: 'Enter the search term',
-                fullWidth: true,
-                isInvalid,
-                'data-test-subj': `documentLevelQuery_query${queryIndex}`,
-              }}
-            />
+            {fieldDataType === DATA_TYPES.NUMBER ? (
+              <FormikFieldNumber
+                name={`${formFieldName}.query`}
+                formRow
+                fieldProps={{ validate: requiredNumber }}
+                rowProps={{
+                  hasEmptyLabelSpace: true,
+                  style: { width: '300px' },
+                  isInvalid,
+                  error: hasError,
+                }}
+                inputProps={{
+                  placeholder: 'Enter the search value',
+                  fullWidth: true,
+                  isInvalid,
+                  'data-test-subj': `documentLevelQuery_query${queryIndex}`,
+                }}
+              />
+            ) : (
+              <FormikFieldText
+                name={`${formFieldName}.query`}
+                formRow
+                fieldProps={{ validate: required }}
+                rowProps={{
+                  hasEmptyLabelSpace: true,
+                  style: { width: '300px' },
+                  isInvalid,
+                  error: hasError,
+                }}
+                inputProps={{
+                  placeholder: 'Enter the search term',
+                  fullWidth: true,
+                  isInvalid,
+                  'data-test-subj': `documentLevelQuery_query${queryIndex}`,
+                }}
+              />
+            )}
           </EuiFlexItem>
         </EuiFlexGroup>
 

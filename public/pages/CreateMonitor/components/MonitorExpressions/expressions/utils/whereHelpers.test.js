@@ -89,7 +89,7 @@ describe('whereHelpers', () => {
           value: 'contains',
         },
         {
-          text: 'does not contains',
+          text: 'does not contain',
           value: 'does_not_contains',
         },
       ]);
@@ -145,27 +145,27 @@ describe('whereHelpers', () => {
   });
   describe('isRangeOperator', () => {
     test('should return true  for IN_RANGE operator', () => {
-      expect(isRangeOperator(OPERATORS_MAP.IN_RANGE)).toBe(true);
+      expect(isRangeOperator(OPERATORS_MAP.IN_RANGE.value)).toBe(true);
     });
     test('should return true  for NOT_IN_RANGE operator', () => {
-      expect(isRangeOperator(OPERATORS_MAP.NOT_IN_RANGE)).toBe(true);
+      expect(isRangeOperator(OPERATORS_MAP.NOT_IN_RANGE.value)).toBe(true);
     });
     test('should return false for any other operators', () => {
-      expect(isRangeOperator(OPERATORS_MAP.IS)).toBe(false);
-      expect(isRangeOperator(OPERATORS_MAP.IS_GREATER_EQUAL)).toBe(false);
+      expect(isRangeOperator(OPERATORS_MAP.IS.value)).toBe(false);
+      expect(isRangeOperator(OPERATORS_MAP.IS_GREATER_EQUAL.value)).toBe(false);
     });
   });
 
   describe('isNullOperator', () => {
     test('should return true for IS_NULL operator', () => {
-      expect(isNullOperator(OPERATORS_MAP.IS_NULL)).toBe(true);
+      expect(isNullOperator(OPERATORS_MAP.IS_NULL.value)).toBe(true);
     });
     test('should return true  for IS_NOT_NULL operator', () => {
-      expect(isNullOperator(OPERATORS_MAP.IS_NOT_NULL)).toBe(true);
+      expect(isNullOperator(OPERATORS_MAP.IS_NOT_NULL.value)).toBe(true);
     });
     test('should return false for any other operators', () => {
-      expect(isNullOperator(OPERATORS_MAP.IS)).toBe(false);
-      expect(isNullOperator(OPERATORS_MAP.IS_GREATER_EQUAL)).toBe(false);
+      expect(isNullOperator(OPERATORS_MAP.IS.value)).toBe(false);
+      expect(isNullOperator(OPERATORS_MAP.IS_GREATER_EQUAL.value)).toBe(false);
     });
   });
 
@@ -194,7 +194,7 @@ describe('whereHelpers', () => {
       expect(
         displayText({
           fieldName: [{ label: 'age', type: 'number' }],
-          operator: OPERATORS_MAP.IN_RANGE,
+          operator: OPERATORS_MAP.IN_RANGE.value,
           fieldRangeStart: 20,
           fieldRangeEnd: 40,
         })
@@ -204,7 +204,7 @@ describe('whereHelpers', () => {
       expect(
         displayText({
           fieldName: [{ label: 'age', type: 'number' }],
-          operator: OPERATORS_MAP.NOT_IN_RANGE,
+          operator: OPERATORS_MAP.NOT_IN_RANGE.value,
           fieldRangeStart: 20,
           fieldRangeEnd: 40,
         })
@@ -214,7 +214,7 @@ describe('whereHelpers', () => {
       expect(
         displayText({
           fieldName: [{ label: 'age', type: 'number' }],
-          operator: OPERATORS_MAP.IS_NULL,
+          operator: OPERATORS_MAP.IS_NULL.value,
         })
       ).toBe('age is null');
     });
@@ -222,7 +222,7 @@ describe('whereHelpers', () => {
       expect(
         displayText({
           fieldName: [{ label: 'age', type: 'number' }],
-          operator: OPERATORS_MAP.IS_NOT_NULL,
+          operator: OPERATORS_MAP.IS_NOT_NULL.value,
         })
       ).toBe('age is not null');
     });
@@ -230,7 +230,7 @@ describe('whereHelpers', () => {
       expect(
         displayText({
           fieldName: [{ label: 'age', type: 'number' }],
-          operator: OPERATORS_MAP.IS_GREATER,
+          operator: OPERATORS_MAP.IS_GREATER.value,
           fieldValue: 20,
         })
       ).toBe('age is greater than 20');

@@ -4,13 +4,17 @@
  */
 
 import _ from 'lodash';
-import { COMPARISON_OPERATORS, OPERATORS_MAP } from './constants';
+import { OPERATORS_MAP } from './constants';
 import { TRIGGER_COMPARISON_OPERATORS } from '../../../../../CreateTrigger/containers/DefineBucketLevelTrigger/DefineBucketLevelTrigger';
+import { DATA_TYPES } from '../../../../../../utils/constants';
 
 export const DEFAULT_WHERE_EXPRESSION_TEXT = 'All fields are included';
 
-export const getOperators = (fieldType) =>
-  COMPARISON_OPERATORS.reduce(
+export const getOperators = (
+  fieldType = DATA_TYPES.TEXT,
+  supportedOperators = Object.values(OPERATORS_MAP)
+) =>
+  supportedOperators.reduce(
     (acc, currentOperator) =>
       currentOperator.dataTypes.includes(fieldType)
         ? [...acc, { text: currentOperator.text, value: currentOperator.value }]
@@ -19,12 +23,12 @@ export const getOperators = (fieldType) =>
   );
 
 export const isRangeOperator = (selectedOperator) =>
-  [OPERATORS_MAP.IN_RANGE, OPERATORS_MAP.NOT_IN_RANGE].includes(selectedOperator);
+  [OPERATORS_MAP.IN_RANGE.value, OPERATORS_MAP.NOT_IN_RANGE.value].includes(selectedOperator);
 export const isNullOperator = (selectedOperator) =>
-  [OPERATORS_MAP.IS_NULL, OPERATORS_MAP.IS_NOT_NULL].includes(selectedOperator);
+  [OPERATORS_MAP.IS_NULL.value, OPERATORS_MAP.IS_NOT_NULL.value].includes(selectedOperator);
 
 export const displayText = (whereValues) => {
-  const comparisonOperators = _.concat(COMPARISON_OPERATORS, TRIGGER_COMPARISON_OPERATORS);
+  const comparisonOperators = _.concat(Object.values(OPERATORS_MAP), TRIGGER_COMPARISON_OPERATORS);
 
   const whereFieldName = _.get(whereValues, 'fieldName[0].label', undefined);
   if (!whereFieldName) {
