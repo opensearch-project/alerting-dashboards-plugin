@@ -17,4 +17,4 @@ Compatible with OpenSearch Dashboards 2.7.0
 * Fixed a bug with doc level trigger creation. ([#513](https://github.com/opensearch-project/alerting-dashboards-plugin/pull/513))
 
 ### Documentation
-* Added 2.7 release notes. ([#]())
+* Added 2.7 release notes. ([#530](https://github.com/opensearch-project/alerting-dashboards-plugin/pull/530))
