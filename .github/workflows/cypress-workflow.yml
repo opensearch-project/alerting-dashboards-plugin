@@ -7,9 +7,9 @@ on:
     branches:
       - "*"
 env:
-  OPENSEARCH_DASHBOARDS_VERSION: '2.x'
+  OPENSEARCH_DASHBOARDS_VERSION: '2.6.0'
   OPENSEARCH_VERSION: '2.6.0-SNAPSHOT'
-  ALERTING_PLUGIN_BRANCH: '2.x'
+  ALERTING_PLUGIN_BRANCH: '2.6.0'
 jobs:
   tests:
     name: Run Cypress E2E tests
