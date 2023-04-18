@@ -176,12 +176,8 @@ class ConfigureActions extends React.Component {
       });
 
       const monitorType = _.get(arrayHelpers, 'form.values.monitor_type', MONITOR_TYPE.QUERY_LEVEL);
-      const initialActionValues = getInitialActionValues({
-        monitorType,
-        flyoutMode,
-        values,
-        fieldPath,
-      });
+      const actions = _.get(values, `${fieldPath}actions`, []);
+      const initialActionValues = getInitialActionValues({ monitorType, flyoutMode, actions });
 
       // If actions is not defined  If user choose to delete actions, it will not override customer's preferences.
       if (

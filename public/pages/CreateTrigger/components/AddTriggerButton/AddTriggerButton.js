@@ -9,6 +9,7 @@ import { EuiButton } from '@elastic/eui';
 import { FORMIK_INITIAL_TRIGGER_VALUES } from '../../containers/CreateTrigger/utils/constants';
 import EnhancedAccordion from '../../../../components/FeatureAnywhereContextMenu/EnhancedAccordion';
 import { getInitialTriggerValues } from './utils';
+import { MONITOR_TYPE } from '../../../../utils/constants';
 
 const AddTriggerButton = ({
   arrayHelpers,
@@ -23,7 +24,8 @@ const AddTriggerButton = ({
       ? 'Add trigger'
       : 'Add another trigger';
   const onClick = () => {
-    const values = getInitialTriggerValues({ script, flyoutMode, triggers });
+    const monitorType = _.get(arrayHelpers, 'form.values.monitor_type', MONITOR_TYPE.QUERY_LEVEL);
+    const values = getInitialTriggerValues({ script, flyoutMode, triggers, monitorType });
     arrayHelpers.push(values);
 
     if (onPostAdd) {

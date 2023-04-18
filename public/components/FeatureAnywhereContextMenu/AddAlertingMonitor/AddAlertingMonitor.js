@@ -47,7 +47,7 @@ function AddAlertingMonitor({
   const setFlyout = () => null;
   const { notifications, http: httpClient } = core;
   const title = embeddable.getTitle();
-  const timeField = embeddable.vis.data?.aggs.aggs[1].params.field.displayName;
+  const timeField = embeddable.vis.params.time_field;
   const initialValues = useMemo(
     () => getInitialValues({ ...history, title, index, timeField, flyoutMode }),
     []

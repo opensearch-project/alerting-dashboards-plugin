@@ -23,7 +23,8 @@ const AddActionButton = ({
     numActions === undefined || numActions === 0 ? 'Add action' : 'Add another action';
   const monitorType = _.get(arrayHelpers, 'form.values.monitor_type', MONITOR_TYPE.QUERY_LEVEL);
   const onClick = () => {
-    const initialValues = getInitialActionValues({ monitorType, flyoutMode, values, fieldPath });
+    const actions = _.get(values, `${fieldPath}actions`, []);
+    const initialValues = getInitialActionValues({ monitorType, flyoutMode, actions });
     arrayHelpers.push(initialValues);
 
     if (onPostAdd) {

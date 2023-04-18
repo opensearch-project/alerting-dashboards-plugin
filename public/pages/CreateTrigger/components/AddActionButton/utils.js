@@ -3,7 +3,7 @@ import { DEFAULT_MESSAGE_SOURCE, FORMIK_INITIAL_ACTION_VALUES } from '../../util
 import { MONITOR_TYPE } from '../../../../utils/constants';
 import { getDigitId, getUniqueName } from '../../../../utils/helpers';
 
-export const getInitialActionValues = ({ monitorType, flyoutMode, values, fieldPath }) => {
+export const getInitialActionValues = ({ monitorType, flyoutMode, actions }) => {
   const initialActionValues = _.cloneDeep(FORMIK_INITIAL_ACTION_VALUES);
 
   switch (monitorType) {
@@ -29,7 +29,6 @@ export const getInitialActionValues = ({ monitorType, flyoutMode, values, fieldP
 
   // Add name based on previous name;
   if (flyoutMode) {
-    const actions = _.get(values, `${fieldPath}actions`, []);
     initialActionValues.name = getUniqueName(actions, 'Notification ');
   }
 
