@@ -73,6 +73,24 @@ function AddAlertingMonitor({
       closeFlyout();
     }
   };
+  const onSubmit = async ({ handleSubmit, validateForm }) => {
+    if (['create', 'adMonitor'].includes(flyoutMode)) {
+      const errors = await validateForm();
+
+      if (Object.keys(errors).length > 0) {
+        // Delay to allow errors to render
+        setTimeout(() => {
+          document
+            .querySelector('.euiFlyoutBody__overflow')
+            .scrollTo({ top: 0, behavior: 'smooth' });
+        }, 300);
+      }
+
+      handleSubmit();
+    } else if (flyoutMode === 'existing') {
+      onAssociateExisting();
+    }
+  };
 
   return (
     <div className="add-alerting-monitor">
@@ -150,24 +168,7 @@ function AddAlertingMonitor({
                   </EuiFlexItem>
                   <EuiFlexItem grow={false}>
                     <EuiButton
-                      onClick={async () => {
-                        if (['create', 'adMonitor'].includes(flyoutMode)) {
-                          const errors = await validateForm();
-
-                          if (Object.keys(errors).length > 0) {
-                            // Delay to allow errors to render
-                            setTimeout(() => {
-                              document
-                                .querySelector('.euiFlyoutBody__overflow')
-                                .scrollTo({ top: 0, behavior: 'smooth' });
-                            }, 300);
-                          }
-
-                          handleSubmit();
-                        } else if (flyoutMode === 'existing') {
-                          onAssociateExisting();
-                        }
-                      }}
+                      onClick={() => onSubmit({ handleSubmit, validateForm })}
                       fill
                       isLoading={isSubmitting}
                     >
