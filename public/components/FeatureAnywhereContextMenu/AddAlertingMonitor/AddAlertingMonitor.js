@@ -61,7 +61,6 @@ function AddAlertingMonitor({
       notifications,
       httpClient,
       onSuccess: async ({ monitorId }) => {
-        console.log({ monitorId });
         await createSavedObjectAssociation(monitorId, embeddable.vis.id);
         closeFlyout();
       },
