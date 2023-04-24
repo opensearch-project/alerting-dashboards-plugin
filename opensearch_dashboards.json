@@ -1,6 +1,6 @@
 {
   "id": "alertingDashboards",
-  "version": "2.4.2.0",
+  "version": "2.4.1.0",
   "opensearchDashboardsVersion": "2.4.1",
   "configPath": ["opensearch_alerting"],
   "requiredPlugins": [],
