@@ -13,7 +13,12 @@ import DocumentationTitle from '../../components/FeatureAnywhereContextMenu/Docu
 import Container from '../../components/FeatureAnywhereContextMenu/Container';
 
 export const ALERTING_ACTION_CONTEXT = 'ALERTING_ACTION_CONTEXT';
+export const ALERTING_ACTION_CONTEXT_GROUP_ID = 'ALERTING_ACTION_CONTEXT_GROUP_ID';
+export const ALERTING_ACTION_ADD_ID = 'ALERTING_ACTION_ADD_ID';
+export const ALERTING_ACTION_ASSOCIATED_ID = 'ALERTING_ACTION_ASSOCIATED_ID';
+export const ALERTING_ACTION_DOC_ID = 'ALERTING_ACTION_DOC_ID';
 export const ALERTING_ACTION_AD = 'ALERTING_ACTION_AD';
+export const ALERTING_TRIGGER_AD_ID = 'ALERTING_TRIGGER_AD_ID';
 
 declare module '../../../../../src/plugins/ui_actions/public' {
   export interface ActionContextMapping {
@@ -22,7 +27,19 @@ declare module '../../../../../src/plugins/ui_actions/public' {
   }
 }
 
-export const openContainerInFlyout = async ({ core, defaultFlyoutMode, embeddable, plugins }) => {
+export const openContainerInFlyout = async ({
+  core,
+  defaultFlyoutMode,
+  embeddable,
+  plugins,
+  detectorId,
+}: {
+  core: any;
+  defaultFlyoutMode: string;
+  embeddable: any;
+  plugins: any;
+  detectorId?: string;
+}) => {
   const services = await core.getStartServices();
   const openFlyout = services[0].overlays.openFlyout;
   const overlay = openFlyout(
@@ -35,6 +52,7 @@ export const openContainerInFlyout = async ({ core, defaultFlyoutMode, embeddabl
           core,
           services,
           plugins,
+          detectorId,
         }}
       />
     ),
@@ -45,7 +63,7 @@ export const openContainerInFlyout = async ({ core, defaultFlyoutMode, embeddabl
 // This is used to create all actions in the same context menu
 const grouping: Action['grouping'] = [
   {
-    id: 'alerting-dashboard-context-menu',
+    id: ALERTING_ACTION_CONTEXT_GROUP_ID,
     getDisplayName: () => 'Alerting',
     getIconType: () => 'bell',
   },
@@ -54,8 +72,7 @@ const grouping: Action['grouping'] = [
 export const getActions = ({ core, plugins }) =>
   [
     {
-      grouping,
-      id: 'addAlertingMonitor',
+      id: ALERTING_ACTION_ADD_ID,
       title: i18n.translate('dashboard.actions.alertingMenuItem.addAlertingMonitor.displayName', {
         defaultMessage: 'Add alerting monitor',
       }),
@@ -65,8 +82,7 @@ export const getActions = ({ core, plugins }) =>
         openContainerInFlyout({ core, embeddable, plugins, defaultFlyoutMode: 'create' }),
     },
     {
-      grouping,
-      id: 'associatedMonitors',
+      id: ALERTING_ACTION_ASSOCIATED_ID,
       title: i18n.translate('dashboard.actions.alertingMenuItem.associatedMonitors.displayName', {
         defaultMessage: 'Associated monitors',
       }),
@@ -76,7 +92,7 @@ export const getActions = ({ core, plugins }) =>
         openContainerInFlyout({ core, embeddable, plugins, defaultFlyoutMode: 'associated' }),
     },
     {
-      id: 'documentation',
+      id: ALERTING_ACTION_DOC_ID,
       title: <DocumentationTitle />,
       icon: 'documentation' as EuiIconType,
       order: 98,
@@ -93,10 +109,16 @@ export const getAdAction = ({ core, plugins }) =>
   createAlertingAction({
     type: ALERTING_ACTION_AD,
     grouping: [],
-    id: 'ad-action',
-    title: 'ad-action',
+    id: ALERTING_TRIGGER_AD_ID,
+    title: ALERTING_TRIGGER_AD_ID,
     icon: '' as EuiIconType,
     order: 1,
-    onExecute: ({ embeddable }) =>
-      openContainerInFlyout({ core, embeddable, plugins, defaultFlyoutMode: 'adMonitor' }),
+    onExecute: ({ embeddable, detectorId }) =>
+      openContainerInFlyout({
+        core,
+        embeddable,
+        plugins,
+        detectorId,
+        defaultFlyoutMode: 'adMonitor',
+      }),
   });

@@ -64,6 +64,7 @@ class ConfigureActions extends React.Component {
       actionDeleted: false,
       hasNotificationPlugin: false,
       accordionsOpen,
+      isInitialLoading: true,
     };
   }
 
@@ -195,6 +196,8 @@ class ConfigureActions extends React.Component {
         loadingDestinations: false,
       });
     }
+
+    this.setState({ isInitialLoading: false });
   };
 
   sendTestMessage = async (index) => {
@@ -275,7 +278,7 @@ class ConfigureActions extends React.Component {
 
   renderActions = (arrayHelpers) => {
     const { context, setFlyout, values, fieldPath, httpClient, plugins, flyoutMode } = this.props;
-    const { destinations, flattenedDestinations, accordionsOpen } = this.state;
+    const { destinations, flattenedDestinations, accordionsOpen, isInitialLoading } = this.state;
     const hasDestinations = !_.isEmpty(destinations);
     const hasActions = !_.isEmpty(_.get(values, `${fieldPath}actions`));
     const shouldRenderActions = hasActions || (hasDestinations && hasActions);
@@ -311,6 +314,7 @@ class ConfigureActions extends React.Component {
               isOpen: accordionsOpen[key],
               onToggle: () => this.onAccordionToggle(key),
             }}
+            isInitialLoading={isInitialLoading}
           />
         );
       })

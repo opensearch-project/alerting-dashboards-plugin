@@ -28,6 +28,8 @@ export const getInitialValues = ({
   location,
   monitorToEdit,
   edit,
+  searchType,
+  detectorId,
 }) => {
   let initialValues = _.mergeWith(
     {},
@@ -48,6 +50,14 @@ export const getInitialValues = ({
 
     // Add aggregations
     initialValues.aggregations = [_.cloneDeep(FORMIK_INITIAL_AGG_VALUES)];
+
+    if (searchType) {
+      initialValues.searchType = searchType;
+    }
+
+    if (detectorId) {
+      initialValues.detectorId = detectorId;
+    }
   }
 
   if (edit && monitorToEdit) {

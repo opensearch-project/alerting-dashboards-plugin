@@ -20,13 +20,12 @@ import { getPlugins } from '../../../../pages/CreateMonitor/containers/CreateMon
 import { dotNotate } from '../../../../utils/SubmitErrorHandler';
 import './styles.scss';
 
-function CreateNew({ embeddable, core, flyoutMode, formikProps, history, setFlyout }) {
+function CreateNew({ embeddable, core, flyoutMode, formikProps, history, setFlyout, detectorId }) {
   const { notifications, isDarkMode = false, http: httpClient } = core;
   const { values, errors, touched, isSubmitting, isValid } = formikProps;
   const [plugins, setPlugins] = useState([]);
   const isAd = values.searchType === SEARCH_TYPE.AD;
-  const detectorId = null;
-  const [accordionsOpen, setAccordionsOpen] = useState({});
+  const [accordionsOpen, setAccordionsOpen] = useState(detectorId ? { monitorDetails: true } : {});
   const [isShowVis, setIsShowVis] = useState(false);
   const title = embeddable.getTitle();
   const notificationService = useMemo(() => new NotificationService(core.http), [core]);

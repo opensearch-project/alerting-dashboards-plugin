@@ -201,7 +201,12 @@ class DefineTrigger extends Component {
     if (isAd && adTriggerType === TRIGGER_TYPE.AD) {
       const adValues = _.get(triggerValues, `${fieldPath}anomalyDetector`);
       triggerContent = (
-        <AnomalyDetectorTrigger detectorId={detectorId} adValues={adValues} fieldPath={fieldPath} />
+        <AnomalyDetectorTrigger
+          detectorId={detectorId}
+          adValues={adValues}
+          fieldPath={fieldPath}
+          flyoutMode={flyoutMode}
+        />
       );
     }
     if (isGraph) {

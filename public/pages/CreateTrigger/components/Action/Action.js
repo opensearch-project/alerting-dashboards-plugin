@@ -21,6 +21,7 @@ import {
   EuiModalFooter,
   EuiModalHeader,
   EuiModalHeaderTitle,
+  EuiLoadingSpinner,
 } from '@elastic/eui';
 import { FormikFieldText, FormikComboBox } from '../../../../components/FormControls';
 import { isInvalid, hasError, validateActionName } from '../../../../utils/validate';
@@ -47,6 +48,7 @@ const Action = ({
   loadDestinations,
   flyoutMode,
   accordionProps = {},
+  isInitialLoading,
 }) => {
   const [backupValues, setBackupValues] = useState();
   const [isConfigureOpen, setIsConfigureOpen] = useState(false);
@@ -239,7 +241,8 @@ const Action = ({
                 <EuiSpacer size="m" />
               </>
             )}
-            {renderChannels()}
+            {(!flyoutMode || !isInitialLoading) && renderChannels()}
+            {flyoutMode && isInitialLoading && <EuiLoadingSpinner size="l" />}
             {!flyoutMode && (
               <ActionComponent
                 action={action}
@@ -251,7 +254,7 @@ const Action = ({
                 values={values}
               />
             )}
-            {flyoutMode && (
+            {flyoutMode && !isInitialLoading && (
               <>
                 <EuiButtonEmpty iconType="pencil" iconSide="left" onClick={onConfigureOpen}>
                   Configure notification

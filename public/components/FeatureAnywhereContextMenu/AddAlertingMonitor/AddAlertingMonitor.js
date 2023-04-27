@@ -27,6 +27,7 @@ import {
   submit,
 } from '../../../pages/CreateMonitor/containers/CreateMonitor/utils/helpers';
 import { createSavedObjectAssociation } from './utils';
+import { SEARCH_TYPE } from '../../../utils/constants';
 
 function AddAlertingMonitor({
   embeddable,
@@ -38,8 +39,8 @@ function AddAlertingMonitor({
   selectedMonitorId,
   setSelectedMonitorId,
   index,
+  detectorId,
 }) {
-  console.log(embeddable);
   const history = {
     location: { pathname: '/create-monitor', search: '', hash: '', state: undefined },
     push: () => null,
@@ -49,8 +50,10 @@ function AddAlertingMonitor({
   const { notifications, http: httpClient } = core;
   const title = embeddable.getTitle();
   const timeField = embeddable.vis?.data?.aggs?.aggs?.[1]?.params?.field?.displayName;
+  const searchType = flyoutMode === 'adMonitor' ? SEARCH_TYPE.AD : '';
   const initialValues = useMemo(
-    () => getInitialValues({ ...history, title, index, timeField, flyoutMode }),
+    () =>
+      getInitialValues({ ...history, title, index, timeField, flyoutMode, searchType, detectorId }),
     []
   );
   const onCreate = (values, formikBag) =>
@@ -153,7 +156,15 @@ function AddAlertingMonitor({
                   )}
                   {['create', 'adMonitor'].includes(flyoutMode) && (
                     <CreateNew
-                      {...{ embeddable, core, flyoutMode, formikProps, history, setFlyout }}
+                      {...{
+                        embeddable,
+                        core,
+                        flyoutMode,
+                        formikProps,
+                        history,
+                        setFlyout,
+                        detectorId,
+                      }}
                     />
                   )}
                   {flyoutMode === 'existing' && (
