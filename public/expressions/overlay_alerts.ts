@@ -36,12 +36,13 @@ import {
   ExpressionFunctionDefinition,
   ExprVisLayers,
 } from '../../../../src/plugins/expressions/public';
-import {
-  TimeRange,
-  calculateBounds,
-} from '../../../../src/plugins/data/common';
+import { TimeRange, calculateBounds } from '../../../../src/plugins/data/common';
 import { getClient } from '../services';
-import { VisLayers, VisLayerTypes, PointInTimeEventsVisLayer } from '../../../../src/plugins/vis_augmenter/public';
+import {
+  VisLayers,
+  VisLayerTypes,
+  PointInTimeEventsVisLayer,
+} from '../../../../src/plugins/vis_augmenter/public';
 
 type Input = ExprVisLayers;
 type Output = Promise<ExprVisLayers>;
@@ -52,15 +53,18 @@ interface Arguments {
 
 const name = 'overlay_alerts';
 
-export type OverlayAlertsExpressionFunctionDefinition =
-  ExpressionFunctionDefinition<'overlay_alerts', Input, Arguments, Output>;
+export type OverlayAlertsExpressionFunctionDefinition = ExpressionFunctionDefinition<
+  'overlay_alerts',
+  Input,
+  Arguments,
+  Output
+>;
 
 const getAlerts = async (
   monitorId: string,
   startTime: number,
   endTime: number
-): Promise<String> => {
-
+): Promise<string> => {
   const params = {
     size: 1000,
     sortField: 'start_time',
@@ -72,14 +76,15 @@ const getAlerts = async (
 
   console.log('getting alerts');
 
-  const resp = await getClient().get( '/api/alerting/alerts', { query: params } );
+  const resp = await getClient().get('/api/alerting/alerts', { query: params });
 
   if (resp.ok) {
     const { alerts } = resp;
 
     // added filter for monitor id since there is a bug in the backend for the alerts api
-    alerts.filter((alert) => (alert.start_time >= startTime && alert.start_time <= endTime))
-      .filter((alert) => (alert.monitorId == monitorId))
+    alerts
+      .filter((alert) => alert.start_time >= startTime && alert.start_time <= endTime)
+      .filter((alert) => alert.monitorId == monitorId);
     return alerts;
   } else {
     console.log('error getting alerts:', resp);
@@ -87,27 +92,59 @@ const getAlerts = async (
   return '';
 };
 
+const getMonitorName = async (monitorId: string): Promise<string> => {
+  // const params = {
+  //   size: 1000,
+  //   sortField: 'start_time',
+  //   sortDirection: 'asc',
+  //   // severityLevel,
+  //   // alertState,
+  //   // monitorIds: [monitorId],
+  // };
+
+  console.log('getting monitor: ' + monitorId);
+
+  const resp = await getClient().get('/api/alerting/monitors/' + monitorId);
+
+  if (resp.ok) {
+    const { monitor } = resp;
+    console.log('getMonitor1');
+    // console.log(JSON.stringify(monitor));
+    console.log(monitor.name as string);
+    return monitor.name as string;
+  } else {
+    console.log('error getting alerts:', resp);
+  }
+  return '';
+};
+
 const convertAlertsToLayer = (
-  alerts: string
+  alerts: string,
+  monitorId: string,
+  monitorName: string
 ): PointInTimeEventsVisLayer => {
   const events = alerts.map((alert) => {
     return {
       timestamp: alert.start_time + (alert.end_time - alert.start_time) / 2,
-      metadata: {},
+      metadata: {
+        pluginResourceId: monitorId,
+      },
     };
   });
   return {
     originPlugin: 'Alerting',
-    events: events,
-    pluginResource: 'AlertingPlugin',
-    type: VisLayerTypes.PointInTimeEvents
+    events,
+    pluginResource: {
+      type: 'Alerting-resource-type',
+      id: monitorId,
+      name: monitorId,
+      urlPath: '/alerting#/monitors/' + monitorId,
+    },
+    type: VisLayerTypes.PointInTimeEvents,
   } as PointInTimeEventsVisLayer;
 };
 
-const appendAlertsToTable = (
-  datatable: OpenSearchDashboardsDatatable,
-  alerts: string
-) => {
+const appendAlertsToTable = (datatable: OpenSearchDashboardsDatatable, alerts: string) => {
   const ALERT_COLUMN_ID = 'alert';
   const newDatatable = cloneDeep(datatable);
 
@@ -130,17 +167,17 @@ const appendAlertsToTable = (
       // probably need to find a better way to guarantee this
       const startTs = newDatatable.rows[rowIndex][
         Object.keys(newDatatable.rows[rowIndex])[0]
-        ] as number;
+      ] as number;
       const endTs = newDatatable.rows[rowIndex + 1][
         Object.keys(newDatatable.rows[rowIndex + 1])[0]
-        ] as number;
+      ] as number;
 
       if (startTs <= alert.start_time && endTs >= alert.start_time) {
         // adding hacky soln of choosing the first y-series data to overlay anomaly spike
         // this is strictly for making it easier to show correlation of the data w/ the anomaly
         const firstYVal = newDatatable.rows[rowIndex][
           Object.keys(newDatatable.rows[rowIndex])[1]
-          ] as number;
+        ] as number;
         newDatatable.rows[rowIndex] = {
           ...newDatatable.rows[rowIndex],
           [ALERT_COLUMN_ID]: firstYVal,
@@ -154,10 +191,7 @@ const appendAlertsToTable = (
   return newDatatable;
 };
 
-const appendAlertDimensionToConfig = (
-  visConfig: any,
-  datatable: OpenSearchDashboardsDatatable
-) => {
+const appendAlertDimensionToConfig = (visConfig: any, datatable: OpenSearchDashboardsDatatable) => {
   const config = cloneDeep(visConfig);
 
   // the AD column is appended last. All previous dimensions are incremented sequentially starting from 0.
@@ -168,7 +202,7 @@ const appendAlertDimensionToConfig = (
   // TODO: see if this has changed to 'metric' based on new vis schemas
   config.dimensions.y.push({
     accessor: alertAccessor,
-    //aggType: 'avg',
+    // aggType: 'avg',
     format: {},
     label: 'Alert',
     params: {},
@@ -177,65 +211,63 @@ const appendAlertDimensionToConfig = (
   return config;
 };
 
-export const overlayAlertsFunction =
-  (): OverlayAlertsExpressionFunctionDefinition => ({
-    name,
-    type: 'vis_layers',
-    inputTypes: ['vis_layers'],
-    help: i18n.translate('data.functions.overlay_alerts.help', {
-      defaultMessage: 'Add an alert vis layer',
-    }),
-    args: {
-      monitorId: {
-        types: ['string'],
-        default: '""',
-        help: '',
-      },
+export const overlayAlertsFunction = (): OverlayAlertsExpressionFunctionDefinition => ({
+  name,
+  type: 'vis_layers',
+  inputTypes: ['vis_layers'],
+  help: i18n.translate('data.functions.overlay_alerts.help', {
+    defaultMessage: 'Add an alert vis layer',
+  }),
+  args: {
+    monitorId: {
+      types: ['string'],
+      default: '""',
+      help: '',
     },
+  },
 
-    async fn(input, args, context): Promise<ExprVisLayers> {
-      // Parsing all of the args & input
-      const monitorId = get(args, 'monitorId', '');
-      const timeRange = get(
-        context,
-        'searchContext.timeRange',
-        ''
-      ) as TimeRange;
-      const origVisLayers = get(input, 'layers', {
-        layers: [] as VisLayers,
-      }) as VisLayers;
-      const parsedTimeRange = timeRange ? calculateBounds(timeRange) : null;
-      const startTimeInMillis = parsedTimeRange?.min?.unix()
-        ? parsedTimeRange?.min?.unix() * 1000
-        : undefined;
-      const endTimeInMillis = parsedTimeRange?.max?.unix()
-        ? parsedTimeRange?.max?.unix() * 1000
-        : undefined;
+  async fn(input, args, context): Promise<ExprVisLayers> {
+    console.log('overlaying alerts');
+    // Parsing all of the args & input
+    const monitorId = get(args, 'monitorId', '');
+    const timeRange = get(context, 'searchContext.timeRange', '') as TimeRange;
+    const origVisLayers = get(input, 'layers', {
+      layers: [] as VisLayers,
+    }) as VisLayers;
+    const parsedTimeRange = timeRange ? calculateBounds(timeRange) : null;
+    const startTimeInMillis = parsedTimeRange?.min?.unix()
+      ? parsedTimeRange?.min?.unix() * 1000
+      : undefined;
+    const endTimeInMillis = parsedTimeRange?.max?.unix()
+      ? parsedTimeRange?.max?.unix() * 1000
+      : undefined;
 
-      // making sure we can actually fetch anomalies. if not just stop here and return.
-      // TODO: throw all of this in a try/catch maybe
-      if (startTimeInMillis === undefined || endTimeInMillis === undefined) {
-        console.log('start or end time invalid');
-        return {
-          type: 'vis_layers',
-          layers: origVisLayers,
-        };
-      }
-
-      const alerts = await getAlerts(
-        monitorId,
-        startTimeInMillis,
-        endTimeInMillis
-      );
-
-      const alertLayer = convertAlertsToLayer(alerts);
-
-      // adding the anomaly layer to the list of VisLayers
+    // making sure we can actually fetch anomalies. if not just stop here and return.
+    // TODO: throw all of this in a try/catch maybe
+    if (startTimeInMillis === undefined || endTimeInMillis === undefined) {
+      console.log('start or end time invalid');
       return {
         type: 'vis_layers',
-        layers: origVisLayers
-          ? origVisLayers.concat(alertLayer)
-          : [alertLayer],
+        layers: origVisLayers,
       };
-    },
-  });
+    }
+
+    console.log('getting alerts');
+    const alerts = await getAlerts(monitorId, startTimeInMillis, endTimeInMillis);
+    // const testing = await getMonitorName(monitorId);
+    // console.log('testing: ' + testing);
+    // console.log('got alerts');
+    // console.log(JSON.stringify(alerts));
+    const monitorName = 'test'; //await getMonitorName(monitorId);
+
+    const alertLayer = convertAlertsToLayer(alerts, monitorId, monitorName);
+
+
+
+    // adding the anomaly layer to the list of VisLayers
+    return {
+      type: 'vis_layers',
+      layers: origVisLayers ? origVisLayers.concat(alertLayer) : [alertLayer],
+    };
+  },
+});

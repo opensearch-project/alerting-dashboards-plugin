@@ -11,6 +11,7 @@ import { getActions, getAdAction } from './utils/contextMenu/actions';
 import { alertingTriggerAd } from './utils/contextMenu/triggers';
 import { overlayAlertsFunction } from './expressions/overlay_alerts';
 import { setClient } from './services';
+// import { setSavedAugmentVisLoader, createSavedAugmentVisLoader } from '../../../src/plugins/vis_augmenter/public';
 
 declare module '../../../src/plugins/ui_actions/public' {
   export interface ActionContextMapping {
@@ -57,6 +58,15 @@ export class AlertingPlugin implements Plugin {
     const adAction = getAdAction({ core, plugins });
     plugins.uiActions.registerTrigger(alertingTriggerAd);
     plugins.uiActions.addTriggerAction(alertingTriggerAd.id, adAction);
+    //
+    // const savedAugmentVisLoader = createSavedAugmentVisLoader({
+    //   savedObjectsClient: core.savedObjects.client,
+    //   indexPatterns: data.indexPatterns,
+    //   search: data.search,
+    //   chrome: core.chrome,
+    //   overlays: core.overlays,
+    // });
+    // setSavedAugmentVisLoader(savedAugmentVisLoader);
   }
 
   public start() {}

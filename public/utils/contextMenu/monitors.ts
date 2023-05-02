@@ -46,7 +46,7 @@ export const useMonitors = (embeddable) => {
 
         if (response.ok) {
           mons = _.get(response, 'resp.hits.hits', []);
-          console.log('monitors');
+          console.log('monitors1');
           console.log(mons);
 
           const parsedMonitors: any[] = [];
@@ -63,6 +63,7 @@ export const useMonitors = (embeddable) => {
               activeAlerts: index,
             })
           });
+          console.log(parsedMonitors);
 
           setMonitors(parsedMonitors);
         } else {
