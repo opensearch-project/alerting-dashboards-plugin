@@ -3,10 +3,11 @@ import AssociatedMonitors from '../AssociatedMonitors';
 import AddAlertingMonitor from '../AddAlertingMonitor';
 import { useMonitors } from '../../../utils/contextMenu/monitors';
 import { useAllMonitors } from '../../../utils/contextMenu/allMonitors';
+import { CoreContext } from '../../../utils/CoreContext';
 import './styles.scss';
 
 const Container = ({ defaultFlyoutMode, ...props }) => {
-  const { embeddable } = props;
+  const { embeddable, core } = props;
   const index = [{ label: embeddable?.vis?.data?.indexPattern?.title }];
   const [flyoutMode, setFlyoutMode] = useState(defaultFlyoutMode);
   const [selectedMonitorId, setSelectedMonitorId] = useState();
@@ -21,17 +22,19 @@ const Container = ({ defaultFlyoutMode, ...props }) => {
   }[flyoutMode];
 
   return (
-    <Flyout
-      {...{
-        ...props,
-        monitors: flyoutMode === 'existing' ? allMonitors : monitors,
-        selectedMonitorId,
-        setSelectedMonitorId,
-        flyoutMode,
-        setFlyoutMode,
-        index,
-      }}
-    />
+    <CoreContext.Provider value={core}>
+      <Flyout
+        {...{
+          ...props,
+          monitors: flyoutMode === 'existing' ? allMonitors : monitors,
+          selectedMonitorId,
+          setSelectedMonitorId,
+          flyoutMode,
+          setFlyoutMode,
+          index,
+        }}
+      />
+    </CoreContext.Provider>
   );
 };
 

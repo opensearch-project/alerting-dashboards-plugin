@@ -12,10 +12,6 @@ export const useMonitors = (embeddable) => {
 
   useEffect(() => {
     const getMonitors = async () => {
-      await new Promise((resolve) => {
-        setTimeout(resolve, 1000);
-      });
-
       const loader = getSavedAugmentVisLoader();
       const associatedObjects = await getAugmentVisSavedObjs(embeddable.vis.id, loader);
       const monitorIds: string[] = [];

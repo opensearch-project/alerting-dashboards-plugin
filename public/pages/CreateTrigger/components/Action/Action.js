@@ -21,6 +21,7 @@ import {
   EuiModalFooter,
   EuiModalHeader,
   EuiModalHeaderTitle,
+  EuiLoadingSpinner,
 } from '@elastic/eui';
 import { FormikFieldText, FormikComboBox } from '../../../../components/FormControls';
 import { isInvalid, hasError, validateActionName } from '../../../../utils/validate';
@@ -47,7 +48,9 @@ const Action = ({
   loadDestinations,
   flyoutMode,
   accordionProps = {},
+  isInitialLoading,
 }) => {
+  const [backupValues, setBackupValues] = useState();
   const [isConfigureOpen, setIsConfigureOpen] = useState(false);
   const ManageButton = useMemo(() => (flyoutMode ? EuiButtonEmpty : EuiButton), [flyoutMode]);
   const Accordion = useMemo(() => (flyoutMode ? MinimalAccordion : EuiAccordion), [flyoutMode]);
@@ -61,12 +64,48 @@ const Action = ({
   const actionLabel = ActionsMap[type].label;
   const manageChannelsUrl = httpClient.basePath.prepend(MANAGE_CHANNELS_PATH);
   const isFirstAction = index !== undefined && index === 0;
+  const refreshDestinations = useMemo(() => {
+    const refresh = async () => {
+      setLoadingDestinations(true);
+      await loadDestinations();
+      setLoadingDestinations(false);
+    };
+    return _.debounce(refresh, 2000, { leading: true, trailing: false });
+  }, []);
+  const onConfigureOpen = () => {
+    setIsConfigureOpen(true);
+    setBackupValues(_.cloneDeep(values));
+  };
+  // Reset the form, because the user wants to restore the backup settings,
+  // rather than just close the popup and keep the changes they have made.
+  const onConfigureCancel = () => {
+    setIsConfigureOpen(false);
+    arrayHelpers.form.resetForm({ values: backupValues });
+  };
+  // Close and retain changes if no errors related to the fields involved
+  const onConfigureUpdate = async () => {
+    const errors = await arrayHelpers.form.validateForm();
 
-  async function refreshDestinations() {
-    setLoadingDestinations(true);
-    await loadDestinations();
-    setLoadingDestinations(false);
-  }
+    if (Object.keys(errors).length === 0) {
+      setIsConfigureOpen(false);
+      return;
+    }
+
+    const pathsToFields = ['subject_template.source', 'message_template.source'];
+
+    // Mark fields in popup as touched
+    pathsToFields.forEach((path) =>
+      arrayHelpers.form.setFieldTouched(`${fieldPath}actions[${index}].${path}`)
+    );
+
+    const isErrorInConfigure = pathsToFields.find((path) =>
+      _.get(errors, `${fieldPath}actions[${index}].${path}`, '')
+    );
+
+    if (!isErrorInConfigure) {
+      setIsConfigureOpen(false);
+    }
+  };
 
   const renderChannels = () => {
     return (
@@ -76,7 +115,7 @@ const Action = ({
             <FormikComboBox
               name={`${fieldPath}actions.${index}.destination_id`}
               formRow
-              fieldProps={{ validate: validateDestination(flattenedDestinations) }}
+              fieldProps={{ validate: validateDestination(flattenedDestinations, flyoutMode) }}
               rowProps={{
                 label: 'Channels',
                 isInvalid,
@@ -98,6 +137,7 @@ const Action = ({
                   refreshDestinations();
                   form.setFieldTouched(`${fieldPath}actions.${index}.destination_id`, true);
                 },
+                onFocus: refreshDestinations,
                 singleSelection: { asPlainText: true },
                 isClearable: false,
                 renderOption: (option) => (
@@ -109,20 +149,10 @@ const Action = ({
                   </React.Fragment>
                 ),
                 rowHeight: 45,
-                isLoading: loadingDestinations,
+                isLoading: !flyoutMode && loadingDestinations,
               }}
             />
           </EuiFlexItem>
-          {flyoutMode && (
-            <EuiFlexItem grow={false}>
-              <EuiSpacer size="xl" />
-              <EuiButtonIcon
-                iconType="refresh"
-                onClick={refreshDestinations}
-                aria-label="Refresh channels"
-              />
-            </EuiFlexItem>
-          )}
           <EuiFlexItem grow={false}>
             <EuiSpacer size="l" />
             <ManageButton
@@ -211,7 +241,8 @@ const Action = ({
                 <EuiSpacer size="m" />
               </>
             )}
-            {renderChannels()}
+            {(!flyoutMode || !isInitialLoading) && renderChannels()}
+            {flyoutMode && isInitialLoading && <EuiLoadingSpinner size="l" />}
             {!flyoutMode && (
               <ActionComponent
                 action={action}
@@ -223,17 +254,13 @@ const Action = ({
                 values={values}
               />
             )}
-            {flyoutMode && (
+            {flyoutMode && !isInitialLoading && (
               <>
-                <EuiButtonEmpty
-                  iconType="pencil"
-                  iconSide="left"
-                  onClick={() => setIsConfigureOpen(true)}
-                >
+                <EuiButtonEmpty iconType="pencil" iconSide="left" onClick={onConfigureOpen}>
                   Configure notification
                 </EuiButtonEmpty>
                 {isConfigureOpen && (
-                  <EuiModal onClose={() => setIsConfigureOpen(false)}>
+                  <EuiModal onClose={onConfigureCancel}>
                     <EuiModalHeader>
                       <EuiModalHeaderTitle>
                         <h1>Configure notification</h1>
@@ -251,8 +278,9 @@ const Action = ({
                       />
                     </EuiModalBody>
                     <EuiModalFooter>
-                      <EuiButton onClick={() => setIsConfigureOpen(false)} fill>
-                        Close
+                      <EuiButton onClick={onConfigureCancel}>Cancel</EuiButton>
+                      <EuiButton onClick={onConfigureUpdate} fill>
+                        Update
                       </EuiButton>
                     </EuiModalFooter>
                   </EuiModal>

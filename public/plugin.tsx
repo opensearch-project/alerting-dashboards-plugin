@@ -53,7 +53,7 @@ export class AlertingPlugin implements Plugin {
     });
 
     // Create trigger for other plugins to open flyout. Can be used by other plugins like this:
-    // plugins.uiActions.executeTriggerActions('ALERTING_TRIGGER_AD_ID', { embeddable });
+    // plugins.uiActions.getTrigger('ALERTING_TRIGGER_AD_ID').exec({ embeddable, detectorId });
     const adAction = getAdAction({ core, plugins });
     plugins.uiActions.registerTrigger(alertingTriggerAd);
     plugins.uiActions.addTriggerAction(alertingTriggerAd.id, adAction);

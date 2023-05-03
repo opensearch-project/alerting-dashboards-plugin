@@ -1,7 +1,5 @@
 .create-new {
   &__vis {
-    height: 400px;
-
     &--hidden {
       display: none;
     }
@@ -19,5 +17,6 @@
 
   .visualization {
     padding: 0;
+    height: 400px;
   }
 }

@@ -54,7 +54,7 @@ const propTypes = {
 };
 const defaultProps = {
   errors: {},
-  flyoutMode: false,
+  flyoutMode: '',
 };
 
 class DefineMonitor extends Component {

@@ -1,9 +1,11 @@
 import _ from 'lodash';
 import { DEFAULT_MESSAGE_SOURCE, FORMIK_INITIAL_ACTION_VALUES } from '../../utils/constants';
 import { MONITOR_TYPE } from '../../../../utils/constants';
+import { getDigitId, getUniqueName } from '../../../../utils/helpers';
 
-export const getInitialActionValues = ({ monitorType, numOfActions, flyoutMode }) => {
+export const getInitialActionValues = ({ monitorType, flyoutMode, actions }) => {
   const initialActionValues = _.cloneDeep(FORMIK_INITIAL_ACTION_VALUES);
+
   switch (monitorType) {
     case MONITOR_TYPE.BUCKET_LEVEL:
       _.set(
@@ -22,8 +24,12 @@ export const getInitialActionValues = ({ monitorType, numOfActions, flyoutMode }
       break;
   }
 
+  const id = getDigitId();
+  initialActionValues.id = `notification${id}`;
+
+  // Add name based on previous name;
   if (flyoutMode) {
-    initialActionValues.name = `Notification ${(numOfActions || 0) + 1}`;
+    initialActionValues.name = getUniqueName(actions, 'Notification ');
   }
 
   return initialActionValues;

@@ -6,8 +6,8 @@ import _ from 'lodash';
 
 import { FORMIK_INITIAL_TRIGGER_VALUES, TRIGGER_TYPE } from '../../CreateTrigger/utils/constants';
 
-export const validateTriggerName = (triggers, triggerToEdit, fieldPath) => (value) => {
-  if (!value) return 'Required.';
+export const validateTriggerName = (triggers, triggerToEdit, fieldPath, isFullText) => (value) => {
+  if (!value) return isFullText ? 'Trigger name is required.' : 'Required.';
   const nameExists = triggers.filter((trigger) => {
     const triggerId = _.get(
       trigger,

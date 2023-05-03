@@ -6,8 +6,6 @@
 import { createAugmentVisSavedObject } from '../../../../../../src/plugins/vis_augmenter/public';
 
 export const createSavedObjectAssociation = async (monitorId, visId) => {
-  console.log('creating saved obj for this monitor...');
-
   // create the fields needed for the saved obj
   const savedObjectToCreate = {
     title: `${monitorId}-association`,
@@ -35,11 +33,8 @@ export const createSavedObjectAssociation = async (monitorId, visId) => {
   // TODO: handle failures if it fails to create
   let newSavedObj = await createAugmentVisSavedObject(savedObjectToCreate);
 
-  console.log('savedOecjts: ', newSavedObj);
-
   // calling save() on the newly-created saved object to actually save it to the system index
   const response = await newSavedObj.save({});
-  console.log('response: ', response);
 
   return response;
 };

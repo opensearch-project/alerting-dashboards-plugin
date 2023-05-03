@@ -39,6 +39,9 @@ class ConfigureTriggers extends React.Component {
   constructor(props) {
     super(props);
 
+    const firstTriggerId = _.get(props.triggerValues, 'triggerDefinitions[0].id');
+    const accordionsOpen = firstTriggerId ? { [firstTriggerId]: true } : {};
+
     this.state = {
       dataTypes: {},
       executeResponse: null,
@@ -47,7 +50,7 @@ class ConfigureTriggers extends React.Component {
         MONITOR_TYPE.BUCKET_LEVEL,
       triggerDeleted: false,
       triggerEmptyPrompt: this.prepareTriggerEmptyPrompt(),
-      accordionsOpen: { trigger1: true },
+      accordionsOpen,
       TriggerContainer: props.flyoutMode
         ? (props) => <EnhancedAccordion {...props} />
         : ({ children }) => <>{children}</>,
@@ -108,11 +111,12 @@ class ConfigureTriggers extends React.Component {
   }
 
   prepareTriggerEmptyPrompt = () => {
-    const { monitorValues, triggerArrayHelpers } = this.props;
+    const { monitorValues, triggerArrayHelpers, flyoutMode } = this.props;
     return (
       <TriggerEmptyPrompt
         arrayHelpers={triggerArrayHelpers}
         script={getDefaultScript(monitorValues)}
+        flyoutMode={flyoutMode}
       />
     );
   };
@@ -328,42 +332,38 @@ class ConfigureTriggers extends React.Component {
     };
 
     return hasTriggers
-      ? triggerValues.triggerDefinitions.map((trigger, index) => {
-          const triggerKey = `trigger${index + 1}`;
-          const name = trigger.name || `Trigger ${index + 1}`;
-          return (
-            <div key={triggerKey}>
-              <TriggerContainer
-                {...{
-                  id: `configure-trigger__${triggerKey}`,
-                  isOpen: accordionsOpen[triggerKey],
-                  onToggle: () => this.onAccordionToggle(triggerKey),
-                  title: (
-                    <EuiFlexGroup alignItems="center" justifyContent="flexStart" gutterSize="s">
-                      <EuiFlexItem grow={false}>{name}</EuiFlexItem>
-                      <EuiFlexItem grow={false}>
-                        <EuiBadge color="hollow">SEV{trigger.severity}</EuiBadge>
-                      </EuiFlexItem>
-                    </EuiFlexGroup>
-                  ),
-                  extraAction: (
-                    <EuiButtonIcon
-                      iconType="trash"
-                      color="text"
-                      aria-label={`Delete ${name}`}
-                      onClick={() => triggerArrayHelpers.remove(index)}
-                    />
-                  ),
-                }}
-              >
-                {triggerContent(triggerArrayHelpers, index)}
-              </TriggerContainer>
-              {!flyoutMode && <EuiHorizontalRule margin={'s'} />}
-              {flyoutMode && <EuiSpacer size="m" />}
-            </div>
-          );
-        })
-      : triggerEmptyPrompt;
+      ? triggerValues.triggerDefinitions.map((trigger, index) => (
+          <div key={trigger.id}>
+            <TriggerContainer
+              {...{
+                id: `configure-trigger__${trigger.id}`,
+                isOpen: accordionsOpen[trigger.id],
+                onToggle: () => this.onAccordionToggle(trigger.id),
+                title: (
+                  <EuiFlexGroup alignItems="center" justifyContent="flexStart" gutterSize="s">
+                    <EuiFlexItem grow={false}>{trigger.name}</EuiFlexItem>
+                    <EuiFlexItem grow={false}>
+                      <EuiBadge color="hollow">SEV{trigger.severity}</EuiBadge>
+                    </EuiFlexItem>
+                  </EuiFlexGroup>
+                ),
+                extraAction: (
+                  <EuiButtonIcon
+                    iconType="trash"
+                    color="text"
+                    aria-label={`Delete ${trigger.name}`}
+                    onClick={() => triggerArrayHelpers.remove(index)}
+                  />
+                ),
+              }}
+            >
+              {triggerContent(triggerArrayHelpers, index)}
+            </TriggerContainer>
+            {!flyoutMode && <EuiHorizontalRule margin={'s'} />}
+            {flyoutMode && <EuiSpacer size="m" />}
+          </div>
+        ))
+      : !flyoutMode && triggerEmptyPrompt;
   };
 
   onAccordionToggle = (key, isOnlyOpen) => {
@@ -390,28 +390,26 @@ class ConfigureTriggers extends React.Component {
         horizontalRuleClassName={'accordion-horizontal-rule'}
       >
         {this.renderTriggers(triggerArrayHelpers)}
-
-        {displayAddTriggerButton ? (
-          <div style={flyoutMode ? {} : { paddingBottom: '20px', paddingTop: '15px' }}>
+        {flyoutMode && (
+          <AddTriggerButton
+            arrayHelpers={triggerArrayHelpers}
+            disabled={disableAddTriggerButton}
+            script={getDefaultScript(monitorValues)}
+            flyoutMode={flyoutMode}
+            monitorType={monitorType}
+            onPostAdd={(values) => this.onAccordionToggle(values.id, true)}
+          />
+        )}
+        {displayAddTriggerButton && !flyoutMode ? (
+          <div style={{ paddingBottom: '20px', paddingTop: '15px' }}>
             <AddTriggerButton
               arrayHelpers={triggerArrayHelpers}
               disabled={disableAddTriggerButton}
               script={getDefaultScript(monitorValues)}
-              flyoutMode={flyoutMode}
               monitorType={monitorType}
-              onAddTrigger={() =>
-                this.onAccordionToggle(
-                  `trigger${triggerValues.triggerDefinitions.length + 1}`,
-                  true
-                )
-              }
             />
-            {!flyoutMode && (
-              <>
-                <EuiSpacer size={'s'} />
-                {inputLimitText(numOfTriggers, MAX_TRIGGERS, 'trigger', 'triggers')}
-              </>
-            )}
+            <EuiSpacer size={'s'} />
+            {inputLimitText(numOfTriggers, MAX_TRIGGERS, 'trigger', 'triggers')}
           </div>
         ) : null}
       </ContentPanelStructure>
