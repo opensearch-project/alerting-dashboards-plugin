@@ -88,9 +88,9 @@ export const isInvalidApiPath = (name, form) => {
   return _.get(form.touched, name, false) && _.isEmpty(path);
 };
 
-export const validateMonitorName = (httpClient, monitorToEdit) => async (value) => {
+export const validateMonitorName = (httpClient, monitorToEdit, isFullText) => async (value) => {
   try {
-    if (!value) return 'Required.';
+    if (!value) return isFullText ? 'Monitor name is required.' : 'Required.';
     const options = {
       index: INDEX.SCHEDULED_JOBS,
       query: { query: { term: { 'monitor.name.keyword': value } } },

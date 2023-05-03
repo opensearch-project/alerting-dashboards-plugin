@@ -32,7 +32,7 @@ export const SubmitErrorHandler = (props) => {
 };
 
 // convert JSON object structure to dot notation
-function dotNotate(obj, target, prefix) {
+export function dotNotate(obj, target, prefix) {
   (target = target || {}), (prefix = prefix || '');
 
   Object.keys(obj).forEach(function (key) {

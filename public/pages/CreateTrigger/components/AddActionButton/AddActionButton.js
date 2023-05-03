@@ -13,19 +13,23 @@ import './styles.scss';
 const AddActionButton = ({
   arrayHelpers,
   type = 'slack',
-  numOfActions,
+  numActions,
   flyoutMode,
-  onAddTrigger,
+  onPostAdd,
+  values,
+  fieldPath,
 }) => {
   const buttonText =
-    numOfActions === undefined || numOfActions === 0 ? 'Add action' : 'Add another action';
+    numActions === undefined || numActions === 0 ? 'Add action' : 'Add another action';
   const monitorType = _.get(arrayHelpers, 'form.values.monitor_type', MONITOR_TYPE.QUERY_LEVEL);
   const onClick = () => {
-    if (onAddTrigger) {
-      onAddTrigger();
-    }
+    const actions = _.get(values, `${fieldPath}actions`, []);
+    const initialValues = getInitialActionValues({ monitorType, flyoutMode, actions });
+    arrayHelpers.push(initialValues);
 
-    arrayHelpers.push(getInitialActionValues({ monitorType, numOfActions, flyoutMode }));
+    if (onPostAdd) {
+      onPostAdd(initialValues);
+    }
   };
 
   return flyoutMode ? (

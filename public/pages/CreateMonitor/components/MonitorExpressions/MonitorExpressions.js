@@ -33,11 +33,16 @@ export const DEFAULT_CLOSED_STATES = {
 };
 
 class MonitorExpressions extends Component {
-  state = {
-    openedStates: DEFAULT_CLOSED_STATES,
-    madeChanges: false,
-    accordionsOpen: {},
-  };
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      openedStates: DEFAULT_CLOSED_STATES,
+      madeChanges: false,
+      accordionsOpen: {},
+      SectionContainer: props.flyoutMode ? MinimalAccordion : ({ children }) => <>{children}</>,
+    };
+  }
 
   openExpression = (expression) => {
     this.setState({
@@ -74,7 +79,7 @@ class MonitorExpressions extends Component {
   };
 
   render() {
-    const { accordionsOpen } = this.state;
+    const { accordionsOpen, SectionContainer } = this.state;
     const { dataTypes, errors, flyoutMode, formik } = this.props;
     const unit = UNITS_OF_TIME.find(({ value }) => value === formik?.values?.bucketUnitOfTime);
     const expressionProps = this.getExpressionProps();
@@ -86,7 +91,7 @@ class MonitorExpressions extends Component {
 
     return (
       <div>
-        <MinimalAccordion
+        <SectionContainer
           {...{
             title: 'Metrics',
             subTitle: 'COUNT OF documents. You can add up to 1 metric.',
@@ -105,9 +110,9 @@ class MonitorExpressions extends Component {
               />
             )}
           </FieldArray>
-        </MinimalAccordion>
+        </SectionContainer>
         <EuiSpacer size={flyoutMode ? 'xs' : 'm'} />
-        <MinimalAccordion
+        <SectionContainer
           {...{
             title: 'Time range',
             subTitle: `Last ${formik.values.bucketValue} ${unit?.text}`,
@@ -118,9 +123,9 @@ class MonitorExpressions extends Component {
           }}
         >
           <ForExpression />
-        </MinimalAccordion>
+        </SectionContainer>
         <EuiSpacer size={flyoutMode ? 'xs' : 'l'} />
-        <MinimalAccordion
+        <SectionContainer
           {...{
             title: 'Data filter',
             subTitle: isDataFilterActive
@@ -133,9 +138,9 @@ class MonitorExpressions extends Component {
           }}
         >
           <WhereExpression {...expressionProps} dataTypes={dataTypes} flyoutMode={flyoutMode} />
-        </MinimalAccordion>
+        </SectionContainer>
         <EuiSpacer size={flyoutMode ? 'xs' : 'm'} />
-        <MinimalAccordion
+        <SectionContainer
           {...{
             title: 'Group by',
             subTitle: formik.values.groupBy.length
@@ -157,7 +162,7 @@ class MonitorExpressions extends Component {
               />
             )}
           </FieldArray>
-        </MinimalAccordion>
+        </SectionContainer>
         <EuiSpacer size="xs" />
       </div>
     );

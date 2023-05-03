@@ -23,7 +23,6 @@ const AssociatedMonitors = ({ embeddable, closeFlyout, setFlyoutMode, monitors }
   const title = embeddable.getTitle();
   const [modalState, setModalState] = useState(undefined);
   const onUnlink = useCallback((item) => {
-    console.log('onUnlink', item);
     setModalState({
       detector: {
         name: item.name,
@@ -33,7 +32,6 @@ const AssociatedMonitors = ({ embeddable, closeFlyout, setFlyoutMode, monitors }
   }, []);
   const onEdit = useCallback(
     (item) => {
-      console.log('onEdit', item);
       window.open(`alerting#/monitors/${item.id}?action=update-monitor`, '_blank');
       // closeFlyout();
     },

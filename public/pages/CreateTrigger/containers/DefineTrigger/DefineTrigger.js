@@ -201,7 +201,12 @@ class DefineTrigger extends Component {
     if (isAd && adTriggerType === TRIGGER_TYPE.AD) {
       const adValues = _.get(triggerValues, `${fieldPath}anomalyDetector`);
       triggerContent = (
-        <AnomalyDetectorTrigger detectorId={detectorId} adValues={adValues} fieldPath={fieldPath} />
+        <AnomalyDetectorTrigger
+          detectorId={detectorId}
+          adValues={adValues}
+          fieldPath={fieldPath}
+          flyoutMode={flyoutMode}
+        />
       );
     }
     if (isGraph) {
@@ -220,7 +225,7 @@ class DefineTrigger extends Component {
       <FormikFieldText
         name={`${fieldPath}name`}
         fieldProps={{
-          validate: validateTriggerName(triggers, triggerValues, fieldPath),
+          validate: validateTriggerName(triggers, triggerValues, fieldPath, flyoutMode),
         }}
         formRow
         rowProps={{ ...defaultRowProps, ...(flyoutMode ? { style: {} } : {}) }}
@@ -341,8 +346,6 @@ class DefineTrigger extends Component {
                 notificationService={notificationService}
                 plugins={plugins}
                 flyoutMode={flyoutMode}
-                accordionsOpen={accordionsOpen}
-                onAccordionToggle={this.onAccordionToggle}
               />
             )}
           </FieldArray>
