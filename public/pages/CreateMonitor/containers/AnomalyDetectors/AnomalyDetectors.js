@@ -96,6 +96,7 @@ class AnomalyDetectors extends React.Component {
             singleSelection: { asPlaintext: true },
             isClearable: false,
             selectedOptions,
+            isDisabled: flyoutMode === 'adMonitor',
           }}
         />
       </div>
