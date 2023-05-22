@@ -20,7 +20,6 @@ export const useMonitors = (embeddable) => {
         const associatedObjects = await getAugmentVisSavedObjs(embeddable.vis.id, loader);
         const monitorIds: string[] = [];
         for (const associatedObject of associatedObjects) {
-          console.log(JSON.stringify(associatedObject));
           if (associatedObject.visLayerExpressionFn.name === 'overlay_alerts')
             monitorIds.push(associatedObject.pluginResource.id);
         }

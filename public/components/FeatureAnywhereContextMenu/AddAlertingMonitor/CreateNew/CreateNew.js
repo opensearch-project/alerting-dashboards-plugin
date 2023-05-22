@@ -5,7 +5,7 @@
 
 import React, { useState, useMemo, useEffect } from 'react';
 import { EuiTitle, EuiIcon, EuiText, EuiSwitch, EuiSpacer, EuiCallOut } from '@elastic/eui';
-import { EmbeddablePanel } from '../../../../../../../src/plugins/embeddable/public';
+import { EmbeddableRenderer } from '../../../../../../../src/plugins/embeddable/public';
 import { NotificationService } from '../../../../services';
 import _ from 'lodash';
 import { FieldArray } from 'formik';
@@ -103,14 +103,7 @@ function CreateNew({ embeddable, core, flyoutMode, formikProps, history, setFlyo
       </div>
       <div className={`create-new__vis ${!isShowVis && 'create-new__vis--hidden'}`}>
         <EuiSpacer size="s" />
-        <EmbeddablePanel
-          embeddable={embeddable}
-          getActions={() => Promise.resolve([])}
-          inspector={{ isAvailable: () => false }}
-          hideHeader
-          isDestroyPrevented
-          isBorderless
-        />
+        <EmbeddableRenderer embeddable={embeddable} />
       </div>
       <EuiSpacer size="l" />
       <EuiTitle size="s">
