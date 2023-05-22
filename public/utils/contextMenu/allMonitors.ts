@@ -5,8 +5,8 @@
 
 import { useState, useEffect } from 'react';
 import _ from 'lodash';
-import { getSavedAugmentVisLoader, getAugmentVisSavedObjs } from '../../../../../src/plugins/vis_augmenter/public'
-
+import { getAugmentVisSavedObjs } from '../../../../../src/plugins/vis_augmenter/public';
+import { getSavedAugmentVisLoader } from '../../services';
 
 export const useAllMonitors = (embeddable) => {
   const [allMonitors, setAllMonitors] = useState<any[] | null>();
@@ -18,16 +18,17 @@ export const useAllMonitors = (embeddable) => {
       // });
 
       const loader = getSavedAugmentVisLoader();
-      const associatedObjects = await getAugmentVisSavedObjs(embeddable.vis.id, loader);
-      const associatedMonitorIds: string[] = [];
-      for (const associatedObject of associatedObjects) {
-        if (associatedObject.visLayerExpressionFn.name === 'overlay_alerts')
-          associatedMonitorIds.push(associatedObject.pluginResourceId)
-      }
-
-      let mons;
-
       try {
+        const associatedObjects = await getAugmentVisSavedObjs(embeddable.vis.id, loader);
+        const associatedMonitorIds: string[] = [];
+        for (const associatedObject of associatedObjects) {
+          if (associatedObject.visLayerExpressionFn.name === 'overlay_alerts')
+            associatedMonitorIds.push(associatedObject.pluginResourceId)
+        }
+
+        let mons;
+
+      // try {
         const params = {
           query: {
             query: {

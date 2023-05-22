@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import _ from 'lodash';
-import { getSavedAugmentVisLoader, getAugmentVisSavedObjs } from '../../../../../src/plugins/vis_augmenter/public'
+import { getAugmentVisSavedObjs, SavedObjectLoaderAugmentVis } from '../../../../../src/plugins/vis_augmenter/public'
+import { getSavedAugmentVisLoader } from '../../services';
 
 export const stateToLabel = {
   enabled: { label: 'Enabled', color: 'success' },
@@ -12,17 +13,24 @@ export const useMonitors = (embeddable) => {
 
   useEffect(() => {
     const getMonitors = async () => {
-      const loader = getSavedAugmentVisLoader();
-      const associatedObjects = await getAugmentVisSavedObjs(embeddable.vis.id, loader);
-      const monitorIds: string[] = [];
-      for (const associatedObject of associatedObjects) {
-        if (associatedObject.visLayerExpressionFn.name === 'overlay_alerts')
-          monitorIds.push(associatedObject.pluginResourceId)
-      }
-
-      let mons;
+      const loader: SavedObjectLoaderAugmentVis = getSavedAugmentVisLoader();
+      console.log(loader);
 
       try {
+        const associatedObjects = await getAugmentVisSavedObjs(embeddable.vis.id, loader);
+        const monitorIds: string[] = [];
+        for (const associatedObject of associatedObjects) {
+          console.log(JSON.stringify(associatedObject));
+          if (associatedObject.visLayerExpressionFn.name === 'overlay_alerts')
+            monitorIds.push(associatedObject.pluginResource.id);
+        }
+
+        let mons
+
+        console.log('monitorIDs');
+        console.log(monitorIds);
+
+      // try {
         const params = {
           query: {
             query: {

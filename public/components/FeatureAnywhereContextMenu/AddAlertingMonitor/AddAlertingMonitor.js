@@ -26,7 +26,7 @@ import {
   getInitialValues,
   submit,
 } from '../../../pages/CreateMonitor/containers/CreateMonitor/utils/helpers';
-import { createSavedObjectAssociation } from './utils';
+import { createSavedObjectAssociation } from './utils.tsx';
 import { SEARCH_TYPE } from '../../../utils/constants';
 
 function AddAlertingMonitor({

@@ -11,6 +11,7 @@ import { getActions, getAdAction } from './utils/contextMenu/actions';
 import { alertingTriggerAd } from './utils/contextMenu/triggers';
 import { overlayAlertsFunction } from './expressions/overlay_alerts';
 import { setClient } from './services';
+import { setSavedAugmentVisLoader } from './services';
 // import { setSavedAugmentVisLoader, createSavedAugmentVisLoader } from '../../../src/plugins/vis_augmenter/public';
 
 declare module '../../../src/plugins/ui_actions/public' {
@@ -69,7 +70,10 @@ export class AlertingPlugin implements Plugin {
     // setSavedAugmentVisLoader(savedAugmentVisLoader);
   }
 
-  public start() {}
+  public start(core, plugins) {
+    setSavedAugmentVisLoader(plugins.visAugmenter.savedAugmentVisLoader);
+    return {};
+  }
 
   public stop() {}
 }

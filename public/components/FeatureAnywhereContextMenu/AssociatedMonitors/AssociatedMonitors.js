@@ -16,7 +16,7 @@ import {
 import { get } from 'lodash';
 import './styles.scss';
 import { useColumns } from './helpers';
-import { getSavedAugmentVisLoader } from '../../../../../../src/plugins/vis_augmenter/public';
+import { getSavedAugmentVisLoader } from '../../../services';
 import { ConfirmUnlinkDetectorModal } from './ConfirmUnlinkModal';
 
 const AssociatedMonitors = ({ embeddable, closeFlyout, setFlyoutMode, monitors }) => {
@@ -41,7 +41,7 @@ const AssociatedMonitors = ({ embeddable, closeFlyout, setFlyoutMode, monitors }
   const onUnlinkDetector = useCallback(async () => {
     // setIsLoadingFinalDetectors(true);
     await savedObjectLoader.findAll().then(async (resp) => {
-      if (resp != undefined) {
+      if (resp !== undefined) {
         const savedAugmentObjects = get(resp, 'hits', []);
         // gets all the saved object for this visualization
         const savedAugmentForThisVisualization = savedAugmentObjects.filter(
