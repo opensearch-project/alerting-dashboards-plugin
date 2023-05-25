@@ -4,6 +4,7 @@
  */
 
 import { PLUGIN_NAME } from '../utils/constants';
+import { setClient } from './services';
 
 export class AlertingPlugin {
   constructor(initializerContext) {
@@ -27,6 +28,11 @@ export class AlertingPlugin {
         return renderApp(coreStart, params);
       },
     });
+
+    // Set the HTTP client so it can be pulled into expression fns to make
+    // direct server-side calls
+    setClient(core.http);
+
     return {};
   }
 
