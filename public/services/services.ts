@@ -6,7 +6,7 @@
 import { createContext } from 'react';
 import { BrowserServices } from '../models/interfaces';
 import { createGetterSetter } from '../../../../src/plugins/opensearch_dashboards_utils/public';
-import { CoreStart } from '../../../../src/core/public';
+import { CoreStart, IUiSettingsClient } from '../../../../src/core/public';
 import { SavedObjectLoaderAugmentVis } from '../../../../src/plugins/vis_augmenter/public';
 
 const ServicesContext = createContext<BrowserServices | null>(null);
@@ -22,6 +22,7 @@ export const [getSavedAugmentVisLoader, setSavedAugmentVisLoader] = createGetter
   SavedObjectLoaderAugmentVis
   >('savedAugmentVisLoader');
 
+export const [getUISettings, setUISettings] = createGetterSetter<IUiSettingsClient>('UISettings');
 // // TODO: may move to a standalone plugin
 // export const [getSavedFeatureAnywhereLoader, setSavedFeatureAnywhereLoader] =
 //   createGetterSetter<SavedObjectLoader>('savedFeatureAnywhereLoader');

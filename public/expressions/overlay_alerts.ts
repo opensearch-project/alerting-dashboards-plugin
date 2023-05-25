@@ -35,12 +35,8 @@ import {
   ExprVisLayers,
 } from '../../../../src/plugins/expressions/public';
 import { TimeRange, calculateBounds } from '../../../../src/plugins/data/common';
-import { getClient } from '../services';
-import {
-  VisLayers,
-  VisLayerTypes,
-  PointInTimeEventsVisLayer,
-} from '../../../../src/plugins/vis_augmenter/public';
+import { VisLayers } from '../../../../src/plugins/vis_augmenter/public';
+import { convertAlertsToLayer, getAlerts, getMonitorName } from './helpers';
 
 type Input = ExprVisLayers;
 type Output = Promise<ExprVisLayers>;
@@ -58,72 +54,6 @@ export type OverlayAlertsExpressionFunctionDefinition = ExpressionFunctionDefini
   Output
 >;
 
-const getAlerts = async (
-  monitorId: string,
-  startTime: number,
-  endTime: number
-): Promise<string> => {
-  const params = {
-    size: 1000,
-    sortField: 'start_time',
-    sortDirection: 'asc',
-    monitorIds: [monitorId],
-  };
-
-  console.log('getting alerts');
-
-  const resp = await getClient().get('/api/alerting/alerts', { query: params });
-
-  if (resp.ok) {
-    const { alerts } = resp;
-
-    // added filter for monitor id since there is a bug in the backend for the alerts api
-    alerts
-      .filter((alert) => alert.start_time >= startTime && alert.start_time <= endTime)
-      .filter((alert) => alert.monitorId == monitorId);
-    return alerts;
-  } else {
-    console.log('error getting alerts:', resp);
-  }
-  return '';
-};
-
-const getMonitorName = async (monitorId: string): Promise<string> => {
-  const resp = await getClient().get('/api/alerting/monitors/' + monitorId);
-
-  if (resp.ok) {
-    return resp.resp.name as string;
-  } else {
-    console.log('error getting alerts:', resp);
-  }
-  return '';
-};
-
-const convertAlertsToLayer = (
-  alerts: string,
-  monitorId: string,
-  monitorName: string
-): PointInTimeEventsVisLayer => {
-  const events = alerts.map((alert) => {
-    return {
-      timestamp: alert.start_time + (alert.end_time - alert.start_time) / 2,
-      metadata: {
-        pluginResourceId: monitorId,
-      },
-    };
-  });
-  return {
-    originPlugin: 'Alerting',
-    events,
-    pluginResource: {
-      type: 'Alerting Monitors',
-      id: monitorId,
-      name: monitorName,
-      urlPath: '/alerting#/monitors/' + monitorId,
-    },
-    type: VisLayerTypes.PointInTimeEvents,
-  } as PointInTimeEventsVisLayer;
-};
 
 export const overlayAlertsFunction = (): OverlayAlertsExpressionFunctionDefinition => ({
   name,
@@ -141,7 +71,6 @@ export const overlayAlertsFunction = (): OverlayAlertsExpressionFunctionDefiniti
   },
 
   async fn(input, args, context): Promise<ExprVisLayers> {
-    console.log('overlaying alerts');
     // Parsing all of the args & input
     const monitorId = get(args, 'monitorId', '');
     const timeRange = get(context, 'searchContext.timeRange', '') as TimeRange;
@@ -156,8 +85,7 @@ export const overlayAlertsFunction = (): OverlayAlertsExpressionFunctionDefiniti
       ? parsedTimeRange?.max?.unix() * 1000
       : undefined;
 
-    // making sure we can actually fetch alerts. if not just stop here and return.
-    // TODO: throw all of this in a try/catch maybe
+    // If time range is invalid return the original vis layers.
     if (startTimeInMillis === undefined || endTimeInMillis === undefined) {
       console.log('start or end time invalid');
       return {
@@ -166,11 +94,24 @@ export const overlayAlertsFunction = (): OverlayAlertsExpressionFunctionDefiniti
       };
     }
 
-    console.log('getting alerts');
     const alerts = await getAlerts(monitorId, startTimeInMillis, endTimeInMillis);
+    let alertLayer;
     const monitorName = await getMonitorName(monitorId);
-
-    const alertLayer = convertAlertsToLayer(alerts, monitorId, monitorName);
+    if (monitorName === 'RESOURCE_DELETED') {
+      const error = {
+        type: 'RESOURCE_DELETED',
+        message: 'The monitor does not exist.'
+      }
+      alertLayer = convertAlertsToLayer(alerts, monitorId, monitorName, error);
+    } else if (monitorName === 'FETCH_FAILURE') {
+      const error = {
+        type: 'FETCH_FAILURE',
+        message: 'The user does not have permissions to the monitor.'
+      }
+      alertLayer = convertAlertsToLayer(alerts, monitorId, monitorName, error);
+    } else {
+      alertLayer = convertAlertsToLayer(alerts, monitorId, monitorName);
+    }
 
     // adding the alerting layer to the list of VisLayers
     return {

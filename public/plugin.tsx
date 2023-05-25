@@ -4,15 +4,16 @@
  */
 
 import { PLUGIN_NAME } from '../utils/constants';
-import { Plugin } from '../../../src/core/public';
+import { Plugin, CoreSetup, CoreStart } from '../../../src/core/public';
 import { ACTION_ALERTING } from './actions/alerting_dashboard_action';
 import { CONTEXT_MENU_TRIGGER } from '../../../src/plugins/embeddable/public';
 import { getActions, getAdAction } from './utils/contextMenu/actions';
 import { alertingTriggerAd } from './utils/contextMenu/triggers';
+import { ExpressionsSetup } from '../../../src/plugins/expressions/public';
+import { UiActionsSetup } from '../../../src/plugins/ui_actions/public';
 import { overlayAlertsFunction } from './expressions/overlay_alerts';
-import { setClient } from './services';
-import { setSavedAugmentVisLoader } from './services';
-// import { setSavedAugmentVisLoader, createSavedAugmentVisLoader } from '../../../src/plugins/vis_augmenter/public';
+import { setClient, setSavedAugmentVisLoader, setUISettings } from './services';
+import { VisAugmenterSetup, VisAugmenterStart } from '../../../src/plugins/vis_augmenter/public';
 
 declare module '../../../src/plugins/ui_actions/public' {
   export interface ActionContextMapping {
@@ -20,8 +21,23 @@ declare module '../../../src/plugins/ui_actions/public' {
   }
 }
 
-export class AlertingPlugin implements Plugin {
-  public setup(core, plugins) {
+export interface AlertingSetup {}
+
+export interface AlertingStart {}
+
+export interface AlertingSetupDeps {
+  expressions: ExpressionsSetup;
+  uiActions: UiActionsSetup;
+  visAugmenter: VisAugmenterSetup;
+}
+
+export interface AlertingStartDeps {
+  visAugmenter: VisAugmenterStart;
+}
+
+export class AlertingPlugin implements Plugin<AlertingSetup, AlertingStart, AlertingSetupDeps, AlertingStartDeps> {
+  public setup(core: CoreSetup<AlertingStartDeps, AlertingStart>, { expressions, uiActions, visAugmenter }: AlertingSetupDeps): AlertingSetup {
+    console.log("Alerting plugin setup2");
     core.application.register({
       id: PLUGIN_NAME,
       title: 'Alerting',
@@ -39,26 +55,40 @@ export class AlertingPlugin implements Plugin {
       },
     });
 
+    if (visAugmenter.savedAugmentVisLoader === null || visAugmenter.savedAugmentVisLoader === undefined) {
+      console.log('no loader set');
+      console.log(visAugmenter);
+      console.log('outputted vals');
+    } else {
+      console.log('loader set');
+      setSavedAugmentVisLoader(visAugmenter.savedAugmentVisLoader);
+    }
+    if (!(core.uiSettings === null || core.uiSettings === undefined)) {
+      setUISettings(core.uiSettings);
+    }
+
     // Set the HTTP client so it can be pulled into expression fns to make
     // direct server-side calls
     setClient(core.http);
 
     // registers the expression function used to render anomalies on an Augmented Visualization
-    plugins.expressions.registerFunction(overlayAlertsFunction());
+    expressions.registerFunction(overlayAlertsFunction());
+
+    const plugins = { expressions, uiActions, visAugmenter }
 
     // Create context menu actions. Pass core, to access service for flyouts.
     const actions = getActions({ core, plugins });
 
     // Add actions to uiActions
     actions.forEach((action) => {
-      plugins.uiActions.addTriggerAction(CONTEXT_MENU_TRIGGER, action);
+      uiActions.addTriggerAction(CONTEXT_MENU_TRIGGER, action);
     });
 
     // Create trigger for other plugins to open flyout. Can be used by other plugins like this:
     // plugins.uiActions.getTrigger('ALERTING_TRIGGER_AD_ID').exec({ embeddable, detectorId });
     const adAction = getAdAction({ core, plugins });
-    plugins.uiActions.registerTrigger(alertingTriggerAd);
-    plugins.uiActions.addTriggerAction(alertingTriggerAd.id, adAction);
+    uiActions.registerTrigger(alertingTriggerAd);
+    uiActions.addTriggerAction(alertingTriggerAd.id, adAction);
     //
     // const savedAugmentVisLoader = createSavedAugmentVisLoader({
     //   savedObjectsClient: core.savedObjects.client,
@@ -68,10 +98,16 @@ export class AlertingPlugin implements Plugin {
     //   overlays: core.overlays,
     // });
     // setSavedAugmentVisLoader(savedAugmentVisLoader);
+    return;
   }
 
-  public start(core, plugins) {
-    setSavedAugmentVisLoader(plugins.visAugmenter.savedAugmentVisLoader);
+  public start(core: CoreStart, { visAugmenter }: AlertingStartDeps): AlertingStart {
+    setSavedAugmentVisLoader(visAugmenter.savedAugmentVisLoader);
+    if (!(core.uiSettings === null || core.uiSettings === undefined)) {
+      setUISettings(core.uiSettings);
+    } else {
+      console.log('settings is null?');
+    }
     return {};
   }
 
