@@ -66,6 +66,8 @@ const grouping: Action['grouping'] = [
     id: ALERTING_ACTION_CONTEXT_GROUP_ID,
     getDisplayName: () => 'Alerting',
     getIconType: () => 'bell',
+    category: 'vis_augmenter',
+    order: 30,
   },
 ];
 
