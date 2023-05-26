@@ -50,37 +50,51 @@ describe('helpers', function () {
     it('Got monitor name', async () => {
       const monitorName = 'monitorName';
       httpClientMock.get.mockResolvedValue({ ok: true, resp: { name: monitorName } });
-      expect(await getMonitorName('monitorId')).toBe(monitorName);
+      expect(await getMonitorName('monitorId')).toStrictEqual(monitorName);
     });
     it('Monitor not found', async () => {
       httpClientMock.get.mockResolvedValue({
         ok: false,
         resp: '[alerting_exception] Monitor not found.',
       });
-      expect(await getMonitorName('monitorId')).toBe('RESOURCE_DELETED');
+      expect(await getMonitorName('monitorId')).toStrictEqual('RESOURCE_DELETED');
     });
     it('Security permissions exception due to RBAC', async () => {
       httpClientMock.get.mockResolvedValue({
         ok: false,
         resp: 'Do not have permissions to resource',
       });
-      expect(await getMonitorName('monitorId')).toBe('FETCH_FAILURE');
+      expect(await getMonitorName('monitorId')).toStrictEqual('FETCH_FAILURE');
     });
     it('Security permissions exception due to cluster permission issue', async () => {
       httpClientMock.get.mockResolvedValue({
         ok: false,
         resp: '[security_exception] Has permission problem',
       });
-      expect(await getMonitorName('monitorId')).toBe('FETCH_FAILURE');
+      expect(await getMonitorName('monitorId')).toStrictEqual('FETCH_FAILURE');
     });
     it('Unknown error', async () => {
       httpClientMock.get.mockResolvedValue({ ok: false, resp: 'Unknown error' });
-      expect(await getMonitorName('monitorId')).toBe('error loading monitor');
+      expect(await getMonitorName('monitorId')).toStrictEqual('error loading monitor');
     });
   });
 
   describe('convertAlertsToLayer()', function () {
-    it('Got monitor name', async () => {
+    const events = [
+      {
+        timestamp: alert1.start_time + (alert1.end_time - alert1.start_time) / 2,
+        metadata: {
+          pluginResourceId: alert1.monitor_id,
+        },
+      },
+      {
+        timestamp: alert2.start_time + (alert2.end_time - alert2.start_time) / 2,
+        metadata: {
+          pluginResourceId: alert2.monitor_id,
+        },
+      },
+    ];
+    it('Setup alert layer', async () => {
       const monitorName = 'monitorName';
       const monitorId = alert1.monitor_id;
       const layer = {
@@ -93,52 +107,36 @@ describe('helpers', function () {
           urlPath: 'alerting#/monitors/' + monitorId,
         },
         type: VisLayerTypes.PointInTimeEvents,
+        error: undefined,
       };
       httpClientMock.get.mockResolvedValue({ ok: true, resp: { name: monitorName } });
-      expect(await convertAlertsToLayer([alert1, alert2], monitorId, monitorName)).toBe(
-        monitorName
+      expect(await convertAlertsToLayer([alert1, alert2], monitorId, monitorName)).toStrictEqual(
+        layer
       );
     });
-    // it('Monitor not found', async () => {
-    //   httpClientMock.get.mockResolvedValue({ ok: false, resp: '[alerting_exception] Monitor not found.'});
-    //   expect(await getMonitorName('monitorId')).toBe('RESOURCE_DELETED');
-    // });
-    // it('Security permissions exception due to RBAC', async () => {
-    //   httpClientMock.get.mockResolvedValue({ ok: false, resp: 'Do not have permissions to resource'});
-    //   expect(await getMonitorName('monitorId')).toBe('FETCH_FAILURE');
-    // });
-    // it('Security permissions exception due to cluster permission issue', async () => {
-    //   httpClientMock.get.mockResolvedValue({ ok: false, resp: '[security_exception] Has permission problem'});
-    //   expect(await getMonitorName('monitorId')).toBe('FETCH_FAILURE');
-    // });
-    // it('Unknown error', async () => {
-    //   httpClientMock.get.mockResolvedValue({ ok: false, resp: 'Unknown error'});
-    //   expect(await getMonitorName('monitorId')).toBe('error loading monitor');
-    // });
+    it('Setup alert layer with error', async () => {
+      const monitorName = 'monitorName';
+      const monitorId = alert1.monitor_id;
+      const error = {
+        type: 'RESOURCE_DELETED',
+        message: 'The monitor does not exist.',
+      };
+      const layer = {
+        originPlugin: 'Alerting',
+        events,
+        pluginResource: {
+          type: 'Alerting Monitors',
+          id: monitorId,
+          name: monitorName,
+          urlPath: 'alerting#/monitors/' + monitorId,
+        },
+        type: VisLayerTypes.PointInTimeEvents,
+        error: error,
+      };
+      httpClientMock.get.mockResolvedValue({ ok: true, resp: { name: monitorName } });
+      expect(
+        await convertAlertsToLayer([alert1, alert2], monitorId, monitorName, error)
+      ).toStrictEqual(layer);
+    });
   });
-
-  // describe('convertAlertsToLayer()', function () {
-  //   it('check all legend positions', function () {
-  //     const baseConfig = {
-  //       view: {
-  //         stroke: null,
-  //       },
-  //       concat: {
-  //         spacing: 0,
-  //       },
-  //       legend: {
-  //         orient: null,
-  //       },
-  //       kibana: {
-  //         hideWarnings: true,
-  //       },
-  //     };
-  //     const positions = ['top', 'right', 'left', 'bottom'];
-  //     positions.forEach((position) => {
-  //       const visParams = { legendPosition: position };
-  //       baseConfig.legend.orient = position;
-  //       expect(setupConfig(visParams)).toStrictEqual(baseConfig);
-  //     });
-  //   });
-  // });
 });

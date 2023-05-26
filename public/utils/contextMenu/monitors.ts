@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import _ from 'lodash';
 import { getAugmentVisSavedObjs, SavedObjectLoaderAugmentVis, ISavedAugmentVis } from '../../../../../src/plugins/vis_augmenter/public'
 import { getSavedAugmentVisLoader, getUISettings } from '../../services';
+import { getAlertingAugmentVisSavedObjs } from '../savedObjectHelper';
 
 export const stateToLabel = {
   enabled: { label: 'Enabled', color: 'success' },
@@ -18,11 +19,11 @@ export const useMonitors = (embeddable) => {
       const uiSettings = getUISettings();
 
       try {
-        const associatedObjects = await getAugmentVisSavedObjs(embeddable.vis.id, loader, uiSettings);
+        const associatedObjects = await getAlertingAugmentVisSavedObjs(embeddable.vis.id);
+        // const associatedObjects = await getAugmentVisSavedObjs(embeddable.vis.id, loader, uiSettings);
         const monitorIds: string[] = [];
         for (const associatedObject of associatedObjects) {
-          if (associatedObject.visLayerExpressionFn.name === 'overlay_alerts')
-            monitorIds.push(associatedObject.pluginResource.id);
+          monitorIds.push(associatedObject.pluginResource.id);
         }
 
         // const monitorIds: string[] = [];
