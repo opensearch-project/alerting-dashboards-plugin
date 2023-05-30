@@ -35,7 +35,7 @@ import {
   ExprVisLayers,
 } from '../../../../src/plugins/expressions/public';
 import { TimeRange, calculateBounds } from '../../../../src/plugins/data/common';
-import { VisLayers } from '../../../../src/plugins/vis_augmenter/public';
+import { VisLayers, VisLayerErrorTypes } from '../../../../src/plugins/vis_augmenter/public';
 import { convertAlertsToLayer, getAlerts, getMonitorName } from './helpers';
 
 type Input = ExprVisLayers;
@@ -97,13 +97,13 @@ export const overlayAlertsFunction = (): OverlayAlertsExpressionFunctionDefiniti
     const alerts = await getAlerts(monitorId, startTimeInMillis, endTimeInMillis);
     let alertLayer;
     const monitorName = await getMonitorName(monitorId);
-    if (monitorName === 'RESOURCE_DELETED') {
+    if (monitorName === VisLayerErrorTypes.RESOURCE_DELETED) {
       const error = {
         type: 'RESOURCE_DELETED',
         message: 'The monitor does not exist.'
       }
       alertLayer = convertAlertsToLayer(alerts, monitorId, monitorName, error);
-    } else if (monitorName === 'FETCH_FAILURE') {
+    } else if (monitorName === VisLayerErrorTypes.FETCH_FAILURE) {
       const error = {
         type: 'FETCH_FAILURE',
         message: 'The user does not have permissions to the monitor.'
