@@ -25,7 +25,6 @@ export const getAlerts = async (
   const resp = await getClient().get('/api/alerting/alerts', { query: params });
 
   if (resp.ok) {
-    // added filter for monitor id since there is a bug in the backend for the alerts api
     const filteredAlerts = resp.alerts.filter((alert) => alert.start_time >= startTime && alert.start_time <= endTime );
     return filteredAlerts;
   } else {
