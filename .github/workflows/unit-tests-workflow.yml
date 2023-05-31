@@ -2,10 +2,10 @@ name: Unit tests workflow
 on:
   push:
     branches:
-      - "*"
+      - "**"
   pull_request:
     branches:
-      - "*"
+      - "**"
 env:
   # Revert to main for main merge
   OPENSEARCH_DASHBOARDS_VERSION: 'feature/feature-anywhere'

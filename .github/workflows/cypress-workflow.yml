@@ -2,10 +2,10 @@ name: E2E Cypress tests
 on:
   pull_request:
     branches:
-      - "*"
+      - "**"
   push:
     branches:
-      - "*"
+      - "**"
 env:
   # Revert to main for main merge
   OPENSEARCH_DASHBOARDS_VERSION: 'feature/feature-anywhere'
