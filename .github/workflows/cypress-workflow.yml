@@ -7,7 +7,8 @@ on:
     branches:
       - "*"
 env:
-  OPENSEARCH_DASHBOARDS_VERSION: 'main'
+  # Revert to main for main merge
+  OPENSEARCH_DASHBOARDS_VERSION: 'feature/feature-anywhere'
   OPENSEARCH_VERSION: '3.0.0-SNAPSHOT'
   ALERTING_PLUGIN_BRANCH: 'main'
 jobs:
