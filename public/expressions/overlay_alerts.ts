@@ -27,7 +27,7 @@ export type OverlayAlertsExpressionFunctionDefinition = ExpressionFunctionDefini
   Input,
   Arguments,
   Output
->;
+  >;
 
 
 export const overlayAlertsFunction = (): OverlayAlertsExpressionFunctionDefinition => ({

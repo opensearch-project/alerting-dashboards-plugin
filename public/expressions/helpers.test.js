@@ -42,7 +42,7 @@ describe('helpers', function () {
     it('Failed response', async () => {
       httpClientMock.get.mockResolvedValue({ ok: false });
       const receivedAlerts = await getAlerts('WZ3QSYgB9c6A9c_8qpzW', 1684865592000, 1684867151600);
-      expect(receivedAlerts).toStrictEqual('');
+      expect(receivedAlerts).toStrictEqual([]);
     });
   });
 
@@ -92,7 +92,7 @@ describe('helpers', function () {
         metadata: {
           pluginResourceId: alert2.monitor_id,
         },
-      }
+      },
     ];
     it('Setup alert layer', async () => {
       const monitorName = 'monitorName';
@@ -119,8 +119,8 @@ describe('helpers', function () {
       const monitorId = alert1.monitor_id;
       const error = {
         type: 'RESOURCE_DELETED',
-        message: 'The monitor does not exist.'
-      }
+        message: 'The monitor does not exist.',
+      };
       const layer = {
         originPlugin: 'Alerting',
         events,
@@ -134,9 +134,9 @@ describe('helpers', function () {
         error: error,
       };
       httpClientMock.get.mockResolvedValue({ ok: true, resp: { name: monitorName } });
-      expect(await convertAlertsToLayer([alert1, alert2], monitorId, monitorName, error)).toStrictEqual(
-        layer
-      );
+      expect(
+        await convertAlertsToLayer([alert1, alert2], monitorId, monitorName, error)
+      ).toStrictEqual(layer);
     });
   });
 });

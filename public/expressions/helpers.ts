@@ -10,12 +10,13 @@ import {
   VisLayerErrorTypes,
   PointInTimeEventsVisLayer,
 } from '../../../../src/plugins/vis_augmenter/public';
+import { Alert } from '../models/interfaces';
 
 export const getAlerts = async (
   monitorId: string,
   startTime: number,
   endTime: number
-): Promise<string> => {
+): Promise<Alert[]> => {
   const params = {
     size: 1000,
     sortField: 'start_time',
@@ -31,7 +32,7 @@ export const getAlerts = async (
   } else {
     console.error('Error getting alerts to overlay:', resp);
   }
-  return '';
+  return [];
 };
 
 export const getMonitorName = async (monitorId: string): Promise<string> => {
@@ -47,7 +48,7 @@ export const getMonitorName = async (monitorId: string): Promise<string> => {
 };
 
 export const convertAlertsToLayer = (
-  alerts: string,
+  alerts: Alert[],
   monitorId: string,
   monitorName: string,
   error?: VisLayerError,
