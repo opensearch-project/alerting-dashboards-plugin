@@ -42,7 +42,7 @@ describe('helpers', function () {
     it('Failed response', async () => {
       httpClientMock.get.mockResolvedValue({ ok: false });
       const receivedAlerts = await getAlerts('WZ3QSYgB9c6A9c_8qpzW', 1684865592000, 1684867151600);
-      expect(receivedAlerts).toStrictEqual('');
+      expect(receivedAlerts).toStrictEqual([]);
     });
   });
 
