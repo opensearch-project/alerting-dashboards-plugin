@@ -7,7 +7,7 @@ import { PLUGIN_NAME } from '../utils/constants';
 import { Plugin, CoreSetup, CoreStart } from '../../../src/core/public';
 import { ExpressionsSetup } from '../../../src/plugins/expressions/public';
 import { UiActionsSetup } from '../../../src/plugins/ui_actions/public';
-import { setSavedAugmentVisLoader, setUISettings } from './services';
+import { setSavedAugmentVisLoader, setUISettings, setClient } from './services';
 import { VisAugmenterSetup, VisAugmenterStart } from '../../../src/plugins/vis_augmenter/public';
 
 export interface AlertingSetup {}
@@ -42,6 +42,10 @@ export class AlertingPlugin implements Plugin<AlertingSetup, AlertingStart, Aler
         return renderApp(coreStart, params);
       },
     });
+
+    // Set the HTTP client so it can be pulled into expression fns to make
+    // direct server-side calls
+    setClient(core.http);
 
     setUISettings(core.uiSettings);
 

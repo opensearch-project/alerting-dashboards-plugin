@@ -20,3 +20,5 @@ export const [getSavedAugmentVisLoader, setSavedAugmentVisLoader] = createGetter
   >('savedAugmentVisLoader');
 
 export const [getUISettings, setUISettings] = createGetterSetter<IUiSettingsClient>('UISettings');
+export const [getClient, setClient] =
+  createGetterSetter<CoreStart['http']>('http');
