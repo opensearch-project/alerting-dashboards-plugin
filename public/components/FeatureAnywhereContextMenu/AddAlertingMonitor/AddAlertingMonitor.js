@@ -65,13 +65,13 @@ function AddAlertingMonitor({
       notifications,
       httpClient,
       onSuccess: async ({ monitorId }) => {
-        await createSavedObjectAssociation(monitorId, embeddable.vis.id);
+        await createSavedObjectAssociation(monitorId, embeddable);
         closeFlyout();
       },
     });
   const onAssociateExisting = async () => {
     // create saved object or dispatch an event that will create the obj
-    const res = await createSavedObjectAssociation(selectedMonitorId, embeddable.vis.id);
+    const res = await createSavedObjectAssociation(selectedMonitorId, embeddable);
 
     if (res) {
       closeFlyout();

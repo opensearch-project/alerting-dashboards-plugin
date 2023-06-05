@@ -28,7 +28,6 @@ export interface AlertingStart {}
 export interface AlertingSetupDeps {
   expressions: ExpressionsSetup;
   uiActions: UiActionsSetup;
-  visAugmenter: VisAugmenterSetup;
 }
 
 export interface AlertingStartDeps {
@@ -36,7 +35,7 @@ export interface AlertingStartDeps {
 }
 
 export class AlertingPlugin implements Plugin<AlertingSetup, AlertingStart, AlertingSetupDeps, AlertingStartDeps> {
-  public setup(core: CoreSetup<AlertingStartDeps, AlertingStart>, { expressions, uiActions, visAugmenter }: AlertingSetupDeps): AlertingSetup {
+  public setup(core: CoreSetup<AlertingStartDeps, AlertingStart>, { expressions, uiActions }: AlertingSetupDeps): AlertingSetup {
     console.log("Alerting plugin setup2");
     core.application.register({
       id: PLUGIN_NAME,
@@ -55,17 +54,18 @@ export class AlertingPlugin implements Plugin<AlertingSetup, AlertingStart, Aler
       },
     });
 
-    if (visAugmenter.savedAugmentVisLoader === null || visAugmenter.savedAugmentVisLoader === undefined) {
-      console.log('no loader set');
-      console.log(visAugmenter);
-      console.log('outputted vals');
-    } else {
-      console.log('loader set');
-      setSavedAugmentVisLoader(visAugmenter.savedAugmentVisLoader);
-    }
-    if (!(core.uiSettings === null || core.uiSettings === undefined)) {
-      setUISettings(core.uiSettings);
-    }
+    // if (visAugmenter.savedAugmentVisLoader === null || visAugmenter.savedAugmentVisLoader === undefined) {
+    //   console.log('no loader set');
+    //   console.log(visAugmenter);
+    //   console.log('outputted vals');
+    // } else {
+    //   console.log('loader set');
+    //   setSavedAugmentVisLoader(visAugmenter.savedAugmentVisLoader);
+    // }
+    // if (!(core.uiSettings === null || core.uiSettings === undefined)) {
+    //   setUISettings(core.uiSettings);
+    // }
+    setUISettings(core.uiSettings);
 
     // Set the HTTP client so it can be pulled into expression fns to make
     // direct server-side calls
@@ -74,7 +74,7 @@ export class AlertingPlugin implements Plugin<AlertingSetup, AlertingStart, Aler
     // registers the expression function used to render anomalies on an Augmented Visualization
     expressions.registerFunction(overlayAlertsFunction());
 
-    const plugins = { expressions, uiActions, visAugmenter }
+    const plugins = { expressions, uiActions }
 
     // Create context menu actions. Pass core, to access service for flyouts.
     const actions = getActions({ core, plugins });
@@ -103,11 +103,11 @@ export class AlertingPlugin implements Plugin<AlertingSetup, AlertingStart, Aler
 
   public start(core: CoreStart, { visAugmenter }: AlertingStartDeps): AlertingStart {
     setSavedAugmentVisLoader(visAugmenter.savedAugmentVisLoader);
-    if (!(core.uiSettings === null || core.uiSettings === undefined)) {
-      setUISettings(core.uiSettings);
-    } else {
-      console.log('settings is null?');
-    }
+    // if (!(core.uiSettings === null || core.uiSettings === undefined)) {
+    //   setUISettings(core.uiSettings);
+    // } else {
+    //   console.log('settings is null?');
+    // }
     return {};
   }
 
