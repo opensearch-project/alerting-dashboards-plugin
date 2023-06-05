@@ -27,7 +27,9 @@ export const getAlerts = async (
   const resp = await getClient().get('/api/alerting/alerts', { query: params });
 
   if (resp.ok) {
-    const filteredAlerts = resp.alerts.filter((alert) => alert.start_time >= startTime && alert.start_time <= endTime );
+    const filteredAlerts = resp.alerts.filter(
+      (alert) => alert.start_time >= startTime && alert.start_time <= endTime
+    );
     return filteredAlerts;
   } else {
     console.error('Error getting alerts to overlay:', resp);
@@ -41,7 +43,10 @@ export const getMonitorName = async (monitorId: string): Promise<string> => {
     return resp.resp.name;
   } else if (resp.resp === '[alerting_exception] Monitor not found.') {
     return VisLayerErrorTypes.RESOURCE_DELETED
-  } else if (resp.resp.includes('Do not have permissions to resource') || resp.resp.includes('security_exception')) {
+  } else if (
+    resp.resp.includes('Do not have permissions to resource') ||
+    resp.resp.includes('security_exception')
+  ) {
     return VisLayerErrorTypes.FETCH_FAILURE
   }
   return 'error loading monitor';
@@ -70,7 +75,8 @@ export const convertAlertsToLayer = (
       name: monitorName,
       urlPath: `alerting#/monitors/${monitorId}`,
     },
+    pluginEventType: 'Alerts',
     type: VisLayerTypes.PointInTimeEvents,
-    error: error
+    error,
   };
 };
