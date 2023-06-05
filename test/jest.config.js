@@ -19,7 +19,7 @@ module.exports = {
   },
   snapshotSerializers: ['../../node_modules/enzyme-to-json/serializer'],
   coverageReporters: ['lcov', 'text', 'cobertura'],
-  testMatch: ['**/*.test.js'],
+  testMatch: ['**/*.test.{js,ts}'],
   collectCoverageFrom: [
     '**/*.js',
     '!**/node_modules/**',

@@ -8,7 +8,8 @@ import { Plugin, CoreSetup, CoreStart } from '../../../src/core/public';
 import { ExpressionsSetup } from '../../../src/plugins/expressions/public';
 import { UiActionsSetup } from '../../../src/plugins/ui_actions/public';
 import { setSavedAugmentVisLoader, setUISettings, setClient } from './services';
-import { VisAugmenterSetup, VisAugmenterStart } from '../../../src/plugins/vis_augmenter/public';
+import { VisAugmenterStart } from '../../../src/plugins/vis_augmenter/public';
+import { overlayAlertsFunction } from './expressions/overlay_alerts';
 
 export interface AlertingSetup {}
 
@@ -17,7 +18,6 @@ export interface AlertingStart {}
 export interface AlertingSetupDeps {
   expressions: ExpressionsSetup;
   uiActions: UiActionsSetup;
-  visAugmenter: VisAugmenterSetup;
 }
 
 export interface AlertingStartDeps {
@@ -25,7 +25,7 @@ export interface AlertingStartDeps {
 }
 
 export class AlertingPlugin implements Plugin<AlertingSetup, AlertingStart, AlertingSetupDeps, AlertingStartDeps> {
-  public setup(core: CoreSetup<AlertingStartDeps, AlertingStart>, { expressions, uiActions, visAugmenter }: AlertingSetupDeps): AlertingSetup {
+  public setup(core: CoreSetup<AlertingSetupDeps, AlertingStart>, { expressions, uiActions }: AlertingSetupDeps): AlertingSetup {
     core.application.register({
       id: PLUGIN_NAME,
       title: 'Alerting',
@@ -47,7 +47,11 @@ export class AlertingPlugin implements Plugin<AlertingSetup, AlertingStart, Aler
     // direct server-side calls
     setClient(core.http);
 
+    // Register the UI Settings for the helper CRUD Saved Augement Loader functions
     setUISettings(core.uiSettings);
+
+    // registers the expression function used to render anomalies on an Augmented Visualization
+    expressions.registerFunction(overlayAlertsFunction());
 
     return {};
   }
