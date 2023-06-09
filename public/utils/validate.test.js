@@ -14,6 +14,7 @@ import {
   ILLEGAL_CHARACTERS,
   validateIndex,
   isIndexPatternQueryValid,
+  requiredNumber,
 } from './validate';
 import { FORMIK_INITIAL_VALUES } from '../pages/CreateMonitor/containers/CreateMonitor/utils/constants';
 import { TRIGGER_TYPE } from '../pages/CreateTrigger/containers/CreateTrigger/utils/constants';
@@ -200,5 +201,39 @@ describe('validateIndex', () => {
     const illegalCharacters = ILLEGAL_CHARACTERS.join(' ');
     const invalidText = `One of your inputs contains invalid characters or spaces. Please omit: ${illegalCharacters}`;
     expect(validateIndex([{ label: 'valid- index$' }])).toBe(invalidText);
+  });
+});
+
+describe('requiredNumber', () => {
+  test('returns undefined for negative integers', () => {
+    expect(requiredNumber(-10)).toBeUndefined();
+  });
+
+  test('returns undefined for negative decimal number', () => {
+    expect(requiredNumber(-10.25)).toBeUndefined();
+  });
+
+  test('returns undefined for 0', () => {
+    expect(requiredNumber(0)).toBeUndefined();
+  });
+
+  test('returns undefined for positive decimal number', () => {
+    expect(requiredNumber(10.25)).toBeUndefined();
+  });
+
+  test('returns undefined for positive integer', () => {
+    expect(requiredNumber(10)).toBeUndefined();
+  });
+
+  test('returns error text for string value', () => {
+    expect(requiredNumber('NaN')).toBe('Requires numerical value.');
+  });
+
+  test('returns error text for undefined value', () => {
+    expect(requiredNumber(undefined)).toBe('Requires numerical value.');
+  });
+
+  test('returns error text for null value', () => {
+    expect(requiredNumber(null)).toBe('Requires numerical value.');
   });
 });

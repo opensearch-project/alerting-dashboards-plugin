@@ -43,6 +43,7 @@ exports[`AcknowledgeAlertsModal renders 1`] = `
       "detectorId": "",
       "disabled": false,
       "fieldName": Array [],
+      "filters": Array [],
       "frequency": "interval",
       "groupBy": Array [],
       "groupByField": Array [
@@ -88,13 +89,6 @@ exports[`AcknowledgeAlertsModal renders 1`] = `
         "thur": false,
         "tue": false,
         "wed": false,
-      },
-      "where": Object {
-        "fieldName": Array [],
-        "fieldRangeEnd": 0,
-        "fieldRangeStart": 0,
-        "fieldValue": "",
-        "operator": "is",
       },
     }
   }

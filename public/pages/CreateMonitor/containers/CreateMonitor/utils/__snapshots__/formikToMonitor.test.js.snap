@@ -198,16 +198,10 @@ Object {
       "aggregations": Array [],
       "bucketUnitOfTime": "h",
       "bucketValue": 1,
+      "filters": Array [],
       "groupBy": Array [],
       "searchType": "graph",
       "timeField": "",
-      "where": Object {
-        "fieldName": Array [],
-        "fieldRangeEnd": 0,
-        "fieldRangeStart": 0,
-        "fieldValue": "",
-        "operator": "is",
-      },
     },
   },
 }
@@ -328,16 +322,10 @@ Object {
   "aggregations": Array [],
   "bucketUnitOfTime": "h",
   "bucketValue": 1,
+  "filters": Array [],
   "groupBy": Array [],
   "searchType": "graph",
   "timeField": "@timestamp",
-  "where": Object {
-    "fieldName": Array [],
-    "fieldRangeEnd": 0,
-    "fieldRangeStart": 0,
-    "fieldValue": "",
-    "operator": "is",
-  },
 }
 `;
 
@@ -346,20 +334,10 @@ Object {
   "aggregations": Array [],
   "bucketUnitOfTime": "h",
   "bucketValue": 1,
+  "filters": Array [],
   "groupBy": Array [],
   "searchType": "graph",
   "timeField": "@timestamp",
-  "where": Object {
-    "fieldName": Array [
-      Object {
-        "label": "age",
-        "type": "number",
-      },
-    ],
-    "fieldRangeEnd": 40,
-    "fieldRangeStart": 20,
-    "operator": "in_range",
-  },
 }
 `;
 
@@ -368,19 +346,10 @@ Object {
   "aggregations": Array [],
   "bucketUnitOfTime": "h",
   "bucketValue": 1,
+  "filters": Array [],
   "groupBy": Array [],
   "searchType": "graph",
   "timeField": "@timestamp",
-  "where": Object {
-    "fieldName": Array [
-      Object {
-        "label": "age",
-        "type": "number",
-      },
-    ],
-    "fieldValue": 20,
-    "operator": "is_greater_equal",
-  },
 }
 `;
 

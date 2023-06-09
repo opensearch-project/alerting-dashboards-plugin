@@ -14,15 +14,73 @@ const SAMPLE_EXTRACTION_QUERY_MONITOR = 'sample_extraction_query_document_level_
 const SAMPLE_VISUAL_EDITOR_MONITOR = 'sample_visual_editor_document_level_monitor';
 const SAMPLE_DOCUMENT_LEVEL_MONITOR = 'sample_document_level_monitor';
 
+const sampleDocument = {
+  message: 'This is an error from IAD region',
+  date: '2020-06-04T18:57:12',
+  region: 'us-west-2',
+  numberField: 100,
+};
+
+const queryOperators = [
+  {
+    text: 'is',
+    value: 'is',
+  },
+  {
+    text: 'is not',
+    value: 'is_not',
+  },
+  {
+    text: 'is greater than',
+    value: 'is_greater',
+  },
+  {
+    text: 'is greater than equal',
+    value: 'is_greater_equal',
+  },
+  {
+    text: 'is less than',
+    value: 'is_less',
+  },
+  {
+    text: 'is less than equal',
+    value: 'is_less_equal',
+  },
+];
+
 const addDocumentsToTestIndex = (indexName = '', numOfDocs = 0) => {
   for (let i = 0; i < numOfDocs; i++) {
-    const docBody = {
-      message: 'This is an error from IAD region',
-      date: '2020-06-04T18:57:12',
-      region: 'us-west-2',
-    };
-    cy.insertDocumentToIndex(indexName, undefined, docBody);
+    cy.insertDocumentToIndex(indexName, undefined, sampleDocument);
   }
+};
+
+const addQuery = ({ queryIndex = 0, queryName, queryField, operator, query, tags = [] }) => {
+  // Add another query
+  if (queryIndex > 0) cy.get('[data-test-subj="addDocLevelQueryButton"]').click({ force: true });
+
+  // Enter query name
+  cy.get(`[data-test-subj="documentLevelQuery_queryName${queryIndex}"]`).type(queryName);
+
+  // Enter query field
+  cy.get(`[data-test-subj="documentLevelQuery_field${queryIndex}"]`).type(
+    `${queryField}{downarrow}{enter}`
+  );
+
+  // Select query operator
+  cy.get(`[data-test-subj="documentLevelQuery_operator${queryIndex}"]`).select(operator);
+
+  // Enter query
+  cy.get(`[data-test-subj="documentLevelQuery_query${queryIndex}"]`).type(query);
+
+  // Enter tags
+  tags.forEach((tag, tagIndex) => {
+    cy.get(`[data-test-subj="addDocLevelQueryTagButton_query${queryIndex}"]`).click({
+      force: true,
+    });
+    cy.get(
+      `[data-test-subj="documentLevelQueryTag_text_field_query${queryIndex}_tag${tagIndex}"]`
+    ).type(tag);
+  });
 };
 
 describe('DocumentLevelMonitor', () => {
@@ -53,15 +111,15 @@ describe('DocumentLevelMonitor', () => {
       cy.contains('There are no existing monitors');
 
       // Go to create monitor page
-      cy.contains('Create monitor').click();
+      cy.contains('Create monitor').click({ force: true });
 
       // Select the Document-Level Monitor type
-      cy.get('[data-test-subj="docLevelMonitorRadioCard"]').click();
+      cy.get('[data-test-subj="docLevelMonitorRadioCard"]').click({ force: true });
     });
 
     it('by extraction query editor', () => {
       // Select extraction query for method of definition
-      cy.get('[data-test-subj="extractionQueryEditorRadioCard"]').click();
+      cy.get('[data-test-subj="extractionQueryEditorRadioCard"]').click({ force: true });
 
       // Wait for input to load and then type in the monitor name
       cy.get('input[name="name"]').type(SAMPLE_EXTRACTION_QUERY_MONITOR);
@@ -113,7 +171,7 @@ describe('DocumentLevelMonitor', () => {
       // TODO: Test with Notifications plugin
 
       // Click the create button
-      cy.get('button').contains('Create').click();
+      cy.get('button').contains('Create').click({ force: true });
 
       // Confirm we can see only one row in the trigger list by checking <caption> element
       cy.contains('This table contains 1 row');
@@ -122,7 +180,7 @@ describe('DocumentLevelMonitor', () => {
       cy.contains(sampleDocumentLevelMonitor.triggers[0].document_level_trigger.name);
 
       // Go back to the Monitors list
-      cy.get('a').contains('Monitors').click();
+      cy.get('a').contains('Monitors').click({ force: true });
 
       // Confirm we can see the created monitor in the list
       cy.contains(SAMPLE_EXTRACTION_QUERY_MONITOR);
@@ -130,7 +188,7 @@ describe('DocumentLevelMonitor', () => {
 
     it('by visual editor', () => {
       // Select visual editor for method of definition
-      cy.get('[data-test-subj="visualEditorRadioCard"]').click();
+      cy.get('[data-test-subj="visualEditorRadioCard"]').click({ force: true });
 
       // Wait for input to load and then type in the monitor name
       cy.get('input[name="name"]').type(SAMPLE_VISUAL_EDITOR_MONITOR);
@@ -138,25 +196,35 @@ describe('DocumentLevelMonitor', () => {
       // Wait for input to load and then type in the index name
       cy.get('#index').type(`${TESTING_INDEX}{enter}`, { force: true });
 
-      // Enter query name
-      cy.get('[data-test-subj="documentLevelQuery_queryName0"]').type(
-        sampleDocumentLevelMonitor.inputs[0].doc_level_input.queries[0].name
-      );
+      const testQueries = [
+        {
+          queryName: sampleDocumentLevelMonitor.inputs[0].doc_level_input.queries[0].name,
+          queryField: 'region',
+          operator: 'is',
+          operatorValue: 'is',
+          query: 'us-west-2',
+          tags: [sampleDocumentLevelMonitor.inputs[0].doc_level_input.queries[0].tags[0]],
+        },
+      ];
 
-      // Enter query field
-      cy.get('[data-test-subj="documentLevelQuery_field0"]').type('region{downarrow}{enter}');
+      // Enter first query
+      addQuery(testQueries[0]);
 
-      // Enter query operator
-      cy.get('[data-test-subj="documentLevelQuery_operator0"]').type('is{enter}');
-
-      // Enter query
-      cy.get('[data-test-subj="documentLevelQuery_query0"]').type('us-west-2');
-
-      // Enter query tags
-      cy.get('[data-test-subj="addDocLevelQueryTagButton_query0"]').click().click();
-      cy.get('[data-test-subj="documentLevelQueryTag_text_field_query0_tag0"]').type(
-        sampleDocumentLevelMonitor.inputs[0].doc_level_input.queries[0].tags[0]
-      );
+      // Create queries for each supported query operator
+      queryOperators.forEach((operator, index) => {
+        // Incrementing the query index by 1 to account for the query created above.
+        const queryIndex = index + 1;
+        const newQuery = {
+          queryIndex: queryIndex,
+          queryName: `Query${queryIndex}-${operator.value}`,
+          queryField: 'numberField',
+          operator: operator.text,
+          operatorValue: operator.value,
+          query: 1000 + queryIndex,
+        };
+        addQuery(newQuery);
+        testQueries.push(newQuery);
+      });
 
       // Add a trigger
       cy.contains('Add trigger').click({ force: true });
@@ -174,7 +242,7 @@ describe('DocumentLevelMonitor', () => {
       );
 
       // Add another condition
-      cy.get('[data-test-subj="addTriggerConditionButton"]').click().click();
+      cy.get('[data-test-subj="addTriggerConditionButton"]').click({ force: true });
 
       // Define a second condition
       cy.get(
@@ -190,7 +258,7 @@ describe('DocumentLevelMonitor', () => {
       // TODO: Test with Notifications plugin
 
       // Click the create button
-      cy.get('button').contains('Create').click();
+      cy.get('button').contains('Create').click({ force: true });
 
       // Confirm we can see only one row in the trigger list by checking <caption> element
       cy.contains('This table contains 1 row');
@@ -198,8 +266,55 @@ describe('DocumentLevelMonitor', () => {
       // Confirm we can see the new trigger
       cy.contains(sampleDocumentLevelMonitor.triggers[0].document_level_trigger.name);
 
+      // Click the 'Edit' button to confirm the monitor has the expected configuration
+      cy.contains('Edit').click({ force: true });
+
+      // Confirm each query has been configured correctly
+      testQueries.forEach((query, index) => {
+        // Confirm query name
+        cy.get(`[data-test-subj="documentLevelQuery_queryName${index}"]`).should(
+          'have.value',
+          query.queryName
+        );
+
+        // Confirm query field
+        cy.get(`[data-test-subj="documentLevelQuery_field${index}"]`).contains(query.queryField);
+
+        // Confirm query operator
+        cy.get(`[data-test-subj="documentLevelQuery_operator${index}"]`).should(
+          'have.value',
+          query.operatorValue
+        );
+
+        // Confirm query
+        cy.get(`[data-test-subj="documentLevelQuery_query${index}"]`).should(
+          'have.value',
+          query.query.toString()
+        );
+
+        // Confirm tags
+        query.tags?.forEach((tag, tagIndex) => {
+          cy.get(
+            `[data-test-subj="documentLevelQueryTag_badge_query${index}_tag${tagIndex}"]`
+          ).contains(tag);
+        });
+      });
+
+      // Confirm the first trigger condition has been configured correctly
+      cy.get(
+        '[data-test-subj="documentLevelTriggerExpression_query_triggerDefinitions[0].triggerConditions.0"]'
+      ).contains(sampleDocumentLevelMonitor.inputs[0].doc_level_input.queries[0].tags[0]);
+
+      // Confirm the second trigger condition has been configured correctly
+      cy.get(
+        '[data-test-subj="documentLevelTriggerExpression_andOr_triggerDefinitions[0].triggerConditions.1"]'
+      ).contains('OR');
+      cy.get(
+        '[data-test-subj="documentLevelTriggerExpression_query_triggerDefinitions[0].triggerConditions.1"]'
+      ).contains(sampleDocumentLevelMonitor.inputs[0].doc_level_input.queries[0].name);
+
       // Go back to the Monitors list
-      cy.get('a').contains('Monitors').click();
+      cy.get('a').contains('Monitors').click({ force: true });
 
       // Confirm we can see the created monitor in the list
       cy.contains(SAMPLE_VISUAL_EDITOR_MONITOR);
@@ -235,7 +350,7 @@ describe('DocumentLevelMonitor', () => {
         cy.contains('Add another trigger').click({ force: true });
 
         // Expand the accordion
-        cy.contains('New trigger').click();
+        cy.contains('New trigger').click({ force: true });
 
         // Type in the trigger name
         const newTriggerName = 'new-extraction-query-trigger';
@@ -266,7 +381,7 @@ describe('DocumentLevelMonitor', () => {
         // TODO: Test with Notifications plugin
 
         // Click the update button
-        cy.get('button').contains('Update').last().click();
+        cy.get('button').contains('Update').last().click({ force: true });
 
         // Confirm we can see only one row in the trigger list by checking <caption> element
         cy.contains('This table contains 2 rows');
@@ -308,7 +423,7 @@ describe('DocumentLevelMonitor', () => {
         cy.get('[data-test-subj="documentLevelQuery_query3"]').type('Unknown message');
 
         // Enter query tags
-        cy.get('[data-test-subj="addDocLevelQueryTagButton_query3"]').click().click();
+        cy.get('[data-test-subj="addDocLevelQueryTagButton_query3"]').click({ force: true });
         cy.get('[data-test-subj="documentLevelQueryTag_text_field_query3_tag0"]').type('sev1');
 
         // Remove existing trigger
@@ -318,7 +433,7 @@ describe('DocumentLevelMonitor', () => {
         cy.contains('Add another trigger').click({ force: true });
 
         // Expand the accordion
-        cy.contains('New trigger').click();
+        cy.contains('New trigger').click({ force: true });
 
         // Type in the trigger name
         const newTriggerName = 'new-visual-editor-trigger';
@@ -332,7 +447,7 @@ describe('DocumentLevelMonitor', () => {
         // TODO: Test with Notifications plugin
 
         // Click the create button
-        cy.get('button').contains('Update').last().click();
+        cy.get('button').contains('Update').last().click({ force: true });
 
         // Confirm we can see only one row in the trigger list by checking <caption> element
         cy.contains('This table contains 1 row');
@@ -375,7 +490,7 @@ describe('DocumentLevelMonitor', () => {
         cy.get('[data-test-subj="indicesComboBox"]').contains(TESTING_INDEX_B, { timeout: 20000 });
 
         // Click the update button
-        cy.get('button').contains('Update').last().click();
+        cy.get('button').contains('Update').last().click({ force: true });
 
         // Confirm we're on the Monitor Details page by searching for the History element
         cy.contains('History', { timeout: 20000 });

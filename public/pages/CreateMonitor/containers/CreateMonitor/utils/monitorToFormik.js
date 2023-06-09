@@ -6,6 +6,11 @@
 import _ from 'lodash';
 import { FORMIK_INITIAL_DOCUMENT_LEVEL_QUERY_VALUES, FORMIK_INITIAL_VALUES } from './constants';
 import { SEARCH_TYPE, INPUTS_DETECTOR_ID, MONITOR_TYPE } from '../../../../../utils/constants';
+import { OPERATORS_MAP } from '../../../components/MonitorExpressions/expressions/utils/constants';
+import {
+  DOC_LEVEL_INPUT_FIELD,
+  QUERY_STRING_QUERY_OPERATORS,
+} from '../../../components/DocumentLevelMonitorQueries/utils/constants';
 
 // Convert Monitor JSON to Formik values used in UI forms
 export default function monitorToFormik(monitor) {
@@ -65,11 +70,15 @@ export default function monitorToFormik(monitor) {
   };
 }
 
+export function indicesToFormik(indices) {
+  return indices.map((index) => ({ label: index }));
+}
+
 export function docLevelInputToFormik(monitor) {
-  const input = monitor.inputs[0]['doc_level_input'];
+  const input = monitor.inputs[0][DOC_LEVEL_INPUT_FIELD];
   const { description, indices, queries } = input;
   return {
-    description: description, // TODO DRAFT: DocLevelInput 'description' field isn't currently represented in the mocks. Remove it from frontend?
+    description: description,
     index: indicesToFormik(indices),
     query: JSON.stringify(_.omit(input, 'indices'), null, 4),
     queries: queriesToFormik(queries),
@@ -78,27 +87,15 @@ export function docLevelInputToFormik(monitor) {
 
 export function queriesToFormik(queries) {
   return queries.map((query) => {
-    let querySource = '';
+    let querySource;
     try {
       querySource = JSON.parse(query.query);
     } catch (e) {
       querySource = query.query;
     }
 
-    const parsedQuerySource = {};
-    const usesIsNotOperator = _.startsWith(querySource, 'NOT (') && _.endsWith(querySource, ')');
-    const operator = usesIsNotOperator ? '!=' : '==';
-
-    if (usesIsNotOperator) {
-      querySource = querySource.substring(5, querySource.length - 1);
-      querySource = _.split(querySource, ':');
-      parsedQuerySource['field'] = _.trim(querySource[0], '"');
-      parsedQuerySource['query'] = _.trim(querySource[1], '"');
-    } else {
-      const splitQuery = _.split(querySource, '"');
-      parsedQuerySource['field'] = _.trim(splitQuery[0], '":');
-      parsedQuerySource['query'] = _.trim(splitQuery[1], '"');
-    }
+    const operator = getQueryOperator(querySource);
+    const parsedQuerySource = parseQueryString(querySource, operator);
 
     return {
       ...FORMIK_INITIAL_DOCUMENT_LEVEL_QUERY_VALUES,
@@ -111,6 +108,62 @@ export function queriesToFormik(queries) {
   });
 }
 
-export function indicesToFormik(indices) {
-  return indices.map((index) => ({ label: index }));
+export function getQueryOperator(query = FORMIK_INITIAL_DOCUMENT_LEVEL_QUERY_VALUES.query) {
+  if (_.startsWith(query, 'NOT (') && _.endsWith(query, ')')) return OPERATORS_MAP.IS_NOT.value;
+  if (_.includes(query, QUERY_STRING_QUERY_OPERATORS[OPERATORS_MAP.IS_GREATER_EQUAL.value]))
+    return OPERATORS_MAP.IS_GREATER_EQUAL.value;
+  if (_.includes(query, QUERY_STRING_QUERY_OPERATORS[OPERATORS_MAP.IS_GREATER.value]))
+    return OPERATORS_MAP.IS_GREATER.value;
+  if (_.includes(query, QUERY_STRING_QUERY_OPERATORS[OPERATORS_MAP.IS_LESS_EQUAL.value]))
+    return OPERATORS_MAP.IS_LESS_EQUAL.value;
+  if (_.includes(query, QUERY_STRING_QUERY_OPERATORS[OPERATORS_MAP.IS_LESS.value]))
+    return OPERATORS_MAP.IS_LESS.value;
+  return OPERATORS_MAP.IS.value;
+}
+
+export function parseQueryString(
+  query = FORMIK_INITIAL_DOCUMENT_LEVEL_QUERY_VALUES.query,
+  operator = OPERATORS_MAP.IS.value
+) {
+  let field = FORMIK_INITIAL_DOCUMENT_LEVEL_QUERY_VALUES.field;
+  let parsedQuery = FORMIK_INITIAL_DOCUMENT_LEVEL_QUERY_VALUES.query;
+  switch (operator) {
+    case OPERATORS_MAP.IS.value:
+      parsedQuery = _.split(query, '"');
+      field = _.trim(parsedQuery[0], '":');
+      parsedQuery = _.trim(parsedQuery[1], '"');
+      break;
+    case OPERATORS_MAP.IS_NOT.value:
+      parsedQuery = query.substring(5, query.length - 1);
+      parsedQuery = _.split(parsedQuery, ':');
+      field = _.trim(parsedQuery[0], '"');
+      parsedQuery = _.trim(parsedQuery[1], '"');
+      break;
+    case OPERATORS_MAP.IS_GREATER.value:
+      parsedQuery = _.split(query, QUERY_STRING_QUERY_OPERATORS[OPERATORS_MAP.IS_GREATER.value]);
+      field = field = _.trim(parsedQuery[0], '"');
+      parsedQuery = _.trim(parsedQuery[1], '"');
+      break;
+    case OPERATORS_MAP.IS_GREATER_EQUAL.value:
+      parsedQuery = _.split(
+        query,
+        QUERY_STRING_QUERY_OPERATORS[OPERATORS_MAP.IS_GREATER_EQUAL.value]
+      );
+      field = field = _.trim(parsedQuery[0], '"');
+      parsedQuery = _.trim(parsedQuery[1], '"');
+      break;
+    case OPERATORS_MAP.IS_LESS.value:
+      parsedQuery = _.split(query, QUERY_STRING_QUERY_OPERATORS[OPERATORS_MAP.IS_LESS.value]);
+      field = field = _.trim(parsedQuery[0], '"');
+      parsedQuery = _.trim(parsedQuery[1], '"');
+      break;
+    case OPERATORS_MAP.IS_LESS_EQUAL.value:
+      parsedQuery = _.split(query, QUERY_STRING_QUERY_OPERATORS[OPERATORS_MAP.IS_LESS_EQUAL.value]);
+      field = field = _.trim(parsedQuery[0], '"');
+      parsedQuery = _.trim(parsedQuery[1], '"');
+      break;
+    default:
+      console.log('Unknown query operator detected:', operator);
+  }
+  return { field: field, query: parsedQuery };
 }
