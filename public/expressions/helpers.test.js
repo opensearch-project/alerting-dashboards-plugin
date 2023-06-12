@@ -106,6 +106,7 @@ describe('helpers', function () {
           name: monitorName,
           urlPath: 'alerting#/monitors/' + monitorId,
         },
+        pluginEventType: 'Alerts',
         type: VisLayerTypes.PointInTimeEvents,
         error: undefined,
       };
@@ -130,6 +131,7 @@ describe('helpers', function () {
           name: monitorName,
           urlPath: 'alerting#/monitors/' + monitorId,
         },
+        pluginEventType: 'Alerts',
         type: VisLayerTypes.PointInTimeEvents,
         error: error,
       };
