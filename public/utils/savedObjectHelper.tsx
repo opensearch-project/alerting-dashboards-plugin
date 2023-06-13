@@ -51,7 +51,6 @@ export const getAlertingAugmentVisSavedObjs = async (
   const loader = getSavedAugmentVisLoader();
   const uiSettings = getUISettings();
   const savedObjects = await getAugmentVisSavedObjs(visId, loader, uiSettings);
-  console.log(savedObjects);
   return savedObjects.filter((savedObject) => savedObject.visLayerExpressionFn.name === 'overlay_alerts');
 };
 
@@ -69,7 +68,7 @@ export const getAssociatedMonitorIds = async (
 export const deleteAlertingAugmentVisSavedObj = async (
   visId: string,
   monitorId: string,
-): Promise<ISavedAugmentVis[]> => {
+): Promise<void> => {
   const savedObjectLoader = getSavedAugmentVisLoader();
   await savedObjectLoader.findAll().then(async (resp) => {
     if (resp !== undefined) {
@@ -85,7 +84,14 @@ export const deleteAlertingAugmentVisSavedObj = async (
         (savedObject) => get(savedObject, 'pluginResource.id', '') === monitorId
       );
       const savedObjectToUnlinkId = get(savedAugmentToUnlink, 'id', '');
-      await savedObjectLoader.delete(savedObjectToUnlinkId);
+      if (savedObjectToUnlinkId === '') {
+        throw new Error('Failed to retrieve the saved object that associates the visualization and the Alerting monitor.');
+      }
+      try {
+        await savedObjectLoader.delete(savedObjectToUnlinkId);
+      } catch (e) {
+        throw new Error('Failed to delete the saved object that associates the visualization and the Alerting monitor. Reason:' + e.message);
+      }
     }
   });
 };

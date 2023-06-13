@@ -3,151 +3,47 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { cloneDeep } from 'lodash';
+import { uiSettingsServiceMock } from '../../../../src/core/public/mocks';
+import { setSavedAugmentVisLoader, setUISettings } from '../services';
 import {
   createSavedAugmentVisLoader,
-  ISavedAugmentVis,
-  SavedObjectOpenSearchDashboardsServicesWithAugmentVis,
   setUISettings as setVisAugUISettings,
+  SavedObjectOpenSearchDashboardsServicesWithAugmentVis,
   VisLayerExpressionFn,
   VisLayerTypes,
 } from '../../../../src/plugins/vis_augmenter/public';
-import {
-  PLUGIN_AUGMENTATION_ENABLE_SETTING,
-  PLUGIN_AUGMENTATION_MAX_OBJECTS_SETTING,
-} from '../../../../src/plugins/vis_augmenter/common';
-import { uiSettingsServiceMock } from '../../../../src/core/public/mocks';
-import { setSavedAugmentVisLoader, setUISettings } from '../services';
 import {
   createSavedObjectAssociation,
   deleteAlertingAugmentVisSavedObj,
   getAlertingAugmentVisSavedObjs,
   getAssociatedMonitorIds,
 } from './savedObjectHelper';
-
-const getMockAugmentVisSavedObjectClient = (
-  augmentVisSavedObjs: ISavedAugmentVis[],
-  savedObjectId: string = 'randomId',
-  keepReferences: boolean = true
-): any => {
-  const savedObjs = (augmentVisSavedObjs = cloneDeep(augmentVisSavedObjs));
-
-  const client = {
-    find: jest.fn(() =>
-      Promise.resolve({
-        total: savedObjs.length,
-        savedObjects: savedObjs.map((savedObj) => {
-          console.log(savedObj);
-          const objVisId = savedObj.visId;
-          const objId = savedObj.id;
-          console.log(objVisId);
-          console.log(objId);
-          delete savedObj.visId;
-          delete savedObj.id;
-          return {
-            id: objId,
-            attributes: savedObj as Record<string, any>,
-            references: keepReferences
-              ? [
-                {
-                  name: savedObj.visName,
-                  type: 'visualization',
-                  id: objVisId,
-                },
-              ]
-              : [],
-          };
-        }),
-      })
-    ),
-    create: jest.fn((opensearchType, attributes, creationOptions) =>
-      Promise.resolve({
-        id: savedObjectId,
-      })
-    ),
-    delete: jest.fn((opensearchType, savedObjectId) =>
-      Promise.resolve()
-    ),
-  } as any;
-  return client;
-};
-
-const createMockSavedObject = (
-  pluginResource: any,
-  visLayerExpressionFn: any,
-  originPlugin: string = 'alertingDashboards',
-  savedObjectId: string = 'savedObjectId',
-  visId: string = 'visId',
-): ISavedAugmentVis => {
-
-  return {
-    id: savedObjectId,
-    title: 'visTitle',
-    description: 'Association to Alerting monitor',
-    originPlugin: originPlugin,
-    pluginResource: pluginResource,
-    visName: 'visName',
-    visId: visId,
-    visLayerExpressionFn: visLayerExpressionFn,
-  };
-}
-
-const setUIAugSettings = (isEnabled = true, maxCount = 10) => {
-  uiSettingsMock.get.mockImplementation((key: string) => {
-    if (key === PLUGIN_AUGMENTATION_MAX_OBJECTS_SETTING)
-      return maxCount;
-    else if (key === PLUGIN_AUGMENTATION_ENABLE_SETTING)
-      return isEnabled
-    else return false
-  });
-}
-
-const setAugLoader = (augmentSavedVisObjects = []) => {
-  const loader = createSavedAugmentVisLoader({
-    savedObjectsClient: getMockAugmentVisSavedObjectClient(augmentSavedVisObjects),
-  } as SavedObjectOpenSearchDashboardsServicesWithAugmentVis);
-  setSavedAugmentVisLoader(loader);
-}
-
-const uiSettingsMock = uiSettingsServiceMock.createStartContract();
-setUISettings(uiSettingsMock);
-setVisAugUISettings(uiSettingsMock);
-
-const fn = {
-  type: VisLayerTypes.PointInTimeEvents,
-  name: 'overlay_alerts',
-  args: {
-    monitorId: 'monitorId',
-  },
-} as VisLayerExpressionFn;
-const adFn = {
-  type: VisLayerTypes.PointInTimeEvents,
-  name: 'overlay_anomalies',
-  args: {
-    detectorId: 'detectorId',
-  },
-} as VisLayerExpressionFn;
-let pluginResource = {
-  type: 'alerting monitor',
-  id: 'monitorId',
-};
+import {
+  createMockSavedObject,
+  getMockAugmentVisSavedObjectClient,
+  setAugLoader,
+  setUIAugSettings,
+} from './savedObjectHelper.mock';
 
 describe('savedObjectHelper', function () {
+  const uiSettingsMock = uiSettingsServiceMock.createStartContract();
+  setUISettings(uiSettingsMock);
+  setVisAugUISettings(uiSettingsMock);
   setAugLoader();
-  const embeddable = {
-    vis: {
-      id: 'visId',
-      title: 'visTitle',
-    }
-  }
   describe('createSavedObjectAssociation()', function () {
-    setUIAugSettings();
+    const embeddable = {
+      vis: {
+        id: 'visId',
+        title: 'visTitle',
+      }
+    }
+    setUIAugSettings(uiSettingsMock);
     it('createSavedObject', async () => {
       const object = await createSavedObjectAssociation('monitorId', embeddable);
       expect(object).toStrictEqual('randomId');
     });
     it('createSavedObject with augmentation disabled', async () => {
-      setUIAugSettings(false);
+      setUIAugSettings(uiSettingsMock, false);
       try {
         await createSavedObjectAssociation('monitorId', embeddable);
       } catch (e) {
@@ -155,7 +51,7 @@ describe('savedObjectHelper', function () {
       }
     });
     it('createSavedObject with max associated objects to be 0', async () => {
-      setUIAugSettings(true, 0);
+      setUIAugSettings(uiSettingsMock, true, 0);
       try {
         await createSavedObjectAssociation('monitorId', embeddable);
       } catch (e) {
@@ -167,13 +63,20 @@ describe('savedObjectHelper', function () {
   });
 
   describe('getAlertingAugmentVisSavedObjs', function () {
-    setUIAugSettings();
+    setUIAugSettings(uiSettingsMock);
     const adPluginResource = {
       type: 'ad detector',
       id: 'detectorId',
     };
+    const adFn = {
+      type: VisLayerTypes.PointInTimeEvents,
+      name: 'overlay_anomalies',
+      args: {
+        detectorId: 'detectorId',
+      },
+    } as VisLayerExpressionFn;
     it('getSavedObject and filter non-alerting objects', async () => {
-      const validObj1 = createMockSavedObject(pluginResource, fn)
+      const validObj1 = createMockSavedObject()
       const adObj1 = createMockSavedObject(adPluginResource, adFn, 'anomalyDetectionDashboards')
       const visId = validObj1.visId;
       setAugLoader([validObj1, adObj1]);
@@ -186,8 +89,8 @@ describe('savedObjectHelper', function () {
       expect(receivedObject).toStrictEqual([expectedObject]);
     });
     it('getSavedObject and vis augmenter is disabled', async () => {
-      setUIAugSettings(false);
-      const validObj1 = createMockSavedObject(pluginResource, fn)
+      setUIAugSettings(uiSettingsMock, false);
+      const validObj1 = createMockSavedObject()
       const visId = validObj1.visId;
       setAugLoader([validObj1]);
       try {
@@ -200,16 +103,16 @@ describe('savedObjectHelper', function () {
 
   describe('getAssociatedMonitorIds', function () {
     it('getAssociatedMonitorIds', async () => {
-      setUIAugSettings();
-      const validObj1 = createMockSavedObject(pluginResource, fn)
+      setUIAugSettings(uiSettingsMock);
+      const validObj1 = createMockSavedObject()
       const visId = validObj1.visId;
       setAugLoader([validObj1]);
       const receivedObject = await getAssociatedMonitorIds(visId);
       expect(receivedObject).toStrictEqual([validObj1.pluginResource.id]);
     });
     it('getAssociatedMonitorIds and vis augmenter is disabled', async () => {
-      setUIAugSettings(false)
-      const validObj1 = createMockSavedObject(pluginResource, fn)
+      setUIAugSettings(uiSettingsMock, false)
+      const validObj1 = createMockSavedObject()
       const visId = validObj1.visId;
       setAugLoader([validObj1]);
       try {
@@ -222,10 +125,34 @@ describe('savedObjectHelper', function () {
 
   describe('deleteAlertingAugmentVisSavedObj', function () {
     it('deleteAlertingAugmentVisSavedObj', async () => {
-      setUIAugSettings();
-      const validObj1 = createMockSavedObject(pluginResource, fn)
+      setUIAugSettings(uiSettingsMock);
+      const validObj1 = createMockSavedObject()
       setAugLoader([validObj1]);
       await deleteAlertingAugmentVisSavedObj('visId', 'monitorId');
+    });
+    it('deleteAlertingAugmentVisSavedObj with no saved object', async () => {
+      setUIAugSettings(uiSettingsMock);
+      setAugLoader([]);
+      try {
+        await deleteAlertingAugmentVisSavedObj('visId', 'monitorId');
+        throw new Error('Did not initially throw an error');
+      } catch (e) {
+        expect(e.message).toStrictEqual('Failed to retrieve the saved object that associates the visualization and the Alerting monitor.');
+      }
+    });
+    it('deleteAlertingAugmentVisSavedObj with delete failure', async () => {
+      setUIAugSettings(uiSettingsMock);
+      const validObj1 = createMockSavedObject()
+      const loader = createSavedAugmentVisLoader({
+        savedObjectsClient: getMockAugmentVisSavedObjectClient([validObj1], 'randomId', true, true),
+      } as SavedObjectOpenSearchDashboardsServicesWithAugmentVis);
+      setSavedAugmentVisLoader(loader);
+      try {
+        await deleteAlertingAugmentVisSavedObj('visId', 'monitorId');
+        throw new Error('Did not initially throw an error');
+      } catch (e) {
+        expect(e.message).toStrictEqual('Failed to delete the saved object that associates the visualization and the Alerting monitor. Reason:Failure to delete saved object.');
+      }
     });
   });
 });

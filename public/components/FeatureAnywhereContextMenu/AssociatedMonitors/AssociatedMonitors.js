@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import {
   EuiFlyoutHeader,
   EuiTitle,
@@ -13,10 +13,8 @@ import {
   EuiLoadingSpinner,
   EuiTextColor,
 } from '@elastic/eui';
-import { get } from 'lodash';
 import './styles.scss';
 import { useColumns } from './helpers';
-import { getSavedAugmentVisLoader } from '../../../services';
 import { ConfirmUnlinkDetectorModal } from './ConfirmUnlinkModal';
 import { deleteAlertingAugmentVisSavedObj } from '../../../utils/savedObjectHelper';
 
@@ -38,7 +36,6 @@ const AssociatedMonitors = ({ embeddable, closeFlyout, setFlyoutMode, monitors }
     },
     [closeFlyout]
   );
-  // const savedObjectLoader = useMemo(() => getSavedAugmentVisLoader(), []);
   const onUnlinkMonitor = useCallback(async () => {
     try {
       await deleteAlertingAugmentVisSavedObj(embeddable.vis.id, modalState.detector.id);
@@ -48,54 +45,6 @@ const AssociatedMonitors = ({ embeddable, closeFlyout, setFlyoutMode, monitors }
       handleHideModal();
       closeFlyout();
     }
-
-    // await savedObjectLoader.findAll().then(async (resp) => {
-    //   if (resp !== undefined) {
-    //     const savedAugmentObjects = get(resp, 'hits', []);
-    //     // gets all the saved object for this visualization
-    //     const savedAugmentForThisVisualization = savedAugmentObjects.filter(
-    //       (savedObj) => get(savedObj, 'visId', '') === embeddable.vis.id
-    //     );
-    //
-    //     // find saved Augment object matching detector we want to unlink
-    //     // There should only be one detector and vis pairing
-    //     const savedAugmentToUnlink = savedAugmentForThisVisualization.find(
-    //       (savedObject) => get(savedObject, 'pluginResource.id', '') === modalState.detector.id
-    //     );
-    //     console.log(savedAugmentToUnlink);
-    //     const savedObjectToUnlinkId = get(savedAugmentToUnlink, 'id4', '');
-    //     console.log(savedObjectToUnlinkId);
-    //     try {
-    //       await savedObjectLoader
-    //         .delete(savedObjectToUnlinkId);
-    //     } catch (e) {
-    //       console.log(e);
-    //     } finally {
-    //       handleHideModal();
-    //       closeFlyout();
-    //     }
-    //       // .then(async () => {
-    //       //   core.notifications.toasts.addSuccess({
-    //       //     title: `Association removed between the ${savedAugmentToUnlink.name}
-    //       //     and the ${title} visualization`,
-    //       //     text: "The monitor's alerts do not appear on the visualization. Refresh your dashboard to update the visualization",
-    //       //   });
-    //       // })
-    //       // .catch((error) => {
-    //       //   core.notifications.toasts.addDanger(
-    //       //     prettifyErrorMessage(
-    //       //       `Error unlinking selected monitor: ${error}`
-    //       //     )
-    //       //   );
-    //       //   console.log(`Error unlinking selected monitor: ${error}`);
-    //       // })
-    //       // .finally(() => {
-    //       //   // getDetectors();
-    //       //   handleHideModal();
-    //       //   closeFlyout();
-    //       // });
-    //   }
-    // });
   }, [closeFlyout, modalState]);
   const columns = useColumns({ onUnlink, onEdit });
   const emptyMsg = (
@@ -160,7 +109,7 @@ const AssociatedMonitors = ({ embeddable, closeFlyout, setFlyoutMode, monitors }
         <EuiFlexGroup justifyContent="spaceBetween" alignItems="center">
           <EuiFlexItem>
             <EuiText>
-              <h4>{title}</h4>
+              <h4>Visualization: {title}</h4>
             </EuiText>
           </EuiFlexItem>
           <EuiFlexItem grow={false}>

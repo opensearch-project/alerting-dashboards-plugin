@@ -3,6 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+import _ from 'lodash';
 import React from 'react';
 import { i18n } from '@osd/i18n';
 import { EuiIconType } from '@elastic/eui/src/components/icon/icon';
@@ -40,6 +41,10 @@ export const openContainerInFlyout = async ({
   plugins: any;
   detectorId?: string;
 }) => {
+  const clonedEmbeddable = await _.cloneDeep(embeddable);
+  console.log('embeddable');
+  console.log(embeddable);
+  console.log(clonedEmbeddable);
   const services = await core.getStartServices();
   const openFlyout = services[0].overlays.openFlyout;
   const overlay = openFlyout(
@@ -47,7 +52,7 @@ export const openContainerInFlyout = async ({
       <Container
         {...{
           defaultFlyoutMode,
-          embeddable,
+          embeddable: clonedEmbeddable,
           closeFlyout: () => overlay.close(),
           core,
           services,

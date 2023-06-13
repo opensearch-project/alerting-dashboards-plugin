@@ -5,8 +5,6 @@
 
 import { useState, useEffect } from 'react';
 import _ from 'lodash';
-import { getSavedAugmentVisLoader, getUISettings } from '../../services';
-import { getAugmentVisSavedObjs, } from '../../../../../src/plugins/vis_augmenter/public'
 import { getAlertingAugmentVisSavedObjs } from '../savedObjectHelper';
 
 export const useAllMonitors = (embeddable) => {
@@ -14,24 +12,16 @@ export const useAllMonitors = (embeddable) => {
 
   useEffect(() => {
     const getAllMonitors = async () => {
-      // await new Promise((resolve) => {
-      //   setTimeout(resolve, 1000);
-      // });
 
-      const loader = getSavedAugmentVisLoader();
-      const uiSettings = getUISettings();
       try {
         const associatedObjects = await getAlertingAugmentVisSavedObjs(embeddable.vis.id);
-        // const associatedObjects = await getAugmentVisSavedObjs(embeddable.vis.id, loader, uiSettings);
         const associatedMonitorIds: string[] = [];
         for (const associatedObject of associatedObjects) {
-          // if (associatedObject.visLayerExpressionFn.name === 'overlay_alerts')
-          associatedMonitorIds.push(associatedObject.pluginResourceId)
+          associatedMonitorIds.push(associatedObject.pluginResource.id)
         }
 
         let mons;
 
-      // try {
         const params = {
           query: {
             query: {
@@ -53,8 +43,6 @@ export const useAllMonitors = (embeddable) => {
 
         if (response.ok) {
           mons = _.get(response, 'resp.hits.hits', []);
-          console.log('monitors');
-          console.log(mons);
 
           const parsedMonitors: any[] = [];
           mons.forEach((mon, index) => {

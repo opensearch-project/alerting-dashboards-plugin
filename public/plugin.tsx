@@ -6,14 +6,15 @@
 import { PLUGIN_NAME } from '../utils/constants';
 import { Plugin, CoreSetup, CoreStart } from '../../../src/core/public';
 import { ACTION_ALERTING } from './actions/alerting_dashboard_action';
-import { CONTEXT_MENU_TRIGGER } from '../../../src/plugins/embeddable/public';
+import { CONTEXT_MENU_TRIGGER, EmbeddableStart } from '../../../src/plugins/embeddable/public';
 import { getActions, getAdAction } from './utils/contextMenu/actions';
 import { alertingTriggerAd } from './utils/contextMenu/triggers';
 import { ExpressionsSetup } from '../../../src/plugins/expressions/public';
 import { UiActionsSetup } from '../../../src/plugins/ui_actions/public';
 import { overlayAlertsFunction } from './expressions/overlay_alerts';
-import { setClient, setSavedAugmentVisLoader, setUISettings } from './services';
-import { VisAugmenterSetup, VisAugmenterStart } from '../../../src/plugins/vis_augmenter/public';
+import { setClient, setEmbeddable, setSavedAugmentVisLoader, setUISettings, setQueryService } from './services';
+import { VisAugmenterStart } from '../../../src/plugins/vis_augmenter/public';
+import { DataPublicPluginStart } from '../../../src/plugins/data/public';
 
 declare module '../../../src/plugins/ui_actions/public' {
   export interface ActionContextMapping {
@@ -32,6 +33,8 @@ export interface AlertingSetupDeps {
 
 export interface AlertingStartDeps {
   visAugmenter: VisAugmenterStart;
+  embeddable: EmbeddableStart;
+  data: DataPublicPluginStart;
 }
 
 export class AlertingPlugin implements Plugin<AlertingSetup, AlertingStart, AlertingSetupDeps, AlertingStartDeps> {
@@ -54,17 +57,6 @@ export class AlertingPlugin implements Plugin<AlertingSetup, AlertingStart, Aler
       },
     });
 
-    // if (visAugmenter.savedAugmentVisLoader === null || visAugmenter.savedAugmentVisLoader === undefined) {
-    //   console.log('no loader set');
-    //   console.log(visAugmenter);
-    //   console.log('outputted vals');
-    // } else {
-    //   console.log('loader set');
-    //   setSavedAugmentVisLoader(visAugmenter.savedAugmentVisLoader);
-    // }
-    // if (!(core.uiSettings === null || core.uiSettings === undefined)) {
-    //   setUISettings(core.uiSettings);
-    // }
     setUISettings(core.uiSettings);
 
     // Set the HTTP client so it can be pulled into expression fns to make
@@ -89,25 +81,14 @@ export class AlertingPlugin implements Plugin<AlertingSetup, AlertingStart, Aler
     const adAction = getAdAction({ core, plugins });
     uiActions.registerTrigger(alertingTriggerAd);
     uiActions.addTriggerAction(alertingTriggerAd.id, adAction);
-    //
-    // const savedAugmentVisLoader = createSavedAugmentVisLoader({
-    //   savedObjectsClient: core.savedObjects.client,
-    //   indexPatterns: data.indexPatterns,
-    //   search: data.search,
-    //   chrome: core.chrome,
-    //   overlays: core.overlays,
-    // });
-    // setSavedAugmentVisLoader(savedAugmentVisLoader);
+
     return;
   }
 
-  public start(core: CoreStart, { visAugmenter }: AlertingStartDeps): AlertingStart {
+  public start(core: CoreStart, { visAugmenter, embeddable, data }: AlertingStartDeps): AlertingStart {
+    setEmbeddable(embeddable);
+    setQueryService(data.query);
     setSavedAugmentVisLoader(visAugmenter.savedAugmentVisLoader);
-    // if (!(core.uiSettings === null || core.uiSettings === undefined)) {
-    //   setUISettings(core.uiSettings);
-    // } else {
-    //   console.log('settings is null?');
-    // }
     return {};
   }
 

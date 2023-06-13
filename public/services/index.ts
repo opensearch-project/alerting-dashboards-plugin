@@ -4,6 +4,6 @@
  */
 
 import NotificationService from './NotificationService';
-import { ServicesConsumer, ServicesContext, getClient, setClient, getSavedAugmentVisLoader, setSavedAugmentVisLoader, getUISettings, setUISettings } from './services';
 
-export { ServicesConsumer, ServicesContext, NotificationService, getClient, setClient, getSavedAugmentVisLoader, setSavedAugmentVisLoader, getUISettings, setUISettings };
+export * from './services';
+export { NotificationService };

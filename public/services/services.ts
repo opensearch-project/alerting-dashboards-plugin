@@ -8,6 +8,8 @@ import { BrowserServices } from '../models/interfaces';
 import { createGetterSetter } from '../../../../src/plugins/opensearch_dashboards_utils/public';
 import { CoreStart, IUiSettingsClient } from '../../../../src/core/public';
 import { SavedObjectLoaderAugmentVis } from '../../../../src/plugins/vis_augmenter/public';
+import { DataPublicPluginStart } from '../../../../src/plugins/data/public';
+import { EmbeddableStart } from '../../../../src/plugins/embeddable/public';
 
 const ServicesContext = createContext<BrowserServices | null>(null);
 
@@ -23,6 +25,9 @@ export const [getSavedAugmentVisLoader, setSavedAugmentVisLoader] = createGetter
   >('savedAugmentVisLoader');
 
 export const [getUISettings, setUISettings] = createGetterSetter<IUiSettingsClient>('UISettings');
-// // TODO: may move to a standalone plugin
-// export const [getSavedFeatureAnywhereLoader, setSavedFeatureAnywhereLoader] =
-//   createGetterSetter<SavedObjectLoader>('savedFeatureAnywhereLoader');
+
+export const [getEmbeddable, setEmbeddable] = createGetterSetter<EmbeddableStart>('embeddable');
+
+export const [getQueryService, setQueryService] = createGetterSetter<
+  DataPublicPluginStart['query']
+  >('Query');

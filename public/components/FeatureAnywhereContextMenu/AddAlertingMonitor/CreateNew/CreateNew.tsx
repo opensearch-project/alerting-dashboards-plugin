@@ -4,11 +4,21 @@
  */
 
 import React, { useState, useMemo, useEffect } from 'react';
-import { EuiTitle, EuiIcon, EuiText, EuiSwitch, EuiSpacer, EuiCallOut } from '@elastic/eui';
-import { EmbeddableRenderer } from '../../../../../../../src/plugins/embeddable/public';
-import { NotificationService } from '../../../../services';
+import {
+  EuiTitle,
+  EuiIcon,
+  EuiText,
+  EuiSwitch,
+  EuiSpacer,
+  EuiCallOut,
+} from '@elastic/eui';
 import _ from 'lodash';
 import { FieldArray } from 'formik';
+import {
+  EmbeddableRenderer,
+  ErrorEmbeddable,
+} from '../../../../../../../src/plugins/embeddable/public';
+import { NotificationService } from '../../../../services';
 import DefineMonitor from '../../../../pages/CreateMonitor/containers/DefineMonitor';
 import { formikToMonitor } from '../../../../pages/CreateMonitor/containers/CreateMonitor/utils/formikToMonitor';
 import { SEARCH_TYPE } from '../../../../utils/constants';
@@ -19,16 +29,24 @@ import EnhancedAccordion from '../../EnhancedAccordion';
 import { getPlugins } from '../../../../pages/CreateMonitor/containers/CreateMonitor/utils/helpers';
 import { dotNotate } from '../../../../utils/SubmitErrorHandler';
 import './styles.scss';
+import { fetchVisEmbeddable } from '../../../../../../../src/plugins/vis_augmenter/public';
+import {
+  VisualizeEmbeddable,
+} from '../../../../../../../src/plugins/visualizations/public';
 
 function CreateNew({ embeddable, core, flyoutMode, formikProps, history, setFlyout, detectorId }) {
   const { notifications, isDarkMode = false, http: httpClient } = core;
   const { values, errors, touched, isSubmitting, isValid } = formikProps;
   const [plugins, setPlugins] = useState([]);
+  const [generatedEmbeddable, setGeneratedEmbeddable] = useState<
+    VisualizeEmbeddable | ErrorEmbeddable
+  >();
   const isAd = values.searchType === SEARCH_TYPE.AD;
   const [accordionsOpen, setAccordionsOpen] = useState(detectorId ? { monitorDetails: true } : {});
   const [isShowVis, setIsShowVis] = useState(false);
   const title = embeddable.getTitle();
   const notificationService = useMemo(() => new NotificationService(core.http), [core]);
+
   const onAccordionToggle = (key) => {
     const newAccordionsOpen = { ...accordionsOpen };
     newAccordionsOpen[key] = !accordionsOpen[key];
@@ -56,7 +74,14 @@ function CreateNew({ embeddable, core, flyoutMode, formikProps, history, setFlyo
       setPlugins(newPlugins);
     };
 
+    const createEmbeddable = async () => {
+      const visEmbeddable = await fetchVisEmbeddable(embeddable.vis.id);
+      setGeneratedEmbeddable(visEmbeddable);
+    };
+
     updatePlugins();
+
+    createEmbeddable();
   }, []);
 
   return (
@@ -103,7 +128,7 @@ function CreateNew({ embeddable, core, flyoutMode, formikProps, history, setFlyo
       </div>
       <div className={`create-new__vis ${!isShowVis && 'create-new__vis--hidden'}`}>
         <EuiSpacer size="s" />
-        <EmbeddableRenderer embeddable={embeddable} />
+        <EmbeddableRenderer embeddable={generatedEmbeddable} />
       </div>
       <EuiSpacer size="l" />
       <EuiTitle size="s">
