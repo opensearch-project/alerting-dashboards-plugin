@@ -91,7 +91,7 @@ export const getActions = ({ core, plugins }) =>
       title: i18n.translate('dashboard.actions.alertingMenuItem.associatedMonitors.displayName', {
         defaultMessage: 'Associated monitors',
       }),
-      icon: 'gear' as EuiIconType,
+      icon: 'kqlSelector' as EuiIconType,
       order: 99,
       onExecute: ({ embeddable }) =>
         openContainerInFlyout({ core, embeddable, plugins, defaultFlyoutMode: 'associated' }),

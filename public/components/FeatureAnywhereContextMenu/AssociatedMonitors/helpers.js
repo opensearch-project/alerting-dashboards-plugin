@@ -1,7 +1,8 @@
 import React, { useMemo } from 'react';
-import { EuiHealth } from '@elastic/eui';
+import { EuiHealth, EuiLink } from '@elastic/eui';
 import { stateToLabel } from '../../../utils/contextMenu/monitors';
 import { dateOptionsLong } from '../../../utils/contextMenu/helpers';
+import { PLUGIN_NAME } from '../../../../utils/constants';
 
 export const useColumns = ({ onUnlink, onEdit }) => {
   const columns = useMemo(
@@ -12,6 +13,11 @@ export const useColumns = ({ onUnlink, onEdit }) => {
         sortable: true,
         truncateText: true,
         width: '50%',
+        render: (name, monitor) => (
+          <EuiLink href={`${PLUGIN_NAME}#/monitors/${monitor.id}`} target="_blank">
+            {name}
+          </EuiLink>
+        ),
       },
       {
         field: 'state',
@@ -24,7 +30,7 @@ export const useColumns = ({ onUnlink, onEdit }) => {
       },
       {
         field: 'date',
-        name: 'Last alert',
+        name: 'Latest alert',
         sortable: true,
         truncateText: true,
         width: '50%',

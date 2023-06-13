@@ -61,6 +61,8 @@ const AssociatedMonitors = ({ embeddable, closeFlyout, setFlyoutMode, monitors }
       body="There are no alerting monitors that match the search result."
     />
   );
+  console.log('monitors list');
+  console.log(monitors);
   const loadingMsg = <EuiEmptyPrompt body={<EuiLoadingSpinner size="l" />} />;
   const tableProps = {
     items: monitors || [],
@@ -95,14 +97,7 @@ const AssociatedMonitors = ({ embeddable, closeFlyout, setFlyoutMode, monitors }
       ) : null}
       <EuiFlyoutHeader hasBorder>
         <EuiTitle>
-          <h2 id="associated-monitors__title">
-            Associated monitors{' '}
-            {monitors && (
-              <EuiTextColor color={monitors.length > 0 ? 'default' : 'subdued'}>
-                ({monitors.length})
-              </EuiTextColor>
-            )}
-          </h2>
+          <h2 id="associated-monitors__title">Associated monitors</h2>
         </EuiTitle>
       </EuiFlyoutHeader>
       <EuiFlyoutBody>

@@ -33,7 +33,7 @@ export const useMonitors = (embeddable) => {
             },
           },
         }
-        const response = await fetch('../api/alerting/monitors/_search', {
+        const monitorResponse = await fetch('../api/alerting/monitors/_search', {
           method: 'post', // Default is 'get'
           body: JSON.stringify(params),
           headers: new Headers({
@@ -43,12 +43,34 @@ export const useMonitors = (embeddable) => {
         })
           .then(response => response.json())
 
-
-        if (response.ok) {
-          mons = _.get(response, 'resp.hits.hits', []);
+        if (monitorResponse.ok) {
+          mons = _.get(monitorResponse, 'resp.hits.hits', []);
 
           const parsedMonitors: any[] = [];
+
           mons.forEach((mon, index) => {
+
+            // Need to update this to get all the info correctly. Make a helper or new dashboard api
+            // const alertParams = {
+            //   size: 1,
+            //   sortField: 'start_time',
+            //   sortDirection: 'desc',
+            //   monitorIds: mon._id,
+            // };
+            //
+            // const alertsResponse = await fetch('../api/alerting/alerts', {
+            //   body: JSON.stringify(alertParams),
+            //   headers: new Headers({
+            //     'Content-Type': 'application/json',
+            //     'osd-xsrf': 'true'
+            //   })
+            // })
+            //   .then(response => response.json())
+            //
+            // console.log('alertsResponse');
+            // console.log(alertsResponse);
+
+
             const state = mon._source.enabled ? 'enabled' : 'disabled';
             parsedMonitors.push({
               name: mon._source.name,
@@ -64,7 +86,7 @@ export const useMonitors = (embeddable) => {
 
           setMonitors(parsedMonitors);
         } else {
-          console.log('error getting monitors:', response);
+          console.log('error getting monitors:', monitorResponse);
         }
       } catch (err) {
         console.error(err);

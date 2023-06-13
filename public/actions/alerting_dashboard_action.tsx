@@ -7,6 +7,7 @@ import {
 import { IncompatibleActionError, createAction } from '../../../../src/plugins/ui_actions/public';
 import { isReferenceOrValueEmbeddable } from '../../../../src/plugins/embeddable/public';
 import { Action } from '../../../../src/plugins/ui_actions/public';
+import { isEligibleForVisLayers } from '../../../../src/plugins/vis_augmenter/public';
 
 export const ACTION_ALERTING = 'alerting';
 
@@ -51,14 +52,11 @@ export const createAlertingAction = ({
     grouping,
     // Do not show actions for certin visualizations
     isCompatible: async ({ embeddable }: ActionContext) => {
-      const paramsType = embeddable.vis?.params?.type;
-      const seriesParams = embeddable.vis?.params?.seriesParams || [];
-      const series = embeddable.vis?.params?.series || [];
-      const isLineGraph =
-        seriesParams.find((item) => item.type === 'line') ||
-        series.find((item) => item.chart_type === 'line');
-      const isValidVis = isLineGraph && paramsType !== 'table';
-      return Boolean(embeddable.parent && isDashboard(embeddable.parent) && isValidVis);
+      return Boolean(
+        embeddable.parent &&
+        isDashboard(embeddable.parent) &&
+        isEligibleForVisLayers(embeddable.vis)
+      );
     },
     execute: async (context: ActionContext) => {
       if (!isReferenceOrValueEmbeddable(context.embeddable)) {
