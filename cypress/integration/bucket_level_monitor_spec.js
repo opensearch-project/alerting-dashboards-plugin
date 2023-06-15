@@ -24,6 +24,9 @@ const AVERAGE_METRIC_NAME = 'avg_products_base_price';
 const TESTING_INDEX_A = 'bucket-level-monitor-test-index-a';
 const TESTING_INDEX_B = 'bucket-level-monitor-test-index-b';
 
+// 3 seconds
+const INDICES_LOADING_WAIT = 3000;
+
 const addTriggerToVisualEditorMonitor = (triggerName, triggerIndex, actionName, isEdit) => {
   // Add a trigger
   cy.contains('Add trigger').click({ force: true });
@@ -73,13 +76,15 @@ const addTriggerToVisualEditorMonitor = (triggerName, triggerIndex, actionName, 
     force: true,
   });
 
-  cy.get(`[name="triggerDefinitions[${triggerIndex}].filters.0.fieldName"]`).type(
+  cy.get(`[data-test-subj="triggerDefinitions[${triggerIndex}].filters.0.fieldName"]`).type(
     `${GROUP_BY_FIELD}{downarrow}{enter}`
   );
 
-  cy.get(`[name="triggerDefinitions[${triggerIndex}].filters.0.operator"]`).select('includes');
+  cy.get(`[data-test-subj="triggerDefinitions[${triggerIndex}].filters.0.operator"]`).select(
+    'includes'
+  );
 
-  cy.get(`[name="triggerDefinitions[${triggerIndex}].filters.0.fieldValue"]`)
+  cy.get(`[data-test-subj="triggerDefinitions[${triggerIndex}].filters.0.fieldValue"]`)
     .type('a*')
     .trigger('blur', { force: true });
 
@@ -214,10 +219,22 @@ describe('Bucket-Level Monitors', () => {
 
       // Wait for input to load and then type in the index name
       // Pressing enter at the end to create combo box entry and trigger change events for time field below
-      cy.get('#index').type(`${INDEX.SAMPLE_DATA_ECOMMERCE}{enter}`, { force: true });
+      cy.get('[data-test-subj="indicesComboBox"]')
+        .click({ force: true })
+        .type(INDEX.SAMPLE_DATA_ECOMMERCE)
+        // Adding a short wait time here to reduce flakiness of async combobox
+        .wait(INDICES_LOADING_WAIT)
+        .type(`{enter}`)
+        .trigger('blur', { force: true });
 
       // Select 'order_date' as the timeField for the data source index
-      cy.get('#timeField').type(`${TIME_FIELD}{downArrow}{enter}`, { force: true });
+      cy.get('[data-test-subj="timeFieldComboBox"]')
+        .click({ force: true })
+        .type(TIME_FIELD)
+        // Adding a short wait time here to reduce flakiness of async combobox
+        .wait(INDICES_LOADING_WAIT)
+        .type('{enter}')
+        .trigger('blur', { force: true });
 
       // Add a metric for the query
       cy.get('[data-test-subj="addMetricButton"]').click({ force: true });
@@ -240,6 +257,34 @@ describe('Bucket-Level Monitors', () => {
       );
 
       cy.get('button').contains('Save').click({ force: true });
+
+      // Add data filters for the query
+      const filters = [
+        // Number type
+        { field: 'products.quantity', operator: 'is less than', value: 100 },
+        // Text type
+        { field: 'manufacturer', operator: 'starts with', value: 'Amazon' },
+        // Keyword type
+        { field: 'user', operator: 'contains', value: 'Jeff' },
+      ];
+
+      filters.forEach((filter, index) => {
+        cy.get(`[data-test-subj="addFilterButton"]`).click({ force: true });
+
+        cy.get(`[data-test-subj="filters.${index}.fieldName"]`).type(
+          `${filter.field}{downarrow}{enter}`
+        );
+
+        cy.get(`[data-test-subj="filters.${index}.operator"]`).select(filter.operator);
+
+        cy.get(`[data-test-subj="filters.${index}.fieldValue"]`).type(`${filter.value}{enter}`);
+
+        // Close data filter popover
+        cy.contains('Data filter - optional').click({ force: true });
+      });
+
+      // Confirm filter limit text is correct
+      cy.contains('You can add up to 7 more data filters.', { timeout: 20000 });
 
       // Add a group by field for the query
       cy.get('[data-test-subj="addGroupByButton"]').click({ force: true });
@@ -321,11 +366,16 @@ describe('Bucket-Level Monitors', () => {
         cy.contains('Edit').click({ force: true });
 
         // Click on the Index field and type in multiple index names to replicate the bug
-        cy.get('#index')
+        cy.get('[data-test-subj="indicesComboBox"]')
           .click({ force: true })
-          .type(`${TESTING_INDEX_A}{enter}${TESTING_INDEX_B}{enter}`, {
-            force: true,
-          })
+          .type(TESTING_INDEX_A)
+          // Adding a short wait time here to reduce flakiness of async combobox
+          .wait(INDICES_LOADING_WAIT)
+          .type(`{enter}`)
+          .type(TESTING_INDEX_B)
+          // Adding a short wait time here to reduce flakiness of async combobox
+          .wait(INDICES_LOADING_WAIT)
+          .type(`{enter}`)
           .trigger('blur', { force: true });
 
         // Confirm Index field only contains the expected text
@@ -351,7 +401,7 @@ describe('Bucket-Level Monitors', () => {
     cy.deleteAllMonitors();
 
     // Delete sample data
-    cy.deleteIndexByName(`${INDEX.SAMPLE_DATA_ECOMMERCE}`);
+    cy.deleteIndexByName(INDEX.SAMPLE_DATA_ECOMMERCE);
     cy.deleteIndexByName(TESTING_INDEX_A);
     cy.deleteIndexByName(TESTING_INDEX_B);
   });
