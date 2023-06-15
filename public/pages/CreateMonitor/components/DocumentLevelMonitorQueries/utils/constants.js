@@ -6,6 +6,7 @@
 import { OPERATORS_MAP } from '../../MonitorExpressions/expressions/utils/constants';
 
 export const DOC_LEVEL_INPUT_FIELD = 'doc_level_input';
+export const COMPOSITE_INPUT_FIELD = 'composite_input';
 
 /**
  * A list of the operators currently supported for defining queries through the UI.

@@ -46,6 +46,14 @@ export default function alertingPlugin(Client, config, components) {
     method: 'POST',
   });
 
+  alerting.createWorkflow = ca({
+    url: {
+      fmt: `${API_ROUTE_PREFIX}/workflows?refresh=wait_for`,
+    },
+    needBody: true,
+    method: 'POST',
+  });
+
   alerting.deleteMonitor = ca({
     url: {
       fmt: `${MONITOR_BASE_API}/<%=monitorId%>`,

@@ -61,6 +61,8 @@ export const FORMIK_INITIAL_VALUES = {
   bucketUnitOfTime: 'h', // m = minute, h = hour, d = day
   filters: [], // array of FORMIK_INITIAL_WHERE_EXPRESSION_VALUES
   detectorId: '',
+  associatedMonitors: [],
+  expressionQuery: null,
 };
 
 export const FORMIK_INITIAL_AGG_VALUES = {

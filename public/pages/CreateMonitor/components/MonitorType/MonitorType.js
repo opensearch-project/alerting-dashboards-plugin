@@ -25,6 +25,9 @@ const onChangeDefinition = (e, form) => {
   form.setFieldValue('searchType', FORMIK_INITIAL_VALUES.searchType);
   form.setFieldValue('triggerDefinitions', FORMIK_INITIAL_TRIGGER_VALUES.triggerConditions);
   switch (type) {
+    case MONITOR_TYPE.COMPOSITE_LEVEL:
+      form.setFieldValue('searchType', SEARCH_TYPE.GRAPH);
+      break;
     case MONITOR_TYPE.CLUSTER_METRICS:
       form.setFieldValue('searchType', SEARCH_TYPE.CLUSTER_METRICS);
       break;
@@ -56,9 +59,17 @@ const clusterMetricsDescription = (
   </EuiText>
 );
 
-const documentLevelDescription = ( // TODO DRAFT: confirm wording
+const documentLevelDescription = // TODO DRAFT: confirm wording
+  (
+    <EuiText color={'subdued'} size={'xs'} style={{ paddingBottom: '10px', paddingTop: '0px' }}>
+      Per document monitors allow you to run queries on new documents as they're indexed.
+    </EuiText>
+  );
+
+const compositeLevelDescription = (
   <EuiText color={'subdued'} size={'xs'} style={{ paddingBottom: '10px', paddingTop: '0px' }}>
-    Per document monitors allow you to run queries on new documents as they're indexed.
+    Composite monitors allow you to monitor the states of existing monitors and to reduce alert
+    noise.
   </EuiText>
 );
 
@@ -125,6 +136,22 @@ const MonitorType = ({ values }) => (
           onChange: (e, field, form) => onChangeDefinition(e, form),
           children: documentLevelDescription,
           'data-test-subj': 'docLevelMonitorRadioCard',
+        }}
+      />
+    </EuiFlexItem>
+    <EuiFlexItem grow={false}>
+      <FormikCheckableCard
+        name="monitorTypeCompositeLevel"
+        formRow
+        rowProps={{ hasEmptyLabelSpace: true }}
+        inputProps={{
+          id: 'compositeLevelMonitorRadioCard',
+          label: 'Composite monitor',
+          checked: values.monitor_type === MONITOR_TYPE.COMPOSITE_LEVEL,
+          value: MONITOR_TYPE.COMPOSITE_LEVEL,
+          onChange: (e, field, form) => onChangeDefinition(e, form),
+          children: compositeLevelDescription,
+          'data-test-subj': 'compositeLevelMonitorRadioCard',
         }}
       />
     </EuiFlexItem>

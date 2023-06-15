@@ -32,6 +32,8 @@ import {
 } from '../../../CreateTrigger/containers/CreateTrigger/utils/formikToTrigger';
 import { triggerToFormik } from '../../../CreateTrigger/containers/CreateTrigger/utils/triggerToFormik';
 import { TRIGGER_TYPE } from '../../../CreateTrigger/containers/CreateTrigger/utils/constants';
+import WorkflowDetails from '../WorkflowDetails/WorkflowDetails';
+import CompositeMonitorsAlertTrigger from '../../../CreateTrigger/containers/DefineCompositeLevelTrigger/CompositeMonitorsAlertTrigger';
 
 export default class CreateMonitor extends Component {
   static defaultProps = {
@@ -110,9 +112,14 @@ export default class CreateMonitor extends Component {
   async onCreate(monitor, { setSubmitting, setErrors }) {
     const { httpClient, notifications } = this.props;
     try {
-      const resp = await httpClient.post('../api/alerting/monitors', {
-        body: JSON.stringify(monitor),
-      });
+      const resp = await httpClient.post(
+        `../api/alerting/${
+          monitor.monitor_type === MONITOR_TYPE.COMPOSITE_LEVEL ? 'workflows' : 'monitors'
+        }`,
+        {
+          body: JSON.stringify(monitor),
+        }
+      );
       setSubmitting(false);
       const {
         ok,
@@ -242,6 +249,8 @@ export default class CreateMonitor extends Component {
       monitor = { ...monitor, ...triggers };
     }
 
+    console.log('Monitor', monitor);
+    console.log('Value', values);
     if (edit) this.onUpdate(monitor, formikBag);
     else this.onCreate(monitor, formikBag);
   }
@@ -288,42 +297,67 @@ export default class CreateMonitor extends Component {
                 detectorId={this.props.detectorId}
                 setFlyout={this.props.setFlyout}
               />
+
               <EuiSpacer />
 
-              {values.searchType !== SEARCH_TYPE.AD && (
-                <div>
-                  <DefineMonitor
-                    values={values}
-                    errors={errors}
-                    touched={touched}
-                    httpClient={httpClient}
-                    location={location}
-                    detectorId={this.props.detectorId}
-                    notifications={notifications}
-                    isDarkMode={isDarkMode}
-                  />
-                  <EuiSpacer />
-                </div>
-              )}
+              <WorkflowDetails
+                history={history}
+                isAd={values.searchType === SEARCH_TYPE.AD}
+                isComposite={values.monitor_type === MONITOR_TYPE.COMPOSITE_LEVEL}
+                httpClient={httpClient}
+              />
 
-              <FieldArray name={'triggerDefinitions'} validateOnChange={true}>
-                {(triggerArrayHelpers) => (
-                  <ConfigureTriggers
-                    edit={edit}
-                    triggerArrayHelpers={triggerArrayHelpers}
-                    monitor={formikToMonitor(values)}
-                    monitorValues={values}
-                    setFlyout={this.props.setFlyout}
-                    triggers={_.get(formikToMonitor(values), 'triggers', [])}
-                    triggerValues={values}
-                    isDarkMode={this.props.isDarkMode}
-                    httpClient={httpClient}
-                    notifications={notifications}
-                    notificationService={notificationService}
-                    plugins={plugins}
-                  />
+              <EuiSpacer />
+
+              {values.searchType !== SEARCH_TYPE.AD &&
+                values.monitor_type !== MONITOR_TYPE.COMPOSITE_LEVEL && (
+                  <div>
+                    <DefineMonitor
+                      values={values}
+                      errors={errors}
+                      touched={touched}
+                      httpClient={httpClient}
+                      location={location}
+                      detectorId={this.props.detectorId}
+                      notifications={notifications}
+                      isDarkMode={isDarkMode}
+                    />
+                    <EuiSpacer />
+                  </div>
                 )}
-              </FieldArray>
+
+              {values.monitor_type === MONITOR_TYPE.COMPOSITE_LEVEL ? (
+                <CompositeMonitorsAlertTrigger
+                  edit={edit}
+                  monitor={formikToMonitor(values)}
+                  monitorValues={values}
+                  triggerValues={values}
+                  isDarkMode={this.props.isDarkMode}
+                  httpClient={httpClient}
+                  notifications={notifications}
+                  notificationService={notificationService}
+                  plugins={plugins}
+                />
+              ) : (
+                <FieldArray name={'triggerDefinitions'} validateOnChange={true}>
+                  {(triggerArrayHelpers) => (
+                    <ConfigureTriggers
+                      edit={edit}
+                      triggerArrayHelpers={triggerArrayHelpers}
+                      monitor={formikToMonitor(values)}
+                      monitorValues={values}
+                      setFlyout={this.props.setFlyout}
+                      triggers={_.get(formikToMonitor(values), 'triggers', [])}
+                      triggerValues={values}
+                      isDarkMode={this.props.isDarkMode}
+                      httpClient={httpClient}
+                      notifications={notifications}
+                      notificationService={notificationService}
+                      plugins={plugins}
+                    />
+                  )}
+                </FieldArray>
+              )}
 
               <EuiSpacer />
               <EuiFlexGroup alignItems="center" justifyContent="flexEnd">

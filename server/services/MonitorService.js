@@ -35,6 +35,28 @@ export default class MonitorService {
     }
   };
 
+  createWorkflow = async (context, req, res) => {
+    try {
+      const params = { body: req.body };
+      const { callAsCurrentUser } = await this.esDriver.asScoped(req);
+      const createResponse = await callAsCurrentUser('alerting.createWorkflow', params);
+      return res.ok({
+        body: {
+          ok: true,
+          resp: createResponse,
+        },
+      });
+    } catch (err) {
+      console.error('Alerting - MonitorService - createWorkflow:', err);
+      return res.ok({
+        body: {
+          ok: false,
+          resp: err.message,
+        },
+      });
+    }
+  };
+
   deleteMonitor = async (context, req, res) => {
     try {
       const { id } = req.params;

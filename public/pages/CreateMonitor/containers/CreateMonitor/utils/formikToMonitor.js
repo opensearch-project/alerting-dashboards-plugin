@@ -14,6 +14,7 @@ import {
   getApiType,
 } from '../../../components/ClusterMetricsMonitor/utils/clusterMetricsMonitorHelpers';
 import {
+  COMPOSITE_INPUT_FIELD,
   DOC_LEVEL_INPUT_FIELD,
   DOC_LEVEL_QUERY_MAP,
 } from '../../../components/DocumentLevelMonitorQueries/utils/constants';
@@ -29,10 +30,36 @@ export function formikToMonitor(values) {
           [DOC_LEVEL_INPUT_FIELD]: formikToDocLevelQueriesUiMetadata(values),
           search: { searchType: values.searchType },
         };
+      case MONITOR_TYPE.COMPOSITE_LEVEL:
+        return {
+          [COMPOSITE_INPUT_FIELD]: formikToCompositeUiMetadata(values),
+          search: { searchType: values.searchType },
+        };
       default:
         return { search: formikToUiSearch(values) };
     }
   };
+
+  if (values.monitor_type === MONITOR_TYPE.COMPOSITE_LEVEL) {
+    const enabled_time = new Date();
+    return {
+      last_update_time: enabled_time.getTime(),
+      owner: 'alerting',
+      type: 'workflow',
+      enabled_time: enabled_time.getTime(),
+      enabled: !values.disabled,
+      workflow_type: 'composite',
+      schema_version: 0,
+      name: values.name,
+      schedule,
+      inputs: [formikToInputs(values)],
+      triggers: [],
+      ui_metadata: {
+        schedule: uiSchedule,
+        ...monitorUiMetadata(),
+      },
+    };
+  }
 
   return {
     name: values.name,
@@ -56,9 +83,24 @@ export function formikToInputs(values) {
       return formikToClusterMetricsInput(values);
     case MONITOR_TYPE.DOC_LEVEL:
       return formikToDocLevelInput(values);
+    case MONITOR_TYPE.COMPOSITE_LEVEL:
+      return formikToCompositeInput(values);
     default:
       return formikToSearch(values);
   }
+}
+
+export function formikToCompositeInput(values) {
+  return {
+    composite_input: {
+      sequence: {
+        delegates: values.associatedMonitors.map((monitor, idx) => ({
+          order: idx + 1,
+          monitor_id: monitor.value,
+        })),
+      },
+    },
+  };
 }
 
 export function formikToSearch(values) {
@@ -144,15 +186,8 @@ export function formikToAd(values) {
 }
 
 export function formikToUiSearch(values) {
-  const {
-    searchType,
-    timeField,
-    aggregations,
-    groupBy,
-    bucketValue,
-    bucketUnitOfTime,
-    filters,
-  } = values;
+  const { searchType, timeField, aggregations, groupBy, bucketValue, bucketUnitOfTime, filters } =
+    values;
   return {
     searchType,
     timeField,
@@ -268,6 +303,13 @@ export function formikToDocLevelInput(values) {
 
 export function formikToDocLevelQueriesUiMetadata(values) {
   return { queries: _.get(values, 'queries', []) };
+}
+
+export function formikToCompositeUiMetadata(values) {
+  return {
+    associatedMonitors: _.get(values, 'associatedMonitors', []),
+    query: _.get(values, '', ''),
+  };
 }
 
 export function formikToCompositeAggregation(values) {

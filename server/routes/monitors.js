@@ -47,6 +47,16 @@ export default function (services, router) {
 
   router.post(
     {
+      path: '/api/alerting/workflows',
+      validate: {
+        body: schema.any(),
+      },
+    },
+    monitorService.createWorkflow
+  );
+
+  router.post(
+    {
       path: '/api/alerting/monitors/_execute',
       validate: {
         query: schema.object({
