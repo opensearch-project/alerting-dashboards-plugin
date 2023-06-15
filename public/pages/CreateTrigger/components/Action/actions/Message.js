@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import _ from 'lodash';
 import Mustache from 'mustache';
 import {
@@ -209,16 +209,6 @@ export default function Message(
     console.error('There was an error rendering mustache template', err);
   }
 
-  console.log(
-    'MESSAGE',
-    action,
-    context,
-    index,
-    isSubjectDisabled,
-    sendTestMessage,
-    fieldPath,
-    values
-  );
   return (
     <div>
       {!isSubjectDisabled ? (

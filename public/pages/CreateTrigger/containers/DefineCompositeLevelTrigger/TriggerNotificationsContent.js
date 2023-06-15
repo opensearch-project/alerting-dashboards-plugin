@@ -24,7 +24,16 @@ const TriggerNotificationsContent = ({
   const onChange = (selectedOptions) => {
     setSelected(selectedOptions);
     const initialActionValues = _.cloneDeep(FORMIK_INITIAL_ACTION_VALUES);
-    _.set(triggerValues, 'triggerDefinitions[0].actions[0]', initialActionValues);
+    _.set(triggerValues, 'triggerDefinitions[0].actions[0]', {
+      ...initialActionValues,
+      destination_id: selectedOptions[0]?.value,
+      subject_template: {
+        lang: 'mustache',
+        source: 'Monitor {{ctx.monitor.name}} triggered an alert {{ctx.trigger.name}}',
+      },
+    });
+
+    console.log('CHANNEL SELECTED', _.get(triggerValues, 'triggerDefinitions[0].actions[0]', {}));
   };
 
   const showConfig = (channels) => setIsModalVisible(true);

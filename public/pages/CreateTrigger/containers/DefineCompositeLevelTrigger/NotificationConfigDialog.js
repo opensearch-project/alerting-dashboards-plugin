@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { Fragment } from 'react';
+import React from 'react';
 import {
   EuiButton,
   EuiSpacer,
@@ -15,7 +15,7 @@ import {
 } from '@elastic/eui';
 import { titleTemplate } from './DefineCompositeLevelTrigger';
 import Message from '../../components/Action/actions';
-import { DEFAULT_MESSAGE_SOURCE, FORMIK_INITIAL_ACTION_VALUES } from '../../utils/constants';
+import { FORMIK_INITIAL_ACTION_VALUES } from '../../utils/constants';
 import { getTriggerContext } from '../../utils/helper';
 import { formikToMonitor } from '../../../CreateMonitor/containers/CreateMonitor/utils/formikToMonitor';
 import _ from 'lodash';

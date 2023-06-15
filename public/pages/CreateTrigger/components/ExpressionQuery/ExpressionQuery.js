@@ -13,7 +13,6 @@ import { FormikFormRow, FormikInputWrapper } from '../../../../components/FormCo
 const ExpressionQuery = ({
   selections,
   dataTestSubj,
-  onChange,
   value,
   defaultText,
   label,

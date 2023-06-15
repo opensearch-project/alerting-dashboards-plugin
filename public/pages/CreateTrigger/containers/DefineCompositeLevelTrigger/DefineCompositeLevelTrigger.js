@@ -6,11 +6,10 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
-import { EuiAccordion, EuiSpacer, EuiText, EuiTitle } from '@elastic/eui';
+import { EuiSpacer, EuiText } from '@elastic/eui';
 import { FormikFieldText, FormikSelect } from '../../../../components/FormControls';
 import { hasError, isInvalid } from '../../../../utils/validate';
 import { DEFAULT_TRIGGER_NAME, SEVERITY_OPTIONS } from '../../utils/constants';
-import { validateTriggerName } from '../DefineTrigger/utils/validation';
 import ExpressionQuery from '../../components/ExpressionQuery/ExpressionQuery';
 import TriggerNotifications from './TriggerNotifications';
 import ContentPanel from '../../../../components/ContentPanel';
@@ -75,10 +74,9 @@ class DefineCompositeLevelTrigger extends Component {
       notifications,
       notificationService,
       plugins,
-      selectedMonitors,
     } = this.props;
     const fieldPath = `triggerDefinitions[0].`;
-    const triggerName = _.get(triggerValues, `${fieldPath}name`, DEFAULT_TRIGGER_NAME);
+    const triggerName = _.get(triggerValues, `${fieldPath}name`, 'Trigger');
     const triggerDefinitions = _.get(triggerValues, 'triggerDefinitions', []);
     _.set(triggerValues, 'triggerDefinitions', [
       {

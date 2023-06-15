@@ -20,7 +20,7 @@ import {
   FormikFormRow,
 } from '../../../../../components/FormControls';
 
-const MonitorsList = ({ monitors = [], options = [], history }) => {
+const MonitorsList = ({ monitors = [], options = [] }) => {
   const [selectedOptions, setSelectedOptions] = useState({});
   const [monitorOptions, setMonitorOptions] = useState([]);
   const [monitorFields, setMonitorFields] = useState<number[]>(
