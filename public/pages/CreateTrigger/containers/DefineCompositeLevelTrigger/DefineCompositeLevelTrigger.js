@@ -9,7 +9,7 @@ import _ from 'lodash';
 import { EuiSpacer, EuiText } from '@elastic/eui';
 import { FormikFieldText, FormikSelect } from '../../../../components/FormControls';
 import { hasError, isInvalid } from '../../../../utils/validate';
-import { DEFAULT_TRIGGER_NAME, SEVERITY_OPTIONS } from '../../utils/constants';
+import { SEVERITY_OPTIONS } from '../../utils/constants';
 import ExpressionQuery from '../../components/ExpressionQuery/ExpressionQuery';
 import TriggerNotifications from './TriggerNotifications';
 import ContentPanel from '../../../../components/ContentPanel';
@@ -123,7 +123,7 @@ class DefineCompositeLevelTrigger extends Component {
         <EuiSpacer size={'l'} />
 
         <ExpressionQuery
-          name={`${fieldPath}triggerConditions`}
+          formikName={`${fieldPath}triggerConditions`}
           label={titleTemplate(
             'Trigger condition',
             'An alert will trigger when the following monitors generate active alerts.'

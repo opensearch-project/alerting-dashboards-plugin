@@ -115,7 +115,7 @@ export function formikToDocumentLevelTriggerCondition(values, monitorUiMetadata)
   };
 }
 
-export function formikToCompositeTriggerCondition(values, monitorUiMetadata) {
+export function formikToCompositeTriggerCondition(values) {
   const conditionMap = {
     and: '&&',
     or: '||',

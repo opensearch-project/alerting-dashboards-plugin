@@ -36,7 +36,7 @@ const TriggerNotificationsContent = ({
     });
   };
 
-  const showConfig = (channels) => setIsModalVisible(true);
+  const showConfig = () => setIsModalVisible(true);
 
   return (
     <Fragment>

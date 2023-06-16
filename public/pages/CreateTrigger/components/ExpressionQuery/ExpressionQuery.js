@@ -16,8 +16,7 @@ const ExpressionQuery = ({
   value,
   defaultText,
   label,
-  name = 'expressionQueries',
-  triggerValues,
+  formikName = 'expressionQueries',
 }) => {
   const DEFAULT_DESCRIPTION = defaultText ? defaultText : 'Select';
   const OPERATORS = ['AND', 'OR', 'NOT'];
@@ -79,7 +78,7 @@ const ExpressionQuery = ({
 
   const onBlur = (form, expressions) => {
     form.setFieldTouched('expressionQueries', true);
-    form.setFieldValue('triggerDefinitions[0].triggerConditions', getValue(expressions));
+    form.setFieldValue(formikName, getValue(expressions));
     form.setFieldError('expressionQueries', validate());
   };
 
