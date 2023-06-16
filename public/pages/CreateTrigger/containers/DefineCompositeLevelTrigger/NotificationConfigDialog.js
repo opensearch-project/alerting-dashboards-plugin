@@ -20,8 +20,6 @@ import { getTriggerContext } from '../../utils/helper';
 import { formikToMonitor } from '../../../CreateMonitor/containers/CreateMonitor/utils/formikToMonitor';
 import _ from 'lodash';
 import { formikToTrigger } from '../CreateTrigger/utils/formikToTrigger';
-import { MONITOR_TYPE } from '../../../../utils/constants';
-import { TRIGGER_TYPE } from '../CreateTrigger/utils/constants';
 import { backendErrorNotification } from '../../../../utils/helpers';
 import { checkForError } from '../ConfigureActions/ConfigureActions';
 
@@ -31,58 +29,31 @@ const NotificationConfigDialog = ({
   triggerValues,
   httpClient,
   notifications,
+  actionIndex,
 }) => {
   const triggerIndex = 0;
   const monitor = formikToMonitor(triggerValues);
+  delete monitor.monitor_type;
   const context = getTriggerContext({}, monitor, triggerValues, 0);
 
   const initialActionValues = _.cloneDeep(FORMIK_INITIAL_ACTION_VALUES);
-  let action = _.get(triggerValues, 'triggerDefinitions[0].actions[0]', {
+  let action = _.get(triggerValues, `triggerDefinitions[0].actions[${actionIndex}]`, {
     ...initialActionValues,
   });
 
+  console.log('Initial actions', action);
   const sendTestMessage = async (index) => {
-    const flattenedDestinations = [];
-    // TODO: For bucket-level triggers, sendTestMessage will only send a test message if there is
-    //  at least one bucket of data from the monitor input query.
     let testTrigger = _.cloneDeep(
       formikToTrigger(triggerValues, monitor.ui_metadata)[triggerIndex]
     );
-    let action;
-    let condition;
 
-    switch (monitor.monitor_type) {
-      case MONITOR_TYPE.BUCKET_LEVEL:
-        action = _.get(testTrigger, `${TRIGGER_TYPE.BUCKET_LEVEL}.actions[${index}]`);
-        condition = {
-          ..._.get(testTrigger, `${TRIGGER_TYPE.BUCKET_LEVEL}.condition`),
-          buckets_path: { _count: '_count' },
-          script: {
-            source: 'params._count >= 0',
-          },
-        };
-        _.set(testTrigger, `${TRIGGER_TYPE.BUCKET_LEVEL}.actions`, [action]);
-        _.set(testTrigger, `${TRIGGER_TYPE.BUCKET_LEVEL}.condition`, condition);
-        break;
-      case MONITOR_TYPE.DOC_LEVEL:
-        action = _.get(testTrigger, `${TRIGGER_TYPE.DOC_LEVEL}.actions[${index}]`);
-        condition = {
-          ..._.get(testTrigger, `${TRIGGER_TYPE.DOC_LEVEL}.condition`),
-          script: { lang: 'painless', source: 'return true' },
-        };
-        _.set(testTrigger, `${TRIGGER_TYPE.DOC_LEVEL}.actions`, [action]);
-        _.set(testTrigger, `${TRIGGER_TYPE.DOC_LEVEL}.condition`, condition);
-        break;
-      default:
-        action = _.get(testTrigger, `actions[${index}]`);
-        condition = {
-          ..._.get(testTrigger, 'condition'),
-          script: { lang: 'painless', source: 'return true' },
-        };
-        _.set(testTrigger, 'actions', [action]);
-        _.set(testTrigger, 'condition', condition);
-        break;
-    }
+    const action = _.get(testTrigger, `chained_alert_trigger.actions[${index}]`);
+    const condition = {
+      ..._.get(testTrigger, 'chained_alert_trigger.condition'),
+      script: { lang: 'painless', source: 'return true' },
+    };
+    _.set(testTrigger, 'actions', [action]);
+    _.set(testTrigger, 'condition', condition);
 
     const testMonitor = { ...monitor, triggers: [{ ...testTrigger }] };
 
@@ -94,13 +65,8 @@ const NotificationConfigDialog = ({
       let error = null;
       if (response.ok) {
         error = checkForError(response, error);
-        if (!_.isEmpty(action.destination_id)) {
-          const destinationName = _.get(
-            _.find(flattenedDestinations, { value: action.destination_id }),
-            'label'
-          );
-          notifications.toasts.addSuccess(`Test message sent to "${destinationName}."`);
-        }
+        if (!_.isEmpty(action.destination_id))
+          notifications.toasts.addSuccess(`Test message sent to "${action.name}."`);
       }
       if (error || !response.ok) {
         const errorMessage = error == null ? response.resp : error;
@@ -127,7 +93,7 @@ const NotificationConfigDialog = ({
 
         <Message
           fieldPath={'triggerDefinitions[0]'}
-          index={0}
+          index={actionIndex}
           values={triggerValues}
           action={action}
           context={{

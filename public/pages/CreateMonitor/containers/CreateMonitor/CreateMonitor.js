@@ -114,7 +114,9 @@ export default class CreateMonitor extends Component {
     try {
       const resp = await httpClient.post(
         `../api/alerting/${
-          monitor.monitor_type === MONITOR_TYPE.COMPOSITE_LEVEL ? 'workflows' : 'monitors'
+          monitor.workflow_type && monitor.workflow_type === MONITOR_TYPE.COMPOSITE_LEVEL
+            ? 'workflows'
+            : 'monitors'
         }`,
         {
           body: JSON.stringify(monitor),
@@ -183,6 +185,9 @@ export default class CreateMonitor extends Component {
         case MONITOR_TYPE.DOC_LEVEL:
           triggerType = TRIGGER_TYPE.DOC_LEVEL;
           break;
+        case MONITOR_TYPE.COMPOSITE_LEVEL:
+          triggerType = TRIGGER_TYPE.COMPOSITE_LEVEL;
+          break;
         default:
           triggerType = TRIGGER_TYPE.QUERY_LEVEL;
           break;
@@ -249,8 +254,8 @@ export default class CreateMonitor extends Component {
       monitor = { ...monitor, ...triggers };
     }
 
-    console.log('Monitor', monitor);
-    console.log('Value', values);
+    if (monitor.monitor_type === MONITOR_TYPE.COMPOSITE_LEVEL) delete monitor.monitor_type;
+
     if (edit) this.onUpdate(monitor, formikBag);
     else this.onCreate(monitor, formikBag);
   }

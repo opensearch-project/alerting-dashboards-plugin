@@ -17,6 +17,7 @@ const ExpressionQuery = ({
   defaultText,
   label,
   name = 'expressionQueries',
+  triggerValues,
 }) => {
   const DEFAULT_DESCRIPTION = defaultText ? defaultText : 'Select';
   const OPERATORS = ['AND', 'OR', 'NOT'];

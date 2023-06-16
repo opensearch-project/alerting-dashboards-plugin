@@ -13,7 +13,7 @@ import { FORMIK_INITIAL_ACTION_VALUES } from '../../utils/constants';
 const TriggerNotificationsContent = ({
   channel,
   options,
-  idx,
+  actionIndex,
   triggerValues,
   httpClient,
   notifications,
@@ -23,17 +23,17 @@ const TriggerNotificationsContent = ({
 
   const onChange = (selectedOptions) => {
     setSelected(selectedOptions);
+
     const initialActionValues = _.cloneDeep(FORMIK_INITIAL_ACTION_VALUES);
-    _.set(triggerValues, 'triggerDefinitions[0].actions[0]', {
+    _.set(triggerValues, `triggerDefinitions[0].actions[${actionIndex}]`, {
       ...initialActionValues,
       destination_id: selectedOptions[0]?.value,
+      name: selectedOptions[0]?.label,
       subject_template: {
         lang: 'mustache',
         source: 'Monitor {{ctx.monitor.name}} triggered an alert {{ctx.trigger.name}}',
       },
     });
-
-    console.log('CHANNEL SELECTED', _.get(triggerValues, 'triggerDefinitions[0].actions[0]', {}));
   };
 
   const showConfig = (channels) => setIsModalVisible(true);
@@ -49,7 +49,7 @@ const TriggerNotificationsContent = ({
             }}
           >
             <FormikComboBox
-              name={`channel_name_${idx}`}
+              name={`channel_name_${actionIndex}`}
               formRow
               fieldProps={{
                 isInvalid: !selected.length,
@@ -91,6 +91,7 @@ const TriggerNotificationsContent = ({
           triggerValues={triggerValues}
           httpClient={httpClient}
           notifications={notifications}
+          actionIndex={actionIndex}
         />
       )}
     </Fragment>

@@ -293,6 +293,7 @@ export function formikToTriggerUiMetadata(values, monitorUiMetadata) {
         bucketLevelTriggersUiMetadata[trigger.name] = triggerMetadata;
       });
       return bucketLevelTriggersUiMetadata;
+
     case MONITOR_TYPE.DOC_LEVEL:
       const docLevelTriggersUiMetadata = {};
       _.get(values, 'triggerDefinitions', []).forEach((trigger) => {

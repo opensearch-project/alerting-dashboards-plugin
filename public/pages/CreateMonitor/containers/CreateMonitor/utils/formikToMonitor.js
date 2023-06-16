@@ -48,7 +48,8 @@ export function formikToMonitor(values) {
       type: 'workflow',
       enabled_time: enabled_time.getTime(),
       enabled: !values.disabled,
-      workflow_type: 'composite',
+      monitor_type: MONITOR_TYPE.COMPOSITE_LEVEL,
+      workflow_type: MONITOR_TYPE.COMPOSITE_LEVEL,
       schema_version: 0,
       name: values.name,
       schedule,
@@ -56,6 +57,7 @@ export function formikToMonitor(values) {
       triggers: [],
       ui_metadata: {
         schedule: uiSchedule,
+        monitor_type: values.monitor_type,
         ...monitorUiMetadata(),
       },
     };

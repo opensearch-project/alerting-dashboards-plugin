@@ -19,25 +19,25 @@ import { CHANNEL_TYPES } from '../../utils/constants';
 
 const TriggerNotifications = ({
   httpClient,
-  actions = [],
+  triggerActions = [],
   plugins,
   notifications,
   notificationService,
   triggerValues,
 }) => {
-  const [channels, setChannels] = useState([]);
+  const [actions, setActions] = useState([]);
   const [options, setOptions] = useState([]);
 
   useEffect(() => {
-    let newChannels = [...actions];
-    if (_.isEmpty(newChannels))
-      newChannels = [
+    let newActions = [...triggerActions];
+    if (_.isEmpty(newActions))
+      newActions = [
         {
           name: '',
           id: '',
         },
       ];
-    setChannels(newChannels);
+    setActions(newActions);
 
     getChannels().then((channels) => setOptions(channels));
   }, []);
@@ -81,40 +81,40 @@ const TriggerNotifications = ({
   };
 
   const onAddNotification = () => {
-    const newChannels = [...channels];
-    newChannels.push({
+    const newActions = [...actions];
+    newActions.push({
       label: '',
       value: '',
     });
-    setChannels(newChannels);
+    setActions(newActions);
   };
 
   const onRemoveNotification = (idx) => {
-    const newChannels = [...channels];
-    newChannels.splice(idx, 1);
-    setChannels(newChannels);
+    const newActions = [...actions];
+    newActions.splice(idx, 1);
+    setActions(newActions);
   };
 
   return (
     <Fragment>
       {titleTemplate('Notifications')}
       <EuiSpacer size={'m'} />
-      {channels.length &&
-        channels.map((channel, idx) => (
+      {actions.length &&
+        actions.map((channel, actionIndex) => (
           <EuiAccordion
-            title={`Notification ${idx + 1}`}
-            key={`notification-accordion-${idx}`}
-            id={`notification-accordion-${idx}`}
-            initialIsOpen={!idx}
-            buttonContent={<EuiText>{`Notification ${idx + 1}`}</EuiText>}
+            title={`Notification ${actionIndex + 1}`}
+            key={`notification-accordion-${actionIndex}`}
+            id={`notification-accordion-${actionIndex}`}
+            initialIsOpen={!actionIndex}
+            buttonContent={<EuiText>{`Notification ${actionIndex + 1}`}</EuiText>}
             paddingSize={'s'}
             extraAction={
-              channels.length > 1 && (
+              actions.length > 1 && (
                 <EuiButtonIcon
                   color={'danger'}
                   aria-label={'Delete notification'}
                   iconType={'trash'}
-                  onClick={() => onRemoveNotification(idx)}
+                  onClick={() => onRemoveNotification(actionIndex)}
                   size={'s'}
                 />
               )
@@ -123,11 +123,10 @@ const TriggerNotifications = ({
             <TriggerNotificationsContent
               channel={channel}
               options={options}
-              idx={idx}
+              actionIndex={actionIndex}
               notifications={notifications}
               triggerValues={triggerValues}
               httpClient={httpClient}
-              actions={actions}
             />
           </EuiAccordion>
         ))}

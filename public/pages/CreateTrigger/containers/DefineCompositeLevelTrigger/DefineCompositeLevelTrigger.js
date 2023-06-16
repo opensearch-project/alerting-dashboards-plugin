@@ -86,7 +86,7 @@ class DefineCompositeLevelTrigger extends Component {
         name: triggerName,
       },
     ]);
-
+    const triggerActions = _.get(triggerValues, 'triggerDefinitions[0].actions', []);
     const monitorList = monitorValues?.associatedMonitors
       ? monitorValues.associatedMonitors?.map((monitor) => ({
           label: monitor.label.replaceAll(' ', '_'),
@@ -135,6 +135,7 @@ class DefineCompositeLevelTrigger extends Component {
           onChange={() => {}}
           dataTestSubj={'composite_expression_query'}
           defaultText={'Select associated monitor'}
+          triggerValues={triggerValues}
         />
 
         <EuiSpacer size={'l'} />
@@ -156,6 +157,7 @@ class DefineCompositeLevelTrigger extends Component {
           notifications={notifications}
           notificationService={notificationService}
           triggerValues={triggerValues}
+          triggerActions={triggerActions}
         />
       </ContentPanel>
     );
