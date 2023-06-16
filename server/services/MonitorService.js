@@ -157,9 +157,19 @@ export default class MonitorService {
     }
   };
 
+  /**
+   *  TODO: Fix this where the last alert and active alerts are not correct
+   * @param context
+   * @param req
+   * @param res
+   * @returns {Promise<*>}
+   */
   getMonitors = async (context, req, res) => {
     try {
-      const { from, size, search, sortDirection, sortField, state } = req.query;
+      const { from, size, search, sortDirection, sortField, state, monitorIds } = req.query;
+
+      console.log('req query');
+      console.log(JSON.stringify(req.query));
 
       let must = { match_all: {} };
       if (search.trim()) {
@@ -173,6 +183,23 @@ export default class MonitorService {
             query: `*${search.trim().split(' ').join('* *')}*`,
           },
         };
+      }
+
+      const mustList = [must];
+      console.log('JSON.stringify(monitorIds)');
+      console.log(JSON.stringify(monitorIds));
+      if (monitorIds !== undefined) {
+        mustList.push({
+          terms: {
+            _id: monitorIds,
+          },
+        });
+      } else if (monitorIds === 'empty') {
+        mustList.push({
+          terms: {
+            _id: [],
+          },
+        });
       }
 
       const filter = [{ term: { 'monitor.type': 'monitor' } }];
@@ -197,13 +224,17 @@ export default class MonitorService {
           query: {
             bool: {
               filter,
-              must,
+              must: mustList,
             },
           },
         },
       };
 
+      console.log(JSON.stringify(params));
+
       const { callAsCurrentUser: alertingCallAsCurrentUser } = await this.esDriver.asScoped(req);
+      // console.log('parameters');
+      // console.log(JSON.stringify(params));
       const getResponse = await alertingCallAsCurrentUser('alerting.getMonitors', params);
 
       const totalMonitors = _.get(getResponse, 'hits.total.value', 0);
@@ -219,7 +250,7 @@ export default class MonitorService {
         return [id, { id, version, ifSeqNo, ifPrimaryTerm, name, enabled, monitor }];
       }, {});
       const monitorMap = new Map(monitorKeyValueTuples);
-      const monitorIds = [...monitorMap.keys()];
+      const monitorIdsOutput = [...monitorMap.keys()];
 
       const aggsOrderData = {};
       const aggsSorts = {
@@ -236,7 +267,7 @@ export default class MonitorService {
         index: INDEX.ALL_ALERTS,
         body: {
           size: 0,
-          query: { terms: { monitor_id: monitorIds } },
+          query: { terms: { monitor_id: monitorIdsOutput } },
           aggregations: {
             uniq_monitor_ids: {
               terms: {
@@ -320,13 +351,19 @@ export default class MonitorService {
         currentTime: Date.now(),
       }));
 
+      // console.log("getting monitors");
+      // console.log(JSON.stringify(unusedMonitors));
+      // console.log(JSON.stringify(buckets));
+
       let results = _.orderBy(buckets.concat(unusedMonitors), [sortField], [sortDirection]);
       // If we sorted on monitor name then we already applied from/size to the first query to limit what we're aggregating over
       // Therefore we do not need to apply from/size to this result set
       // If we sorted on aggregations, then this is our in memory pagination
+      // console.log(JSON.stringify(results));
       if (!monitorSorts[sortField]) {
         results = results.slice(from, from + size);
       }
+      // console.log(JSON.stringify(results));
 
       return res.ok({
         body: {

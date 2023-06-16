@@ -86,3 +86,8 @@ export const CHANNEL_TYPE = Object.freeze({
   [BACKEND_CHANNEL_TYPE.SES]: 'Amazon SES',
   [BACKEND_CHANNEL_TYPE.SNS]: 'Amazon SNS',
 });
+
+export const PLUGIN_AUGMENTATION_ENABLE_SETTING = 'visualization:enablePluginAugmentation';
+
+export const PLUGIN_AUGMENTATION_MAX_OBJECTS_SETTING =
+  'visualization:enablePluginAugmentation.maxPluginObjects';

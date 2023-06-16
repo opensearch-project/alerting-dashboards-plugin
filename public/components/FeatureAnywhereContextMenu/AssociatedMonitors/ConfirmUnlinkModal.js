@@ -36,8 +36,8 @@ export const ConfirmUnlinkDetectorModal = (props) => {
         </EuiModalHeader>
         <EuiModalBody>
           <EuiText>
-            Removing association unlinks {props.detector.name} detector from the visualization but
-            does not delete it. The detector association can be restored.
+            Removing association unlinks {props.monitor.name} monitor from the visualization but
+            does not delete it. The monitor association can be restored.
           </EuiText>
           <EuiSpacer size="s" />
         </EuiModalBody>

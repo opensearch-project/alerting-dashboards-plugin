@@ -18,7 +18,7 @@ import {
   EmbeddableRenderer,
   ErrorEmbeddable,
 } from '../../../../../../../src/plugins/embeddable/public';
-import { NotificationService } from '../../../../services';
+import { NotificationService, getEmbeddable } from '../../../../services';
 import DefineMonitor from '../../../../pages/CreateMonitor/containers/DefineMonitor';
 import { formikToMonitor } from '../../../../pages/CreateMonitor/containers/CreateMonitor/utils/formikToMonitor';
 import { SEARCH_TYPE } from '../../../../utils/constants';
@@ -44,7 +44,7 @@ function CreateNew({ embeddable, core, flyoutMode, formikProps, history, setFlyo
   const isAd = values.searchType === SEARCH_TYPE.AD;
   const [accordionsOpen, setAccordionsOpen] = useState(detectorId ? { monitorDetails: true } : {});
   const [isShowVis, setIsShowVis] = useState(false);
-  const title = embeddable.getTitle();
+  const title = embeddable.vis.title;
   const notificationService = useMemo(() => new NotificationService(core.http), [core]);
 
   const onAccordionToggle = (key) => {
@@ -70,7 +70,7 @@ function CreateNew({ embeddable, core, flyoutMode, formikProps, history, setFlyo
   // On load
   useEffect(() => {
     const updatePlugins = async () => {
-      const newPlugins = await getPlugins(httpClient);
+      const newPlugins = await getPlugins(httpClient, getEmbeddable());
       setPlugins(newPlugins);
     };
 

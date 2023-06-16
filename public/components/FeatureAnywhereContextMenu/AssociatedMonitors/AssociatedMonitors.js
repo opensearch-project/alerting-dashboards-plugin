@@ -17,13 +17,15 @@ import './styles.scss';
 import { useColumns } from './helpers';
 import { ConfirmUnlinkDetectorModal } from './ConfirmUnlinkModal';
 import { deleteAlertingAugmentVisSavedObj } from '../../../utils/savedObjectHelper';
+import { getNotifications } from '../../../services';
 
 const AssociatedMonitors = ({ embeddable, closeFlyout, setFlyoutMode, monitors }) => {
-  const title = embeddable.getTitle();
+  const title = embeddable.vis.title;
   const [modalState, setModalState] = useState(undefined);
+  const notifications = getNotifications();
   const onUnlink = useCallback((item) => {
     setModalState({
-      detector: {
+      monitor: {
         name: item.name,
         id: item.id,
       },
@@ -38,12 +40,19 @@ const AssociatedMonitors = ({ embeddable, closeFlyout, setFlyoutMode, monitors }
   );
   const onUnlinkMonitor = useCallback(async () => {
     try {
-      await deleteAlertingAugmentVisSavedObj(embeddable.vis.id, modalState.detector.id);
+      await deleteAlertingAugmentVisSavedObj(embeddable.vis.id, modalState.monitor.id);
+      notifications.toasts.addSuccess({
+        title: `Association removed between the ${modalState.monitor.name} monitor and the ${title} visualization`,
+        text:
+          "The monitor's alerts do not automatically appear on the visualization. Refresh your dashboard to update the visualization.",
+      });
+      setAllMonitors(monitors.filter((monitor) => monitor.id !== modalState.monitor.id));
     } catch (e) {
-      console.log(e);
+      notifications.toasts.addDanger(
+        `Failed to remove the association between the "${modalState.monitor.name}" monitor with the ${title} visualization. Failed due to ${e.message}.`
+      );
     } finally {
       handleHideModal();
-      closeFlyout();
     }
   }, [closeFlyout, modalState]);
   const columns = useColumns({ onUnlink, onEdit });
@@ -61,8 +70,8 @@ const AssociatedMonitors = ({ embeddable, closeFlyout, setFlyoutMode, monitors }
       body="There are no alerting monitors that match the search result."
     />
   );
-  console.log('monitors list');
-  console.log(monitors);
+  // console.log('monitors list');
+  // console.log(monitors);
   const loadingMsg = <EuiEmptyPrompt body={<EuiLoadingSpinner size="l" />} />;
   const tableProps = {
     items: monitors || [],
@@ -89,7 +98,7 @@ const AssociatedMonitors = ({ embeddable, closeFlyout, setFlyoutMode, monitors }
     <div className="associated-monitors">
       {modalState ? (
         <ConfirmUnlinkDetectorModal
-          detector={modalState.detector}
+          monitor={modalState.monitor}
           onHide={handleHideModal}
           onConfirm={onUnlinkMonitor}
           isListLoading={!monitors}

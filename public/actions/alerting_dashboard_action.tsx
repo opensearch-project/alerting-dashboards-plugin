@@ -8,6 +8,7 @@ import { IncompatibleActionError, createAction } from '../../../../src/plugins/u
 import { isReferenceOrValueEmbeddable } from '../../../../src/plugins/embeddable/public';
 import { Action } from '../../../../src/plugins/ui_actions/public';
 import { isEligibleForVisLayers } from '../../../../src/plugins/vis_augmenter/public';
+import { getUISettings } from '../services'
 
 export const ACTION_ALERTING = 'alerting';
 
@@ -55,7 +56,7 @@ export const createAlertingAction = ({
       return Boolean(
         embeddable.parent &&
         isDashboard(embeddable.parent) &&
-        isEligibleForVisLayers(embeddable.vis)
+        isEligibleForVisLayers(embeddable.vis, getUISettings())
       );
     },
     execute: async (context: ActionContext) => {

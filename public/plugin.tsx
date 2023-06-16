@@ -4,7 +4,11 @@
  */
 
 import { PLUGIN_NAME } from '../utils/constants';
-import { Plugin, CoreSetup, CoreStart } from '../../../src/core/public';
+import {
+  Plugin,
+  CoreSetup,
+  CoreStart,
+} from '../../../src/core/public';
 import { ACTION_ALERTING } from './actions/alerting_dashboard_action';
 import { CONTEXT_MENU_TRIGGER, EmbeddableStart } from '../../../src/plugins/embeddable/public';
 import { getActions, getAdAction } from './utils/contextMenu/actions';
@@ -12,7 +16,7 @@ import { alertingTriggerAd } from './utils/contextMenu/triggers';
 import { ExpressionsSetup } from '../../../src/plugins/expressions/public';
 import { UiActionsSetup } from '../../../src/plugins/ui_actions/public';
 import { overlayAlertsFunction } from './expressions/overlay_alerts';
-import { setClient, setEmbeddable, setSavedAugmentVisLoader, setUISettings, setQueryService } from './services';
+import { setClient, setEmbeddable, setNotifications, setSavedAugmentVisLoader, setUISettings, setQueryService } from './services';
 import { VisAugmenterStart } from '../../../src/plugins/vis_augmenter/public';
 import { DataPublicPluginStart } from '../../../src/plugins/data/public';
 
@@ -86,9 +90,11 @@ export class AlertingPlugin implements Plugin<AlertingSetup, AlertingStart, Aler
   }
 
   public start(core: CoreStart, { visAugmenter, embeddable, data }: AlertingStartDeps): AlertingStart {
+    setUISettings(core.uiSettings);
     setEmbeddable(embeddable);
     setQueryService(data.query);
     setSavedAugmentVisLoader(visAugmenter.savedAugmentVisLoader);
+    setNotifications(core.notifications);
     return {};
   }
 

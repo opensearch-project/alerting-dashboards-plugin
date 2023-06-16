@@ -4,7 +4,6 @@ import AddAlertingMonitor from '../AddAlertingMonitor';
 import { useMonitors } from '../../../utils/contextMenu/monitors';
 import { useAllMonitors } from '../../../utils/contextMenu/allMonitors';
 import { CoreContext } from '../../../utils/CoreContext';
-import './styles.scss';
 
 const Container = ({ defaultFlyoutMode, ...props }) => {
   const { embeddable, core } = props;

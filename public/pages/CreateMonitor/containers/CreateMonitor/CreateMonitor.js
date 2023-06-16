@@ -23,6 +23,7 @@ import MonitorDetails from '../MonitorDetails';
 import ConfigureTriggers from '../../../CreateTrigger/containers/ConfigureTriggers';
 import { triggerToFormik } from '../../../CreateTrigger/containers/CreateTrigger/utils/triggerToFormik';
 import { getInitialValues, getPlugins, submit } from './utils/helpers';
+import { createSavedObjectAssociation } from '../../../../utils/savedObjectHelper';
 
 export default class CreateMonitor extends Component {
   static defaultProps = {
@@ -108,6 +109,9 @@ export default class CreateMonitor extends Component {
       updateMonitor,
       notifications,
       httpClient,
+      onSuccess: async ({ monitor }) => {
+        notifications.toasts.addSuccess(`Monitor "${monitor.name}" successfully created.`);
+      },
     });
   }
 

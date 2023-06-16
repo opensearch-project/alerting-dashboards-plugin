@@ -8,13 +8,13 @@ exports[`AssociateExisting renders 1`] = `
     size="xs"
   >
     <p>
-      This is a short description of the feature to get users excited. Learn more in the documentation.
-       
+      View existing monitors across your system and add the monitor(s) to a dashboard and visualization.
+
       <a
-        href="https://opensearch.org/docs/latest/monitoring-plugins/alerting/index/"
+        href="https://opensearch.org/docs/latest/observing-your-data/alerting/dashboards-alerting/"
         target="_blank"
       >
-        Learn more 
+        Learn more
         <EuiIcon
           type="popout"
         />

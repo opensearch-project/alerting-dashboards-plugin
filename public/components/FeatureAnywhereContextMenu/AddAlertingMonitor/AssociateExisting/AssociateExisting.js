@@ -18,7 +18,7 @@ import {
   EuiHorizontalRule,
 } from '@elastic/eui';
 import { stateToLabel } from '../../../../utils/contextMenu/monitors';
-import { dateOptionsShort } from '../../../../utils/contextMenu/helpers';
+import { dateOptionsLong, dateOptionsShort } from '../../../../utils/contextMenu/helpers';
 import './styles.scss';
 
 function AssociateExisting({ monitors, selectedMonitorId, setSelectedMonitorId }) {
@@ -49,10 +49,10 @@ function AssociateExisting({ monitors, selectedMonitorId, setSelectedMonitorId }
     <div className="associate-existing">
       <EuiText size="xs">
         <p>
-          This is a short description of the feature to get users excited. Learn more in the
-          documentation.{' '}
+          View existing monitors across your system and add the monitor(s) to a dashboard and
+          visualization.{' '}
           <a
-            href="https://opensearch.org/docs/latest/monitoring-plugins/alerting/index/"
+            href="https://opensearch.org/docs/latest/observing-your-data/alerting/dashboards-alerting/"
             target="_blank"
           >
             Learn more <EuiIcon type="popout" />
@@ -82,12 +82,13 @@ function AssociateExisting({ monitors, selectedMonitorId, setSelectedMonitorId }
           }}
           aria-label="Select monitor to associate"
           isClearable
-          singleSelection
+          singleSelection={{ asPlainText: true }}
           placeholder="Search a monitor"
         />
       )}
       <EuiSpacer size="xl" />
       {monitor && (
+        // const monitorLink = "/app/alerting#/monitors/" + monitor.id;
         <>
           <EuiFlexGroup justifyContent="spaceBetween" alignItems="flexStart">
             <EuiFlexItem>
@@ -114,8 +115,16 @@ function AssociateExisting({ monitors, selectedMonitorId, setSelectedMonitorId }
               ['Active alerts', (monitor) => monitor.activeAlerts],
               [
                 'Last alert',
-                (monitor) =>
-                  new Intl.DateTimeFormat('default', dateOptionsShort).format(monitor.date),
+                (monitor) => {
+                  console.log('monitor from existing');
+                  console.log(monitor);
+                  if (monitor.date) {
+                    return new Intl.DateTimeFormat('default', dateOptionsLong).format(monitor.date);
+                  } else {
+                    return '-';
+                  }
+                  // return new Intl.DateTimeFormat('default', dateOptionsShort).format(monitor.date)
+                },
               ],
             ].map(([label, getValue]) => (
               <li key={label}>

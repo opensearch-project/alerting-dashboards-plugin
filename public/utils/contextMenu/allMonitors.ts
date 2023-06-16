@@ -5,7 +5,8 @@
 
 import { useState, useEffect } from 'react';
 import _ from 'lodash';
-import { getAlertingAugmentVisSavedObjs } from '../savedObjectHelper';
+import { getAlertingAugmentVisSavedObjs, getAssociatedMonitorIds } from '../savedObjectHelper';
+import { getClient } from '../../services';
 
 export const useAllMonitors = (embeddable) => {
   const [allMonitors, setAllMonitors] = useState<any[] | null>();
@@ -14,49 +15,67 @@ export const useAllMonitors = (embeddable) => {
     const getAllMonitors = async () => {
 
       try {
-        const associatedObjects = await getAlertingAugmentVisSavedObjs(embeddable.vis.id);
-        const associatedMonitorIds: string[] = [];
-        for (const associatedObject of associatedObjects) {
-          associatedMonitorIds.push(associatedObject.pluginResource.id)
-        }
+        // const associatedObjects = await getAlertingAugmentVisSavedObjs(embeddable.vis.id);
+        // const associatedMonitorIds: string[] = [];
+        // for (const associatedObject of associatedObjects) {
+        //   associatedMonitorIds.push(associatedObject.pluginResource.id)
+        // }
+
+        const associatedMonitorIds = await getAssociatedMonitorIds(embeddable.vis.id);
+
+        console.log('monitorIds');
+        console.log(associatedMonitorIds);
 
         let mons;
 
+        const httpClient = getClient();
         const params = {
-          query: {
-            query: {
-              match_all: {}
-            },
-          },
-        }
-        const response = await fetch('../api/alerting/monitors/_search', {
-          method: 'post', // Default is 'get'
-          body: JSON.stringify(params),
-          // mode: 'cors',
-          headers: new Headers({
-            'Content-Type': 'application/json',
-            'osd-xsrf': 'true'
-          })
-        })
-          .then(response => response.json())
+          from: 0,
+          size: 10000,
+          search: '',
+          sortDirection: 'desc',
+          sortField: name,
+          state: 'all'
+        };
+        const response = await httpClient.get('../api/alerting/monitors', { query: params });
+
+        // const params = {
+        //   query: {
+        //     query: {
+        //       match_all: {}
+        //     },
+        //   },
+        // }
+        // const response = await fetch('../api/alerting/monitors/_search', {
+        //   method: 'post', // Default is 'get'
+        //   body: JSON.stringify(params),
+        //   // mode: 'cors',
+        //   headers: new Headers({
+        //     'Content-Type': 'application/json',
+        //     'osd-xsrf': 'true'
+        //   })
+        // })
+        //   .then(response => response.json())
 
 
         if (response.ok) {
-          mons = _.get(response, 'resp.hits.hits', []);
+          mons = _.get(response, 'monitors', []);
 
           const parsedMonitors: any[] = [];
           mons.forEach((mon, index) => {
-            const state = mon._source.enabled ? 'enabled' : 'disabled';
-            if (!associatedMonitorIds.includes(mon._id)) {
+            const state = mon.monitor.enabled ? 'enabled' : 'disabled';
+            const latestAlert = mon.latestAlert === "--" ? undefined : mon.latestAlert;
+            // console.log(latestAlert);
+            if (!associatedMonitorIds.includes(mon.id)) {
               parsedMonitors.push({
-                name: mon._source.name,
+                name: mon.name,
                 state: state,
-                date: mon._source.last_update_time, // this is the last alert time
-                id: mon._id,
-                type: mon._source.monitor_type,
-                indexes: mon._source.inputs[0].search.indices,
+                date: latestAlert, // this is the last alert time
+                id: mon.id,
+                type: mon.monitor.monitor_type,
+                indexes: mon.monitor.inputs[0].search.indices,
                 triggers: [{ name: 'example trigger' }],
-                activeAlerts: index,
+                activeAlerts: mon.active,
               })
             }
           });

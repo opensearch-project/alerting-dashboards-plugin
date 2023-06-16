@@ -48,6 +48,8 @@ export const overlayAlertsFunction = (): OverlayAlertsExpressionFunctionDefiniti
   async fn(input, args, context): Promise<ExprVisLayers> {
     // Parsing all of the args & input
     const monitorId = get(args, 'monitorId', '');
+    console.log('args');
+    console.log(args);
     const timeRange = get(context, 'searchContext.timeRange', '') as TimeRange;
     const origVisLayers = get(input, 'layers', {
       layers: [] as VisLayers,
@@ -79,6 +81,8 @@ export const overlayAlertsFunction = (): OverlayAlertsExpressionFunctionDefiniti
         message: 'The user does not have permissions to the monitor.'
       }
     const alertLayer = convertAlertsToLayer(alerts, monitorId, monitorName, error);
+    console.log('alertsLayer');
+    console.log(alertLayer);
 
     // adding the alerting layer to the list of VisLayers
     return {

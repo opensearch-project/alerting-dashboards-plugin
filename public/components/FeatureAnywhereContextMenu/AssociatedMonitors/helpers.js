@@ -34,7 +34,13 @@ export const useColumns = ({ onUnlink, onEdit }) => {
         sortable: true,
         truncateText: true,
         width: '50%',
-        render: (date) => new Intl.DateTimeFormat('default', dateOptionsLong).format(date),
+        render: (date) => {
+          if (date) {
+            return new Intl.DateTimeFormat('default', dateOptionsLong).format(date);
+          } else {
+            return '-';
+          }
+        },
       },
       {
         name: 'Actions',

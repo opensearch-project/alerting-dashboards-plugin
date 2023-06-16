@@ -145,6 +145,42 @@ export const prepareTriggers = ({
   return { triggers: updatedTriggers, ui_metadata: updatedUiMetadata };
 };
 
+// export const createMonitor = async ({
+//   monitor,
+//   formikBag,
+//   httpClient,
+//   notifications,
+//   history,
+//   onSuccess,
+// }) => {
+//   const { setSubmitting } = formikBag;
+//
+//   try {
+//     const resp = await httpClient.post('../api/alerting/monitors', {
+//       body: JSON.stringify(monitor),
+//     });
+//     setSubmitting(false);
+//     const {
+//       ok,
+//       resp: { _id },
+//     } = resp;
+//     if (ok) {
+//       notifications.toasts.addSuccess(`Monitor "${monitor.name}" successfully created.`);
+//       history.push(`/monitors/${_id}`);
+//
+//       if (onSuccess) {
+//         onSuccess({ monitorId: _id });
+//       }
+//     } else {
+//       console.log('Failed to create:', resp);
+//       backendErrorNotification(notifications, 'create', 'monitor', resp.resp);
+//     }
+//   } catch (err) {
+//     console.error(err);
+//     setSubmitting(false);
+//   }
+// }
+
 export const create = async ({
   monitor,
   formikBag,
@@ -165,11 +201,19 @@ export const create = async ({
       resp: { _id },
     } = resp;
     if (ok) {
-      notifications.toasts.addSuccess(`Monitor "${monitor.name}" successfully created.`);
+      // if (associatedVis) {
+      //   notifications.toasts.addSuccess({
+      //     title: `The ${monitor.name} is associated with the ${associatedVis.title} visualization`,
+      //     text: 'The alert appears on the visualization when an alarm is triggered',
+      //   });
+      // } else {
+      //   notifications.toasts.addSuccess(`Monitor "${monitor.name}" successfully created.`);
+      // }
+      // notifications.toasts.addSuccess(`Monitor "${monitor.name}" successfully created.`);
       history.push(`/monitors/${_id}`);
 
       if (onSuccess) {
-        onSuccess({ monitorId: _id });
+        onSuccess({ monitor: { _id, ...monitor } });
       }
     } else {
       console.log('Failed to create:', resp);

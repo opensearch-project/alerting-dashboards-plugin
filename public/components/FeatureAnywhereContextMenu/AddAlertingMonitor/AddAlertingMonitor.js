@@ -26,7 +26,10 @@ import {
   getInitialValues,
   submit,
 } from '../../../pages/CreateMonitor/containers/CreateMonitor/utils/helpers';
-import { createSavedObjectAssociation } from '../../../utils/savedObjectHelper';
+import {
+  createSavedObjectAssociation,
+  validateAssociationIsAllow,
+} from '../../../utils/savedObjectHelper';
 import { SEARCH_TYPE } from '../../../utils/constants';
 
 function AddAlertingMonitor({
@@ -48,7 +51,7 @@ function AddAlertingMonitor({
   };
   const setFlyout = () => null;
   const { notifications, http: httpClient } = core;
-  const title = embeddable.getTitle();
+  const title = embeddable.vis.title;
   const timeField = embeddable.vis?.data?.aggs?.aggs?.[1]?.params?.field?.displayName;
   const searchType = flyoutMode === 'adMonitor' ? SEARCH_TYPE.AD : '';
   const initialValues = useMemo(
@@ -56,26 +59,59 @@ function AddAlertingMonitor({
       getInitialValues({ ...history, title, index, timeField, flyoutMode, searchType, detectorId }),
     []
   );
-  const onCreate = (values, formikBag) =>
-    submit({
-      values,
-      formikBag,
-      history,
-      updateMonitor: () => null,
-      notifications,
-      httpClient,
-      onSuccess: async ({ monitorId }) => {
-        await createSavedObjectAssociation(monitorId, embeddable);
-        closeFlyout();
-      },
-    });
-  const onAssociateExisting = async () => {
-    // create saved object or dispatch an event that will create the obj
-    const res = await createSavedObjectAssociation(selectedMonitorId, embeddable);
-
-    if (res) {
+  const onCreate = async (values, formikBag) => {
+    // Get setting if it is maxed out
+    if ((await validateAssociationIsAllow(embeddable.vis.id, true)) === true) {
+      submit({
+        values,
+        formikBag,
+        history,
+        updateMonitor: () => null,
+        notifications,
+        httpClient,
+        onSuccess: async ({ monitor }) => {
+          await createSavedObjectAssociation(monitor._id, embeddable)
+            .then((resp) => {
+              closeFlyout();
+              notifications.toasts.addSuccess({
+                title: `The ${monitor.name} is associated with the ${title} visualization`,
+                text: 'The alert appears on the visualization when an alarm is triggered',
+              });
+            })
+            .catch((error) => {
+              closeFlyout();
+              notifications.toasts.addDanger(
+                `Monitor "${monitor.name}" failed to associate with the ${title} visualization, but was created successfully. Failed due to ${error.message}.`
+              );
+            });
+        },
+      });
+    } else {
       closeFlyout();
     }
+  };
+  const onAssociateExisting = async () => {
+    const monitorName = _.get(
+      monitors.find((monitor) => monitor.id === selectedMonitorId),
+      'name',
+      '{Failed to retrieve monitor name}'
+    );
+
+    // create saved object or dispatch an event that will create the obj
+    await createSavedObjectAssociation(selectedMonitorId, embeddable)
+      .then((resp) => {
+        closeFlyout();
+        notifications.toasts.addSuccess({
+          title: `The ${monitorName} is associated with the ${title} visualization`,
+          text: 'The alert appears on the visualization when an alarm is triggered',
+        });
+      })
+      .catch((error) => {
+        closeFlyout();
+        notifications.toasts.addDanger(
+          `Monitor "${monitorName}" failed to associate with the ${title} visualization due to ${error.message}.`
+        );
+      });
   };
   const onSubmit = async ({ handleSubmit, validateForm }) => {
     if (['create', 'adMonitor'].includes(flyoutMode)) {

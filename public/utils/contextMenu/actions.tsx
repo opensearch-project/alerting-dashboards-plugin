@@ -103,7 +103,7 @@ export const getActions = ({ core, plugins }) =>
       order: 98,
       onExecute: () => {
         window.open(
-          'https://opensearch.org/docs/latest/monitoring-plugins/alerting/index/',
+          'https://opensearch.org/docs/latest/observing-your-data/alerting/dashboards-alerting/',
           '_blank'
         );
       },

@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
 import _ from 'lodash';
 import { getAugmentVisSavedObjs, SavedObjectLoaderAugmentVis, ISavedAugmentVis } from '../../../../../src/plugins/vis_augmenter/public'
-import { getSavedAugmentVisLoader, getUISettings } from '../../services';
-import { getAlertingAugmentVisSavedObjs } from '../savedObjectHelper';
+import { getSavedAugmentVisLoader, getUISettings, getClient } from '../../services';
+import { getAssociatedMonitorIds } from '../savedObjectHelper';
 
 export const stateToLabel = {
   enabled: { label: 'Enabled', color: 'success' },
@@ -16,71 +16,44 @@ export const useMonitors = (embeddable) => {
     const getMonitors = async () => {
 
       try {
-        const associatedObjects = await getAlertingAugmentVisSavedObjs(embeddable.vis.id);
-        const monitorIds: string[] = [];
-        for (const associatedObject of associatedObjects) {
-          monitorIds.push(associatedObject.pluginResource.id);
-        }
+        const alertingMonitorIds = await getAssociatedMonitorIds(embeddable.vis.id);
+        console.log('monitorIds2');
+        console.log(alertingMonitorIds);
 
         let mons
 
+        const httpClient = getClient();
         const params = {
-          query: {
-            query: {
-              ids: {
-                values: monitorIds,
-              },
-            },
-          },
-        }
-        const monitorResponse = await fetch('../api/alerting/monitors/_search', {
-          method: 'post', // Default is 'get'
-          body: JSON.stringify(params),
-          headers: new Headers({
-            'Content-Type': 'application/json',
-            'osd-xsrf': 'true'
-          })
-        })
-          .then(response => response.json())
+          from: 0,
+          size: 10000,
+          search: '',
+          sortDirection: 'desc',
+          sortField: name,
+          state: 'all',
+          monitorIds: alertingMonitorIds
+        };
+        const monitorResponse = await httpClient.get('../api/alerting/monitors', { query: params });
 
         if (monitorResponse.ok) {
-          mons = _.get(monitorResponse, 'resp.hits.hits', []);
+          mons = _.get(monitorResponse, 'monitors', []);
 
           const parsedMonitors: any[] = [];
 
           mons.forEach((mon, index) => {
 
-            // Need to update this to get all the info correctly. Make a helper or new dashboard api
-            // const alertParams = {
-            //   size: 1,
-            //   sortField: 'start_time',
-            //   sortDirection: 'desc',
-            //   monitorIds: mon._id,
-            // };
-            //
-            // const alertsResponse = await fetch('../api/alerting/alerts', {
-            //   body: JSON.stringify(alertParams),
-            //   headers: new Headers({
-            //     'Content-Type': 'application/json',
-            //     'osd-xsrf': 'true'
-            //   })
-            // })
-            //   .then(response => response.json())
-            //
-            // console.log('alertsResponse');
-            // console.log(alertsResponse);
-
-
-            const state = mon._source.enabled ? 'enabled' : 'disabled';
+            const state = mon.monitor.enabled ? 'enabled' : 'disabled';
+            const latestAlert = mon.latestAlert === "--" ? undefined : mon.latestAlert;
+            // console.log('latestAlert');
+            // console.log(latestAlert);
             parsedMonitors.push({
-              name: mon._source.name,
+              name: mon.name,
               state: state,
-              date: mon._source.last_update_time, // this is the last alert time
-              id: mon._id,
-              type: mon._source.monitor_type,
-              indexes: mon._source.inputs[0].search.indices,
+              date: latestAlert, // this is the last alert time
+              id: mon.id,
+              type: mon.monitor.monitor_type,
+              indexes: mon.monitor.inputs[0].search.indices,
               triggers: [{ name: 'example trigger' }],
-              activeAlerts: index,
+              activeAlerts: mon.active,
             })
           });
 
