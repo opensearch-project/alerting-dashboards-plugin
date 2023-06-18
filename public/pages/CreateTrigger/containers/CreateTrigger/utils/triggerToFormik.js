@@ -35,6 +35,8 @@ export function triggerDefinitionToFormik(trigger, monitor) {
       return bucketLevelTriggerToFormik(trigger, monitor);
     case MONITOR_TYPE.DOC_LEVEL:
       return documentLevelTriggerToFormik(trigger, monitor);
+    case MONITOR_TYPE.COMPOSITE_LEVEL:
+      return compositeTriggerToFormik(trigger, monitor);
     default:
       return queryLevelTriggerToFormik(trigger, monitor);
   }
@@ -202,6 +204,30 @@ export function documentLevelTriggerToFormik(trigger, monitor) {
     minTimeBetweenExecutions,
     rollingWindowSize,
   } = trigger[TRIGGER_TYPE.DOC_LEVEL];
+  const triggerUiMetadata = _.get(monitor, `ui_metadata.triggers[${name}]`);
+  return {
+    ..._.cloneDeep(FORMIK_INITIAL_TRIGGER_VALUES),
+    id,
+    name,
+    severity,
+    script,
+    actions: getExecutionPolicyActions(actions),
+    minTimeBetweenExecutions,
+    rollingWindowSize,
+    triggerConditions: triggerUiMetadata,
+  };
+}
+
+export function compositeTriggerToFormik(trigger, monitor) {
+  const {
+    id,
+    name,
+    severity,
+    condition: { script },
+    actions,
+    minTimeBetweenExecutions,
+    rollingWindowSize,
+  } = trigger[TRIGGER_TYPE.COMPOSITE_LEVEL];
   const triggerUiMetadata = _.get(monitor, `ui_metadata.triggers[${name}]`);
   return {
     ..._.cloneDeep(FORMIK_INITIAL_TRIGGER_VALUES),

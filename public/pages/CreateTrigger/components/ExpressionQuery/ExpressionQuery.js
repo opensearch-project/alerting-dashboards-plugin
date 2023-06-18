@@ -23,6 +23,7 @@ const ExpressionQuery = ({
   const [usedExpressions, setUsedExpressions] = useState([]);
 
   useEffect(() => {
+    debugger;
     let expressions = [];
     if (value?.length) {
       let values = [...value];

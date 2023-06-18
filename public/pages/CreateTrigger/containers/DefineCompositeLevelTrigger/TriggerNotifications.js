@@ -40,7 +40,7 @@ const TriggerNotifications = ({
     setActions(newActions);
 
     getChannels().then((channels) => setOptions(channels));
-  }, []);
+  }, [triggerValues]);
 
   const getChannels = async () => {
     const hasNotificationPlugin = plugins.indexOf(OS_NOTIFICATION_PLUGIN) !== -1;

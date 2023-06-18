@@ -8,9 +8,11 @@ import { FORMIK_INITIAL_DOCUMENT_LEVEL_QUERY_VALUES, FORMIK_INITIAL_VALUES } fro
 import { SEARCH_TYPE, INPUTS_DETECTOR_ID, MONITOR_TYPE } from '../../../../../utils/constants';
 import { OPERATORS_MAP } from '../../../components/MonitorExpressions/expressions/utils/constants';
 import {
+  COMPOSITE_INPUT_FIELD,
   DOC_LEVEL_INPUT_FIELD,
   QUERY_STRING_QUERY_OPERATORS,
 } from '../../../components/DocumentLevelMonitorQueries/utils/constants';
+import { formikToCompositeInput, formikToCompositeUiMetadata } from './formikToMonitor';
 
 // Convert Monitor JSON to Formik values used in UI forms
 export default function monitorToFormik(monitor) {
@@ -38,6 +40,8 @@ export default function monitorToFormik(monitor) {
         };
       case MONITOR_TYPE.DOC_LEVEL:
         return docLevelInputToFormik(monitor);
+      case MONITOR_TYPE.COMPOSITE_LEVEL:
+        return { inputs: _.get(monitor, 'inputs[0].composite_input.sequence.delegates', []) };
       default:
         return {
           index: indicesToFormik(inputs[0].search.indices),

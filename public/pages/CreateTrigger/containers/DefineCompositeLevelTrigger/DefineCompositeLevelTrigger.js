@@ -93,7 +93,6 @@ class DefineCompositeLevelTrigger extends Component {
           monitor_id: monitor.value,
         }))
       : [];
-
     return (
       <ContentPanel
         title={'Alert trigger'}

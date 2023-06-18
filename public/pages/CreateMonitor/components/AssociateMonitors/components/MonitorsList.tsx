@@ -20,9 +20,10 @@ import {
   FormikFormRow,
 } from '../../../../../components/FormControls';
 
-const MonitorsList = ({ monitors = [], options = [] }) => {
+const MonitorsList = ({ monitors = [], options = [], values }) => {
   const [selectedOptions, setSelectedOptions] = useState({});
   const [monitorOptions, setMonitorOptions] = useState([]);
+
   const [monitorFields, setMonitorFields] = useState<number[]>(
     _.reduce(
       monitors.length ? monitors : [0, 1],
@@ -41,9 +42,11 @@ const MonitorsList = ({ monitors = [], options = [] }) => {
     }));
     setMonitorOptions(newOptions);
 
-    let newSelected = monitors.length ? monitors : [];
-    setSelectedOptions(Object.assign({}, newSelected));
-  }, []);
+    // let newSelected = monitors.length ? monitors : [];
+    // setSelectedOptions(Object.assign({}, newSelected));
+
+    // _.set(values, 'associatedMonitors', Object.values(newSelected));
+  }, [monitors, options, values]);
 
   const onChange = (options, monitorIdx, form) => {
     let newSelected = {
@@ -72,7 +75,6 @@ const MonitorsList = ({ monitors = [], options = [] }) => {
   const onBlur = (monitorIdx, form) => {
     form.setFieldTouched('associatedMonitors', true);
     form.setFieldTouched(`associatedMonitor_${monitorIdx}`, true);
-
     form.setFieldValue('associatedMonitors', Object.values(selectedOptions));
     form.setFieldError('associatedMonitors', validate());
   };

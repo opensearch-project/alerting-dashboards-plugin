@@ -9,7 +9,7 @@ export const TRIGGER_TYPE = {
   ALERT_TRIGGER: 'alerting_trigger',
   QUERY_LEVEL: 'query_level_trigger',
   DOC_LEVEL: 'document_level_trigger',
-  COMPOSITE_LEVEL: 'composite_level_trigger',
+  COMPOSITE_LEVEL: 'chained_alert_trigger',
 };
 
 export const FORMIK_INITIAL_BUCKET_SELECTOR_VALUES = {

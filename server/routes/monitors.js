@@ -70,6 +70,18 @@ export default function (services, router) {
 
   router.get(
     {
+      path: '/api/alerting/workflows/{id}',
+      validate: {
+        params: schema.object({
+          id: schema.string(),
+        }),
+      },
+    },
+    monitorService.getWorkflow
+  );
+
+  router.get(
+    {
       path: '/api/alerting/monitors/{id}',
       validate: {
         params: schema.object({

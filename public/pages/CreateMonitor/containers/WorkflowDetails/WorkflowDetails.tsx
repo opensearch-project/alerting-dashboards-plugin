@@ -9,7 +9,7 @@ import Schedule from '../../components/Schedule';
 import AssociateMonitors from '../../components/AssociateMonitors/AssociateMonitors';
 import { EuiSpacer } from '@elastic/eui';
 
-const WorkflowDetails = ({ isAd, isComposite, httpClient, history }) => {
+const WorkflowDetails = ({ isAd, isComposite, httpClient, history, values }) => {
   const [selectedMonitors, setSelectedMonitors] = useState([]);
   const [monitorOptions, setMonitorOptions] = useState([]);
 
@@ -17,7 +17,7 @@ const WorkflowDetails = ({ isAd, isComposite, httpClient, history }) => {
     const response = await httpClient.get('../api/alerting/monitors', {
       query: {
         from: 0,
-        size: 5000,
+        size: 1000,
         search: '',
         sortField: 'name',
         sortDirection: 'desc',
@@ -37,8 +37,15 @@ const WorkflowDetails = ({ isAd, isComposite, httpClient, history }) => {
   useEffect(() => {
     getMonitors().then((monitors) => {
       setMonitorOptions(monitors);
+
+      // const getMonitorById = (id) => monitors.find((mon) => mon.monitor_id === id);
+      // const newSelectedMonitors = values.inputs.map((monitor) => ({
+      //   value: monitor.monitor_id,
+      //   label: getMonitorById(monitor.monitor_id)?.monitor_name,
+      // }));
+      // setSelectedMonitors(newSelectedMonitors);
     });
-  }, []);
+  }, [values]);
 
   return (
     <ContentPanel
@@ -59,6 +66,7 @@ const WorkflowDetails = ({ isAd, isComposite, httpClient, history }) => {
             monitors={selectedMonitors}
             options={monitorOptions}
             history={history}
+            values={values}
           />
         </Fragment>
       )}

@@ -306,6 +306,7 @@ export default class CreateMonitor extends Component {
               <EuiSpacer />
 
               <WorkflowDetails
+                values={values}
                 history={history}
                 isAd={values.searchType === SEARCH_TYPE.AD}
                 isComposite={values.monitor_type === MONITOR_TYPE.COMPOSITE_LEVEL}

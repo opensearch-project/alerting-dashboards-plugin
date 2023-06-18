@@ -41,21 +41,39 @@ const NotificationConfigDialog = ({
     ...initialActionValues,
   });
 
-  console.log('Initial actions', action);
   const sendTestMessage = async (index) => {
-    let testTrigger = _.cloneDeep(
-      formikToTrigger(triggerValues, monitor.ui_metadata)[triggerIndex]
-    );
+    const mon = _.cloneDeep(monitor);
+    const tv = _.cloneDeep(triggerValues);
+    let testTrigger = _.cloneDeep(formikToTrigger(tv, mon.ui_metadata)[triggerIndex]);
 
+    testTrigger = {
+      ...testTrigger,
+      name: _.get(tv, 'triggerDefinitions[0].name', ''),
+      severity: _.get(tv, 'triggerDefinitions[0].severity', ''),
+    };
     const action = _.get(testTrigger, `chained_alert_trigger.actions[${index}]`);
     const condition = {
       ..._.get(testTrigger, 'chained_alert_trigger.condition'),
       script: { lang: 'painless', source: 'return true' },
     };
-    _.set(testTrigger, 'actions', [action]);
-    _.set(testTrigger, 'condition', condition);
 
-    const testMonitor = { ...monitor, triggers: [{ ...testTrigger }] };
+    let triggers = _.cloneDeep(testTrigger);
+
+    delete triggers.chained_alert_trigger;
+    delete triggers.min_time_between_executions;
+    delete triggers.rolling_window_size;
+
+    _.set(triggers, 'actions', [action]);
+    _.set(triggers, 'condition', condition);
+
+    const testMonitor = { ...monitor, triggers: [{ ...triggers }] };
+
+    // clean up actions and triggers
+    delete testMonitor.enabled_time;
+    delete testMonitor.last_update_time;
+    delete testMonitor.schema_version;
+    delete testMonitor.ui_metadata.composite_input;
+    delete testMonitor.ui_metadata.monitor_type;
 
     try {
       const response = await httpClient.post('../api/alerting/monitors/_execute', {
@@ -78,7 +96,6 @@ const NotificationConfigDialog = ({
     }
   };
 
-  console.log('ACTION', action);
   return (
     <EuiModal onClose={() => closeModal()}>
       <EuiModalHeader>

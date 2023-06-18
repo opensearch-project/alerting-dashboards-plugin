@@ -72,6 +72,8 @@ export default class MonitorDetails extends Component {
     };
   }
 
+  isWorkflow = () => new URLSearchParams(this.props.location.search).get('type') === 'workflow';
+
   componentDidMount() {
     this.getMonitor(this.props.match.params.monitorId);
   }
@@ -112,7 +114,7 @@ export default class MonitorDetails extends Component {
   getMonitor = (id) => {
     const { httpClient } = this.props;
     httpClient
-      .get(`../api/alerting/monitors/${id}`)
+      .get(`../api/alerting/${this.isWorkflow() ? 'workflows' : 'monitors'}/${id}`)
       .then((resp) => {
         const {
           ok,
@@ -450,9 +452,8 @@ export default class MonitorDetails extends Component {
             <EuiTabs>{this.renderTableTabs()}</EuiTabs>
             {this.state.tabContent}
           </div>
-        ) : (
-          this.renderAlertsTable()
-        )}
+        ) : // this.renderAlertsTable()
+        null}
 
         {isJsonModalOpen && (
           <EuiOverlayMask>

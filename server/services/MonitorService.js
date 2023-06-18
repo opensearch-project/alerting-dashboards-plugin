@@ -146,6 +146,40 @@ export default class MonitorService {
     }
   };
 
+  getWorkflow = async (context, req, res) => {
+    try {
+      const { id } = req.params;
+      const params = { monitorId: id };
+      const { callAsCurrentUser } = await this.esDriver.asScoped(req);
+      const getResponse = await callAsCurrentUser('alerting.getWorkflow', params);
+      const monitor = _.get(getResponse, 'workflow', null);
+      const version = _.get(getResponse, '_version', null);
+      const ifSeqNo = _.get(getResponse, '_seq_no', null);
+      const ifPrimaryTerm = _.get(getResponse, '_primary_term', null);
+      monitor.monitor_type = monitor.workflow_type;
+
+      return res.ok({
+        body: {
+          ok: true,
+          resp: monitor,
+          activeCount: 0,
+          dayCount: 0,
+          version,
+          ifSeqNo,
+          ifPrimaryTerm,
+        },
+      });
+    } catch (err) {
+      console.error('Alerting - MonitorService - getMonitor:', err);
+      return res.ok({
+        body: {
+          ok: false,
+          resp: err.message,
+        },
+      });
+    }
+  };
+
   updateMonitor = async (context, req, res) => {
     try {
       const { id } = req.params;

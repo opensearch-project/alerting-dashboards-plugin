@@ -9,6 +9,7 @@ import { FormikComboBox } from '../../../../components/FormControls';
 import NotificationConfigDialog from './NotificationConfigDialog';
 import _ from 'lodash';
 import { FORMIK_INITIAL_ACTION_VALUES } from '../../utils/constants';
+import { NOTIFY_OPTIONS_VALUES } from '../../components/Action/actions/Message';
 
 const TriggerNotificationsContent = ({
   channel,
@@ -32,6 +33,9 @@ const TriggerNotificationsContent = ({
       subject_template: {
         lang: 'mustache',
         source: 'Monitor {{ctx.monitor.name}} triggered an alert {{ctx.trigger.name}}',
+      },
+      action_execution_policy: {
+        action_execution_scope: NOTIFY_OPTIONS_VALUES.PER_ALERT,
       },
     });
   };
