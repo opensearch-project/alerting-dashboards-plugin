@@ -1,5 +1,6 @@
 import React, { useCallback, useState } from 'react';
 import {
+  EuiFlyout,
   EuiFlyoutHeader,
   EuiTitle,
   EuiText,
@@ -104,27 +105,29 @@ const AssociatedMonitors = ({ embeddable, closeFlyout, setFlyoutMode, monitors }
           isListLoading={!monitors}
         />
       ) : null}
-      <EuiFlyoutHeader hasBorder>
-        <EuiTitle>
-          <h2 id="associated-monitors__title">Associated monitors</h2>
-        </EuiTitle>
-      </EuiFlyoutHeader>
-      <EuiFlyoutBody>
-        <EuiFlexGroup justifyContent="spaceBetween" alignItems="center">
-          <EuiFlexItem>
-            <EuiText>
-              <h4>Visualization: {title}</h4>
-            </EuiText>
-          </EuiFlexItem>
-          <EuiFlexItem grow={false}>
-            <EuiButton iconType="link" fill onClick={() => setFlyoutMode('existing')}>
-              Associate a monitor
-            </EuiButton>
-          </EuiFlexItem>
-        </EuiFlexGroup>
-        <EuiSpacer size="l" />
-        <EuiInMemoryTable {...tableProps} />
-      </EuiFlyoutBody>
+      <EuiFlyout ownFocus size="m" paddingSize="m" onClose={closeFlyout}>
+        <EuiFlyoutHeader hasBorder>
+          <EuiTitle>
+            <h2 id="associated-monitors__title">Associated monitors</h2>
+          </EuiTitle>
+        </EuiFlyoutHeader>
+        <EuiFlyoutBody>
+          <EuiFlexGroup justifyContent="spaceBetween" alignItems="center">
+            <EuiFlexItem>
+              <EuiText>
+                <h4>Visualization: {title}</h4>
+              </EuiText>
+            </EuiFlexItem>
+            <EuiFlexItem grow={false}>
+              <EuiButton iconType="link" fill onClick={() => setFlyoutMode('existing')}>
+                Associate a monitor
+              </EuiButton>
+            </EuiFlexItem>
+          </EuiFlexGroup>
+          <EuiSpacer size="l" />
+          <EuiInMemoryTable {...tableProps} />
+        </EuiFlyoutBody>
+      </EuiFlyout>
     </div>
   );
 };

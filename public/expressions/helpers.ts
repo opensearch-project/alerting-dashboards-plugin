@@ -25,15 +25,11 @@ export const getAlerts = async (
   };
 
   const resp = await getClient().get('/api/alerting/alerts', { query: params });
-  console.log('response for alerts');
-  console.log(resp);
 
   if (resp.ok) {
     const filteredAlerts = resp.alerts.filter(
       (alert) => alert.start_time >= startTime && alert.start_time <= endTime
     );
-    console.log('filteredAlerts');
-    console.log(filteredAlerts);
     return filteredAlerts;
   } else {
     console.error('Error getting alerts to overlay:', resp);

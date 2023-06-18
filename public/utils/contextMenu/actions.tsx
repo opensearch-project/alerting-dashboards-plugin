@@ -42,9 +42,6 @@ export const openContainerInFlyout = async ({
   detectorId?: string;
 }) => {
   const clonedEmbeddable = await _.cloneDeep(embeddable);
-  console.log('embeddable');
-  console.log(embeddable);
-  console.log(clonedEmbeddable);
   const services = await core.getStartServices();
   const openFlyout = services[0].overlays.openFlyout;
   const overlay = openFlyout(
@@ -71,6 +68,8 @@ const grouping: Action['grouping'] = [
     id: ALERTING_ACTION_CONTEXT_GROUP_ID,
     getDisplayName: () => 'Alerting',
     getIconType: () => 'bell',
+    category: 'vis_augmenter',
+    order: 30,
   },
 ];
 

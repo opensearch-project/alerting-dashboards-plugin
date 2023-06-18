@@ -64,7 +64,7 @@ function CreateNew({ embeddable, core, flyoutMode, formikProps, history, setFlyo
       });
     }
 
-    return { isShowingErrors, errorList: [...errorList] };
+    return { isShowingErrors: errorList.size !== 0, errorList: [...errorList] };
   }, [errors, isSubmitting, isValid]);
 
   // On load

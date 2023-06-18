@@ -280,6 +280,7 @@ class DefineTrigger extends Component {
                 }}
               >
                 <EuiFlexGroup gutterSize="m">
+                  {/*Change this to <EuiFlexItem grow style={{ maxWidth: 400 }}> since max eui row input is 400px*/}
                   <EuiFlexItem grow style={{ width: 150 }}>
                     {nameField}
                   </EuiFlexItem>
