@@ -5,7 +5,7 @@
 
 import React, { useState } from 'react';
 import _ from 'lodash';
-import { EuiPopover, EuiBadge, EuiPopoverTitle } from '@elastic/eui';
+import { EuiPopover, EuiBadge, EuiPopoverTitle, EuiSpacer } from '@elastic/eui';
 import MetricPopover from './MetricPopover';
 
 export default function MetricItem(
@@ -18,14 +18,22 @@ export default function MetricItem(
   };
 
   if (flyoutMode) {
+    let metricText = `${aggregation.aggregationType.toUpperCase()} OF ${aggregation.fieldName}`;
+    if (_.isEmpty(aggregation.fieldName)) {
+      metricText = 'COUNT OF documents';
+    }
     return (
-      <MetricPopover
-        options={fieldOptions}
-        closePopover={closePopover}
-        expressionWidth={expressionWidth}
-        index={index}
-        flyoutMode={flyoutMode}
-      />
+      <div>
+        <EuiBadge color="hollow">{metricText}</EuiBadge>
+        <EuiSpacer size="s" />
+        <MetricPopover
+          options={fieldOptions}
+          closePopover={closePopover}
+          expressionWidth={expressionWidth}
+          index={index}
+          flyoutMode={flyoutMode}
+        />
+      </div>
     );
   }
 

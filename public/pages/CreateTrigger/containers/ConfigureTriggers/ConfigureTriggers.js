@@ -377,8 +377,7 @@ class ConfigureTriggers extends React.Component {
     const { ContentPanelStructure } = this.state;
     const numOfTriggers = _.get(triggerValues, 'triggerDefinitions', []).length;
     const displayAddTriggerButton = numOfTriggers > 0;
-    const disableAddTriggerButton =
-      _.get(triggerValues, 'triggerDefinitions', []).length >= MAX_TRIGGERS;
+    const disableAddTriggerButton = numOfTriggers >= MAX_TRIGGERS;
     const monitorType = monitorValues.monitor_type;
 
     return (
@@ -390,7 +389,7 @@ class ConfigureTriggers extends React.Component {
         horizontalRuleClassName={'accordion-horizontal-rule'}
       >
         {this.renderTriggers(triggerArrayHelpers)}
-        {flyoutMode && (
+        {flyoutMode && !disableAddTriggerButton && (
           <AddTriggerButton
             arrayHelpers={triggerArrayHelpers}
             disabled={disableAddTriggerButton}

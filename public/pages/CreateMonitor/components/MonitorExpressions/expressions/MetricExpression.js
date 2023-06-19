@@ -101,13 +101,7 @@ class MetricExpression extends Component {
 
     return (
       <div id="aggregations">
-        {flyoutMode && (
-          <>
-            <EuiBadge color="hollow">COUNT OF documents</EuiBadge>
-            <EuiSpacer size="s" />
-            {this.renderFieldItems(arrayHelpers, fieldOptions, expressionWidth)}
-          </>
-        )}
+        {flyoutMode && <>{this.renderFieldItems(arrayHelpers, fieldOptions, expressionWidth)}</>}
         {!flyoutMode && (
           <>
             <EuiText size="xs">
