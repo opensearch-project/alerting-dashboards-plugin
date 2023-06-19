@@ -69,6 +69,7 @@ const MonitorsList = ({ monitors = [], options = [], values }) => {
     newMonitorOptions.forEach((mon) => {
       mon.disabled = isSelected(selected, mon);
     });
+
     setMonitorOptions([...newMonitorOptions]);
   };
 
@@ -83,7 +84,7 @@ const MonitorsList = ({ monitors = [], options = [], values }) => {
     let isSelected = false;
     for (const key in selected) {
       if (selected.hasOwnProperty(key)) {
-        if (_.isEqual(selected[key], monitor)) {
+        if (selected[key].value === monitor.value) {
           isSelected = true;
           break;
         }
