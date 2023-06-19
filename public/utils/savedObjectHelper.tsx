@@ -20,7 +20,6 @@ import {
 
 export const validateAssociationIsAllow = async (visId, sendDangerToast = false) => {
   const uiSettings = getUISettings();
-  const loader = getSavedAugmentVisLoader();
   const notifications = getNotifications();
 
   const isAugmentationEnabled = uiSettings.get(PLUGIN_AUGMENTATION_ENABLE_SETTING);
@@ -34,6 +33,24 @@ export const validateAssociationIsAllow = async (visId, sendDangerToast = false)
   }
 
   const maxAssociatedCount = uiSettings.get(PLUGIN_AUGMENTATION_MAX_OBJECTS_SETTING);
+  const currentAssociatedCount = await getCountOfAssociatedObjects(visId);
+  if (maxAssociatedCount <= currentAssociatedCount) {
+    if (sendDangerToast) {
+      notifications.toasts.addDanger(
+        `Cannot create the monitor and associate it to the visualization due to the limit of the max
+            amount of associated plugin resources (${maxAssociatedCount}) with
+            ${savedObjectsForThisVisualization.length} associated to the visualization`
+      );
+    }
+    return false;
+  } else {
+    return true;
+  }
+};
+
+export const getCountOfAssociatedObjects = async (visId) => {
+  const loader = getSavedAugmentVisLoader();
+
   return await loader.findAll().then(async (resp) => {
     if (resp !== undefined) {
       const savedAugmentObjects = get(resp, 'hits', []);
@@ -41,19 +58,7 @@ export const validateAssociationIsAllow = async (visId, sendDangerToast = false)
       const savedObjectsForThisVisualization = savedAugmentObjects.filter(
         (savedObj) => get(savedObj, 'visId', '') === visId
       );
-      const exceedThreshold = maxAssociatedCount <= savedObjectsForThisVisualization.length;
-      if (exceedThreshold) {
-        if (sendDangerToast) {
-          notifications.toasts.addDanger(
-            `Cannot create the monitor and associate it to the visualization due to the limit of the max
-            amount of associated plugin resources (${maxAssociatedCount}) with
-            ${savedObjectsForThisVisualization.length} associated to the visualization`
-          );
-         }
-        return false;
-      } else {
-        return true;
-      }
+      return savedObjectsForThisVisualization.length;
     }
   });
 };
@@ -95,8 +100,6 @@ export const getAlertingAugmentVisSavedObjs = async (
   const loader = getSavedAugmentVisLoader();
   const uiSettings = getUISettings();
   const savedObjects = await getAugmentVisSavedObjs(visId, loader, uiSettings);
-  console.log('savedObject');
-  console.log(savedObjects);
   return savedObjects.filter(
     (savedObject) => savedObject.visLayerExpressionFn.name === 'overlay_alerts'
   );
@@ -104,8 +107,6 @@ export const getAlertingAugmentVisSavedObjs = async (
 
 export const getAssociatedMonitorIds = async (visId: string): Promise<string[]> => {
   const savedObjects = await getAlertingAugmentVisSavedObjs(visId);
-  console.log('savedObject2');
-  console.log(savedObjects);
   const associatedMonitorIds: string[] = [];
   for (const associatedObject of savedObjects) {
     associatedMonitorIds.push(associatedObject.pluginResource.id);

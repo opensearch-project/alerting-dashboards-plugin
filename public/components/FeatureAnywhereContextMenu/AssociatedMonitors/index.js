@@ -3,6 +3,6 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import AssociatedMonitors from './AssociatedMonitors';
+import AssociatedMonitors from './AssociatedMonitors.tsx';
 
 export default AssociatedMonitors;

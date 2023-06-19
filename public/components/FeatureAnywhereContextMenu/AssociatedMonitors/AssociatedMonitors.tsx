@@ -1,5 +1,6 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useState, useEffect } from 'react';
 import {
+  EuiCallOut,
   EuiFlyout,
   EuiFlyoutHeader,
   EuiTitle,
@@ -17,8 +18,13 @@ import {
 import './styles.scss';
 import { useColumns } from './helpers';
 import { ConfirmUnlinkDetectorModal } from './ConfirmUnlinkModal';
-import { deleteAlertingAugmentVisSavedObj } from '../../../utils/savedObjectHelper';
-import { getNotifications } from '../../../services';
+import {
+  deleteAlertingAugmentVisSavedObj, getAssociatedMonitorIds,
+  getCountOfAssociatedObjects,
+  validateAssociationIsAllow,
+} from '../../../utils/savedObjectHelper';
+import { getClient, getNotifications, getSavedAugmentVisLoader, getUISettings } from '../../../services';
+import { PLUGIN_AUGMENTATION_MAX_OBJECTS_SETTING } from '../../../utils/constants';
 
 const AssociatedMonitors = ({ embeddable, closeFlyout, setFlyoutMode, monitors }) => {
   const title = embeddable.vis.title;
@@ -47,7 +53,9 @@ const AssociatedMonitors = ({ embeddable, closeFlyout, setFlyoutMode, monitors }
         text:
           "The monitor's alerts do not automatically appear on the visualization. Refresh your dashboard to update the visualization.",
       });
-      setAllMonitors(monitors.filter((monitor) => monitor.id !== modalState.monitor.id));
+      // Need to remove the monitor the below does not work.
+      // maybe need to export
+      // setAllMonitors(monitors.filter((monitor) => monitor.id !== modalState.monitor.id));
     } catch (e) {
       notifications.toasts.addDanger(
         `Failed to remove the association between the "${modalState.monitor.name}" monitor with the ${title} visualization. Failed due to ${e.message}.`
@@ -95,6 +103,22 @@ const AssociatedMonitors = ({ embeddable, closeFlyout, setFlyoutMode, monitors }
     setModalState(undefined);
   }, []);
 
+  //TODO: move this to Containers and pass this in. Also make sure its exportable to be updated
+  const [isAssociateAllowed, setIsAssociateAllowed] = useState<any[] | null>();
+
+  useEffect(() => {
+    const getIsAssociateAllowed = async () => {
+      const isAllowed = await validateAssociationIsAllow(embeddable.vis.id);
+      setIsAssociateAllowed(isAllowed);
+    };
+
+    getIsAssociateAllowed();
+  }, []);
+
+  const uiSettings = getUISettings();
+  const maxAssociatedCount = uiSettings.get(PLUGIN_AUGMENTATION_MAX_OBJECTS_SETTING);
+  const limitReachedTitle = `Limit reached. No more than ${maxAssociatedCount} objects can be associated with a visualizations.`
+
   return (
     <div className="associated-monitors">
       {modalState ? (
@@ -111,6 +135,13 @@ const AssociatedMonitors = ({ embeddable, closeFlyout, setFlyoutMode, monitors }
             <h2 id="associated-monitors__title">Associated monitors</h2>
           </EuiTitle>
         </EuiFlyoutHeader>
+        {!isAssociateAllowed && (
+          <EuiFlyoutHeader>
+            <EuiCallOut title={limitReachedTitle} color="warning" iconType="alert">
+              Adding more objects may affect cluster performance and prevent dashboards from rendering properly. Remove associations before add new ones.
+            </EuiCallOut>
+          </EuiFlyoutHeader>
+        )}
         <EuiFlyoutBody>
           <EuiFlexGroup justifyContent="spaceBetween" alignItems="center">
             <EuiFlexItem>
@@ -119,7 +150,7 @@ const AssociatedMonitors = ({ embeddable, closeFlyout, setFlyoutMode, monitors }
               </EuiText>
             </EuiFlexItem>
             <EuiFlexItem grow={false}>
-              <EuiButton iconType="link" fill onClick={() => setFlyoutMode('existing')}>
+              <EuiButton iconType="link" isDisabled={!isAssociateAllowed} fill onClick={() => setFlyoutMode('existing')}>
                 Associate a monitor
               </EuiButton>
             </EuiFlexItem>
