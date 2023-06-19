@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   EuiButton,
   EuiSpacer,
@@ -22,6 +22,7 @@ import _ from 'lodash';
 import { formikToTrigger } from '../CreateTrigger/utils/formikToTrigger';
 import { backendErrorNotification } from '../../../../utils/helpers';
 import { checkForError } from '../ConfigureActions/ConfigureActions';
+import { TRIGGER_TYPE } from '../CreateTrigger/utils/constants';
 
 const NotificationConfigDialog = ({
   channel,
@@ -41,39 +42,53 @@ const NotificationConfigDialog = ({
     ...initialActionValues,
   });
 
+  const fieldPath = 'triggerDefinitions[0]';
+  const [initialValues, setInitialValues] = useState({});
+
+  useEffect(() => {
+    setInitialValues({
+      subject_source: _.get(
+        triggerValues,
+        `${fieldPath}actions.${actionIndex}.subject_template.source`,
+        ''
+      ),
+      message_source: _.get(
+        triggerValues,
+        `${fieldPath}actions.${actionIndex}.message_template.source`,
+        ''
+      ),
+      throttle_enabled: _.get(
+        triggerValues,
+        `${fieldPath}actions.${actionIndex}.throttle_enabled`,
+        ''
+      ),
+      throttle_value: _.get(triggerValues, `${fieldPath}actions.${actionIndex}.throttle.value`, ''),
+    });
+  }, []);
+
   const sendTestMessage = async (index) => {
-    const mon = _.cloneDeep(monitor);
-    const tv = _.cloneDeep(triggerValues);
-    let testTrigger = _.cloneDeep(formikToTrigger(tv, mon.ui_metadata)[triggerIndex]);
+    const monitorData = _.cloneDeep(monitor);
+    let testTrigger = _.cloneDeep(
+      formikToTrigger(triggerValues, monitorData.ui_metadata)[triggerIndex]
+    );
 
     testTrigger = {
       ...testTrigger,
-      name: _.get(tv, 'triggerDefinitions[0].name', ''),
-      severity: _.get(tv, 'triggerDefinitions[0].severity', ''),
+      name: _.get(triggerValues, 'triggerDefinitions[0].name', ''),
+      severity: _.get(triggerValues, 'triggerDefinitions[0].severity', ''),
     };
-    const action = _.get(testTrigger, `chained_alert_trigger.actions[${index}]`);
+    const action = _.get(testTrigger, `${TRIGGER_TYPE.COMPOSITE_LEVEL}.actions[${index}]`);
     const condition = {
-      ..._.get(testTrigger, 'chained_alert_trigger.condition'),
+      ..._.get(testTrigger, `${TRIGGER_TYPE.COMPOSITE_LEVEL}.condition`),
       script: { lang: 'painless', source: 'return true' },
     };
 
-    let triggers = _.cloneDeep(testTrigger);
+    delete testTrigger[TRIGGER_TYPE.COMPOSITE_LEVEL];
 
-    delete triggers.chained_alert_trigger;
-    delete triggers.min_time_between_executions;
-    delete triggers.rolling_window_size;
+    _.set(testTrigger, 'actions', [action]);
+    _.set(testTrigger, 'condition', condition);
 
-    _.set(triggers, 'actions', [action]);
-    _.set(triggers, 'condition', condition);
-
-    const testMonitor = { ...monitor, triggers: [{ ...triggers }] };
-
-    // clean up actions and triggers
-    delete testMonitor.enabled_time;
-    delete testMonitor.last_update_time;
-    delete testMonitor.schema_version;
-    delete testMonitor.ui_metadata.composite_input;
-    delete testMonitor.ui_metadata.monitor_type;
+    const testMonitor = { ...monitor, triggers: [{ ...testTrigger }] };
 
     try {
       const response = await httpClient.post('../api/alerting/monitors/_execute', {
@@ -96,8 +111,17 @@ const NotificationConfigDialog = ({
     }
   };
 
+  const clearConfig = () => {
+    _.set(
+      triggerValues,
+      `${fieldPath}actions.${actionIndex}.subject_template.source`,
+      initialValues.subject_source
+    );
+    closeModal();
+  };
+
   return (
-    <EuiModal onClose={() => closeModal()}>
+    <EuiModal onClose={() => clearConfig()}>
       <EuiModalHeader>
         <EuiModalHeaderTitle>
           <h1>Configure notification</h1>
@@ -120,7 +144,7 @@ const NotificationConfigDialog = ({
         />
       </EuiModalBody>
       <EuiModalFooter>
-        <EuiButton onClick={() => closeModal()}>Close</EuiButton>
+        <EuiButton onClick={() => clearConfig()}>Close</EuiButton>
         <EuiButton onClick={() => closeModal()} fill>
           Update
         </EuiButton>

@@ -231,7 +231,6 @@ export default class MonitorService {
         };
       }
 
-      const filter = [{ term: { 'monitor.type': 'monitor' } }];
       if (state !== 'all') {
         const enabled = state === 'enabled';
         filter.push({ term: { 'monitor.enabled': enabled } });
@@ -252,7 +251,6 @@ export default class MonitorService {
           ...monitorSortPageData,
           query: {
             bool: {
-              filter,
               must,
             },
           },

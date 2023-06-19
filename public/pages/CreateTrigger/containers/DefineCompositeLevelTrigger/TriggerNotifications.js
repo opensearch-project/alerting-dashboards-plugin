@@ -92,6 +92,7 @@ const TriggerNotifications = ({
   const onRemoveNotification = (idx) => {
     const newActions = [...actions];
     newActions.splice(idx, 1);
+    _.set(triggerValues, 'triggerDefinitions[0].actions', newActions);
     setActions(newActions);
   };
 

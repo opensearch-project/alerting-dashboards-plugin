@@ -61,7 +61,7 @@ const MonitorsList = ({ monitors = [], options = [], values }) => {
 
     updateMonitorOptions(newSelected);
 
-    onBlur(monitorIdx, form);
+    updateFormik(monitorIdx, form);
   };
 
   const updateMonitorOptions = (selected) => {
@@ -72,7 +72,7 @@ const MonitorsList = ({ monitors = [], options = [], values }) => {
     setMonitorOptions([...newMonitorOptions]);
   };
 
-  const onBlur = (monitorIdx, form) => {
+  const updateFormik = (monitorIdx, form) => {
     form.setFieldTouched('associatedMonitors', true);
     form.setFieldTouched(`associatedMonitor_${monitorIdx}`, true);
     form.setFieldValue('associatedMonitors', Object.values(selectedOptions));
@@ -109,10 +109,11 @@ const MonitorsList = ({ monitors = [], options = [], values }) => {
 
     updateMonitorOptions(newSelected);
 
-    onBlur(monitorIdx, form);
+    updateFormik(monitorIdx, form);
   };
 
   const isValid = () => Object.keys(selectedOptions).length > 1;
+
   const validate = () => {
     if (!isValid()) return 'Required.';
   };
@@ -149,7 +150,7 @@ const MonitorsList = ({ monitors = [], options = [], values }) => {
                         !selectedOptions[monitorIdx],
                       placeholder: 'Select a monitor',
                       onChange: (options, field, form) => onChange(options, monitorIdx, form),
-                      onBlur: (e, field, form) => onBlur(monitorIdx, form),
+                      onBlur: (e, field, form) => updateFormik(monitorIdx, form),
                       options: monitorOptions,
                       singleSelection: { asPlainText: true },
                       selectedOptions: selectedOptions[monitorIdx]

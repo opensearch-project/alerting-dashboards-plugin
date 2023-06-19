@@ -225,8 +225,6 @@ export function compositeTriggerToFormik(trigger, monitor) {
     severity,
     condition: { script },
     actions,
-    minTimeBetweenExecutions,
-    rollingWindowSize,
   } = trigger[TRIGGER_TYPE.COMPOSITE_LEVEL];
   const triggerUiMetadata = _.get(monitor, `ui_metadata.triggers[${name}]`);
   return {
@@ -236,8 +234,6 @@ export function compositeTriggerToFormik(trigger, monitor) {
     severity,
     script,
     actions: getExecutionPolicyActions(actions),
-    minTimeBetweenExecutions,
-    rollingWindowSize,
     triggerConditions: triggerUiMetadata,
   };
 }

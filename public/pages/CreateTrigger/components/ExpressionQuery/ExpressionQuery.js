@@ -23,7 +23,6 @@ const ExpressionQuery = ({
   const [usedExpressions, setUsedExpressions] = useState([]);
 
   useEffect(() => {
-    debugger;
     let expressions = [];
     if (value?.length) {
       let values = [...value];
@@ -164,10 +163,13 @@ const ExpressionQuery = ({
     />
   );
 
-  const isValid = () => usedExpressions.length > 1;
+  const isValid = () => selections.length > 1 && usedExpressions.length > 1;
 
   const validate = () => {
-    if (!isValid()) return 'At least two monitors should be selected.';
+    if (selections.length < 2)
+      return 'Trigger condition requires at least two associated monitors.';
+    if (usedExpressions.length < 2)
+      return 'Trigger condition requires at least two monitors selected.';
   };
 
   return (
