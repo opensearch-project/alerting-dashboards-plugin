@@ -47,22 +47,7 @@ const NotificationConfigDialog = ({
 
   useEffect(() => {
     setInitialValues({
-      subject_source: _.get(
-        triggerValues,
-        `${fieldPath}actions.${actionIndex}.subject_template.source`,
-        ''
-      ),
-      message_source: _.get(
-        triggerValues,
-        `${fieldPath}actions.${actionIndex}.message_template.source`,
-        ''
-      ),
-      throttle_enabled: _.get(
-        triggerValues,
-        `${fieldPath}actions.${actionIndex}.throttle_enabled`,
-        ''
-      ),
-      throttle_value: _.get(triggerValues, `${fieldPath}actions.${actionIndex}.throttle.value`, ''),
+      [`action${actionIndex}`]: _.get(triggerValues, `${fieldPath}actions.${actionIndex}`, ''),
     });
   }, []);
 
@@ -114,8 +99,8 @@ const NotificationConfigDialog = ({
   const clearConfig = () => {
     _.set(
       triggerValues,
-      `${fieldPath}actions.${actionIndex}.subject_template.source`,
-      initialValues.subject_source
+      `${fieldPath}actions.${actionIndex}`,
+      initialValues[`action${actionIndex}`]
     );
     closeModal();
   };
