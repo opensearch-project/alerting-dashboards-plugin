@@ -170,10 +170,17 @@ export default class MonitorDetails extends Component {
 
     this.setState({ updating: true });
     return httpClient
-      .put(`../api/alerting/monitors/${monitorId}`, {
-        query: { ...query },
-        body: JSON.stringify({ ...monitor, ...update }),
-      })
+      .put(
+        `../api/alerting/${
+          monitor.workflow_type && monitor.workflow_type === MONITOR_TYPE.COMPOSITE_LEVEL
+            ? 'workflows'
+            : 'monitors'
+        }/${monitorId}`,
+        {
+          query: { ...query },
+          body: JSON.stringify({ ...monitor, ...update }),
+        }
+      )
       .then((resp) => {
         if (resp.ok) {
           const { version: monitorVersion } = resp;

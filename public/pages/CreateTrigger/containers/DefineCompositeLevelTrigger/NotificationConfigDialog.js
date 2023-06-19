@@ -25,7 +25,6 @@ import { checkForError } from '../ConfigureActions/ConfigureActions';
 import { TRIGGER_TYPE } from '../CreateTrigger/utils/constants';
 
 const NotificationConfigDialog = ({
-  channel,
   closeModal,
   triggerValues,
   httpClient,

@@ -37,10 +37,11 @@ const TriggerNotifications = ({
           id: '',
         },
       ];
+
     setActions(newActions);
 
     getChannels().then((channels) => setOptions(channels));
-  }, [triggerValues]);
+  }, [triggerValues, plugins]);
 
   const getChannels = async () => {
     const hasNotificationPlugin = plugins.indexOf(OS_NOTIFICATION_PLUGIN) !== -1;
@@ -101,7 +102,7 @@ const TriggerNotifications = ({
       {titleTemplate('Notifications')}
       <EuiSpacer size={'m'} />
       {actions.length &&
-        actions.map((channel, actionIndex) => (
+        actions.map((action, actionIndex) => (
           <EuiAccordion
             title={`Notification ${actionIndex + 1}`}
             key={`notification-accordion-${actionIndex}`}
@@ -122,7 +123,7 @@ const TriggerNotifications = ({
             }
           >
             <TriggerNotificationsContent
-              channel={channel}
+              action={action}
               options={options}
               actionIndex={actionIndex}
               notifications={notifications}

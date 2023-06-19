@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { Fragment, useState } from 'react';
+import React, { Fragment, useState, useEffect } from 'react';
 import { EuiPanel, EuiFlexGroup, EuiFlexItem, EuiButtonEmpty, EuiSpacer } from '@elastic/eui';
 import { FormikComboBox } from '../../../../components/FormControls';
 import NotificationConfigDialog from './NotificationConfigDialog';
@@ -12,7 +12,7 @@ import { FORMIK_INITIAL_ACTION_VALUES } from '../../utils/constants';
 import { NOTIFY_OPTIONS_VALUES } from '../../components/Action/actions/Message';
 
 const TriggerNotificationsContent = ({
-  channel,
+  action,
   options,
   actionIndex,
   triggerValues,
@@ -21,6 +21,17 @@ const TriggerNotificationsContent = ({
 }) => {
   const [selected, setSelected] = useState([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
+
+  useEffect(() => {
+    setSelected([
+      {
+        label: action.name,
+        value: action.config_id,
+        type: action.config_type,
+        description: action.description,
+      },
+    ]);
+  }, [action]);
 
   const onChange = (selectedOptions) => {
     setSelected(selectedOptions);
@@ -64,7 +75,6 @@ const TriggerNotificationsContent = ({
               }}
               inputProps={{
                 isInvalid: !selected.length,
-                value: channel,
                 placeholder: 'Select a channel to get notified',
                 options: options,
                 selectedOptions: selected,
@@ -91,7 +101,6 @@ const TriggerNotificationsContent = ({
       {isModalVisible && (
         <NotificationConfigDialog
           closeModal={() => setIsModalVisible(false)}
-          channel={channel}
           triggerValues={triggerValues}
           httpClient={httpClient}
           notifications={notifications}

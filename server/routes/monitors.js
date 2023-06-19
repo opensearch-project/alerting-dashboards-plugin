@@ -109,6 +109,23 @@ export default function (services, router) {
     monitorService.updateMonitor
   );
 
+  router.put(
+    {
+      path: '/api/alerting/workflows/{id}',
+      validate: {
+        params: schema.object({
+          id: schema.string(),
+        }),
+        query: schema.object({
+          ifSeqNo: schema.maybe(schema.number()),
+          ifPrimaryTerm: schema.maybe(schema.number()),
+        }),
+        body: schema.any(),
+      },
+    },
+    monitorService.updateMonitor
+  );
+
   router.delete(
     {
       path: '/api/alerting/monitors/{id}',

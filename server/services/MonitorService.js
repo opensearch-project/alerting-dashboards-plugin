@@ -184,6 +184,7 @@ export default class MonitorService {
     try {
       const { id } = req.params;
       const params = { monitorId: id, body: req.body, refresh: 'wait_for' };
+      const { type } = req.body;
 
       // TODO DRAFT: Are we sure we need to include ifSeqNo and ifPrimaryTerm from the UI side when updating monitors?
       const { ifSeqNo, ifPrimaryTerm } = req.query;
@@ -193,7 +194,10 @@ export default class MonitorService {
       }
 
       const { callAsCurrentUser } = await this.esDriver.asScoped(req);
-      const updateResponse = await callAsCurrentUser('alerting.updateMonitor', params);
+      const updateResponse = await callAsCurrentUser(
+        `alerting.${type === 'workflow' ? 'updateWorkflow' : 'updateMonitor'}`,
+        params
+      );
       const { _version, _id } = updateResponse;
       return res.ok({
         body: {

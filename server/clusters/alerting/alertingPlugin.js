@@ -96,6 +96,21 @@ export default function alertingPlugin(Client, config, components) {
     method: 'PUT',
   });
 
+  // TODO DRAFT: May need to add 'refresh' assignment here again.
+  alerting.updateWorkflow = ca({
+    url: {
+      fmt: `${API_ROUTE_PREFIX}/workflows/<%=monitorId%>`,
+      req: {
+        monitorId: {
+          type: 'string',
+          required: true,
+        },
+      },
+    },
+    needBody: true,
+    method: 'PUT',
+  });
+
   alerting.getMonitors = ca({
     url: {
       fmt: `${MONITOR_BASE_API}/_search`,
