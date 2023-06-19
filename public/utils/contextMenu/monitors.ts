@@ -17,8 +17,6 @@ export const useMonitors = (embeddable) => {
 
       try {
         const alertingMonitorIds = await getAssociatedMonitorIds(embeddable.vis.id);
-        console.log('monitorIds2');
-        console.log(alertingMonitorIds);
 
         let mons
 
@@ -43,8 +41,6 @@ export const useMonitors = (embeddable) => {
 
             const state = mon.monitor.enabled ? 'enabled' : 'disabled';
             const latestAlert = mon.latestAlert === "--" ? undefined : mon.latestAlert;
-            // console.log('latestAlert');
-            // console.log(latestAlert);
             parsedMonitors.push({
               name: mon.name,
               state: state,

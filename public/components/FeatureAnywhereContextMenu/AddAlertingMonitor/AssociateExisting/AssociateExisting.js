@@ -116,8 +116,6 @@ function AssociateExisting({ monitors, selectedMonitorId, setSelectedMonitorId }
               [
                 'Last alert',
                 (monitor) => {
-                  console.log('monitor from existing');
-                  console.log(monitor);
                   if (monitor.date) {
                     return new Intl.DateTimeFormat('default', dateOptionsLong).format(monitor.date);
                   } else {

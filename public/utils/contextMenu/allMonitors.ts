@@ -15,16 +15,7 @@ export const useAllMonitors = (embeddable) => {
     const getAllMonitors = async () => {
 
       try {
-        // const associatedObjects = await getAlertingAugmentVisSavedObjs(embeddable.vis.id);
-        // const associatedMonitorIds: string[] = [];
-        // for (const associatedObject of associatedObjects) {
-        //   associatedMonitorIds.push(associatedObject.pluginResource.id)
-        // }
-
         const associatedMonitorIds = await getAssociatedMonitorIds(embeddable.vis.id);
-
-        console.log('monitorIds');
-        console.log(associatedMonitorIds);
 
         let mons;
 

@@ -168,9 +168,6 @@ export default class MonitorService {
     try {
       const { from, size, search, sortDirection, sortField, state, monitorIds } = req.query;
 
-      console.log('req query');
-      console.log(JSON.stringify(req.query));
-
       let must = { match_all: {} };
       if (search.trim()) {
         // This is an expensive wildcard query to match monitor names such as: "This is a long monitor name"
@@ -186,8 +183,6 @@ export default class MonitorService {
       }
 
       const mustList = [must];
-      console.log('JSON.stringify(monitorIds)');
-      console.log(JSON.stringify(monitorIds));
       if (monitorIds !== undefined) {
         mustList.push({
           terms: {
@@ -230,11 +225,7 @@ export default class MonitorService {
         },
       };
 
-      console.log(JSON.stringify(params));
-
       const { callAsCurrentUser: alertingCallAsCurrentUser } = await this.esDriver.asScoped(req);
-      // console.log('parameters');
-      // console.log(JSON.stringify(params));
       const getResponse = await alertingCallAsCurrentUser('alerting.getMonitors', params);
 
       const totalMonitors = _.get(getResponse, 'hits.total.value', 0);
@@ -351,19 +342,13 @@ export default class MonitorService {
         currentTime: Date.now(),
       }));
 
-      // console.log("getting monitors");
-      // console.log(JSON.stringify(unusedMonitors));
-      // console.log(JSON.stringify(buckets));
-
       let results = _.orderBy(buckets.concat(unusedMonitors), [sortField], [sortDirection]);
       // If we sorted on monitor name then we already applied from/size to the first query to limit what we're aggregating over
       // Therefore we do not need to apply from/size to this result set
       // If we sorted on aggregations, then this is our in memory pagination
-      // console.log(JSON.stringify(results));
       if (!monitorSorts[sortField]) {
         results = results.slice(from, from + size);
       }
-      // console.log(JSON.stringify(results));
 
       return res.ok({
         body: {

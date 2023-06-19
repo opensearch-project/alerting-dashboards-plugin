@@ -79,8 +79,7 @@ const AssociatedMonitors = ({ embeddable, closeFlyout, setFlyoutMode, monitors }
       body="There are no alerting monitors that match the search result."
     />
   );
-  // console.log('monitors list');
-  // console.log(monitors);
+
   const loadingMsg = <EuiEmptyPrompt body={<EuiLoadingSpinner size="l" />} />;
   const tableProps = {
     items: monitors || [],

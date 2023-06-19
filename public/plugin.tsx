@@ -43,7 +43,6 @@ export interface AlertingStartDeps {
 
 export class AlertingPlugin implements Plugin<AlertingSetup, AlertingStart, AlertingSetupDeps, AlertingStartDeps> {
   public setup(core: CoreSetup<AlertingStartDeps, AlertingStart>, { expressions, uiActions }: AlertingSetupDeps): AlertingSetup {
-    console.log("Alerting plugin setup2");
     core.application.register({
       id: PLUGIN_NAME,
       title: 'Alerting',
@@ -90,7 +89,6 @@ export class AlertingPlugin implements Plugin<AlertingSetup, AlertingStart, Aler
   }
 
   public start(core: CoreStart, { visAugmenter, embeddable, data }: AlertingStartDeps): AlertingStart {
-    setUISettings(core.uiSettings);
     setEmbeddable(embeddable);
     setQueryService(data.query);
     setSavedAugmentVisLoader(visAugmenter.savedAugmentVisLoader);
