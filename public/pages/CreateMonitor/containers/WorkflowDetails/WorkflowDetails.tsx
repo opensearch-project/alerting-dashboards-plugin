@@ -8,6 +8,7 @@ import ContentPanel from '../../../../components/ContentPanel';
 import Schedule from '../../components/Schedule';
 import AssociateMonitors from '../../components/AssociateMonitors/AssociateMonitors';
 import { EuiSpacer } from '@elastic/eui';
+import * as _ from 'lodash';
 
 const WorkflowDetails = ({ isAd, isComposite, httpClient, history, values }) => {
   const [selectedMonitors, setSelectedMonitors] = useState([]);
@@ -38,14 +39,21 @@ const WorkflowDetails = ({ isAd, isComposite, httpClient, history, values }) => 
     getMonitors().then((monitors) => {
       setMonitorOptions(monitors);
 
-      // const getMonitorById = (id) => monitors.find((mon) => mon.monitor_id === id);
-      // const newSelectedMonitors = values.inputs.map((monitor) => ({
-      //   value: monitor.monitor_id,
-      //   label: getMonitorById(monitor.monitor_id)?.monitor_name,
-      // }));
-      // setSelectedMonitors(newSelectedMonitors);
+      const inputIds = values.inputs?.map((input) => input.monitor_id);
+      if (inputIds && inputIds.length) {
+        const selected = monitors.filter((monitor) => inputIds.indexOf(monitor.monitor_id) !== -1);
+        setSelectedMonitors(selected);
+        _.set(
+          values,
+          'associatedMonitors',
+          selected.map((monitor) => ({
+            value: monitor.monitor_id,
+            label: monitor.monitor_name,
+          }))
+        );
+      }
     });
-  }, [values]);
+  }, [values.inputs]);
 
   return (
     <ContentPanel
@@ -62,12 +70,7 @@ const WorkflowDetails = ({ isAd, isComposite, httpClient, history, values }) => 
       {isComposite && (
         <Fragment>
           <EuiSpacer size="xl" />
-          <AssociateMonitors
-            monitors={selectedMonitors}
-            options={monitorOptions}
-            history={history}
-            values={values}
-          />
+          <AssociateMonitors monitors={selectedMonitors} options={monitorOptions} />
         </Fragment>
       )}
     </ContentPanel>

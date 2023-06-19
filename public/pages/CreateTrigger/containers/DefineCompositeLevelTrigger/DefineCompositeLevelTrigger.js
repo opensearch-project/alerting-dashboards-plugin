@@ -75,6 +75,7 @@ class DefineCompositeLevelTrigger extends Component {
       notificationService,
       plugins,
     } = this.props;
+
     const fieldPath = `triggerDefinitions[0].`;
     const triggerName = _.get(triggerValues, `${fieldPath}name`, 'Trigger');
     const triggerDefinitions = _.get(triggerValues, 'triggerDefinitions', []);

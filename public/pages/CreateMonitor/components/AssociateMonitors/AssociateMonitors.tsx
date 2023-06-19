@@ -7,7 +7,7 @@ import React, { Fragment } from 'react';
 import { EuiSpacer, EuiText } from '@elastic/eui';
 import MonitorsList from './components/MonitorsList';
 
-const AssociateMonitors = ({ monitors, options, history, values }) => {
+const AssociateMonitors = ({ monitors, options }) => {
   const onUpdate = () => {};
 
   return (
@@ -21,7 +21,7 @@ const AssociateMonitors = ({ monitors, options, history, values }) => {
 
       <EuiSpacer size="m" />
 
-      <MonitorsList monitors={monitors} options={options} history={history} values={values} />
+      <MonitorsList monitors={monitors} options={options} />
     </Fragment>
   );
 };

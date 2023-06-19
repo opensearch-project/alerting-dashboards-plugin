@@ -20,7 +20,7 @@ import {
   FormikFormRow,
 } from '../../../../../components/FormControls';
 
-const MonitorsList = ({ monitors = [], options = [], values }) => {
+const MonitorsList = ({ monitors = [], options = [] }) => {
   const [selectedOptions, setSelectedOptions] = useState({});
   const [monitorOptions, setMonitorOptions] = useState([]);
 
@@ -42,11 +42,14 @@ const MonitorsList = ({ monitors = [], options = [], values }) => {
     }));
     setMonitorOptions(newOptions);
 
-    // let newSelected = monitors.length ? monitors : [];
-    // setSelectedOptions(Object.assign({}, newSelected));
-
-    // _.set(values, 'associatedMonitors', Object.values(newSelected));
-  }, [monitors, options, values]);
+    let newSelected = monitors.length
+      ? monitors.map((monitor) => ({
+          label: monitor.monitor_name,
+          value: monitor.monitor_id,
+        }))
+      : [];
+    setSelectedOptions(Object.assign({}, newSelected));
+  }, [monitors, options]);
 
   const onChange = (options, monitorIdx, form) => {
     let newSelected = {
