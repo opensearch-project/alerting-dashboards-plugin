@@ -262,5 +262,67 @@ exports[`MonitorType renders 1`] = `
       </div>
     </div>
   </div>
+  <div
+    class="euiFlexItem euiFlexItem--flexGrowZero"
+  >
+    <div
+      class="euiFormRow euiFormRow--hasEmptyLabelSpace"
+      id="monitorTypeCompositeLevel-form-row-row"
+    >
+      <div
+        class="euiFormRow__fieldWrapper"
+      >
+        <div
+          class="euiPanel euiPanel--borderRadiusMedium euiPanel--plain euiPanel--hasShadow euiPanel--hasBorder euiPanel--flexGrowZero euiSplitPanel euiSplitPanel--row euiCheckableCard"
+        >
+          <div
+            class="euiPanel euiPanel--paddingMedium euiPanel--borderRadiusNone euiPanel--subdued euiPanel--noShadow euiPanel--noBorder euiPanel--flexGrowZero euiPanel--isClickable euiSplitPanel__inner"
+          >
+            <div
+              class="euiRadio euiRadio--noLabel"
+              data-test-subj="compositeLevelMonitorRadioCard"
+            >
+              <input
+                class="euiRadio__input"
+                id="compositeLevelMonitorRadioCard"
+                name="monitorTypeCompositeLevel"
+                type="radio"
+                value="composite"
+              />
+              <div
+                class="euiRadio__circle"
+              />
+            </div>
+          </div>
+          <div
+            class="euiPanel euiPanel--paddingMedium euiPanel--borderRadiusNone euiPanel--transparent euiPanel--noShadow euiPanel--noBorder euiSplitPanel__inner"
+          >
+            <label
+              aria-describedby="compositeLevelMonitorRadioCard-details"
+              class="euiCheckableCard__label"
+              for="compositeLevelMonitorRadioCard"
+            >
+              Composite monitor
+            </label>
+            <div
+              class="euiCheckableCard__children"
+              id="compositeLevelMonitorRadioCard-details"
+            >
+              <div
+                class="euiText euiText--extraSmall"
+                style="padding-bottom:10px;padding-top:0px"
+              >
+                <div
+                  class="euiTextColor euiTextColor--subdued"
+                >
+                  Composite monitors allow you to monitor the states of existing monitors and to reduce alert noise.
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 `;

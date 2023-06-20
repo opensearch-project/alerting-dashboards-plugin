@@ -35,6 +35,7 @@ exports[`AcknowledgeAlertsModal renders 1`] = `
     Object {
       "aggregationType": "count",
       "aggregations": Array [],
+      "associatedMonitors": Array [],
       "bucketUnitOfTime": "h",
       "bucketValue": 1,
       "cronExpression": "0 */1 * * *",
@@ -42,6 +43,7 @@ exports[`AcknowledgeAlertsModal renders 1`] = `
       "description": "",
       "detectorId": "",
       "disabled": false,
+      "expressionQuery": null,
       "fieldName": Array [],
       "filters": Array [],
       "frequency": "interval",

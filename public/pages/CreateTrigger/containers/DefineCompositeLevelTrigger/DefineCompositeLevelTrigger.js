@@ -117,7 +117,11 @@ class DefineCompositeLevelTrigger extends Component {
               paddingLeft: 0,
             },
           }}
-          inputProps={{ ...defaultInputProps, value: triggerName }}
+          inputProps={{
+            ...defaultInputProps,
+            value: triggerName,
+            'data-test-subj': 'composite-trigger-name',
+          }}
         />
 
         <EuiSpacer size={'l'} />
