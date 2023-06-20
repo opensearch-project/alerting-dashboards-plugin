@@ -43,6 +43,8 @@ function AddAlertingMonitor({
   setSelectedMonitorId,
   index,
   detectorId,
+  isAssociateAllowed,
+  limitReachedCallout,
 }) {
   const history = {
     location: { pathname: '/create-monitor', search: '', hash: '', state: undefined },
@@ -148,8 +150,14 @@ function AddAlertingMonitor({
                 </EuiTitle>
               </EuiFlyoutHeader>
               <EuiFlyoutBody>
+                {!isAssociateAllowed && (
+                  <div>
+                    {limitReachedCallout}
+                    <EuiSpacer size="m" />
+                  </div>
+                )}
                 <div className="add-alerting-monitor__scroll">
-                  {flyoutMode !== 'adMonitor' && (
+                  {flyoutMode !== 'adMonitor' && isAssociateAllowed && (
                     <>
                       <EuiFormFieldset
                         legend={{
@@ -200,6 +208,7 @@ function AddAlertingMonitor({
                         history,
                         setFlyout,
                         detectorId,
+                        isAssociateAllowed,
                       }}
                     />
                   )}
@@ -219,6 +228,7 @@ function AddAlertingMonitor({
                       onClick={() => onSubmit({ handleSubmit, validateForm })}
                       fill
                       isLoading={isSubmitting}
+                      disabled={!isAssociateAllowed}
                     >
                       {flyoutMode === 'existing' ? 'Associate' : 'Create'} monitor
                     </EuiButton>

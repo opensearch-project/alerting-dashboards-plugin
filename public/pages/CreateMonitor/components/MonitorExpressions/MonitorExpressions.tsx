@@ -129,7 +129,7 @@ class MonitorExpressions extends Component {
           {...{
             title: 'Data filter',
             subTitle: isDataFilterActive
-              ? '1 filter defined'
+              ? '1 filter defined. You can add up to ${MAX_NUM_WHERE_EXPRESSION} filter.'
               : `No filter defined. You can add up to ${MAX_NUM_WHERE_EXPRESSION} filter.`,
             isUsingDivider: true,
             id: 'metric-expression__data-filter',
@@ -144,7 +144,7 @@ class MonitorExpressions extends Component {
           {...{
             title: 'Group by',
             subTitle: formik.values.groupBy.length
-              ? `${formik.values.groupBy.length} groupbys defined`
+              ? `${formik.values.groupBy.length} group bys defined. You can add up to ${groupBysLimit} group bys.`
               : `No group bys defined. You can add up to ${groupBysLimit} group bys.`,
             isUsingDivider: true,
             id: 'metric-expression__group-by',

@@ -39,7 +39,7 @@ export const validateAssociationIsAllow = async (visId, sendDangerToast = false)
       notifications.toasts.addDanger(
         `Cannot create the monitor and associate it to the visualization due to the limit of the max
             amount of associated plugin resources (${maxAssociatedCount}) with
-            ${savedObjectsForThisVisualization.length} associated to the visualization`
+            ${currentAssociatedCount} associated to the visualization`
       );
     }
     return false;

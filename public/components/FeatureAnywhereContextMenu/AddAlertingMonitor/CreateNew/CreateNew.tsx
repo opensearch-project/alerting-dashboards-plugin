@@ -34,7 +34,7 @@ import {
   VisualizeEmbeddable,
 } from '../../../../../../../src/plugins/visualizations/public';
 
-function CreateNew({ embeddable, core, flyoutMode, formikProps, history, setFlyout, detectorId }) {
+function CreateNew({ embeddable, core, flyoutMode, formikProps, history, setFlyout, detectorId, isAssociateAllowed }) {
   const { notifications, isDarkMode = false, http: httpClient } = core;
   const { values, errors, touched, isSubmitting, isValid } = formikProps;
   const [plugins, setPlugins] = useState([]);
@@ -75,7 +75,7 @@ function CreateNew({ embeddable, core, flyoutMode, formikProps, history, setFlyo
     };
 
     const createEmbeddable = async () => {
-      const visEmbeddable = await fetchVisEmbeddable(embeddable.vis.id);
+      const visEmbeddable = await fetchVisEmbeddable(embeddable.vis.id, getEmbeddable());
       setGeneratedEmbeddable(visEmbeddable);
     };
 
@@ -130,13 +130,15 @@ function CreateNew({ embeddable, core, flyoutMode, formikProps, history, setFlyo
         <EuiSpacer size="s" />
         <EmbeddableRenderer embeddable={generatedEmbeddable} />
       </div>
-      <EuiSpacer size="l" />
-      <EuiTitle size="s">
+      {isAssociateAllowed && (
+        <>
+        <EuiSpacer size="l" />
+        <EuiTitle size="s">
         <h3>Monitor details</h3>
-      </EuiTitle>
-      <EuiSpacer size="m" />
+        </EuiTitle>
+        <EuiSpacer size="m" />
 
-      <EnhancedAccordion
+        <EnhancedAccordion
         {...{
           id: 'monitorDetails',
           isOpen: accordionsOpen.monitorDetails,
@@ -152,47 +154,47 @@ function CreateNew({ embeddable, core, flyoutMode, formikProps, history, setFlyo
             </>
           ),
         }}
-      >
+        >
         <MonitorDetails
-          values={values}
-          errors={errors}
-          history={history}
-          httpClient={httpClient}
-          plugins={plugins}
-          isAd={isAd}
-          detectorId={detectorId}
-          flyoutMode={flyoutMode}
+        values={values}
+        errors={errors}
+        history={history}
+        httpClient={httpClient}
+        plugins={plugins}
+        isAd={isAd}
+        detectorId={detectorId}
+        flyoutMode={flyoutMode}
         />
-      </EnhancedAccordion>
-      <EuiSpacer size="m" />
+        </EnhancedAccordion>
+        <EuiSpacer size="m" />
       {!isAd && (
         <EnhancedAccordion
-          {...{
-            id: 'advancedData',
-            isOpen: accordionsOpen.advancedData,
-            onToggle: () => onAccordionToggle('advancedData'),
-            title: 'Advanced data source configuration',
-          }}
+        {...{
+          id: 'advancedData',
+          isOpen: accordionsOpen.advancedData,
+          onToggle: () => onAccordionToggle('advancedData'),
+          title: 'Advanced data source configuration',
+        }}
         >
-          <DefineMonitor
-            values={values}
-            errors={errors}
-            touched={touched}
-            httpClient={httpClient}
-            location={location}
-            detectorId={detectorId}
-            notifications={notifications}
-            isDarkMode={isDarkMode}
-            flyoutMode={flyoutMode}
-          />
+        <DefineMonitor
+        values={values}
+        errors={errors}
+        touched={touched}
+        httpClient={httpClient}
+        location={location}
+        detectorId={detectorId}
+        notifications={notifications}
+        isDarkMode={isDarkMode}
+        flyoutMode={flyoutMode}
+        />
         </EnhancedAccordion>
-      )}
-      <EuiSpacer size="xl" />
-      <EuiTitle size="s">
+        )}
+        <EuiSpacer size="xl" />
+        <EuiTitle size="s">
         <h3>Triggers</h3>
-      </EuiTitle>
-      <EuiSpacer size="m" />
-      <FieldArray name={'triggerDefinitions'} validateOnChange={true}>
+        </EuiTitle>
+        <EuiSpacer size="m" />
+        <FieldArray name={'triggerDefinitions'} validateOnChange={true}>
         {(triggerArrayHelpers) => (
           <ConfigureTriggers
             triggerArrayHelpers={triggerArrayHelpers}
@@ -209,7 +211,9 @@ function CreateNew({ embeddable, core, flyoutMode, formikProps, history, setFlyo
             flyoutMode={flyoutMode}
           />
         )}
-      </FieldArray>
+        </FieldArray>
+        </>
+      )}
     </div>
   );
 }

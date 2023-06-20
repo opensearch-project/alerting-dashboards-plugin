@@ -1,9 +1,16 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import {
+  EuiCallOut,
+  EuiFlyoutHeader,
+} from '@elastic/eui';
 import AssociatedMonitors from '../AssociatedMonitors';
 import AddAlertingMonitor from '../AddAlertingMonitor';
 import { useMonitors } from '../../../utils/contextMenu/monitors';
 import { useAllMonitors } from '../../../utils/contextMenu/allMonitors';
 import { CoreContext } from '../../../utils/CoreContext';
+import { validateAssociationIsAllow } from '../../../utils/savedObjectHelper';
+import { getUISettings } from '../../../services';
+import { PLUGIN_AUGMENTATION_MAX_OBJECTS_SETTING } from '../../../utils/constants';
 
 const Container = ({ defaultFlyoutMode, ...props }) => {
   const { embeddable, core } = props;
@@ -12,6 +19,26 @@ const Container = ({ defaultFlyoutMode, ...props }) => {
   const [selectedMonitorId, setSelectedMonitorId] = useState();
   const monitors = useMonitors(embeddable);
   const allMonitors = useAllMonitors(embeddable);
+
+  const [isAssociateAllowed, setIsAssociateAllowed] = useState<any[] | null>();
+
+  useEffect(() => {
+    const getIsAssociateAllowed = async () => {
+      const isAllowed = await validateAssociationIsAllow(embeddable.vis.id);
+      setIsAssociateAllowed(isAllowed);
+    };
+
+    getIsAssociateAllowed();
+  }, []);
+  const uiSettings = getUISettings();
+  const maxAssociatedCount = uiSettings.get(PLUGIN_AUGMENTATION_MAX_OBJECTS_SETTING);
+  const limitReachedTitle = `Limit reached. No more than ${maxAssociatedCount} objects can be associated with a visualizations.`
+
+  const limitReachedCallout = (
+    <EuiCallOut title={limitReachedTitle} color="warning" iconType="alert">
+      Adding more objects may affect cluster performance and prevent dashboards from rendering properly. Remove associations before add new ones.
+    </EuiCallOut>
+  );
 
   const Flyout = {
     associated: AssociatedMonitors,
@@ -31,6 +58,8 @@ const Container = ({ defaultFlyoutMode, ...props }) => {
           flyoutMode,
           setFlyoutMode,
           index,
+          isAssociateAllowed,
+          limitReachedCallout,
         }}
       />
     </CoreContext.Provider>

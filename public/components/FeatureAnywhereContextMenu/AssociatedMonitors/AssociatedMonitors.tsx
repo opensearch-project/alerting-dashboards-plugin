@@ -26,7 +26,7 @@ import {
 import { getClient, getNotifications, getSavedAugmentVisLoader, getUISettings } from '../../../services';
 import { PLUGIN_AUGMENTATION_MAX_OBJECTS_SETTING } from '../../../utils/constants';
 
-const AssociatedMonitors = ({ embeddable, closeFlyout, setFlyoutMode, monitors }) => {
+const AssociatedMonitors = ({ embeddable, closeFlyout, setFlyoutMode, monitors, isAssociateAllowed, limitReachedCallout }) => {
   const title = embeddable.vis.title;
   const [modalState, setModalState] = useState(undefined);
   const notifications = getNotifications();
@@ -103,20 +103,22 @@ const AssociatedMonitors = ({ embeddable, closeFlyout, setFlyoutMode, monitors }
   }, []);
 
   //TODO: move this to Containers and pass this in. Also make sure its exportable to be updated
-  const [isAssociateAllowed, setIsAssociateAllowed] = useState<any[] | null>();
+  // const [isAssociateAllowed, setIsAssociateAllowed] = useState<any[] | null>();
 
-  useEffect(() => {
-    const getIsAssociateAllowed = async () => {
-      const isAllowed = await validateAssociationIsAllow(embeddable.vis.id);
-      setIsAssociateAllowed(isAllowed);
-    };
+  // useEffect(() => {
+  //   const getIsAssociateAllowed = async () => {
+  //     const isAllowed = await validateAssociationIsAllow(embeddable.vis.id);
+  //     setIsAssociateAllowed(isAllowed);
+  //   };
+  //
+  //   getIsAssociateAllowed();
+  // }, []);
+  console.log('isAssociateAllowed');
+  console.log(isAssociateAllowed);
 
-    getIsAssociateAllowed();
-  }, []);
-
-  const uiSettings = getUISettings();
-  const maxAssociatedCount = uiSettings.get(PLUGIN_AUGMENTATION_MAX_OBJECTS_SETTING);
-  const limitReachedTitle = `Limit reached. No more than ${maxAssociatedCount} objects can be associated with a visualizations.`
+  // const uiSettings = getUISettings();
+  // const maxAssociatedCount = uiSettings.get(PLUGIN_AUGMENTATION_MAX_OBJECTS_SETTING);
+  // const limitReachedTitle = `Limit reached. No more than ${maxAssociatedCount} objects can be associated with a visualizations.`
 
   return (
     <div className="associated-monitors">
@@ -136,9 +138,7 @@ const AssociatedMonitors = ({ embeddable, closeFlyout, setFlyoutMode, monitors }
         </EuiFlyoutHeader>
         {!isAssociateAllowed && (
           <EuiFlyoutHeader>
-            <EuiCallOut title={limitReachedTitle} color="warning" iconType="alert">
-              Adding more objects may affect cluster performance and prevent dashboards from rendering properly. Remove associations before add new ones.
-            </EuiCallOut>
+            limitReachedCallout
           </EuiFlyoutHeader>
         )}
         <EuiFlyoutBody>
