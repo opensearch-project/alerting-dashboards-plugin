@@ -42,6 +42,7 @@
     "react-vis": "^1.8.1"
   },
   "resolutions": {
+    "decode-uri-component": "^0.2.1",
     "fstream": "1.0.12",
     "glob-parent": "^5.1.2"
   },
