@@ -85,6 +85,10 @@ Cypress.Commands.add('createAndExecuteMonitor', (monitorJSON) => {
   );
 });
 
+Cypress.Commands.add('executeMonitor', (monitorID) => {
+  cy.request('POST', `${Cypress.env('opensearch')}${API.MONITOR_BASE}/${monitorID}/_execute`);
+});
+
 Cypress.Commands.add('executeCompositeMonitor', (monitorID) => {
   cy.request('POST', `${Cypress.env('opensearch')}${API.WORKFLOW_BASE}/${monitorID}/_execute`);
 });

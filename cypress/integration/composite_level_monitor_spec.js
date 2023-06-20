@@ -15,7 +15,9 @@ const clearAll = () => {
   cy.deleteAllMonitors();
   cy.deleteIndexByName(sample_index_1);
   cy.deleteIndexByName(sample_index_2);
-  cy.deleteAllAlerts();
+
+  // wait until alerts index finishes writing docs
+  cy.wait(1000).then(() => cy.deleteAllAlerts());
 };
 
 describe('CompositeLevelMonitor', () => {
@@ -81,7 +83,7 @@ describe('CompositeLevelMonitor', () => {
       // cy.get('[title="Notification 1"]').type('Channel name');
 
       cy.intercept('api/alerting/workflows').as('createMonitorRequest');
-      cy.intercept('api/alerting/monitors').as('getMonitorsRequest');
+      cy.intercept(`api/alerting/monitors?*`).as('getMonitorsRequest');
       cy.get('button').contains('Create').click({ force: true });
 
       // Wait for monitor to be created
@@ -89,29 +91,36 @@ describe('CompositeLevelMonitor', () => {
         const monitorID = interceptor.response.body.resp._id;
 
         cy.contains('Loading monitors');
-        cy.wait('@getMonitorsRequest');
+        cy.wait('@getMonitorsRequest').then((interceptor) => {
+          const monitors = interceptor.response.body.monitors;
+          const monitor1 = monitors.filter((monitor) => monitor.name === 'monitor_1');
+          const monitor2 = monitors.filter((monitor) => monitor.name === 'monitor_2');
 
-        // Let monitor's table render the rows before querying
-        cy.wait(1000).then(() => {
-          cy.get('table tbody td').contains(SAMPLE_VISUAL_EDITOR_MONITOR);
-
-          // Load sample data
-          cy.insertDocumentToIndex(
-            sample_index_1,
-            undefined,
-            sampleCompositeJson.sample_composite_associated_index_document
-          );
-          cy.insertDocumentToIndex(
-            sample_index_2,
-            undefined,
-            sampleCompositeJson.sample_composite_associated_index_document
-          );
-
+          // Let monitor's table render the rows before querying
           cy.wait(1000).then(() => {
-            cy.executeCompositeMonitor(monitorID);
+            cy.get('table tbody td').contains(SAMPLE_VISUAL_EDITOR_MONITOR);
 
-            cy.get('[role="tab"]').contains('Alerts').click();
-            cy.get('table tbody td').contains('Composite trigger');
+            // Load sample data
+            cy.insertDocumentToIndex(
+              sample_index_1,
+              undefined,
+              sampleCompositeJson.sample_composite_associated_index_document
+            );
+            cy.insertDocumentToIndex(
+              sample_index_2,
+              undefined,
+              sampleCompositeJson.sample_composite_associated_index_document
+            );
+
+            cy.wait(1000).then(() => {
+              cy.executeCompositeMonitor(monitorID);
+              debugger;
+              monitor1[0] && cy.executeMonitor(monitor1[0].id);
+              monitor2[0] && cy.executeMonitor(monitor2[0].id);
+
+              cy.get('[role="tab"]').contains('Alerts').click();
+              cy.get('table tbody td').contains('Composite trigger');
+            });
           });
         });
       });
