@@ -10,33 +10,33 @@ import AssociateMonitors from '../../components/AssociateMonitors/AssociateMonit
 import { EuiSpacer } from '@elastic/eui';
 import * as _ from 'lodash';
 
+export const getMonitors = async (httpClient) => {
+  const response = await httpClient.get('../api/alerting/monitors', {
+    query: {
+      from: 0,
+      size: 1000,
+      search: '',
+      sortField: 'name',
+      sortDirection: 'desc',
+      state: 'all',
+    },
+  });
+
+  if (response.ok) {
+    const { monitors, totalMonitors } = response;
+    return monitors.map((monitor) => ({ monitor_id: monitor.id, monitor_name: monitor.name }));
+  } else {
+    console.log('error getting monitors:', response);
+    return [];
+  }
+};
+
 const WorkflowDetails = ({ isAd, isComposite, httpClient, history, values }) => {
   const [selectedMonitors, setSelectedMonitors] = useState([]);
   const [monitorOptions, setMonitorOptions] = useState([]);
 
-  const getMonitors = async () => {
-    const response = await httpClient.get('../api/alerting/monitors', {
-      query: {
-        from: 0,
-        size: 1000,
-        search: '',
-        sortField: 'name',
-        sortDirection: 'desc',
-        state: 'all',
-      },
-    });
-
-    if (response.ok) {
-      const { monitors, totalMonitors } = response;
-      return monitors.map((monitor) => ({ monitor_id: monitor.id, monitor_name: monitor.name }));
-    } else {
-      console.log('error getting monitors:', response);
-      return [];
-    }
-  };
-
   useEffect(() => {
-    getMonitors().then((monitors) => {
+    getMonitors(httpClient).then((monitors) => {
       setMonitorOptions(monitors);
 
       const inputIds = values.inputs?.map((input) => input.monitor_id);

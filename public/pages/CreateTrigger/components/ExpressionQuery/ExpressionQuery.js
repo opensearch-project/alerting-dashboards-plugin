@@ -17,38 +17,17 @@ const ExpressionQuery = ({
   defaultText,
   label,
   formikName = 'expressionQueries',
+  triggerValues,
 }) => {
   const DEFAULT_DESCRIPTION = defaultText ? defaultText : 'Select';
-  const OPERATORS = ['AND', 'OR', 'NOT'];
   const [usedExpressions, setUsedExpressions] = useState([]);
 
   useEffect(() => {
-    let expressions = [];
     if (value?.length) {
-      let values = [...value];
-      if (OPERATORS.indexOf(values[0]?.description) === -1) values = ['', ...values];
-
-      let counter = 0;
-      values.map((exp, idx) => {
-        if (idx % 2 === 0) {
-          expressions.push({
-            description: exp.description,
-            isOpen: false,
-            monitor_name: '',
-            monitor_id: '',
-          });
-          counter++;
-        } else {
-          const currentIndex = idx - counter;
-          expressions[currentIndex] = { ...expressions[currentIndex], ...exp };
-        }
-      });
-    } else {
-      expressions = [];
+      setUsedExpressions(value);
+      _.set(triggerValues, formikName, getValue(value));
     }
-
-    setUsedExpressions(expressions);
-  }, []);
+  }, [value]);
 
   const getValue = (expressions) =>
     expressions.map((exp) => ({

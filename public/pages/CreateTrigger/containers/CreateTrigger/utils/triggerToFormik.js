@@ -14,6 +14,7 @@ import {
   ACTIONABLE_ALERTS_OPTIONS_LABELS,
   NOTIFY_OPTIONS_VALUES,
 } from '../../../components/Action/actions/Message';
+import { convertQueryToExpressions } from '../../DefineCompositeLevelTrigger/DefineCompositeLevelTrigger';
 
 export function triggerToFormik(trigger, monitor) {
   return _.isArray(trigger)
@@ -226,7 +227,12 @@ export function compositeTriggerToFormik(trigger, monitor) {
     condition: { script },
     actions,
   } = trigger[TRIGGER_TYPE.COMPOSITE_LEVEL];
-  const triggerUiMetadata = _.get(monitor, `ui_metadata.triggers[${name}]`);
+  // TODO this should be saved in ui_metadata, currently workflows don't save ui_metadata
+  // const triggerUiMetadata = _.get(monitor, `ui_metadata.triggers[${name}]`);
+  const triggerConditions = convertQueryToExpressions(
+    monitor.triggers[0].chained_alert_trigger.condition.script.source,
+    []
+  );
   return {
     ..._.cloneDeep(FORMIK_INITIAL_TRIGGER_VALUES),
     id,
@@ -234,7 +240,7 @@ export function compositeTriggerToFormik(trigger, monitor) {
     severity,
     script,
     actions: getExecutionPolicyActions(actions),
-    triggerConditions: triggerUiMetadata,
+    triggerConditions: triggerConditions, //triggerUiMetadata,
   };
 }
 

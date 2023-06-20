@@ -14,6 +14,7 @@ import ExpressionQuery from '../../components/ExpressionQuery/ExpressionQuery';
 import TriggerNotifications from './TriggerNotifications';
 import ContentPanel from '../../../../components/ContentPanel';
 import { FORMIK_INITIAL_TRIGGER_VALUES } from '../CreateTrigger/utils/constants';
+import { getMonitors } from '../../../CreateMonitor/containers/WorkflowDetails/WorkflowDetails';
 
 const defaultRowProps = {
   label: 'Trigger name',
@@ -57,19 +58,64 @@ export const titleTemplate = (title, subTitle) => (
   </EuiText>
 );
 
+export const convertQueryToExpressions = (query, monitors) => {
+  const conditionMap = {
+    '&&': 'and',
+    '||': 'or',
+    '!': 'not',
+    '': '',
+  };
+  const queryToExpressionRegex = new RegExp('(&& )?(\\|\\| )?(monitor\\[id=(.*?)\\])', 'g');
+  const matcher = query.matchAll(queryToExpressionRegex);
+  let match;
+  let expressions = [];
+  while ((match = matcher.next().value)) {
+    const monitorId = match[4]?.trim();
+    const monitor = monitors.filter((mon) => mon.monitor_id === monitorId);
+    expressions.push({
+      description: conditionMap[match[1]?.trim()] || '',
+      isOpen: false,
+      monitor_name: monitor[0]?.monitor_name,
+      monitor_id: monitorId,
+    });
+  }
+
+  return expressions;
+};
+
 class DefineCompositeLevelTrigger extends Component {
   constructor(props) {
     super(props);
-    this.state = {};
+    this.state = {
+      expressions: [],
+    };
+  }
+
+  componentDidMount() {
+    getMonitors(this.props.httpClient).then((monitors) => {
+      const inputIds = this.props.monitorValues.inputs?.map((input) => input.monitor_id);
+      if (inputIds && inputIds.length) {
+        const selectedMonitors = monitors.filter(
+          (monitor) => inputIds.indexOf(monitor.monitor_id) !== -1
+        );
+
+        const expressions = convertQueryToExpressions(
+          this.props.triggerValues.triggerDefinitions[0].script.source,
+          selectedMonitors
+        );
+
+        this.setState({
+          expressions,
+        });
+      }
+    });
   }
 
   render() {
     const {
       edit,
       monitorValues,
-      triggers,
       triggerValues,
-      isDarkMode,
       httpClient,
       notifications,
       notificationService,
@@ -94,6 +140,7 @@ class DefineCompositeLevelTrigger extends Component {
           monitor_id: monitor.value,
         }))
       : [];
+
     return (
       <ContentPanel
         title={'Alert trigger'}
@@ -133,10 +180,7 @@ class DefineCompositeLevelTrigger extends Component {
             'An alert will trigger when the following monitors generate active alerts.'
           )}
           selections={monitorList}
-          value={[]
-            .concat(...monitorList.map((monitor) => [monitor, { description: 'and' }]))
-            .slice(0, -1)}
-          onChange={() => {}}
+          value={this.state.expressions}
           dataTestSubj={'composite_expression_query'}
           defaultText={'Select associated monitor'}
           triggerValues={triggerValues}
