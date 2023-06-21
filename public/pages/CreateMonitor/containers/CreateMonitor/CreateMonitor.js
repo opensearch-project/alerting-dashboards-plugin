@@ -306,6 +306,7 @@ export default class CreateMonitor extends Component {
               <EuiSpacer />
 
               <WorkflowDetails
+                isDarkMode={isDarkMode}
                 values={values}
                 history={history}
                 isAd={values.searchType === SEARCH_TYPE.AD}

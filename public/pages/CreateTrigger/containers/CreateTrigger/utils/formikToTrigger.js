@@ -124,11 +124,15 @@ export function formikToCompositeTriggerCondition(values) {
   };
 
   const triggerConditions = _.get(values, 'triggerConditions', []);
-  const source = triggerConditions.reduce((query, expression) => {
+  let source = triggerConditions.reduce((query, expression) => {
     query += ` ${conditionMap[expression.condition]} monitor[id=${expression.monitor_id}]`;
     query = query.trim();
     return query;
   }, '');
+
+  if (!source) {
+    source = _.get(values, 'script.source', '');
+  }
 
   return {
     script: {

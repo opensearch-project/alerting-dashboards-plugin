@@ -44,6 +44,7 @@ describe('CompositeLevelMonitor', () => {
     cy.contains('Create monitor', { timeout: 20000 });
   });
 
+  let monitorId;
   describe('can be created', () => {
     beforeEach(() => {
       // Go to create monitor page
@@ -88,7 +89,7 @@ describe('CompositeLevelMonitor', () => {
 
       // Wait for monitor to be created
       cy.wait('@createMonitorRequest').then((interceptor) => {
-        const monitorID = interceptor.response.body.resp._id;
+        monitorId = interceptor.response.body.resp._id;
 
         cy.contains('Loading monitors');
         cy.wait('@getMonitorsRequest').then((interceptor) => {
@@ -113,8 +114,7 @@ describe('CompositeLevelMonitor', () => {
             );
 
             cy.wait(1000).then(() => {
-              cy.executeCompositeMonitor(monitorID);
-              debugger;
+              cy.executeCompositeMonitor(monitorId);
               monitor1[0] && cy.executeMonitor(monitor1[0].id);
               monitor2[0] && cy.executeMonitor(monitor2[0].id);
 
@@ -124,6 +124,25 @@ describe('CompositeLevelMonitor', () => {
           });
         });
       });
+    });
+  });
+
+  describe('can be edited', () => {
+    beforeEach(() => {
+      if (monitorId) {
+        cy.visit(
+          `${Cypress.env(
+            'opensearch_dashboards'
+          )}/app/${PLUGIN_NAME}#/monitors/${monitorId}?action=update-monitor&type=workflow`
+        );
+      } else {
+        throw new Error(`Monitor with ID: ${monitorId} not found or not created.`);
+      }
+    });
+
+    it('by visual editor', () => {
+      // Verify edit page
+      cy.contains('Edit monitor', { timeout: 20000 });
     });
   });
 

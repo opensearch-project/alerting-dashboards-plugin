@@ -9,6 +9,7 @@ import {
 } from '@elastic/eui';
 import * as _ from 'lodash';
 import { FormikFormRow, FormikInputWrapper } from '../../../../components/FormControls';
+import { FormikCodeEditor } from '../../../../components/FormControls';
 
 const ExpressionQuery = ({
   selections,
@@ -18,16 +19,34 @@ const ExpressionQuery = ({
   label,
   formikName = 'expressionQueries',
   triggerValues,
+  isDarkMode = false,
 }) => {
   const DEFAULT_DESCRIPTION = defaultText ? defaultText : 'Select';
   const [usedExpressions, setUsedExpressions] = useState([]);
+  const [graphUi, setGraphUi] = useState(triggerValues.searchType === 'graph');
+  const [editorValue, setEditorValue] = useState('');
+
+  const getQueryTemplate = (monitor_id) => `monitor[id=${monitor_id}]`;
+  const queryConditionOperator = '&&';
 
   useEffect(() => {
     if (value?.length) {
       setUsedExpressions(value);
       _.set(triggerValues, formikName, getValue(value));
     }
-  }, [value]);
+
+    setGraphUi(triggerValues.searchType === 'graph');
+
+    if (selections?.length) {
+      const editorValues = [];
+      selections.map((selection) => {
+        editorValues.push(getQueryTemplate(selection.monitor_id));
+      });
+      const script = editorValues.join(` ${queryConditionOperator} `);
+      setEditorValue(script);
+      _.set(triggerValues, 'triggerDefinitions[0].script.source', script);
+    }
+  }, [value, triggerValues.searchType]);
 
   const getValue = (expressions) =>
     expressions.map((exp) => ({
@@ -155,7 +174,7 @@ const ExpressionQuery = ({
     <FormikInputWrapper
       name={'expressionQueries'}
       fieldProps={{
-        validate: () => validate(),
+        validate: () => graphUi && validate(),
       }}
       render={({ field, form }) => (
         <FormikFormRow
@@ -163,90 +182,121 @@ const ExpressionQuery = ({
           form={form}
           rowProps={{
             label: label,
-            isInvalid: () => form.touched['expressionQueries'] && !isValid(),
-            error: () => validate(),
+            isInvalid: () => form.touched['expressionQueries'] && graphUi && !isValid(),
+            error: () => graphUi && validate(),
+            style: {
+              maxWidth: 'inherit',
+            },
           }}
         >
-          <EuiFlexGroup
-            gutterSize="s"
-            data-test-subj={dataTestSubj}
-            className={'expressionQueries'}
-          >
-            {!usedExpressions.length && (
-              <EuiFlexItem grow={false} key={`selections_default`}>
-                <EuiPopover
-                  id={`selections_default`}
-                  button={
-                    <EuiExpression
-                      isInvalid={form.errors['expressionQueries'] && !isValid()}
-                      description={DEFAULT_DESCRIPTION}
-                      value={''}
-                      isActive={false}
-                      uppercase={false}
-                      onClick={(e) => onBlur(form, usedExpressions)}
-                    />
-                  }
-                  isOpen={false}
-                  panelPaddingSize="s"
-                  anchorPosition="rightDown"
-                  closePopover={() => onBlur(form, usedExpressions)}
-                />
-              </EuiFlexItem>
-            )}
-            {usedExpressions.map((expression, idx) => (
-              <EuiFlexItem grow={false} key={`selections_${idx}`}>
-                <EuiPopover
-                  id={`selections_${idx}`}
-                  button={
-                    <EuiExpression
-                      isInvalid={form.errors['expressionQueries'] && !isValid()}
-                      aria-label={'Add condition expression'}
-                      description={expression.description}
-                      value={expression.monitor_name}
-                      isActive={expression.isOpen}
-                      onClick={(e) => {
-                        e.preventDefault();
-                        openPopover(idx);
-                      }}
-                    />
-                  }
-                  isOpen={expression.isOpen}
-                  closePopover={() => closePopover(idx)}
-                  panelPaddingSize="s"
-                  anchorPosition="rightDown"
-                >
-                  {renderOptions(expression, idx, form)}
-                </EuiPopover>
-              </EuiFlexItem>
-            ))}
-            {selections.length > usedExpressions.length && (
-              <EuiFlexItem grow={false} key={`selections_add`}>
-                <EuiButtonIcon
-                  onClick={() => {
-                    const expressions = _.cloneDeep(usedExpressions);
-                    const differences = _.differenceBy(selections, expressions, 'monitor_id');
-                    const newExpressions = [
-                      ...expressions,
-                      {
-                        description: usedExpressions.length ? 'AND' : '',
-                        isOpen: false,
-                        monitor_name: differences[0]?.label,
-                        monitor_id: differences[0]?.monitor_id,
-                      },
-                    ];
+          {graphUi ? (
+            <EuiFlexGroup
+              gutterSize="s"
+              data-test-subj={dataTestSubj}
+              className={'expressionQueries'}
+            >
+              {!usedExpressions.length && (
+                <EuiFlexItem grow={false} key={`selections_default`}>
+                  <EuiPopover
+                    id={`selections_default`}
+                    button={
+                      <EuiExpression
+                        isInvalid={form.errors['expressionQueries'] && !isValid()}
+                        description={DEFAULT_DESCRIPTION}
+                        value={''}
+                        isActive={false}
+                        uppercase={false}
+                        onClick={(e) => onBlur(form, usedExpressions)}
+                      />
+                    }
+                    isOpen={false}
+                    panelPaddingSize="s"
+                    anchorPosition="rightDown"
+                    closePopover={() => onBlur(form, usedExpressions)}
+                  />
+                </EuiFlexItem>
+              )}
+              {usedExpressions.map((expression, idx) => (
+                <EuiFlexItem grow={false} key={`selections_${idx}`}>
+                  <EuiPopover
+                    id={`selections_${idx}`}
+                    button={
+                      <EuiExpression
+                        isInvalid={form.errors['expressionQueries'] && !isValid()}
+                        aria-label={'Add condition expression'}
+                        description={expression.description}
+                        value={expression.monitor_name}
+                        isActive={expression.isOpen}
+                        onClick={(e) => {
+                          e.preventDefault();
+                          openPopover(idx);
+                        }}
+                      />
+                    }
+                    isOpen={expression.isOpen}
+                    closePopover={() => closePopover(idx)}
+                    panelPaddingSize="s"
+                    anchorPosition="rightDown"
+                  >
+                    {renderOptions(expression, idx, form)}
+                  </EuiPopover>
+                </EuiFlexItem>
+              ))}
+              {selections.length > usedExpressions.length && (
+                <EuiFlexItem grow={false} key={`selections_add`}>
+                  <EuiButtonIcon
+                    onClick={() => {
+                      const expressions = _.cloneDeep(usedExpressions);
+                      const differences = _.differenceBy(selections, expressions, 'monitor_id');
+                      const newExpressions = [
+                        ...expressions,
+                        {
+                          description: usedExpressions.length ? 'AND' : '',
+                          isOpen: false,
+                          monitor_name: differences[0]?.label,
+                          monitor_id: differences[0]?.monitor_id,
+                        },
+                      ];
 
-                    setUsedExpressions(newExpressions);
-                    onBlur(form, newExpressions);
-                  }}
-                  color={'primary'}
-                  iconType="plusInCircleFilled"
-                  aria-label={'Add one more condition'}
-                  data-test-subj={'condition-add-selection-btn'}
-                  style={{ marginTop: '1px' }}
-                />
-              </EuiFlexItem>
-            )}
-          </EuiFlexGroup>
+                      setUsedExpressions(newExpressions);
+                      onBlur(form, newExpressions);
+                    }}
+                    color={'primary'}
+                    iconType="plusInCircleFilled"
+                    aria-label={'Add one more condition'}
+                    data-test-subj={'condition-add-selection-btn'}
+                    style={{ marginTop: '1px' }}
+                  />
+                </EuiFlexItem>
+              )}
+            </EuiFlexGroup>
+          ) : (
+            <FormikCodeEditor
+              name="expressionQueries"
+              formRow
+              fieldProps={{}}
+              rowProps={{
+                label: 'Trigger condition',
+                fullWidth: true,
+              }}
+              inputProps={{
+                mode: 'text',
+                width: '80%',
+                height: '300px',
+                theme: isDarkMode ? 'sense-dark' : 'github',
+                value: editorValue,
+                onChange: (query, field, form) => {
+                  _.set(triggerValues, 'triggerDefinitions[0].script.source', query);
+                  form.setFieldValue('expressionQueries', query);
+                },
+                onBlur: (e, field, form) => {
+                  console.log('### triggerValues', triggerValues);
+                  form.setFieldTouched('expressionQueries', true);
+                },
+                'data-test-subj': 'expressionQueriesCodeEditor',
+              }}
+            />
+          )}
         </FormikFormRow>
       )}
     />

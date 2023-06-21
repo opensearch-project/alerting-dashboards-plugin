@@ -31,7 +31,7 @@ export const getMonitors = async (httpClient) => {
   }
 };
 
-const WorkflowDetails = ({ isAd, isComposite, httpClient, history, values }) => {
+const WorkflowDetails = ({ isAd, isComposite, httpClient, history, values, isDarkMode }) => {
   const [selectedMonitors, setSelectedMonitors] = useState([]);
   const [monitorOptions, setMonitorOptions] = useState([]);
 
@@ -40,7 +40,7 @@ const WorkflowDetails = ({ isAd, isComposite, httpClient, history, values }) => 
       setMonitorOptions(monitors);
 
       const inputIds = values.inputs?.map((input) => input.monitor_id);
-      if (inputIds && inputIds.length) {
+      if (inputIds?.length) {
         const selected = monitors.filter((monitor) => inputIds.indexOf(monitor.monitor_id) !== -1);
         setSelectedMonitors(selected);
         _.set(
@@ -70,7 +70,13 @@ const WorkflowDetails = ({ isAd, isComposite, httpClient, history, values }) => 
       {isComposite && (
         <Fragment>
           <EuiSpacer size="xl" />
-          <AssociateMonitors monitors={selectedMonitors} options={monitorOptions} />
+          <AssociateMonitors
+            isDarkMode={isDarkMode}
+            monitors={selectedMonitors}
+            options={monitorOptions}
+            searchType={values.searchType}
+            monitorValues={values}
+          />
         </Fragment>
       )}
     </ContentPanel>
