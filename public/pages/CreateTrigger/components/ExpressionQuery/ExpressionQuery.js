@@ -33,6 +33,13 @@ const ExpressionQuery = ({
     ...DEFAULT_EXPRESSION,
     description: DEFAULT_CONDITION,
   };
+  const EXPRESSION_CONDITIONS_MAP = [
+    { description: '', label: '' },
+    { description: 'AND', label: 'AND' },
+    { description: 'OR', label: 'OR' },
+    { description: 'NOT', label: 'NOT' },
+  ];
+
   const [usedExpressions, setUsedExpressions] = useState([DEFAULT_EXPRESSION]);
   const [graphUi, setGraphUi] = useState(triggerValues.searchType === 'graph');
   const [editorValue, setEditorValue] = useState('');
@@ -155,12 +162,7 @@ const ExpressionQuery = ({
           ]}
           onChange={(selection) => changeCondition(selection, expression, idx, form)}
           onBlur={() => onBlur(form, usedExpressions)}
-          options={[
-            { description: '', label: '' },
-            { description: 'AND', label: 'AND' },
-            { description: 'OR', label: 'OR' },
-            { description: 'NOT', label: 'NOT' },
-          ]}
+          options={EXPRESSION_CONDITIONS_MAP}
         />
       </EuiFlexItem>
       <EuiFlexItem grow={false}>{renderMonitorOptions(expression, idx, form)}</EuiFlexItem>
@@ -218,9 +220,7 @@ const ExpressionQuery = ({
           form={form}
           rowProps={{
             label: label,
-            isInvalid: () => {
-              return form.touched['expressionQueries'] && graphUi && !isValid();
-            },
+            isInvalid: () => form.touched['expressionQueries'] && graphUi && !isValid(),
             error: () => graphUi && validate(),
             style: {
               maxWidth: 'inherit',
@@ -248,10 +248,7 @@ const ExpressionQuery = ({
                         description={expression.description}
                         value={expression.monitor_name}
                         isActive={!!selections?.length}
-                        onClick={(e) => {
-                          e.preventDefault();
-                          openPopover(idx, form);
-                        }}
+                        onClick={(e) => openPopover(idx)}
                       />
                     }
                     isOpen={expression.isOpen}
@@ -301,9 +298,7 @@ const ExpressionQuery = ({
                   _.set(triggerValues, 'triggerDefinitions[0].script.source', query);
                   form.setFieldValue('expressionQueries', query);
                 },
-                onBlur: (e, field, form) => {
-                  form.setFieldTouched('expressionQueries', true);
-                },
+                onBlur: (e, field, form) => form.setFieldTouched('expressionQueries', true),
                 'data-test-subj': 'expressionQueriesCodeEditor',
               }}
             />
