@@ -24,7 +24,7 @@ const MonitorsList = ({ monitors = [], options = [] }) => {
   const [selectedOptions, setSelectedOptions] = useState({});
   const [monitorOptions, setMonitorOptions] = useState([]);
 
-  const [monitorFields, setMonitorFields] = useState<number[]>(
+  const [monitorFields, setMonitorFields] = useState(
     _.reduce(
       monitors.length ? monitors : [0, 1],
       (result, value, key) => {
