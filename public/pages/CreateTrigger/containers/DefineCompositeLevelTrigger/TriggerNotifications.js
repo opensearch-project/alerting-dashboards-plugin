@@ -129,6 +129,7 @@ const TriggerNotifications = ({
               notifications={notifications}
               triggerValues={triggerValues}
               httpClient={httpClient}
+              hasNotifications={plugins.indexOf(OS_NOTIFICATION_PLUGIN) !== -1}
             />
           </EuiAccordion>
         ))}

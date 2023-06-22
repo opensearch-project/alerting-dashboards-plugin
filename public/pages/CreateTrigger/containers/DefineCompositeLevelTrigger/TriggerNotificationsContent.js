@@ -10,6 +10,7 @@ import NotificationConfigDialog from './NotificationConfigDialog';
 import _ from 'lodash';
 import { FORMIK_INITIAL_ACTION_VALUES } from '../../utils/constants';
 import { NOTIFY_OPTIONS_VALUES } from '../../components/Action/actions/Message';
+import { required } from '../../../../utils/validate';
 
 const TriggerNotificationsContent = ({
   action,
@@ -18,19 +19,21 @@ const TriggerNotificationsContent = ({
   triggerValues,
   httpClient,
   notifications,
+  hasNotifications,
 }) => {
   const [selected, setSelected] = useState([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
 
   useEffect(() => {
-    setSelected([
-      {
-        label: action.name,
-        value: action.config_id,
-        type: action.config_type,
-        description: action.description,
-      },
-    ]);
+    action?.config_id &&
+      setSelected([
+        {
+          label: action.name,
+          value: action.config_id,
+          type: action.config_type,
+          description: action.description,
+        },
+      ]);
   }, [action]);
 
   const onChange = (selectedOptions) => {
@@ -51,6 +54,11 @@ const TriggerNotificationsContent = ({
     });
   };
 
+  const onBlur = (e, field, form) => {
+    form.setFieldTouched(field.name, true);
+    form.setFieldError(field.name, required(form.values[field.name]));
+  };
+
   const showConfig = () => setIsModalVisible(true);
 
   return (
@@ -66,25 +74,28 @@ const TriggerNotificationsContent = ({
             <FormikComboBox
               name={`channel_name_${actionIndex}`}
               formRow
-              fieldProps={{
-                isInvalid: !selected.length,
-                errors: !selected.length && 'Required.',
-              }}
+              fieldProps={{}}
               rowProps={{
                 label: 'Notification channel',
+                isInvalid: (name, form) => form.touched[name] && !selected?.length,
+                error: (name, form) => form.touched[name] && !selected?.length && 'Required.',
               }}
               inputProps={{
-                isInvalid: !selected.length,
                 placeholder: 'Select a channel to get notified',
                 options: options,
                 selectedOptions: selected,
                 onChange: (selectedOptions) => onChange(selectedOptions),
+                onBlur: (e, field, form) => onBlur(e, field, form),
                 singleSelection: { asPlainText: true },
               }}
             />
           </EuiFlexItem>
           <EuiFlexItem grow={false} style={{ paddingLeft: 0, marginLeft: 0 }}>
-            <EuiButtonEmpty iconType={'popout'} style={{ marginTop: '22px' }}>
+            <EuiButtonEmpty
+              iconType={'popout'}
+              style={{ marginTop: '22px' }}
+              disabled={!hasNotifications}
+            >
               Manage channels
             </EuiButtonEmpty>
           </EuiFlexItem>
