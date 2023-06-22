@@ -34,7 +34,7 @@ const AssociateMonitors = ({
   useEffect(() => {
     if (monitors?.length) {
       const value = { ...queryTemplate };
-      monitors.map((monitor, idx) => {
+      monitors.forEach((monitor, idx) => {
         let delegate = {
           order: idx + 1,
           monitor_id: monitor.monitor_id,
