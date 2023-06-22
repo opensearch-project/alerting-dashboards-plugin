@@ -46,8 +46,12 @@ const AssociateMonitors = ({
         });
       });
 
-      _.set(monitorValues, 'associatedMonitorsEditor', JSON.stringify(value, null, 4));
-      _.set(monitorValues, 'associatedMonitors', delegatesToMonitors(value));
+      try {
+        _.set(monitorValues, 'associatedMonitorsEditor', JSON.stringify(value, null, 4));
+        _.set(monitorValues, 'associatedMonitors', delegatesToMonitors(value));
+      } catch (e) {
+        console.log('No monitor options are available.');
+      }
     } else if (options?.length && !graphUi) {
       const value = { ...queryTemplate };
       const firstTwo = options.slice(0, 2);
