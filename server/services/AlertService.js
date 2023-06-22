@@ -19,6 +19,7 @@ export default class AlertService {
   }
 
   getAlerts = async (context, req, res) => {
+    console.log('****** GET ALERTS *****');
     const {
       from = 0,
       size = 20,
@@ -78,6 +79,7 @@ export default class AlertService {
     const { callAsCurrentUser } = this.esDriver.asScoped(req);
     try {
       const resp = await callAsCurrentUser('alerting.getAlerts', params);
+      console.log(params);
       const alerts = resp.alerts.map((hit) => {
         const alert = hit;
         const id = hit.alert_id;

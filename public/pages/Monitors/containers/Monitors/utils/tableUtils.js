@@ -8,6 +8,7 @@ import { EuiLink } from '@elastic/eui';
 import moment from 'moment';
 import { DEFAULT_EMPTY_DATA } from '../../../../../utils/constants';
 import { PLUGIN_NAME } from '../../../../../../utils/constants';
+import { getItemLevelType } from './helpers';
 
 const renderTime = (time) => {
   const momentTime = moment(time);
@@ -22,10 +23,27 @@ export const columns = [
     sortable: true,
     textOnly: true,
     render: (name, item) => (
-      <EuiLink data-test-subj={name} href={`${PLUGIN_NAME}#/monitors/${item.id}?type=${item.type}`}>
+      <EuiLink
+        data-test-subj={name}
+        href={`${PLUGIN_NAME}#/monitors/${item.id}?type=${item.monitor.type}`}
+      >
         {name}
       </EuiLink>
     ),
+  },
+  {
+    field: 'enabled',
+    name: 'State',
+    sortable: false,
+    truncateText: false,
+    render: (enabled) => (enabled ? 'Enabled' : 'Disabled'),
+  },
+  {
+    field: 'item_type',
+    name: 'Type',
+    sortable: false,
+    truncateText: false,
+    render: (item_type) => getItemLevelType(item_type),
   },
   {
     field: 'user',
@@ -47,13 +65,6 @@ export const columns = [
     sortable: false,
     truncateText: true,
     textOnly: true,
-  },
-  {
-    field: 'enabled',
-    name: 'State',
-    sortable: false,
-    truncateText: false,
-    render: (enabled) => (enabled ? 'Enabled' : 'Disabled'),
   },
   {
     field: 'lastNotificationTime',

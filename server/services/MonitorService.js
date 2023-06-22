@@ -80,6 +80,7 @@ export default class MonitorService {
   };
 
   getMonitor = async (context, req, res) => {
+    console.log('****** GET MONITOR *****');
     try {
       const { id } = req.params;
       const params = { monitorId: id };
@@ -147,6 +148,7 @@ export default class MonitorService {
   };
 
   getWorkflow = async (context, req, res) => {
+    console.log('****** GET WORKFLOW *****');
     try {
       const { id } = req.params;
       const params = { monitorId: id };
@@ -170,7 +172,7 @@ export default class MonitorService {
         },
       });
     } catch (err) {
-      console.error('Alerting - MonitorService - getMonitor:', err);
+      console.error('Alerting - MonitorService - getWorkflow:', err);
       return res.ok({
         body: {
           ok: false,
@@ -218,6 +220,7 @@ export default class MonitorService {
   };
 
   getMonitors = async (context, req, res) => {
+    console.log('****** GET MONITORS *****');
     try {
       const { from, size, search, sortDirection, sortField, state } = req.query;
 
@@ -235,9 +238,11 @@ export default class MonitorService {
         };
       }
 
+      const should = [];
       if (state !== 'all') {
         const enabled = state === 'enabled';
-        filter.push({ term: { 'monitor.enabled': enabled } });
+        should.push({ term: { 'monitor.enabled': enabled } });
+        should.push({ term: { 'workflow.enabled': enabled } });
       }
 
       const monitorSorts = { name: 'monitor.name.keyword' };
@@ -255,7 +260,7 @@ export default class MonitorService {
           ...monitorSortPageData,
           query: {
             bool: {
-              must,
+              should,
             },
           },
         },

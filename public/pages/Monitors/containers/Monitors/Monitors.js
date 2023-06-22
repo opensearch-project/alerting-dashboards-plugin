@@ -18,6 +18,7 @@ import { columns as staticColumns } from './utils/tableUtils';
 import { MONITOR_ACTIONS, MONITOR_TYPE } from '../../../../utils/constants';
 import { backendErrorNotification } from '../../../../utils/helpers';
 import { displayAcknowledgedAlertsToast } from '../../../Dashboard/utils/helpers';
+import DeleteMonitorModal from '../../../../components/DeleteModal/DeleteMonitorModal';
 
 const MAX_MONITOR_COUNT = 1000;
 
@@ -45,6 +46,7 @@ export default class Monitors extends Component {
       monitors: [],
       monitorState: state,
       loadingMonitors: true,
+      monitorItemsToDelete: undefined,
     };
 
     this.getMonitors = _.debounce(this.getMonitors.bind(this), 500, { leading: true });
@@ -135,17 +137,25 @@ export default class Monitors extends Component {
     const unwrappedMonitors = [];
     monitors.forEach((monitor) => {
       const monitorType = _.get(monitor, 'monitor.monitor.monitor_type', 'monitor.monitor_type');
+      let unwrappedMonitor = monitor.monitor;
       switch (monitorType) {
         case MONITOR_TYPE.CLUSTER_METRICS:
-          let unwrappedMonitor = monitor.monitor;
           _.set(monitor, 'monitor', unwrappedMonitor.monitor);
           _.set(monitor, 'name', monitor.monitor.name);
           _.set(monitor, 'enabled', monitor.monitor.enabled);
-          unwrappedMonitors.push(monitor);
+          _.set(monitor, 'item_type', monitorType);
           break;
         default:
-          unwrappedMonitors.push(monitor);
+          _.set(
+            monitor,
+            'item_type',
+            unwrappedMonitor.monitor_type || unwrappedMonitor.workflow_type,
+            '-'
+          );
+          break;
       }
+
+      unwrappedMonitors.push(monitor);
     });
     return unwrappedMonitors;
   };
@@ -294,7 +304,9 @@ export default class Monitors extends Component {
   }
 
   onClickDelete(item) {
-    this.deleteMonitors([item]);
+    this.setState({
+      monitorItemsToDelete: [item],
+    });
   }
 
   onClickDisable(item) {
@@ -310,7 +322,7 @@ export default class Monitors extends Component {
   }
 
   onBulkDelete() {
-    this.deleteMonitors(this.state.selectedItems);
+    this.setState({ monitorItemsToDelete: this.state.selectedItems });
   }
 
   onBulkDisable() {
@@ -404,67 +416,77 @@ export default class Monitors extends Component {
     };
 
     return (
-      <ContentPanel
-        actions={
-          <MonitorActions
-            isEditDisabled={selectedItems.length !== 1}
-            onBulkAcknowledge={this.onBulkAcknowledge}
-            onBulkEnable={this.onBulkEnable}
-            onBulkDisable={this.onBulkDisable}
-            onBulkDelete={this.onBulkDelete}
-            onClickEdit={this.onClickEdit}
-          />
-        }
-        bodyStyles={{ padding: 'initial' }}
-        title="Monitors"
-      >
-        <MonitorControls
-          activePage={page}
-          pageCount={Math.ceil(totalMonitors / size) || 1}
-          search={search}
-          state={monitorState}
-          onSearchChange={this.onSearchChange}
-          onStateChange={this.onMonitorStateChange}
-          onPageClick={this.onPageClick}
-        />
-
-        <EuiHorizontalRule margin="xs" />
-
-        {showAcknowledgeModal && (
-          <AcknowledgeModal
-            alerts={alerts}
-            totalAlerts={totalAlerts}
-            onAcknowledge={this.onClickAcknowledgeModal}
-            onClickCancel={this.onClickCancel}
-          />
-        )}
-
-        <EuiBasicTable
-          columns={this.columns}
-          hasActions={true}
-          isSelectable={true}
-          /*
-           * EUI doesn't let you manually control the selectedItems, so we have to use the itemId for now
-           * If using monitor ID, doesn't correctly update selectedItems when doing certain bulk actions, because the ID is the same
-           * If using monitor ID + monitor version, it works for everything except Acknowledge, because Acknowledge isn't updating the monitor document
-           * So the best approach for now is to set a currentTime on API response for the table to use as part of itemId,
-           * and whenever new monitors are fetched from the server, we should be deselecting all monitors
-           * */
-          itemId={this.getItemId}
-          items={monitors}
-          noItemsMessage={
-            <MonitorEmptyPrompt
-              filterIsApplied={filterIsApplied}
-              loading={loadingMonitors}
-              resetFilters={this.resetFilters}
+      <>
+        <ContentPanel
+          actions={
+            <MonitorActions
+              isEditDisabled={selectedItems.length !== 1}
+              isDeleteDisabled={selectedItems.length === 0}
+              onBulkAcknowledge={this.onBulkAcknowledge}
+              onBulkEnable={this.onBulkEnable}
+              onBulkDisable={this.onBulkDisable}
+              onBulkDelete={this.onBulkDelete}
+              onClickEdit={this.onClickEdit}
             />
           }
-          onChange={this.onTableChange}
-          pagination={pagination}
-          selection={selection}
-          sorting={sorting}
-        />
-      </ContentPanel>
+          bodyStyles={{ padding: 'initial' }}
+          title="Monitors"
+        >
+          <MonitorControls
+            activePage={page}
+            pageCount={Math.ceil(totalMonitors / size) || 1}
+            search={search}
+            state={monitorState}
+            onSearchChange={this.onSearchChange}
+            onStateChange={this.onMonitorStateChange}
+            onPageClick={this.onPageClick}
+          />
+
+          <EuiHorizontalRule margin="xs" />
+
+          {showAcknowledgeModal && (
+            <AcknowledgeModal
+              alerts={alerts}
+              totalAlerts={totalAlerts}
+              onAcknowledge={this.onClickAcknowledgeModal}
+              onClickCancel={this.onClickCancel}
+            />
+          )}
+
+          <EuiBasicTable
+            columns={this.columns}
+            hasActions={true}
+            isSelectable={true}
+            /*
+             * EUI doesn't let you manually control the selectedItems, so we have to use the itemId for now
+             * If using monitor ID, doesn't correctly update selectedItems when doing certain bulk actions, because the ID is the same
+             * If using monitor ID + monitor version, it works for everything except Acknowledge, because Acknowledge isn't updating the monitor document
+             * So the best approach for now is to set a currentTime on API response for the table to use as part of itemId,
+             * and whenever new monitors are fetched from the server, we should be deselecting all monitors
+             * */
+            itemId={this.getItemId}
+            items={monitors}
+            noItemsMessage={
+              <MonitorEmptyPrompt
+                filterIsApplied={filterIsApplied}
+                loading={loadingMonitors}
+                resetFilters={this.resetFilters}
+              />
+            }
+            onChange={this.onTableChange}
+            pagination={pagination}
+            selection={selection}
+            sorting={sorting}
+          />
+        </ContentPanel>
+        {this.state.monitorItemsToDelete && (
+          <DeleteMonitorModal
+            monitorNames={this.state.monitorItemsToDelete.map((item) => item.name)}
+            closeDeleteModal={() => this.setState({ monitorItemsToDelete: undefined })}
+            onClickDelete={() => this.deleteMonitors(this.state.monitorItemsToDelete)}
+          />
+        )}
+      </>
     );
   }
 }

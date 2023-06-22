@@ -72,7 +72,9 @@ export default class MonitorDetails extends Component {
     };
   }
 
-  isWorkflow = () => new URLSearchParams(this.props.location.search).get('type') === 'workflow';
+  isWorkflow = () => {
+    return new URLSearchParams(this.props.location.search).get('type') === 'workflow';
+  };
 
   componentDidMount() {
     this.getMonitor(this.props.match.params.monitorId);

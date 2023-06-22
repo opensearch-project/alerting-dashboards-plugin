@@ -98,7 +98,15 @@ export default class Triggers extends Component {
         name: 'Name',
         sortable: true,
         truncateText: true,
-        width: '25%',
+        width: '15%',
+      },
+      {
+        name: 'Condition -- (formatting pending...)',
+        truncateText: true,
+        render: (item) => {
+          return item.condition.script.source;
+        },
+        width: '50%',
       },
       {
         field: 'actions',
@@ -106,18 +114,19 @@ export default class Triggers extends Component {
         sortable: true,
         truncateText: false,
         render: (actions) => actions.length,
-        width: '25%',
+        width: '15%',
       },
       {
         field: 'severity',
         name: 'Severity',
         sortable: true,
         truncateText: false,
-        width: '50%',
+        width: '20%',
       },
     ];
 
     const sorting = { sort: { field, direction } };
+    const items = getUnwrappedTriggers(monitor);
 
     return (
       <ContentPanel
@@ -126,7 +135,7 @@ export default class Triggers extends Component {
         bodyStyles={{ padding: 'initial' }}
       >
         <EuiInMemoryTable
-          items={getUnwrappedTriggers(monitor)}
+          items={items}
           itemId="id"
           key={tableKey}
           columns={columns}
