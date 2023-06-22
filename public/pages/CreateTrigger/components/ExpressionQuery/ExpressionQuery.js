@@ -100,7 +100,7 @@ const ExpressionQuery = ({
     form.setFieldError('expressionQueries', validate());
   };
 
-  const openPopover = (idx = 0, form) => {
+  const openPopover = (idx = 0) => {
     const expressions = _.cloneDeep(usedExpressions);
     expressions[idx] = { ...expressions[idx], isOpen: !expressions[idx].isOpen };
     setUsedExpressions(expressions);
