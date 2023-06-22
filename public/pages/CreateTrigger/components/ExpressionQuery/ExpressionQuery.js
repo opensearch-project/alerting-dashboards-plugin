@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import {
   EuiFlexItem,
   EuiFlexGroup,
@@ -121,16 +121,19 @@ const ExpressionQuery = ({
     form.setFieldTouched(`expressionQueries_${idx}`, true);
   };
 
-  const onRemoveExpression = (idx) => {
-    const expressions = _.cloneDeep(usedExpressions);
-    expressions.splice(idx, 1);
-    expressions.length && (expressions[0].description = '');
+  const onRemoveExpression = useCallback(
+    (idx) => {
+      const expressions = _.cloneDeep(usedExpressions);
+      expressions.splice(idx, 1);
+      expressions.length && (expressions[0].description = '');
 
-    if (!expressions?.length) {
-      expressions.push(DEFAULT_EXPRESSION);
-    }
-    setUsedExpressions([...expressions]);
-  };
+      if (!expressions?.length) {
+        expressions.push(DEFAULT_EXPRESSION);
+      }
+      setUsedExpressions([...expressions]);
+    },
+    [usedExpressions]
+  );
 
   const hasInvalidExpression = () => {
     return !!usedExpressions.filter((expression) => expression.monitor_id === '')?.length;
@@ -214,7 +217,7 @@ const ExpressionQuery = ({
       fieldProps={{
         validate: () => graphUi && validate(),
       }}
-      render={({ field, form }) => (
+      render={({ form }) => (
         <FormikFormRow
           name={'expressionQueries'}
           form={form}
@@ -248,7 +251,7 @@ const ExpressionQuery = ({
                         description={expression.description}
                         value={expression.monitor_name}
                         isActive={!!selections?.length}
-                        onClick={(e) => openPopover(idx)}
+                        onClick={() => openPopover(idx)}
                       />
                     }
                     isOpen={expression.isOpen}
