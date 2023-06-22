@@ -22,7 +22,7 @@ const ExpressionQuery = ({
   isDarkMode = false,
 }) => {
   const DEFAULT_CONDITION = 'AND';
-  const DEFAULT_NAME = defaultText ? defaultText : 'Select';
+  const DEFAULT_NAME = defaultText ?? 'Select';
   const DEFAULT_EXPRESSION = {
     description: '',
     isOpen: false,
