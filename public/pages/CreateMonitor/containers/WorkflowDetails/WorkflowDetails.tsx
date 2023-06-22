@@ -6,7 +6,7 @@
 import React, { Fragment, useEffect, useState } from 'react';
 import ContentPanel from '../../../../components/ContentPanel';
 import Schedule from '../../components/Schedule';
-import AssociateMonitors from '../../components/AssociateMonitors/AssociateMonitors';
+import AssociateMonitors from '../../components/AssociateMonitors/AssociateMonitors.js';
 import { EuiSpacer } from '@elastic/eui';
 import * as _ from 'lodash';
 

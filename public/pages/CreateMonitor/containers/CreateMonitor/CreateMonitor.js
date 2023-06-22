@@ -254,8 +254,6 @@ export default class CreateMonitor extends Component {
       monitor = { ...monitor, ...triggers };
     }
 
-    if (monitor.monitor_type === MONITOR_TYPE.COMPOSITE_LEVEL) delete monitor.monitor_type;
-
     if (edit) this.onUpdate(monitor, formikBag);
     else this.onCreate(monitor, formikBag);
   }

@@ -24,7 +24,10 @@ const MonitorsList = ({ monitors = [], options = [] }) => {
   const [selectedOptions, setSelectedOptions] = useState({});
   const [monitorOptions, setMonitorOptions] = useState([]);
 
-  const [monitorFields, setMonitorFields] = useState<number[]>(
+  const fieldName = 'associatedMonitors';
+  const fieldInputNamePrefix = 'associatedMonitor_';
+
+  const [monitorFields, setMonitorFields] = useState(
     _.reduce(
       monitors.length ? monitors : [0, 1],
       (result, value, key) => {
@@ -77,10 +80,10 @@ const MonitorsList = ({ monitors = [], options = [] }) => {
   };
 
   const updateFormik = (monitorIdx, form) => {
-    form.setFieldTouched('associatedMonitors', true);
-    form.setFieldTouched(`associatedMonitor_${monitorIdx}`, true);
-    form.setFieldValue('associatedMonitors', Object.values(selectedOptions));
-    form.setFieldError('associatedMonitors', validate());
+    form.setFieldTouched(fieldName, true);
+    form.setFieldTouched(`${fieldInputNamePrefix}${monitorIdx}`, true);
+    form.setFieldValue(fieldName, Object.values(selectedOptions));
+    form.setFieldError(fieldName, validate());
   };
 
   const isSelected = (selected, monitor) => {
@@ -130,11 +133,11 @@ const MonitorsList = ({ monitors = [], options = [] }) => {
       }}
       render={({ field, form }) => (
         <FormikFormRow
-          name={'associatedMonitors'}
+          name={fieldName}
           form={form}
           rowProps={{
             label: 'Monitor',
-            isInvalid: () => form.touched['associatedMonitors'] && !isValid(),
+            isInvalid: () => form.touched[fieldName] && !isValid(),
             error: () => validate(),
           }}
         >
@@ -146,11 +149,11 @@ const MonitorsList = ({ monitors = [], options = [] }) => {
               >
                 <EuiFlexItem grow={true}>
                   <FormikComboBox
-                    name={`associatedMonitor_${monitorIdx}`}
+                    name={`${fieldInputNamePrefix}${monitorIdx}`}
                     inputProps={{
                       isInvalid:
-                        form.touched[`associatedMonitor_${monitorIdx}`] &&
-                        form.errors['associatedMonitors'] &&
+                        form.touched[`${fieldInputNamePrefix}${monitorIdx}`] &&
+                        form.errors[fieldName] &&
                         !selectedOptions[monitorIdx],
                       placeholder: 'Select a monitor',
                       onChange: (options, field, form) => onChange(options, monitorIdx, form),

@@ -19,6 +19,8 @@ const AssociateMonitors = ({
 }) => {
   const [graphUi, setGraphUi] = useState(searchType === 'graph');
 
+  const fieldName = 'associatedMonitors';
+  const fieldEditorName = 'associatedMonitorsEditor';
   const queryTemplate = {
     sequence: {
       delegates: [],
@@ -34,7 +36,7 @@ const AssociateMonitors = ({
   useEffect(() => {
     if (monitors?.length) {
       const value = { ...queryTemplate };
-      monitors.map((monitor, idx) => {
+      monitors.forEach((monitor, idx) => {
         let delegate = {
           order: idx + 1,
           monitor_id: monitor.monitor_id,
@@ -46,25 +48,27 @@ const AssociateMonitors = ({
         });
       });
 
-      _.set(monitorValues, 'associatedMonitorsEditor', JSON.stringify(value, null, 4));
-      _.set(monitorValues, 'associatedMonitors', delegatesToMonitors(value));
-    } else {
-      if (options?.length) {
-        const value = { ...queryTemplate };
-        const firstTwo = options.slice(0, 2);
-        firstTwo.map((monitor, idx) => {
-          value.sequence.delegates.push({
-            order: idx + 1,
-            monitor_id: monitor.monitor_id,
-          });
+      try {
+        _.set(monitorValues, fieldEditorName, JSON.stringify(value, null, 4));
+        _.set(monitorValues, fieldName, delegatesToMonitors(value));
+      } catch (e) {
+        console.log('No monitor options are available.');
+      }
+    } else if (options?.length && !graphUi) {
+      const value = { ...queryTemplate };
+      const firstTwo = options.slice(0, 2);
+      firstTwo.map((monitor, idx) => {
+        value.sequence.delegates.push({
+          order: idx + 1,
+          monitor_id: monitor.monitor_id,
         });
+      });
 
-        try {
-          _.set(monitorValues, 'associatedMonitorsEditor', JSON.stringify(value, null, 4));
-          _.set(monitorValues, 'associatedMonitors', delegatesToMonitors(value));
-        } catch (e) {
-          console.log('No monitor options are available.');
-        }
+      try {
+        _.set(monitorValues, fieldEditorName, JSON.stringify(value, null, 4));
+        _.set(monitorValues, fieldName, delegatesToMonitors(value));
+      } catch (e) {
+        console.log('No monitor options are available.');
       }
     }
 
@@ -73,10 +77,10 @@ const AssociateMonitors = ({
 
   const onCodeChange = useCallback(
     (query, field, form) => {
-      form.setFieldValue('associatedMonitorsEditor', query);
+      form.setFieldValue(fieldEditorName, query);
       try {
         const code = JSON.parse(query);
-        form.setFieldValue('associatedMonitors', delegatesToMonitors(code));
+        form.setFieldValue(fieldName, delegatesToMonitors(code));
       } catch (e) {
         console.error('Invalid json.');
       }
@@ -99,7 +103,7 @@ const AssociateMonitors = ({
         <MonitorsList monitors={monitors} options={options} />
       ) : (
         <FormikCodeEditor
-          name="associatedMonitorsEditor"
+          name={fieldEditorName}
           formRow
           fieldProps={{
             validate: validateExtractionQuery,
@@ -116,7 +120,7 @@ const AssociateMonitors = ({
             height: '300px',
             theme: isDarkMode ? 'sense-dark' : 'github',
             onChange: onCodeChange,
-            onBlur: (e, field, form) => form.setFieldTouched('associatedMonitorsEditor', true),
+            onBlur: (e, field, form) => form.setFieldTouched(fieldEditorName, true),
             'data-test-subj': 'associatedMonitorsCodeEditor',
           }}
         />
