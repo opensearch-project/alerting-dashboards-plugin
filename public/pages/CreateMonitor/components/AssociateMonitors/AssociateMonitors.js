@@ -48,23 +48,21 @@ const AssociateMonitors = ({
 
       _.set(monitorValues, 'associatedMonitorsEditor', JSON.stringify(value, null, 4));
       _.set(monitorValues, 'associatedMonitors', delegatesToMonitors(value));
-    } else {
-      if (options?.length && !graphUi) {
-        const value = { ...queryTemplate };
-        const firstTwo = options.slice(0, 2);
-        firstTwo.map((monitor, idx) => {
-          value.sequence.delegates.push({
-            order: idx + 1,
-            monitor_id: monitor.monitor_id,
-          });
+    } else if (options?.length && !graphUi) {
+      const value = { ...queryTemplate };
+      const firstTwo = options.slice(0, 2);
+      firstTwo.map((monitor, idx) => {
+        value.sequence.delegates.push({
+          order: idx + 1,
+          monitor_id: monitor.monitor_id,
         });
+      });
 
-        try {
-          _.set(monitorValues, 'associatedMonitorsEditor', JSON.stringify(value, null, 4));
-          _.set(monitorValues, 'associatedMonitors', delegatesToMonitors(value));
-        } catch (e) {
-          console.log('No monitor options are available.');
-        }
+      try {
+        _.set(monitorValues, 'associatedMonitorsEditor', JSON.stringify(value, null, 4));
+        _.set(monitorValues, 'associatedMonitors', delegatesToMonitors(value));
+      } catch (e) {
+        console.log('No monitor options are available.');
       }
     }
 
