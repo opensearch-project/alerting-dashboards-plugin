@@ -19,6 +19,8 @@ const AssociateMonitors = ({
 }) => {
   const [graphUi, setGraphUi] = useState(searchType === 'graph');
 
+  const fieldName = 'associatedMonitors';
+  const fieldEditorName = 'associatedMonitorsEditor';
   const queryTemplate = {
     sequence: {
       delegates: [],
@@ -47,8 +49,8 @@ const AssociateMonitors = ({
       });
 
       try {
-        _.set(monitorValues, 'associatedMonitorsEditor', JSON.stringify(value, null, 4));
-        _.set(monitorValues, 'associatedMonitors', delegatesToMonitors(value));
+        _.set(monitorValues, fieldEditorName, JSON.stringify(value, null, 4));
+        _.set(monitorValues, fieldName, delegatesToMonitors(value));
       } catch (e) {
         console.log('No monitor options are available.');
       }
@@ -63,8 +65,8 @@ const AssociateMonitors = ({
       });
 
       try {
-        _.set(monitorValues, 'associatedMonitorsEditor', JSON.stringify(value, null, 4));
-        _.set(monitorValues, 'associatedMonitors', delegatesToMonitors(value));
+        _.set(monitorValues, fieldEditorName, JSON.stringify(value, null, 4));
+        _.set(monitorValues, fieldName, delegatesToMonitors(value));
       } catch (e) {
         console.log('No monitor options are available.');
       }
@@ -75,10 +77,10 @@ const AssociateMonitors = ({
 
   const onCodeChange = useCallback(
     (query, field, form) => {
-      form.setFieldValue('associatedMonitorsEditor', query);
+      form.setFieldValue(fieldEditorName, query);
       try {
         const code = JSON.parse(query);
-        form.setFieldValue('associatedMonitors', delegatesToMonitors(code));
+        form.setFieldValue(fieldName, delegatesToMonitors(code));
       } catch (e) {
         console.error('Invalid json.');
       }
@@ -101,7 +103,7 @@ const AssociateMonitors = ({
         <MonitorsList monitors={monitors} options={options} />
       ) : (
         <FormikCodeEditor
-          name="associatedMonitorsEditor"
+          name={fieldEditorName}
           formRow
           fieldProps={{
             validate: validateExtractionQuery,
@@ -118,7 +120,7 @@ const AssociateMonitors = ({
             height: '300px',
             theme: isDarkMode ? 'sense-dark' : 'github',
             onChange: onCodeChange,
-            onBlur: (e, field, form) => form.setFieldTouched('associatedMonitorsEditor', true),
+            onBlur: (e, field, form) => form.setFieldTouched(fieldEditorName, true),
             'data-test-subj': 'associatedMonitorsCodeEditor',
           }}
         />
