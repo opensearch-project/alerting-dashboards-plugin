@@ -21,8 +21,19 @@ const ExpressionQuery = ({
   triggerValues,
   isDarkMode = false,
 }) => {
-  const DEFAULT_DESCRIPTION = defaultText ? defaultText : 'Select';
-  const [usedExpressions, setUsedExpressions] = useState([]);
+  const DEFAULT_CONDITION = 'AND';
+  const DEFAULT_NAME = defaultText ? defaultText : 'Select';
+  const DEFAULT_EXPRESSION = {
+    description: '',
+    isOpen: false,
+    monitor_id: '',
+    monitor_name: DEFAULT_NAME,
+  };
+  const DEFAULT_NEXT_EXPRESSION = {
+    ...DEFAULT_EXPRESSION,
+    description: DEFAULT_CONDITION,
+  };
+  const [usedExpressions, setUsedExpressions] = useState([DEFAULT_EXPRESSION]);
   const [graphUi, setGraphUi] = useState(triggerValues.searchType === 'graph');
   const [editorValue, setEditorValue] = useState('');
 
@@ -46,7 +57,7 @@ const ExpressionQuery = ({
       setEditorValue(script);
       _.set(triggerValues, 'triggerDefinitions[0].script.source', script);
     }
-  }, [value, triggerValues.searchType]);
+  }, [value, triggerValues.searchType, selections]);
 
   const getValue = (expressions) =>
     expressions.map((exp) => ({
@@ -57,42 +68,79 @@ const ExpressionQuery = ({
 
   const changeMonitor = (selection, exp, idx, form) => {
     const expressions = _.cloneDeep(usedExpressions);
-    expressions[idx] = {
-      ...expressions[idx],
-      monitor_id: selection[0].monitor_id,
-      monitor_name: selection[0].label,
-    };
+    let monitor = selection[0];
+    if (monitor) {
+      expressions[idx] = {
+        ...expressions[idx],
+        monitor_id: monitor.monitor_id,
+        monitor_name: monitor.label,
+      };
+    } else {
+      expressions[idx] = idx ? DEFAULT_NEXT_EXPRESSION : DEFAULT_EXPRESSION;
+    }
 
     setUsedExpressions(expressions);
-    onBlur(form, expressions);
+    onChange(form, expressions);
   };
 
   const changeCondition = (selection, exp, idx, form) => {
     const expressions = _.cloneDeep(usedExpressions);
     expressions[idx] = { ...expressions[idx], description: selection[0].description };
     setUsedExpressions(expressions);
-    onBlur(form, expressions);
+    onChange(form, expressions);
+  };
+
+  const onChange = (form, expressions) => {
+    form.setFieldTouched('expressionQueries', true);
+    form.setFieldValue(formikName, getValue(expressions));
   };
 
   const onBlur = (form, expressions) => {
-    form.setFieldTouched('expressionQueries', true);
-    form.setFieldValue(formikName, getValue(expressions));
+    onChange(form, expressions);
     form.setFieldError('expressionQueries', validate());
   };
 
-  const openPopover = (idx) => {
+  const openPopover = (idx = 0, form) => {
     const expressions = _.cloneDeep(usedExpressions);
     expressions[idx] = { ...expressions[idx], isOpen: !expressions[idx].isOpen };
     setUsedExpressions(expressions);
   };
 
-  const closePopover = (idx) => {
+  const closePopover = (idx, form) => {
     const expressions = _.cloneDeep(usedExpressions);
     expressions[idx] = { ...expressions[idx], isOpen: false };
     setUsedExpressions(expressions);
+    onBlur(form, usedExpressions);
+    form.setFieldTouched(`expressionQueries_${idx}`, true);
   };
 
-  const renderOptions = (expression, idx, form) => (
+  const onRemoveExpression = (idx) => {
+    const expressions = _.cloneDeep(usedExpressions);
+    expressions.splice(idx, 1);
+    expressions.length && (expressions[0].description = '');
+
+    if (!expressions?.length) {
+      expressions.push(DEFAULT_EXPRESSION);
+    }
+    setUsedExpressions([...expressions]);
+  };
+
+  const hasInvalidExpression = () => {
+    return !!usedExpressions.filter((expression) => expression.monitor_id === '')?.length;
+  };
+
+  const isValid = () =>
+    selections.length > 1 && usedExpressions.length > 1 && !hasInvalidExpression();
+
+  const validate = () => {
+    if (selections.length < 2)
+      return 'Trigger condition requires at least two associated monitors.';
+    if (usedExpressions.length < 2)
+      return 'Trigger condition requires at least two monitors selected.';
+    if (hasInvalidExpression()) return 'Invalid expressions.';
+  };
+
+  const renderOptions = (expression, idx = 0, form) => (
     <EuiFlexGroup gutterSize="s" data-test-subj={dataTestSubj}>
       <EuiFlexItem grow={false}>
         <EuiComboBox
@@ -106,6 +154,7 @@ const ExpressionQuery = ({
             },
           ]}
           onChange={(selection) => changeCondition(selection, expression, idx, form)}
+          onBlur={() => onBlur(form, usedExpressions)}
           options={[
             { description: '', label: '' },
             { description: 'AND', label: 'AND' },
@@ -118,12 +167,7 @@ const ExpressionQuery = ({
       <EuiFlexItem grow={false}>
         <EuiButtonIcon
           data-test-subj={`selection-exp-field-item-remove-${idx}`}
-          onClick={() => {
-            const usedExp = _.cloneDeep(usedExpressions);
-            usedExp.splice(idx, 1);
-            usedExp.length && (usedExp[0].description = '');
-            setUsedExpressions([...usedExp]);
-          }}
+          onClick={() => onRemoveExpression(idx)}
           iconType={'trash'}
           color="danger"
           aria-label={'Remove condition'}
@@ -138,6 +182,7 @@ const ExpressionQuery = ({
       singleSelection={{ asPlainText: true }}
       compressed
       onChange={(selection) => changeMonitor(selection, expression, idx, form)}
+      onBlur={() => onBlur(form, usedExpressions)}
       selectedOptions={[
         {
           label: expression.monitor_name,
@@ -161,15 +206,6 @@ const ExpressionQuery = ({
     />
   );
 
-  const isValid = () => selections.length > 1 && usedExpressions.length > 1;
-
-  const validate = () => {
-    if (selections.length < 2)
-      return 'Trigger condition requires at least two associated monitors.';
-    if (usedExpressions.length < 2)
-      return 'Trigger condition requires at least two monitors selected.';
-  };
-
   return (
     <FormikInputWrapper
       name={'expressionQueries'}
@@ -182,7 +218,9 @@ const ExpressionQuery = ({
           form={form}
           rowProps={{
             label: label,
-            isInvalid: () => form.touched['expressionQueries'] && graphUi && !isValid(),
+            isInvalid: () => {
+              return form.touched['expressionQueries'] && graphUi && !isValid();
+            },
             error: () => graphUi && validate(),
             style: {
               maxWidth: 'inherit',
@@ -195,46 +233,29 @@ const ExpressionQuery = ({
               data-test-subj={dataTestSubj}
               className={'expressionQueries'}
             >
-              {!usedExpressions.length && (
-                <EuiFlexItem grow={false} key={`selections_default`}>
-                  <EuiPopover
-                    id={`selections_default`}
-                    button={
-                      <EuiExpression
-                        isInvalid={form.errors['expressionQueries'] && !isValid()}
-                        description={DEFAULT_DESCRIPTION}
-                        value={''}
-                        isActive={false}
-                        uppercase={false}
-                        onClick={(e) => onBlur(form, usedExpressions)}
-                      />
-                    }
-                    isOpen={false}
-                    panelPaddingSize="s"
-                    anchorPosition="rightDown"
-                    closePopover={() => onBlur(form, usedExpressions)}
-                  />
-                </EuiFlexItem>
-              )}
               {usedExpressions.map((expression, idx) => (
                 <EuiFlexItem grow={false} key={`selections_${idx}`}>
                   <EuiPopover
                     id={`selections_${idx}`}
                     button={
                       <EuiExpression
-                        isInvalid={form.errors['expressionQueries'] && !isValid()}
+                        isInvalid={
+                          form.touched[`expressionQueries_${idx}`] &&
+                          graphUi &&
+                          !expression.monitor_id
+                        }
                         aria-label={'Add condition expression'}
                         description={expression.description}
                         value={expression.monitor_name}
-                        isActive={expression.isOpen}
+                        isActive={!!selections?.length}
                         onClick={(e) => {
                           e.preventDefault();
-                          openPopover(idx);
+                          openPopover(idx, form);
                         }}
                       />
                     }
                     isOpen={expression.isOpen}
-                    closePopover={() => closePopover(idx)}
+                    closePopover={() => closePopover(idx, form)}
                     panelPaddingSize="s"
                     anchorPosition="rightDown"
                   >
@@ -247,19 +268,10 @@ const ExpressionQuery = ({
                   <EuiButtonIcon
                     onClick={() => {
                       const expressions = _.cloneDeep(usedExpressions);
-                      const differences = _.differenceBy(selections, expressions, 'monitor_id');
-                      const newExpressions = [
-                        ...expressions,
-                        {
-                          description: usedExpressions.length ? 'AND' : '',
-                          isOpen: false,
-                          monitor_name: differences[0]?.label,
-                          monitor_id: differences[0]?.monitor_id,
-                        },
-                      ];
-
-                      setUsedExpressions(newExpressions);
-                      onBlur(form, newExpressions);
+                      expressions.push({
+                        ...DEFAULT_NEXT_EXPRESSION,
+                      });
+                      setUsedExpressions(expressions);
                     }}
                     color={'primary'}
                     iconType="plusInCircleFilled"
@@ -290,7 +302,6 @@ const ExpressionQuery = ({
                   form.setFieldValue('expressionQueries', query);
                 },
                 onBlur: (e, field, form) => {
-                  console.log('### triggerValues', triggerValues);
                   form.setFieldTouched('expressionQueries', true);
                 },
                 'data-test-subj': 'expressionQueriesCodeEditor',
