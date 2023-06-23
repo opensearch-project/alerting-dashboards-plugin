@@ -9,7 +9,6 @@ import {
 } from '../../../components/MonitorExpressions/expressions/utils/constants';
 import { MONITOR_TYPE } from '../../../../../utils/constants';
 import { SUPPORTED_DOC_LEVEL_QUERY_OPERATORS } from '../../../components/DocumentLevelMonitorQueries/utils/constants';
-import { QUERY_OPERATORS } from '../../../../Dashboard/components/FindingsDashboard/findingsUtils';
 
 export const BUCKET_COUNT = 5;
 
