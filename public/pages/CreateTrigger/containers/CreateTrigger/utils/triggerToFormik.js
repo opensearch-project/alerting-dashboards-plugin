@@ -14,7 +14,6 @@ import {
   ACTIONABLE_ALERTS_OPTIONS_LABELS,
   NOTIFY_OPTIONS_VALUES,
 } from '../../../components/Action/actions/Message';
-import { conditionToExpressions } from '../../../components/CompositeTriggerCondition/CompositeTriggerCondition';
 
 export function triggerToFormik(trigger, monitor) {
   return _.isArray(trigger)
