@@ -77,7 +77,7 @@ const MonitorsList = ({ values, httpClient }) => {
     );
 
   const monitorsToOptions = (monitors) =>
-    monitors.map((monitor, index) => ({
+    monitors.map((monitor) => ({
       label: monitor.monitor_name,
       value: monitor.monitor_id,
     }));
@@ -179,7 +179,7 @@ const MonitorsList = ({ values, httpClient }) => {
       fieldProps={{
         validate: () => validate(),
       }}
-      render={({ field, form }) => (
+      render={({ form }) => (
         <FormikFormRow
           name={formikFieldName}
           form={form}
