@@ -200,7 +200,9 @@ const MonitorsList = ({ values, httpClient }) => {
                     name={`${formikFieldName}_${monitorIdx}`}
                     inputProps={{
                       isInvalid:
-                        form.touched[`${formikFieldName}_${monitorIdx}`] && !selection[monitorIdx],
+                        (form.touched[`${formikFieldName}_${monitorIdx}`] ||
+                          form.touched[formikFieldName]) &&
+                        !selection[monitorIdx],
                       placeholder: 'Select a monitor',
                       onChange: (options, field, form) => onChange(options, monitorIdx, form),
                       onBlur: (e, field, form) => onBlur(e, field, form),
