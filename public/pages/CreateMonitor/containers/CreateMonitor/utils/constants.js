@@ -73,6 +73,7 @@ export const FORMIK_INITIAL_VALUES = {
   detectorId: '',
   associatedMonitors: DEFAULT_ASSOCIATED_MONITORS_VALUE,
   associatedMonitorsList: [],
+  associatedMonitorsEditor: '',
 };
 
 export const FORMIK_INITIAL_AGG_VALUES = {

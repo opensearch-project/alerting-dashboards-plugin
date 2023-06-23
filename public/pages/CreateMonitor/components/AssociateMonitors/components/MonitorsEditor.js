@@ -3,11 +3,10 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { FormikCodeEditor } from '../../../../../components/FormControls';
-import { hasError, isInvalid, validateExtractionQuery } from '../../../../../utils/validate';
 
-const MonitorsEditor = ({ values, isDarkMode }) => {
+const MonitorsEditor = ({ values, isDarkMode, errors }) => {
   const codeFieldName = 'associatedMonitorsEditor';
   const formikValueName = 'associatedMonitors';
   const [editorValue, setEditorValue] = useState('');
@@ -15,7 +14,7 @@ const MonitorsEditor = ({ values, isDarkMode }) => {
   useEffect(() => {
     try {
       const code = JSON.stringify(values.associatedMonitors, null, 4);
-      // _.set(values, codeFieldName, code);
+      _.set(values, codeFieldName, code);
       setEditorValue(code);
     } catch (e) {}
   }, [values.associatedMonitors]);
@@ -34,25 +33,26 @@ const MonitorsEditor = ({ values, isDarkMode }) => {
   };
 
   const isInvalid = (name, form) => {
-    if (form.touched[codeFieldName]) {
-      try {
-        const associatedMonitors = form.values[name];
-        const json = JSON.parse(associatedMonitors);
-        return !json.sequence?.delegates?.length;
-      } catch (e) {
-        return false;
-      }
+    try {
+      const associatedMonitors = form.values[name];
+      const json = JSON.parse(associatedMonitors);
+      return !json.sequence?.delegates?.length || json.sequence?.delegates?.length < 2;
+    } catch (e) {
+      return true;
     }
   };
 
   const hasError = (name, form) => {
+    const associatedMonitors = form.values[name];
+    return validate(associatedMonitors);
+  };
+
+  const validate = (value) => {
     try {
-      const associatedMonitors = form.values[name];
-      const json = JSON.parse(associatedMonitors);
-      return (
-        json.sequence?.delegates?.length < 2 &&
-        'Delegates list can not be empty or have less then two associated monitors.'
-      );
+      const json = JSON.parse(value);
+      if (!json.sequence?.delegates?.length || json.sequence?.delegates?.length < 2) {
+        return 'Delegates list can not be empty or have less then two associated monitors.';
+      }
     } catch (e) {
       return 'Invalid json.';
     }
@@ -62,14 +62,17 @@ const MonitorsEditor = ({ values, isDarkMode }) => {
     <FormikCodeEditor
       name={codeFieldName}
       formRow
-      fieldProps={{}}
+      fieldProps={{
+        validate: validate,
+      }}
       rowProps={{
         label: 'Define workflow',
         fullWidth: true,
-        // isInvalid: (name, form) => isInvalid(name, form),
-        // error: (name, form) => hasError(name, form),
+        isInvalid: (name, form) => form.touched[codeFieldName] && isInvalid(name, form),
+        error: hasError,
       }}
       inputProps={{
+        isInvalid: (name, form) => isInvalid(name, form),
         mode: 'json',
         width: '80%',
         height: '300px',

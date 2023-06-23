@@ -29,7 +29,7 @@ export const getMonitors = async (httpClient) => {
   }
 };
 
-const AssociateMonitors = ({ isDarkMode, values, httpClient }) => {
+const AssociateMonitors = ({ isDarkMode, values, httpClient, errors }) => {
   const [graphUi, setGraphUi] = useState(false);
 
   useEffect(() => {
@@ -50,7 +50,7 @@ const AssociateMonitors = ({ isDarkMode, values, httpClient }) => {
       {graphUi ? (
         <MonitorsList values={values} httpClient={httpClient} />
       ) : (
-        <MonitorsEditor values={values} />
+        <MonitorsEditor values={values} errors={errors} isDarkMode={isDarkMode} />
       )}
     </Fragment>
   );

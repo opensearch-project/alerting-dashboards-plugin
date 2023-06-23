@@ -177,7 +177,7 @@ const MonitorsList = ({ values, httpClient }) => {
     <FormikInputWrapper
       name={formikFieldName}
       fieldProps={{
-        validate: () => validate(),
+        validate: validate,
       }}
       render={({ form }) => (
         <FormikFormRow

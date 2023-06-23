@@ -5,11 +5,11 @@ import { FormikCodeEditor } from '../../../../components/FormControls';
 const ExpressionEditor = ({ values, formikFieldName, formikFieldPath, isDarkMode = false }) => {
   const [editorValue, setEditorValue] = useState('');
   const formikFullFieldName = `${formikFieldPath}${formikFieldName}`;
-  const formikFullCodeFieldName = 'triggerConditionsCode';
+  const formikFullCodeFieldName = _.replace(`${formikFullFieldName}_code`, /[.\[\]]/gm, '_');
 
   useEffect(() => {
     const code = _.get(values, formikFullFieldName, '');
-    // _.set(values, formikFullCodeFieldName, code);
+    _.set(values, formikFullCodeFieldName, code);
     setEditorValue(code);
   }, [values]);
 
@@ -19,19 +19,25 @@ const ExpressionEditor = ({ values, formikFieldName, formikFieldPath, isDarkMode
     return !form.values[name]?.length && 'Invalid condition.';
   };
 
+  const validate = (value) => {
+    if (!value?.length) return 'Invalid condition.';
+  };
+
   return (
     <FormikCodeEditor
       name={formikFullCodeFieldName}
       formRow
-      fieldProps={{}}
+      fieldProps={{
+        validate: validate,
+      }}
       rowProps={{
         label: 'Trigger condition',
         fullWidth: true,
-        // isInvalid: (name, form) => form.touched[name] && isInvalid(name, form),
-        // error: (name, form) => hasError(name, form),
+        isInvalid: (name, form) => form.touched[name] && isInvalid(name, form),
+        error: (name, form) => hasError(name, form),
       }}
       inputProps={{
-        // isInvalid: (name, form) => form.touched[name] && isInvalid(name, form),
+        isInvalid: (name, form) => form.touched[name] && isInvalid(name, form),
         mode: 'text',
         width: '80%',
         height: '300px',

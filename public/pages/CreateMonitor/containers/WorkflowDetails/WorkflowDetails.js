@@ -10,7 +10,7 @@ import AssociateMonitors from '../../components/AssociateMonitors/AssociateMonit
 import { EuiSpacer } from '@elastic/eui';
 import { MONITOR_TYPE, SEARCH_TYPE } from '../../../../utils/constants';
 
-const WorkflowDetails = ({ values, isDarkMode, httpClient }) => {
+const WorkflowDetails = ({ values, isDarkMode, httpClient, errors }) => {
   const isAd = values.searchType === SEARCH_TYPE.AD;
   const isComposite = values.monitor_type === MONITOR_TYPE.COMPOSITE_LEVEL;
   return (
@@ -29,7 +29,12 @@ const WorkflowDetails = ({ values, isDarkMode, httpClient }) => {
       {isComposite && (
         <Fragment>
           <EuiSpacer size="xl" />
-          <AssociateMonitors isDarkMode={isDarkMode} values={values} httpClient={httpClient} />
+          <AssociateMonitors
+            isDarkMode={isDarkMode}
+            values={values}
+            httpClient={httpClient}
+            errors={errors}
+          />
         </Fragment>
       )}
     </ContentPanel>

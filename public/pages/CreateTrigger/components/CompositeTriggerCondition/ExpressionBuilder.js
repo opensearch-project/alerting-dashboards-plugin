@@ -105,7 +105,7 @@ const ExpressionBuilder = ({
 
     const condition = _.get(values, formikFullFieldName, '');
     const expressions = conditionToExpressions(condition, monitors);
-    setUsedExpressions(expressions.length ? expressions : [DEFAULT_EXPRESSION]);
+    setUsedExpressions(expressions?.length ? expressions : [DEFAULT_EXPRESSION]);
   };
 
   const expressionsToCondition = (expressions) => {

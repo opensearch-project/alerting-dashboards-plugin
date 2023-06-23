@@ -303,7 +303,12 @@ export default class CreateMonitor extends Component {
 
               <EuiSpacer />
 
-              <WorkflowDetails isDarkMode={isDarkMode} values={values} httpClient={httpClient} />
+              <WorkflowDetails
+                isDarkMode={isDarkMode}
+                values={values}
+                httpClient={httpClient}
+                errors={errors}
+              />
 
               <EuiSpacer />
 
