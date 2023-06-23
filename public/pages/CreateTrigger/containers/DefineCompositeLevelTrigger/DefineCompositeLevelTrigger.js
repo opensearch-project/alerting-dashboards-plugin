@@ -58,7 +58,7 @@ export const titleTemplate = (title, subTitle) => (
 
 class DefineCompositeLevelTrigger extends Component {
   render() {
-    const { values, httpClient, notifications, notificationService, plugins } = this.props;
+    const { values, httpClient, notifications, notificationService, plugins, touched } = this.props;
 
     const formikFieldPath = `triggerDefinitions[0].`;
     const triggerName = _.get(values, `${formikFieldPath}name`, 'Trigger');
@@ -113,6 +113,7 @@ class DefineCompositeLevelTrigger extends Component {
             'An alert will trigger when the following monitors generate active alerts.'
           )}
           values={values}
+          touched={touched}
           isDarkMode={this.props.isDarkMode}
           httpClient={httpClient}
         />

@@ -13,11 +13,13 @@ const CompositeMonitorsAlertTrigger = ({
   notificationService,
   plugins,
   values,
+  touched,
 }) => {
   return (
     <Fragment>
       <DefineCompositeLevelTrigger
         values={values}
+        touched={touched}
         isDarkMode={isDarkMode}
         httpClient={httpClient}
         notifications={notifications}

@@ -34,6 +34,7 @@ const CompositeTriggerCondition = ({
   formikFieldPath = '',
   formikFieldName = 'triggerCondition',
   values,
+  touched,
   isDarkMode = false,
   httpClient,
 }) => {
@@ -71,6 +72,7 @@ const CompositeTriggerCondition = ({
                 <ExpressionBuilder
                   httpClient={httpClient}
                   values={values}
+                  touched={touched}
                   formikFieldName={formikFieldName}
                   formikFieldPath={formikFieldPath}
                 />

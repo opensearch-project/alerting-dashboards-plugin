@@ -43,8 +43,15 @@ export const conditionToExpressions = (condition, monitors) => {
   return expressions;
 };
 
-const ExpressionBuilder = ({ formikFieldPath = '', formikFieldName, values, httpClient }) => {
+const ExpressionBuilder = ({
+  formikFieldPath = '',
+  formikFieldName,
+  values,
+  touched,
+  httpClient,
+}) => {
   const formikFullFieldName = `${formikFieldPath}${formikFieldName}`;
+  const formikFullFieldValue = _.replace(`${formikFullFieldName}_value`, /[.\[\]]/gm, '_');
 
   const DEFAULT_CONDITION = 'AND';
   const DEFAULT_NAME = 'Select associated monitor';
@@ -69,6 +76,10 @@ const ExpressionBuilder = ({ formikFieldPath = '', formikFieldName, values, http
   const [options, setOptions] = useState([]);
 
   useEffect(() => {
+    // initializing formik because these are generic fields and formik won't pick them up until fields is updated
+    _.set(touched, formikFullFieldValue, false);
+    _.set(values, formikFullFieldValue, '');
+
     const monitors = _.get(values, 'monitorOptions', []);
     if (monitors.length) {
       setInitialValues(monitors);
@@ -148,7 +159,7 @@ const ExpressionBuilder = ({ formikFieldPath = '', formikFieldName, values, http
 
   const onBlur = (form, expressions) => {
     onChange(form, expressions);
-    form.setFieldTouched(`${formikFullFieldName}_value`, true);
+    form.setFieldTouched(formikFullFieldValue, true);
   };
 
   const openPopover = (idx = 0) => {
@@ -255,16 +266,16 @@ const ExpressionBuilder = ({ formikFieldPath = '', formikFieldName, values, http
 
   return (
     <FormikInputWrapper
-      name={`${formikFullFieldName}_value`}
+      name={formikFullFieldValue}
       fieldProps={{
         validate: () => validate(),
       }}
       render={({ form }) => (
         <FormikFormRow
-          name={`${formikFullFieldName}_value`}
+          name={formikFullFieldValue}
           form={form}
           rowProps={{
-            isInvalid: () => form.touched[`${formikFullFieldName}_value`] && !isValid(),
+            isInvalid: () => form.touched[formikFullFieldValue] && !isValid(),
             error: () => validate(),
             style: {
               maxWidth: 'inherit',
@@ -287,7 +298,10 @@ const ExpressionBuilder = ({ formikFieldPath = '', formikFieldName, values, http
                       description={expression.description}
                       value={expression.monitor_name}
                       isActive={!!options?.length}
-                      onClick={() => openPopover(idx)}
+                      onClick={() => {
+                        form.setFieldTouched(formikFullFieldValue, true);
+                        openPopover(idx);
+                      }}
                     />
                   }
                   isOpen={expression.isOpen}
