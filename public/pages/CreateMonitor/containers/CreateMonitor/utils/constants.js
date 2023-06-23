@@ -73,6 +73,7 @@ export const FORMIK_INITIAL_VALUES = {
   filters: [], // array of FORMIK_INITIAL_WHERE_EXPRESSION_VALUES
   detectorId: '',
   associatedMonitors: DEFAULT_ASSOCIATED_MONITORS_VALUE,
+  associatedMonitorsList: [],
 };
 
 export const FORMIK_INITIAL_AGG_VALUES = {

@@ -185,10 +185,7 @@ const MonitorsList = ({ values, httpClient }) => {
           form={form}
           rowProps={{
             label: 'Monitor',
-            isInvalid: () => {
-              console.log(form.touched[formikFieldName], isValid());
-              return form.touched[formikFieldName] && !isValid();
-            },
+            isInvalid: () => form.touched[formikFieldName] && !isValid(),
             error: () => validate(),
           }}
         >
