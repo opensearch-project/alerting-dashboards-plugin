@@ -23,6 +23,17 @@ export const FORMIK_INITIAL_WHERE_EXPRESSION_VALUES = {
   fieldRangeEnd: undefined,
 };
 
+export const DEFAULT_ASSOCIATED_MONITORS_VALUE = {
+  sequence: {
+    delegates: [
+      /*{
+        order: 1,
+        monitor_id: '{{m1}}',
+      }*/
+    ],
+  },
+};
+
 export const FORMIK_INITIAL_VALUES = {
   /* CONFIGURE MONITOR */
   name: '',
@@ -61,8 +72,7 @@ export const FORMIK_INITIAL_VALUES = {
   bucketUnitOfTime: 'h', // m = minute, h = hour, d = day
   filters: [], // array of FORMIK_INITIAL_WHERE_EXPRESSION_VALUES
   detectorId: '',
-  associatedMonitors: [],
-  expressionQueries: [],
+  associatedMonitors: DEFAULT_ASSOCIATED_MONITORS_VALUE,
 };
 
 export const FORMIK_INITIAL_AGG_VALUES = {

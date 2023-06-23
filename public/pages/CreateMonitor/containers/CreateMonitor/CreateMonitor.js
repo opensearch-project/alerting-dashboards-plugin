@@ -303,14 +303,7 @@ export default class CreateMonitor extends Component {
 
               <EuiSpacer />
 
-              <WorkflowDetails
-                isDarkMode={isDarkMode}
-                values={values}
-                history={history}
-                isAd={values.searchType === SEARCH_TYPE.AD}
-                isComposite={values.monitor_type === MONITOR_TYPE.COMPOSITE_LEVEL}
-                httpClient={httpClient}
-              />
+              <WorkflowDetails isDarkMode={isDarkMode} values={values} httpClient={httpClient} />
 
               <EuiSpacer />
 
@@ -333,10 +326,7 @@ export default class CreateMonitor extends Component {
 
               {values.monitor_type === MONITOR_TYPE.COMPOSITE_LEVEL ? (
                 <CompositeMonitorsAlertTrigger
-                  edit={edit}
-                  monitor={formikToMonitor(values)}
-                  monitorValues={values}
-                  triggerValues={values}
+                  values={values}
                   isDarkMode={this.props.isDarkMode}
                   httpClient={httpClient}
                   notifications={notifications}

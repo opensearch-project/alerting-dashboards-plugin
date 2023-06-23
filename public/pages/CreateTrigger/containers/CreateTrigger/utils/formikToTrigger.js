@@ -116,28 +116,12 @@ export function formikToDocumentLevelTriggerCondition(values, monitorUiMetadata)
 }
 
 export function formikToCompositeTriggerCondition(values) {
-  const conditionMap = {
-    and: '&&',
-    or: '||',
-    not: '!',
-    '': '',
-  };
-
-  const triggerConditions = _.get(values, 'triggerConditions', []);
-  let source = triggerConditions.reduce((query, expression) => {
-    query += ` ${conditionMap[expression.condition]} monitor[id=${expression.monitor_id}]`;
-    query = query.trim();
-    return query;
-  }, '');
-
-  if (!source) {
-    source = _.get(values, 'script.source', '');
-  }
+  const triggerConditions = _.get(values, 'triggerConditions', '');
 
   return {
     script: {
       lang: 'painless',
-      source: `(${source})`,
+      source: triggerConditions,
     },
   };
 }
@@ -314,7 +298,7 @@ export function formikToTriggerUiMetadata(values, monitorUiMetadata) {
     case MONITOR_TYPE.COMPOSITE_LEVEL:
       const compositeTriggersUiMetadata = {};
       _.get(values, 'triggerDefinitions', []).forEach((trigger) => {
-        compositeTriggersUiMetadata[trigger.name] = _.get(trigger, 'triggerConditions', []);
+        compositeTriggersUiMetadata[trigger.name] = _.get(trigger, 'triggerConditions', '');
       });
       return compositeTriggersUiMetadata;
   }

@@ -94,14 +94,7 @@ export function formikToInputs(values) {
 
 export function formikToCompositeInput(values) {
   return {
-    composite_input: {
-      sequence: {
-        delegates: values.associatedMonitors.map((monitor, idx) => ({
-          order: idx + 1,
-          monitor_id: monitor.value,
-        })),
-      },
-    },
+    composite_input: values.associatedMonitors,
   };
 }
 
