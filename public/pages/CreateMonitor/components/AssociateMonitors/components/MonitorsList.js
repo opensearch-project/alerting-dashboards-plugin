@@ -98,6 +98,11 @@ const MonitorsList = ({ values, httpClient }) => {
     setFormikValues(selected, monitorIdx, form);
   };
 
+  const onBlur = (e, field, form) => {
+    form.setFieldTouched(formikFieldName, true);
+    form.setFieldTouched(field.name, true);
+  };
+
   const updateSelection = (selected) => {
     const newMonitorOptions = [...options];
     newMonitorOptions.forEach((mon) => {
@@ -108,10 +113,6 @@ const MonitorsList = ({ values, httpClient }) => {
   };
 
   const setFormikValues = (selected, monitorIdx, form) => {
-    // form.setFieldTouched(formikFieldName, true);
-    // form.setFieldTouched(`${formikFieldName}_${monitorIdx}`, true);
-    // form.setFieldError(formikFieldName, validate());
-
     const associatedMonitors = _.get(
       values,
       'associatedMonitors',
@@ -175,18 +176,19 @@ const MonitorsList = ({ values, httpClient }) => {
   return (
     <FormikInputWrapper
       name={formikFieldName}
-      fieldProps={
-        {
-          // validate: () => validate(),
-        }
-      }
+      fieldProps={{
+        validate: () => validate(),
+      }}
       render={({ field, form }) => (
         <FormikFormRow
           name={formikFieldName}
           form={form}
           rowProps={{
             label: 'Monitor',
-            isInvalid: () => form.touched[formikFieldName] && !isValid(),
+            isInvalid: () => {
+              console.log(form.touched[formikFieldName], isValid());
+              return form.touched[formikFieldName] && !isValid();
+            },
             error: () => validate(),
           }}
         >
@@ -204,7 +206,7 @@ const MonitorsList = ({ values, httpClient }) => {
                         form.touched[`${formikFieldName}_${monitorIdx}`] && !selection[monitorIdx],
                       placeholder: 'Select a monitor',
                       onChange: (options, field, form) => onChange(options, monitorIdx, form),
-                      // onBlur: (e, field, form) => setFormikValues(monitorIdx, form),
+                      onBlur: (e, field, form) => onBlur(e, field, form),
                       options: options,
                       singleSelection: { asPlainText: true },
                       selectedOptions: selection[monitorIdx] ? [selection[monitorIdx]] : undefined,
