@@ -96,7 +96,7 @@ exports[`AlertsDashboardFlyoutComponent renders 1`] = `
             }
           }
         >
-          Loading conditions...
+          -
         </p>
       </EuiText>
     </EuiFlexItem>
@@ -128,7 +128,7 @@ exports[`AlertsDashboardFlyoutComponent renders 1`] = `
             Filters
           </strong>
           <p>
-            Loading filters...
+            -
           </p>
         </EuiText>
       </EuiFlexItem>
@@ -141,7 +141,7 @@ exports[`AlertsDashboardFlyoutComponent renders 1`] = `
             Group by
           </strong>
           <p>
-            Loading groups...
+            -
           </p>
         </EuiText>
       </EuiFlexItem>
@@ -231,8 +231,8 @@ exports[`AlertsDashboardFlyoutComponent renders 1`] = `
       isSelectable={true}
       itemId={[Function]}
       items={Array []}
-      loading={true}
-      noItemsMessage="Loading alerts..."
+      loading={false}
+      noItemsMessage="No alerts."
       onChange={[Function]}
       pagination={
         Object {

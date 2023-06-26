@@ -6,6 +6,13 @@ exports[`AnomalyDetectors renders 1`] = `
     Object {
       "aggregationType": "count",
       "aggregations": Array [],
+      "associatedMonitors": Object {
+        "sequence": Object {
+          "delegates": Array [],
+        },
+      },
+      "associatedMonitorsEditor": "",
+      "associatedMonitorsList": Array [],
       "bucketUnitOfTime": "h",
       "bucketValue": 1,
       "cronExpression": "0 */1 * * *",
@@ -70,6 +77,13 @@ exports[`AnomalyDetectors renders 1`] = `
       Object {
         "aggregationType": "count",
         "aggregations": Array [],
+        "associatedMonitors": Object {
+          "sequence": Object {
+            "delegates": Array [],
+          },
+        },
+        "associatedMonitorsEditor": "",
+        "associatedMonitorsList": Array [],
         "bucketUnitOfTime": "h",
         "bucketValue": 1,
         "cronExpression": "0 */1 * * *",
@@ -195,6 +209,13 @@ exports[`AnomalyDetectors renders 1`] = `
                   "initialValues": Object {
                     "aggregationType": "count",
                     "aggregations": Array [],
+                    "associatedMonitors": Object {
+                      "sequence": Object {
+                        "delegates": Array [],
+                      },
+                    },
+                    "associatedMonitorsEditor": "",
+                    "associatedMonitorsList": Array [],
                     "bucketUnitOfTime": "h",
                     "bucketValue": 1,
                     "cronExpression": "0 */1 * * *",
@@ -278,6 +299,13 @@ exports[`AnomalyDetectors renders 1`] = `
                   "values": Object {
                     "aggregationType": "count",
                     "aggregations": Array [],
+                    "associatedMonitors": Object {
+                      "sequence": Object {
+                        "delegates": Array [],
+                      },
+                    },
+                    "associatedMonitorsEditor": "",
+                    "associatedMonitorsList": Array [],
                     "bucketUnitOfTime": "h",
                     "bucketValue": 1,
                     "cronExpression": "0 */1 * * *",
@@ -409,6 +437,13 @@ exports[`AnomalyDetectors renders 1`] = `
                           "initialValues": Object {
                             "aggregationType": "count",
                             "aggregations": Array [],
+                            "associatedMonitors": Object {
+                              "sequence": Object {
+                                "delegates": Array [],
+                              },
+                            },
+                            "associatedMonitorsEditor": "",
+                            "associatedMonitorsList": Array [],
                             "bucketUnitOfTime": "h",
                             "bucketValue": 1,
                             "cronExpression": "0 */1 * * *",
@@ -492,6 +527,13 @@ exports[`AnomalyDetectors renders 1`] = `
                           "values": Object {
                             "aggregationType": "count",
                             "aggregations": Array [],
+                            "associatedMonitors": Object {
+                              "sequence": Object {
+                                "delegates": Array [],
+                              },
+                            },
+                            "associatedMonitorsEditor": "",
+                            "associatedMonitorsList": Array [],
                             "bucketUnitOfTime": "h",
                             "bucketValue": 1,
                             "cronExpression": "0 */1 * * *",

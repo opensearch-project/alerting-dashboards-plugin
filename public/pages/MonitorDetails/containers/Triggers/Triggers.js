@@ -24,6 +24,8 @@ export function getUnwrappedTriggers(monitor) {
         return trigger[TRIGGER_TYPE.BUCKET_LEVEL];
       case MONITOR_TYPE.DOC_LEVEL:
         return trigger[TRIGGER_TYPE.DOC_LEVEL];
+      case MONITOR_TYPE.COMPOSITE_LEVEL:
+        return trigger[TRIGGER_TYPE.COMPOSITE_LEVEL];
       default:
         return trigger[TRIGGER_TYPE.QUERY_LEVEL];
     }

@@ -11,7 +11,7 @@ import Interval from './Frequencies/Interval';
 const Schedule = ({ isAd }) => (
   <Fragment>
     <EuiText style={{ marginBottom: '0px' }}>
-      <h4>Schedule</h4>
+      <h4>Define workflow schedule</h4>
     </EuiText>
 
     {isAd ? (
@@ -31,7 +31,7 @@ const Schedule = ({ isAd }) => (
       ) : (
         <div>
           <Frequency />
-          <EuiSpacer size="s" />
+          <EuiSpacer size="m" />
           <FrequencyPicker />
         </div>
       )}

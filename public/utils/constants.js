@@ -30,6 +30,7 @@ export const MONITOR_TYPE = {
   BUCKET_LEVEL: 'bucket_level_monitor',
   CLUSTER_METRICS: 'cluster_metrics_monitor',
   DOC_LEVEL: 'doc_level_monitor',
+  COMPOSITE_LEVEL: 'composite',
 };
 
 export const DESTINATION_ACTIONS = {

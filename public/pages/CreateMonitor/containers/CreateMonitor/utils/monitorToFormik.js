@@ -38,6 +38,10 @@ export default function monitorToFormik(monitor) {
         };
       case MONITOR_TYPE.DOC_LEVEL:
         return docLevelInputToFormik(monitor);
+      case MONITOR_TYPE.COMPOSITE_LEVEL:
+        return {
+          associatedMonitors: _.get(monitor, 'inputs[0].composite_input', {}),
+        };
       default:
         return {
           index: indicesToFormik(inputs[0].search.indices),

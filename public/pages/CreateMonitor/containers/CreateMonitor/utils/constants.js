@@ -9,7 +9,6 @@ import {
 } from '../../../components/MonitorExpressions/expressions/utils/constants';
 import { MONITOR_TYPE } from '../../../../../utils/constants';
 import { SUPPORTED_DOC_LEVEL_QUERY_OPERATORS } from '../../../components/DocumentLevelMonitorQueries/utils/constants';
-import { QUERY_OPERATORS } from '../../../../Dashboard/components/FindingsDashboard/findingsUtils';
 
 export const BUCKET_COUNT = 5;
 
@@ -21,6 +20,17 @@ export const FORMIK_INITIAL_WHERE_EXPRESSION_VALUES = {
   fieldValue: '',
   fieldRangeStart: undefined,
   fieldRangeEnd: undefined,
+};
+
+export const DEFAULT_ASSOCIATED_MONITORS_VALUE = {
+  sequence: {
+    delegates: [
+      /*{
+        order: 1,
+        monitor_id: '{{m1}}',
+      }*/
+    ],
+  },
 };
 
 export const FORMIK_INITIAL_VALUES = {
@@ -61,6 +71,9 @@ export const FORMIK_INITIAL_VALUES = {
   bucketUnitOfTime: 'h', // m = minute, h = hour, d = day
   filters: [], // array of FORMIK_INITIAL_WHERE_EXPRESSION_VALUES
   detectorId: '',
+  associatedMonitors: DEFAULT_ASSOCIATED_MONITORS_VALUE,
+  associatedMonitorsList: [],
+  associatedMonitorsEditor: '',
 };
 
 export const FORMIK_INITIAL_AGG_VALUES = {

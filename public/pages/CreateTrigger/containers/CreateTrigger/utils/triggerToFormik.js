@@ -35,6 +35,8 @@ export function triggerDefinitionToFormik(trigger, monitor) {
       return bucketLevelTriggerToFormik(trigger, monitor);
     case MONITOR_TYPE.DOC_LEVEL:
       return documentLevelTriggerToFormik(trigger, monitor);
+    case MONITOR_TYPE.COMPOSITE_LEVEL:
+      return compositeTriggerToFormik(trigger, monitor);
     default:
       return queryLevelTriggerToFormik(trigger, monitor);
   }
@@ -213,6 +215,32 @@ export function documentLevelTriggerToFormik(trigger, monitor) {
     minTimeBetweenExecutions,
     rollingWindowSize,
     triggerConditions: triggerUiMetadata,
+  };
+}
+
+export function compositeTriggerToFormik(trigger, monitor) {
+  const {
+    id,
+    name,
+    severity,
+    condition: { script },
+    actions,
+  } = trigger[TRIGGER_TYPE.COMPOSITE_LEVEL];
+
+  const triggerConditions = _.get(
+    monitor,
+    'triggers[0].chained_alert_trigger.condition.script.source',
+    ''
+  );
+
+  return {
+    ..._.cloneDeep(FORMIK_INITIAL_TRIGGER_VALUES),
+    id,
+    name,
+    severity,
+    script,
+    actions: getExecutionPolicyActions(actions),
+    triggerConditions: triggerConditions,
   };
 }
 

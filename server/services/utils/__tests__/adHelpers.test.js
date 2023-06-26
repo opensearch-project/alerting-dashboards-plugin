@@ -72,7 +72,7 @@ describe('helpers', () => {
             dataStartTime: 1587929940000,
             dataEndTime: 1587930000000,
             anomalyGrade: 0,
-            confidence: 0,
+            confidence: '0.99',
             plotTime: 1587929970000,
           },
           {
@@ -80,7 +80,7 @@ describe('helpers', () => {
             dataStartTime: 1587930420000,
             dataEndTime: 1587930480000,
             anomalyGrade: 0,
-            confidence: 0,
+            confidence: '0.99',
             plotTime: 1587930450000,
           },
         ],

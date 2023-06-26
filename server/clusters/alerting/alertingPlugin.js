@@ -9,6 +9,7 @@ import {
   DESTINATION_BASE_API,
   EMAIL_ACCOUNT_BASE_API,
   EMAIL_GROUP_BASE_API,
+  WORKFLOW_BASE_API,
 } from '../../services/utils/constants';
 
 export default function alertingPlugin(Client, config, components) {
@@ -22,6 +23,19 @@ export default function alertingPlugin(Client, config, components) {
       fmt: `${API_ROUTE_PREFIX}/findings/_search`,
     },
     needBody: true,
+    method: 'GET',
+  });
+
+  alerting.getWorkflow = ca({
+    url: {
+      fmt: `${API_ROUTE_PREFIX}/workflows/<%=monitorId%>`,
+      req: {
+        monitorId: {
+          type: 'string',
+          required: true,
+        },
+      },
+    },
     method: 'GET',
   });
 
@@ -46,6 +60,14 @@ export default function alertingPlugin(Client, config, components) {
     method: 'POST',
   });
 
+  alerting.createWorkflow = ca({
+    url: {
+      fmt: `${API_ROUTE_PREFIX}/workflows?refresh=wait_for`,
+    },
+    needBody: true,
+    method: 'POST',
+  });
+
   alerting.deleteMonitor = ca({
     url: {
       fmt: `${MONITOR_BASE_API}/<%=monitorId%>`,
@@ -63,6 +85,21 @@ export default function alertingPlugin(Client, config, components) {
   alerting.updateMonitor = ca({
     url: {
       fmt: `${MONITOR_BASE_API}/<%=monitorId%>`,
+      req: {
+        monitorId: {
+          type: 'string',
+          required: true,
+        },
+      },
+    },
+    needBody: true,
+    method: 'PUT',
+  });
+
+  // TODO DRAFT: May need to add 'refresh' assignment here again.
+  alerting.updateWorkflow = ca({
+    url: {
+      fmt: `${API_ROUTE_PREFIX}/workflows/<%=monitorId%>`,
       req: {
         monitorId: {
           type: 'string',

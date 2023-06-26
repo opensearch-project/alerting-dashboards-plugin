@@ -35,6 +35,28 @@ export default class MonitorService {
     }
   };
 
+  createWorkflow = async (context, req, res) => {
+    try {
+      const params = { body: req.body };
+      const { callAsCurrentUser } = await this.esDriver.asScoped(req);
+      const createResponse = await callAsCurrentUser('alerting.createWorkflow', params);
+      return res.ok({
+        body: {
+          ok: true,
+          resp: createResponse,
+        },
+      });
+    } catch (err) {
+      console.error('Alerting - MonitorService - createWorkflow:', err);
+      return res.ok({
+        body: {
+          ok: false,
+          resp: err.message,
+        },
+      });
+    }
+  };
+
   deleteMonitor = async (context, req, res) => {
     try {
       const { id } = req.params;
@@ -124,10 +146,45 @@ export default class MonitorService {
     }
   };
 
+  getWorkflow = async (context, req, res) => {
+    try {
+      const { id } = req.params;
+      const params = { monitorId: id };
+      const { callAsCurrentUser } = await this.esDriver.asScoped(req);
+      const getResponse = await callAsCurrentUser('alerting.getWorkflow', params);
+      const monitor = _.get(getResponse, 'workflow', null);
+      const version = _.get(getResponse, '_version', null);
+      const ifSeqNo = _.get(getResponse, '_seq_no', null);
+      const ifPrimaryTerm = _.get(getResponse, '_primary_term', null);
+      monitor.monitor_type = monitor.workflow_type;
+
+      return res.ok({
+        body: {
+          ok: true,
+          resp: monitor,
+          activeCount: 0,
+          dayCount: 0,
+          version,
+          ifSeqNo,
+          ifPrimaryTerm,
+        },
+      });
+    } catch (err) {
+      console.error('Alerting - MonitorService - getMonitor:', err);
+      return res.ok({
+        body: {
+          ok: false,
+          resp: err.message,
+        },
+      });
+    }
+  };
+
   updateMonitor = async (context, req, res) => {
     try {
       const { id } = req.params;
       const params = { monitorId: id, body: req.body, refresh: 'wait_for' };
+      const { type } = req.body;
 
       // TODO DRAFT: Are we sure we need to include ifSeqNo and ifPrimaryTerm from the UI side when updating monitors?
       const { ifSeqNo, ifPrimaryTerm } = req.query;
@@ -137,7 +194,10 @@ export default class MonitorService {
       }
 
       const { callAsCurrentUser } = await this.esDriver.asScoped(req);
-      const updateResponse = await callAsCurrentUser('alerting.updateMonitor', params);
+      const updateResponse = await callAsCurrentUser(
+        `alerting.${type === 'workflow' ? 'updateWorkflow' : 'updateMonitor'}`,
+        params
+      );
       const { _version, _id } = updateResponse;
       return res.ok({
         body: {
@@ -175,7 +235,6 @@ export default class MonitorService {
         };
       }
 
-      const filter = [{ term: { 'monitor.type': 'monitor' } }];
       if (state !== 'all') {
         const enabled = state === 'enabled';
         filter.push({ term: { 'monitor.enabled': enabled } });
@@ -196,7 +255,6 @@ export default class MonitorService {
           ...monitorSortPageData,
           query: {
             bool: {
-              filter,
               must,
             },
           },

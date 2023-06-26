@@ -8,7 +8,6 @@ import { EuiSpacer } from '@elastic/eui';
 import ContentPanel from '../../../../components/ContentPanel';
 import FormikFieldText from '../../../../components/FormControls/FormikFieldText';
 import { hasError, isInvalid, required, validateMonitorName } from '../../../../utils/validate';
-import Schedule from '../../components/Schedule';
 import MonitorDefinitionCard from '../../components/MonitorDefinitionCard';
 import MonitorType from '../../components/MonitorType';
 import AnomalyDetectors from '../AnomalyDetectors/AnomalyDetectors';
@@ -102,9 +101,6 @@ const MonitorDetails = ({
           {anomalyDetectorContent.content}
         </div>
       ) : null}
-
-      <EuiSpacer size="l" />
-      <Schedule isAd={isAd} />
     </ContentPanel>
   );
 };

@@ -14,6 +14,13 @@ exports[`CreateMonitor renders 1`] = `
         "adResultIndex": undefined,
         "aggregationType": "count",
         "aggregations": Array [],
+        "associatedMonitors": Object {
+          "sequence": Object {
+            "delegates": Array [],
+          },
+        },
+        "associatedMonitorsEditor": "",
+        "associatedMonitorsList": Array [],
         "bucketUnitOfTime": "h",
         "bucketValue": 1,
         "cronExpression": "0 */1 * * *",
