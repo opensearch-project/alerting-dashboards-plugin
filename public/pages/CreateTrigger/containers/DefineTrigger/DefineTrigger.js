@@ -275,7 +275,7 @@ class DefineTrigger extends Component {
                 {...{
                   title: 'Trigger condition',
                   id: 'metric-expression__trigger-condition',
-                  isOpen: accordionsOpen.triggerCondition,
+                  isOpen: accordionsOpen.triggerCondition ?? true,
                   onToggle: () => this.onAccordionToggle('triggerCondition'),
                 }}
               >

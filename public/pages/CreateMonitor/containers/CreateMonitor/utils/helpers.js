@@ -59,6 +59,7 @@ export const getInitialValues = ({
 
     if (detectorId) {
       initialValues.detectorId = detectorId;
+      initialValues.period = { interval: 20, unit: 'MINUTES' };
     }
   }
 

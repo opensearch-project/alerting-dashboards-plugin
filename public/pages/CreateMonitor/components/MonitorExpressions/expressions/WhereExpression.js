@@ -233,16 +233,13 @@ class WhereExpression extends Component {
       <EuiFlexGroup style={flyoutMode ? {} : { ...EXPRESSION_STYLE }} alignItems="flexEnd">
         <EuiFlexItem grow={false} style={{ width: 200 }}>
           <EuiFlexGroup direction="column" gutterSize="xs">
-            {flyoutMode && (
-              <EuiFlexItem>
-                <EuiText size="xs">
-                  <h4>Field</h4>
-                </EuiText>
-              </EuiFlexItem>
-            )}
             <EuiFlexItem>
               <FormikComboBox
                 name={`${fieldPath}where.fieldName`}
+                formRow
+                rowProps={{
+                  label: flyoutMode ? 'Field' : '',
+                }}
                 inputProps={{
                   placeholder: 'Select a field',
                   options: indexFields,
@@ -256,16 +253,13 @@ class WhereExpression extends Component {
         </EuiFlexItem>
         <EuiFlexItem grow={false}>
           <EuiFlexGroup direction="column" gutterSize="xs">
-            {flyoutMode && (
-              <EuiFlexItem>
-                <EuiText size="xs">
-                  <h4>Operator</h4>
-                </EuiText>
-              </EuiFlexItem>
-            )}
             <EuiFlexItem>
               <FormikSelect
                 name={`${fieldPath}where.operator`}
+                formRow
+                rowProps={{
+                  label: flyoutMode ? 'Operator' : '',
+                }}
                 inputProps={{
                   onChange: this.handleOperatorChange,
                   options: fieldOperators,

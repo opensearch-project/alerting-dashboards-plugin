@@ -15,18 +15,19 @@ export default function MetricPopover(
 ) {
   const [errorFieldNameMessage, setErrorFieldNameMessage] = useState('');
 
-  const onChangeAggWrapper = (e, field, form) => {
-    form.setFieldValue(`aggregations.${index}.aggregationType`, e.target.value);
-  };
-  const onChangeFieldWrapper = (options, field, form) => {
-    form.setFieldValue(`aggregations.${index}.fieldName`, options[0].label);
-  };
-
   const validateFieldName = (value) => {
     if (!value) {
       setErrorFieldNameMessage('Please select a field for the metric aggregation.');
       return 'Please select a field for the metric aggregation.';
     }
+  };
+
+  const onChangeAggWrapper = (e, field, form) => {
+    form.setFieldValue(`aggregations.${index}.aggregationType`, e.target.value);
+  };
+  const onChangeFieldWrapper = (options, field, form) => {
+    form.setFieldValue(`aggregations.${index}.fieldName`, options[0].label);
+    validateFieldName(options[0].label);
   };
 
   return (

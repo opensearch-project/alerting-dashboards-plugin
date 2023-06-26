@@ -149,11 +149,17 @@ export function formikToUiSearch(values) {
     bucketUnitOfTime,
     where,
   } = values;
+  const cleanedGroupBy = [];
+  for (let item of groupBy) {
+    if (item !== '') {
+      cleanedGroupBy.push(item);
+    }
+  }
   return {
     searchType,
     timeField,
     aggregations,
-    groupBy,
+    cleanedGroupBy,
     bucketValue,
     bucketUnitOfTime,
     where,

@@ -101,7 +101,7 @@ function AssociateExisting({ monitors, selectedMonitorId, setSelectedMonitorId }
               </EuiHealth>
             </EuiFlexItem>
             <EuiFlexItem grow={false}>
-              <EuiLink href="/app/alerting" external>
+              <EuiLink href={`alerting#/monitors/${monitor.id}`} target="_blank">
                 View monitor page
               </EuiLink>
             </EuiFlexItem>
