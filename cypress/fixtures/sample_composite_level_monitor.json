@@ -2,7 +2,7 @@
   "sample_composite_monitor": {
     "type": "workflow",
     "schema_version": 0,
-    "name": "sample_component_level_monitor",
+    "name": "sampleComponentLevelMonitor",
     "workflow_type": "composite",
     "enabled": true,
     "enabled_time": 1686908176848,
@@ -99,7 +99,7 @@
     }
   },
   "sample_composite_associated_monitor_1": {
-    "name": "monitor_1",
+    "name": "monitorOne",
     "type": "monitor",
     "monitor_type": "doc_level_monitor",
     "enabled": false,
@@ -155,7 +155,63 @@
     ]
   },
   "sample_composite_associated_monitor_2": {
-    "name": "monitor_2",
+    "name": "monitorTwo",
+    "type": "monitor",
+    "monitor_type": "doc_level_monitor",
+    "enabled": false,
+    "schedule": {
+      "period": {
+        "unit": "MINUTES",
+        "interval": 1
+      }
+    },
+    "inputs": [
+      {
+        "doc_level_input": {
+          "description": "",
+          "indices": ["sample_index_2"],
+          "queries": [
+            {
+              "id": "monitor_2_query_1",
+              "name": "monitor_2_query_1",
+              "query": "NOT (audit_category:\"sample_text\")",
+              "tags": []
+            },
+            {
+              "id": "monitor_2_query_2",
+              "name": "monitor_2_query_2",
+              "query": "NOT (audit_node_host_name:\"sample_text\")",
+              "tags": []
+            },
+            {
+              "id": "monitor_2_query_3",
+              "name": "monitor_2_query_3",
+              "query": "NOT (audit_node_id:\"sample_text\")",
+              "tags": []
+            }
+          ]
+        }
+      }
+    ],
+    "triggers": [
+      {
+        "document_level_trigger": {
+          "id": "sample_trigger_2",
+          "name": "monitor_2_query_2",
+          "severity": "1",
+          "condition": {
+            "script": {
+              "source": "query[name=monitor_2_query_1] || query[name=monitor_2_query_2] && query[name=monitor_2_query_3]",
+              "lang": "painless"
+            }
+          },
+          "actions": []
+        }
+      }
+    ]
+  },
+  "sample_composite_associated_monitor_3": {
+    "name": "monitorThree",
     "type": "monitor",
     "monitor_type": "doc_level_monitor",
     "enabled": false,

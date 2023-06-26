@@ -144,15 +144,16 @@ Cypress.Commands.add('deleteAllMonitors', () => {
       const monitors = response.body.hits.hits.sort((monitor) =>
         monitor._source.type === 'workflow' ? -1 : 1
       );
-      console.log('MONITORS', monitors);
       for (let i = 0; i < monitors.length; i++) {
-        cy.request({
-          method: 'DELETE',
-          url: `${Cypress.env('opensearch')}${
-            monitors[i]._source.type === 'workflow' ? API.WORKFLOW_BASE : API.MONITOR_BASE
-          }/${monitors[i]._id}`,
-          failOnStatusCode: false,
-        });
+        if (monitors[i]._id) {
+          cy.request({
+            method: 'DELETE',
+            url: `${Cypress.env('opensearch')}${
+              monitors[i]._source.type === 'workflow' ? API.WORKFLOW_BASE : API.MONITOR_BASE
+            }/${monitors[i]._id}`,
+            failOnStatusCode: false,
+          });
+        }
       }
     } else {
       cy.log('Failed to get all monitors.', response);

@@ -209,6 +209,7 @@ const ExpressionBuilder = ({
         <EuiComboBox
           style={{ width: '150px' }}
           singleSelection={{ asPlainText: true }}
+          data-test-subj={`condition-combobox-${idx}`}
           compressed
           selectedOptions={[
             {
@@ -248,6 +249,7 @@ const ExpressionBuilder = ({
         },
       ]}
       style={{ width: '250px' }}
+      data-test-subj={`monitors-combobox-${idx}`}
       options={(() => {
         const differences = _.differenceBy(options, usedExpressions, 'monitor_id');
         return [
@@ -302,6 +304,7 @@ const ExpressionBuilder = ({
                         form.setFieldTouched(formikFullFieldValue, true);
                         openPopover(idx);
                       }}
+                      data-test-subj={`select-expression_${idx}`}
                     />
                   }
                   isOpen={expression.isOpen}
