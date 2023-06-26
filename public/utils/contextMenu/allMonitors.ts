@@ -8,8 +8,8 @@ import _ from 'lodash';
 import { getAlertingAugmentVisSavedObjs, getAssociatedMonitorIds } from '../savedObjectHelper';
 import { getClient } from '../../services';
 
-export const useAllMonitors = (embeddable) => {
-  const [allMonitors, setAllMonitors] = useState<any[] | null>();
+export const useAllMonitors = (embeddable, allMonitors, setAllMonitors) => {
+  // const [allMonitors, setAllMonitors] = useState<any[] | null>();
 
   useEffect(() => {
     const getAllMonitors = async () => {
@@ -28,6 +28,7 @@ export const useAllMonitors = (embeddable) => {
           sortField: name,
           state: 'all'
         };
+
         const response = await httpClient.get('../api/alerting/monitors', { query: params });
 
         // const params = {
@@ -56,7 +57,6 @@ export const useAllMonitors = (embeddable) => {
           mons.forEach((mon, index) => {
             const state = mon.monitor.enabled ? 'enabled' : 'disabled';
             const latestAlert = mon.latestAlert === "--" ? undefined : mon.latestAlert;
-            // console.log(latestAlert);
             if (!associatedMonitorIds.includes(mon.id)) {
               parsedMonitors.push({
                 name: mon.name,
@@ -83,5 +83,5 @@ export const useAllMonitors = (embeddable) => {
     getAllMonitors();
   }, []);
 
-  return allMonitors;
+  // return allMonitors;
 }

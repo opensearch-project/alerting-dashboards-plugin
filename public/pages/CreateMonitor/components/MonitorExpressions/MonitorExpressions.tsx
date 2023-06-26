@@ -96,7 +96,7 @@ class MonitorExpressions extends Component {
             title: 'Metrics',
             subTitle: 'COUNT OF documents. You can add up to 1 metric.',
             id: 'metric-expression__metrics',
-            isOpen: accordionsOpen.metrics,
+            isOpen: accordionsOpen.metrics ?? true,
             onToggle: () => this.onAccordionToggle('metrics'),
           }}
         >
@@ -129,7 +129,7 @@ class MonitorExpressions extends Component {
           {...{
             title: 'Data filter',
             subTitle: isDataFilterActive
-              ? '1 filter defined. You can add up to ${MAX_NUM_WHERE_EXPRESSION} filter.'
+              ? `1 filter defined. You can add up to ${MAX_NUM_WHERE_EXPRESSION} filter.`
               : `No filter defined. You can add up to ${MAX_NUM_WHERE_EXPRESSION} filter.`,
             isUsingDivider: true,
             id: 'metric-expression__data-filter',
@@ -143,7 +143,7 @@ class MonitorExpressions extends Component {
         <SectionContainer
           {...{
             title: 'Group by',
-            subTitle: formik.values.groupBy.length
+            subTitle: formik.values.groupBy.length > 0 && formik.values.groupBy[0] !== ''
               ? `${formik.values.groupBy.length} group bys defined. You can add up to ${groupBysLimit} group bys.`
               : `No group bys defined. You can add up to ${groupBysLimit} group bys.`,
             isUsingDivider: true,

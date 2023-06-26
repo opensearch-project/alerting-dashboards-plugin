@@ -58,7 +58,7 @@ function AddAlertingMonitor({
   const searchType = flyoutMode === 'adMonitor' ? SEARCH_TYPE.AD : '';
   const initialValues = useMemo(
     () =>
-      getInitialValues({ ...history, title, index, timeField, flyoutMode, searchType, detectorId }),
+      getInitialValues({ ...history, title, index, timeField, flyoutMode, searchType, detectorId, embeddable }),
     []
   );
   const onCreate = async (values, formikBag) => {

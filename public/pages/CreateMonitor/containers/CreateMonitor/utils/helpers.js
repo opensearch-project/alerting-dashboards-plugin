@@ -19,6 +19,7 @@ import { triggerToFormik } from '../../../../CreateTrigger/containers/CreateTrig
 import { TRIGGER_TYPE } from '../../../../CreateTrigger/containers/CreateTrigger/utils/constants';
 import { FORMIK_INITIAL_AGG_VALUES } from '../../CreateMonitor/utils/constants';
 import { getInitialTriggerValues } from '../../../../CreateTrigger/components/AddTriggerButton/utils';
+import { AGGREGATION_TYPES } from '../../../components/MonitorExpressions/expressions/utils/constants';
 
 export const getInitialValues = ({
   title,
@@ -30,6 +31,7 @@ export const getInitialValues = ({
   edit,
   searchType,
   detectorId,
+  embeddable,
 }) => {
   let initialValues = _.mergeWith(
     {},
@@ -49,7 +51,7 @@ export const getInitialValues = ({
     initialValues.triggerDefinitions = [initialTrigger];
 
     // Add aggregations
-    initialValues.aggregations = [_.cloneDeep(FORMIK_INITIAL_AGG_VALUES)];
+    initialValues.aggregations = getMetricAgg(embeddable);
 
     if (searchType) {
       initialValues.searchType = searchType;
@@ -69,6 +71,25 @@ export const getInitialValues = ({
   }
 
   return initialValues;
+};
+
+const getMetricAgg = (embeddable) => {
+  let aggregationType = AGGREGATION_TYPES[1].value;
+  let fieldName = '';
+  for (let agg of embeddable.vis.data.aggs.aggs) {
+    if (agg.schema === 'metric' && !(aggregationType && fieldName) && agg.params.field) {
+      console.log(agg);
+      aggregationType = agg.__type.dslName;
+      fieldName = agg.params.field.spec.name;
+      break;
+    }
+  }
+  return [
+    {
+      aggregationType: aggregationType,
+      fieldName: fieldName,
+    },
+  ];
 };
 
 export const getPlugins = async (httpClient) => {

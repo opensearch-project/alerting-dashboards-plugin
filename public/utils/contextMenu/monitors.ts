@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import _ from 'lodash';
-import { getAugmentVisSavedObjs, SavedObjectLoaderAugmentVis, ISavedAugmentVis } from '../../../../../src/plugins/vis_augmenter/public'
-import { getSavedAugmentVisLoader, getUISettings, getClient } from '../../services';
+import { getClient } from '../../services';
 import { getAssociatedMonitorIds } from '../savedObjectHelper';
 
 export const stateToLabel = {
@@ -9,8 +8,8 @@ export const stateToLabel = {
   disabled: { label: 'Disabled', color: 'danger' },
 };
 
-export const useMonitors = (embeddable) => {
-  const [monitors, setMonitors] = useState<any[] | null>();
+export const useMonitors = (embeddable, monitors, setMonitors) => {
+  // const [monitors, setMonitors] = useState<any[] | null>();
 
   useEffect(() => {
     const getMonitors = async () => {
@@ -55,7 +54,7 @@ export const useMonitors = (embeddable) => {
 
           setMonitors(parsedMonitors);
         } else {
-          console.log('error getting monitors:', monitorResponse);
+          console.log('1error getting monitors:', monitorResponse);
         }
       } catch (err) {
         console.error(err);
@@ -64,6 +63,4 @@ export const useMonitors = (embeddable) => {
 
     getMonitors();
   }, []);
-
-  return monitors;
 };

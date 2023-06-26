@@ -19,8 +19,8 @@ export default function MetricItem(
 
   if (flyoutMode) {
     let metricText = `${aggregation.aggregationType.toUpperCase()} OF ${aggregation.fieldName}`;
-    if (_.isEmpty(aggregation.fieldName)) {
-      metricText = 'COUNT OF documents';
+    if (_.isEmpty(aggregation.fieldName) && _.isEmpty(aggregation.aggregationType)) {
+      metricText = '';
     }
     return (
       <div>

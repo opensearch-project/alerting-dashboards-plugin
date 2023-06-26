@@ -17,10 +17,16 @@ const Container = ({ defaultFlyoutMode, ...props }) => {
   const index = [{ label: embeddable?.vis?.data?.indexPattern?.title }];
   const [flyoutMode, setFlyoutMode] = useState(defaultFlyoutMode);
   const [selectedMonitorId, setSelectedMonitorId] = useState();
-  const monitors = useMonitors(embeddable);
-  const allMonitors = useAllMonitors(embeddable);
+  const [monitors, setMonitors] = useState<any[] | null>();
+  useMonitors(embeddable, monitors, setMonitors);
+  const [allMonitors, setAllMonitors] = useState<any[] | null>();
+  useAllMonitors(embeddable, allMonitors, setAllMonitors);
 
   const [isAssociateAllowed, setIsAssociateAllowed] = useState<any[] | null>();
+
+  const state = {
+    monitors, setMonitors, allMonitors, setAllMonitors, isAssociateAllowed
+  }
 
   useEffect(() => {
     const getIsAssociateAllowed = async () => {
@@ -60,6 +66,7 @@ const Container = ({ defaultFlyoutMode, ...props }) => {
           index,
           isAssociateAllowed,
           limitReachedCallout,
+          state,
         }}
       />
     </CoreContext.Provider>

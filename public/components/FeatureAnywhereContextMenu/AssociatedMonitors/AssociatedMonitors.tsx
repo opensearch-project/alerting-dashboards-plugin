@@ -1,6 +1,5 @@
-import React, { useCallback, useState, useEffect } from 'react';
+import React, { useCallback, useState } from 'react';
 import {
-  EuiCallOut,
   EuiFlyout,
   EuiFlyoutHeader,
   EuiTitle,
@@ -13,20 +12,14 @@ import {
   EuiFlexGroup,
   EuiFlexItem,
   EuiLoadingSpinner,
-  EuiTextColor,
 } from '@elastic/eui';
 import './styles.scss';
 import { useColumns } from './helpers';
 import { ConfirmUnlinkDetectorModal } from './ConfirmUnlinkModal';
-import {
-  deleteAlertingAugmentVisSavedObj, getAssociatedMonitorIds,
-  getCountOfAssociatedObjects,
-  validateAssociationIsAllow,
-} from '../../../utils/savedObjectHelper';
-import { getClient, getNotifications, getSavedAugmentVisLoader, getUISettings } from '../../../services';
-import { PLUGIN_AUGMENTATION_MAX_OBJECTS_SETTING } from '../../../utils/constants';
+import { deleteAlertingAugmentVisSavedObj } from '../../../utils/savedObjectHelper';
+import { getNotifications } from '../../../services';
 
-const AssociatedMonitors = ({ embeddable, closeFlyout, setFlyoutMode, monitors, isAssociateAllowed, limitReachedCallout }) => {
+const AssociatedMonitors = ({ embeddable, closeFlyout, setFlyoutMode, monitors, isAssociateAllowed, limitReachedCallout, state }) => {
   const title = embeddable.vis.title;
   const [modalState, setModalState] = useState(undefined);
   const notifications = getNotifications();
@@ -55,7 +48,8 @@ const AssociatedMonitors = ({ embeddable, closeFlyout, setFlyoutMode, monitors, 
       });
       // Need to remove the monitor the below does not work.
       // maybe need to export
-      // setAllMonitors(monitors.filter((monitor) => monitor.id !== modalState.monitor.id));
+      const newMonitors = monitors.filter((monitor) => monitor.id !== modalState.monitor.id);
+      state.setMonitors(newMonitors);
     } catch (e) {
       notifications.toasts.addDanger(
         `Failed to remove the association between the "${modalState.monitor.name}" monitor with the ${title} visualization. Failed due to ${e.message}.`
@@ -102,24 +96,6 @@ const AssociatedMonitors = ({ embeddable, closeFlyout, setFlyoutMode, monitors, 
     setModalState(undefined);
   }, []);
 
-  //TODO: move this to Containers and pass this in. Also make sure its exportable to be updated
-  // const [isAssociateAllowed, setIsAssociateAllowed] = useState<any[] | null>();
-
-  // useEffect(() => {
-  //   const getIsAssociateAllowed = async () => {
-  //     const isAllowed = await validateAssociationIsAllow(embeddable.vis.id);
-  //     setIsAssociateAllowed(isAllowed);
-  //   };
-  //
-  //   getIsAssociateAllowed();
-  // }, []);
-  console.log('isAssociateAllowed');
-  console.log(isAssociateAllowed);
-
-  // const uiSettings = getUISettings();
-  // const maxAssociatedCount = uiSettings.get(PLUGIN_AUGMENTATION_MAX_OBJECTS_SETTING);
-  // const limitReachedTitle = `Limit reached. No more than ${maxAssociatedCount} objects can be associated with a visualizations.`
-
   return (
     <div className="associated-monitors">
       {modalState ? (
@@ -138,7 +114,7 @@ const AssociatedMonitors = ({ embeddable, closeFlyout, setFlyoutMode, monitors, 
         </EuiFlyoutHeader>
         {!isAssociateAllowed && (
           <EuiFlyoutHeader>
-            limitReachedCallout
+            {limitReachedCallout}
           </EuiFlyoutHeader>
         )}
         <EuiFlyoutBody>

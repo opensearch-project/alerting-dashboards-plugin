@@ -186,7 +186,7 @@ export default class MonitorService {
       if (monitorIds !== undefined) {
         mustList.push({
           terms: {
-            _id: monitorIds,
+            _id: Array.isArray(monitorIds) ? monitorIds : [monitorIds],
           },
         });
       } else if (monitorIds === 'empty') {

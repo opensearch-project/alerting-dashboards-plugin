@@ -18,7 +18,7 @@ import {
   EmbeddableRenderer,
   ErrorEmbeddable,
 } from '../../../../../../../src/plugins/embeddable/public';
-import { NotificationService, getEmbeddable } from '../../../../services';
+import { NotificationService, getEmbeddable, getQueryService } from '../../../../services';
 import DefineMonitor from '../../../../pages/CreateMonitor/containers/DefineMonitor';
 import { formikToMonitor } from '../../../../pages/CreateMonitor/containers/CreateMonitor/utils/formikToMonitor';
 import { SEARCH_TYPE } from '../../../../utils/constants';
@@ -75,7 +75,7 @@ function CreateNew({ embeddable, core, flyoutMode, formikProps, history, setFlyo
     };
 
     const createEmbeddable = async () => {
-      const visEmbeddable = await fetchVisEmbeddable(embeddable.vis.id, getEmbeddable());
+      const visEmbeddable = await fetchVisEmbeddable(embeddable.vis.id, getEmbeddable(), getQueryService());
       setGeneratedEmbeddable(visEmbeddable);
     };
 
@@ -171,7 +171,7 @@ function CreateNew({ embeddable, core, flyoutMode, formikProps, history, setFlyo
         <EnhancedAccordion
         {...{
           id: 'advancedData',
-          isOpen: accordionsOpen.advancedData,
+          isOpen: accordionsOpen.advancedData ?? true,
           onToggle: () => onAccordionToggle('advancedData'),
           title: 'Advanced data source configuration',
         }}
