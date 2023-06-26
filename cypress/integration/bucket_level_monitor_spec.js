@@ -24,9 +24,6 @@ const AVERAGE_METRIC_NAME = 'avg_products_base_price';
 const TESTING_INDEX_A = 'bucket-level-monitor-test-index-a';
 const TESTING_INDEX_B = 'bucket-level-monitor-test-index-b';
 
-// 3 seconds
-const INDICES_LOADING_WAIT = 3000;
-
 const addTriggerToVisualEditorMonitor = (triggerName, triggerIndex, actionName, isEdit) => {
   // Add a trigger
   cy.contains('Add trigger').click({ force: true });
@@ -219,22 +216,10 @@ describe('Bucket-Level Monitors', () => {
 
       // Wait for input to load and then type in the index name
       // Pressing enter at the end to create combo box entry and trigger change events for time field below
-      cy.get('[data-test-subj="indicesComboBox"]')
-        .click({ force: true })
-        .type(INDEX.SAMPLE_DATA_ECOMMERCE)
-        // Adding a short wait time here to reduce flakiness of async combobox
-        .wait(INDICES_LOADING_WAIT)
-        .type(`{enter}`)
-        .trigger('blur', { force: true });
+      cy.get('#index').type(`${INDEX.SAMPLE_DATA_ECOMMERCE}{enter}`, { force: true });
 
       // Select 'order_date' as the timeField for the data source index
-      cy.get('[data-test-subj="timeFieldComboBox"]')
-        .click({ force: true })
-        .type(TIME_FIELD)
-        // Adding a short wait time here to reduce flakiness of async combobox
-        .wait(INDICES_LOADING_WAIT)
-        .type('{enter}')
-        .trigger('blur', { force: true });
+      cy.get('#timeField').type(`${TIME_FIELD}{downArrow}{enter}`, { force: true });
 
       // Add a metric for the query
       cy.get('[data-test-subj="addMetricButton"]').click({ force: true });
@@ -366,16 +351,11 @@ describe('Bucket-Level Monitors', () => {
         cy.contains('Edit').click({ force: true });
 
         // Click on the Index field and type in multiple index names to replicate the bug
-        cy.get('[data-test-subj="indicesComboBox"]')
+        cy.get('#index')
           .click({ force: true })
-          .type(TESTING_INDEX_A)
-          // Adding a short wait time here to reduce flakiness of async combobox
-          .wait(INDICES_LOADING_WAIT)
-          .type(`{enter}`)
-          .type(TESTING_INDEX_B)
-          // Adding a short wait time here to reduce flakiness of async combobox
-          .wait(INDICES_LOADING_WAIT)
-          .type(`{enter}`)
+          .type(`${TESTING_INDEX_A}{enter}${TESTING_INDEX_B}{enter}`, {
+            force: true,
+          })
           .trigger('blur', { force: true });
 
         // Confirm Index field only contains the expected text
