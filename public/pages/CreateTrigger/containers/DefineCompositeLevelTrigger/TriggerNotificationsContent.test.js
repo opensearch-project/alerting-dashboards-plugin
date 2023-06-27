@@ -8,7 +8,6 @@ import { render } from 'enzyme';
 
 import { Formik } from 'formik';
 import { FORMIK_INITIAL_VALUES } from '../../../CreateMonitor/containers/CreateMonitor/utils/constants';
-import TriggerNotifications from './TriggerNotifications';
 import TriggerNotificationsContent from './TriggerNotificationsContent';
 
 describe('TriggerNotificationsContent', () => {
