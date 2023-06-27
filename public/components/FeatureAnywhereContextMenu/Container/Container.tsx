@@ -1,8 +1,10 @@
-import React, { useState, useEffect } from 'react';
-import {
-  EuiCallOut,
-  EuiFlyoutHeader,
-} from '@elastic/eui';
+/*
+ * Copyright OpenSearch Contributors
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+import React, { useEffect, useState } from 'react';
+import { EuiCallOut } from '@elastic/eui';
 import AssociatedMonitors from '../AssociatedMonitors';
 import AddAlertingMonitor from '../AddAlertingMonitor';
 import { useMonitors } from '../../../utils/contextMenu/monitors';
@@ -11,6 +13,7 @@ import { CoreContext } from '../../../utils/CoreContext';
 import { validateAssociationIsAllow } from '../../../utils/savedObjectHelper';
 import { getUISettings } from '../../../services';
 import { PLUGIN_AUGMENTATION_MAX_OBJECTS_SETTING } from '../../../utils/constants';
+import './styles.scss';
 
 const Container = ({ defaultFlyoutMode, ...props }) => {
   const { embeddable, core } = props;

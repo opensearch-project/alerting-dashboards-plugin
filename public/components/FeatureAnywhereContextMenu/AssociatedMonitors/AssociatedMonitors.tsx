@@ -106,34 +106,32 @@ const AssociatedMonitors = ({ embeddable, closeFlyout, setFlyoutMode, monitors, 
           isListLoading={!monitors}
         />
       ) : null}
-      <EuiFlyout ownFocus size="m" paddingSize="m" onClose={closeFlyout}>
-        <EuiFlyoutHeader hasBorder>
-          <EuiTitle>
-            <h2 id="associated-monitors__title">Associated monitors</h2>
-          </EuiTitle>
+      <EuiFlyoutHeader hasBorder>
+        <EuiTitle>
+          <h2 id="associated-monitors__title">Associated monitors</h2>
+        </EuiTitle>
+      </EuiFlyoutHeader>
+      {!isAssociateAllowed && (
+        <EuiFlyoutHeader>
+          {limitReachedCallout}
         </EuiFlyoutHeader>
-        {!isAssociateAllowed && (
-          <EuiFlyoutHeader>
-            {limitReachedCallout}
-          </EuiFlyoutHeader>
-        )}
-        <EuiFlyoutBody>
-          <EuiFlexGroup justifyContent="spaceBetween" alignItems="center">
-            <EuiFlexItem>
-              <EuiText>
-                <h4>Visualization: {title}</h4>
-              </EuiText>
-            </EuiFlexItem>
-            <EuiFlexItem grow={false}>
-              <EuiButton iconType="link" isDisabled={!isAssociateAllowed} fill onClick={() => setFlyoutMode('existing')}>
-                Associate a monitor
-              </EuiButton>
-            </EuiFlexItem>
-          </EuiFlexGroup>
-          <EuiSpacer size="l" />
-          <EuiInMemoryTable {...tableProps} />
-        </EuiFlyoutBody>
-      </EuiFlyout>
+      )}
+      <EuiFlyoutBody>
+        <EuiFlexGroup justifyContent="spaceBetween" alignItems="center">
+          <EuiFlexItem>
+            <EuiText>
+              <h4>Visualization: {title}</h4>
+            </EuiText>
+          </EuiFlexItem>
+          <EuiFlexItem grow={false}>
+            <EuiButton iconType="link" isDisabled={!isAssociateAllowed} fill onClick={() => setFlyoutMode('existing')}>
+              Associate a monitor
+            </EuiButton>
+          </EuiFlexItem>
+        </EuiFlexGroup>
+        <EuiSpacer size="l" />
+        <EuiInMemoryTable {...tableProps} />
+      </EuiFlyoutBody>
     </div>
   );
 };
