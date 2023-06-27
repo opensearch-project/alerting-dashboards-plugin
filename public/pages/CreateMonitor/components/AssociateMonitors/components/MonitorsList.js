@@ -53,8 +53,10 @@ const MonitorsList = ({ values, httpClient }) => {
       'associatedMonitors',
       DEFAULT_ASSOCIATED_MONITORS_VALUE
     );
+
     const selected = {};
-    associatedMonitors.sequence.delegates.forEach((monitor, index) => {
+    const delegates = _.sortBy(associatedMonitors.sequence.delegates, ['order']);
+    delegates.forEach((monitor, index) => {
       const filteredOption = options.filter((option) => option.monitor_id === monitor.monitor_id);
       selected[index] = {
         label: filteredOption[0]?.monitor_name || '',
@@ -66,8 +68,8 @@ const MonitorsList = ({ values, httpClient }) => {
     return selected;
   };
 
-  const generateFields = (selected) =>
-    _.reduce(
+  const generateFields = (selected) => {
+    return _.reduce(
       Object.keys(selected).length > 1 ? Object.keys(selected) : [0, 1],
       (result, value, key) => {
         result.push(key);
@@ -75,6 +77,7 @@ const MonitorsList = ({ values, httpClient }) => {
       },
       []
     );
+  };
 
   const monitorsToOptions = (monitors) =>
     monitors.map((monitor) => ({
@@ -93,9 +96,8 @@ const MonitorsList = ({ values, httpClient }) => {
     }
     setSelection(selected);
 
-    updateSelection(selected);
-
     setFormikValues(selected, monitorIdx, form);
+    updateSelection(selected);
   };
 
   const onBlur = (e, field, form) => {
@@ -151,6 +153,8 @@ const MonitorsList = ({ values, httpClient }) => {
     let nextIndex = Math.max(...fields) + 1;
     const newMonitorFields = [...fields, nextIndex];
     setFields(newMonitorFields);
+
+    updateSelection(selection);
   };
 
   const onRemoveMonitor = (monitorIdx, idx, form) => {
@@ -162,9 +166,8 @@ const MonitorsList = ({ values, httpClient }) => {
     newMonitorFields.splice(idx, 1);
     setFields(newMonitorFields);
 
-    updateSelection(selected);
-
     setFormikValues(selected, monitorIdx, form);
+    updateSelection(selected);
   };
 
   const isValid = () => Object.keys(selection).length > 1;
@@ -264,7 +267,10 @@ const MonitorsList = ({ values, httpClient }) => {
               </EuiFlexGroup>
             ))}
             <EuiSpacer size={'m'} />
-            <EuiButton onClick={() => onAddMonitor()} disabled={fields.length >= 10}>
+            <EuiButton
+              onClick={() => onAddMonitor()}
+              disabled={fields.length >= 10 || fields.length >= options.length}
+            >
               Associate another monitor
             </EuiButton>
             <EuiText color={'subdued'} size={'xs'}>

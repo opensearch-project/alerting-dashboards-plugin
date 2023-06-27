@@ -1,0 +1,79 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`CompositeTriggerCondition renders 1`] = `
+<div
+  class="euiFormRow"
+  id="triggerConditionFieldsContainer-form-row-row"
+  style="max-width:inherit"
+>
+  <div
+    class="euiFormRow__labelWrapper"
+  >
+    <label
+      class="euiFormLabel euiFormRow__label"
+      for="triggerConditionFieldsContainer-form-row"
+    >
+      Trigger label
+    </label>
+  </div>
+  <div
+    class="euiFormRow__fieldWrapper"
+  >
+    <div
+      class="euiFlexGroup euiFlexGroup--gutterSmall euiFlexGroup--directionRow euiFlexGroup--responsive"
+      data-test-subj="pathtriggerCondition"
+      id="triggerConditionFieldsContainer-form-row"
+    >
+      <div
+        class="euiFlexItem"
+      >
+        <div
+          class="euiFormRow euiFormRow--fullWidth"
+          id="pathtriggerCondition_code-form-row-row"
+        >
+          <div
+            class="euiFormRow__labelWrapper"
+          >
+            <label
+              class="euiFormLabel euiFormRow__label"
+              for="pathtriggerCondition_code-form-row"
+            >
+              Trigger condition
+            </label>
+          </div>
+          <div
+            class="euiFormRow__fieldWrapper"
+          >
+            <div
+              class="euiCodeEditorWrapper"
+              data-test-subj="compositeTriggerConditionEditor"
+              style="width:80%;height:300px"
+            >
+              <button
+                class="euiCodeEditorKeyboardHint"
+                data-test-subj="codeEditorHint"
+                id="generated-id"
+              >
+                <p
+                  class="euiText"
+                >
+                  Press Enter to start editing.
+                </p>
+                <p
+                  class="euiText"
+                >
+                  When you're done, press Escape to stop editing.
+                </p>
+              </button>
+              <div
+                id="generated-id"
+                style="width:80%;height:300px"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;

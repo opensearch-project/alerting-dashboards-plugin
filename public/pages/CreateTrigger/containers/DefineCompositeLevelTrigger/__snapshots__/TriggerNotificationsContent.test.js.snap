@@ -1,0 +1,232 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`TriggerNotificationsContent renders with notifications 1`] = `
+<div
+  class="euiPanel euiPanel--paddingMedium euiPanel--borderRadiusMedium euiPanel--plain euiPanel--noShadow euiPanel--noBorder"
+>
+  <div
+    class="euiFlexGroup euiFlexGroup--gutterLarge euiFlexGroup--directionRow euiFlexGroup--responsive"
+  >
+    <div
+      class="euiFlexItem"
+      style="max-width:400px"
+    >
+      <div
+        class="euiFormRow"
+        id="channel_name_0-form-row-row"
+      >
+        <div
+          class="euiFormRow__labelWrapper"
+        >
+          <label
+            class="euiFormLabel euiFormRow__label"
+            for="channel_name_0-form-row"
+          >
+            Notification channel
+          </label>
+        </div>
+        <div
+          class="euiFormRow__fieldWrapper"
+        >
+          <div
+            aria-expanded="false"
+            aria-haspopup="listbox"
+            class="euiComboBox"
+            name="channel_name_0"
+            role="combobox"
+          >
+            <div
+              class="euiFormControlLayout"
+            >
+              <div
+                class="euiFormControlLayout__childrenWrapper"
+              >
+                <div
+                  class="euiComboBox__inputWrap euiComboBox__inputWrap--noWrap euiComboBox__inputWrap-isClearable"
+                  data-test-subj="comboBoxInput"
+                  tabindex="-1"
+                >
+                  <p
+                    class="euiComboBoxPlaceholder"
+                  >
+                    Select a channel to get notified
+                  </p>
+                  <div
+                    class="euiComboBox__input"
+                    style="font-size:14px;display:inline-block"
+                  >
+                    <input
+                      aria-controls=""
+                      data-test-subj="comboBoxSearchInput"
+                      id="channel_name_0"
+                      role="textbox"
+                      style="box-sizing:content-box;width:1px"
+                      value=""
+                    />
+                    <div
+                      style="position:absolute;top:0;left:0;visibility:hidden;height:0;overflow:scroll;white-space:pre"
+                    />
+                  </div>
+                </div>
+                <div
+                  class="euiFormControlLayoutIcons euiFormControlLayoutIcons--right"
+                >
+                  <button
+                    aria-label="Open list of options"
+                    class="euiFormControlLayoutCustomIcon euiFormControlLayoutCustomIcon--clickable"
+                    data-test-subj="comboBoxToggleListButton"
+                    type="button"
+                  >
+                    <div>
+                      EuiIconMock
+                    </div>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div
+      class="euiFlexItem euiFlexItem--flexGrowZero"
+      style="padding-left:0;margin-left:0"
+    >
+      <button
+        class="euiButtonEmpty euiButtonEmpty--primary"
+        style="margin-top:22px"
+        type="button"
+      >
+        <span
+          class="euiButtonContent euiButtonEmpty__content"
+        >
+          <div>
+            EuiIconMock
+          </div>
+          <span
+            class="euiButtonEmpty__text"
+          >
+            Manage channels
+          </span>
+        </span>
+      </button>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`TriggerNotificationsContent renders without notifications 1`] = `
+<div
+  class="euiPanel euiPanel--paddingMedium euiPanel--borderRadiusMedium euiPanel--plain euiPanel--noShadow euiPanel--noBorder"
+>
+  <div
+    class="euiFlexGroup euiFlexGroup--gutterLarge euiFlexGroup--directionRow euiFlexGroup--responsive"
+  >
+    <div
+      class="euiFlexItem"
+      style="max-width:400px"
+    >
+      <div
+        class="euiFormRow"
+        id="channel_name_0-form-row-row"
+      >
+        <div
+          class="euiFormRow__labelWrapper"
+        >
+          <label
+            class="euiFormLabel euiFormRow__label"
+            for="channel_name_0-form-row"
+          >
+            Notification channel
+          </label>
+        </div>
+        <div
+          class="euiFormRow__fieldWrapper"
+        >
+          <div
+            aria-expanded="false"
+            aria-haspopup="listbox"
+            class="euiComboBox"
+            name="channel_name_0"
+            role="combobox"
+          >
+            <div
+              class="euiFormControlLayout"
+            >
+              <div
+                class="euiFormControlLayout__childrenWrapper"
+              >
+                <div
+                  class="euiComboBox__inputWrap euiComboBox__inputWrap--noWrap euiComboBox__inputWrap-isClearable"
+                  data-test-subj="comboBoxInput"
+                  tabindex="-1"
+                >
+                  <p
+                    class="euiComboBoxPlaceholder"
+                  >
+                    Select a channel to get notified
+                  </p>
+                  <div
+                    class="euiComboBox__input"
+                    style="font-size:14px;display:inline-block"
+                  >
+                    <input
+                      aria-controls=""
+                      data-test-subj="comboBoxSearchInput"
+                      id="channel_name_0"
+                      role="textbox"
+                      style="box-sizing:content-box;width:1px"
+                      value=""
+                    />
+                    <div
+                      style="position:absolute;top:0;left:0;visibility:hidden;height:0;overflow:scroll;white-space:pre"
+                    />
+                  </div>
+                </div>
+                <div
+                  class="euiFormControlLayoutIcons euiFormControlLayoutIcons--right"
+                >
+                  <button
+                    aria-label="Open list of options"
+                    class="euiFormControlLayoutCustomIcon euiFormControlLayoutCustomIcon--clickable"
+                    data-test-subj="comboBoxToggleListButton"
+                    type="button"
+                  >
+                    <div>
+                      EuiIconMock
+                    </div>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div
+      class="euiFlexItem euiFlexItem--flexGrowZero"
+      style="padding-left:0;margin-left:0"
+    >
+      <button
+        class="euiButtonEmpty euiButtonEmpty--primary euiButtonEmpty-isDisabled"
+        disabled=""
+        style="margin-top:22px"
+        type="button"
+      >
+        <span
+          class="euiButtonContent euiButtonEmpty__content"
+        >
+          <div>
+            EuiIconMock
+          </div>
+          <span
+            class="euiButtonEmpty__text"
+          >
+            Manage channels
+          </span>
+        </span>
+      </button>
+    </div>
+  </div>
+</div>
+`;

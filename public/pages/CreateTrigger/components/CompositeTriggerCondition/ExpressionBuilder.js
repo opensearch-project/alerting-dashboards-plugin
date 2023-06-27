@@ -11,7 +11,7 @@ import * as _ from 'lodash';
 import { FormikFormRow, FormikInputWrapper } from '../../../../components/FormControls';
 import { getMonitors } from '../../../CreateMonitor/components/AssociateMonitors/AssociateMonitors';
 
-export const conditionToExpressions = (condition, monitors) => {
+export const conditionToExpressions = (condition = '', monitors) => {
   if (!condition.length) return [];
 
   const conditionMap = {
@@ -26,7 +26,7 @@ export const conditionToExpressions = (condition, monitors) => {
   let expressions = [];
   let counter = 0;
   while ((match = matcher.next().value)) {
-    if (counter && !match[1]) return; // Didn't find condition after the first match
+    if (counter && !match[1]) return []; // Didn't find condition after the first match
 
     const monitorId = match[3]?.trim(); // match [3] is the monitor_id
     const monitor = monitors.filter((mon) => mon.monitor_id === monitorId);
@@ -49,6 +49,7 @@ const ExpressionBuilder = ({
   values,
   touched,
   httpClient,
+  edit,
 }) => {
   const formikFullFieldName = `${formikFieldPath}${formikFieldName}`;
   const formikFullFieldValue = _.replace(`${formikFullFieldName}_value`, /[.\[\]]/gm, '_');
@@ -77,8 +78,8 @@ const ExpressionBuilder = ({
 
   useEffect(() => {
     // initializing formik because these are generic fields and formik won't pick them up until fields is updated
-    _.set(touched, formikFullFieldValue, false);
-    _.set(values, formikFullFieldValue, '');
+    !_.get(touched, formikFullFieldValue) && _.set(touched, formikFullFieldValue, false);
+    !_.get(values, formikFullFieldValue) && _.set(values, formikFullFieldValue, '');
 
     const monitors = _.get(values, 'monitorOptions', []);
     if (monitors.length) {
@@ -104,7 +105,23 @@ const ExpressionBuilder = ({
     setOptions(monitorOptions);
 
     const condition = _.get(values, formikFullFieldName, '');
-    const expressions = conditionToExpressions(condition, monitors);
+
+    let expressions = conditionToExpressions(condition, monitors);
+    console.log('EDIT', edit, _.get(touched, formikFullFieldValue, false));
+    if (!edit && !_.get(touched, formikFullFieldValue, false)) {
+      expressions = [];
+      monitorOptions.forEach((monitor, index) => {
+        expressions.push({
+          description: index ? 'AND' : '',
+          monitor_id: monitor.monitor_id,
+          monitor_name: monitor.label,
+        });
+      });
+    }
+
+    console.log('associatedMonitors', associatedMonitors);
+    console.log('monitorOptions', monitorOptions);
+    console.log('expressions', expressions);
     setUsedExpressions(expressions?.length ? expressions : [DEFAULT_EXPRESSION]);
   };
 

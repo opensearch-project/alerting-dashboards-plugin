@@ -43,6 +43,7 @@ exports[`AnomalyDetectors renders 1`] = `
         "interval": 1,
         "unit": "MINUTES",
       },
+      "preventVisualEditor": false,
       "queries": Array [],
       "query": "{
     \\"size\\": 0,
@@ -114,6 +115,7 @@ exports[`AnomalyDetectors renders 1`] = `
           "interval": 1,
           "unit": "MINUTES",
         },
+        "preventVisualEditor": false,
         "queries": Array [],
         "query": "{
     \\"size\\": 0,
@@ -246,6 +248,7 @@ exports[`AnomalyDetectors renders 1`] = `
                       "interval": 1,
                       "unit": "MINUTES",
                     },
+                    "preventVisualEditor": false,
                     "queries": Array [],
                     "query": "{
     \\"size\\": 0,
@@ -336,6 +339,7 @@ exports[`AnomalyDetectors renders 1`] = `
                       "interval": 1,
                       "unit": "MINUTES",
                     },
+                    "preventVisualEditor": false,
                     "queries": Array [],
                     "query": "{
     \\"size\\": 0,
@@ -474,6 +478,7 @@ exports[`AnomalyDetectors renders 1`] = `
                               "interval": 1,
                               "unit": "MINUTES",
                             },
+                            "preventVisualEditor": false,
                             "queries": Array [],
                             "query": "{
     \\"size\\": 0,
@@ -564,6 +569,7 @@ exports[`AnomalyDetectors renders 1`] = `
                               "interval": 1,
                               "unit": "MINUTES",
                             },
+                            "preventVisualEditor": false,
                             "queries": Array [],
                             "query": "{
     \\"size\\": 0,

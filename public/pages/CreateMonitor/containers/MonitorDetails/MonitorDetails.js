@@ -3,8 +3,8 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React from 'react';
-import { EuiSpacer } from '@elastic/eui';
+import React, { Fragment } from 'react';
+import { EuiSpacer, EuiCallOut } from '@elastic/eui';
 import ContentPanel from '../../../../components/ContentPanel';
 import FormikFieldText from '../../../../components/FormControls/FormikFieldText';
 import { hasError, isInvalid, required, validateMonitorName } from '../../../../utils/validate';
@@ -41,15 +41,7 @@ function renderEmptyMessage(message) {
   );
 }
 
-const MonitorDetails = ({
-  values,
-  errors,
-  httpClient,
-  monitorToEdit,
-  isAd,
-  plugins,
-  detectorId,
-}) => {
+const MonitorDetails = ({ values, httpClient, monitorToEdit, isAd, plugins, detectorId }) => {
   const anomalyDetectorContent = isAd && renderAnomalyDetector(httpClient, values, detectorId);
   const displayMonitorDefinitionCards = values.monitor_type !== MONITOR_TYPE.CLUSTER_METRICS;
   return (
@@ -101,6 +93,21 @@ const MonitorDetails = ({
           {anomalyDetectorContent.content}
         </div>
       ) : null}
+
+      {values.preventVisualEditor && (
+        <Fragment>
+          <EuiSpacer size={'l'} />
+          <EuiCallOut
+            title="You have advanced configurations not supported by the visual editor"
+            iconType="iInCircle"
+            color={'warning'}
+          >
+            <p>
+              To view or modify all of your configurations, switch to the Extraction query editor.
+            </p>
+          </EuiCallOut>
+        </Fragment>
+      )}
     </ContentPanel>
   );
 };

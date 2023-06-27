@@ -1,0 +1,71 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`AssociateMonitors renders 1`] = `
+Array [
+  <div
+    class="euiText euiText--medium"
+    style="padding-bottom:0px;margin-bottom:0px"
+  >
+    <h4>
+      Associate monitors
+    </h4>
+  </div>,
+  <div
+    class="euiText euiText--extraSmall"
+  >
+    <div
+      class="euiTextColor euiTextColor--subdued"
+    >
+      Associate two or more monitors to run as part of this workflow.
+    </div>
+  </div>,
+  <div
+    class="euiSpacer euiSpacer--m"
+  />,
+  <div
+    class="euiFormRow euiFormRow--fullWidth"
+    id="associatedMonitorsEditor-form-row-row"
+  >
+    <div
+      class="euiFormRow__labelWrapper"
+    >
+      <label
+        class="euiFormLabel euiFormRow__label"
+        for="associatedMonitorsEditor-form-row"
+      >
+        Define workflow
+      </label>
+    </div>
+    <div
+      class="euiFormRow__fieldWrapper"
+    >
+      <div
+        class="euiCodeEditorWrapper"
+        data-test-subj="associatedMonitorsEditor"
+        style="width:80%;height:300px"
+      >
+        <button
+          class="euiCodeEditorKeyboardHint"
+          data-test-subj="codeEditorHint"
+          id="generated-id"
+        >
+          <p
+            class="euiText"
+          >
+            Press Enter to start editing.
+          </p>
+          <p
+            class="euiText"
+          >
+            When you're done, press Escape to stop editing.
+          </p>
+        </button>
+        <div
+          id="generated-id"
+          style="width:80%;height:300px"
+        />
+      </div>
+    </div>
+  </div>,
+]
+`;

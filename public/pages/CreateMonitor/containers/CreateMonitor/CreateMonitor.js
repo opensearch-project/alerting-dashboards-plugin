@@ -282,108 +282,116 @@ export default class CreateMonitor extends Component {
     return (
       <div style={{ padding: '25px 50px' }}>
         <Formik initialValues={initialValues} onSubmit={this.onSubmit} validateOnChange={false}>
-          {({ values, errors, handleSubmit, isSubmitting, isValid, touched }) => (
-            <Fragment>
-              <EuiTitle size="l">
-                <h1>{edit ? 'Edit' : 'Create'} monitor</h1>
-              </EuiTitle>
-              <EuiSpacer />
+          {({ values, errors, handleSubmit, isSubmitting, isValid, touched }) => {
+            return (
+              <Fragment>
+                <EuiTitle size="l">
+                  <h1>{edit ? 'Edit' : 'Create'} monitor</h1>
+                </EuiTitle>
+                <EuiSpacer />
 
-              <MonitorDetails
-                values={values}
-                errors={errors}
-                history={history}
-                httpClient={httpClient}
-                monitorToEdit={monitorToEdit}
-                plugins={plugins}
-                isAd={values.searchType === SEARCH_TYPE.AD}
-                detectorId={this.props.detectorId}
-                setFlyout={this.props.setFlyout}
-              />
+                <MonitorDetails
+                  values={values}
+                  errors={errors}
+                  history={history}
+                  httpClient={httpClient}
+                  monitorToEdit={monitorToEdit}
+                  plugins={plugins}
+                  isAd={values.searchType === SEARCH_TYPE.AD}
+                  detectorId={this.props.detectorId}
+                  setFlyout={this.props.setFlyout}
+                />
 
-              <EuiSpacer />
-
-              <WorkflowDetails
-                isDarkMode={isDarkMode}
-                values={values}
-                httpClient={httpClient}
-                errors={errors}
-              />
-
-              <EuiSpacer />
-
-              {values.searchType !== SEARCH_TYPE.AD &&
-                values.monitor_type !== MONITOR_TYPE.COMPOSITE_LEVEL && (
-                  <div>
-                    <DefineMonitor
-                      values={values}
-                      errors={errors}
-                      touched={touched}
-                      httpClient={httpClient}
-                      location={location}
-                      detectorId={this.props.detectorId}
-                      notifications={notifications}
-                      isDarkMode={isDarkMode}
-                    />
+                {values.preventVisualEditor ? null : (
+                  <Fragment>
                     <EuiSpacer />
-                  </div>
+
+                    <WorkflowDetails
+                      isDarkMode={isDarkMode}
+                      values={values}
+                      httpClient={httpClient}
+                      errors={errors}
+                    />
+
+                    <EuiSpacer />
+
+                    {values.searchType !== SEARCH_TYPE.AD &&
+                      values.monitor_type !== MONITOR_TYPE.COMPOSITE_LEVEL && (
+                        <div>
+                          <DefineMonitor
+                            values={values}
+                            errors={errors}
+                            touched={touched}
+                            httpClient={httpClient}
+                            location={location}
+                            detectorId={this.props.detectorId}
+                            notifications={notifications}
+                            isDarkMode={isDarkMode}
+                          />
+                          <EuiSpacer />
+                        </div>
+                      )}
+
+                    {values.monitor_type === MONITOR_TYPE.COMPOSITE_LEVEL ? (
+                      <CompositeMonitorsAlertTrigger
+                        edit={edit}
+                        values={values}
+                        touched={touched}
+                        isDarkMode={this.props.isDarkMode}
+                        httpClient={httpClient}
+                        notifications={notifications}
+                        notificationService={notificationService}
+                        plugins={plugins}
+                      />
+                    ) : (
+                      <FieldArray name={'triggerDefinitions'} validateOnChange={true}>
+                        {(triggerArrayHelpers) => (
+                          <ConfigureTriggers
+                            edit={edit}
+                            triggerArrayHelpers={triggerArrayHelpers}
+                            monitor={formikToMonitor(values)}
+                            monitorValues={values}
+                            setFlyout={this.props.setFlyout}
+                            triggers={_.get(formikToMonitor(values), 'triggers', [])}
+                            triggerValues={values}
+                            isDarkMode={this.props.isDarkMode}
+                            httpClient={httpClient}
+                            notifications={notifications}
+                            notificationService={notificationService}
+                            plugins={plugins}
+                          />
+                        )}
+                      </FieldArray>
+                    )}
+
+                    <EuiSpacer />
+                    <EuiFlexGroup alignItems="center" justifyContent="flexEnd">
+                      <EuiFlexItem grow={false}>
+                        <EuiButtonEmpty onClick={this.onCancel}>Cancel</EuiButtonEmpty>
+                      </EuiFlexItem>
+                      <EuiFlexItem grow={false}>
+                        <EuiButton fill onClick={handleSubmit} isLoading={isSubmitting}>
+                          {edit ? 'Update' : 'Create'}
+                        </EuiButton>
+                      </EuiFlexItem>
+                    </EuiFlexGroup>
+                  </Fragment>
                 )}
 
-              {values.monitor_type === MONITOR_TYPE.COMPOSITE_LEVEL ? (
-                <CompositeMonitorsAlertTrigger
-                  values={values}
-                  touched={touched}
-                  isDarkMode={this.props.isDarkMode}
-                  httpClient={httpClient}
-                  notifications={notifications}
-                  notificationService={notificationService}
-                  plugins={plugins}
+                <SubmitErrorHandler
+                  errors={errors}
+                  isSubmitting={isSubmitting}
+                  isValid={isValid}
+                  onSubmitError={() =>
+                    notifications.toasts.addDanger({
+                      title: `Failed to ${edit ? 'update' : 'create'} the monitor`,
+                      text: 'Fix all highlighted error(s) before continuing.',
+                    })
+                  }
                 />
-              ) : (
-                <FieldArray name={'triggerDefinitions'} validateOnChange={true}>
-                  {(triggerArrayHelpers) => (
-                    <ConfigureTriggers
-                      edit={edit}
-                      triggerArrayHelpers={triggerArrayHelpers}
-                      monitor={formikToMonitor(values)}
-                      monitorValues={values}
-                      setFlyout={this.props.setFlyout}
-                      triggers={_.get(formikToMonitor(values), 'triggers', [])}
-                      triggerValues={values}
-                      isDarkMode={this.props.isDarkMode}
-                      httpClient={httpClient}
-                      notifications={notifications}
-                      notificationService={notificationService}
-                      plugins={plugins}
-                    />
-                  )}
-                </FieldArray>
-              )}
-
-              <EuiSpacer />
-              <EuiFlexGroup alignItems="center" justifyContent="flexEnd">
-                <EuiFlexItem grow={false}>
-                  <EuiButtonEmpty onClick={this.onCancel}>Cancel</EuiButtonEmpty>
-                </EuiFlexItem>
-                <EuiFlexItem grow={false}>
-                  <EuiButton fill onClick={handleSubmit} isLoading={isSubmitting}>
-                    {edit ? 'Update' : 'Create'}
-                  </EuiButton>
-                </EuiFlexItem>
-              </EuiFlexGroup>
-              <SubmitErrorHandler
-                errors={errors}
-                isSubmitting={isSubmitting}
-                isValid={isValid}
-                onSubmitError={() =>
-                  notifications.toasts.addDanger({
-                    title: `Failed to ${edit ? 'update' : 'create'} the monitor`,
-                    text: 'Fix all highlighted error(s) before continuing.',
-                  })
-                }
-              />
-            </Fragment>
-          )}
+              </Fragment>
+            );
+          }}
         </Formik>
       </div>
     );

@@ -58,7 +58,8 @@ export const titleTemplate = (title, subTitle) => (
 
 class DefineCompositeLevelTrigger extends Component {
   render() {
-    const { values, httpClient, notifications, notificationService, plugins, touched } = this.props;
+    const { values, httpClient, notifications, notificationService, plugins, touched, edit } =
+      this.props;
 
     const formikFieldPath = `triggerDefinitions[0].`;
     const triggerName = _.get(values, `${formikFieldPath}name`, 'Trigger');
@@ -106,6 +107,7 @@ class DefineCompositeLevelTrigger extends Component {
         <EuiSpacer size={'l'} />
 
         <CompositeTriggerCondition
+          edit={edit}
           formikFieldPath={formikFieldPath}
           formikFieldName={`triggerConditions`}
           label={titleTemplate(

@@ -1,0 +1,308 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`CompositeMonitorsAlertTrigger renders 1`] = `
+<div
+  class="euiPanel euiPanel--paddingMedium euiPanel--borderRadiusMedium euiPanel--plain euiPanel--hasShadow"
+  style="padding-left:10px;padding-right:10px;padding-bottom:20px;padding-top:20px"
+>
+  <div
+    class="euiFlexGroup euiFlexGroup--gutterLarge euiFlexGroup--alignItemsCenter euiFlexGroup--justifyContentSpaceBetween euiFlexGroup--directionRow euiFlexGroup--responsive"
+    style="padding:0px 10px"
+  >
+    <div
+      class="euiFlexItem"
+    >
+      <h3
+        class="euiTitle euiTitle--small"
+      >
+        Alert trigger
+      </h3>
+    </div>
+    <div
+      class="euiFlexItem euiFlexItem--flexGrowZero"
+    >
+      <div
+        class="euiFlexGroup euiFlexGroup--gutterLarge euiFlexGroup--alignItemsCenter euiFlexGroup--justifyContentSpaceBetween euiFlexGroup--directionRow euiFlexGroup--responsive"
+      >
+        <div
+          class="euiFlexItem"
+        />
+      </div>
+    </div>
+  </div>
+  <div
+    class="euiText euiText--extraSmall"
+    style="padding:0px 10px"
+  >
+    <div
+      class="euiTextColor euiTextColor--subdued"
+    />
+  </div>
+  <hr
+    class="euiHorizontalRule euiHorizontalRule--full euiHorizontalRule--marginXSmall"
+  />
+  <div
+    style="padding:0px 10px"
+  >
+    <div
+      class="euiSpacer euiSpacer--m"
+    />
+    <div
+      class="euiFormRow"
+      id="triggerDefinitions[0].name-form-row-row"
+      style="padding-left:0"
+    >
+      <div
+        class="euiFormRow__labelWrapper"
+      >
+        <label
+          aria-invalid="false"
+          class="euiFormLabel euiFormRow__label"
+          for="triggerDefinitions[0].name-form-row"
+        >
+          Trigger name
+        </label>
+      </div>
+      <div
+        class="euiFormRow__fieldWrapper"
+      >
+        <div
+          class="euiFormControlLayout"
+        >
+          <div
+            class="euiFormControlLayout__childrenWrapper"
+          >
+            <input
+              class="euiFieldText"
+              data-test-subj="composite-trigger-name"
+              name="triggerDefinitions[0].name"
+              type="text"
+              value="Trigger"
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+    <div
+      class="euiSpacer euiSpacer--l"
+    />
+    <div
+      class="euiFormRow"
+      id="triggerConditionFieldsContainer-form-row-row"
+      style="max-width:inherit"
+    >
+      <div
+        class="euiFormRow__labelWrapper"
+      >
+        <label
+          class="euiFormLabel euiFormRow__label"
+          for="triggerConditionFieldsContainer-form-row"
+        >
+          <div
+            class="euiText euiText--medium"
+          >
+            <div
+              style="font-weight:bold"
+            >
+              Trigger condition
+            </div>
+            <div
+              class="euiText euiText--extraSmall"
+            >
+              <div
+                class="euiTextColor euiTextColor--subdued"
+              >
+                An alert will trigger when the following monitors generate active alerts.
+              </div>
+            </div>
+            <div
+              class="euiSpacer euiSpacer--s"
+            />
+          </div>
+        </label>
+      </div>
+      <div
+        class="euiFormRow__fieldWrapper"
+      >
+        <div
+          class="euiFlexGroup euiFlexGroup--gutterSmall euiFlexGroup--directionRow euiFlexGroup--responsive"
+          data-test-subj="triggerDefinitions[0].triggerConditions"
+          id="triggerConditionFieldsContainer-form-row"
+        >
+          <div
+            class="euiFlexItem"
+          >
+            <div
+              class="euiFormRow euiFormRow--fullWidth"
+              id="triggerDefinitions_0__triggerConditions_code-form-row-row"
+            >
+              <div
+                class="euiFormRow__labelWrapper"
+              >
+                <label
+                  class="euiFormLabel euiFormRow__label"
+                  for="triggerDefinitions_0__triggerConditions_code-form-row"
+                >
+                  Trigger condition
+                </label>
+              </div>
+              <div
+                class="euiFormRow__fieldWrapper"
+              >
+                <div
+                  class="euiCodeEditorWrapper"
+                  data-test-subj="compositeTriggerConditionEditor"
+                  style="width:80%;height:300px"
+                >
+                  <button
+                    class="euiCodeEditorKeyboardHint"
+                    data-test-subj="codeEditorHint"
+                    id="generated-id"
+                  >
+                    <p
+                      class="euiText"
+                    >
+                      Press Enter to start editing.
+                    </p>
+                    <p
+                      class="euiText"
+                    >
+                      When you're done, press Escape to stop editing.
+                    </p>
+                  </button>
+                  <div
+                    id="generated-id"
+                    style="width:80%;height:300px"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div
+      class="euiSpacer euiSpacer--l"
+    />
+    <div
+      class="euiText euiText--medium"
+    >
+      <div
+        style="font-weight:bold"
+      >
+        Alert severity
+      </div>
+      <div
+        class="euiSpacer euiSpacer--s"
+      />
+    </div>
+    <div
+      class="euiFormRow"
+      id="triggerDefinitions[0].severity-form-row-row"
+      style="padding-left:10px;margin-top:0px"
+    >
+      <div
+        class="euiFormRow__labelWrapper"
+      >
+        <label
+          aria-invalid="false"
+          class="euiFormLabel euiFormRow__label"
+          for="triggerDefinitions[0].severity-form-row"
+        >
+          Severity level
+        </label>
+      </div>
+      <div
+        class="euiFormRow__fieldWrapper"
+      >
+        <div
+          class="euiFormControlLayout"
+        >
+          <div
+            class="euiFormControlLayout__childrenWrapper"
+          >
+            <select
+              class="euiSelect"
+              id="triggerDefinitions[0].severity"
+              name="triggerDefinitions[0].severity"
+            >
+              <option
+                value="1"
+              >
+                1 (Highest)
+              </option>
+              <option
+                value="2"
+              >
+                2 (High)
+              </option>
+              <option
+                value="3"
+              >
+                3 (Medium)
+              </option>
+              <option
+                value="4"
+              >
+                4 (Low)
+              </option>
+              <option
+                value="5"
+              >
+                5 (Lowest)
+              </option>
+            </select>
+            <div
+              class="euiFormControlLayoutIcons euiFormControlLayoutIcons--right"
+            >
+              <span
+                class="euiFormControlLayoutCustomIcon"
+              >
+                <div>
+                  EuiIconMock
+                </div>
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div
+      class="euiSpacer euiSpacer--xl"
+    />
+    <div
+      class="euiText euiText--medium"
+    >
+      <div
+        style="font-weight:bold"
+      >
+        Notifications
+      </div>
+      <div
+        class="euiSpacer euiSpacer--s"
+      />
+    </div>
+    <div
+      class="euiSpacer euiSpacer--m"
+    />
+    0
+    <hr
+      class="euiHorizontalRule euiHorizontalRule--full euiHorizontalRule--marginSmall"
+    />
+    <button
+      class="euiButton euiButton--primary"
+      type="button"
+    >
+      <span
+        class="euiButtonContent euiButton__content"
+      >
+        <span
+          class="euiButton__text"
+        >
+          Add notification
+        </span>
+      </span>
+    </button>
+  </div>
+</div>
+`;
