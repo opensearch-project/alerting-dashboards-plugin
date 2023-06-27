@@ -53,8 +53,10 @@ const MonitorsList = ({ values, httpClient }) => {
       'associatedMonitors',
       DEFAULT_ASSOCIATED_MONITORS_VALUE
     );
+
     const selected = {};
-    associatedMonitors.sequence.delegates.forEach((monitor, index) => {
+    const delegates = _.sortBy(associatedMonitors.sequence.delegates, ['order']);
+    delegates.forEach((monitor, index) => {
       const filteredOption = options.filter((option) => option.monitor_id === monitor.monitor_id);
       selected[index] = {
         label: filteredOption[0]?.monitor_name || '',
