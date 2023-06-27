@@ -92,7 +92,7 @@ export default class MonitorService {
       const ifPrimaryTerm = _.get(getResponse, '_primary_term', null);
       if (monitor) {
         const { callAsCurrentUser } = this.esDriver.asScoped(req);
-        const searchResponse = await callAsCurrentUser('alerting.getMonitors', {
+        const aggsParams = {
           index: INDEX.ALL_ALERTS,
           body: {
             size: 0,
@@ -119,7 +119,8 @@ export default class MonitorService {
               },
             },
           },
-        });
+        };
+        const searchResponse = await callAsCurrentUser('alerting.getMonitors', aggsParams);
         const dayCount = _.get(searchResponse, 'aggregations.24_hour_count.buckets.0.doc_count', 0);
         const activeBuckets = _.get(searchResponse, 'aggregations.active_count.buckets', []);
         const activeCount = activeBuckets.reduce(
@@ -263,6 +264,20 @@ export default class MonitorService {
               should,
             },
           },
+          aggregations: {
+            associated_composite_monitors: {
+              nested: {
+                path: 'workflow.inputs.composite_input.sequence.delegates',
+              },
+              aggs: {
+                monitor_ids: {
+                  terms: {
+                    field: 'workflow.inputs.composite_input.sequence.delegates.monitor_id',
+                  },
+                },
+              },
+            },
+          },
         },
       };
 
@@ -283,6 +298,14 @@ export default class MonitorService {
       }, {});
       const monitorMap = new Map(monitorKeyValueTuples);
       const monitorIds = [...monitorMap.keys()];
+      const associatedCompositeMonitorCountMap = {};
+      _.get(
+        getResponse,
+        'aggregations.associated_composite_monitors.monitor_ids.buckets',
+        []
+      ).forEach(({ key, doc_count }) => {
+        associatedCompositeMonitorCountMap[key] = doc_count;
+      });
 
       const aggsOrderData = {};
       const aggsSorts = {
@@ -368,6 +391,7 @@ export default class MonitorService {
             active,
             errors,
             currentTime: Date.now(),
+            associatedCompositeMonitorCnt: associatedCompositeMonitorCountMap[id] || 0,
           };
         }
       );
@@ -381,6 +405,7 @@ export default class MonitorService {
         errors: 0,
         latestAlert: '--',
         currentTime: Date.now(),
+        associatedCompositeMonitorCnt: associatedCompositeMonitorCountMap[monitor.id] || 0,
       }));
 
       let results = _.orderBy(buckets.concat(unusedMonitors), [sortField], [sortDirection]);

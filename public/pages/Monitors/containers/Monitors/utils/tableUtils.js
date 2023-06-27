@@ -98,4 +98,9 @@ export const columns = [
     sortable: true,
     truncateText: false,
   },
+  {
+    field: 'associatedCompositeMonitorCnt',
+    name: 'Associated composite monitors',
+    truncateText: false,
+  },
 ];
