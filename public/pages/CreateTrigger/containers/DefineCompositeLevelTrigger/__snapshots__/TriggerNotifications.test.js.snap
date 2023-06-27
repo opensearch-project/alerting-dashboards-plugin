@@ -1,0 +1,39 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`TriggerNotifications renders 1`] = `
+Array [
+  <div
+    class="euiText euiText--medium"
+  >
+    <div
+      style="font-weight:bold"
+    >
+      Notifications
+    </div>
+    <div
+      class="euiSpacer euiSpacer--s"
+    />
+  </div>,
+  <div
+    class="euiSpacer euiSpacer--m"
+  />,
+  "0",
+  <hr
+    class="euiHorizontalRule euiHorizontalRule--full euiHorizontalRule--marginSmall"
+  />,
+  <button
+    class="euiButton euiButton--primary"
+    type="button"
+  >
+    <span
+      class="euiButtonContent euiButton__content"
+    >
+      <span
+        class="euiButton__text"
+      >
+        Add notification
+      </span>
+    </span>
+  </button>,
+]
+`;
