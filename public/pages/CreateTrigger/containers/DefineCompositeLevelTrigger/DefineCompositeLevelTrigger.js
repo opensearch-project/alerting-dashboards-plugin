@@ -10,11 +10,10 @@ import { EuiSpacer, EuiText } from '@elastic/eui';
 import { FormikFieldText, FormikSelect } from '../../../../components/FormControls';
 import { hasError, isInvalid } from '../../../../utils/validate';
 import { SEVERITY_OPTIONS } from '../../utils/constants';
-import ExpressionQuery from '../../components/ExpressionQuery/ExpressionQuery';
+import CompositeTriggerCondition from '../../components/CompositeTriggerCondition/CompositeTriggerCondition';
 import TriggerNotifications from './TriggerNotifications';
 import ContentPanel from '../../../../components/ContentPanel';
-import { FORMIK_INITIAL_TRIGGER_VALUES } from '../CreateTrigger/utils/constants';
-import { getMonitors } from '../../../CreateMonitor/containers/WorkflowDetails/WorkflowDetails';
+import { FORMIK_COMPOSITE_INITIAL_TRIGGER_VALUES } from '../CreateTrigger/utils/constants';
 
 const defaultRowProps = {
   label: 'Trigger name',
@@ -41,8 +40,7 @@ const selectInputProps = {
 };
 
 const propTypes = {
-  monitorValues: PropTypes.object.isRequired,
-  triggerValues: PropTypes.object.isRequired,
+  values: PropTypes.object.isRequired,
   isDarkMode: PropTypes.bool.isRequired,
 };
 
@@ -58,88 +56,22 @@ export const titleTemplate = (title, subTitle) => (
   </EuiText>
 );
 
-export const convertQueryToExpressions = (query, monitors) => {
-  const conditionMap = {
-    '&&': 'and',
-    '||': 'or',
-    '!': 'not',
-    '': '',
-  };
-  const queryToExpressionRegex = new RegExp('(&& )?(\\|\\| )?(monitor\\[id=(.*?)\\])', 'g');
-  const matcher = query.matchAll(queryToExpressionRegex);
-  let match;
-  let expressions = [];
-  while ((match = matcher.next().value)) {
-    const monitorId = match[4]?.trim();
-    const monitor = monitors.filter((mon) => mon.monitor_id === monitorId);
-    expressions.push({
-      description: conditionMap[match[1]?.trim()] || '',
-      isOpen: false,
-      monitor_name: monitor[0]?.monitor_name,
-      monitor_id: monitorId,
-    });
-  }
-
-  return expressions;
-};
-
 class DefineCompositeLevelTrigger extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      expressions: [],
-    };
-  }
-
-  componentDidMount() {
-    getMonitors(this.props.httpClient).then((monitors) => {
-      const inputIds = this.props.monitorValues.inputs?.map((input) => input.monitor_id);
-      if (inputIds && inputIds.length) {
-        const selectedMonitors = monitors.filter(
-          (monitor) => inputIds.indexOf(monitor.monitor_id) !== -1
-        );
-
-        const expressions = convertQueryToExpressions(
-          this.props.triggerValues.triggerDefinitions[0].script.source,
-          selectedMonitors
-        );
-
-        this.setState({
-          expressions,
-        });
-      }
-    });
-  }
-
   render() {
-    const {
-      edit,
-      monitorValues,
-      triggerValues,
-      httpClient,
-      notifications,
-      notificationService,
-      plugins,
-    } = this.props;
+    const { values, httpClient, notifications, notificationService, plugins, touched } = this.props;
 
-    const fieldPath = `triggerDefinitions[0].`;
-    const triggerName = _.get(triggerValues, `${fieldPath}name`, 'Trigger');
-    const triggerDefinitions = _.get(triggerValues, 'triggerDefinitions', []);
-    _.set(triggerValues, 'triggerDefinitions', [
+    const formikFieldPath = `triggerDefinitions[0].`;
+    const triggerName = _.get(values, `${formikFieldPath}name`, 'Trigger');
+    const triggerDefinitions = _.get(values, 'triggerDefinitions', []);
+    _.set(values, 'triggerDefinitions', [
       {
-        ...FORMIK_INITIAL_TRIGGER_VALUES,
+        ...FORMIK_COMPOSITE_INITIAL_TRIGGER_VALUES,
         ...triggerDefinitions[0],
         severity: 1,
         name: triggerName,
       },
     ]);
-    const triggerActions = _.get(triggerValues, 'triggerDefinitions[0].actions', []);
-    const monitorList = monitorValues?.associatedMonitors
-      ? monitorValues.associatedMonitors?.map((monitor) => ({
-          label: monitor.label?.replaceAll(' ', '_'),
-          monitor_id: monitor.value,
-        }))
-      : [];
+    const triggerActions = _.get(values, `${formikFieldPath}.actions`, []);
 
     return (
       <ContentPanel
@@ -155,7 +87,7 @@ class DefineCompositeLevelTrigger extends Component {
         <EuiSpacer size={'m'} />
 
         <FormikFieldText
-          name={`${fieldPath}name`}
+          name={`${formikFieldPath}name`}
           fieldProps={{}}
           formRow
           rowProps={{
@@ -173,25 +105,24 @@ class DefineCompositeLevelTrigger extends Component {
 
         <EuiSpacer size={'l'} />
 
-        <ExpressionQuery
-          formikName={`${fieldPath}triggerConditions`}
+        <CompositeTriggerCondition
+          formikFieldPath={formikFieldPath}
+          formikFieldName={`triggerConditions`}
           label={titleTemplate(
             'Trigger condition',
             'An alert will trigger when the following monitors generate active alerts.'
           )}
-          selections={monitorList}
-          value={this.state.expressions}
-          dataTestSubj={'composite_expression_query'}
-          defaultText={'Select associated monitor'}
-          triggerValues={triggerValues}
+          values={values}
+          touched={touched}
           isDarkMode={this.props.isDarkMode}
+          httpClient={httpClient}
         />
 
         <EuiSpacer size={'l'} />
 
         {titleTemplate('Alert severity')}
         <FormikSelect
-          name={`${fieldPath}severity`}
+          name={`${formikFieldPath}severity`}
           formRow
           fieldProps={selectFieldProps}
           rowProps={selectRowProps}
@@ -205,7 +136,7 @@ class DefineCompositeLevelTrigger extends Component {
           plugins={plugins}
           notifications={notifications}
           notificationService={notificationService}
-          triggerValues={triggerValues}
+          triggerValues={values}
           triggerActions={triggerActions}
         />
       </ContentPanel>

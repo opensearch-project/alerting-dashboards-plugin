@@ -19,71 +19,119 @@ import {
   FormikInputWrapper,
   FormikFormRow,
 } from '../../../../../components/FormControls';
+import { DEFAULT_ASSOCIATED_MONITORS_VALUE } from '../../../containers/CreateMonitor/utils/constants';
+import { getMonitors } from '../AssociateMonitors';
 
-const MonitorsList = ({ monitors = [], options = [] }) => {
-  const [selectedOptions, setSelectedOptions] = useState({});
-  const [monitorOptions, setMonitorOptions] = useState([]);
+const MonitorsList = ({ values, httpClient }) => {
+  const formikFieldName = 'associatedMonitorsList';
+  const formikValueName = 'associatedMonitors';
 
-  const fieldName = 'associatedMonitors';
-  const fieldInputNamePrefix = 'associatedMonitor_';
+  const [fields, setFields] = useState([0, 1]);
+  const [options, setOptions] = useState([]);
+  const [selection, setSelection] = useState({});
 
-  const [monitorFields, setMonitorFields] = useState(
+  useEffect(() => {
+    const monitorOptions = _.get(values, 'monitorOptions', []);
+    if (monitorOptions.length) {
+      setOptions(monitorsToOptions(monitorOptions));
+      const selected = formikToSelection(monitorOptions);
+      setFields(generateFields(selected));
+    } else {
+      getMonitors(httpClient).then((monitors) => {
+        _.set(values, 'monitorOptions', monitors);
+
+        setOptions(monitorsToOptions(monitors));
+        const selected = formikToSelection(monitors);
+        setFields(generateFields(selected));
+      });
+    }
+  }, [values]);
+
+  const formikToSelection = (options) => {
+    const associatedMonitors = _.get(
+      values,
+      'associatedMonitors',
+      DEFAULT_ASSOCIATED_MONITORS_VALUE
+    );
+    const selected = {};
+    associatedMonitors.sequence.delegates.forEach((monitor, index) => {
+      const filteredOption = options.filter((option) => option.monitor_id === monitor.monitor_id);
+      selected[index] = {
+        label: filteredOption[0]?.monitor_name || '',
+        value: monitor.monitor_id,
+      };
+    });
+
+    setSelection(selected);
+    return selected;
+  };
+
+  const generateFields = (selected) =>
     _.reduce(
-      monitors.length ? monitors : [0, 1],
+      Object.keys(selected).length > 1 ? Object.keys(selected) : [0, 1],
       (result, value, key) => {
         result.push(key);
         return result;
       },
       []
-    )
-  );
+    );
 
-  useEffect(() => {
-    const newOptions = [...options].map((monitor) => ({
+  const monitorsToOptions = (monitors) =>
+    monitors.map((monitor) => ({
       label: monitor.monitor_name,
       value: monitor.monitor_id,
     }));
-    setMonitorOptions(newOptions);
-
-    let newSelected = monitors.length
-      ? monitors.map((monitor) => ({
-          label: monitor.monitor_name,
-          value: monitor.monitor_id,
-        }))
-      : [];
-    setSelectedOptions(Object.assign({}, newSelected));
-  }, [monitors, options]);
 
   const onChange = (options, monitorIdx, form) => {
-    let newSelected = {
-      ...selectedOptions,
+    let selected = {
+      ...selection,
     };
     if (options[0]) {
-      newSelected[monitorIdx] = options[0];
+      selected[monitorIdx] = options[0];
     } else {
-      delete newSelected[monitorIdx];
+      delete selected[monitorIdx];
     }
-    setSelectedOptions(newSelected);
+    setSelection(selected);
 
-    updateMonitorOptions(newSelected);
+    updateSelection(selected);
 
-    updateFormik(monitorIdx, form);
+    setFormikValues(selected, monitorIdx, form);
   };
 
-  const updateMonitorOptions = (selected) => {
-    const newMonitorOptions = [...monitorOptions];
+  const onBlur = (e, field, form) => {
+    form.setFieldTouched(formikFieldName, true);
+    form.setFieldTouched(field.name, true);
+  };
+
+  const updateSelection = (selected) => {
+    const newMonitorOptions = [...options];
     newMonitorOptions.forEach((mon) => {
       mon.disabled = isSelected(selected, mon);
     });
 
-    setMonitorOptions([...newMonitorOptions]);
+    setOptions([...newMonitorOptions]);
   };
 
-  const updateFormik = (monitorIdx, form) => {
-    form.setFieldTouched(fieldName, true);
-    form.setFieldTouched(`${fieldInputNamePrefix}${monitorIdx}`, true);
-    form.setFieldValue(fieldName, Object.values(selectedOptions));
-    form.setFieldError(fieldName, validate());
+  const setFormikValues = (selected, monitorIdx, form) => {
+    const associatedMonitors = _.get(
+      values,
+      'associatedMonitors',
+      DEFAULT_ASSOCIATED_MONITORS_VALUE
+    );
+    associatedMonitors.sequence.delegates = selectionToFormik(selected);
+    form.setFieldValue(formikValueName, associatedMonitors);
+  };
+
+  const selectionToFormik = (selection) => {
+    const monitors = [];
+    Object.values(selection).forEach((monitor, index) => {
+      monitors.push({
+        order: index + 1,
+        monitor_id: monitor.value,
+      });
+    });
+
+    return monitors;
   };
 
   const isSelected = (selected, monitor) => {
@@ -100,26 +148,26 @@ const MonitorsList = ({ monitors = [], options = [] }) => {
   };
 
   const onAddMonitor = () => {
-    let nextIndex = Math.max(...monitorFields) + 1;
-    const newMonitorFields = [...monitorFields, nextIndex];
-    setMonitorFields(newMonitorFields);
+    let nextIndex = Math.max(...fields) + 1;
+    const newMonitorFields = [...fields, nextIndex];
+    setFields(newMonitorFields);
   };
 
   const onRemoveMonitor = (monitorIdx, idx, form) => {
-    const newSelected = { ...selectedOptions };
-    delete newSelected[monitorIdx];
-    setSelectedOptions(newSelected);
+    const selected = { ...selection };
+    delete selected[monitorIdx];
+    setSelection(selected);
 
-    const newMonitorFields = [...monitorFields];
+    const newMonitorFields = [...fields];
     newMonitorFields.splice(idx, 1);
-    setMonitorFields(newMonitorFields);
+    setFields(newMonitorFields);
 
-    updateMonitorOptions(newSelected);
+    updateSelection(selected);
 
-    updateFormik(monitorIdx, form);
+    setFormikValues(selected, monitorIdx, form);
   };
 
-  const isValid = () => Object.keys(selectedOptions).length > 1;
+  const isValid = () => Object.keys(selection).length > 1;
 
   const validate = () => {
     if (!isValid()) return 'Required.';
@@ -127,48 +175,46 @@ const MonitorsList = ({ monitors = [], options = [] }) => {
 
   return (
     <FormikInputWrapper
-      name={'associatedMonitors'}
+      name={formikFieldName}
       fieldProps={{
-        validate: () => validate(),
+        validate: validate,
       }}
-      render={({ field, form }) => (
+      render={({ form }) => (
         <FormikFormRow
-          name={fieldName}
+          name={formikFieldName}
           form={form}
           rowProps={{
             label: 'Monitor',
-            isInvalid: () => form.touched[fieldName] && !isValid(),
+            isInvalid: () => form.touched[formikFieldName] && !isValid(),
             error: () => validate(),
           }}
         >
           <Fragment>
-            {monitorFields.map((monitorIdx, idx) => (
+            {fields.map((monitorIdx, idx) => (
               <EuiFlexGroup
                 key={`monitors_list_${monitorIdx}`}
                 style={{ width: '400px', position: 'relative' }}
               >
                 <EuiFlexItem grow={true}>
                   <FormikComboBox
-                    name={`${fieldInputNamePrefix}${monitorIdx}`}
+                    name={`${formikFieldName}_${monitorIdx}`}
                     inputProps={{
                       isInvalid:
-                        form.touched[`${fieldInputNamePrefix}${monitorIdx}`] &&
-                        form.errors[fieldName] &&
-                        !selectedOptions[monitorIdx],
+                        (form.touched[`${formikFieldName}_${monitorIdx}`] ||
+                          form.touched[formikFieldName]) &&
+                        !selection[monitorIdx],
                       placeholder: 'Select a monitor',
                       onChange: (options, field, form) => onChange(options, monitorIdx, form),
-                      onBlur: (e, field, form) => updateFormik(monitorIdx, form),
-                      options: monitorOptions,
+                      onBlur: (e, field, form) => onBlur(e, field, form),
+                      options: options,
                       singleSelection: { asPlainText: true },
-                      selectedOptions: selectedOptions[monitorIdx]
-                        ? [selectedOptions[monitorIdx]]
-                        : undefined,
+                      selectedOptions: selection[monitorIdx] ? [selection[monitorIdx]] : undefined,
                       'data-test-subj': `monitors_list_${monitorIdx}`,
                       fullWidth: true,
                     }}
                   />
                 </EuiFlexItem>
-                {selectedOptions[monitorIdx] && (
+                {selection[monitorIdx] && (
                   <EuiFlexItem
                     grow={false}
                     style={{
@@ -187,12 +233,12 @@ const MonitorsList = ({ monitors = [], options = [] }) => {
                         iconType={'inspect'}
                         color="text"
                         target={'_blank'}
-                        href={`alerting#/monitors/${selectedOptions[monitorIdx].value}?alertState=ALL&from=0&monitorIds=${selectedOptions[monitorIdx].value}&search=&severityLevel=ALL&size=20&sortDirection=desc&sortField=start_time`}
+                        href={`alerting#/monitors/${selection[monitorIdx].value}?alertState=ALL&from=0&monitorIds=${selection[monitorIdx].value}&search=&severityLevel=ALL&size=20&sortDirection=desc&sortField=start_time`}
                       />
                     </EuiToolTip>
                   </EuiFlexItem>
                 )}
-                {monitorFields.length > 2 && (
+                {fields.length > 2 && (
                   <EuiFlexItem
                     grow={false}
                     style={{
@@ -218,17 +264,11 @@ const MonitorsList = ({ monitors = [], options = [] }) => {
               </EuiFlexGroup>
             ))}
             <EuiSpacer size={'m'} />
-            <EuiButton
-              onClick={() => onAddMonitor()}
-              disabled={
-                monitorFields.length >= 10 ||
-                monitorOptions.length <= Object.keys(selectedOptions).length
-              }
-            >
+            <EuiButton onClick={() => onAddMonitor()} disabled={fields.length >= 10}>
               Associate another monitor
             </EuiButton>
             <EuiText color={'subdued'} size={'xs'}>
-              You can associate up to {10 - monitorFields.length} more monitors.
+              You can associate up to {10 - fields.length} more monitors.
             </EuiText>
           </Fragment>
         </FormikFormRow>

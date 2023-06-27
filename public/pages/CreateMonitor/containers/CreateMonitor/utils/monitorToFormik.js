@@ -41,18 +41,8 @@ export default function monitorToFormik(monitor) {
       case MONITOR_TYPE.DOC_LEVEL:
         return docLevelInputToFormik(monitor);
       case MONITOR_TYPE.COMPOSITE_LEVEL:
-        const associatedMonitors = _.get(
-          monitor,
-          'inputs[0].composite_input.sequence.delegates',
-          []
-        );
-
         return {
-          inputs: associatedMonitors,
-          associatedMonitors: associatedMonitors.map((mon) => ({
-            label: '',
-            value: mon.monitor_id,
-          })),
+          associatedMonitors: _.get(monitor, 'inputs[0].composite_input', {}),
         };
       default:
         return {

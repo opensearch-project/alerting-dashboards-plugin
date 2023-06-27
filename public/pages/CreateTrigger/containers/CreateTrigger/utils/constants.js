@@ -68,6 +68,17 @@ export const FORMIK_INITIAL_TRIGGER_VALUES = {
   actions: undefined,
 };
 
+export const FORMIK_COMPOSITE_INITIAL_TRIGGER_VALUES = {
+  name: '',
+  severity: '1',
+  script: {
+    lang: 'painless',
+    source: ``,
+  },
+  triggerConditions: '',
+  actions: undefined,
+};
+
 export const FORMIK_INITIAL_DOC_LEVEL_SCRIPT = {
   lang: FORMIK_INITIAL_TRIGGER_VALUES.script.lang,
   source: '(query[name=<queryName>] || query[name=<queryName>]) && query[tag=<queryTag>]',
