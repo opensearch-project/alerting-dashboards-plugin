@@ -334,6 +334,7 @@ export default class CreateMonitor extends Component {
 
                     {values.monitor_type === MONITOR_TYPE.COMPOSITE_LEVEL ? (
                       <CompositeMonitorsAlertTrigger
+                        edit={edit}
                         values={values}
                         touched={touched}
                         isDarkMode={this.props.isDarkMode}

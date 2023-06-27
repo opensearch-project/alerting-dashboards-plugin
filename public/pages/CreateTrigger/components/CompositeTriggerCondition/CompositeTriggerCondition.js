@@ -12,6 +12,7 @@ const CompositeTriggerCondition = ({
   touched,
   isDarkMode = false,
   httpClient,
+  edit,
 }) => {
   const formikFullFieldName = `${formikFieldPath}${formikFieldName}`;
   const [graphUi, setGraphUi] = useState(values.searchType === 'graph');
@@ -45,6 +46,7 @@ const CompositeTriggerCondition = ({
             <EuiFlexItem grow={true}>
               {graphUi ? (
                 <ExpressionBuilder
+                  edit={edit}
                   httpClient={httpClient}
                   values={values}
                   touched={touched}

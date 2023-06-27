@@ -7,6 +7,7 @@ import React, { Fragment } from 'react';
 import DefineCompositeLevelTrigger from './DefineCompositeLevelTrigger';
 
 const CompositeMonitorsAlertTrigger = ({
+  edit,
   isDarkMode,
   httpClient,
   notifications,
@@ -18,6 +19,7 @@ const CompositeMonitorsAlertTrigger = ({
   return (
     <Fragment>
       <DefineCompositeLevelTrigger
+        edit={edit}
         values={values}
         touched={touched}
         isDarkMode={isDarkMode}
