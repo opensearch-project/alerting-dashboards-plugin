@@ -11,7 +11,7 @@ import * as _ from 'lodash';
 import { FormikFormRow, FormikInputWrapper } from '../../../../components/FormControls';
 import { getMonitors } from '../../../CreateMonitor/components/AssociateMonitors/AssociateMonitors';
 
-export const conditionToExpressions = (condition, monitors) => {
+export const conditionToExpressions = (condition = '', monitors) => {
   if (!condition.length) return [];
 
   const conditionMap = {
@@ -26,7 +26,7 @@ export const conditionToExpressions = (condition, monitors) => {
   let expressions = [];
   let counter = 0;
   while ((match = matcher.next().value)) {
-    if (counter && !match[1]) return; // Didn't find condition after the first match
+    if (counter && !match[1]) return []; // Didn't find condition after the first match
 
     const monitorId = match[3]?.trim(); // match [3] is the monitor_id
     const monitor = monitors.filter((mon) => mon.monitor_id === monitorId);
