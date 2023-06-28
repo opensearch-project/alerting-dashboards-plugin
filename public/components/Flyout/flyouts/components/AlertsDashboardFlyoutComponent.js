@@ -17,6 +17,8 @@ import {
   EuiTab,
   EuiTabs,
   EuiText,
+  EuiToolTip,
+  EuiButtonIcon,
 } from '@elastic/eui';
 import { getTime } from '../../../../pages/MonitorDetails/components/MonitorOverview/utils/getOverviewStats';
 import { PLUGIN_NAME } from '../../../../../utils/constants';
@@ -334,6 +336,32 @@ export default class AlertsDashboardFlyoutComponent extends Component {
             getAlertsFindingColumn(httpClient, history, location, notifications)
           );
           break;
+        case MONITOR_TYPE.COMPOSITE_LEVEL:
+          columns = _.cloneDeep(queryColumns);
+          columns.push({
+            name: 'Actions',
+            sortable: false,
+            actions: [
+              {
+                render: (alert) => (
+                  <EuiToolTip content={'View details'}>
+                    <EuiButtonIcon
+                      aria-label={'View details'}
+                      data-test-subj={`view-details-icon`}
+                      iconType={'inspect'}
+                      onClick={() => {
+                        this.props.openChainedAlertsFlyout?.({
+                          alert,
+                          closeFlyout: this.props.closeFlyout,
+                        });
+                      }}
+                    />
+                  </EuiToolTip>
+                ),
+              },
+            ],
+          });
+          break;
         default:
           columns = queryColumns;
           break;
@@ -421,6 +449,7 @@ export default class AlertsDashboardFlyoutComponent extends Component {
           sorting={sorting}
           isSelectable={selectable}
           selection={selection}
+          hasActions={true}
           onChange={this.onTableChange}
           noItemsMessage={loading ? 'Loading alerts...' : 'No alerts.'}
           data-test-subj={`alertsDashboardFlyout_table_${trigger_name}`}

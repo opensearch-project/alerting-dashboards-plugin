@@ -81,6 +81,19 @@ export default function alertingPlugin(Client, config, components) {
     method: 'DELETE',
   });
 
+  alerting.deleteWorkflow = ca({
+    url: {
+      fmt: `${WORKFLOW_BASE_API}/<%=workflowId%>`,
+      req: {
+        workflowId: {
+          type: 'string',
+          required: true,
+        },
+      },
+    },
+    method: 'DELETE',
+  });
+
   // TODO DRAFT: May need to add 'refresh' assignment here again.
   alerting.updateMonitor = ca({
     url: {

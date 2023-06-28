@@ -29,7 +29,11 @@ export default class AlertService {
       severityLevel = 'ALL',
       alertState = 'ALL',
       monitorIds = [],
+      monitorType = 'monitor',
     } = req.query;
+
+    console.log('get alerts req query from frontend');
+    console.log(JSON.stringify(req.query));
 
     var params;
     switch (sortField) {
@@ -73,13 +77,17 @@ export default class AlertService {
     params.alertState = alertState;
     params.searchString = search;
     if (search.trim()) params.searchString = `*${search.trim().split(' ').join('* *')}*`;
-    if (monitorIds.length > 0)
-      params.monitorId = !Array.isArray(monitorIds) ? monitorIds : monitorIds[0];
+    if (monitorIds.length > 0) {
+      const idField = monitorType === 'composite' ? 'workflowIds' : 'monitorId';
+      params[idField] = !Array.isArray(monitorIds) ? monitorIds : monitorIds[0];
+    }
 
     const { callAsCurrentUser } = this.esDriver.asScoped(req);
     try {
+      console.log('Get Alerts params ****');
+      console.log(monitorType);
+      console.log(JSON.stringify(params));
       const resp = await callAsCurrentUser('alerting.getAlerts', params);
-      console.log(params);
       const alerts = resp.alerts.map((hit) => {
         const alert = hit;
         const id = hit.alert_id;
@@ -87,6 +95,9 @@ export default class AlertService {
         return { id, ...alert, version };
       });
       const totalAlerts = resp.totalAlerts;
+
+      console.log('Get alerts response *****');
+      console.log(JSON.stringify(alerts));
 
       return res.ok({
         body: {

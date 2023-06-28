@@ -220,11 +220,14 @@ export default class Monitors extends Component {
   deleteMonitor(item) {
     const { httpClient, notifications } = this.props;
     const { id, version } = item;
+    const poolType = item.item_type === 'composite' ? 'workflows' : 'monitors';
     return httpClient
-      .delete(`../api/alerting/monitors/${id}`, { query: { version } })
+      .delete(`../api/alerting/${poolType}/${id}`, { query: { version } })
       .then((resp) => {
         if (!resp.ok) {
           backendErrorNotification(notifications, 'delete', 'monitor', resp.resp);
+        } else {
+          notifications.toasts.addSuccess(`Monitor deleted successfully.`);
         }
         return resp;
       })
@@ -378,6 +381,10 @@ export default class Monitors extends Component {
     return `${item.id}-${item.currentTime}`;
   }
 
+  isDeleteNotSupported = (items) => {
+    return items.length > 1 && items.some((item) => item.associatedCompositeMonitorCnt > 0);
+  };
+
   render() {
     const {
       alerts,
@@ -421,7 +428,9 @@ export default class Monitors extends Component {
           actions={
             <MonitorActions
               isEditDisabled={selectedItems.length !== 1}
-              isDeleteDisabled={selectedItems.length === 0}
+              isDeleteDisabled={
+                selectedItems.length === 0 || this.isDeleteNotSupported(selectedItems)
+              }
               onBulkAcknowledge={this.onBulkAcknowledge}
               onBulkEnable={this.onBulkEnable}
               onBulkDisable={this.onBulkDisable}
@@ -481,7 +490,7 @@ export default class Monitors extends Component {
         </ContentPanel>
         {this.state.monitorItemsToDelete && (
           <DeleteMonitorModal
-            monitorNames={this.state.monitorItemsToDelete.map((item) => item.name)}
+            monitors={this.state.monitorItemsToDelete}
             closeDeleteModal={() => this.setState({ monitorItemsToDelete: undefined })}
             onClickDelete={() => this.deleteMonitors(this.state.monitorItemsToDelete)}
           />

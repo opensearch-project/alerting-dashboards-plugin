@@ -73,7 +73,10 @@ export default class MonitorDetails extends Component {
   }
 
   isWorkflow = () => {
-    return new URLSearchParams(this.props.location.search).get('type') === 'workflow';
+    const searchParams = new URLSearchParams(this.props.location.search);
+    return (
+      searchParams.get('type') === 'workflow' || searchParams.get('monitorType') === 'composite'
+    );
   };
 
   componentDidMount() {
@@ -316,11 +319,13 @@ export default class MonitorDetails extends Component {
   };
 
   renderTableTabs = () => {
-    const { tabId } = this.state;
-    const tabs = [
-      { ...TABLE_TAB_IDS.ALERTS, content: this.renderAlertsTable() },
-      { ...TABLE_TAB_IDS.FINDINGS, content: this.renderFindingsTable() },
-    ];
+    const { tabId, monitor } = this.state;
+    const tabs = [{ ...TABLE_TAB_IDS.ALERTS, content: this.renderAlertsTable() }];
+
+    if (monitor.monitor_type !== MONITOR_TYPE.COMPOSITE_LEVEL) {
+      tabs.push({ ...TABLE_TAB_IDS.FINDINGS, content: this.renderFindingsTable() });
+    }
+
     return tabs.map((tab, index) => (
       <EuiTab
         key={`${tab.id}${index}`}
@@ -385,7 +390,9 @@ export default class MonitorDetails extends Component {
       );
     }
 
-    const displayTableTabs = monitor.monitor_type === MONITOR_TYPE.DOC_LEVEL;
+    const displayTableTabs = [MONITOR_TYPE.DOC_LEVEL, MONITOR_TYPE.COMPOSITE_LEVEL].includes(
+      monitor.monitor_type
+    );
     return (
       <div style={{ padding: '25px 50px' }}>
         {this.renderNoTriggersCallOut()}
@@ -458,11 +465,12 @@ export default class MonitorDetails extends Component {
 
         {displayTableTabs ? (
           <div>
-            <EuiTabs>{this.renderTableTabs()}</EuiTabs>
+            {monitor.monitor_type !== MONITOR_TYPE.COMPOSITE_LEVEL ? (
+              <EuiTabs>{this.renderTableTabs()}</EuiTabs>
+            ) : null}
             {this.state.tabContent}
           </div>
-        ) : // this.renderAlertsTable()
-        null}
+        ) : null}
 
         {isJsonModalOpen && (
           <EuiOverlayMask>

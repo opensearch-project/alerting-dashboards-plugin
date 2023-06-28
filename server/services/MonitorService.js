@@ -79,6 +79,30 @@ export default class MonitorService {
     }
   };
 
+  deleteWorkflow = async (context, req, res) => {
+    try {
+      const { id } = req.params;
+      const params = { workflowId: id };
+      const { callAsCurrentUser } = await this.esDriver.asScoped(req);
+      const response = await callAsCurrentUser('alerting.deleteWorkflow', params);
+      console.log('delete workflow response ^*^*^*^*^*');
+      console.log(JSON.stringify(response));
+      return res.ok({
+        body: {
+          ok: response.result === 'deleted' || response.result === undefined,
+        },
+      });
+    } catch (err) {
+      console.error('Alerting - MonitorService - deleteWorkflow:', err);
+      return res.ok({
+        body: {
+          ok: false,
+          resp: err.message,
+        },
+      });
+    }
+  };
+
   getMonitor = async (context, req, res) => {
     console.log('****** GET MONITOR *****');
     try {
@@ -86,10 +110,13 @@ export default class MonitorService {
       const params = { monitorId: id };
       const { callAsCurrentUser } = await this.esDriver.asScoped(req);
       const getResponse = await callAsCurrentUser('alerting.getMonitor', params);
-      const monitor = _.get(getResponse, 'monitor', null);
+      console.log('Get monitor complete response ^^^^^^^^^');
+      console.log(JSON.stringify(getResponse));
+      let monitor = _.get(getResponse, 'monitor', null);
       const version = _.get(getResponse, '_version', null);
       const ifSeqNo = _.get(getResponse, '_seq_no', null);
       const ifPrimaryTerm = _.get(getResponse, '_primary_term', null);
+      const associated_workflows = _.get(getResponse, 'associated_workflows', null);
       if (monitor) {
         const { callAsCurrentUser } = this.esDriver.asScoped(req);
         const aggsParams = {
@@ -127,6 +154,12 @@ export default class MonitorService {
           (acc, curr) => (curr.key === 'ACTIVE' ? curr.doc_count : acc),
           0
         );
+        if (associated_workflows) {
+          monitor = {
+            ...monitor,
+            associated_workflows,
+          };
+        }
         return res.ok({
           body: { ok: true, resp: monitor, activeCount, dayCount, version, ifSeqNo, ifPrimaryTerm },
         });
@@ -496,6 +529,9 @@ export default class MonitorService {
     try {
       const { query, index, size } = req.body;
       const params = { index, size, body: query };
+
+      console.log('Search monitors ******* ');
+      console.log(JSON.stringify(params));
 
       const { callAsCurrentUser } = await this.esDriver.asScoped(req);
       const results = await callAsCurrentUser('alerting.getMonitors', params);

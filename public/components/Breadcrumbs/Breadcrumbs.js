@@ -106,7 +106,7 @@ export async function getBreadcrumb(route, routeState, httpClient) {
   // This condition is true for any auto generated 20 character long,
   // URL-safe, base64-encoded document ID by opensearch
   if (RegExp(/^[0-9a-z_-]{20}$/i).test(base)) {
-    const { action, type } = queryString.parse(`?${queryParams}`);
+    const { action, type, monitorType } = queryString.parse(`?${queryParams}`);
     switch (action) {
       case DESTINATION_ACTIONS.UPDATE_DESTINATION:
         const destinationName = _.get(routeState, 'destinationToEdit.name', base);
@@ -119,7 +119,8 @@ export async function getBreadcrumb(route, routeState, httpClient) {
         // TODO::Everything else is considered as monitor, we should break this.
         let monitorName = base;
         try {
-          const searchPool = type === 'workflow' ? 'workflows' : 'monitors';
+          const searchPool =
+            type === 'workflow' || monitorType === 'composite' ? 'workflows' : 'monitors';
           const response = await httpClient.get(`../api/alerting/${searchPool}/${base}`);
           if (response.ok) {
             monitorName = response.resp.name;

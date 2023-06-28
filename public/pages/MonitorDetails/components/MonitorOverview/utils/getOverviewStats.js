@@ -16,6 +16,7 @@ import {
 } from '../../../../../utils/constants';
 import { API_TYPES } from '../../../../CreateMonitor/components/ClusterMetricsMonitor/utils/clusterMetricsMonitorConstants';
 import { getApiType } from '../../../../CreateMonitor/components/ClusterMetricsMonitor/utils/clusterMetricsMonitorHelpers';
+import { PLUGIN_NAME } from '../../../../../../utils/constants';
 
 // TODO: used in multiple places, move into helper
 export function getTime(time) {
@@ -85,7 +86,7 @@ export default function getOverviewStats(
       ]
     : [];
   const monitorLevelType = _.get(monitor, 'ui_metadata.monitor_type', 'query_level_monitor');
-  return [
+  const overviewStats = [
     {
       header: 'Monitor type',
       value: getMonitorLevelType(monitorLevelType),
@@ -126,4 +127,32 @@ export default function getOverviewStats(
       value: monitor.user && monitor.user.name ? monitor.user.name : '-',
     },
   ];
+
+  if (monitor.associated_workflows) {
+    overviewStats.push({
+      header: 'Associated composite monitors',
+      value:
+        monitor.associated_workflows.length > 0 ? (
+          <>
+            {monitor.associated_workflows.map((id, idx) => {
+              return (
+                <EuiLink
+                  className="associated-comp-monitor-link"
+                  target="_blank"
+                  key={id}
+                  href={`${PLUGIN_NAME}#/monitors/${id}?type=${'workflow'}`}
+                >
+                  {id}
+                  {`${idx < monitor.associated_workflows.length - 1 ? ', ' : ''}`}
+                </EuiLink>
+              );
+            })}
+          </>
+        ) : (
+          '-'
+        ),
+    });
+  }
+
+  return overviewStats;
 }

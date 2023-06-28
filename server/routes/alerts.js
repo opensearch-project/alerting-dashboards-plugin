@@ -21,6 +21,7 @@ export default function (services, router) {
           severityLevel: schema.maybe(schema.string()),
           alertState: schema.maybe(schema.string()),
           monitorIds: schema.maybe(schema.string()),
+          monitorType: schema.maybe(schema.string()),
         }),
       },
     },

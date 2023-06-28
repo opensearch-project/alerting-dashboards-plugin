@@ -212,3 +212,27 @@ export const alertColumns = (
     ),
   },
 ];
+
+export const associatedAlertsTableColumns = [
+  {
+    field: 'start_time',
+    name: 'Alert start time',
+    sortable: true,
+    truncateText: false,
+    render: renderTime,
+    dataType: 'date',
+  },
+  {
+    field: 'severity',
+    name: 'Severity',
+    sortable: false,
+    truncateText: false,
+  },
+  {
+    field: 'trigger_name',
+    name: 'Trigger name',
+    sortable: true,
+    truncateText: true,
+    textOnly: true,
+  },
+];

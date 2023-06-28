@@ -101,14 +101,6 @@ export default class Triggers extends Component {
         width: '15%',
       },
       {
-        name: 'Condition -- (formatting pending...)',
-        truncateText: true,
-        render: (item) => {
-          return item.condition.script.source;
-        },
-        width: '50%',
-      },
-      {
         field: 'actions',
         name: 'Number of actions',
         sortable: true,
@@ -124,6 +116,17 @@ export default class Triggers extends Component {
         width: '20%',
       },
     ];
+
+    if (monitor.monitor_type === MONITOR_TYPE.COMPOSITE_LEVEL) {
+      columns.splice(1, 0, {
+        name: 'Condition -- (formatting pending...)',
+        truncateText: true,
+        render: (item) => {
+          return item.condition.script.source;
+        },
+        width: '50%',
+      });
+    }
 
     const sorting = { sort: { field, direction } };
     const items = getUnwrappedTriggers(monitor);

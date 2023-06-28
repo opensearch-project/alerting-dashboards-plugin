@@ -6,7 +6,14 @@
 import React, { Component } from 'react';
 import _ from 'lodash';
 import queryString from 'query-string';
-import { EuiBasicTable, EuiButton, EuiHorizontalRule, EuiIcon } from '@elastic/eui';
+import {
+  EuiBasicTable,
+  EuiButton,
+  EuiHorizontalRule,
+  EuiIcon,
+  EuiToolTip,
+  EuiButtonIcon,
+} from '@elastic/eui';
 import ContentPanel from '../../../components/ContentPanel';
 import DashboardEmptyPrompt from '../components/DashboardEmptyPrompt';
 import DashboardControls from '../components/DashboardControls';
@@ -30,6 +37,7 @@ import { DEFAULT_PAGE_SIZE_OPTIONS } from '../../Monitors/containers/Monitors/ut
 import { MAX_ALERT_COUNT } from '../utils/constants';
 import AcknowledgeAlertsModal from '../components/AcknowledgeAlertsModal';
 import { getAlertsFindingColumn } from '../components/FindingsDashboard/findingsUtils';
+import { chainedAlertDetailsFlyout } from '../components/ChainedAlertDetailsFlyout/ChainedAlertDetailsFlyout';
 
 export default class Dashboard extends Component {
   constructor(props) {
@@ -37,15 +45,8 @@ export default class Dashboard extends Component {
 
     const { location, perAlertView } = props;
 
-    const {
-      alertState,
-      from,
-      search,
-      severityLevel,
-      size,
-      sortDirection,
-      sortField,
-    } = getURLQueryParams(location);
+    const { alertState, from, search, severityLevel, size, sortDirection, sortField } =
+      getURLQueryParams(location);
 
     this.state = {
       alerts: [],
@@ -74,16 +75,8 @@ export default class Dashboard extends Component {
   };
 
   componentDidMount() {
-    const {
-      alertState,
-      page,
-      search,
-      severityLevel,
-      size,
-      sortDirection,
-      sortField,
-      monitorIds,
-    } = this.state;
+    const { alertState, page, search, severityLevel, size, sortDirection, sortField, monitorIds } =
+      this.state;
     this.getAlerts(
       page * size,
       size,
@@ -134,7 +127,9 @@ export default class Dashboard extends Component {
         severityLevel,
         alertState,
         monitorIds,
+        monitorType: this.props.monitorType,
       };
+
       const queryParamsString = queryString.stringify(params);
       location.search;
       const { httpClient, history, notifications, perAlertView } = this.props;
@@ -226,16 +221,8 @@ export default class Dashboard extends Component {
     );
 
     this.setState({ selectedItems: [] });
-    const {
-      page,
-      size,
-      search,
-      sortField,
-      sortDirection,
-      severityLevel,
-      alertState,
-      monitorIds,
-    } = this.state;
+    const { page, size, search, sortField, sortDirection, severityLevel, alertState, monitorIds } =
+      this.state;
     this.getAlerts(
       page * size,
       size,
@@ -280,6 +267,26 @@ export default class Dashboard extends Component {
     if (!_.isEmpty(payload)) {
       this.props.setFlyout({
         type: 'alertsDashboard',
+        payload: {
+          ...payload,
+          openChainedAlertsFlyout: this.openChainedAlertsFlyout,
+          closeFlyout: this.closeFlyout,
+        },
+      });
+    }
+  };
+
+  closeFlyout = () => {
+    const { setFlyout } = this.props;
+    if (typeof setFlyout === 'function') setFlyout(null);
+    this.setState({ flyoutIsOpen: false });
+  };
+
+  openChainedAlertsFlyout = (payload) => {
+    this.setState({ flyoutIsOpen: true });
+    if (!_.isEmpty(payload)) {
+      this.props.setFlyout({
+        type: 'chainedAlertDetailsFlyout',
         payload: { ...payload },
       });
     }
@@ -292,16 +299,8 @@ export default class Dashboard extends Component {
   };
 
   refreshDashboard = () => {
-    const {
-      page,
-      size,
-      search,
-      sortField,
-      sortDirection,
-      severityLevel,
-      alertState,
-      monitorIds,
-    } = this.state;
+    const { page, size, search, sortField, sortDirection, severityLevel, alertState, monitorIds } =
+      this.state;
     this.getAlerts(
       page * size,
       size,
@@ -399,6 +398,32 @@ export default class Dashboard extends Component {
               this.closeFlyout
             )
           );
+          break;
+        case MONITOR_TYPE.COMPOSITE_LEVEL:
+          columnType = _.cloneDeep(queryColumns);
+          columnType.push({
+            name: 'Actions',
+            sortable: false,
+            actions: [
+              {
+                render: (alert) => (
+                  <EuiToolTip content={'View details'}>
+                    <EuiButtonIcon
+                      aria-label={'View details'}
+                      data-test-subj={`view-details-icon`}
+                      iconType={'inspect'}
+                      onClick={() => {
+                        this.openChainedAlertsFlyout({
+                          alert,
+                          closeFlyout: this.closeFlyout,
+                        });
+                      }}
+                    />
+                  </EuiToolTip>
+                ),
+              },
+            ],
+          });
           break;
         default:
           columnType = queryColumns;

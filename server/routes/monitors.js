@@ -141,6 +141,21 @@ export default function (services, router) {
     monitorService.deleteMonitor
   );
 
+  router.delete(
+    {
+      path: '/api/alerting/workflows/{id}',
+      validate: {
+        params: schema.object({
+          id: schema.string(),
+        }),
+        query: schema.object({
+          version: schema.number(),
+        }),
+      },
+    },
+    monitorService.deleteWorkflow
+  );
+
   router.post(
     {
       path: '/api/alerting/monitors/{id}/_acknowledge/alerts',
