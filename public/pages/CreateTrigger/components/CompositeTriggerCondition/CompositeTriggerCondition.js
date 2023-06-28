@@ -13,6 +13,7 @@ const CompositeTriggerCondition = ({
   isDarkMode = false,
   httpClient,
   edit,
+  triggerIndex,
 }) => {
   const formikFullFieldName = `${formikFieldPath}${formikFieldName}`;
   const [graphUi, setGraphUi] = useState(values.searchType === 'graph');
@@ -25,13 +26,13 @@ const CompositeTriggerCondition = ({
   const validate = () => {};
   return (
     <FormikInputWrapper
-      name={`${formikFullFieldName}_fieldContainer`}
+      name={`${formikFullFieldName}_${triggerIndex}_fieldContainer`}
       fieldProps={{
         validate: () => graphUi && validate(),
       }}
       render={({ form }) => (
         <FormikFormRow
-          name={'triggerConditionFieldsContainer'}
+          name={`triggerConditionFieldsContainer_${triggerIndex}`}
           form={form}
           rowProps={{
             label: label,
@@ -42,10 +43,11 @@ const CompositeTriggerCondition = ({
             },
           }}
         >
-          <EuiFlexGroup gutterSize="s" data-test-subj={`${formikFullFieldName}`}>
+          <EuiFlexGroup gutterSize="s" data-test-subj={`${formikFullFieldName}${triggerIndex}`}>
             <EuiFlexItem grow={true}>
               {graphUi ? (
                 <ExpressionBuilder
+                  triggerIndex={triggerIndex}
                   edit={edit}
                   httpClient={httpClient}
                   values={values}
@@ -55,6 +57,7 @@ const CompositeTriggerCondition = ({
                 />
               ) : (
                 <ExpressionEditor
+                  triggerIndex={triggerIndex}
                   isDarkMode={isDarkMode}
                   values={values}
                   formikFieldName={formikFieldName}

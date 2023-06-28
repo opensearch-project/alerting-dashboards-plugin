@@ -50,9 +50,11 @@ const ExpressionBuilder = ({
   touched,
   httpClient,
   edit,
+  triggerIndex,
 }) => {
   const formikFullFieldName = `${formikFieldPath}${formikFieldName}`;
   const formikFullFieldValue = _.replace(`${formikFullFieldName}_value`, /[.\[\]]/gm, '_');
+  const expressionNamePrefix = `expressionQueries_${triggerIndex}`;
 
   const DEFAULT_CONDITION = 'AND';
   const DEFAULT_NAME = 'Select associated monitor';
@@ -107,8 +109,7 @@ const ExpressionBuilder = ({
     const condition = _.get(values, formikFullFieldName, '');
 
     let expressions = conditionToExpressions(condition, monitors);
-    console.log('EDIT', edit, _.get(touched, formikFullFieldValue, false));
-    if (!edit && !_.get(touched, formikFullFieldValue, false)) {
+    if (!edit && !_.get(touched, formikFullFieldValue, false) && !triggerIndex) {
       expressions = [];
       monitorOptions.forEach((monitor, index) => {
         expressions.push({
@@ -117,11 +118,10 @@ const ExpressionBuilder = ({
           monitor_name: monitor.label,
         });
       });
+
+      _.set(values, formikFullFieldName, expressionsToCondition(expressions));
     }
 
-    console.log('associatedMonitors', associatedMonitors);
-    console.log('monitorOptions', monitorOptions);
-    console.log('expressions', expressions);
     setUsedExpressions(expressions?.length ? expressions : [DEFAULT_EXPRESSION]);
   };
 
@@ -190,7 +190,7 @@ const ExpressionBuilder = ({
     expressions[idx] = { ...expressions[idx], isOpen: false };
     setUsedExpressions(expressions);
     onBlur(form, expressions);
-    form.setFieldTouched(`expressionQueries_${idx}`, true);
+    form.setFieldTouched(`${expressionNamePrefix}_${idx}`, true);
   };
 
   const onRemoveExpression = useCallback(
@@ -221,12 +221,15 @@ const ExpressionBuilder = ({
   };
 
   const renderOptions = (expression, idx = 0, form) => (
-    <EuiFlexGroup gutterSize="s" data-test-subj={`${formikFullFieldName}_options`}>
+    <EuiFlexGroup
+      gutterSize="s"
+      data-test-subj={`${formikFullFieldName}_${triggerIndex}_${idx}_options`}
+    >
       <EuiFlexItem grow={false}>
         <EuiComboBox
           style={{ width: '150px' }}
           singleSelection={{ asPlainText: true }}
-          data-test-subj={`condition-combobox-${idx}`}
+          data-test-subj={`condition-combobox-${triggerIndex}-${idx}`}
           compressed
           selectedOptions={[
             {
@@ -242,7 +245,7 @@ const ExpressionBuilder = ({
       <EuiFlexItem grow={false}>{renderMonitorOptions(expression, idx, form)}</EuiFlexItem>
       <EuiFlexItem grow={false}>
         <EuiButtonIcon
-          data-test-subj={`selection-exp-field-item-remove-${idx}`}
+          data-test-subj={`selection-exp-field-item-remove-${triggerIndex}-${idx}`}
           onClick={() => onRemoveExpression(form, idx)}
           iconType={'trash'}
           color="danger"
@@ -266,7 +269,7 @@ const ExpressionBuilder = ({
         },
       ]}
       style={{ width: '250px' }}
-      data-test-subj={`monitors-combobox-${idx}`}
+      data-test-subj={`monitors-combobox-${triggerIndex}-${idx}`}
       options={(() => {
         const differences = _.differenceBy(options, usedExpressions, 'monitor_id');
         return [
@@ -307,12 +310,14 @@ const ExpressionBuilder = ({
             className={'expressionQueries'}
           >
             {usedExpressions.map((expression, idx) => (
-              <EuiFlexItem grow={false} key={`selection_${idx}`}>
+              <EuiFlexItem grow={false} key={`selection_${triggerIndex}_${idx}`}>
                 <EuiPopover
                   id={`selection_${idx}`}
                   button={
                     <EuiExpression
-                      isInvalid={form.touched[`expressionQueries_${idx}`] && !expression.monitor_id}
+                      isInvalid={
+                        form.touched[`${expressionNamePrefix}_${idx}`] && !expression.monitor_id
+                      }
                       aria-label={'Add condition expression'}
                       description={expression.description}
                       value={expression.monitor_name}
@@ -321,7 +326,7 @@ const ExpressionBuilder = ({
                         form.setFieldTouched(formikFullFieldValue, true);
                         openPopover(idx);
                       }}
-                      data-test-subj={`select-expression_${idx}`}
+                      data-test-subj={`select-expression_${triggerIndex}_${idx}`}
                     />
                   }
                   isOpen={expression.isOpen}
@@ -346,7 +351,7 @@ const ExpressionBuilder = ({
                   color={'primary'}
                   iconType="plusInCircleFilled"
                   aria-label={'Add one more condition'}
-                  data-test-subj={'condition-add-options-btn'}
+                  data-test-subj={`condition-add-options-btn_${triggerIndex}`}
                   style={{ marginTop: '1px' }}
                 />
               </EuiFlexItem>

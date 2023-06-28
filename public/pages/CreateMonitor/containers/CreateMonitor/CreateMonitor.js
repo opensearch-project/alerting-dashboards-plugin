@@ -33,7 +33,6 @@ import {
 import { triggerToFormik } from '../../../CreateTrigger/containers/CreateTrigger/utils/triggerToFormik';
 import { TRIGGER_TYPE } from '../../../CreateTrigger/containers/CreateTrigger/utils/constants';
 import WorkflowDetails from '../WorkflowDetails/WorkflowDetails';
-import CompositeMonitorsAlertTrigger from '../../../CreateTrigger/containers/DefineCompositeLevelTrigger/CompositeMonitorsAlertTrigger';
 
 export default class CreateMonitor extends Component {
   static defaultProps = {
@@ -332,37 +331,25 @@ export default class CreateMonitor extends Component {
                         </div>
                       )}
 
-                    {values.monitor_type === MONITOR_TYPE.COMPOSITE_LEVEL ? (
-                      <CompositeMonitorsAlertTrigger
-                        edit={edit}
-                        values={values}
-                        touched={touched}
-                        isDarkMode={this.props.isDarkMode}
-                        httpClient={httpClient}
-                        notifications={notifications}
-                        notificationService={notificationService}
-                        plugins={plugins}
-                      />
-                    ) : (
-                      <FieldArray name={'triggerDefinitions'} validateOnChange={true}>
-                        {(triggerArrayHelpers) => (
-                          <ConfigureTriggers
-                            edit={edit}
-                            triggerArrayHelpers={triggerArrayHelpers}
-                            monitor={formikToMonitor(values)}
-                            monitorValues={values}
-                            setFlyout={this.props.setFlyout}
-                            triggers={_.get(formikToMonitor(values), 'triggers', [])}
-                            triggerValues={values}
-                            isDarkMode={this.props.isDarkMode}
-                            httpClient={httpClient}
-                            notifications={notifications}
-                            notificationService={notificationService}
-                            plugins={plugins}
-                          />
-                        )}
-                      </FieldArray>
-                    )}
+                    <FieldArray name={'triggerDefinitions'} validateOnChange={true}>
+                      {(triggerArrayHelpers) => (
+                        <ConfigureTriggers
+                          edit={edit}
+                          triggerArrayHelpers={triggerArrayHelpers}
+                          monitor={formikToMonitor(values)}
+                          monitorValues={values}
+                          touched={touched}
+                          setFlyout={this.props.setFlyout}
+                          triggers={_.get(formikToMonitor(values), 'triggers', [])}
+                          triggerValues={values}
+                          isDarkMode={this.props.isDarkMode}
+                          httpClient={httpClient}
+                          notifications={notifications}
+                          notificationService={notificationService}
+                          plugins={plugins}
+                        />
+                      )}
+                    </FieldArray>
 
                     <EuiSpacer />
                     <EuiFlexGroup alignItems="center" justifyContent="flexEnd">

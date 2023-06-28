@@ -24,6 +24,7 @@ import {
 } from '../../../CreateMonitor/components/ClusterMetricsMonitor/utils/clusterMetricsMonitorHelpers';
 import { FORMIK_INITIAL_VALUES } from '../../../CreateMonitor/containers/CreateMonitor/utils/constants';
 import { getDefaultScript } from '../../utils/helper';
+import DefineCompositeLevelTrigger from '../DefineCompositeLevelTrigger';
 
 class ConfigureTriggers extends React.Component {
   constructor(props) {
@@ -292,6 +293,37 @@ class ConfigureTriggers extends React.Component {
     );
   };
 
+  renderCompositeLevelTrigger = (triggerArrayHelpers, index) => {
+    const {
+      edit,
+      monitor,
+      monitorValues,
+      setFlyout,
+      triggers,
+      triggerValues,
+      isDarkMode,
+      httpClient,
+      notifications,
+      notificationService,
+      plugins,
+      touched,
+    } = this.props;
+    const { dataTypes, executeResponse } = this.state;
+    return (
+      <DefineCompositeLevelTrigger
+        triggerIndex={index}
+        edit={edit}
+        values={monitorValues}
+        touched={touched}
+        isDarkMode={isDarkMode}
+        httpClient={httpClient}
+        notifications={notifications}
+        notificationService={notificationService}
+        plugins={plugins}
+      />
+    );
+  };
+
   renderTriggers = (triggerArrayHelpers) => {
     const { monitorValues, triggerValues } = this.props;
     const { triggerEmptyPrompt } = this.state;
@@ -303,6 +335,8 @@ class ConfigureTriggers extends React.Component {
           return this.renderDefineBucketLevelTrigger(arrayHelpers, index);
         case MONITOR_TYPE.DOC_LEVEL:
           return this.renderDefineDocumentLevelTrigger(arrayHelpers, index);
+        case MONITOR_TYPE.COMPOSITE_LEVEL:
+          return this.renderCompositeLevelTrigger(arrayHelpers, index);
         default:
           return this.renderDefineTrigger(arrayHelpers, index);
       }

@@ -20,10 +20,17 @@ const onChangeDefinition = (e, form, values) => {
   let preventVisualEditor = false;
 
   if (values.monitor_type === MONITOR_TYPE.COMPOSITE_LEVEL && type === 'graph') {
-    const triggerConditions = _.get(values, 'triggerDefinitions[0].triggerConditions', '');
+    const triggerDefinitions = _.get(values, 'triggerDefinitions', []);
     const monitors = _.get(values, 'monitorOptions', []);
-    const parsedConditions = conditionToExpressions(triggerConditions, monitors);
-    preventVisualEditor = !!triggerConditions.length && !parsedConditions.length;
+    for (let trigger of triggerDefinitions) {
+      const triggerConditions = trigger.triggerConditions || '';
+      const parsedConditions = conditionToExpressions(triggerConditions, monitors);
+
+      if (!!triggerConditions.length && !parsedConditions.length) {
+        preventVisualEditor = true;
+        break;
+      }
+    }
   }
 
   form.setFieldValue('preventVisualEditor', preventVisualEditor);

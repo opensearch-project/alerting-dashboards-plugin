@@ -2,10 +2,20 @@ import React, { useEffect, useState } from 'react';
 import * as _ from 'lodash';
 import { FormikCodeEditor } from '../../../../components/FormControls';
 
-const ExpressionEditor = ({ values, formikFieldName, formikFieldPath, isDarkMode = false }) => {
+const ExpressionEditor = ({
+  values,
+  formikFieldName,
+  formikFieldPath,
+  isDarkMode = false,
+  triggerIndex,
+}) => {
   const [editorValue, setEditorValue] = useState('');
   const formikFullFieldName = `${formikFieldPath}${formikFieldName}`;
-  const formikFullCodeFieldName = _.replace(`${formikFullFieldName}_code`, /[.\[\]]/gm, '_');
+  const formikFullCodeFieldName = _.replace(
+    `${formikFullFieldName}_${triggerIndex}_code`,
+    /[.\[\]]/gm,
+    '_'
+  );
 
   useEffect(() => {
     const code = _.get(values, formikFullFieldName, '');
@@ -49,7 +59,7 @@ const ExpressionEditor = ({ values, formikFieldName, formikFieldPath, isDarkMode
           form.setFieldValue(formikFullCodeFieldName, code);
         },
         onBlur: (e, field, form) => form.setFieldTouched(field.name, true),
-        'data-test-subj': 'compositeTriggerConditionEditor',
+        'data-test-subj': `compositeTriggerConditionEditor_${triggerIndex}`,
       }}
     />
   );

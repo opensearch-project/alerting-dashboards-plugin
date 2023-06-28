@@ -6,10 +6,10 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
-import { EuiSpacer, EuiText } from '@elastic/eui';
+import { EuiSpacer, EuiText, EuiTitle, EuiAccordion, EuiButton } from '@elastic/eui';
 import { FormikFieldText, FormikSelect } from '../../../../components/FormControls';
 import { hasError, isInvalid } from '../../../../utils/validate';
-import { SEVERITY_OPTIONS } from '../../utils/constants';
+import { DEFAULT_TRIGGER_NAME, SEVERITY_OPTIONS } from '../../utils/constants';
 import CompositeTriggerCondition from '../../components/CompositeTriggerCondition/CompositeTriggerCondition';
 import TriggerNotifications from './TriggerNotifications';
 import ContentPanel from '../../../../components/ContentPanel';
@@ -58,32 +58,52 @@ export const titleTemplate = (title, subTitle) => (
 
 class DefineCompositeLevelTrigger extends Component {
   render() {
-    const { values, httpClient, notifications, notificationService, plugins, touched, edit } =
-      this.props;
+    const {
+      values,
+      httpClient,
+      notifications,
+      notificationService,
+      plugins,
+      touched,
+      edit,
+      triggerIndex,
+    } = this.props;
 
-    const formikFieldPath = `triggerDefinitions[0].`;
+    const formikFieldPath = `triggerDefinitions[${triggerIndex}].`;
     const triggerName = _.get(values, `${formikFieldPath}name`, 'Trigger');
     const triggerDefinitions = _.get(values, 'triggerDefinitions', []);
-    _.set(values, 'triggerDefinitions', [
-      {
-        ...FORMIK_COMPOSITE_INITIAL_TRIGGER_VALUES,
-        ...triggerDefinitions[0],
-        severity: 1,
-        name: triggerName,
-      },
-    ]);
-    const triggerActions = _.get(values, `${formikFieldPath}.actions`, []);
+    !triggerDefinitions.length &&
+      _.set(values, 'triggerDefinitions', [
+        {
+          ...FORMIK_COMPOSITE_INITIAL_TRIGGER_VALUES,
+          ...triggerDefinitions[triggerIndex],
+          severity: 1,
+          name: triggerName,
+        },
+      ]);
+    const triggerActions = _.get(values, `${formikFieldPath}actions`, []);
 
     return (
-      <ContentPanel
-        title={'Alert trigger'}
-        titleSize="s"
-        panelStyles={{
-          paddingBottom: '20px',
-          paddingLeft: '10px',
-          paddingRight: '10px',
-          paddingTop: '20px',
-        }}
+      <EuiAccordion
+        id={triggerName}
+        buttonContent={
+          <EuiTitle size={'s'} data-test-subj={`${formikFieldPath}_triggerAccordion`}>
+            <h1>{_.isEmpty(triggerName) ? DEFAULT_TRIGGER_NAME : triggerName}</h1>
+          </EuiTitle>
+        }
+        initialIsOpen={edit ? false : triggerIndex === 0}
+        extraAction={
+          <EuiButton
+            color={'danger'}
+            onClick={() => {
+              triggerArrayHelpers.remove(triggerIndex);
+            }}
+            size={'s'}
+          >
+            Remove trigger
+          </EuiButton>
+        }
+        style={{ paddingBottom: '15px', paddingTop: '10px' }}
       >
         <EuiSpacer size={'m'} />
 
@@ -107,6 +127,7 @@ class DefineCompositeLevelTrigger extends Component {
         <EuiSpacer size={'l'} />
 
         <CompositeTriggerCondition
+          triggerIndex={triggerIndex}
           edit={edit}
           formikFieldPath={formikFieldPath}
           formikFieldName={`triggerConditions`}
@@ -141,7 +162,7 @@ class DefineCompositeLevelTrigger extends Component {
           triggerValues={values}
           triggerActions={triggerActions}
         />
-      </ContentPanel>
+      </EuiAccordion>
     );
   }
 }
