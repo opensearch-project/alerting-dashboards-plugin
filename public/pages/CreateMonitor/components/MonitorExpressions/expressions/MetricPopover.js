@@ -70,8 +70,8 @@ export default function MetricPopover(
                 fieldProps={{ validate: validateFieldName }}
                 rowProps={{
                   label: 'Field',
-                  isInvalid: () => errorFieldNameMessage !== '',
-                  error: () => errorFieldNameMessage,
+                  isInvalid: errorFieldNameMessage !== '',
+                  error: errorFieldNameMessage,
                 }}
                 inputProps={{
                   placeholder: 'Select a field',

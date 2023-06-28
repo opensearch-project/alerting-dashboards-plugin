@@ -138,7 +138,7 @@ function AddAlertingMonitor({
 
   return (
     <div className="add-alerting-monitor">
-      <Formik initialValues={initialValues} onSubmit={onCreate} validateOnChange={true}>
+      <Formik initialValues={initialValues} onSubmit={onCreate} validateOnChange={false}>
         {(formikProps) => {
           const { handleSubmit, isSubmitting, validateForm } = formikProps;
 
