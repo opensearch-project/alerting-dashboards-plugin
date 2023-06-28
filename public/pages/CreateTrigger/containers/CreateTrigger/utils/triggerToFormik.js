@@ -239,7 +239,7 @@ export function compositeTriggerToFormik(trigger, monitor) {
     name,
     severity,
     script,
-    actions: getExecutionPolicyActions(actions),
+    actions,
     triggerConditions: triggerConditions,
   };
 }

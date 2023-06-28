@@ -27,11 +27,11 @@ const TriggerNotificationsContent = ({
   const [isModalVisible, setIsModalVisible] = useState(false);
 
   useEffect(() => {
-    action?.config_id &&
+    action?.destination_id &&
       setSelected([
         {
           label: action.name,
-          value: action.config_id,
+          value: action.destination_id,
           type: action.config_type,
           description: action.description,
         },
