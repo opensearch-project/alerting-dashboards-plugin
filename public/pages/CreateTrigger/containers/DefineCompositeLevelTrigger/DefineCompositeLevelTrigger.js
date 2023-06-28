@@ -66,6 +66,7 @@ class DefineCompositeLevelTrigger extends Component {
       touched,
       edit,
       triggerIndex,
+      triggerArrayHelpers,
     } = this.props;
 
     const formikFieldPath = `triggerDefinitions[${triggerIndex}].`;

@@ -306,6 +306,7 @@ class ConfigureTriggers extends React.Component {
     } = this.props;
     return (
       <DefineCompositeLevelTrigger
+        triggerArrayHelpers={triggerArrayHelpers}
         triggerIndex={index}
         edit={edit}
         values={monitorValues}
