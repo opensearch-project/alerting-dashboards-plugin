@@ -34,7 +34,7 @@ import {
   VisualizeEmbeddable,
 } from '../../../../../../../src/plugins/visualizations/public';
 
-function CreateNew({ embeddable, core, flyoutMode, formikProps, history, setFlyout, detectorId, isAssociateAllowed }) {
+function CreateNew({ embeddable, core, flyoutMode, formikProps, history, setFlyout, detectorId, isAssociateAllowed, showErrors }) {
   const { notifications, isDarkMode = false, http: httpClient } = core;
   const { values, errors, touched, isSubmitting, isValid } = formikProps;
   const [plugins, setPlugins] = useState([]);
@@ -53,6 +53,8 @@ function CreateNew({ embeddable, core, flyoutMode, formikProps, history, setFlyo
     setAccordionsOpen(newAccordionsOpen);
   };
   const { isShowingErrors, errorList } = useMemo(() => {
+    console.log('errors');
+    console.log(JSON.stringify(errors));
     const isShowingErrors = Object.keys(errors).length > 0 && !isSubmitting && !isValid;
     const errorList = new Set();
 
@@ -100,7 +102,7 @@ function CreateNew({ embeddable, core, flyoutMode, formikProps, history, setFlyo
           </a>
         </p>
       </EuiText>
-      {isShowingErrors && (
+      {isShowingErrors && showErrors && (
         <>
           <EuiSpacer size="m" />
           <EuiCallOut title="Address the following errors:" color="danger" iconType="alert">

@@ -32,7 +32,7 @@ const Schedule = ({ isAd, flyoutMode }) => (
         <Interval />
       ) : (
         <div>
-          <Frequency />
+          <Frequency flyoutMode={flyoutMode} />
           <EuiSpacer size={flyoutMode ? 'm' : 's'} />
           <FrequencyPicker />
         </div>

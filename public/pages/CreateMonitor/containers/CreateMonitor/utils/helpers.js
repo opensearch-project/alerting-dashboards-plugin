@@ -77,12 +77,12 @@ export const getInitialValues = ({
 const getMetricAgg = (embeddable) => {
   let aggregationType = AGGREGATION_TYPES[1].value;
   let fieldName = '';
-  for (let agg of embeddable.vis.data.aggs.aggs) {
+  if (embeddable.vis.data.aggs.aggs.length === 1) {
+    const agg = embeddable.vis.data.aggs.aggs[0];
     if (agg.schema === 'metric' && !(aggregationType && fieldName) && agg.params.field) {
       console.log(agg);
       aggregationType = agg.__type.dslName;
       fieldName = agg.params.field.spec.name;
-      break;
     }
   }
   return [

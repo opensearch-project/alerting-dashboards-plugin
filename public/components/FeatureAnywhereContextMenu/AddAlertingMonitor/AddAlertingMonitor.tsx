@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import {
   EuiFlexItem,
   EuiFlexGroup,
@@ -61,8 +61,10 @@ function AddAlertingMonitor({
       getInitialValues({ ...history, title, index, timeField, flyoutMode, searchType, detectorId, embeddable }),
     []
   );
+  const [isLoading, setIsLoading] = useState(false);
+  const [showErrors, setShowErrors] = useState(false);
+
   const onCreate = async (values, formikBag) => {
-    // Get setting if it is maxed out
     if ((await validateAssociationIsAllow(embeddable.vis.id, true)) === true) {
       submit({
         values,
@@ -81,15 +83,12 @@ function AddAlertingMonitor({
               });
             })
             .catch((error) => {
-              closeFlyout();
               notifications.toasts.addDanger(
                 `Monitor "${monitor.name}" failed to associate with the ${title} visualization, but was created successfully. Failed due to ${error.message}.`
               );
             });
         },
       });
-    } else {
-      closeFlyout();
     }
   };
   const onAssociateExisting = async () => {
@@ -116,6 +115,7 @@ function AddAlertingMonitor({
       });
   };
   const onSubmit = async ({ handleSubmit, validateForm }) => {
+    setIsLoading(true);
     if (['create', 'adMonitor'].includes(flyoutMode)) {
       const errors = await validateForm();
 
@@ -126,6 +126,8 @@ function AddAlertingMonitor({
             .querySelector('.euiFlyoutBody__overflow')
             .scrollTo({ top: 0, behavior: 'smooth' });
         }, 300);
+        setIsLoading(false);
+        setShowErrors(true);
       }
 
       handleSubmit();
@@ -136,7 +138,7 @@ function AddAlertingMonitor({
 
   return (
     <div className="add-alerting-monitor">
-      <Formik initialValues={initialValues} onSubmit={onCreate} validateOnChange={false}>
+      <Formik initialValues={initialValues} onSubmit={onCreate} validateOnChange={true}>
         {(formikProps) => {
           const { handleSubmit, isSubmitting, validateForm } = formikProps;
 
@@ -209,6 +211,7 @@ function AddAlertingMonitor({
                         setFlyout,
                         detectorId,
                         isAssociateAllowed,
+                        showErrors,
                       }}
                     />
                   )}
@@ -227,7 +230,7 @@ function AddAlertingMonitor({
                     <EuiButton
                       onClick={() => onSubmit({ handleSubmit, validateForm })}
                       fill
-                      isLoading={isSubmitting}
+                      isLoading={isLoading}
                       disabled={!isAssociateAllowed}
                     >
                       {flyoutMode === 'existing' ? 'Associate' : 'Create'} monitor

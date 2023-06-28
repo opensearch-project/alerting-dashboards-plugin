@@ -16,6 +16,8 @@ export default function MetricPopover(
   const [errorFieldNameMessage, setErrorFieldNameMessage] = useState('');
 
   const validateFieldName = (value) => {
+    console.log('validating Field name');
+    console.log(value);
     if (!value) {
       setErrorFieldNameMessage('Please select a field for the metric aggregation.');
       return 'Please select a field for the metric aggregation.';
@@ -68,8 +70,8 @@ export default function MetricPopover(
                 fieldProps={{ validate: validateFieldName }}
                 rowProps={{
                   label: 'Field',
-                  isInvalid: errorFieldNameMessage !== '',
-                  error: errorFieldNameMessage,
+                  isInvalid: () => errorFieldNameMessage !== '',
+                  error: () => errorFieldNameMessage,
                 }}
                 inputProps={{
                   placeholder: 'Select a field',

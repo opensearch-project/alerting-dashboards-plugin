@@ -54,7 +54,7 @@ export const useMonitors = (embeddable, monitors, setMonitors) => {
 
           setMonitors(parsedMonitors);
         } else {
-          console.log('1error getting monitors:', monitorResponse);
+          console.log('error getting monitors:', monitorResponse);
         }
       } catch (err) {
         console.error(err);
