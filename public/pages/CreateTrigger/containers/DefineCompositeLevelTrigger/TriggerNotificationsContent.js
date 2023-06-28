@@ -16,10 +16,12 @@ const TriggerNotificationsContent = ({
   action,
   options,
   actionIndex,
+  triggerIndex,
   triggerValues,
   httpClient,
   notifications,
   hasNotifications,
+  formikFieldPath,
 }) => {
   const [selected, setSelected] = useState([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -40,7 +42,7 @@ const TriggerNotificationsContent = ({
     setSelected(selectedOptions);
 
     const initialActionValues = _.cloneDeep(FORMIK_INITIAL_ACTION_VALUES);
-    _.set(triggerValues, `triggerDefinitions[0].actions[${actionIndex}]`, {
+    _.set(triggerValues, `${formikFieldPath}actions[${actionIndex}]`, {
       ...initialActionValues,
       destination_id: selectedOptions[0]?.value,
       name: selectedOptions[0]?.label,
@@ -72,7 +74,7 @@ const TriggerNotificationsContent = ({
             }}
           >
             <FormikComboBox
-              name={`channel_name_${actionIndex}`}
+              name={`channel_name_${triggerIndex}_${actionIndex}`}
               formRow
               fieldProps={{}}
               rowProps={{
@@ -117,6 +119,8 @@ const TriggerNotificationsContent = ({
           httpClient={httpClient}
           notifications={notifications}
           actionIndex={actionIndex}
+          triggerIndex={triggerIndex}
+          formikFieldPath={formikFieldPath}
         />
       )}
     </Fragment>

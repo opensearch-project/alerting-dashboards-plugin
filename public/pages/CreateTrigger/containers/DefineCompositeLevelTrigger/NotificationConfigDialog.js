@@ -30,23 +30,27 @@ const NotificationConfigDialog = ({
   httpClient,
   notifications,
   actionIndex,
+  triggerIndex,
+  formikFieldPath,
 }) => {
-  const triggerIndex = 0;
   const monitor = formikToMonitor(triggerValues);
   delete monitor.monitor_type;
   const context = getTriggerContext({}, monitor, triggerValues, 0);
 
   const initialActionValues = _.cloneDeep(FORMIK_INITIAL_ACTION_VALUES);
-  let action = _.get(triggerValues, `triggerDefinitions[0].actions[${actionIndex}]`, {
+  let action = _.get(triggerValues, `${formikFieldPath}actions[${actionIndex}]`, {
     ...initialActionValues,
   });
 
-  const fieldPath = 'triggerDefinitions[0]';
   const [initialValues, setInitialValues] = useState({});
 
   useEffect(() => {
     setInitialValues({
-      [`action${actionIndex}`]: _.get(triggerValues, `${fieldPath}actions.${actionIndex}`, ''),
+      [`action${actionIndex}`]: _.get(
+        triggerValues,
+        `${formikFieldPath}actions.${actionIndex}`,
+        ''
+      ),
     });
   }, []);
 
@@ -58,8 +62,8 @@ const NotificationConfigDialog = ({
 
     testTrigger = {
       ...testTrigger,
-      name: _.get(triggerValues, 'triggerDefinitions[0].name', ''),
-      severity: _.get(triggerValues, 'triggerDefinitions[0].severity', ''),
+      name: _.get(triggerValues, `${formikFieldPath}name`, ''),
+      severity: _.get(triggerValues, `${formikFieldPath}severity`, ''),
     };
     const action = _.get(testTrigger, `${TRIGGER_TYPE.COMPOSITE_LEVEL}.actions[${index}]`);
     const condition = {
@@ -98,7 +102,7 @@ const NotificationConfigDialog = ({
   const clearConfig = () => {
     _.set(
       triggerValues,
-      `${fieldPath}actions.${actionIndex}`,
+      `${formikFieldPath}actions.${actionIndex}`,
       initialValues[`action${actionIndex}`]
     );
     closeModal();
@@ -117,7 +121,7 @@ const NotificationConfigDialog = ({
         <EuiSpacer size={'m'} />
 
         <Message
-          fieldPath={'triggerDefinitions[0]'}
+          fieldPath={formikFieldPath}
           index={actionIndex}
           values={triggerValues}
           action={action}

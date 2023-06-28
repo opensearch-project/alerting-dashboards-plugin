@@ -24,6 +24,8 @@ const TriggerNotifications = ({
   notifications,
   notificationService,
   triggerValues,
+  triggerIndex,
+  formikFieldPath,
 }) => {
   const [actions, setActions] = useState([]);
   const [options, setOptions] = useState([]);
@@ -93,7 +95,7 @@ const TriggerNotifications = ({
   const onRemoveNotification = (idx) => {
     const newActions = [...actions];
     newActions.splice(idx, 1);
-    _.set(triggerValues, 'triggerDefinitions[0].actions', newActions);
+    _.set(triggerValues, `${formikFieldPath}actions`, newActions);
     setActions(newActions);
   };
 
@@ -105,8 +107,8 @@ const TriggerNotifications = ({
         actions.map((action, actionIndex) => (
           <EuiAccordion
             title={`Notification ${actionIndex + 1}`}
-            key={`notification-accordion-${actionIndex}`}
-            id={`notification-accordion-${actionIndex}`}
+            key={`notification-accordion-${triggerIndex}-${actionIndex}`}
+            id={`notification-accordion-${triggerIndex}-${actionIndex}`}
             initialIsOpen={!actionIndex}
             buttonContent={<EuiText>{`Notification ${actionIndex + 1}`}</EuiText>}
             paddingSize={'s'}
@@ -126,10 +128,12 @@ const TriggerNotifications = ({
               action={action}
               options={options}
               actionIndex={actionIndex}
+              triggerIndex={triggerIndex}
               notifications={notifications}
               triggerValues={triggerValues}
               httpClient={httpClient}
               hasNotifications={plugins.indexOf(OS_NOTIFICATION_PLUGIN) !== -1}
+              formikFieldPath={formikFieldPath}
             />
           </EuiAccordion>
         ))}

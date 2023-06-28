@@ -154,6 +154,8 @@ class DefineCompositeLevelTrigger extends Component {
         <EuiSpacer size={'xl'} />
 
         <TriggerNotifications
+          formikFieldPath={formikFieldPath}
+          triggerIndex={triggerIndex}
           httpClient={httpClient}
           plugins={plugins}
           notifications={notifications}
