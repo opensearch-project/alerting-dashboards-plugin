@@ -296,11 +296,7 @@ class ConfigureTriggers extends React.Component {
   renderCompositeLevelTrigger = (triggerArrayHelpers, index) => {
     const {
       edit,
-      monitor,
       monitorValues,
-      setFlyout,
-      triggers,
-      triggerValues,
       isDarkMode,
       httpClient,
       notifications,
@@ -308,7 +304,6 @@ class ConfigureTriggers extends React.Component {
       plugins,
       touched,
     } = this.props;
-    const { dataTypes, executeResponse } = this.state;
     return (
       <DefineCompositeLevelTrigger
         triggerIndex={index}

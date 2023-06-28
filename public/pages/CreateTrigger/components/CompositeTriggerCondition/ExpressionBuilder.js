@@ -97,7 +97,7 @@ const ExpressionBuilder = ({
   const setInitialValues = (monitors) => {
     const monitorOptions = [];
     const associatedMonitors = _.get(values, 'associatedMonitors', {});
-    associatedMonitors.sequence.delegates.forEach((monitor, index) => {
+    associatedMonitors.sequence.delegates.forEach((monitor) => {
       const filteredOption = monitors.filter((option) => option.monitor_id === monitor.monitor_id);
       monitorOptions.push({
         label: filteredOption[0]?.monitor_name || '',

@@ -12,7 +12,6 @@ import { hasError, isInvalid } from '../../../../utils/validate';
 import { DEFAULT_TRIGGER_NAME, SEVERITY_OPTIONS } from '../../utils/constants';
 import CompositeTriggerCondition from '../../components/CompositeTriggerCondition/CompositeTriggerCondition';
 import TriggerNotifications from './TriggerNotifications';
-import ContentPanel from '../../../../components/ContentPanel';
 import { FORMIK_COMPOSITE_INITIAL_TRIGGER_VALUES } from '../CreateTrigger/utils/constants';
 
 const defaultRowProps = {
