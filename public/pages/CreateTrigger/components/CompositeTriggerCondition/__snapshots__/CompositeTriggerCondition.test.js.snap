@@ -29,14 +29,14 @@ exports[`CompositeTriggerCondition renders 1`] = `
       >
         <div
           class="euiFormRow euiFormRow--fullWidth"
-          id="pathtriggerCondition_undefined_code-form-row-row"
+          id="pathtriggerConditioncode-form-row-row"
         >
           <div
             class="euiFormRow__labelWrapper"
           >
             <label
               class="euiFormLabel euiFormRow__label"
-              for="pathtriggerCondition_undefined_code-form-row"
+              for="pathtriggerConditioncode-form-row"
             >
               Trigger condition
             </label>

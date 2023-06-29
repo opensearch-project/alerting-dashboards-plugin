@@ -3,7 +3,7 @@
 exports[`ExpressionBuilder renders 1`] = `
 <div
   class="euiFormRow"
-  id="pathtriggerCondition_value-form-row-row"
+  id="pathtriggerConditionvalue-form-row-row"
   style="max-width:inherit"
 >
   <div
@@ -12,7 +12,7 @@ exports[`ExpressionBuilder renders 1`] = `
     <div
       class="euiFlexGroup euiFlexGroup--gutterSmall euiFlexGroup--directionRow euiFlexGroup--responsive expressionQueries"
       data-test-subj="pathtriggerCondition"
-      id="pathtriggerCondition_value-form-row"
+      id="pathtriggerConditionvalue-form-row"
     >
       <div
         class="euiFlexItem euiFlexItem--flexGrowZero"

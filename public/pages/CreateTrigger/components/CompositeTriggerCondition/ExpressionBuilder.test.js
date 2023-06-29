@@ -17,7 +17,9 @@ describe('ExpressionBuilder', () => {
         <ExpressionBuilder
           formikFieldPath={'path'}
           formikFieldName={'triggerCondition'}
-          values={{}}
+          values={{
+            triggerDefinitions: [],
+          }}
           touched={{}}
           httpClient={{}}
         />
