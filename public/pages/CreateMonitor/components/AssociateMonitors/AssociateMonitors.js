@@ -22,7 +22,9 @@ export const getMonitors = async (httpClient) => {
 
   if (response.ok) {
     const { monitors, totalMonitors } = response;
-    return monitors.map((monitor) => ({ monitor_id: monitor.id, monitor_name: monitor.name }));
+    return monitors
+      .filter((monitor) => monitor.monitor?.type === 'monitor')
+      .map((monitor) => ({ monitor_id: monitor.id, monitor_name: monitor.name }));
   } else {
     console.log('error getting monitors:', response);
     return [];
