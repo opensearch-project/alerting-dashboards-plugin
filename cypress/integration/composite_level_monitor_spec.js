@@ -68,26 +68,13 @@ describe('CompositeLevelMonitor', () => {
         .type('monitorTwo', { delay: 50 })
         .type('{enter}');
 
+      cy.get('button').contains('Add trigger').click({ force: true });
+
       // Type trigger name
       cy.get('[data-test-subj="composite-trigger-name"]')
         .type('{selectall}')
         .type('{backspace}')
         .type('Composite trigger');
-
-      // Add associated monitors to condition
-      cy.get('[data-test-subj="condition-add-options-btn"]').click({ force: true });
-
-      cy.get('[data-test-subj="select-expression_0"]').click({ force: true });
-      cy.wait(1000);
-      cy.get('[data-test-subj="monitors-combobox-0"]')
-        .type('monitorOne', { delay: 50 })
-        .type('{enter}');
-
-      cy.get('[data-test-subj="select-expression_1"]').click({ force: true });
-      cy.wait(1000);
-      cy.get('[data-test-subj="monitors-combobox-1"]')
-        .type('monitorTwo', { delay: 50 })
-        .type('{enter}');
 
       // TODO: Test with Notifications plugin
       // Select notification channel
@@ -186,10 +173,12 @@ describe('CompositeLevelMonitor', () => {
         .type('monitorThree', { delay: 50 })
         .type('{enter}');
 
-      cy.get('[data-test-subj="condition-add-options-btn"]').click({ force: true });
-      cy.get('[data-test-subj="select-expression_2"]').click({ force: true });
+      cy.get('button').contains('Composite trigger').click({ force: true });
+
+      cy.get('[data-test-subj="condition-add-options-btn_0"]').click({ force: true });
+      cy.get('[data-test-subj="select-expression_0_2"]').click({ force: true });
       cy.wait(1000);
-      cy.get('[data-test-subj="monitors-combobox-2"]')
+      cy.get('[data-test-subj="monitors-combobox-0-2"]')
         .type('monitorThree', { delay: 50 })
         .type('{enter}');
 
