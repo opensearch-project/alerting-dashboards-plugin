@@ -62,9 +62,11 @@ export default class MonitorDetails extends Component {
       error: null,
       triggerToEdit: null,
       editMonitor: () => {
+        const search = new URLSearchParams(this.props.location.search);
+        const monitorType = search.get('monitorType') || 'monitor';
         this.props.history.push({
           ...this.props.location,
-          search: `?action=${MONITOR_ACTIONS.UPDATE_MONITOR}`,
+          search: `?action=${MONITOR_ACTIONS.UPDATE_MONITOR}&monitorType=${monitorType}`,
         });
       },
       isJsonModalOpen: false,

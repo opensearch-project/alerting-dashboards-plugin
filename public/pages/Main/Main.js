@@ -86,6 +86,19 @@ class Main extends Component {
                         )}
                       />
                       <Route
+                        path="/workflows/:workflowId"
+                        render={(props) => (
+                          <MonitorDetails
+                            httpClient={core.http}
+                            setFlyout={this.setFlyout}
+                            notifications={core.notifications}
+                            isDarkMode={core.isDarkMode}
+                            notificationService={services.notificationService}
+                            {...props}
+                          />
+                        )}
+                      />
+                      <Route
                         path="/monitors/:monitorId"
                         render={(props) => (
                           <MonitorDetails

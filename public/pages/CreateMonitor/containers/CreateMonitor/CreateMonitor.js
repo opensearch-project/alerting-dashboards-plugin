@@ -111,12 +111,10 @@ export default class CreateMonitor extends Component {
   async onCreate(monitor, { setSubmitting, setErrors }) {
     const { httpClient, notifications } = this.props;
     try {
+      let isWorkflow =
+        monitor.workflow_type && monitor.workflow_type === MONITOR_TYPE.COMPOSITE_LEVEL;
       const resp = await httpClient.post(
-        `../api/alerting/${
-          monitor.workflow_type && monitor.workflow_type === MONITOR_TYPE.COMPOSITE_LEVEL
-            ? 'workflows'
-            : 'monitors'
-        }`,
+        `../api/alerting/${isWorkflow ? 'workflows' : 'monitors'}`,
         {
           body: JSON.stringify(monitor),
         }
@@ -128,7 +126,13 @@ export default class CreateMonitor extends Component {
       } = resp;
       if (ok) {
         notifications.toasts.addSuccess(`Monitor "${monitor.name}" successfully created.`);
-        this.props.history.push(`/monitors/${_id}`);
+        let isWorkflow =
+          monitor.workflow_type && monitor.workflow_type === MONITOR_TYPE.COMPOSITE_LEVEL;
+        this.props.history.push(
+          `/${isWorkflow ? 'workflows' : 'monitors'}/${_id}${
+            isWorkflow ? '?type=workflow' : '?type=monitor'
+          }`
+        );
       } else {
         console.log('Failed to create:', resp);
         backendErrorNotification(notifications, 'create', 'monitor', resp.resp);
@@ -227,7 +231,13 @@ export default class CreateMonitor extends Component {
       const { ok, id } = resp;
       if (ok) {
         notifications.toasts.addSuccess(`Monitor "${monitor.name}" successfully updated.`);
-        this.props.history.push(`/monitors/${id}`);
+        let isWorkflow =
+          monitor.workflow_type && monitor.workflow_type === MONITOR_TYPE.COMPOSITE_LEVEL;
+        this.props.history.push(
+          `/${isWorkflow ? 'workflows' : 'monitors'}/${id}${
+            isWorkflow ? '?type=workflow' : '?type=monitor'
+          }`
+        );
       } else {
         console.log('Failed to update:', resp);
       }
