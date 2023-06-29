@@ -3,14 +3,14 @@
 exports[`ExpressionEditor renders 1`] = `
 <div
   class="euiFormRow euiFormRow--fullWidth"
-  id="pathtriggerCondition_code-form-row-row"
+  id="pathtriggerCondition_undefined_code-form-row-row"
 >
   <div
     class="euiFormRow__labelWrapper"
   >
     <label
       class="euiFormLabel euiFormRow__label"
-      for="pathtriggerCondition_code-form-row"
+      for="pathtriggerCondition_undefined_code-form-row"
     >
       Trigger condition
     </label>
@@ -20,7 +20,7 @@ exports[`ExpressionEditor renders 1`] = `
   >
     <div
       class="euiCodeEditorWrapper"
-      data-test-subj="compositeTriggerConditionEditor"
+      data-test-subj="compositeTriggerConditionEditor_undefined"
       style="width:80%;height:300px"
     >
       <button

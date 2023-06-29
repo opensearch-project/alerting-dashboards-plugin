@@ -228,6 +228,7 @@ exports[`AlertsDashboardFlyoutComponent renders 1`] = `
         ]
       }
       data-test-subj="alertsDashboardFlyout_table_undefined"
+      hasActions={true}
       isSelectable={true}
       itemId={[Function]}
       items={Array []}
