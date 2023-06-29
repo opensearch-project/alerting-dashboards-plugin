@@ -53,7 +53,7 @@ const ExpressionBuilder = ({
   triggerIndex,
 }) => {
   const formikFullFieldName = `${formikFieldPath}${formikFieldName}`;
-  const formikFullFieldValue = _.replace(`${formikFullFieldName}_value`, /[.\[\]]/gm, '_');
+  const formikFullFieldValue = `${formikFullFieldName}value`;
   const expressionNamePrefix = `expressionQueries_${triggerIndex}`;
 
   const DEFAULT_CONDITION = 'AND';
@@ -92,22 +92,17 @@ const ExpressionBuilder = ({
         setInitialValues(monitors);
       });
     }
-  }, [values.associatedMonitors?.sequence?.delegates, values[formikFullFieldName]]);
+  }, [
+    values.associatedMonitors?.sequence?.delegates,
+    values[formikFullFieldName],
+    values.triggerDefinitions.length,
+  ]);
 
   const setInitialValues = (monitors) => {
-    const monitorOptions = [];
-    const associatedMonitors = _.get(values, 'associatedMonitors', {});
-    associatedMonitors.sequence.delegates.forEach((monitor) => {
-      const filteredOption = monitors.filter((option) => option.monitor_id === monitor.monitor_id);
-      monitorOptions.push({
-        label: filteredOption[0]?.monitor_name || '',
-        monitor_id: monitor.monitor_id,
-      });
-    });
+    const monitorOptions = getAssociatedMonitors(monitors);
     setOptions(monitorOptions);
 
     const condition = _.get(values, formikFullFieldName, '');
-
     let expressions = conditionToExpressions(condition, monitors);
     if (!edit && !_.get(touched, formikFullFieldValue, false) && !triggerIndex) {
       expressions = [];
@@ -123,6 +118,20 @@ const ExpressionBuilder = ({
     }
 
     setUsedExpressions(expressions?.length ? expressions : [DEFAULT_EXPRESSION]);
+  };
+
+  const getAssociatedMonitors = (monitors) => {
+    const monitorOptions = [];
+    const associatedMonitors = _.get(values, 'associatedMonitors', {});
+    associatedMonitors.sequence.delegates.forEach((monitor) => {
+      const filteredOption = monitors.filter((option) => option.monitor_id === monitor.monitor_id);
+      monitorOptions.push({
+        label: filteredOption[0]?.monitor_name || '',
+        monitor_id: monitor.monitor_id,
+      });
+    });
+
+    return monitorOptions;
   };
 
   const expressionsToCondition = (expressions) => {

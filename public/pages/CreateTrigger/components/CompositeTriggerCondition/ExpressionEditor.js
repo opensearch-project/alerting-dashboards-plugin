@@ -11,11 +11,7 @@ const ExpressionEditor = ({
 }) => {
   const [editorValue, setEditorValue] = useState('');
   const formikFullFieldName = `${formikFieldPath}${formikFieldName}`;
-  const formikFullCodeFieldName = _.replace(
-    `${formikFullFieldName}_${triggerIndex}_code`,
-    /[.\[\]]/gm,
-    '_'
-  );
+  const formikFullCodeFieldName = `${formikFullFieldName}code`;
 
   useEffect(() => {
     const code = _.get(values, formikFullFieldName, '');
