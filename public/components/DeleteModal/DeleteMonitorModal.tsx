@@ -6,8 +6,10 @@
 import React, { Component } from 'react';
 import {
   EuiConfirmModal,
+  EuiLink,
   EuiOverlayMask
 } from '@elastic/eui';
+import { PLUGIN_NAME } from '../../../utils/constants';
 
 interface DeleteModalProps {
   monitors: any[];
@@ -30,9 +32,19 @@ export default class DeleteMonitorModal extends Component<DeleteModalProps> {
     let warningBody: React.ReactNode = 'This action cannot be undone.';
     let allowDelete = true;
 
-    if (monitors.length === 1 && monitors[0].associatedCompositeMonitorCnt > 0) {
+    if (monitors.length === 1 && (monitors[0].associatedCompositeMonitorCnt > 0 || monitors[0].associated_workflows?.length > 0)) {
       warningHeading = `Unable to delete ${monitorNames[0]}`;
-      warningBody = `The monitor ${monitorNames[0]} is currently associated with composite monitors. Unlink from the composite monitors before deleting this monitor.`;
+      warningBody = (
+        <>
+          {`The monitor ${monitorNames[0]} is currently associated with composite monitors. Unlink from the composite monitors before deleting this monitor.`}
+          { monitors[0].associated_workflows?.length > 0 ?
+                <ul>
+                  {monitors[0].associated_workflows.map(({ id, name }) => <li><EuiLink target='_blank' href={`${PLUGIN_NAME}#/monitors/${id}?type=workflow`}>{name}</EuiLink></li>)}
+                </ul>
+              : null
+          }
+        </>
+      )
       allowDelete = false;
     }
     else if (monitorNames.length > 1) {
@@ -51,7 +63,7 @@ export default class DeleteMonitorModal extends Component<DeleteModalProps> {
       <EuiOverlayMask>
         <EuiConfirmModal
           title={warningHeading}
-          onCancel={allowDelete ? closeDeleteModal : () => {}}
+          onCancel={closeDeleteModal}
           onConfirm={() => {
             if (allowDelete) {
               onClickDelete();
