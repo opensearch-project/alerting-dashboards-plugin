@@ -109,6 +109,7 @@ const TriggerNotifications = ({
             title={`Notification ${actionIndex + 1}`}
             key={`notification-accordion-${triggerIndex}-${actionIndex}`}
             id={`notification-accordion-${triggerIndex}-${actionIndex}`}
+            data-test-subj={`notification-accordion-${triggerIndex}-${actionIndex}`}
             initialIsOpen={!actionIndex}
             buttonContent={<EuiText>{`Notification ${actionIndex + 1}`}</EuiText>}
             paddingSize={'s'}
