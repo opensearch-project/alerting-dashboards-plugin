@@ -3,22 +3,19 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useState, useMemo, useEffect } from 'react';
-import {
-  EuiTitle,
-  EuiIcon,
-  EuiText,
-  EuiSwitch,
-  EuiSpacer,
-  EuiCallOut,
-} from '@elastic/eui';
+import React, { useEffect, useMemo, useState } from 'react';
+import { EuiCallOut, EuiIcon, EuiSpacer, EuiSwitch, EuiText, EuiTitle } from '@elastic/eui';
 import _ from 'lodash';
 import { FieldArray } from 'formik';
+import { EmbeddableRenderer, ErrorEmbeddable } from '../../../../../../../src/plugins/embeddable/public';
 import {
-  EmbeddableRenderer,
-  ErrorEmbeddable,
-} from '../../../../../../../src/plugins/embeddable/public';
-import { NotificationService, getEmbeddable, getQueryService } from '../../../../services';
+  getClient,
+  getEmbeddable,
+  getNotifications,
+  getQueryService,
+  getUISettings,
+  NotificationService,
+} from '../../../../services';
 import DefineMonitor from '../../../../pages/CreateMonitor/containers/DefineMonitor';
 import { formikToMonitor } from '../../../../pages/CreateMonitor/containers/CreateMonitor/utils/formikToMonitor';
 import { SEARCH_TYPE } from '../../../../utils/constants';
@@ -30,12 +27,12 @@ import { getPlugins } from '../../../../pages/CreateMonitor/containers/CreateMon
 import { dotNotate } from '../../../../utils/SubmitErrorHandler';
 import './styles.scss';
 import { fetchVisEmbeddable } from '../../../../../../../src/plugins/vis_augmenter/public';
-import {
-  VisualizeEmbeddable,
-} from '../../../../../../../src/plugins/visualizations/public';
+import { VisualizeEmbeddable } from '../../../../../../../src/plugins/visualizations/public';
 
-function CreateNew({ embeddable, core, flyoutMode, formikProps, history, setFlyout, detectorId, isAssociateAllowed, showErrors }) {
-  const { notifications, isDarkMode = false, http: httpClient } = core;
+function CreateNew({ embeddable, flyoutMode, formikProps, history, setFlyout, detectorId, isAssociateAllowed, showErrors }) {
+  const isDarkMode = getUISettings().get('theme:darkMode') || false;
+  const notifications = getNotifications();
+  const httpClient = getClient();
   const { values, errors, touched, isSubmitting, isValid } = formikProps;
   const [plugins, setPlugins] = useState([]);
   const [generatedEmbeddable, setGeneratedEmbeddable] = useState<
@@ -45,7 +42,7 @@ function CreateNew({ embeddable, core, flyoutMode, formikProps, history, setFlyo
   const [accordionsOpen, setAccordionsOpen] = useState(detectorId ? { monitorDetails: true } : {});
   const [isShowVis, setIsShowVis] = useState(false);
   const title = embeddable.vis.title;
-  const notificationService = useMemo(() => new NotificationService(core.http), [core]);
+  const notificationService = useMemo(() => new NotificationService(getClient()), []);
 
   const onAccordionToggle = (key) => {
     const newAccordionsOpen = { ...accordionsOpen };
@@ -53,8 +50,6 @@ function CreateNew({ embeddable, core, flyoutMode, formikProps, history, setFlyo
     setAccordionsOpen(newAccordionsOpen);
   };
   const { isShowingErrors, errorList } = useMemo(() => {
-    console.log('errors');
-    console.log(JSON.stringify(errors));
     const isShowingErrors = Object.keys(errors).length > 0 && !isSubmitting && !isValid;
     const errorList = new Set();
 

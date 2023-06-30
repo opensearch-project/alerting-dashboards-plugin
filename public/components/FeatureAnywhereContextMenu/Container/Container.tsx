@@ -7,29 +7,22 @@ import React, { useEffect, useState } from 'react';
 import { EuiCallOut } from '@elastic/eui';
 import AssociatedMonitors from '../AssociatedMonitors';
 import AddAlertingMonitor from '../AddAlertingMonitor';
-import { useMonitors } from '../../../utils/contextMenu/monitors';
-import { useAllMonitors } from '../../../utils/contextMenu/allMonitors';
-import { CoreContext } from '../../../utils/CoreContext';
+import { retrieveAssociatedMonitors, retrieveUnassociatedMonitors } from '../../../utils/contextMenu/monitors';
 import { validateAssociationIsAllow } from '../../../utils/savedObjectHelper';
 import { getUISettings } from '../../../services';
 import { PLUGIN_AUGMENTATION_MAX_OBJECTS_SETTING } from '../../../utils/constants';
 import './styles.scss';
 
 const Container = ({ defaultFlyoutMode, ...props }) => {
-  const { embeddable, core } = props;
+  const { embeddable } = props;
   const index = [{ label: embeddable?.vis?.data?.indexPattern?.title }];
   const [flyoutMode, setFlyoutMode] = useState(defaultFlyoutMode);
   const [selectedMonitorId, setSelectedMonitorId] = useState();
-  const [monitors, setMonitors] = useState<any[] | null>();
-  useMonitors(embeddable, monitors, setMonitors);
-  const [allMonitors, setAllMonitors] = useState<any[] | null>();
-  useAllMonitors(embeddable, allMonitors, setAllMonitors);
-
-  const [isAssociateAllowed, setIsAssociateAllowed] = useState<any[] | null>();
-
-  const state = {
-    monitors, setMonitors, allMonitors, setAllMonitors, isAssociateAllowed
-  }
+  const [associatedMonitors, setAssociatedMonitors] = useState<any[]>([]);
+  retrieveAssociatedMonitors(embeddable.vis.id, setAssociatedMonitors);
+  const [unassociatedMonitors, setUnassociatedMonitors] = useState<any[]>([]);
+  retrieveUnassociatedMonitors(embeddable.vis.id, setUnassociatedMonitors);
+  const [isAssociateAllowed, setIsAssociateAllowed] = useState(true);
 
   useEffect(() => {
     const getIsAssociateAllowed = async () => {
@@ -57,22 +50,19 @@ const Container = ({ defaultFlyoutMode, ...props }) => {
   }[flyoutMode];
 
   return (
-    <CoreContext.Provider value={core}>
-      <Flyout
-        {...{
-          ...props,
-          monitors: flyoutMode === 'existing' ? allMonitors : monitors,
-          selectedMonitorId,
-          setSelectedMonitorId,
-          flyoutMode,
-          setFlyoutMode,
-          index,
-          isAssociateAllowed,
-          limitReachedCallout,
-          state,
-        }}
-      />
-    </CoreContext.Provider>
+    <Flyout
+      {...{
+        ...props,
+        monitors: flyoutMode === 'existing' ? unassociatedMonitors : associatedMonitors,
+        selectedMonitorId,
+        setSelectedMonitorId,
+        flyoutMode,
+        setFlyoutMode,
+        index,
+        isAssociateAllowed,
+        limitReachedCallout,
+      }}
+    />
   );
 };
 

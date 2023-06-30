@@ -90,16 +90,11 @@ class MonitorExpressions extends Component {
       : MAX_NUM_QUERY_LEVEL_GROUP_BYS;
 
     const metricAgg = formik.values.aggregations?.[0]
-    const metricSubTitle = `${metricAgg.aggregationType.toUpperCase()} OF ${metricAgg.fieldName}. You can add up to 1 metric.`;
-    // const metricSubTitle = metricAgg ?
-    //   `${metricAgg.aggregationType.toUpperCase()} OF ${metricAgg.fieldName}. You can add up to 1 metric.` :
-    //   'COUNT OF documents. You can add up to 1 metric.';
+    const metricSubTitle = metricAgg ?
+      `${metricAgg.aggregationType.toUpperCase()} OF ${metricAgg.fieldName}. You can add up to 1 metric.` :
+      'COUNT OF documents. You can add up to 1 metric.';
 
-    accordionsOpen.metrics = accordionsOpen.metrics || 'aggregations' in errors || metricAgg.fieldName === undefined;
-
-    console.log('define errors3');
-    console.log(JSON.stringify(errors));
-    console.log('aggregations' in errors);
+    accordionsOpen.metrics = accordionsOpen?.metrics || 'aggregations' in errors || metricAgg?.fieldName === undefined;
 
     return (
       <div>

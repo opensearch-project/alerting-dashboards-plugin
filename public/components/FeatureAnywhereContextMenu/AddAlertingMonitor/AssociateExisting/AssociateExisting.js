@@ -18,7 +18,7 @@ import {
   EuiHorizontalRule,
 } from '@elastic/eui';
 import { stateToLabel } from '../../../../utils/contextMenu/monitors';
-import { dateOptionsLong, dateOptionsShort } from '../../../../utils/contextMenu/helpers';
+import { dateOptionsLong } from '../../../../utils/contextMenu/helpers';
 import './styles.scss';
 
 function AssociateExisting({ monitors, selectedMonitorId, setSelectedMonitorId }) {

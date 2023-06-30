@@ -16,7 +16,7 @@ import { alertingTriggerAd } from './utils/contextMenu/triggers';
 import { ExpressionsSetup } from '../../../src/plugins/expressions/public';
 import { UiActionsSetup } from '../../../src/plugins/ui_actions/public';
 import { overlayAlertsFunction } from './expressions/overlay_alerts';
-import { setClient, setEmbeddable, setNotifications, setSavedAugmentVisLoader, setUISettings, setQueryService } from './services';
+import { setClient, setEmbeddable, setNotifications, setOverlays, setSavedAugmentVisLoader, setUISettings, setQueryService } from './services';
 import { VisAugmenterStart } from '../../../src/plugins/vis_augmenter/public';
 import { DataPublicPluginStart } from '../../../src/plugins/data/public';
 
@@ -69,10 +69,8 @@ export class AlertingPlugin implements Plugin<AlertingSetup, AlertingStart, Aler
     // registers the expression function used to render anomalies on an Augmented Visualization
     expressions.registerFunction(overlayAlertsFunction());
 
-    const plugins = { expressions, uiActions }
-
     // Create context menu actions. Pass core, to access service for flyouts.
-    const actions = getActions({ core, plugins });
+    const actions = getActions();
 
     // Add actions to uiActions
     actions.forEach((action) => {
@@ -80,8 +78,7 @@ export class AlertingPlugin implements Plugin<AlertingSetup, AlertingStart, Aler
     });
 
     // Create trigger for other plugins to open flyout. Can be used by other plugins like this:
-    // plugins.uiActions.getTrigger('ALERTING_TRIGGER_AD_ID').exec({ embeddable, detectorId });
-    const adAction = getAdAction({ core, plugins });
+    const adAction = getAdAction();
     uiActions.registerTrigger(alertingTriggerAd);
     uiActions.addTriggerAction(alertingTriggerAd.id, adAction);
 
@@ -90,6 +87,7 @@ export class AlertingPlugin implements Plugin<AlertingSetup, AlertingStart, Aler
 
   public start(core: CoreStart, { visAugmenter, embeddable, data }: AlertingStartDeps): AlertingStart {
     setEmbeddable(embeddable);
+    setOverlays(core.overlays);
     setQueryService(data.query);
     setSavedAugmentVisLoader(visAugmenter.savedAugmentVisLoader);
     setNotifications(core.notifications);

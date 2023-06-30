@@ -6,7 +6,7 @@
 import { createContext } from 'react';
 import { BrowserServices } from '../models/interfaces';
 import { createGetterSetter } from '../../../../src/plugins/opensearch_dashboards_utils/public';
-import { CoreStart, IUiSettingsClient, NotificationsStart } from '../../../../src/core/public';
+import { CoreStart, IUiSettingsClient, NotificationsStart, OverlayStart } from '../../../../src/core/public';
 import { SavedObjectLoaderAugmentVis } from '../../../../src/plugins/vis_augmenter/public';
 import { DataPublicPluginStart } from '../../../../src/plugins/data/public';
 import { EmbeddableStart } from '../../../../src/plugins/embeddable/public';
@@ -27,6 +27,9 @@ export const [getSavedAugmentVisLoader, setSavedAugmentVisLoader] = createGetter
 export const [getUISettings, setUISettings] = createGetterSetter<IUiSettingsClient>('UISettings');
 
 export const [getEmbeddable, setEmbeddable] = createGetterSetter<EmbeddableStart>('embeddable');
+
+export const [getOverlays, setOverlays] =
+  createGetterSetter<OverlayStart>('Overlays');
 
 export const [getQueryService, setQueryService] = createGetterSetter<
   DataPublicPluginStart['query']

@@ -12,6 +12,7 @@ import { createAlertingAction } from '../../actions/alerting_dashboard_action';
 import { Action } from '../../../../../src/plugins/ui_actions/public';
 import DocumentationTitle from '../../components/FeatureAnywhereContextMenu/DocumentationTitle';
 import Container from '../../components/FeatureAnywhereContextMenu/Container';
+import { getOverlays } from '../../services';
 
 export const ALERTING_ACTION_CONTEXT = 'ALERTING_ACTION_CONTEXT';
 export const ALERTING_ACTION_CONTEXT_GROUP_ID = 'ALERTING_ACTION_CONTEXT_GROUP_ID';
@@ -29,21 +30,17 @@ declare module '../../../../../src/plugins/ui_actions/public' {
 }
 
 export const openContainerInFlyout = async ({
-  core,
   defaultFlyoutMode,
   embeddable,
-  plugins,
   detectorId,
 }: {
-  core: any;
   defaultFlyoutMode: string;
   embeddable: any;
-  plugins: any;
   detectorId?: string;
 }) => {
   const clonedEmbeddable = await _.cloneDeep(embeddable);
-  const services = await core.getStartServices();
-  const openFlyout = services[0].overlays.openFlyout;
+  const overlayService = getOverlays();
+  const openFlyout = overlayService.openFlyout;
   const overlay = openFlyout(
     toMountPoint(
       <Container
@@ -51,9 +48,6 @@ export const openContainerInFlyout = async ({
           defaultFlyoutMode,
           embeddable: clonedEmbeddable,
           closeFlyout: () => overlay.close(),
-          core,
-          services,
-          plugins,
           detectorId,
         }}
       />
@@ -73,7 +67,7 @@ const grouping: Action['grouping'] = [
   },
 ];
 
-export const getActions = ({ core, plugins }) =>
+export const getActions = () =>
   [
     {
       id: ALERTING_ACTION_ADD_ID,
@@ -83,7 +77,7 @@ export const getActions = ({ core, plugins }) =>
       icon: 'plusInCircle' as EuiIconType,
       order: 100,
       onExecute: ({ embeddable }) =>
-        openContainerInFlyout({ core, embeddable, plugins, defaultFlyoutMode: 'create' }),
+        openContainerInFlyout({ embeddable, defaultFlyoutMode: 'create' }),
     },
     {
       id: ALERTING_ACTION_ASSOCIATED_ID,
@@ -93,7 +87,7 @@ export const getActions = ({ core, plugins }) =>
       icon: 'kqlSelector' as EuiIconType,
       order: 99,
       onExecute: ({ embeddable }) =>
-        openContainerInFlyout({ core, embeddable, plugins, defaultFlyoutMode: 'associated' }),
+        openContainerInFlyout({ embeddable, defaultFlyoutMode: 'associated' }),
     },
     {
       id: ALERTING_ACTION_DOC_ID,
@@ -109,7 +103,7 @@ export const getActions = ({ core, plugins }) =>
     },
   ].map((options) => createAlertingAction({ ...options, grouping, type: ALERTING_ACTION_CONTEXT }));
 
-export const getAdAction = ({ core, plugins }) =>
+export const getAdAction = () =>
   createAlertingAction({
     type: ALERTING_ACTION_AD,
     grouping: [],
@@ -119,9 +113,7 @@ export const getAdAction = ({ core, plugins }) =>
     order: 1,
     onExecute: ({ embeddable, detectorId }) =>
       openContainerInFlyout({
-        core,
         embeddable,
-        plugins,
         detectorId,
         defaultFlyoutMode: 'adMonitor',
       }),

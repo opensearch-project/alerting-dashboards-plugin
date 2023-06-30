@@ -9,7 +9,8 @@ import { EuiPopover, EuiBadge, EuiPopoverTitle, EuiSpacer } from '@elastic/eui';
 import MetricPopover from './MetricPopover';
 
 export default function MetricItem(
-  { arrayHelpers, fieldOptions, expressionWidth, aggregation, index, flyoutMode } = this.props
+  { arrayHelpers, fieldOptions, expressionWidth, aggregation, index, flyoutMode, errors } = this
+    .props
 ) {
   const [isPopoverOpen, setIsPopoverOpen] = useState(aggregation.fieldName === '');
   const closePopover = () => {
@@ -32,6 +33,8 @@ export default function MetricItem(
           expressionWidth={expressionWidth}
           index={index}
           flyoutMode={flyoutMode}
+          aggregation={aggregation}
+          errors={errors}
         />
       </div>
     );

@@ -31,11 +31,12 @@ import {
   validateAssociationIsAllow,
 } from '../../../utils/savedObjectHelper';
 import { SEARCH_TYPE } from '../../../utils/constants';
+import { getClient, getNotifications } from '../../../services';
 
 function AddAlertingMonitor({
   embeddable,
   closeFlyout,
-  core,
+  // core,
   flyoutMode,
   setFlyoutMode,
   monitors,
@@ -52,7 +53,8 @@ function AddAlertingMonitor({
     goBack: closeFlyout,
   };
   const setFlyout = () => null;
-  const { notifications, http: httpClient } = core;
+  const httpClient = getClient().httpClient;
+  const notifications = getNotifications();
   const title = embeddable.vis.title;
   const timeField = embeddable.vis?.data?.aggs?.aggs?.[1]?.params?.field?.displayName;
   const searchType = flyoutMode === 'adMonitor' ? SEARCH_TYPE.AD : '';
@@ -204,7 +206,6 @@ function AddAlertingMonitor({
                     <CreateNew
                       {...{
                         embeddable,
-                        core,
                         flyoutMode,
                         formikProps,
                         history,
