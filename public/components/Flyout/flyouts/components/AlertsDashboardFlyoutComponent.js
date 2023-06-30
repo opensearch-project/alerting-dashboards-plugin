@@ -61,15 +61,8 @@ export default class AlertsDashboardFlyoutComponent extends Component {
     const { location, monitors, monitor_id } = this.props;
     const monitor = _.get(_.find(monitors, { _id: monitor_id }), '_source');
     const monitorType = _.get(monitor, 'monitor_type', MONITOR_TYPE.QUERY_LEVEL);
-    const {
-      alertState,
-      from,
-      search,
-      severityLevel,
-      size,
-      sortDirection,
-      sortField,
-    } = getURLQueryParams(location);
+    const { alertState, from, search, severityLevel, size, sortDirection, sortField } =
+      getURLQueryParams(location);
 
     this.state = {
       alerts: [],
@@ -93,16 +86,8 @@ export default class AlertsDashboardFlyoutComponent extends Component {
   }
 
   componentDidMount() {
-    const {
-      alertState,
-      page,
-      search,
-      severityLevel,
-      size,
-      sortDirection,
-      sortField,
-      monitorIds,
-    } = this.state;
+    const { alertState, page, search, severityLevel, size, sortDirection, sortField, monitorIds } =
+      this.state;
     this.getAlerts(
       page * size,
       size,
@@ -175,15 +160,8 @@ export default class AlertsDashboardFlyoutComponent extends Component {
 
   getAlerts = async () => {
     this.setState({ loading: true, tabContent: undefined });
-    const {
-      from,
-      search,
-      sortField,
-      sortDirection,
-      severityLevel,
-      alertState,
-      monitorIds,
-    } = this.state;
+    const { from, search, sortField, sortDirection, severityLevel, alertState, monitorIds } =
+      this.state;
 
     const { httpClient, history, notifications, triggerID } = this.props;
 
@@ -201,7 +179,7 @@ export default class AlertsDashboardFlyoutComponent extends Component {
     const queryParamsString = queryString.stringify(params);
     history.replace({ ...this.props.location, search: queryParamsString });
 
-    httpClient.get('../api/alerting/alerts', { query: params }).then((resp) => {
+    httpClient.get('../api/alerting/alerts', { query: params })?.then((resp) => {
       if (resp.ok) {
         const { alerts } = resp;
         const filteredAlerts = _.filter(alerts, { trigger_id: triggerID });
@@ -250,16 +228,8 @@ export default class AlertsDashboardFlyoutComponent extends Component {
         .catch((error) => error)
     );
 
-    const {
-      page,
-      size,
-      search,
-      sortField,
-      sortDirection,
-      severityLevel,
-      alertState,
-      monitorIds,
-    } = this.state;
+    const { page, size, search, sortField, sortDirection, severityLevel, alertState, monitorIds } =
+      this.state;
     await this.getAlerts(
       page * size,
       size,
