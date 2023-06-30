@@ -3,8 +3,8 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { uiSettingsServiceMock } from '../../../../src/core/public/mocks';
-import { setSavedAugmentVisLoader, setUISettings } from '../services';
+import { notificationServiceMock, uiSettingsServiceMock } from '../../../../src/core/public/mocks';
+import { setSavedAugmentVisLoader, setUISettings, setNotifications } from '../services';
 import {
   createSavedAugmentVisLoader,
   setUISettings as setVisAugUISettings,
@@ -16,7 +16,7 @@ import {
   createSavedObjectAssociation,
   deleteAlertingAugmentVisSavedObj,
   getAlertingAugmentVisSavedObjs,
-  getAssociatedMonitorIds,
+  getAssociatedMonitorIds, getCountOfAssociatedObjects, validateAssociationIsAllow,
 } from './savedObjectHelper';
 import {
   createMockSavedObject,
@@ -27,9 +27,48 @@ import {
 
 describe('savedObjectHelper', function () {
   const uiSettingsMock = uiSettingsServiceMock.createStartContract();
+  const notificationsMock = notificationServiceMock.createSetupContract();
   setUISettings(uiSettingsMock);
+  setNotifications(notificationsMock);
   setVisAugUISettings(uiSettingsMock);
   setAugLoader();
+
+  describe('validateAssociationIsAllow()', function () {
+    setUIAugSettings(uiSettingsMock);
+    it('validation is true', async () => {
+      const isValid = await validateAssociationIsAllow('visId');
+      expect(isValid).toStrictEqual(true);
+    });
+    it('validation is false due to associated is disabled', async () => {
+      setUIAugSettings(uiSettingsMock, false);
+      const isValid = await validateAssociationIsAllow('visId');
+      expect(isValid).toStrictEqual(false);
+    });
+    it('validation is false due to max associated objects to be 0', async () => {
+      setUIAugSettings(uiSettingsMock, true, 0);
+      const isValid = await validateAssociationIsAllow('visId');
+      expect(isValid).toStrictEqual(false);
+    });
+  });
+
+  describe('getCountOfAssociatedObjects()', function () {
+    it('no associated objects should give 0 count', async () => {
+      const associatedCount = await getCountOfAssociatedObjects('visId');
+      expect(associatedCount).toStrictEqual(0);
+    });
+    it('set 5 associated objects', async () => {
+      const validObj1 = createMockSavedObject()
+      const validObj2 = createMockSavedObject()
+      const validObj3 = createMockSavedObject()
+      const validObj4 = createMockSavedObject()
+      const validObj5 = createMockSavedObject()
+      const visId = validObj1.visId;
+      setAugLoader([validObj1, validObj2, validObj3, validObj4, validObj5]);
+      const associatedCount = await getCountOfAssociatedObjects(visId);
+      expect(associatedCount).toStrictEqual(5);
+    });
+  });
+
   describe('createSavedObjectAssociation()', function () {
     const embeddable = {
       vis: {
@@ -39,6 +78,7 @@ describe('savedObjectHelper', function () {
     }
     setUIAugSettings(uiSettingsMock);
     it('createSavedObject', async () => {
+      setUIAugSettings(uiSettingsMock);
       const object = await createSavedObjectAssociation('monitorId', embeddable);
       expect(object).toStrictEqual('randomId');
     });
