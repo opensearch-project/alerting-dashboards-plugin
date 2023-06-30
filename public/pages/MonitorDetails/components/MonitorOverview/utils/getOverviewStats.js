@@ -134,7 +134,7 @@ export default function getOverviewStats(
       value:
         monitor.associated_workflows.length > 0 ? (
           <>
-            {monitor.associated_workflows.map((id, idx) => {
+            {monitor.associated_workflows.map(({ id, name }, idx) => {
               return (
                 <EuiLink
                   className="associated-comp-monitor-link"
@@ -142,7 +142,7 @@ export default function getOverviewStats(
                   key={id}
                   href={`${PLUGIN_NAME}#/monitors/${id}?type=${'workflow'}`}
                 >
-                  {id}
+                  {name}
                   {`${idx < monitor.associated_workflows.length - 1 ? ', ' : ''}`}
                 </EuiLink>
               );

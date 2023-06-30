@@ -37,7 +37,6 @@ import { DEFAULT_PAGE_SIZE_OPTIONS } from '../../Monitors/containers/Monitors/ut
 import { MAX_ALERT_COUNT } from '../utils/constants';
 import AcknowledgeAlertsModal from '../components/AcknowledgeAlertsModal';
 import { getAlertsFindingColumn } from '../components/FindingsDashboard/findingsUtils';
-import { chainedAlertDetailsFlyout } from '../components/ChainedAlertDetailsFlyout/ChainedAlertDetailsFlyout';
 
 export default class Dashboard extends Component {
   constructor(props) {
@@ -161,7 +160,9 @@ export default class Dashboard extends Component {
     const { httpClient } = this.props;
     const { alertsByTriggers } = this.state;
     this.setState({ ...this.state, loadingMonitors: true });
-    const monitorIds = alertsByTriggers.map((alert) => alert.monitor_id);
+    const monitorIds = Array.from(
+      new Set(alertsByTriggers.map((alert) => alert.monitor_id).filter((monitorId) => !!monitorId))
+    );
     let monitors;
     try {
       const params = {
@@ -187,26 +188,25 @@ export default class Dashboard extends Component {
     this.setState({ ...this.state, loadingMonitors: false, monitors: monitors });
   }
 
-  // TODO: exists in both Dashboard and Monitors, should be moved to redux when implemented
-  acknowledgeAlert = async () => {
-    const { selectedItems } = this.state;
-    const { httpClient, notifications, perAlertView } = this.props;
-
-    if (!selectedItems.length) return;
-
-    let selectedAlerts = perAlertView ? selectedItems : _.get(selectedItems, '0.alerts', []);
-    selectedAlerts = filterActiveAlerts(selectedAlerts);
+  acknowledgeAlerts = async (alerts) => {
+    const { httpClient, notifications } = this.props;
+    const selectedAlerts = filterActiveAlerts(alerts);
 
     const monitorAlerts = selectedAlerts.reduce((monitorAlerts, alert) => {
-      const { id, monitor_id: monitorId } = alert;
-      if (monitorAlerts[monitorId]) monitorAlerts[monitorId].push(id);
-      else monitorAlerts[monitorId] = [id];
+      const id = alert.id;
+      const monitorId = alert.workflow_id || alert.monitor_id;
+      if (monitorAlerts[monitorId]) monitorAlerts[monitorId].alerts.push(id);
+      else
+        monitorAlerts[monitorId] = {
+          alerts: [id],
+          poolType: !!alert.workflow_id ? 'workflows' : 'monitors',
+        };
       return monitorAlerts;
     }, {});
 
-    Object.entries(monitorAlerts).map(([monitorId, alerts]) =>
+    Object.entries(monitorAlerts).map(([monitorId, { alerts, poolType }]) =>
       httpClient
-        .post(`../api/alerting/monitors/${monitorId}/_acknowledge/alerts`, {
+        .post(`../api/alerting/${poolType}/${monitorId}/_acknowledge/alerts`, {
           body: JSON.stringify({ alerts }),
         })
         .then((resp) => {
@@ -219,6 +219,17 @@ export default class Dashboard extends Component {
         })
         .catch((error) => error)
     );
+  };
+
+  // TODO: exists in both Dashboard and Monitors, should be moved to redux when implemented
+  acknowledgeAlert = async () => {
+    const { selectedItems } = this.state;
+    const { perAlertView } = this.props;
+
+    if (!selectedItems.length) return;
+
+    let selectedAlerts = perAlertView ? selectedItems : _.get(selectedItems, '0.alerts', []);
+    await this.acknowledgeAlerts(selectedAlerts);
 
     this.setState({ selectedItems: [] });
     const { page, size, search, sortField, sortDirection, severityLevel, alertState, monitorIds } =
@@ -338,6 +349,7 @@ export default class Dashboard extends Component {
         onClose={this.closeModal}
         triggerId={triggerID}
         triggerName={trigger_name}
+        acknowledgeAlerts={this.acknowledgeAlerts}
       />
     );
   };
@@ -416,6 +428,7 @@ export default class Dashboard extends Component {
                         this.openChainedAlertsFlyout({
                           alert,
                           closeFlyout: this.closeFlyout,
+                          httpClient,
                         });
                       }}
                     />

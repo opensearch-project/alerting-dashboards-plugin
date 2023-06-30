@@ -40,12 +40,13 @@ import {
   TRIGGER_ACTIONS,
 } from '../../../utils/constants';
 import { migrateTriggerMetadata } from './utils/helpers';
-import { backendErrorNotification } from '../../../utils/helpers';
+import { backendErrorNotification, deleteMonitor } from '../../../utils/helpers';
 import { getUnwrappedTriggers } from './Triggers/Triggers';
 import { formikToMonitor } from '../../CreateMonitor/containers/CreateMonitor/utils/formikToMonitor';
 import monitorToFormik from '../../CreateMonitor/containers/CreateMonitor/utils/monitorToFormik';
 import FindingsDashboard from '../../Dashboard/containers/FindingsDashboard';
 import { TABLE_TAB_IDS } from '../../Dashboard/components/FindingsDashboard/findingsUtils';
+import DeleteMonitorModal from '../../../components/DeleteModal/DeleteMonitorModal';
 
 export default class MonitorDetails extends Component {
   constructor(props) {
@@ -69,6 +70,7 @@ export default class MonitorDetails extends Component {
       },
       isJsonModalOpen: false,
       tabId: TABLE_TAB_IDS.ALERTS.id,
+      showDeleteModal: false,
     };
   }
 
@@ -266,6 +268,15 @@ export default class MonitorDetails extends Component {
     return { ...formikToMonitor(monitorValues), triggers };
   };
 
+  onDeleteClick = () => {
+    this.setState({ showDeleteModal: true });
+  };
+
+  deleteMonitor = async () => {
+    await deleteMonitor(this.state.monitor, this.props.httpClient, this.props.notifications);
+    this.props.history.push('/monitors');
+  };
+
   renderAlertsTable = () => {
     const { monitor, editMonitor } = this.state;
     const {
@@ -353,6 +364,7 @@ export default class MonitorDetails extends Component {
       loading,
       editMonitor,
       isJsonModalOpen,
+      showDeleteModal,
     } = this.state;
     const {
       location,
@@ -432,6 +444,11 @@ export default class MonitorDetails extends Component {
           <EuiFlexItem grow={false}>
             <EuiButton onClick={this.showJsonModal}>Export as JSON</EuiButton>
           </EuiFlexItem>
+          <EuiFlexItem grow={false}>
+            <EuiButton onClick={this.onDeleteClick} color="danger">
+              Delete
+            </EuiButton>
+          </EuiFlexItem>
         </EuiFlexGroup>
         <EuiSpacer />
         <MonitorOverview
@@ -497,6 +514,13 @@ export default class MonitorDetails extends Component {
               </EuiModalFooter>
             </EuiModal>
           </EuiOverlayMask>
+        )}
+        {showDeleteModal && (
+          <DeleteMonitorModal
+            monitors={[monitor]}
+            closeDeleteModal={() => this.setState({ showDeleteModal: false })}
+            onClickDelete={() => this.deleteMonitor()}
+          />
         )}
       </div>
     );

@@ -63,9 +63,11 @@ export default class MonitorService {
       const params = { monitorId: id };
       const { callAsCurrentUser } = await this.esDriver.asScoped(req);
       const response = await callAsCurrentUser('alerting.deleteMonitor', params);
+      console.log('Delete monitor response');
+      console.log(JSON.stringify(response));
       return res.ok({
         body: {
-          ok: response.result === 'deleted',
+          ok: response.result === 'deleted' || response.result === undefined,
         },
       });
     } catch (err) {
@@ -160,6 +162,12 @@ export default class MonitorService {
             associated_workflows,
           };
         }
+        monitor = {
+          ...monitor,
+          item_type: monitor.workflow_type || monitor.monitor_type,
+          id,
+          version,
+        };
         return res.ok({
           body: { ok: true, resp: monitor, activeCount, dayCount, version, ifSeqNo, ifPrimaryTerm },
         });
@@ -188,16 +196,22 @@ export default class MonitorService {
       const params = { monitorId: id };
       const { callAsCurrentUser } = await this.esDriver.asScoped(req);
       const getResponse = await callAsCurrentUser('alerting.getWorkflow', params);
-      const monitor = _.get(getResponse, 'workflow', null);
+      let workflow = _.get(getResponse, 'workflow', null);
       const version = _.get(getResponse, '_version', null);
       const ifSeqNo = _.get(getResponse, '_seq_no', null);
       const ifPrimaryTerm = _.get(getResponse, '_primary_term', null);
-      monitor.monitor_type = monitor.workflow_type;
+      workflow.monitor_type = workflow.workflow_type;
+      workflow = {
+        ...workflow,
+        item_type: workflow.workflow_type,
+        id,
+        version,
+      };
 
       return res.ok({
         body: {
           ok: true,
-          resp: monitor,
+          resp: workflow,
           activeCount: 0,
           dayCount: 0,
           version,
@@ -489,6 +503,35 @@ export default class MonitorService {
       });
     } catch (err) {
       console.error('Alerting - MonitorService - acknowledgeAlerts:', err);
+      return res.ok({
+        body: {
+          ok: false,
+          resp: err.message,
+        },
+      });
+    }
+  };
+
+  acknowledgeChainedAlerts = async (context, req, res) => {
+    try {
+      const { id } = req.params;
+      const params = {
+        workflowId: id,
+        body: req.body,
+      };
+      const { callAsCurrentUser } = this.esDriver.asScoped(req);
+      const acknowledgeResponse = await callAsCurrentUser(
+        'alerting.acknowledgeChainedAlerts',
+        params
+      );
+      return res.ok({
+        body: {
+          ok: !acknowledgeResponse.failed.length,
+          resp: acknowledgeResponse,
+        },
+      });
+    } catch (err) {
+      console.error('Alerting - MonitorService - acknowledgeChainedAlerts:', err);
       return res.ok({
         body: {
           ok: false,

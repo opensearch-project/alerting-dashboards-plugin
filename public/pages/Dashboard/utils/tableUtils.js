@@ -208,7 +208,9 @@ export const alertColumns = (
     truncateText: true,
     textOnly: true,
     render: (name, alert) => (
-      <EuiLink href={`${PLUGIN_NAME}#/monitors/${alert.monitor_id}`}>{name}</EuiLink>
+      <EuiLink href={`${PLUGIN_NAME}#/monitors/${alert.monitor_id}?type=${alert.alert_source}`}>
+        {name}
+      </EuiLink>
     ),
   },
 ];
@@ -227,6 +229,7 @@ export const associatedAlertsTableColumns = [
     name: 'Severity',
     sortable: false,
     truncateText: false,
+    width: '100px',
   },
   {
     field: 'trigger_name',

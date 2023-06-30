@@ -16,7 +16,7 @@ import { DEFAULT_PAGE_SIZE_OPTIONS, DEFAULT_QUERY_PARAMS } from './utils/constan
 import { getURLQueryParams } from './utils/helpers';
 import { columns as staticColumns } from './utils/tableUtils';
 import { MONITOR_ACTIONS, MONITOR_TYPE } from '../../../../utils/constants';
-import { backendErrorNotification } from '../../../../utils/helpers';
+import { backendErrorNotification, deleteMonitor } from '../../../../utils/helpers';
 import { displayAcknowledgedAlertsToast } from '../../../Dashboard/utils/helpers';
 import DeleteMonitorModal from '../../../../components/DeleteModal/DeleteMonitorModal';
 
@@ -55,7 +55,6 @@ export default class Monitors extends Component {
     this.onSelectionChange = this.onSelectionChange.bind(this);
     this.onSearchChange = this.onSearchChange.bind(this);
     this.updateMonitor = this.updateMonitor.bind(this);
-    this.deleteMonitor = this.deleteMonitor.bind(this);
     this.updateMonitors = this.updateMonitors.bind(this);
     this.deleteMonitors = this.deleteMonitors.bind(this);
     this.onClickAcknowledge = this.onClickAcknowledge.bind(this);
@@ -217,23 +216,6 @@ export default class Monitors extends Component {
       .catch((err) => err);
   }
 
-  deleteMonitor(item) {
-    const { httpClient, notifications } = this.props;
-    const { id, version } = item;
-    const poolType = item.item_type === 'composite' ? 'workflows' : 'monitors';
-    return httpClient
-      .delete(`../api/alerting/${poolType}/${id}`, { query: { version } })
-      .then((resp) => {
-        if (!resp.ok) {
-          backendErrorNotification(notifications, 'delete', 'monitor', resp.resp);
-        } else {
-          notifications.toasts.addSuccess(`Monitor deleted successfully.`);
-        }
-        return resp;
-      })
-      .catch((err) => err);
-  }
-
   updateMonitors(items, update) {
     const arrayOfPromises = items.map((item) =>
       this.updateMonitor(item, update).catch((error) => error)
@@ -247,8 +229,11 @@ export default class Monitors extends Component {
     });
   }
 
-  deleteMonitors(items) {
-    const arrayOfPromises = items.map((item) => this.deleteMonitor(item).catch((error) => error));
+  async deleteMonitors(items) {
+    const { httpClient, notifications } = this.props;
+    const arrayOfPromises = items.map((item) =>
+      deleteMonitor(item, httpClient, notifications).catch((error) => error)
+    );
 
     return Promise.all(arrayOfPromises).then((values) => {
       // TODO: Show which values failed, succeeded, etc.

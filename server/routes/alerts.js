@@ -27,4 +27,17 @@ export default function (services, router) {
     },
     alertService.getAlerts
   );
+
+  router.get(
+    {
+      path: '/api/alerting/workflows/alerts',
+      validate: {
+        query: schema.object({
+          workflowIds: schema.string(),
+          getAssociatedAlerts: schema.boolean(),
+        }),
+      },
+    },
+    alertService.getWorkflowAlerts
+  );
 }

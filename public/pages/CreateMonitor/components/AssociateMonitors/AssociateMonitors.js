@@ -7,6 +7,7 @@ import React, { Fragment, useState, useEffect } from 'react';
 import { EuiSpacer, EuiText } from '@elastic/eui';
 import MonitorsList from './components/MonitorsList';
 import MonitorsEditor from './components/MonitorsEditor';
+import { monitorTypesForComposition } from '../../../../utils/constants';
 
 export const getMonitors = async (httpClient) => {
   const response = await httpClient.get('../api/alerting/monitors', {
@@ -21,8 +22,14 @@ export const getMonitors = async (httpClient) => {
   });
 
   if (response.ok) {
-    const { monitors, totalMonitors } = response;
-    return monitors.map((monitor) => ({ monitor_id: monitor.id, monitor_name: monitor.name }));
+    const { monitors } = response;
+    return monitors
+      .filter(
+        (monitor) =>
+          monitor.monitor?.type === 'monitor' &&
+          monitorTypesForComposition.has(monitor.monitor?.monitor_type)
+      )
+      .map((monitor) => ({ monitor_id: monitor.id, monitor_name: monitor.name }));
   } else {
     console.log('error getting monitors:', response);
     return [];

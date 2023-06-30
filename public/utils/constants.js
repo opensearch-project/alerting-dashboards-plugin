@@ -96,3 +96,9 @@ export const PREVIEW_ERROR_TYPE = {
   NO_ENABLED_FEATURES: 2,
   SPARSE_DATA: 3,
 };
+
+export const monitorTypesForComposition = new Set([
+  MONITOR_TYPE.BUCKET_LEVEL,
+  MONITOR_TYPE.DOC_LEVEL,
+  MONITOR_TYPE.QUERY_LEVEL,
+]);

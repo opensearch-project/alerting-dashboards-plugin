@@ -77,6 +77,7 @@ const ExpressionBuilder = ({
 
   const [usedExpressions, setUsedExpressions] = useState([DEFAULT_EXPRESSION]);
   const [options, setOptions] = useState([]);
+  const triggerConditions = _.get(values, formikFullFieldName, '');
 
   useEffect(() => {
     // initializing formik because these are generic fields and formik won't pick them up until fields is updated
@@ -92,7 +93,7 @@ const ExpressionBuilder = ({
         setInitialValues(monitors);
       });
     }
-  }, [values.associatedMonitors?.sequence?.delegates, values[formikFullFieldName]]);
+  }, [values.associatedMonitors?.sequence?.delegates, triggerConditions]);
 
   const setInitialValues = (monitors) => {
     const monitorOptions = [];
@@ -109,7 +110,12 @@ const ExpressionBuilder = ({
     const condition = _.get(values, formikFullFieldName, '');
 
     let expressions = conditionToExpressions(condition, monitors);
-    if (!edit && !_.get(touched, formikFullFieldValue, false) && !triggerIndex) {
+    if (
+      !edit &&
+      !_.get(touched, formikFullFieldValue, false) &&
+      triggerIndex === 0 &&
+      expressions.length === 0
+    ) {
       expressions = [];
       monitorOptions.forEach((monitor, index) => {
         expressions.push({

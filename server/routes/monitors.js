@@ -168,4 +168,17 @@ export default function (services, router) {
     },
     monitorService.acknowledgeAlerts
   );
+
+  router.post(
+    {
+      path: '/api/alerting/workflows/{id}/_acknowledge/alerts',
+      validate: {
+        params: schema.object({
+          id: schema.string(),
+        }),
+        body: schema.any(),
+      },
+    },
+    monitorService.acknowledgeChainedAlerts
+  );
 }

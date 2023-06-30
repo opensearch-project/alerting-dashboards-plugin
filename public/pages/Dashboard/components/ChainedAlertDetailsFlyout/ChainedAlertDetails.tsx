@@ -3,7 +3,7 @@
 * SPDX-License-Identifier: Apache-2.0
 */
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   EuiFlexGrid,
   EuiTitle,
@@ -21,7 +21,7 @@ import { DEFAULT_EMPTY_DATA } from '../../../../utils/constants';
 import { associatedAlertsTableColumns, renderTime } from '../../utils/tableUtils';
 import _ from 'lodash';
 
-export const ChainedAlertDetails = ({ alert }) => {
+export const ChainedAlertDetails = ({ alert, associatedAlerts }) => {
   const [itemIdToExpandedRowMap, setItemIdToExpandedRowMap] = useState<{
     [key: string]: JSX.Element;
   }>({});
@@ -50,7 +50,7 @@ export const ChainedAlertDetails = ({ alert }) => {
             </EuiFlexItem>
             <EuiFlexItem grow={true}>
               <EuiText size={'xs'} className={'associated-alerts-table-details-row-value'}>
-                {item.end_time}
+                {item.end_time || DEFAULT_EMPTY_DATA}
               </EuiText>
             </EuiFlexItem>
           </EuiFlexGroup>
@@ -91,18 +91,6 @@ export const ChainedAlertDetails = ({ alert }) => {
     }
   ];
 
-  const dummyItems = [
-    {
-      id: '3m4k_4gBao9NSj-nooCV',
-      start_time: 1687907771029,
-      end_time: 1687907771029,
-      severity: "1",
-      state: 'ACTIVE',
-      trigger_name: 'Sample trigger',
-      acknowledged_time: undefined
-    }
-  ];
-
   const actions: any[] = [
     {
       render: (item: any) => (
@@ -112,6 +100,7 @@ export const ChainedAlertDetails = ({ alert }) => {
           iconType={itemIdToExpandedRowMap[item.id] ? 'arrowUp' : 'arrowDown'}
         />
       ),
+      width: '50px'
     },
   ];
 
@@ -123,18 +112,19 @@ export const ChainedAlertDetails = ({ alert }) => {
         ))}
       </EuiFlexGrid>
       <EuiSpacer size='xl' />
-      <EuiTitle>
-        <h2>Alerts from associated monitors</h2>
+      <EuiTitle size='s'>
+        <p>Alerts from associated monitors</p>
       </EuiTitle>
       <EuiSpacer size='m' />
       <EuiInMemoryTable
         columns={associatedAlertsTableColumns.concat(actions) as EuiBasicTableColumn<any>[]}
-        items={dummyItems}
+        items={associatedAlerts}
         itemId='id'
         itemIdToExpandedRowMap={itemIdToExpandedRowMap}
         hasActions={true}
         isExpandable={true}
         pagination={true}
+        sorting={true}
       />
     </>
   )

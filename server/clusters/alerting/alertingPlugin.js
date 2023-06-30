@@ -146,6 +146,20 @@ export default function alertingPlugin(Client, config, components) {
     method: 'POST',
   });
 
+  alerting.acknowledgeChainedAlerts = ca({
+    url: {
+      fmt: `${WORKFLOW_BASE_API}/<%=workflowId%>/_acknowledge/alerts`,
+      req: {
+        workflowId: {
+          type: 'string',
+          required: true,
+        },
+      },
+    },
+    needBody: true,
+    method: 'POST',
+  });
+
   alerting.getAlerts = ca({
     url: {
       fmt: `${MONITOR_BASE_API}/alerts`,
@@ -356,5 +370,22 @@ export default function alertingPlugin(Client, config, components) {
       },
     },
     method: 'DELETE',
+  });
+
+  alerting.getWorkflowAlerts = ca({
+    url: {
+      fmt: `${WORKFLOW_BASE_API}/alerts?workflowIds=<%=workflowIds%>&getAssociatedAlerts=<%=getAssociatedAlerts%>`,
+      req: {
+        workflowIds: {
+          type: 'string',
+          required: true,
+        },
+        getAssociatedAlerts: {
+          type: 'boolean',
+          required: true,
+        },
+      },
+    },
+    method: 'GET',
   });
 }

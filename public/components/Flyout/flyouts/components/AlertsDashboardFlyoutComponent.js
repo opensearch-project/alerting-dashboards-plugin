@@ -62,7 +62,10 @@ export default class AlertsDashboardFlyoutComponent extends Component {
     super(props);
     const { location, monitors, monitor_id } = this.props;
     const monitor = _.get(_.find(monitors, { _id: monitor_id }), '_source');
-    const monitorType = _.get(monitor, 'monitor_type', MONITOR_TYPE.QUERY_LEVEL);
+    let monitorType = _.get(monitor, 'monitor_type', undefined);
+    if (!monitorType) {
+      monitorType = _.get(monitor, 'workflow_type', MONITOR_TYPE.QUERY_LEVEL);
+    }
     const { alertState, from, search, severityLevel, size, sortDirection, sortField } =
       getURLQueryParams(location);
 
@@ -162,8 +165,16 @@ export default class AlertsDashboardFlyoutComponent extends Component {
 
   getAlerts = async () => {
     this.setState({ loading: true, tabContent: undefined });
-    const { from, search, sortField, sortDirection, severityLevel, alertState, monitorIds } =
-      this.state;
+    const {
+      from,
+      search,
+      sortField,
+      sortDirection,
+      severityLevel,
+      alertState,
+      monitorIds,
+      monitorType,
+    } = this.state;
 
     const { httpClient, history, notifications, triggerID } = this.props;
 
@@ -176,6 +187,7 @@ export default class AlertsDashboardFlyoutComponent extends Component {
       severityLevel,
       alertState,
       monitorIds,
+      monitorType,
     };
 
     const queryParamsString = queryString.stringify(params);
@@ -284,6 +296,8 @@ export default class AlertsDashboardFlyoutComponent extends Component {
         return TRIGGER_TYPE.BUCKET_LEVEL;
       case MONITOR_TYPE.DOC_LEVEL:
         return TRIGGER_TYPE.DOC_LEVEL;
+      case MONITOR_TYPE.COMPOSITE_LEVEL:
+        return TRIGGER_TYPE.COMPOSITE_LEVEL;
       default:
         return TRIGGER_TYPE.QUERY_LEVEL;
     }
@@ -353,6 +367,7 @@ export default class AlertsDashboardFlyoutComponent extends Component {
                         this.props.openChainedAlertsFlyout?.({
                           alert,
                           closeFlyout: this.props.closeFlyout,
+                          httpClient,
                         });
                       }}
                     />

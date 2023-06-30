@@ -92,7 +92,12 @@ export default class AlertService {
         const alert = hit;
         const id = hit.alert_id;
         const version = hit.alert_version;
-        return { id, ...alert, version };
+        return {
+          id,
+          ...alert,
+          version,
+          alert_source: !!alert.workflow_id ? 'workflow' : 'monitor',
+        };
       });
       const totalAlerts = resp.totalAlerts;
 
@@ -104,6 +109,34 @@ export default class AlertService {
           ok: true,
           alerts,
           totalAlerts,
+        },
+      });
+    } catch (err) {
+      console.log(err.message);
+      return res.ok({
+        body: {
+          ok: false,
+          err: err.message,
+        },
+      });
+    }
+  };
+
+  getWorkflowAlerts = async (context, req, res) => {
+    console.log('****** GET WORKFLOW ALERTS *****');
+    console.log('get alerts req query from frontend');
+    console.log(JSON.stringify(req.query));
+
+    const { callAsCurrentUser } = this.esDriver.asScoped(req);
+    try {
+      const resp = await callAsCurrentUser('alerting.getWorkflowAlerts', req.query);
+      console.log('Get workflow alerts response *****');
+      console.log(JSON.stringify(resp));
+
+      return res.ok({
+        body: {
+          ok: true,
+          resp,
         },
       });
     } catch (err) {
