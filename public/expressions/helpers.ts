@@ -59,15 +59,16 @@ export const convertAlertsToLayer = (
   error?: VisLayerError,
 ): PointInTimeEventsVisLayer => {
   const events = alerts.map((alert) => {
+    const timestamp = alert.end_time ? alert.start_time + (alert.end_time - alert.start_time) / 2 : alert.start_time;
     return {
-      timestamp: alert.start_time + (alert.end_time - alert.start_time) / 2,
+      timestamp: timestamp,
       metadata: {
         pluginResourceId: monitorId,
       },
     };
   });
   return {
-    originPlugin: 'Alerting',
+    originPlugin: 'alertingDashboards',
     events,
     pluginResource: {
       type: 'Alerting Monitors',
