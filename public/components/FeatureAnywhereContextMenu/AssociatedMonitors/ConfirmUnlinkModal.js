@@ -5,25 +5,17 @@
 
 import React, { useState } from 'react';
 import {
-  EuiText,
-  EuiOverlayMask,
   EuiButton,
   EuiButtonEmpty,
   EuiModal,
-  EuiModalHeader,
-  EuiModalFooter,
   EuiModalBody,
+  EuiModalFooter,
+  EuiModalHeader,
   EuiModalHeaderTitle,
+  EuiOverlayMask,
   EuiSpacer,
+  EuiText,
 } from '@elastic/eui';
-
-// interface ConfirmUnlinkDetectorModalProps {
-//   detector: DetectorListItem;
-//   onUnlinkDetector(): void;
-//   onHide(): void;
-//   onConfirm(): void;
-//   isListLoading: boolean;
-// }
 
 export const ConfirmUnlinkDetectorModal = (props) => {
   const [isModalLoading, setIsModalLoading] = useState(false);

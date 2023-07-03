@@ -12,10 +12,10 @@ exports[`AssociatedMonitors renders 1`] = `
         id="associated-monitors__title"
       >
         Associated monitors
-         
       </h2>
     </EuiTitle>
   </EuiFlyoutHeader>
+  <EuiFlyoutHeader />
   <EuiFlyoutBody>
     <EuiFlexGroup
       alignItems="center"
@@ -23,7 +23,9 @@ exports[`AssociatedMonitors renders 1`] = `
     >
       <EuiFlexItem>
         <EuiText>
-          <h4 />
+          <h4>
+            Visualization: 
+          </h4>
         </EuiText>
       </EuiFlexItem>
       <EuiFlexItem
@@ -32,6 +34,7 @@ exports[`AssociatedMonitors renders 1`] = `
         <EuiButton
           fill={true}
           iconType="link"
+          isDisabled={true}
           onClick={[Function]}
         >
           Associate a monitor
@@ -47,6 +50,7 @@ exports[`AssociatedMonitors renders 1`] = `
           Object {
             "field": "name",
             "name": "Monitor Name",
+            "render": [Function],
             "sortable": true,
             "truncateText": true,
             "width": "50%",
@@ -60,7 +64,7 @@ exports[`AssociatedMonitors renders 1`] = `
           },
           Object {
             "field": "date",
-            "name": "Last alert",
+            "name": "Latest alert",
             "render": [Function],
             "sortable": true,
             "truncateText": true,

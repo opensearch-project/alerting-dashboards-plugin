@@ -1,17 +1,16 @@
 import React, { useCallback, useState } from 'react';
 import {
-  EuiFlyout,
-  EuiFlyoutHeader,
-  EuiTitle,
-  EuiText,
-  EuiSpacer,
-  EuiInMemoryTable,
-  EuiFlyoutBody,
-  EuiEmptyPrompt,
   EuiButton,
+  EuiEmptyPrompt,
   EuiFlexGroup,
   EuiFlexItem,
+  EuiFlyoutBody,
+  EuiFlyoutHeader,
+  EuiInMemoryTable,
   EuiLoadingSpinner,
+  EuiSpacer,
+  EuiText,
+  EuiTitle,
 } from '@elastic/eui';
 import './styles.scss';
 import { useColumns } from './helpers';
@@ -19,7 +18,7 @@ import { ConfirmUnlinkDetectorModal } from './ConfirmUnlinkModal';
 import { deleteAlertingAugmentVisSavedObj } from '../../../utils/savedObjectHelper';
 import { getNotifications } from '../../../services';
 
-const AssociatedMonitors = ({ embeddable, closeFlyout, setFlyoutMode, monitors, isAssociateAllowed, limitReachedCallout, state }) => {
+const AssociatedMonitors = ({ embeddable, closeFlyout, setFlyoutMode, monitors, isAssociateAllowed, limitReachedCallout, setAssociatedMonitors }) => {
   const title = embeddable.vis.title;
   const [modalState, setModalState] = useState(undefined);
   const notifications = getNotifications();
@@ -34,9 +33,8 @@ const AssociatedMonitors = ({ embeddable, closeFlyout, setFlyoutMode, monitors, 
   const onEdit = useCallback(
     (item) => {
       window.open(`alerting#/monitors/${item.id}?action=update-monitor`, '_blank');
-      // closeFlyout();
     },
-    [closeFlyout]
+    []
   );
   const onUnlinkMonitor = useCallback(async () => {
     try {
@@ -46,10 +44,8 @@ const AssociatedMonitors = ({ embeddable, closeFlyout, setFlyoutMode, monitors, 
         text:
           "The monitor's alerts do not automatically appear on the visualization. Refresh your dashboard to update the visualization.",
       });
-      // Need to remove the monitor the below does not work.
-      // maybe need to export
       const newMonitors = monitors.filter((monitor) => monitor.id !== modalState.monitor.id);
-      state.setMonitors(newMonitors);
+      setAssociatedMonitors(newMonitors);
     } catch (e) {
       notifications.toasts.addDanger(
         `Failed to remove the association between the "${modalState.monitor.name}" monitor with the ${title} visualization. Failed due to ${e.message}.`
