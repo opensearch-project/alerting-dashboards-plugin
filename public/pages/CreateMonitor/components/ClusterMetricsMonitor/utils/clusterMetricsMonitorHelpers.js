@@ -74,7 +74,8 @@ export const getExamplePathParams = (apiType) => {
 
 export const getApiType = (uri) => {
   let apiType = '';
-  const path = _.get(uri, 'path');
+  // Trim '/' characters from the beginning and end of the path
+  const path = _.get(uri, 'path')?.replace(/^\/+|\/+$/g, '');
   if (_.isEmpty(path)) return apiType;
   _.keys(API_TYPES).forEach((apiTypeKey) => {
     const withPathParams = _.get(API_TYPES, `${apiTypeKey}.paths.withPathParams`);

@@ -8,7 +8,10 @@ import moment from 'moment-timezone';
 import { BUCKET_COUNT, DEFAULT_COMPOSITE_AGG_SIZE, FORMIK_INITIAL_VALUES } from './constants';
 import { MONITOR_TYPE, SEARCH_TYPE } from '../../../../../utils/constants';
 import { OPERATORS_QUERY_MAP } from './whereFilters';
-import { API_TYPES } from '../../../components/ClusterMetricsMonitor/utils/clusterMetricsMonitorConstants';
+import {
+  API_TYPES,
+  URL_DEFAULT_PREFIX,
+} from '../../../components/ClusterMetricsMonitor/utils/clusterMetricsMonitorConstants';
 import {
   getApiPath,
   getApiType,
@@ -118,13 +121,13 @@ export function formikToClusterMetricsInput(values) {
   let pathParams = _.get(values, 'uri.path_params', FORMIK_INITIAL_VALUES.uri.path_params);
   pathParams = _.trim(pathParams);
   const hasPathParams = !_.isEmpty(pathParams);
-  if (hasPathParams) _.concat(pathParams, _.get(API_TYPES, `${apiType}.appendText`, ''));
-  let path = _.get(values, 'uri.path', FORMIK_INITIAL_VALUES.uri.path);
-  if (_.isEmpty(path)) path = getApiPath(hasPathParams, apiType);
-  const canConstructUrl = !_.isEmpty(apiType);
-  const url = canConstructUrl
-    ? `http://localhost:9200/${path}${pathParams}`
-    : FORMIK_INITIAL_VALUES.uri.url;
+  const path = getApiPath(hasPathParams, apiType);
+  let url = FORMIK_INITIAL_VALUES.uri.url;
+  if (!_.isEmpty(apiType)) {
+    url = URL_DEFAULT_PREFIX;
+    if (!_.isEmpty(path)) url = url + '/' + path;
+    if (hasPathParams) url = url + '/' + pathParams + _.get(API_TYPES, `${apiType}.appendText`, '');
+  }
   return {
     uri: {
       api_type: apiType,
@@ -144,15 +147,8 @@ export function formikToAd(values) {
 }
 
 export function formikToUiSearch(values) {
-  const {
-    searchType,
-    timeField,
-    aggregations,
-    groupBy,
-    bucketValue,
-    bucketUnitOfTime,
-    filters,
-  } = values;
+  const { searchType, timeField, aggregations, groupBy, bucketValue, bucketUnitOfTime, filters } =
+    values;
   return {
     searchType,
     timeField,
