@@ -5,6 +5,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { EuiCallOut } from '@elastic/eui';
+import AssociatedMonitors from '../AssociatedMonitors';
 import { retrieveAssociatedMonitors, retrieveUnassociatedMonitors } from '../../../utils/contextMenu/monitors';
 import { validateAssociationIsAllow } from '../../../utils/savedObjectHelper';
 import { getUISettings } from '../../../services';
@@ -40,8 +41,8 @@ const Container = ({ defaultFlyoutMode, ...props }) => {
     </EuiCallOut>
   );
 
-  // Add Associated and Add Alerting monitors pieces in future commit
   const Flyout = {
+    associated: AssociatedMonitors,
   }[flyoutMode];
 
   return (
@@ -56,6 +57,7 @@ const Container = ({ defaultFlyoutMode, ...props }) => {
         index,
         isAssociateAllowed,
         limitReachedCallout,
+        setAssociatedMonitors
       }}
     />
   );
