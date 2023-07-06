@@ -37,7 +37,7 @@ const Container = ({ defaultFlyoutMode, ...props }) => {
 
   const limitReachedCallout = (
     <EuiCallOut title={limitReachedTitle} color="warning" iconType="alert">
-      Adding more objects may affect cluster performance and prevent dashboards from rendering properly. Remove associations before add new ones.
+      Adding more objects may affect cluster performance and prevent dashboards from rendering properly. Remove associations before adding new ones.
     </EuiCallOut>
   );
 
