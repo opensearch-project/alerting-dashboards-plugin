@@ -88,7 +88,8 @@ class ConfigureTriggers extends React.Component {
         this.onQueryMappings();
         break;
       case MONITOR_TYPE.CLUSTER_METRICS:
-        if (canExecuteClusterMetricsMonitor(uri)) this.onRunExecute();
+        const numOfTriggers = _.get(this.props.triggerValues, 'triggerDefinitions', []).length;
+        if (numOfTriggers > 0 && canExecuteClusterMetricsMonitor(uri)) this.onRunExecute();
         break;
     }
   };
