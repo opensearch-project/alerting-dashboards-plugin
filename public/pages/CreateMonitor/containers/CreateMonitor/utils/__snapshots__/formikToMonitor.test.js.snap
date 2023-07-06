@@ -49,7 +49,7 @@ exports[`formikToClusterMetricsUri can build a ClusterMetricsMonitor request wit
 Object {
   "uri": Object {
     "api_type": "",
-    "path": "params",
+    "path": "",
     "path_params": "",
     "url": "",
   },
