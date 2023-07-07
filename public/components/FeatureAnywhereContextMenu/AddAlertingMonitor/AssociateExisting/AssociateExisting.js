@@ -27,7 +27,7 @@ function AssociateExisting({ monitors, selectedMonitorId, setSelectedMonitorId }
       return [];
     }
 
-    const monitor = (monitors || []).find((monitor) => monitor.id === selectedMonitorId);
+    const monitor = monitors.find((monitor) => monitor.id === selectedMonitorId);
     return monitor ? [{ label: monitor.name }] : [];
   }, [selectedMonitorId, monitors]);
   const monitor = useMemo(
@@ -44,6 +44,33 @@ function AssociateExisting({ monitors, selectedMonitorId, setSelectedMonitorId }
       label: monitor.name,
     }));
   }, [monitors]);
+
+  const monitorDetails = useMemo(() => {
+    if (monitor) {
+      return [
+        ['Type', (monitor) => monitor.type],
+        ['Indexes', (monitor) => monitor.indexes],
+        ['Triggers', (monitor) => monitor.triggers.length],
+        ['Active alerts', (monitor) => monitor.activeAlerts],
+        [
+          'Last alert',
+          (monitor) => {
+            if (monitor.date) {
+              return new Intl.DateTimeFormat('default', dateOptionsLong).format(monitor.date);
+            } else {
+              return '-';
+            }
+          },
+        ],
+      ].map(([label, getValue]) => (
+        <li key={label}>
+          <EuiText>
+            <strong>{label}</strong>: {getValue(monitor)}
+          </EuiText>
+        </li>
+      ));
+    }
+  }, [monitor]);
 
   return (
     <div className="associate-existing">
@@ -73,7 +100,7 @@ function AssociateExisting({ monitors, selectedMonitorId, setSelectedMonitorId }
           onChange={(selectedOptions) => {
             let id = null;
 
-            if (selectedOptions && selectedOptions.length) {
+            if (selectedOptions?.length) {
               const match = monitors.find((monitor) => monitor.name === selectedOptions[0].label);
               id = match && match.id;
             }
@@ -88,7 +115,6 @@ function AssociateExisting({ monitors, selectedMonitorId, setSelectedMonitorId }
       )}
       <EuiSpacer size="xl" />
       {monitor && (
-        // const monitorLink = "/app/alerting#/monitors/" + monitor.id;
         <>
           <EuiFlexGroup justifyContent="spaceBetween" alignItems="flexStart">
             <EuiFlexItem>
@@ -107,31 +133,7 @@ function AssociateExisting({ monitors, selectedMonitorId, setSelectedMonitorId }
             </EuiFlexItem>
           </EuiFlexGroup>
           <EuiHorizontalRule margin="m" />
-          <ul className="associate-existing__monitor-details">
-            {[
-              ['Type', (monitor) => monitor.type],
-              ['Indexes', (monitor) => monitor.indexes],
-              ['Triggers', (monitor) => monitor.triggers.length],
-              ['Active alerts', (monitor) => monitor.activeAlerts],
-              [
-                'Last alert',
-                (monitor) => {
-                  if (monitor.date) {
-                    return new Intl.DateTimeFormat('default', dateOptionsLong).format(monitor.date);
-                  } else {
-                    return '-';
-                  }
-                  // return new Intl.DateTimeFormat('default', dateOptionsShort).format(monitor.date)
-                },
-              ],
-            ].map(([label, getValue]) => (
-              <li key={label}>
-                <EuiText>
-                  <strong>{label}</strong>: {getValue(monitor)}
-                </EuiText>
-              </li>
-            ))}
-          </ul>
+          <ul className="associate-existing__monitor-details">{monitorDetails}</ul>
         </>
       )}
     </div>

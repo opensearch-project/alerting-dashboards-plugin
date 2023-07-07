@@ -54,7 +54,8 @@ class ConfigureActions extends React.Component {
     super(props);
     const { values, fieldPath } = props;
     const firstActionId = _.get(values, `${fieldPath}actions[0].id`, '');
-    const accordionsOpen = firstActionId ? { [0]: true } : {};
+    const startActionIndex = 0;
+    const accordionsOpen = firstActionId ? { [startActionIndex]: true } : {};
 
     this.state = {
       destinations: [],

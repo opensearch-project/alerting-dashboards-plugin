@@ -41,8 +41,8 @@ function CreateNew({ embeddable, flyoutMode, formikProps, history, setFlyout, de
   const isAd = values.searchType === SEARCH_TYPE.AD;
   const [accordionsOpen, setAccordionsOpen] = useState(detectorId ? { monitorDetails: true } : {});
   const [isShowVis, setIsShowVis] = useState(false);
-  const title = embeddable.vis.title;
-  const notificationService = useMemo(() => new NotificationService(getClient()), []);
+  const title = embeddable?.vis.title;
+  const notificationService = useMemo(() => new NotificationService(httpClient), []);
 
   const onAccordionToggle = (key) => {
     const newAccordionsOpen = { ...accordionsOpen };
@@ -84,7 +84,6 @@ function CreateNew({ embeddable, flyoutMode, formikProps, history, setFlyout, de
     };
 
     updatePlugins();
-
     createEmbeddable();
   }, []);
 
@@ -109,8 +108,8 @@ function CreateNew({ embeddable, flyoutMode, formikProps, history, setFlyout, de
           <EuiSpacer size="m" />
           <EuiCallOut title="Address the following errors:" color="danger" iconType="alert">
             <ul>
-              {errorList.map((text) => (
-                <li key={text}>{text}</li>
+              {errorList.map((text, index) => (
+                <li key={index}>{text}</li>
               ))}
             </ul>
           </EuiCallOut>
@@ -138,7 +137,7 @@ function CreateNew({ embeddable, flyoutMode, formikProps, history, setFlyout, de
         <>
         <EuiSpacer size="l" />
         <EuiTitle size="s">
-        <h3>Monitor details</h3>
+          <h3>Monitor details</h3>
         </EuiTitle>
         <EuiSpacer size="m" />
 
@@ -159,16 +158,16 @@ function CreateNew({ embeddable, flyoutMode, formikProps, history, setFlyout, de
           ),
         }}
         >
-        <MonitorDetails
-        values={values}
-        errors={errors}
-        history={history}
-        httpClient={httpClient}
-        plugins={plugins}
-        isAd={isAd}
-        detectorId={detectorId}
-        flyoutMode={flyoutMode}
-        />
+          <MonitorDetails
+            values={values}
+            errors={errors}
+            history={history}
+            httpClient={httpClient}
+            plugins={plugins}
+            isAd={isAd}
+            detectorId={detectorId}
+            flyoutMode={flyoutMode}
+          />
         </EnhancedAccordion>
         <EuiSpacer size="m" />
       {!isAd && (
@@ -180,43 +179,43 @@ function CreateNew({ embeddable, flyoutMode, formikProps, history, setFlyout, de
           title: 'Advanced data source configuration',
         }}
         >
-        <DefineMonitor
-        values={values}
-        errors={errors}
-        touched={touched}
-        httpClient={httpClient}
-        location={location}
-        detectorId={detectorId}
-        notifications={notifications}
-        isDarkMode={isDarkMode}
-        flyoutMode={flyoutMode}
-        />
+          <DefineMonitor
+            values={values}
+            errors={errors}
+            touched={touched}
+            httpClient={httpClient}
+            location={location}
+            detectorId={detectorId}
+            notifications={notifications}
+            isDarkMode={isDarkMode}
+            flyoutMode={flyoutMode}
+          />
         </EnhancedAccordion>
         )}
         <EuiSpacer size="xl" />
         <EuiTitle size="s">
-        <h3>Triggers</h3>
+          <h3>Triggers</h3>
         </EuiTitle>
         <EuiSpacer size="m" />
         <FieldArray name={'triggerDefinitions'} validateOnChange={true}>
-        {(triggerArrayHelpers) => (
-          <ConfigureTriggers
-            triggerArrayHelpers={triggerArrayHelpers}
-            monitor={formikToMonitor(values)}
-            monitorValues={values}
-            setFlyout={setFlyout}
-            triggers={_.get(formikToMonitor(values), 'triggers', [])}
-            triggerValues={values}
-            isDarkMode={isDarkMode}
-            httpClient={httpClient}
-            notifications={notifications}
-            notificationService={notificationService}
-            plugins={plugins}
-            flyoutMode={flyoutMode}
-            submitCount={formikProps.submitCount}
-            errors={errors}
-          />
-        )}
+          {(triggerArrayHelpers) => (
+            <ConfigureTriggers
+              triggerArrayHelpers={triggerArrayHelpers}
+              monitor={formikToMonitor(values)}
+              monitorValues={values}
+              setFlyout={setFlyout}
+              triggers={_.get(formikToMonitor(values), 'triggers', [])}
+              triggerValues={values}
+              isDarkMode={isDarkMode}
+              httpClient={httpClient}
+              notifications={notifications}
+              notificationService={notificationService}
+              plugins={plugins}
+              flyoutMode={flyoutMode}
+              submitCount={formikProps.submitCount}
+              errors={errors}
+            />
+          )}
         </FieldArray>
         </>
       )}

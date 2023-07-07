@@ -38,7 +38,8 @@ class ConfigureTriggers extends React.Component {
     super(props);
 
     const firstTriggerId = _.get(props.triggerValues, 'triggerDefinitions[0].id');
-    const accordionsOpen = firstTriggerId ? { [0]: true } : {};
+    const startTriggerIndex = 0;
+    const accordionsOpen = firstTriggerId ? { [startTriggerIndex]: true } : {};
 
     this.state = {
       dataTypes: {},

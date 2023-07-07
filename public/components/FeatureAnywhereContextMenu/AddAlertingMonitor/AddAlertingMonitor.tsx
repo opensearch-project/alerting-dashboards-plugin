@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useState, useCallback } from 'react';
 import {
   EuiFlexItem,
   EuiFlexGroup,
@@ -52,10 +52,10 @@ function AddAlertingMonitor({
     goBack: closeFlyout,
   };
   const setFlyout = () => null;
-  const httpClient = getClient().httpClient;
+  const httpClient = getClient();
   const notifications = getNotifications();
-  const title = embeddable.vis.title;
-  const timeField = embeddable.vis?.data?.aggs?.aggs?.[1]?.params?.field?.displayName;
+  const title = embeddable.vis?.title;
+  const timeField = _.get(embeddable, 'vis.data.aggs.aggs.[1].params.field.displayName');
   const searchType = flyoutMode === 'adMonitor' ? SEARCH_TYPE.AD : '';
   const initialValues = useMemo(
     () =>
@@ -65,8 +65,8 @@ function AddAlertingMonitor({
   const [isLoading, setIsLoading] = useState(false);
   const [showErrors, setShowErrors] = useState(false);
 
-  const onCreate = async (values, formikBag) => {
-    if ((await validateAssociationIsAllow(embeddable.vis.id, true)) === true) {
+  const onCreate = useCallback( async (values, formikBag) => {
+    if (await validateAssociationIsAllow(embeddable.vis.id, true)) {
       submit({
         values,
         formikBag,
@@ -91,8 +91,8 @@ function AddAlertingMonitor({
         },
       });
     }
-  };
-  const onAssociateExisting = async () => {
+  }, [history, notifications, httpClient, closeFlyout, title, embeddable]);
+  const onAssociateExisting = useCallback( async () => {
     const monitorName = _.get(
       monitors.find((monitor) => monitor.id === selectedMonitorId),
       'name',
@@ -114,8 +114,8 @@ function AddAlertingMonitor({
           `Monitor "${monitorName}" failed to associate with the ${title} visualization due to ${error.message}.`
         );
       });
-  };
-  const onSubmit = async ({ handleSubmit, validateForm }) => {
+  }, [monitors, selectedMonitorId, embeddable, closeFlyout, notifications, title]);
+  const onSubmit = useCallback( async ({ handleSubmit, validateForm }) => {
     setIsLoading(true);
     if (['create', 'adMonitor'].includes(flyoutMode)) {
       const errors = await validateForm();
@@ -135,7 +135,7 @@ function AddAlertingMonitor({
     } else if (flyoutMode === 'existing') {
       onAssociateExisting();
     }
-  };
+  }, [setIsLoading, flyoutMode, setShowErrors, onAssociateExisting]);
 
   return (
     <div className="add-alerting-monitor">

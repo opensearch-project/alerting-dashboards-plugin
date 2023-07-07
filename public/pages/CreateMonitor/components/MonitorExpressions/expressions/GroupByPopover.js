@@ -50,11 +50,6 @@ export default function GroupByPopover(
     >
       <EuiFlexGroup direction="column" gutterSize="xs">
         <EuiFlexItem>
-          {/*<EuiText size="xs">*/}
-          {/*  <h4>Field</h4>*/}
-          {/*</EuiText>*/}
-        </EuiFlexItem>
-        <EuiFlexItem>
           <FormikComboBox
             name={`groupBy.${index}`}
             formRow

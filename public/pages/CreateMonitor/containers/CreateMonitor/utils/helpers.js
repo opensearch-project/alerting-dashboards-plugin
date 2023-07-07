@@ -126,7 +126,7 @@ export const prepareTriggers = ({
       triggers: { ...uiMetadata.triggers, ...triggerMetadata },
     };
   } else {
-    let updatedTriggersMetadata = _.cloneDeep(uiMetadata.triggers || {});
+    const updatedTriggersMetadata = _.cloneDeep(uiMetadata.triggers || {});
 
     let triggerType;
     switch (monitor_type) {

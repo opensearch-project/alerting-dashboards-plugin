@@ -3,6 +3,6 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import AddAlertingMonitor from './AddAlertingMonitor.tsx';
+import AddAlertingMonitor from './AddAlertingMonitor';
 
 export default AddAlertingMonitor;

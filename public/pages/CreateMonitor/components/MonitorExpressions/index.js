@@ -3,6 +3,6 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import MonitorExpressions from './MonitorExpressions.tsx';
+import MonitorExpressions from './MonitorExpressions';
 
 export default MonitorExpressions;

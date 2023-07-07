@@ -3,6 +3,6 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import Container from './Container.tsx';
+import Container from './Container';
 
 export default Container;
