@@ -4,84 +4,73 @@ exports[`AddAlertingMonitor renders 1`] = `
 <div
   className="add-alerting-monitor"
 >
-  <EuiFlyoutHeader
-    hasBorder={true}
-  >
-    <EuiTitle>
-      <h2
-        id="add-alerting-monitor__title"
-      >
-        Add alerting monitor
-      </h2>
-    </EuiTitle>
-  </EuiFlyoutHeader>
-  <EuiFlyoutBody>
-    <div
-      className="add-alerting-monitor__scroll"
-    >
-      <EuiFormFieldset
-        className="add-alerting-monitor__modes"
-        legend={
+  <Formik
+    initialValues={
+      Object {
+        "adResultIndex": undefined,
+        "aggregationType": "count",
+        "aggregations": Array [],
+        "bucketUnitOfTime": "h",
+        "bucketValue": 1,
+        "cronExpression": "0 */1 * * *",
+        "daily": 0,
+        "description": "",
+        "detectorId": "",
+        "disabled": false,
+        "fieldName": Array [],
+        "filters": Array [],
+        "frequency": "interval",
+        "groupBy": Array [],
+        "groupByField": Array [
           Object {
-            "children": <EuiTitle>
-              <span>
-                Options to create a new monitor or associate an existing monitor
-              </span>
-            </EuiTitle>,
-            "display": "hidden",
-          }
-        }
-      >
-        <EuiCheckableCard
-          checked={false}
-          id="add-alerting-monitor__create"
-          key="add-alerting-monitor__create"
-          label="Create new monitor"
-          name="add-alerting-monitor__create"
-          onChange={[Function]}
-          value="create"
-        />
-        <EuiCheckableCard
-          checked={false}
-          id="add-alerting-monitor__existing"
-          key="add-alerting-monitor__existing"
-          label="Associate existing monitor"
-          name="add-alerting-monitor__existing"
-          onChange={[Function]}
-          value="existing"
-        />
-      </EuiFormFieldset>
-      <EuiSpacer
-        size="m"
-      />
-      <EuiSpacer
-        size="l"
-      />
-    </div>
-  </EuiFlyoutBody>
-  <EuiFlyoutFooter>
-    <EuiFlexGroup
-      justifyContent="spaceBetween"
-    >
-      <EuiFlexItem
-        grow={false}
-      >
-        <EuiButtonEmpty>
-          Cancel
-        </EuiButtonEmpty>
-      </EuiFlexItem>
-      <EuiFlexItem
-        grow={false}
-      >
-        <EuiButton
-          fill={true}
-          onClick={[Function]}
-        >
-          Create
-           monitor
-        </EuiButton>
-      </EuiFlexItem>
-    </EuiFlexGroup>
-  </EuiFlyoutFooter>
+            "label": "",
+          },
+        ],
+        "groupedOverFieldName": "bytes",
+        "groupedOverTop": 5,
+        "index": Array [],
+        "monitor_type": "query_level_monitor",
+        "monthly": Object {
+          "day": 1,
+          "type": "day",
+        },
+        "name": "",
+        "overDocuments": "all documents",
+        "period": Object {
+          "interval": 1,
+          "unit": "MINUTES",
+        },
+        "queries": Array [],
+        "query": "{
+    \\"size\\": 0,
+    \\"query\\": {
+        \\"match_all\\": {}
+    }
+}",
+        "searchType": "graph",
+        "timeField": "",
+        "timezone": Array [],
+        "uri": Object {
+          "api_type": "",
+          "path": "",
+          "path_params": "",
+          "url": "",
+        },
+        "weekly": Object {
+          "fri": false,
+          "mon": false,
+          "sat": false,
+          "sun": false,
+          "thur": false,
+          "tue": false,
+          "wed": false,
+        },
+      }
+    }
+    onSubmit={[Function]}
+    validateOnChange={false}
+  >
+    <Component />
+  </Formik>
 </div>
 `;

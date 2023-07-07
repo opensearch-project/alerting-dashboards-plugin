@@ -4,18 +4,55 @@
  */
 
 import React from 'react';
-import { uiSettingsServiceMock } from '../../../../../../src/core/public/mocks';
+import {
+  uiSettingsServiceMock,
+  notificationServiceMock,
+  httpServiceMock,
+} from '../../../../../../../src/core/public/mocks';
 import { shallow } from 'enzyme';
 import CreateNew from './CreateNew';
-import { setUISettings } from '../../../../services';
+import { setClient, setUISettings, setNotifications } from '../../../../services';
+import { getInitialValues } from '../../../../pages/CreateMonitor/containers/CreateMonitor/utils/helpers';
 
 describe('CreateNew', () => {
   const uiSettingsMock = uiSettingsServiceMock.createStartContract();
   setUISettings(uiSettingsMock);
+  const notifications = notificationServiceMock.createStartContract();
+  setNotifications(notifications);
+  const httpClient = httpServiceMock.createStartContract();
+  setClient(httpClient);
   test('renders', () => {
+    const location = { pathname: '/create-monitor', search: '', hash: '', state: undefined };
+    const title = 'title';
+    const index = 'index';
+    const timeField = 'timeField';
+    const flyoutMode = 'create';
+    const searchType = flyoutMode === 'adMonitor' ? SEARCH_TYPE.AD : '';
+
+    const initalValues = getInitialValues({
+      location,
+      title,
+      index,
+      timeField,
+      flyoutMode,
+      searchType,
+      detectorId: null,
+      embeddable: null,
+    });
+    const formikProps = {
+      values: initalValues,
+      errors: {},
+      touched: {},
+      isSubmitting: false,
+      isValid: false,
+    };
     const wrapper = shallow(
       <CreateNew
-        {...{ embeddable: { getTitle: () => '', vis: { params: {} } }, core: { http: {} } }}
+        {...{
+          formikProps,
+          embeddable: { getTitle: () => title, vis: { params: {} } },
+          core: { http: {} },
+        }}
       />
     );
     expect(wrapper).toMatchSnapshot();

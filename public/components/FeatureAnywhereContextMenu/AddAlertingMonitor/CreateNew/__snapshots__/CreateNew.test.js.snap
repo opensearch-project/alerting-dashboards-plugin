@@ -48,41 +48,7 @@ exports[`CreateNew renders 1`] = `
     <EuiSpacer
       size="s"
     />
-    <EmbeddablePanel
-      embeddable={
-        Object {
-          "getTitle": [Function],
-          "vis": Object {
-            "params": Object {},
-          },
-        }
-      }
-      getActions={[Function]}
-      hideHeader={true}
-      inspector={
-        Object {
-          "isAvailable": [Function],
-        }
-      }
-      isBorderless={true}
-      isRetained={true}
-    />
+    <EmbeddableRenderer />
   </div>
-  <EuiSpacer
-    size="l"
-  />
-  <EuiTitle
-    size="s"
-  >
-    <h3>
-      Monitor details
-    </h3>
-  </EuiTitle>
-  <EuiSpacer
-    size="m"
-  />
-  <EuiLoadingSpinner
-    size="l"
-  />
 </div>
 `;

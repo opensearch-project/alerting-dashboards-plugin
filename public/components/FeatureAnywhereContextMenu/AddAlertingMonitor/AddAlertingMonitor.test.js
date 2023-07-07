@@ -4,16 +4,18 @@
  */
 
 import React from 'react';
-import { httpServiceMock } from '../../../../../../src/core/public/mocks';
+import { httpServiceMock, notificationServiceMock } from '../../../../../../src/core/public/mocks';
 import { shallow } from 'enzyme';
 import AddAlertingMonitor from './AddAlertingMonitor';
-import { setClient } from '../../../services';
+import { setClient, setNotifications } from '../../../services';
 
 describe('AddAlertingMonitor', () => {
   const httpClient = httpServiceMock.createStartContract();
   setClient(httpClient);
+  const notifications = notificationServiceMock.createStartContract();
+  setNotifications(notifications);
   test('renders', () => {
-    const wrapper = shallow(<AddAlertingMonitor {...{ embeddable: { getTitle: () => '' } }} />);
+    const wrapper = shallow(<AddAlertingMonitor {...{ embeddable: { vis: { title: '' } } }} />);
     expect(wrapper).toMatchSnapshot();
   });
 });
