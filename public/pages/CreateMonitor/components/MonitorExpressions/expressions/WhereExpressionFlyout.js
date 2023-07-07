@@ -31,7 +31,13 @@ import {
   isRangeOperator,
   getIsDataFilterActive,
 } from './utils/whereHelpers';
-import { hasError, isInvalid, required, requiredValidation } from '../../../../../utils/validate';
+import {
+  hasError,
+  isInvalid,
+  isInvalidWithoutTouch,
+  required,
+  requiredValidation,
+} from '../../../../../utils/validate';
 import {
   FormikComboBox,
   FormikSelect,
@@ -179,7 +185,7 @@ class WhereExpressionFlyout extends Component {
           inputProps={{ onChange: this.handleChangeWrapper }}
           fieldProps={{ validate: requiredValidation(validationString) }}
           formRow
-          rowProps={{ label: 'Value', isInvalid, error: hasError }}
+          rowProps={{ label: 'Value', isInvalid: isInvalidWithoutTouch, error: hasError }}
         />
       );
     } else if (fieldType === DATA_TYPES.BOOLEAN) {
@@ -188,7 +194,7 @@ class WhereExpressionFlyout extends Component {
           name={`${fieldPath}where.fieldValue`}
           fieldProps={{ validate: requiredValidation(validationString) }}
           formRow
-          rowProps={{ label: 'Value', isInvalid, error: hasError }}
+          rowProps={{ label: 'Value', isInvalid: isInvalidWithoutTouch, error: hasError }}
           inputProps={{
             onChange: this.handleChangeWrapper,
             options: WHERE_BOOLEAN_FILTERS,
@@ -202,7 +208,7 @@ class WhereExpressionFlyout extends Component {
           name={`${fieldPath}where.fieldValue`}
           fieldProps={{ validate: requiredValidation(validationString) }}
           formRow
-          rowProps={{ label: 'Value', isInvalid, error: hasError }}
+          rowProps={{ label: 'Value', isInvalid: isInvalidWithoutTouch, error: hasError }}
           inputProps={{ onChange: this.handleChangeWrapper, isInvalid }}
         />
       );
@@ -253,7 +259,7 @@ class WhereExpressionFlyout extends Component {
                 fieldProps={{ validate: requiredValidation(validationString) }}
                 rowProps={{
                   label: flyoutMode ? 'Field' : '',
-                  isInvalid,
+                  isInvalid: isInvalidWithoutTouch,
                   error: hasError,
                 }}
                 inputProps={{
@@ -273,11 +279,8 @@ class WhereExpressionFlyout extends Component {
               <FormikSelect
                 name={`${fieldPath}where.operator`}
                 formRow
-                fieldProps={{ validate: required }}
                 rowProps={{
                   label: flyoutMode ? 'Operator' : '',
-                  isInvalid,
-                  error: hasError,
                 }}
                 inputProps={{
                   onChange: this.handleOperatorChange,
@@ -313,7 +316,6 @@ class WhereExpressionFlyout extends Component {
             {badge}
             <EuiSpacer size="s" />
             <div>{inputs}</div>
-            {/*{inputs}*/}
           </>
         )}
         {!flyoutMode && (

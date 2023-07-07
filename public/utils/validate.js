@@ -13,6 +13,8 @@ import { TRIGGER_TYPE } from '../pages/CreateTrigger/containers/CreateTrigger/ut
 export const isInvalid = (name, form) =>
   !!_.get(form.touched, name, false) && !!_.get(form.errors, name, false);
 
+export const isInvalidWithoutTouch = (name, form) => !!_.get(form.errors, name, false);
+
 export const hasError = (name, form) => _.get(form.errors, name);
 
 export const validateActionName = (monitor, trigger) => (value) => {
