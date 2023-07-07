@@ -31,7 +31,7 @@ import {
   isRangeOperator,
   getIsDataFilterActive,
 } from './utils/whereHelpers';
-import { hasError, isInvalid } from '../../../../../utils/validate';
+import { hasError, isInvalid, required, requiredValidation } from '../../../../../utils/validate';
 import {
   FormikComboBox,
   FormikSelect,
@@ -168,6 +168,7 @@ class WhereExpression extends Component {
 
   renderValueField = (fieldType, fieldOperator) => {
     const { fieldPath = '' } = this.props;
+    const validationString = 'Please select a field value for the data filter.';
     if (fieldType === DATA_TYPES.NUMBER) {
       return isRangeOperator(fieldOperator) ? (
         this.renderBetweenAnd()
@@ -175,14 +176,18 @@ class WhereExpression extends Component {
         <FormikFieldNumber
           name={`${fieldPath}where.fieldValue`}
           inputProps={{ onChange: this.handleChangeWrapper }}
+          fieldProps={{ validate: requiredValidation(validationString) }}
           formRow
-          rowProps={{ isInvalid, error: hasError }}
+          rowProps={{ label: 'Value', isInvalid, error: hasError }}
         />
       );
     } else if (fieldType === DATA_TYPES.BOOLEAN) {
       return (
         <FormikSelect
           name={`${fieldPath}where.fieldValue`}
+          fieldProps={{ validate: requiredValidation(validationString) }}
+          formRow
+          rowProps={{ label: 'Value', isInvalid, error: hasError }}
           inputProps={{
             onChange: this.handleChangeWrapper,
             options: WHERE_BOOLEAN_FILTERS,
@@ -194,6 +199,9 @@ class WhereExpression extends Component {
       return (
         <FormikFieldText
           name={`${fieldPath}where.fieldValue`}
+          fieldProps={{ validate: requiredValidation(validationString) }}
+          formRow
+          rowProps={{ label: 'Value', isInvalid, error: hasError }}
           inputProps={{ onChange: this.handleChangeWrapper, isInvalid }}
         />
       );
@@ -211,7 +219,7 @@ class WhereExpression extends Component {
       fieldPath = '',
       flyoutMode,
     } = this.props;
-    const { values } = formik;
+    const { values, errors } = formik;
     const indexFields =
       indexFieldFilters !== undefined
         ? getFilteredIndexFields(dataTypes, ALLOWED_TYPES, indexFieldFilters)
@@ -229,16 +237,25 @@ class WhereExpression extends Component {
       : getOperators(fieldType);
     const whereFilterHeader = useTriggerFieldOperators ? 'Keyword filter' : 'Data filter';
     const showAddButtonFlag = !getIsDataFilterActive({ formik, openedStates, fieldPath });
+    const validationString = 'Please select a field for the data filter.';
+    console.log('some errors');
+    console.log(errors);
     const inputs = (
-      <EuiFlexGroup style={flyoutMode ? {} : { ...EXPRESSION_STYLE }} alignItems="flexEnd">
+      <EuiFlexGroup
+        style={flyoutMode ? {} : { ...EXPRESSION_STYLE }}
+        alignItems={flyoutMode ? 'flexStart' : 'flexEnd'}
+      >
         <EuiFlexItem grow={false} style={{ width: 200 }}>
           <EuiFlexGroup direction="column" gutterSize="xs">
             <EuiFlexItem>
               <FormikComboBox
                 name={`${fieldPath}where.fieldName`}
                 formRow
+                fieldProps={{ validate: requiredValidation(validationString) }}
                 rowProps={{
                   label: flyoutMode ? 'Field' : '',
+                  isInvalid,
+                  error: hasError,
                 }}
                 inputProps={{
                   placeholder: 'Select a field',
@@ -257,8 +274,11 @@ class WhereExpression extends Component {
               <FormikSelect
                 name={`${fieldPath}where.operator`}
                 formRow
+                fieldProps={{ validate: required }}
                 rowProps={{
                   label: flyoutMode ? 'Operator' : '',
+                  isInvalid,
+                  error: hasError,
                 }}
                 inputProps={{
                   onChange: this.handleOperatorChange,
@@ -293,7 +313,8 @@ class WhereExpression extends Component {
           <>
             {badge}
             <EuiSpacer size="s" />
-            {inputs}
+            <div>{inputs}</div>
+            {/*{inputs}*/}
           </>
         )}
         {!flyoutMode && (

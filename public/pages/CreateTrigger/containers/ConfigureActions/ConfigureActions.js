@@ -54,7 +54,7 @@ class ConfigureActions extends React.Component {
     super(props);
     const { values, fieldPath } = props;
     const firstActionId = _.get(values, `${fieldPath}actions[0].id`, '');
-    const accordionsOpen = firstActionId ? { [firstActionId]: true } : {};
+    const accordionsOpen = firstActionId ? { [0]: true } : {};
 
     this.state = {
       destinations: [],
@@ -63,6 +63,7 @@ class ConfigureActions extends React.Component {
       loadingDestinations: true,
       actionDeleted: false,
       hasNotificationPlugin: false,
+      currentSubmitCount: 0,
       accordionsOpen,
       isInitialLoading: true,
     };
@@ -93,8 +94,9 @@ class ConfigureActions extends React.Component {
   }
 
   onAccordionToggle = (key) => {
-    const accordionsOpen = { [key]: !this.state.accordionsOpen[key] };
-    this.setState({ accordionsOpen });
+    const accordionsOpen = { ...this.state.accordionsOpen };
+    accordionsOpen[key] = !accordionsOpen[key];
+    this.setState({ accordionsOpen, currentSubmitCount: this.props.submitCount });
   };
 
   /**
@@ -277,8 +279,24 @@ class ConfigureActions extends React.Component {
   };
 
   renderActions = (arrayHelpers) => {
-    const { context, setFlyout, values, fieldPath, httpClient, plugins, flyoutMode } = this.props;
-    const { destinations, flattenedDestinations, accordionsOpen, isInitialLoading } = this.state;
+    const {
+      context,
+      setFlyout,
+      values,
+      fieldPath,
+      httpClient,
+      plugins,
+      flyoutMode,
+      submitCount,
+      errors,
+    } = this.props;
+    const {
+      destinations,
+      flattenedDestinations,
+      accordionsOpen,
+      isInitialLoading,
+      currentSubmitCount,
+    } = this.state;
     const hasDestinations = !_.isEmpty(destinations);
     const hasActions = !_.isEmpty(_.get(values, `${fieldPath}actions`));
     const shouldRenderActions = hasActions || (hasDestinations && hasActions);
@@ -288,6 +306,10 @@ class ConfigureActions extends React.Component {
     return shouldRenderActions ? (
       _.get(values, `${fieldPath}actions`).map((action, index) => {
         const key = action.id;
+        if (flyoutMode && submitCount > currentSubmitCount) {
+          accordionsOpen[index] =
+            accordionsOpen?.[index] || 'actions' in errors.triggerDefinitions[index];
+        }
 
         return (
           <Action
@@ -311,8 +333,8 @@ class ConfigureActions extends React.Component {
             loadDestinations={this.loadDestinations}
             flyoutMode={flyoutMode}
             accordionProps={{
-              isOpen: accordionsOpen[key],
-              onToggle: () => this.onAccordionToggle(key),
+              isOpen: accordionsOpen[index],
+              onToggle: () => this.onAccordionToggle(index),
             }}
             isInitialLoading={isInitialLoading}
           />

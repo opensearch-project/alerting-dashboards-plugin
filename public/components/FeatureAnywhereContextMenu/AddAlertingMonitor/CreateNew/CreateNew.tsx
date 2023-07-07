@@ -59,6 +59,13 @@ function CreateNew({ embeddable, flyoutMode, formikProps, history, setFlyout, de
       Object.keys(errorPaths).forEach((path) => {
         errorList.add(errorPaths[path]);
       });
+      // Set accordion values if there are errors for top level
+      const newAccordionsOpen = { ...accordionsOpen };
+      if (!newAccordionsOpen.advancedData)
+        newAccordionsOpen.advancedData = 'aggregations' in errors || 'groupBy' in errors || 'where' in errors || 'bucketValue' in errors;
+      if (!newAccordionsOpen.monitorDetails)
+        newAccordionsOpen.monitorDetails = 'name' in errors || 'period' in errors;
+      setAccordionsOpen(newAccordionsOpen);
     }
 
     return { isShowingErrors: errorList.size !== 0, errorList: [...errorList] };
@@ -206,6 +213,8 @@ function CreateNew({ embeddable, flyoutMode, formikProps, history, setFlyout, de
             notificationService={notificationService}
             plugins={plugins}
             flyoutMode={flyoutMode}
+            submitCount={formikProps.submitCount}
+            errors={errors}
           />
         )}
         </FieldArray>

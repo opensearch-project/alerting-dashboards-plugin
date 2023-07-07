@@ -3,49 +3,24 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useState } from 'react';
+import React from 'react';
 
 import { EuiButton, EuiButtonEmpty, EuiFlexGroup, EuiFlexItem, EuiSpacer } from '@elastic/eui';
 
 import { AGGREGATION_TYPES, EXPRESSION_STYLE, POPOVER_STYLE } from './utils/constants';
 import { FormikComboBox, FormikSelect } from '../../../../../components/FormControls';
-import _ from 'lodash';
+import { hasError, isInvalid, requiredValidation } from '../../../../../utils/validate';
 
 export default function MetricPopover(
-  { options, closePopover, expressionWidth, index, flyoutMode, aggregation, errors } = this.props
+  { options, closePopover, expressionWidth, index, flyoutMode } = this.props
 ) {
-  const [errorFieldNameMessage, setErrorFieldNameMessage] = useState('');
-
-  const validateFieldName = (value) => {
-    if (!value) {
-      return 'Please select a field for the metric aggregation.';
-    } else {
-      return undefined;
-    }
-  };
-
-  const setValidateFieldName = (value) => {
-    setErrorFieldNameMessage(validateFieldName(value));
-  };
-
-  if (flyoutMode && errors.aggregations === undefined && !aggregation.fieldName) {
-    // && aggregation.fieldName !== undefined )
-    _.set(
-      errors,
-      `aggregations.${index}.aggregationType`,
-      validateFieldName(aggregation.fieldName)
-    );
-  }
+  const validationString = 'Please select a field for the metric aggregation.';
 
   const onChangeAggWrapper = (e, field, form) => {
     form.setFieldValue(`aggregations.${index}.aggregationType`, e.target.value);
   };
   const onChangeFieldWrapper = async (options, field, form) => {
     form.setFieldValue(`aggregations.${index}.fieldName`, options[0].label);
-    const error = validateFieldName(options[0].label);
-    if (error === undefined) {
-      _.unset(errors, `aggregations`);
-    }
   };
 
   return (
@@ -83,11 +58,11 @@ export default function MetricPopover(
               <FormikComboBox
                 name={`aggregations.${index}.fieldName`}
                 formRow
-                fieldProps={{ validate: setValidateFieldName }}
+                fieldProps={{ validate: requiredValidation(validationString) }}
                 rowProps={{
                   label: 'Field',
-                  isInvalid: errorFieldNameMessage !== '' && errorFieldNameMessage !== undefined,
-                  error: errorFieldNameMessage,
+                  isInvalid,
+                  error: hasError,
                 }}
                 inputProps={{
                   placeholder: 'Select a field',

@@ -36,10 +36,12 @@ class MonitorExpressions extends Component {
   constructor(props) {
     super(props);
 
+    const metricAgg = props.formik.values.aggregations?.[0]
     this.state = {
       openedStates: DEFAULT_CLOSED_STATES,
       madeChanges: false,
-      accordionsOpen: {},
+      currentSubmitCount: 0,
+      accordionsOpen: {metrics: (metricAgg?.fieldName === undefined || metricAgg?.fieldName === '')},
       SectionContainer: props.flyoutMode ? MinimalAccordion : ({ children }) => <>{children}</>,
     };
   }
@@ -74,12 +76,13 @@ class MonitorExpressions extends Component {
   });
 
   onAccordionToggle = (key) => {
-    const accordionsOpen = { [key]: !this.state.accordionsOpen[key] };
-    this.setState({ accordionsOpen });
+    const newAccordionsOpen = this.state.accordionsOpen;
+    newAccordionsOpen[key] = !newAccordionsOpen[key];
+    this.setState({ newAccordionsOpen, currentSubmitCount: this.props.formik.submitCount });
   };
 
   render() {
-    const { accordionsOpen, SectionContainer } = this.state;
+    const { accordionsOpen, SectionContainer, currentSubmitCount } = this.state;
     const { dataTypes, errors, flyoutMode, formik } = this.props;
     const unit = UNITS_OF_TIME.find(({ value }) => value === formik?.values?.bucketUnitOfTime);
     const expressionProps = this.getExpressionProps();
@@ -94,7 +97,12 @@ class MonitorExpressions extends Component {
       `${metricAgg.aggregationType.toUpperCase()} OF ${metricAgg.fieldName}. You can add up to 1 metric.` :
       'COUNT OF documents. You can add up to 1 metric.';
 
-    accordionsOpen.metrics = accordionsOpen?.metrics || 'aggregations' in errors || metricAgg?.fieldName === undefined;
+    if (flyoutMode && formik.submitCount > currentSubmitCount) {
+      accordionsOpen.metrics = accordionsOpen?.metrics || 'aggregations' in errors;
+      accordionsOpen.dataFilter = accordionsOpen?.dataFilter || 'where' in errors;
+      accordionsOpen.groupBy = accordionsOpen?.groupBy || 'groupBy' in errors;
+      accordionsOpen.timeRange = accordionsOpen?.groupBy || 'bucketValue' in errors
+    }
 
     return (
       <div>

@@ -25,7 +25,7 @@ export const MAX_NUM_BUCKET_LEVEL_METRICS = 5;
 class MetricExpression extends Component {
   renderFieldItems = (arrayHelpers, fieldOptions, expressionWidth) => {
     const {
-      formik: { values, errors },
+      formik: { values },
       flyoutMode,
     } = this.props;
     return values.aggregations.map((aggregation, index) => {
@@ -38,7 +38,6 @@ class MetricExpression extends Component {
             aggregation={aggregation}
             index={index}
             flyoutMode={flyoutMode}
-            errors={errors}
           />
         </span>
       );
@@ -96,7 +95,7 @@ class MetricExpression extends Component {
       aggregations.length > MAX_NUM_QUERY_LEVEL_METRICS
     ) {
       errors.aggregations = QUERY_TYPE_METRIC_ERROR;
-    } else {
+    } else if (!flyoutMode) {
       delete errors.aggregations;
     }
 

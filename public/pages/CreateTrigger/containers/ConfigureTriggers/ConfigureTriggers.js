@@ -40,7 +40,7 @@ class ConfigureTriggers extends React.Component {
     super(props);
 
     const firstTriggerId = _.get(props.triggerValues, 'triggerDefinitions[0].id');
-    const accordionsOpen = firstTriggerId ? { [firstTriggerId]: true } : {};
+    const accordionsOpen = firstTriggerId ? { [0]: true } : {};
 
     this.state = {
       dataTypes: {},
@@ -50,6 +50,7 @@ class ConfigureTriggers extends React.Component {
         MONITOR_TYPE.BUCKET_LEVEL,
       triggerDeleted: false,
       triggerEmptyPrompt: this.prepareTriggerEmptyPrompt(),
+      currentSubmitCount: 0,
       accordionsOpen,
       TriggerContainer: props.flyoutMode
         ? (props) => <EnhancedAccordion {...props} />
@@ -213,6 +214,8 @@ class ConfigureTriggers extends React.Component {
       notificationService,
       plugins,
       flyoutMode,
+      submitCount,
+      errors,
     } = this.props;
 
     const { executeResponse } = this.state;
@@ -235,6 +238,8 @@ class ConfigureTriggers extends React.Component {
         notificationService={notificationService}
         plugins={plugins}
         flyoutMode={flyoutMode}
+        submitCount={submitCount}
+        errors={errors}
       />
     );
   };
@@ -316,8 +321,8 @@ class ConfigureTriggers extends React.Component {
   };
 
   renderTriggers = (triggerArrayHelpers) => {
-    const { monitorValues, triggerValues, flyoutMode } = this.props;
-    const { triggerEmptyPrompt, TriggerContainer, accordionsOpen } = this.state;
+    const { monitorValues, triggerValues, flyoutMode, errors, submitCount } = this.props;
+    const { triggerEmptyPrompt, TriggerContainer, accordionsOpen, currentSubmitCount } = this.state;
     const hasTriggers = !_.isEmpty(_.get(triggerValues, 'triggerDefinitions'));
 
     const triggerContent = (arrayHelpers, index) => {
@@ -331,14 +336,20 @@ class ConfigureTriggers extends React.Component {
       }
     };
 
+    if (flyoutMode && submitCount > currentSubmitCount) {
+      for (let index in errors.triggerDefinitions) {
+        accordionsOpen[index] = !_.isEmpty(errors.triggerDefinitions[index]);
+      }
+    }
+
     return hasTriggers
       ? triggerValues.triggerDefinitions.map((trigger, index) => (
           <div key={trigger.id}>
             <TriggerContainer
               {...{
                 id: `configure-trigger__${trigger.id}`,
-                isOpen: accordionsOpen[trigger.id],
-                onToggle: () => this.onAccordionToggle(trigger.id),
+                isOpen: accordionsOpen[index],
+                onToggle: () => this.onAccordionToggle(index),
                 title: (
                   <EuiFlexGroup alignItems="center" justifyContent="flexStart" gutterSize="s">
                     <EuiFlexItem grow={false}>{trigger.name}</EuiFlexItem>
@@ -369,7 +380,7 @@ class ConfigureTriggers extends React.Component {
   onAccordionToggle = (key, isOnlyOpen) => {
     let accordionsOpen = isOnlyOpen ? {} : { ...this.state.accordionsOpen };
     accordionsOpen[key] = !accordionsOpen[key];
-    this.setState({ accordionsOpen });
+    this.setState({ accordionsOpen, currentSubmitCount: this.props.submitCount });
   };
 
   render() {
@@ -396,7 +407,7 @@ class ConfigureTriggers extends React.Component {
             script={getDefaultScript(monitorValues)}
             flyoutMode={flyoutMode}
             monitorType={monitorType}
-            onPostAdd={(values) => this.onAccordionToggle(values.id, true)}
+            onPostAdd={(values) => this.onAccordionToggle(numOfTriggers, true)}
           />
         )}
         {displayAddTriggerButton && !flyoutMode ? (

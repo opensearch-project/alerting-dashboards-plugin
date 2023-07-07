@@ -16,10 +16,13 @@ import {
 
 import { EXPRESSION_STYLE, POPOVER_STYLE } from './utils/constants';
 import { FormikComboBox } from '../../../../../components/FormControls';
+import { hasError, isInvalid, requiredValidation } from '../../../../../utils/validate';
 
 export default function GroupByPopover(
   { values, options, closePopover, expressionWidth, index, flyoutMode } = this.props
 ) {
+  const validationString = 'Please select a field for the group by.';
+
   const disableOption = (label) => {
     options[0].options.forEach((element) => {
       if (element.label === label) {
@@ -47,13 +50,19 @@ export default function GroupByPopover(
     >
       <EuiFlexGroup direction="column" gutterSize="xs">
         <EuiFlexItem>
-          <EuiText size="xs">
-            <h4>Field</h4>
-          </EuiText>
+          {/*<EuiText size="xs">*/}
+          {/*  <h4>Field</h4>*/}
+          {/*</EuiText>*/}
         </EuiFlexItem>
         <EuiFlexItem>
           <FormikComboBox
             name={`groupBy.${index}`}
+            formRow
+            fieldProps={{ validate: requiredValidation(validationString) }}
+            rowProps={{
+              label: 'Field',
+              isInvalid,
+            }}
             inputProps={{
               placeholder: 'Select a field',
               options,

@@ -36,7 +36,6 @@ import { getClient, getNotifications } from '../../../services';
 function AddAlertingMonitor({
   embeddable,
   closeFlyout,
-  // core,
   flyoutMode,
   setFlyoutMode,
   monitors,

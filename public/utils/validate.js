@@ -59,6 +59,10 @@ export const required = (value) => {
   if (!value) return 'Required.';
 };
 
+export const requiredValidation = (text) => (value) => {
+  if (!value || (Array.isArray(value) && value.length === 0)) return text;
+};
+
 export const validateIllegalCharacters = (illegalCharacters = ILLEGAL_CHARACTERS) => (value) => {
   if (_.isEmpty(value)) return required(value);
 

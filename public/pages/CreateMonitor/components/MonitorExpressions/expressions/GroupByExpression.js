@@ -68,7 +68,7 @@ class GroupByExpression extends Component {
       errors.groupBy = GROUP_BY_ERROR;
     } else if (!isBucketLevelMonitor && values.groupBy.length > MAX_NUM_QUERY_LEVEL_GROUP_BYS) {
       errors.groupBy = QUERY_TYPE_GROUP_BY_ERROR;
-    } else {
+    } else if (!flyoutMode) {
       delete errors.groupBy;
     }
 

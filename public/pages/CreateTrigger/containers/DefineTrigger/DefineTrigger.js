@@ -77,6 +77,7 @@ const propTypes = {
   triggerValues: PropTypes.object.isRequired,
   isDarkMode: PropTypes.bool.isRequired,
   flyoutMode: PropTypes.string,
+  submitCount: PropTypes.number,
 };
 
 const defaultProps = {
@@ -88,6 +89,7 @@ class DefineTrigger extends Component {
     super(props);
     this.state = {
       OuterAccordion: props.flyoutMode ? ({ children }) => <>{children}</> : EuiAccordion,
+      currentSubmitCount: 0,
       accordionsOpen: {},
     };
   }
@@ -150,11 +152,11 @@ class DefineTrigger extends Component {
   onAccordionToggle = (key) => {
     const accordionsOpen = { ...this.state.accordionsOpen };
     accordionsOpen[key] = !accordionsOpen[key];
-    this.setState({ accordionsOpen });
+    this.setState({ accordionsOpen, currentSubmitCount: this.props.submitCount });
   };
 
   render() {
-    const { OuterAccordion, accordionsOpen } = this.state;
+    const { OuterAccordion, accordionsOpen, currentSubmitCount } = this.state;
     const {
       edit,
       triggerArrayHelpers,
@@ -171,6 +173,8 @@ class DefineTrigger extends Component {
       notificationService,
       plugins,
       flyoutMode,
+      submitCount,
+      errors,
     } = this.props;
     const executeResponse = _.get(this.state, 'executeResponse', this.props.executeResponse);
     const fieldPath = triggerIndex !== undefined ? `triggerDefinitions[${triggerIndex}].` : '';
@@ -183,6 +187,11 @@ class DefineTrigger extends Component {
     const thresholdValue = _.get(triggerValues, `${fieldPath}thresholdValue`);
     const adTriggerType = _.get(triggerValues, `${fieldPath}anomalyDetector.triggerType`);
     const triggerName = _.get(triggerValues, `${fieldPath}name`, DEFAULT_TRIGGER_NAME);
+
+    if (flyoutMode && submitCount > currentSubmitCount) {
+      accordionsOpen.triggerCondition =
+        accordionsOpen?.metrics || 'name' in errors.triggerDefinitions?.[triggerIndex];
+    }
 
     let triggerContent = (
       <TriggerQuery
@@ -347,6 +356,8 @@ class DefineTrigger extends Component {
                 notificationService={notificationService}
                 plugins={plugins}
                 flyoutMode={flyoutMode}
+                submitCount={submitCount}
+                errors={errors}
               />
             )}
           </FieldArray>
