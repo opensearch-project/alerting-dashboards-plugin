@@ -230,7 +230,7 @@ const MonitorsList = ({ values, httpClient }) => {
                       bottom: '24px',
                     }}
                   >
-                    <EuiToolTip title={'View monitor'}>
+                    <EuiToolTip content={'View monitor'}>
                       <EuiButtonIcon
                         aria-label={'View monitor'}
                         iconType={'inspect'}

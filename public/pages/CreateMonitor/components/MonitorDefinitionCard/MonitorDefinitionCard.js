@@ -26,7 +26,7 @@ const onChangeDefinition = (e, form, values) => {
       const triggerConditions = trigger.triggerConditions || '';
       const parsedConditions = conditionToExpressions(triggerConditions, monitors);
 
-      if (!!triggerConditions.length && !parsedConditions.length) {
+      if (triggerConditions !== '()' && !!triggerConditions.length && !parsedConditions.length) {
         preventVisualEditor = true;
         break;
       }

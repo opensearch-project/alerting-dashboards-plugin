@@ -6,7 +6,7 @@
 import React from 'react';
 import { EuiLink } from '@elastic/eui';
 import moment from 'moment';
-import { DEFAULT_EMPTY_DATA } from '../../../../../utils/constants';
+import { DEFAULT_EMPTY_DATA, MONITOR_TYPE } from '../../../../../utils/constants';
 import { PLUGIN_NAME } from '../../../../../../utils/constants';
 import { getItemLevelType } from './helpers';
 
@@ -102,5 +102,6 @@ export const columns = [
     field: 'associatedCompositeMonitorCnt',
     name: 'Associated composite monitors',
     truncateText: false,
+    render: (count, item) => (item.item_type === MONITOR_TYPE.COMPOSITE_LEVEL ? '–' : count),
   },
 ];

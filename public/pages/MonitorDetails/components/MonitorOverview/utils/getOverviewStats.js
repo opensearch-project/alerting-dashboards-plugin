@@ -51,6 +51,8 @@ function getMonitorLevelType(monitorType) {
       return 'Per cluster metrics monitor';
     case MONITOR_TYPE.DOC_LEVEL:
       return 'Per document monitor';
+    case MONITOR_TYPE.COMPOSITE_LEVEL:
+      return 'Composite monitor';
     default:
       // TODO: May be valuable to implement a toast that displays in this case.
       console.log('Unexpected monitor type:', monitorType);
@@ -85,7 +87,10 @@ export default function getOverviewStats(
         },
       ]
     : [];
-  const monitorLevelType = _.get(monitor, 'ui_metadata.monitor_type', 'query_level_monitor');
+  let monitorLevelType = _.get(monitor, 'monitor_type', undefined);
+  if (!monitorLevelType) {
+    monitorLevelType = _.get(monitor, 'ui_metadata.monitor_type', 'query_level_monitor');
+  }
   const overviewStats = [
     {
       header: 'Monitor type',

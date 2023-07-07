@@ -69,7 +69,22 @@ class ConfigureTriggers extends React.Component {
       'monitorValues.uri.api_type',
       FORMIK_INITIAL_VALUES.uri.api_type
     );
-    if (prevSearchType !== currSearchType || prevApiType !== currApiType) {
+    const prevMonitorType = _.get(
+      prevProps,
+      'monitorValues.monitor_type',
+      FORMIK_INITIAL_VALUES.monitor_type
+    );
+    const currMonitorType = _.get(
+      this.props,
+      'monitorValues.monitor_type',
+      FORMIK_INITIAL_VALUES.monitor_type
+    );
+    const updateTriggerControls =
+      prevSearchType !== currSearchType ||
+      prevApiType !== currApiType ||
+      prevMonitorType !== currMonitorType;
+
+    if (updateTriggerControls) {
       this.setState({ addTriggerButton: this.prepareAddTriggerButton() });
       this.setState({ triggerEmptyPrompt: this.prepareTriggerEmptyPrompt() });
     }
@@ -102,6 +117,7 @@ class ConfigureTriggers extends React.Component {
       <AddTriggerButton
         arrayHelpers={triggerArrayHelpers}
         disabled={disableAddTriggerButton}
+        monitorType={monitorValues.monitor_type}
         script={getDefaultScript(monitorValues)}
       />
     );
@@ -112,6 +128,7 @@ class ConfigureTriggers extends React.Component {
     return (
       <TriggerEmptyPrompt
         arrayHelpers={triggerArrayHelpers}
+        monitorType={monitorValues.monitor_type}
         script={getDefaultScript(monitorValues)}
       />
     );

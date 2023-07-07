@@ -6,6 +6,7 @@ import {
   EuiComboBox,
   EuiButtonIcon,
   EuiExpression,
+  EuiToolTip,
 } from '@elastic/eui';
 import * as _ from 'lodash';
 import { FormikFormRow, FormikInputWrapper } from '../../../../components/FormControls';
@@ -19,8 +20,13 @@ export const conditionToExpressions = (condition = '', monitors) => {
     '||': 'OR',
     '!': 'NOT',
     '': '',
+    '&& !': 'AND_NOT',
+    '|| !': 'OR_NOT',
   };
-  const queryToExpressionRegex = new RegExp(/( && || \|\| )?(monitor\[id=(.*?)\])/, 'gm');
+  const queryToExpressionRegex = new RegExp(
+    /( && || \|\| || && \!|| \|\| \!)?(monitor\[id=(.*?)\])/,
+    'gm'
+  );
   const matcher = condition.matchAll(queryToExpressionRegex);
   let match;
   let expressions = [];
@@ -68,11 +74,12 @@ const ExpressionBuilder = ({
     ...DEFAULT_EXPRESSION,
     description: DEFAULT_CONDITION,
   };
+  const FIRST_EXPRESSION_CONDITIONS_MAP = [{ description: 'NOT', label: 'NOT' }];
   const EXPRESSION_CONDITIONS_MAP = [
-    { description: '', label: '' },
     { description: 'AND', label: 'AND' },
     { description: 'OR', label: 'OR' },
-    { description: 'NOT', label: 'NOT' },
+    { description: 'AND_NOT', label: 'AND NOT' },
+    { description: 'OR_NOT', label: 'OR NOT' },
   ];
 
   const [usedExpressions, setUsedExpressions] = useState([DEFAULT_EXPRESSION]);
@@ -133,15 +140,17 @@ const ExpressionBuilder = ({
 
   const expressionsToCondition = (expressions) => {
     const conditionMap = {
-      AND: '&&',
-      OR: '||',
+      AND: '&& ',
+      OR: '|| ',
       NOT: '!',
       '': '',
+      AND_NOT: '&& !',
+      OR_NOT: '|| !',
     };
 
     const condition = expressions.reduce((query, expression) => {
       if (expression?.monitor_id) {
-        query += ` ${conditionMap[expression.description]} monitor[id=${expression.monitor_id}]`;
+        query += ` ${conditionMap[expression.description]}monitor[id=${expression.monitor_id}]`;
         query = query.trim();
       }
       return query;
@@ -245,19 +254,22 @@ const ExpressionBuilder = ({
           ]}
           onChange={(selection) => changeCondition(selection, expression, idx, form)}
           onBlur={() => onBlur(form, usedExpressions)}
-          options={EXPRESSION_CONDITIONS_MAP}
+          options={idx === 0 ? FIRST_EXPRESSION_CONDITIONS_MAP : EXPRESSION_CONDITIONS_MAP}
+          autoFocus={false}
         />
       </EuiFlexItem>
       <EuiFlexItem grow={false}>{renderMonitorOptions(expression, idx, form)}</EuiFlexItem>
       <EuiFlexItem grow={false}>
-        <EuiButtonIcon
-          data-test-subj={`selection-exp-field-item-remove-${triggerIndex}-${idx}`}
-          onClick={() => onRemoveExpression(form, idx)}
-          iconType={'trash'}
-          color="danger"
-          aria-label={'Remove condition'}
-          style={{ marginTop: '4px' }}
-        />
+        <EuiToolTip content={'Remove monitor'}>
+          <EuiButtonIcon
+            data-test-subj={`selection-exp-field-item-remove-${triggerIndex}-${idx}`}
+            onClick={() => onRemoveExpression(form, idx)}
+            iconType={'trash'}
+            color="danger"
+            aria-label={'Remove condition'}
+            style={{ marginTop: '4px' }}
+          />
+        </EuiToolTip>
       </EuiFlexItem>
     </EuiFlexGroup>
   );
@@ -327,7 +339,7 @@ const ExpressionBuilder = ({
                       aria-label={'Add condition expression'}
                       description={expression.description}
                       value={expression.monitor_name}
-                      isActive={!!options?.length}
+                      isActive={expression.isOpen}
                       onClick={() => {
                         form.setFieldTouched(formikFullFieldValue, true);
                         openPopover(idx);
@@ -346,20 +358,22 @@ const ExpressionBuilder = ({
             ))}
             {options.length > usedExpressions.length && (
               <EuiFlexItem grow={false} key={`selection_add`}>
-                <EuiButtonIcon
-                  onClick={() => {
-                    const expressions = _.cloneDeep(usedExpressions);
-                    expressions.push({
-                      ...DEFAULT_NEXT_EXPRESSION,
-                    });
-                    setUsedExpressions(expressions);
-                  }}
-                  color={'primary'}
-                  iconType="plusInCircleFilled"
-                  aria-label={'Add one more condition'}
-                  data-test-subj={`condition-add-options-btn_${triggerIndex}`}
-                  style={{ marginTop: '1px' }}
-                />
+                <EuiToolTip content={'Add another monitor'}>
+                  <EuiButtonIcon
+                    onClick={() => {
+                      const expressions = _.cloneDeep(usedExpressions);
+                      expressions.push({
+                        ...DEFAULT_NEXT_EXPRESSION,
+                      });
+                      setUsedExpressions(expressions);
+                    }}
+                    color={'primary'}
+                    iconType="plusInCircleFilled"
+                    aria-label={'Add one more condition'}
+                    data-test-subj={`condition-add-options-btn_${triggerIndex}`}
+                    style={{ marginTop: '1px' }}
+                  />
+                </EuiToolTip>
               </EuiFlexItem>
             )}
           </EuiFlexGroup>

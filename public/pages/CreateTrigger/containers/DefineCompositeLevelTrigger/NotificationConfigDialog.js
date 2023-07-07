@@ -132,7 +132,7 @@ const NotificationConfigDialog = ({
         />
       </EuiModalBody>
       <EuiModalFooter>
-        <EuiButton onClick={() => clearConfig()}>Close</EuiButton>
+        <EuiButton onClick={() => clearConfig()}>Cancel</EuiButton>
         <EuiButton onClick={() => closeModal()} fill>
           Update
         </EuiButton>

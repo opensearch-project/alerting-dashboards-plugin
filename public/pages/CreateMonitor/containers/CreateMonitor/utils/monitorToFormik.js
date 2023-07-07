@@ -48,7 +48,8 @@ export default function monitorToFormik(monitor) {
         );
 
         const parsedConditions = conditionToExpressions(triggerConditions, monitorOptions);
-        const preventVisualEditor = !!triggerConditions.length && !parsedConditions.length;
+        const preventVisualEditor =
+          !!triggerConditions.length && triggerConditions !== '()' && !parsedConditions.length;
 
         return {
           associatedMonitors: _.get(monitor, 'inputs[0].composite_input', {}),

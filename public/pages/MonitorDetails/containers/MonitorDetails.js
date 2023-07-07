@@ -46,7 +46,7 @@ import { formikToMonitor } from '../../CreateMonitor/containers/CreateMonitor/ut
 import monitorToFormik from '../../CreateMonitor/containers/CreateMonitor/utils/monitorToFormik';
 import FindingsDashboard from '../../Dashboard/containers/FindingsDashboard';
 import { TABLE_TAB_IDS } from '../../Dashboard/components/FindingsDashboard/findingsUtils';
-import DeleteMonitorModal from '../../../components/DeleteModal/DeleteMonitorModal';
+import { DeleteMonitorModal } from '../../../components/DeleteModal/DeleteMonitorModal';
 
 export default class MonitorDetails extends Component {
   constructor(props) {

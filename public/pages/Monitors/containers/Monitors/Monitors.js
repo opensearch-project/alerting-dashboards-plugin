@@ -18,7 +18,7 @@ import { columns as staticColumns } from './utils/tableUtils';
 import { MONITOR_ACTIONS, MONITOR_TYPE } from '../../../../utils/constants';
 import { backendErrorNotification, deleteMonitor } from '../../../../utils/helpers';
 import { displayAcknowledgedAlertsToast } from '../../../Dashboard/utils/helpers';
-import DeleteMonitorModal from '../../../../components/DeleteModal/DeleteMonitorModal';
+import { DeleteMonitorModal } from '../../../../components/DeleteModal/DeleteMonitorModal';
 
 const MAX_MONITOR_COUNT = 1000;
 
@@ -216,7 +216,7 @@ export default class Monitors extends Component {
       .catch((err) => err);
   }
 
-  updateMonitors(items, update) {
+  async updateMonitors(items, update) {
     const arrayOfPromises = items.map((item) =>
       this.updateMonitor(item, update).catch((error) => error)
     );
@@ -251,16 +251,18 @@ export default class Monitors extends Component {
     const { httpClient, notifications } = this.props;
 
     const monitorAlerts = alerts.reduce((monitorAlerts, alert) => {
-      const { id, monitor_id: monitorId } = alert;
-      if (monitorAlerts[monitorId]) monitorAlerts[monitorId].push(id);
-      else monitorAlerts[monitorId] = [id];
+      const { id, monitor_id, workflow_id, alert_source } = alert;
+      const monitorId = workflow_id || monitor_id;
+      if (monitorAlerts[monitorId]) monitorAlerts[monitorId].ids.push(id);
+      else monitorAlerts[monitorId] = { ids: [id], alert_source };
       return monitorAlerts;
     }, {});
 
-    const promises = Object.entries(monitorAlerts).map(([monitorId, alerts]) =>
+    const promises = Object.entries(monitorAlerts).map(([monitorId, { ids, alert_source }]) => {
+      const poolType = alert_source === 'workflow' ? 'workflows' : 'monitors';
       httpClient
-        .post(`../api/alerting/monitors/${monitorId}/_acknowledge/alerts`, {
-          body: JSON.stringify({ alerts }),
+        .post(`../api/alerting/${poolType}/${monitorId}/_acknowledge/alerts`, {
+          body: JSON.stringify({ alerts: ids }),
         })
         .then((resp) => {
           if (!resp.ok) {
@@ -270,8 +272,8 @@ export default class Monitors extends Component {
             displayAcknowledgedAlertsToast(notifications, successfulCount);
           }
         })
-        .catch((error) => error)
-    );
+        .catch((error) => error);
+    });
 
     const values = await Promise.all(promises);
     // TODO: Show which values failed, succeeded, etc.
@@ -322,8 +324,13 @@ export default class Monitors extends Component {
   }
 
   async getActiveAlerts(selectedItems) {
-    const monitorIds = selectedItems.map((monitor) => monitor.id);
-    if (!monitorIds.length) return;
+    const monitorIds = selectedItems
+      .filter((item) => item.item_type !== MONITOR_TYPE.COMPOSITE_LEVEL)
+      .map((monitor) => monitor.id);
+    const workflowIds = selectedItems
+      .filter((item) => item.item_type === MONITOR_TYPE.COMPOSITE_LEVEL)
+      .map((monitor) => monitor.id);
+    if (!monitorIds.length && !workflowIds.length) return;
     // TODO: Limiting to 100.. otherwise could be bringing back large amount of alerts that all need to be acknowledged 1 by 1, handle case when there are more than 100 on UI
     const params = {
       from: 0,
@@ -335,20 +342,43 @@ export default class Monitors extends Component {
     };
 
     const { httpClient, notifications } = this.props;
+    let allAlerts = [];
+    let totalAlertsCount = 0;
 
-    const response = await httpClient.get('../api/alerting/alerts', { query: params });
-
-    if (response.ok) {
-      const { alerts, totalAlerts } = response;
-      this.setState({
-        alerts,
-        totalAlerts,
-        showAcknowledgeModal: true,
+    if (monitorIds.length > 0) {
+      const monitorAlertsResponse = await httpClient.get('../api/alerting/alerts', {
+        query: params,
       });
-    } else {
-      console.error(response);
-      backendErrorNotification(notifications, 'get', 'alerts', response.err);
+      if (!monitorAlertsResponse.ok) {
+        console.error(monitorAlertsResponse);
+        backendErrorNotification(notifications, 'get', 'alerts', monitorAlertsResponse.err);
+      } else {
+        const { alerts, totalAlerts } = monitorAlertsResponse;
+        allAlerts = allAlerts.concat(alerts);
+        totalAlertsCount += totalAlerts;
+      }
     }
+
+    if (workflowIds.length > 0) {
+      const chainedAlertsResponse = await httpClient.get('../api/alerting/alerts', {
+        query: { ...params, monitorIds: workflowIds, monitorType: MONITOR_TYPE.COMPOSITE_LEVEL },
+      });
+
+      if (!chainedAlertsResponse.ok) {
+        console.error(chainedAlertsResponse);
+        backendErrorNotification(notifications, 'get', 'alerts', chainedAlertsResponse.err);
+      } else {
+        const { alerts, totalAlerts } = chainedAlertsResponse;
+        allAlerts = allAlerts.concat(alerts);
+        totalAlertsCount += totalAlerts;
+      }
+    }
+
+    this.setState({
+      alerts: allAlerts,
+      totalAlerts: totalAlertsCount,
+      showAcknowledgeModal: true,
+    });
   }
 
   onClickCancel() {
@@ -385,6 +415,7 @@ export default class Monitors extends Component {
       totalAlerts,
       totalMonitors,
       loadingMonitors,
+      monitorItemsToDelete,
     } = this.state;
     const filterIsApplied = !!search || monitorState !== DEFAULT_QUERY_PARAMS.state;
 
@@ -473,9 +504,10 @@ export default class Monitors extends Component {
             sorting={sorting}
           />
         </ContentPanel>
-        {this.state.monitorItemsToDelete && (
+        {monitorItemsToDelete && (
           <DeleteMonitorModal
-            monitors={this.state.monitorItemsToDelete}
+            monitors={monitorItemsToDelete}
+            httpClient={this.props.httpClient}
             closeDeleteModal={() => this.setState({ monitorItemsToDelete: undefined })}
             onClickDelete={() => this.deleteMonitors(this.state.monitorItemsToDelete)}
           />
