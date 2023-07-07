@@ -60,7 +60,7 @@ export const convertAlertsToLayer = (
 ): PointInTimeEventsVisLayer => {
   const events = alerts.map((alert) => {
     return {
-      timestamp: alert.start_time + (alert.end_time - alert.start_time) / 2,
+      timestamp: alert.start_time,
       metadata: {
         pluginResourceId: monitorId,
       },

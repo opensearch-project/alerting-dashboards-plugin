@@ -7,8 +7,9 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import moment from 'moment';
 import { CoreContext } from '../../../../utils/CoreContext';
-import { AD_PREVIEW_DAYS } from '../../../../utils/constants';
+import { AD_PREVIEW_DAYS, DEFAULT_PREVIEW_ERROR_MSG } from '../../../../utils/constants';
 import { backendErrorNotification } from '../../../../utils/helpers';
+import { getClient, getNotifications } from '../../../../services';
 
 class AnomalyDetectorData extends React.Component {
   static contextType = CoreContext;
@@ -25,6 +26,7 @@ class AnomalyDetectorData extends React.Component {
       previewStartTime: 0,
       previewEndTime: 0,
       isLoading: false,
+      error: '',
     };
     this.getPreviewData = this.getPreviewData.bind(this);
   }
@@ -39,15 +41,26 @@ class AnomalyDetectorData extends React.Component {
     }
   }
 
+  getPreviewErrorMessage(err) {
+    if (typeof err === 'string') return err;
+    if (err) {
+      if (err.msg === 'Bad Request') {
+        return err.response || DEFAULT_PREVIEW_ERROR_MSG;
+      }
+      if (err.msg) return err.msg;
+    }
+    return DEFAULT_PREVIEW_ERROR_MSG;
+  }
+
   async getPreviewData() {
     const { detectorId, startTime, endTime } = this.props;
-    const { http: httpClient, notifications } = this.context;
+    const httpClient = getClient();
+    const notifications = getNotifications();
     this.setState({
       isLoading: true,
     });
     if (!detectorId) return;
     const requestParams = {
-      startTime: moment().subtract(AD_PREVIEW_DAYS, 'd').valueOf(),
       startTime: startTime,
       endTime: endTime,
       preview: this.props.preview,
@@ -69,6 +82,7 @@ class AnomalyDetectorData extends React.Component {
       } else {
         this.setState({
           isLoading: false,
+          error: getPreviewErrorMessage(response.error),
         });
         backendErrorNotification(notifications, 'get', 'detector results', response.error);
       }
@@ -76,6 +90,7 @@ class AnomalyDetectorData extends React.Component {
       console.error('Unable to get detectorResults', err);
       this.setState({
         isLoading: false,
+        error: err,
       });
     }
   }
@@ -91,7 +106,7 @@ AnomalyDetectorData.propTypes = {
 };
 AnomalyDetectorData.defaultProps = {
   preview: true,
-  startTime: moment().subtract(5, 'd').valueOf(),
+  startTime: moment().subtract(AD_PREVIEW_DAYS, 'd').valueOf(),
   endTime: moment().valueOf(),
 };
 

@@ -6,7 +6,7 @@
 import React, { Component } from 'react';
 import { EuiSpacer } from '@elastic/eui';
 import { connect } from 'formik';
-import { ForExpression, WhereExpression } from './expressions';
+import { ForExpression, WhereExpression, WhereExpressionFlyout } from './expressions';
 import MetricExpression from './expressions/MetricExpression';
 import { FieldArray } from 'formik';
 import GroupByExpression from './expressions/GroupByExpression';
@@ -152,7 +152,12 @@ class MonitorExpressions extends Component {
             onToggle: () => this.onAccordionToggle('dataFilter'),
           }}
         >
+          {flyoutMode &&
+            <WhereExpressionFlyout {...expressionProps} dataTypes={dataTypes} flyoutMode={flyoutMode} />
+          }
+          {!flyoutMode &&
           <WhereExpression {...expressionProps} dataTypes={dataTypes} flyoutMode={flyoutMode} />
+          }
         </SectionContainer>
         <EuiSpacer size={flyoutMode ? 'xs' : 'm'} />
         <SectionContainer

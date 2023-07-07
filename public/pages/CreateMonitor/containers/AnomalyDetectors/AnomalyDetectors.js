@@ -17,6 +17,7 @@ import {
 import { CoreContext } from '../../../../utils/CoreContext';
 import { backendErrorNotification } from '../../../../utils/helpers';
 import FormikFieldText from '../../../../components/FormControls/FormikFieldText';
+import { getClient } from '../../../../services';
 
 class AnomalyDetectors extends React.Component {
   static contextType = CoreContext;
@@ -33,7 +34,7 @@ class AnomalyDetectors extends React.Component {
   }
 
   async searchDetectors() {
-    const { http: httpClient, notifications } = this.context;
+    const httpClient = getClient();
     try {
       const response = await httpClient.post('../api/alerting/detectors/_search');
       if (response.ok) {

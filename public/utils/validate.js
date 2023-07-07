@@ -63,25 +63,31 @@ export const requiredValidation = (text) => (value) => {
   if (!value || (Array.isArray(value) && value.length === 0)) return text;
 };
 
-export const validateIllegalCharacters = (illegalCharacters = ILLEGAL_CHARACTERS) => (value) => {
-  if (_.isEmpty(value)) return required(value);
-
-  const illegalCharactersString = illegalCharacters.join(' ');
-  let errorText = `Contains invalid characters. Cannot contain: ${illegalCharactersString}`;
-
-  if (_.includes(illegalCharacters, ' ')) {
-    errorText =
-      illegalCharacters.length === 1
-        ? 'Cannot contain spaces.'
-        : `Contains invalid characters or spaces. Cannot contain: ${illegalCharactersString}`;
-  }
-
-  let includesIllegalCharacter = false;
-  illegalCharacters.forEach((character) => {
-    if (_.includes(value, character)) includesIllegalCharacter = true;
-  });
-  if (includesIllegalCharacter) return errorText;
+export const requiredNumber = (value) => {
+  if (isNaN(parseFloat(value))) return 'Requires numerical value.';
 };
+
+export const validateIllegalCharacters =
+  (illegalCharacters = ILLEGAL_CHARACTERS) =>
+  (value) => {
+    if (_.isEmpty(value)) return required(value);
+
+    const illegalCharactersString = illegalCharacters.join(' ');
+    let errorText = `Contains invalid characters. Cannot contain: ${illegalCharactersString}`;
+
+    if (_.includes(illegalCharacters, ' ')) {
+      errorText =
+        illegalCharacters.length === 1
+          ? 'Cannot contain spaces.'
+          : `Contains invalid characters or spaces. Cannot contain: ${illegalCharactersString}`;
+    }
+
+    let includesIllegalCharacter = false;
+    illegalCharacters.forEach((character) => {
+      if (_.includes(value, character)) includesIllegalCharacter = true;
+    });
+    if (includesIllegalCharacter) return errorText;
+  };
 
 export const validateRequiredNumber = (value) => {
   if (value === undefined || typeof value === 'string') return 'Provide a value.';

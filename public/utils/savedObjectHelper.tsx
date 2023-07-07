@@ -143,7 +143,7 @@ export const deleteAlertingAugmentVisSavedObj = async (
       } catch (e) {
         throw new Error(
           'Failed to delete the saved object that associates the visualization and the Alerting monitor. Reason:' +
-            e.message
+          e.message
         );
       }
     }

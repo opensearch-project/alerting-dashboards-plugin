@@ -35,6 +35,7 @@ import {
 } from '../../../CreateMonitor/components/ClusterMetricsMonitor/utils/clusterMetricsMonitorHelpers';
 import { DEFAULT_TRIGGER_NAME, SEVERITY_OPTIONS } from '../../utils/constants';
 import MinimalAccordion from '../../../../components/FeatureAnywhereContextMenu/MinimalAccordion';
+import { getTriggerContext } from '../../utils/helper';
 
 const defaultRowProps = {
   label: 'Trigger name',
@@ -68,7 +69,6 @@ const selectInputProps = {
 };
 
 const propTypes = {
-  context: PropTypes.object.isRequired,
   executeResponse: PropTypes.object,
   monitorValues: PropTypes.object.isRequired,
   onRun: PropTypes.func.isRequired,
@@ -160,7 +160,7 @@ class DefineTrigger extends Component {
     const {
       edit,
       triggerArrayHelpers,
-      context,
+      monitor,
       monitorValues,
       onRun,
       setFlyout,
@@ -177,6 +177,7 @@ class DefineTrigger extends Component {
       errors,
     } = this.props;
     const executeResponse = _.get(this.state, 'executeResponse', this.props.executeResponse);
+    const context = getTriggerContext(executeResponse, monitor, triggerValues, triggerIndex);
     const fieldPath = triggerIndex !== undefined ? `triggerDefinitions[${triggerIndex}].` : '';
     const isGraph = _.get(monitorValues, 'searchType') === SEARCH_TYPE.GRAPH;
     const isAd = _.get(monitorValues, 'searchType') === SEARCH_TYPE.AD;
@@ -190,7 +191,9 @@ class DefineTrigger extends Component {
 
     if (flyoutMode && submitCount > currentSubmitCount) {
       accordionsOpen.triggerCondition =
-        accordionsOpen?.metrics || 'name' in errors.triggerDefinitions?.[triggerIndex];
+        accordionsOpen?.metrics ||
+        (errors.triggerDefinitions?.[triggerIndex] &&
+          'name' in errors.triggerDefinitions?.[triggerIndex]);
     }
 
     let triggerContent = (

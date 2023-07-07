@@ -103,11 +103,13 @@ exports[`Monitors renders 1`] = `
               "onClick": [Function],
             },
             Object {
+              "available": [Function],
               "description": "Enable this Monitor",
               "name": "Enable",
               "onClick": [Function],
             },
             Object {
+              "available": [Function],
               "description": "Disable this Monitor",
               "name": "Disable",
               "onClick": [Function],
@@ -119,7 +121,7 @@ exports[`Monitors renders 1`] = `
             },
           ],
           "name": "Actions",
-          "width": "75px",
+          "width": "60px",
         },
       ]
     }

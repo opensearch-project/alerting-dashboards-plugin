@@ -154,7 +154,7 @@ export default class CreateMonitor extends Component {
                 monitorToEdit={monitorToEdit}
                 plugins={plugins}
                 isAd={values.searchType === SEARCH_TYPE.AD}
-                detectorId={null}
+                detectorId={this.props.detectorId}
                 setFlyout={this.props.setFlyout}
               />
               <EuiSpacer />

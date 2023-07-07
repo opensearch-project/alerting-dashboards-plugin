@@ -87,6 +87,15 @@ export const CHANNEL_TYPE = Object.freeze({
   [BACKEND_CHANNEL_TYPE.SNS]: 'Amazon SNS',
 });
 
+export const DEFAULT_PREVIEW_ERROR_MSG = 'There was a problem previewing the detector.';
+
+export const PREVIEW_ERROR_TYPE = {
+  EXCEPTION: 0,
+  NO_FEATURE: 1,
+  NO_ENABLED_FEATURES: 2,
+  SPARSE_DATA: 3,
+};
+
 export const PLUGIN_AUGMENTATION_ENABLE_SETTING = 'visualization:enablePluginAugmentation';
 
 export const PLUGIN_AUGMENTATION_MAX_OBJECTS_SETTING =

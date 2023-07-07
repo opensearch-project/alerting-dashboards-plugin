@@ -34,7 +34,7 @@ const addTriggerToVisualEditorMonitor = (triggerName, triggerIndex, actionName, 
     // TODO: Passing button props in EUI accordion was added in newer versions (31.7.0+).
     //  If this ever becomes available, it can be used to pass data-test-subj for the button.
     // Since the above is currently not possible, referring to the accordion button using its content
-    cy.get('button').contains('New trigger').click();
+    cy.get('button').contains('New trigger').click({ force: true });
   }
 
   // Type in the trigger name
@@ -50,7 +50,7 @@ const addTriggerToVisualEditorMonitor = (triggerName, triggerIndex, actionName, 
     .type('200');
 
   // Add another metric condition for the trigger
-  cy.get('[data-test-subj="addTriggerConditionButton"]').click();
+  cy.get('[data-test-subj="addTriggerConditionButton"]').click({ force: true });
 
   cy.get(`[name="triggerDefinitions[${triggerIndex}].triggerConditions[1].andOrCondition"]`).select(
     'OR'
@@ -69,15 +69,17 @@ const addTriggerToVisualEditorMonitor = (triggerName, triggerIndex, actionName, 
     .type('300');
 
   // Add a trigger where filter
-  cy.get(`[data-test-subj="triggerDefinitions[${triggerIndex}].where.addFilterButton"]`).click();
+  cy.get(`[data-test-subj="triggerDefinitions[${triggerIndex}].addFilterButton"]`).click({
+    force: true,
+  });
 
-  cy.get(`[name="triggerDefinitions[${triggerIndex}].where.fieldName"]`).type(
+  cy.get(`[name="triggerDefinitions[${triggerIndex}].filters.0.fieldName"]`).type(
     `${GROUP_BY_FIELD}{downarrow}{enter}`
   );
 
-  cy.get(`[name="triggerDefinitions[${triggerIndex}].where.operator"]`).select('includes');
+  cy.get(`[name="triggerDefinitions[${triggerIndex}].filters.0.operator"]`).select('includes');
 
-  cy.get(`[name="triggerDefinitions[${triggerIndex}].where.fieldValue"]`)
+  cy.get(`[name="triggerDefinitions[${triggerIndex}].filters.0.fieldValue"]`)
     .type('a*')
     .trigger('blur', { force: true });
 
@@ -131,13 +133,13 @@ describe('Bucket-Level Monitors', () => {
       cy.contains('There are no existing monitors');
 
       // Go to create monitor page
-      cy.contains('Create monitor').click();
+      cy.contains('Create monitor').click({ force: true });
 
       // Select the Bucket-Level Monitor type
-      cy.get('[data-test-subj="bucketLevelMonitorRadioCard"]').click();
+      cy.get('[data-test-subj="bucketLevelMonitorRadioCard"]').click({ force: true });
 
       // Select extraction query for method of definition
-      cy.get('[data-test-subj="extractionQueryEditorRadioCard"]').click();
+      cy.get('[data-test-subj="extractionQueryEditorRadioCard"]').click({ force: true });
 
       // Wait for input to load and then type in the monitor name
       cy.get('input[name="name"]').type(SAMPLE_EXTRACTION_QUERY_MONITOR);
@@ -179,7 +181,7 @@ describe('Bucket-Level Monitors', () => {
       //   .type('{downarrow}{enter}');
 
       // Click the create button
-      cy.get('button').contains('Create').click();
+      cy.get('button').contains('Create').click({ force: true });
 
       // Confirm we can see only one row in the trigger list by checking <caption> element
       cy.contains('This table contains 1 row');
@@ -188,7 +190,7 @@ describe('Bucket-Level Monitors', () => {
       cy.contains(SAMPLE_TRIGGER);
 
       // Go back to the Monitors list
-      cy.get('a').contains('Monitors').click();
+      cy.get('a').contains('Monitors').click({ force: true });
 
       // Confirm we can see the created monitor in the list
       cy.contains(SAMPLE_EXTRACTION_QUERY_MONITOR);
@@ -199,13 +201,13 @@ describe('Bucket-Level Monitors', () => {
       cy.contains('There are no existing monitors');
 
       // Go to create monitor page
-      cy.contains('Create monitor').click();
+      cy.contains('Create monitor').click({ force: true });
 
       // Select the Bucket-Level Monitor type
-      cy.get('[data-test-subj="bucketLevelMonitorRadioCard"]').click();
+      cy.get('[data-test-subj="bucketLevelMonitorRadioCard"]').click({ force: true });
 
       // Select visual editor for method of definition
-      cy.get('[data-test-subj="visualEditorRadioCard"]').click();
+      cy.get('[data-test-subj="visualEditorRadioCard"]').click({ force: true });
 
       // Wait for input to load and then type in the monitor name
       cy.get('input[name="name"]').type(SAMPLE_VISUAL_EDITOR_MONITOR);
@@ -218,41 +220,41 @@ describe('Bucket-Level Monitors', () => {
       cy.get('#timeField').type(`${TIME_FIELD}{downArrow}{enter}`, { force: true });
 
       // Add a metric for the query
-      cy.get('[data-test-subj="addMetricButton"]').click();
+      cy.get('[data-test-subj="addMetricButton"]').click({ force: true });
 
-      cy.get('[data-test-subj="metrics.0.aggregationTypeSelect"]').select('count');
+      cy.get('[data-test-subj="metrics.0.aggregationTypeSelect"]').select('count', { force: true });
 
       cy.get('[data-test-subj="metrics.0.ofFieldComboBox"]').type(
         `${COUNT_METRIC_FIELD}{downArrow}{enter}`
       );
 
-      cy.get('button').contains('Save').click();
+      cy.get('button').contains('Save').click({ force: true });
 
       // Add a second metric for the query
-      cy.get('[data-test-subj="addMetricButton"]').click();
+      cy.get('[data-test-subj="addMetricButton"]').click({ force: true });
 
-      cy.get('[data-test-subj="metrics.1.aggregationTypeSelect"]').select('avg');
+      cy.get('[data-test-subj="metrics.1.aggregationTypeSelect"]').select('avg', { force: true });
 
       cy.get('[data-test-subj="metrics.1.ofFieldComboBox"]').type(
         `${AVERAGE_METRIC_FIELD}{downArrow}{enter}`
       );
 
-      cy.get('button').contains('Save').click();
+      cy.get('button').contains('Save').click({ force: true });
 
       // Add a group by field for the query
-      cy.get('[data-test-subj="addGroupByButton"]').click();
+      cy.get('[data-test-subj="addGroupByButton"]').click({ force: true });
 
       cy.get('[data-test-subj="groupBy.0.ofFieldComboBox"]').type(
         `${GROUP_BY_FIELD}{downArrow}{enter}`
       );
 
-      cy.get('button').contains('Save').click();
+      cy.get('button').contains('Save').click({ force: true });
 
       // Add trigger
       addTriggerToVisualEditorMonitor(SAMPLE_TRIGGER, 0, SAMPLE_ACTION, false);
 
       // Click the create button
-      cy.get('button').contains('Create').click();
+      cy.get('button').contains('Create').click({ force: true });
 
       // Confirm we can see only one row in the trigger list by checking <caption> element
       cy.contains('This table contains 1 row');
@@ -336,7 +338,7 @@ describe('Bucket-Level Monitors', () => {
         });
 
         // Click the update button
-        cy.get('button').contains('Update').last().click();
+        cy.get('button').contains('Update').last().click({ force: true });
 
         // Confirm we're on the Monitor Details page by searching for the History element
         cy.contains('History', { timeout: 20000 });
