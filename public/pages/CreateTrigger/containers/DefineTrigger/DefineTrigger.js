@@ -6,7 +6,15 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
-import { EuiAccordion, EuiButton, EuiSpacer, EuiText, EuiTitle } from '@elastic/eui';
+import {
+  EuiAccordion,
+  EuiButton,
+  EuiSpacer,
+  EuiText,
+  EuiTitle,
+  EuiFlexGroup,
+  EuiFlexItem,
+} from '@elastic/eui';
 import 'brace/mode/plain_text';
 import { FormikFieldText, FormikSelect } from '../../../../components/FormControls';
 import { isInvalid, hasError } from '../../../../utils/validate';
@@ -26,6 +34,7 @@ import {
   canExecuteClusterMetricsMonitor,
 } from '../../../CreateMonitor/components/ClusterMetricsMonitor/utils/clusterMetricsMonitorHelpers';
 import { DEFAULT_TRIGGER_NAME, SEVERITY_OPTIONS } from '../../utils/constants';
+import MinimalAccordion from '../../../../components/FeatureAnywhereContextMenu/MinimalAccordion';
 import { getTriggerContext } from '../../utils/helper';
 
 const defaultRowProps = {
@@ -67,12 +76,22 @@ const propTypes = {
   triggers: PropTypes.arrayOf(PropTypes.object).isRequired,
   triggerValues: PropTypes.object.isRequired,
   isDarkMode: PropTypes.bool.isRequired,
+  flyoutMode: PropTypes.string,
+  submitCount: PropTypes.number,
+};
+
+const defaultProps = {
+  flyoutMode: null,
 };
 
 class DefineTrigger extends Component {
   constructor(props) {
     super(props);
-    this.state = {};
+    this.state = {
+      OuterAccordion: props.flyoutMode ? ({ children }) => <>{children}</> : EuiAccordion,
+      currentSubmitCount: 0,
+      accordionsOpen: {},
+    };
   }
 
   // TODO query-level monitor trigger graph only get the input
@@ -130,7 +149,14 @@ class DefineTrigger extends Component {
       });
   };
 
+  onAccordionToggle = (key) => {
+    const accordionsOpen = { ...this.state.accordionsOpen };
+    accordionsOpen[key] = !accordionsOpen[key];
+    this.setState({ accordionsOpen, currentSubmitCount: this.props.submitCount });
+  };
+
   render() {
+    const { OuterAccordion, accordionsOpen, currentSubmitCount } = this.state;
     const {
       edit,
       triggerArrayHelpers,
@@ -146,6 +172,9 @@ class DefineTrigger extends Component {
       notifications,
       notificationService,
       plugins,
+      flyoutMode,
+      submitCount,
+      errors,
     } = this.props;
     const executeResponse = _.get(this.state, 'executeResponse', this.props.executeResponse);
     const context = getTriggerContext(executeResponse, monitor, triggerValues, triggerIndex);
@@ -159,6 +188,13 @@ class DefineTrigger extends Component {
     const thresholdValue = _.get(triggerValues, `${fieldPath}thresholdValue`);
     const adTriggerType = _.get(triggerValues, `${fieldPath}anomalyDetector.triggerType`);
     const triggerName = _.get(triggerValues, `${fieldPath}name`, DEFAULT_TRIGGER_NAME);
+
+    if (flyoutMode && submitCount > currentSubmitCount) {
+      accordionsOpen.triggerCondition =
+        accordionsOpen?.metrics ||
+        (errors.triggerDefinitions?.[triggerIndex] &&
+          'name' in errors.triggerDefinitions?.[triggerIndex]);
+    }
 
     let triggerContent = (
       <TriggerQuery
@@ -177,7 +213,12 @@ class DefineTrigger extends Component {
     if (isAd && adTriggerType === TRIGGER_TYPE.AD) {
       const adValues = _.get(triggerValues, `${fieldPath}anomalyDetector`);
       triggerContent = (
-        <AnomalyDetectorTrigger detectorId={detectorId} adValues={adValues} fieldPath={fieldPath} />
+        <AnomalyDetectorTrigger
+          detectorId={detectorId}
+          adValues={adValues}
+          fieldPath={fieldPath}
+          flyoutMode={flyoutMode}
+        />
       );
     }
     if (isGraph) {
@@ -188,12 +229,33 @@ class DefineTrigger extends Component {
           thresholdEnum={thresholdEnum}
           thresholdValue={thresholdValue}
           fieldPath={fieldPath}
+          flyoutMode={flyoutMode}
         />
       );
     }
+    const nameField = (
+      <FormikFieldText
+        name={`${fieldPath}name`}
+        fieldProps={{
+          validate: validateTriggerName(triggers, triggerValues, fieldPath, flyoutMode),
+        }}
+        formRow
+        rowProps={{ ...defaultRowProps, ...(flyoutMode ? { style: {} } : {}) }}
+        inputProps={defaultInputProps}
+      />
+    );
+    const severityField = (
+      <FormikSelect
+        name={`${fieldPath}severity`}
+        formRow
+        fieldProps={selectFieldProps}
+        rowProps={{ ...selectRowProps, ...(flyoutMode ? { style: {} } : {}) }}
+        inputProps={selectInputProps}
+      />
+    );
 
     return (
-      <EuiAccordion
+      <OuterAccordion
         id={triggerName}
         buttonContent={
           <EuiTitle size={'s'} data-test-subj={`${fieldPath}_triggerAccordion`}>
@@ -214,25 +276,45 @@ class DefineTrigger extends Component {
         }
         style={{ paddingBottom: '15px', paddingTop: '10px' }}
       >
-        <div style={{ padding: '0px 20px', paddingTop: '20px' }}>
-          <FormikFieldText
-            name={`${fieldPath}name`}
-            fieldProps={{ validate: validateTriggerName(triggers, triggerValues, fieldPath) }}
-            formRow
-            rowProps={defaultRowProps}
-            inputProps={defaultInputProps}
-          />
-          <EuiSpacer size={'m'} />
-          <FormikSelect
-            name={`${fieldPath}severity`}
-            formRow
-            fieldProps={selectFieldProps}
-            rowProps={selectRowProps}
-            inputProps={selectInputProps}
-          />
-          <EuiSpacer size={'m'} />
+        <div style={flyoutMode ? {} : { padding: '0px 20px', paddingTop: '20px' }}>
+          {flyoutMode && (
+            <>
+              <EuiTitle size="xs">
+                <h5>Trigger details</h5>
+              </EuiTitle>
+              <EuiSpacer size="m" />
+              <MinimalAccordion
+                {...{
+                  title: 'Trigger condition',
+                  id: 'metric-expression__trigger-condition',
+                  isOpen: accordionsOpen.triggerCondition ?? true,
+                  onToggle: () => this.onAccordionToggle('triggerCondition'),
+                }}
+              >
+                <EuiFlexGroup gutterSize="m">
+                  {/*Change this to <EuiFlexItem grow style={{ maxWidth: 400 }}> since max eui row input is 400px*/}
+                  <EuiFlexItem grow style={{ width: 150 }}>
+                    {nameField}
+                  </EuiFlexItem>
+                  <EuiFlexItem grow={false} style={{ width: 150 }}>
+                    {severityField}
+                  </EuiFlexItem>
+                </EuiFlexGroup>
+                <EuiSpacer size="m" />
+                {triggerContent}
+              </MinimalAccordion>
+            </>
+          )}
+          {!flyoutMode && (
+            <>
+              {nameField}
+              <EuiSpacer size={'m'} />
+              {severityField}
+              <EuiSpacer size={'m'} />
+            </>
+          )}
 
-          {isAd ? (
+          {!flyoutMode && isAd ? (
             <div style={{ paddingLeft: '10px', marginTop: '0px' }}>
               <EuiText size={'xs'} style={{ paddingBottom: '0px', marginBottom: '0px' }}>
                 <h4>Trigger type</h4>
@@ -250,9 +332,19 @@ class DefineTrigger extends Component {
             </div>
           ) : null}
 
-          {triggerContent}
+          {!flyoutMode && triggerContent}
 
-          <EuiSpacer size={'l'} />
+          {!flyoutMode && <EuiSpacer size={'l'} />}
+
+          {flyoutMode && (
+            <>
+              <EuiSpacer size="l" />
+              <EuiTitle size="xs">
+                <h5>Notifications</h5>
+              </EuiTitle>
+              <EuiSpacer size="m" />
+            </>
+          )}
           <FieldArray name={`${fieldPath}actions`} validateOnChange={true}>
             {(arrayHelpers) => (
               <ConfigureActions
@@ -266,15 +358,19 @@ class DefineTrigger extends Component {
                 triggerIndex={triggerIndex}
                 notificationService={notificationService}
                 plugins={plugins}
+                flyoutMode={flyoutMode}
+                submitCount={submitCount}
+                errors={errors}
               />
             )}
           </FieldArray>
         </div>
-      </EuiAccordion>
+      </OuterAccordion>
     );
   }
 }
 
 DefineTrigger.propTypes = propTypes;
+DefineTrigger.defaultProps = defaultProps;
 
 export default DefineTrigger;

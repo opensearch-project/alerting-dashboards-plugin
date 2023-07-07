@@ -1,3 +1,8 @@
+/*
+ * Copyright OpenSearch Contributors
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 import React, { useMemo } from 'react';
 import { EuiHealth, EuiLink } from '@elastic/eui';
 import { stateToLabel } from '../../../utils/contextMenu/monitors';

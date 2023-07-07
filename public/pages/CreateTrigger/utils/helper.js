@@ -20,8 +20,11 @@ import { formikToTrigger } from '../containers/CreateTrigger/utils/formikToTrigg
 
 export const getChannelOptions = (channels, allowedTypes) =>
   allowedTypes.map((type) => ({
+    key: type,
     label: type,
-    options: channels.filter((channel) => channel.type === type),
+    options: channels
+      .filter((channel) => channel.type === type)
+      .map((option) => ({ key: option.value, ...option })),
   }));
 
 // Custom Webhooks for Destinations used `custom_webhook` for the type whereas Notification Channels use 'webhook'

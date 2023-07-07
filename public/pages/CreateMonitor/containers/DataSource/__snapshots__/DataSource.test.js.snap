@@ -1,21 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`DataSource renders 1`] = `
-<ContentPanel
-  bodyStyles={
-    Object {
-      "padding": "initial",
-    }
-  }
-  panelStyles={
-    Object {
-      "paddingLeft": "10px",
-      "paddingRight": "10px",
-    }
-  }
-  title="Data source"
-  titleSize="s"
->
+<Component>
   <MonitorIndex
     httpClient={[MockFunction]}
     monitorType="query_level_monitor"
@@ -24,5 +10,5 @@ exports[`DataSource renders 1`] = `
     size="s"
   />
   <MonitorTimeField />
-</ContentPanel>
+</Component>
 `;
