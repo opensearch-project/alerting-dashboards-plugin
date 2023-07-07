@@ -157,13 +157,6 @@ export default class MonitorService {
     }
   };
 
-  /**
-   *  TODO: Fix this where the last alert and active alerts are not correct
-   * @param context
-   * @param req
-   * @param res
-   * @returns {Promise<*>}
-   */
   getMonitors = async (context, req, res) => {
     try {
       const { from, size, search, sortDirection, sortField, state, monitorIds } = req.query;
