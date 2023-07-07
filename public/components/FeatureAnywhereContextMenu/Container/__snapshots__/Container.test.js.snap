@@ -23,10 +23,11 @@ exports[`Container renders add 1`] = `
       iconType="alert"
       title="Limit reached. No more than undefined objects can be associated with a visualizations."
     >
-      Adding more objects may affect cluster performance and prevent dashboards from rendering properly. Remove associations before add new ones.
+      Adding more objects may affect cluster performance and prevent dashboards from rendering properly. Remove associations before adding new ones.
     </EuiCallOut>
   }
   monitors={Array []}
+  setAssociatedMonitors={[Function]}
   setFlyoutMode={[Function]}
   setSelectedMonitorId={[Function]}
   startingPanel="add"
@@ -56,10 +57,11 @@ exports[`Container renders associated 1`] = `
       iconType="alert"
       title="Limit reached. No more than undefined objects can be associated with a visualizations."
     >
-      Adding more objects may affect cluster performance and prevent dashboards from rendering properly. Remove associations before add new ones.
+      Adding more objects may affect cluster performance and prevent dashboards from rendering properly. Remove associations before adding new ones.
     </EuiCallOut>
   }
   monitors={Array []}
+  setAssociatedMonitors={[Function]}
   setFlyoutMode={[Function]}
   setSelectedMonitorId={[Function]}
   startingPanel="associated"

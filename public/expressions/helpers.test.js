@@ -82,13 +82,13 @@ describe('helpers', function () {
   describe('convertAlertsToLayer()', function () {
     const events = [
       {
-        timestamp: alert1.start_time + (alert1.end_time - alert1.start_time) / 2,
+        timestamp: alert1.start_time,
         metadata: {
           pluginResourceId: alert1.monitor_id,
         },
       },
       {
-        timestamp: alert2.start_time + (alert2.end_time - alert2.start_time) / 2,
+        timestamp: alert2.start_time,
         metadata: {
           pluginResourceId: alert2.monitor_id,
         },
@@ -98,7 +98,7 @@ describe('helpers', function () {
       const monitorName = 'monitorName';
       const monitorId = alert1.monitor_id;
       const layer = {
-        originPlugin: 'Alerting',
+        originPlugin: 'alertingDashboards',
         events,
         pluginResource: {
           type: 'Alerting Monitors',
@@ -123,7 +123,7 @@ describe('helpers', function () {
         message: 'The monitor does not exist.',
       };
       const layer = {
-        originPlugin: 'Alerting',
+        originPlugin: 'alertingDashboards',
         events,
         pluginResource: {
           type: 'Alerting Monitors',
