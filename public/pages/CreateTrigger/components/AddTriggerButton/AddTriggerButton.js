@@ -28,7 +28,7 @@ const AddTriggerButton = ({
     const values = getInitialTriggerValues({ script, flyoutMode, triggers, monitorType });
     arrayHelpers.push(values);
 
-    if (onPostAdd) {
+    if (flyoutMode && onPostAdd) {
       onPostAdd(values);
     }
   };

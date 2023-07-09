@@ -15,11 +15,11 @@ export const getInitialTriggerValues = ({
   monitorType,
 }) => {
   const initialValues = _.cloneDeep({ ...FORMIK_INITIAL_TRIGGER_VALUES, script });
-  const id = getDigitId();
-
-  initialValues.id = `trigger${id}`;
 
   if (flyoutMode) {
+    const id = getDigitId();
+
+    initialValues.id = `trigger${id}`;
     initialValues.name = getUniqueName(triggers, 'Trigger ');
     const initialAction = getInitialActionValues({ monitorType, flyoutMode, actions: [] });
     initialValues.actions = [initialAction];

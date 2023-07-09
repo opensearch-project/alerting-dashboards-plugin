@@ -37,25 +37,26 @@ class DataSource extends Component {
     const { monitor_type, searchType } = this.props.values;
     const displayTimeField =
       searchType === SEARCH_TYPE.GRAPH && monitor_type !== MONITOR_TYPE.DOC_LEVEL;
-    const Container = isMinimal
-      ? ({ children }) => <>{children}</>
-      : ({ children }) => (
-          <ContentPanel
-            title="Data source"
-            titleSize="s"
-            panelStyles={{ paddingLeft: '10px', paddingRight: '10px' }}
-            bodyStyles={{ padding: 'initial' }}
-          >
-            {children}
-          </ContentPanel>
-        );
-
-    return (
-      <Container>
+    const monitorIndexDisplay = (
+      <>
         <MonitorIndex httpClient={this.props.httpClient} monitorType={monitor_type} />
         <EuiSpacer size="s" />
         {displayTimeField && <MonitorTimeField dataTypes={this.props.dataTypes} />}
-      </Container>
+      </>
+    );
+
+    if (isMinimal) {
+      return { monitorIndexDisplay };
+    }
+    return (
+      <ContentPanel
+        title="Data source"
+        titleSize="s"
+        panelStyles={{ paddingLeft: '10px', paddingRight: '10px' }}
+        bodyStyles={{ padding: 'initial' }}
+      >
+        {monitorIndexDisplay}
+      </ContentPanel>
     );
   }
 }
