@@ -68,23 +68,23 @@ export const validateWhereFilter = (filter = FORMIK_INITIAL_WHERE_EXPRESSION_VAL
   const fieldOperator = _.get(filter, 'operator', FORMIK_INITIAL_WHERE_EXPRESSION_VALUES.operator);
   let filterIsValid = !_.isEmpty(fieldName.label);
   switch (fieldOperator) {
-    case OPERATORS_MAP.IS:
-    case OPERATORS_MAP.IS_NOT:
-    case OPERATORS_MAP.IS_GREATER:
-    case OPERATORS_MAP.IS_GREATER_EQUAL:
-    case OPERATORS_MAP.IS_LESS:
-    case OPERATORS_MAP.IS_LESS_EQUAL:
-    case OPERATORS_MAP.STARTS_WITH:
-    case OPERATORS_MAP.ENDS_WITH:
-    case OPERATORS_MAP.CONTAINS:
-    case OPERATORS_MAP.NOT_CONTAINS:
+    case OPERATORS_MAP.IS.value:
+    case OPERATORS_MAP.IS_NOT.value:
+    case OPERATORS_MAP.IS_GREATER.value:
+    case OPERATORS_MAP.IS_GREATER_EQUAL.value:
+    case OPERATORS_MAP.IS_LESS.value:
+    case OPERATORS_MAP.IS_LESS_EQUAL.value:
+    case OPERATORS_MAP.STARTS_WITH.value:
+    case OPERATORS_MAP.ENDS_WITH.value:
+    case OPERATORS_MAP.CONTAINS.value:
+    case OPERATORS_MAP.DOES_NOT_CONTAINS.value:
       // These operators store the query value in the 'fieldValue'
       // attribute of FORMIK_INITIAL_WHERE_EXPRESSION_VALUES.
       // Validate that value.
       filterIsValid = filterIsValid && !_.isEmpty(filter.fieldValue?.toString());
       break;
-    case OPERATORS_MAP.IN_RANGE:
-    case OPERATORS_MAP.NOT_IN_RANGE:
+    case OPERATORS_MAP.IN_RANGE.value:
+    case OPERATORS_MAP.NOT_IN_RANGE.value:
       // These operators store the query values in the 'fieldRangeStart' and 'fieldRangeEnd'
       // attributes of FORMIK_INITIAL_WHERE_EXPRESSION_VALUES.
       // Both of those values need to be validated.
@@ -93,8 +93,8 @@ export const validateWhereFilter = (filter = FORMIK_INITIAL_WHERE_EXPRESSION_VAL
         !validateRange(filter.fieldRangeStart, filter) &&
         !validateRange(filter.fieldRangeEnd, filter);
       break;
-    case OPERATORS_MAP.IS_NULL:
-    case OPERATORS_MAP.IS_NOT_NULL:
+    case OPERATORS_MAP.IS_NULL.value:
+    case OPERATORS_MAP.IS_NOT_NULL.value:
       // These operators don't store a query value in the FORMIK_INITIAL_WHERE_EXPRESSION_VALUES.
       // No further validation needed.
       break;

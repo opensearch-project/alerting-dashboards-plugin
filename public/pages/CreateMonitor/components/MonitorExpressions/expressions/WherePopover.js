@@ -123,6 +123,7 @@ export default class WherePopover extends Component {
           inputProps={{
             placeholder: 'Enter a value',
             onChange: this.handleChangeWrapper,
+            'data-test-subj': `${fieldPath}fieldValue`,
           }}
           formRow
           rowProps={{ isInvalid, error: hasError }}
@@ -136,6 +137,7 @@ export default class WherePopover extends Component {
             onChange: this.handleChangeWrapper,
             options: WHERE_BOOLEAN_FILTERS,
             isInvalid,
+            'data-test-subj': `${fieldPath}fieldValue`,
           }}
         />
       );
@@ -147,6 +149,7 @@ export default class WherePopover extends Component {
             placeholder: 'Enter a value',
             onChange: this.handleChangeWrapper,
             isInvalid,
+            'data-test-subj': `${fieldPath}fieldValue`,
           }}
         />
       );
@@ -211,6 +214,7 @@ export default class WherePopover extends Component {
               iconOnClickAriaLabel={'Remove filter'}
               onClick={this.openPopover}
               onClickAriaLabel={'Edit where filter'}
+              data-test-subj={`${whereFilterHeader}-${fieldPath}-badge`}
             >
               {displayText(values)}
             </EuiBadge>
@@ -234,6 +238,7 @@ export default class WherePopover extends Component {
                   onChange: this.handleFieldChange,
                   isClearable: false,
                   singleSelection: { asPlainText: true },
+                  'data-test-subj': `${fieldPath}fieldName`,
                 }}
               />
             </EuiFlexItem>
@@ -243,6 +248,7 @@ export default class WherePopover extends Component {
                 inputProps={{
                   onChange: this.handleOperatorChange,
                   options: fieldOperators,
+                  'data-test-subj': `${fieldPath}operator`,
                 }}
               />
             </EuiFlexItem>
