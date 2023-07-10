@@ -15,7 +15,14 @@ const frequencies = [
   { value: 'cronExpression', text: 'Custom cron expression' },
 ];
 
-const Frequency = () => (
+const flyoutFrequencies = [
+  { value: 'interval', text: 'By interval' },
+  { value: 'daily', text: 'Daily' },
+  { value: 'weekly', text: 'Weekly' },
+  { value: 'monthly', text: 'Monthly' },
+];
+
+const Frequency = ({ flyoutMode }) => (
   <FormikSelect
     name="frequency"
     formRow
@@ -25,7 +32,7 @@ const Frequency = () => (
       error: hasError,
     }}
     inputProps={{
-      options: frequencies,
+      options: flyoutMode ? flyoutFrequencies : frequencies,
       isInvalid,
       'data-test-subj': 'frequency_field',
     }}

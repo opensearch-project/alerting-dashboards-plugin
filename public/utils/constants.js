@@ -95,3 +95,8 @@ export const PREVIEW_ERROR_TYPE = {
   NO_ENABLED_FEATURES: 2,
   SPARSE_DATA: 3,
 };
+
+export const PLUGIN_AUGMENTATION_ENABLE_SETTING = 'visualization:enablePluginAugmentation';
+
+export const PLUGIN_AUGMENTATION_MAX_OBJECTS_SETTING =
+  'visualization:enablePluginAugmentation.maxPluginObjects';

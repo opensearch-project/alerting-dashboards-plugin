@@ -14,6 +14,7 @@ import OfExpression from './OfExpression';
 import OverExpression from './OverExpression';
 import WhenExpression from './WhenExpression';
 import WhereExpression from './WhereExpression';
+import WhereExpressionFlyout from './WhereExpressionFlyout';
 
 export {
   ForExpression,
@@ -27,4 +28,5 @@ export {
   OverExpression,
   WhenExpression,
   WhereExpression,
+  WhereExpressionFlyout,
 };

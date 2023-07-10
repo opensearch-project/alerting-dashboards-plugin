@@ -1,0 +1,12 @@
+/*
+ * Copyright OpenSearch Contributors
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+.context-menu {
+  &__flyout {
+    &.euiFlyout--medium {
+      width: 740px;
+    }
+  }
+}

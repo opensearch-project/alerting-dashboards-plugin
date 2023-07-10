@@ -4,7 +4,7 @@
  */
 
 import _ from 'lodash';
-import { OPERATORS_MAP } from './constants';
+import { OPERATORS_MAP, Expressions } from './constants';
 import { TRIGGER_COMPARISON_OPERATORS } from '../../../../../CreateTrigger/containers/DefineBucketLevelTrigger/DefineBucketLevelTrigger';
 import { DATA_TYPES } from '../../../../../../utils/constants';
 import { FORMIK_INITIAL_WHERE_EXPRESSION_VALUES } from '../../../../containers/CreateMonitor/utils/constants';
@@ -107,4 +107,10 @@ export const validateWhereFilter = (filter = FORMIK_INITIAL_WHERE_EXPRESSION_VAL
 
 export const validateWhereFilters = (filters = []) => {
   return filters.filter((filter) => validateWhereFilter(filter)).length === filters.length;
+};
+
+export const getIsDataFilterActive = ({ formik: { values }, openedStates, fieldPath = '' }) => {
+  const whereValues = _.get(values, `${fieldPath}where`);
+  const whereFieldName = _.get(whereValues, 'fieldName[0].label', undefined);
+  return openedStates[Expressions.WHERE] || whereFieldName;
 };

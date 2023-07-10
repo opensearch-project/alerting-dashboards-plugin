@@ -7,6 +7,7 @@ exports[`DefineMonitor renders 1`] = `
       dataTypes={Object {}}
       errors={Object {}}
       httpClient={[MockFunction]}
+      isMinimal={false}
       values={
         Object {
           "aggregationType": "count",

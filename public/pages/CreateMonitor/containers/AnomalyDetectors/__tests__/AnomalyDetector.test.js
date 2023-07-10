@@ -7,10 +7,15 @@ import React from 'react';
 import { Formik } from 'formik';
 import { mount } from 'enzyme';
 
+import {
+  notificationServiceMock,
+  httpServiceMock,
+} from '../../../../../../../../src/core/public/mocks';
 import { FORMIK_INITIAL_VALUES } from '../../CreateMonitor/utils/constants';
 import AnomalyDetectors from '../AnomalyDetectors';
 import { httpClientMock } from '../../../../../../test/mocks';
 import { CoreContext } from '../../../../../utils/CoreContext';
+import { setClient, setNotifications } from '../../../../../services';
 
 // Used to wait until all of the promises have cleared, especially waiting for asynchronous Formik's handlers.
 const runAllPromises = () => new Promise(setImmediate);
@@ -29,6 +34,10 @@ function getMountWrapper() {
 }
 
 describe('AnomalyDetectors', () => {
+  const notifications = notificationServiceMock.createStartContract();
+  setNotifications(notifications);
+  const httpClient = httpServiceMock.createStartContract();
+  setClient(httpClient);
   beforeEach(() => {
     jest.clearAllMocks();
   });
@@ -65,7 +74,7 @@ describe('AnomalyDetectors', () => {
 
     // Validate the specific detector is in the input field
     expect(wrapper.find('[data-test-subj="comboBoxInput"]').hostNodes().text()).toEqual(
-      'sample-detector'
+      'sample-detect'
     );
   });
 });

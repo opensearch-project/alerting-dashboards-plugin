@@ -3,7 +3,7 @@
 exports[`Action renders with Notifications plugin installed 1`] = `
 <div>
   <div
-    class="euiPanel euiPanel--paddingMedium euiPanel--borderRadiusMedium euiPanel--plain euiPanel--hasShadow"
+    class="euiPanel euiPanel--paddingMedium euiPanel--borderRadiusMedium euiPanel--plain euiPanel--hasShadow euiPanel--hasBorder"
     styles="[object Object]"
   >
     <div
@@ -545,7 +545,7 @@ exports[`Action renders with Notifications plugin installed 1`] = `
 exports[`Action renders without Notifications plugin installed 1`] = `
 <div>
   <div
-    class="euiPanel euiPanel--paddingMedium euiPanel--borderRadiusMedium euiPanel--plain euiPanel--hasShadow"
+    class="euiPanel euiPanel--paddingMedium euiPanel--borderRadiusMedium euiPanel--plain euiPanel--hasShadow euiPanel--hasBorder"
     styles="[object Object]"
   >
     <div
