@@ -24,6 +24,7 @@ exports[`MonitorTimeField renders 1`] = `
       aria-expanded="false"
       aria-haspopup="listbox"
       class="euiComboBox"
+      data-test-subj="timeFieldComboBox"
       name="timeField"
       role="combobox"
     >
