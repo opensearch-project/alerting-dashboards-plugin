@@ -9,6 +9,7 @@ import _ from 'lodash';
 import {
   EuiAccordion,
   EuiButton,
+  EuiCallOut,
   EuiSpacer,
   EuiText,
   EuiTitle,
@@ -21,7 +22,7 @@ import { isInvalid, hasError } from '../../../../utils/validate';
 import TriggerQuery from '../../components/TriggerQuery';
 import TriggerGraph from '../../components/TriggerGraph';
 import { validateTriggerName } from './utils/validation';
-import { SEARCH_TYPE } from '../../../../utils/constants';
+import { OS_NOTIFICATION_PLUGIN, SEARCH_TYPE } from '../../../../utils/constants';
 import { AnomalyDetectorTrigger } from './AnomalyDetectorTrigger';
 import { TRIGGER_TYPE } from '../CreateTrigger/utils/constants';
 import { FieldArray } from 'formik';
@@ -176,6 +177,7 @@ class DefineTrigger extends Component {
       submitCount,
       errors,
     } = this.props;
+    const hasNotificationPlugin = plugins.indexOf(OS_NOTIFICATION_PLUGIN) !== -1;
     const executeResponse = _.get(this.state, 'executeResponse', this.props.executeResponse);
     const context = getTriggerContext(executeResponse, monitor, triggerValues, triggerIndex);
     const fieldPath = triggerIndex !== undefined ? `triggerDefinitions[${triggerIndex}].` : '';
@@ -345,25 +347,38 @@ class DefineTrigger extends Component {
               <EuiSpacer size="m" />
             </>
           )}
-          <FieldArray name={`${fieldPath}actions`} validateOnChange={true}>
-            {(arrayHelpers) => (
-              <ConfigureActions
-                arrayHelpers={arrayHelpers}
-                context={context}
-                httpClient={httpClient}
-                setFlyout={setFlyout}
-                values={triggerValues}
-                notifications={notifications}
-                fieldPath={fieldPath}
-                triggerIndex={triggerIndex}
-                notificationService={notificationService}
-                plugins={plugins}
-                flyoutMode={flyoutMode}
-                submitCount={submitCount}
-                errors={errors}
-              />
-            )}
-          </FieldArray>
+          {((flyoutMode && hasNotificationPlugin) || !flyoutMode) && (
+            <FieldArray name={`${fieldPath}actions`} validateOnChange={true}>
+              {(arrayHelpers) => (
+                <ConfigureActions
+                  arrayHelpers={arrayHelpers}
+                  context={context}
+                  httpClient={httpClient}
+                  setFlyout={setFlyout}
+                  values={triggerValues}
+                  notifications={notifications}
+                  fieldPath={fieldPath}
+                  triggerIndex={triggerIndex}
+                  notificationService={notificationService}
+                  plugins={plugins}
+                  flyoutMode={flyoutMode}
+                  submitCount={submitCount}
+                  errors={errors}
+                />
+              )}
+            </FieldArray>
+          )}
+          {flyoutMode && !hasNotificationPlugin && (
+            <div>
+              <EuiCallOut title="The Notifications plugin is not installed" color="warning">
+                <p>
+                  Alerts still appear on the dashboard visualization when the trigger condition is
+                  met.
+                </p>
+              </EuiCallOut>
+              <EuiSpacer size="m" />
+            </div>
+          )}
         </div>
       </OuterAccordion>
     );
