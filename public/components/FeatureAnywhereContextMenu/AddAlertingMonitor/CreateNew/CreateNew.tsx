@@ -74,7 +74,7 @@ function CreateNew({ embeddable, flyoutMode, formikProps, history, setFlyout, de
   // On load
   useEffect(() => {
     const updatePlugins = async () => {
-      const newPlugins = await getPlugins(httpClient, getEmbeddable());
+      const newPlugins = await getPlugins(httpClient);
       setPlugins(newPlugins);
     };
 
