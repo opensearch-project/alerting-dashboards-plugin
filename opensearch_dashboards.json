@@ -3,7 +3,17 @@
   "version": "2.8.0.0",
   "opensearchDashboardsVersion": "2.8.0",
   "configPath": ["opensearch_alerting"],
-  "requiredPlugins": [],
+  "requiredPlugins": [
+    "uiActions",
+    "dashboard",
+    "embeddable",
+    "opensearchDashboardsReact",
+    "savedObjects",
+    "expressions",
+    "data",
+    "visAugmenter",
+    "opensearchDashboardsUtils"
+  ],
   "server": true,
   "ui": true
 }

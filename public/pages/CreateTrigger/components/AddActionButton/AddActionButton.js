@@ -5,35 +5,45 @@
 
 import React from 'react';
 import _ from 'lodash';
-import { EuiButton } from '@elastic/eui';
-
-import { DEFAULT_MESSAGE_SOURCE, FORMIK_INITIAL_ACTION_VALUES } from '../../utils/constants';
+import { EuiButton, EuiButtonEmpty, EuiPanel } from '@elastic/eui';
+import { getInitialActionValues } from './utils';
 import { MONITOR_TYPE } from '../../../../utils/constants';
+import './styles.scss';
 
-const AddActionButton = ({ arrayHelpers, type = 'slack', numOfActions }) => {
+const AddActionButton = ({
+  arrayHelpers,
+  type = 'slack',
+  numActions,
+  flyoutMode,
+  onPostAdd,
+  values,
+  fieldPath,
+}) => {
   const buttonText =
-    numOfActions === undefined || numOfActions === 0 ? 'Add action' : 'Add another action';
+    numActions === undefined || numActions === 0 ? 'Add action' : 'Add another action';
   const monitorType = _.get(arrayHelpers, 'form.values.monitor_type', MONITOR_TYPE.QUERY_LEVEL);
-  const initialActionValues = _.cloneDeep(FORMIK_INITIAL_ACTION_VALUES);
-  switch (monitorType) {
-    case MONITOR_TYPE.BUCKET_LEVEL:
-      _.set(
-        initialActionValues,
-        'message_template.source',
-        DEFAULT_MESSAGE_SOURCE.BUCKET_LEVEL_MONITOR
-      );
-      break;
-    case MONITOR_TYPE.QUERY_LEVEL:
-    case MONITOR_TYPE.CLUSTER_METRICS:
-      _.set(
-        initialActionValues,
-        'message_template.source',
-        DEFAULT_MESSAGE_SOURCE.QUERY_LEVEL_MONITOR
-      );
-      break;
-  }
-  return (
-    <EuiButton fill={false} size={'s'} onClick={() => arrayHelpers.push(initialActionValues)}>
+  const onClick = () => {
+    const actions = _.get(values, `${fieldPath}actions`, []);
+    const initialValues = getInitialActionValues({ monitorType, flyoutMode, actions });
+    arrayHelpers.push(initialValues);
+
+    if (onPostAdd) {
+      onPostAdd(initialValues);
+    }
+  };
+
+  return flyoutMode ? (
+    <EuiPanel paddingSize="none">
+      <EuiButtonEmpty
+        onClick={onClick}
+        iconType="plusInCircle"
+        className="add-action-button__flyout-button"
+      >
+        Add notification
+      </EuiButtonEmpty>
+    </EuiPanel>
+  ) : (
+    <EuiButton fill={false} size={'s'} onClick={onClick}>
       {buttonText}
     </EuiButton>
   );
