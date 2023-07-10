@@ -69,23 +69,27 @@ export const columns = [
     name: 'Active',
     sortable: true,
     truncateText: false,
+    render: (count) => count || 0,
   },
   {
     field: 'acknowledged',
     name: 'Acknowledged',
     sortable: true,
     truncateText: false,
+    render: (count) => count || 0,
   },
   {
     field: 'errors',
     name: 'Errors',
     sortable: true,
     truncateText: false,
+    render: (count) => count || 0,
   },
   {
     field: 'ignored',
     name: 'Ignored',
     sortable: true,
     truncateText: false,
+    render: (count) => count || 0,
   },
 ];
