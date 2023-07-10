@@ -1,0 +1,122 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`AssociatedMonitors renders 1`] = `
+<div
+  className="associated-monitors"
+>
+  <EuiFlyoutHeader
+    hasBorder={true}
+  >
+    <EuiTitle>
+      <h2
+        id="associated-monitors__title"
+      >
+        Associated monitors
+      </h2>
+    </EuiTitle>
+  </EuiFlyoutHeader>
+  <EuiFlyoutHeader />
+  <EuiFlyoutBody>
+    <EuiFlexGroup
+      alignItems="center"
+      justifyContent="spaceBetween"
+    >
+      <EuiFlexItem>
+        <EuiText>
+          <h4>
+            Visualization: 
+          </h4>
+        </EuiText>
+      </EuiFlexItem>
+      <EuiFlexItem
+        grow={false}
+      >
+        <EuiButton
+          fill={true}
+          iconType="link"
+          isDisabled={true}
+          onClick={[Function]}
+        >
+          Associate a monitor
+        </EuiButton>
+      </EuiFlexItem>
+    </EuiFlexGroup>
+    <EuiSpacer
+      size="l"
+    />
+    <EuiInMemoryTable
+      columns={
+        Array [
+          Object {
+            "field": "name",
+            "name": "Monitor Name",
+            "render": [Function],
+            "sortable": true,
+            "truncateText": true,
+            "width": "50%",
+          },
+          Object {
+            "field": "state",
+            "name": "State",
+            "render": [Function],
+            "sortable": true,
+            "width": "105px",
+          },
+          Object {
+            "field": "date",
+            "name": "Latest alert",
+            "render": [Function],
+            "sortable": true,
+            "truncateText": true,
+            "width": "50%",
+          },
+          Object {
+            "actions": Array [
+              Object {
+                "description": "Edit monitor",
+                "icon": "pencil",
+                "name": "Edit monitor",
+                "onClick": [Function],
+                "type": "icon",
+              },
+              Object {
+                "description": "Unlink monitor",
+                "icon": "unlink",
+                "name": "Unlink monitor",
+                "onClick": [Function],
+                "type": "icon",
+              },
+            ],
+            "name": "Actions",
+          },
+        ]
+      }
+      hasActions={true}
+      items={Array []}
+      loading={true}
+      message={
+        <EuiEmptyPrompt
+          body={
+            <EuiLoadingSpinner
+              size="l"
+            />
+          }
+        />
+      }
+      pagination={true}
+      responsive={true}
+      search={
+        Object {
+          "box": Object {
+            "disabled": true,
+            "incremental": true,
+            "schema": true,
+          },
+        }
+      }
+      sorting={true}
+      tableLayout="fixed"
+    />
+  </EuiFlyoutBody>
+</div>
+`;

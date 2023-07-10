@@ -5,17 +5,37 @@
 
 import React, { useState } from 'react';
 import _ from 'lodash';
-import { EuiPopover, EuiBadge, EuiPopoverTitle } from '@elastic/eui';
+import { EuiPopover, EuiBadge, EuiPopoverTitle, EuiSpacer } from '@elastic/eui';
 import MetricPopover from './MetricPopover';
 
 export default function MetricItem(
-  { arrayHelpers, fieldOptions, expressionWidth, aggregation, index } = this.props
+  { arrayHelpers, fieldOptions, expressionWidth, aggregation, index, flyoutMode } = this.props
 ) {
   const [isPopoverOpen, setIsPopoverOpen] = useState(aggregation.fieldName === '');
   const closePopover = () => {
     if (_.isEmpty(aggregation.fieldName)) arrayHelpers.remove(index);
     setIsPopoverOpen(false);
   };
+
+  if (flyoutMode) {
+    let metricText = `${aggregation.aggregationType.toUpperCase()} OF ${aggregation.fieldName}`;
+    if (_.isEmpty(aggregation.fieldName) && _.isEmpty(aggregation.aggregationType)) {
+      metricText = '';
+    }
+    return (
+      <div>
+        <EuiBadge color="hollow">{metricText}</EuiBadge>
+        <EuiSpacer size="s" />
+        <MetricPopover
+          options={fieldOptions}
+          closePopover={closePopover}
+          expressionWidth={expressionWidth}
+          index={index}
+          flyoutMode={flyoutMode}
+        />
+      </div>
+    );
+  }
 
   return (
     <EuiPopover

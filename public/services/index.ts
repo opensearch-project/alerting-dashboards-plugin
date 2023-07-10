@@ -4,6 +4,6 @@
  */
 
 import NotificationService from './NotificationService';
-import { ServicesConsumer, ServicesContext } from './services';
 
-export { ServicesConsumer, ServicesContext, NotificationService };
+export * from './services';
+export { NotificationService };

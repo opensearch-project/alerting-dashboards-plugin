@@ -1,0 +1,44 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`AssociateExisting renders 1`] = `
+<div
+  className="associate-existing"
+>
+  <EuiText
+    size="xs"
+  >
+    <p>
+      View existing monitors across your system and add the monitor(s) to a dashboard and visualization.
+       
+      <a
+        href="https://opensearch.org/docs/latest/observing-your-data/alerting/dashboards-alerting/"
+        target="_blank"
+      >
+        Learn more 
+        <EuiIcon
+          type="popout"
+        />
+      </a>
+    </p>
+  </EuiText>
+  <EuiSpacer
+    size="l"
+  />
+  <EuiTitle
+    size="s"
+  >
+    <h3>
+      Select monitor to associate
+    </h3>
+  </EuiTitle>
+  <EuiSpacer
+    size="m"
+  />
+  <EuiLoadingSpinner
+    size="l"
+  />
+  <EuiSpacer
+    size="xl"
+  />
+</div>
+`;

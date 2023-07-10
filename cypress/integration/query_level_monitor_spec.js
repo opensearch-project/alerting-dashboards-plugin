@@ -30,7 +30,8 @@ const addVisualQueryLevelTrigger = (
   thresholdValue
 ) => {
   // Click 'Add trigger' button
-  cy.contains('Add trigger', { timeout: 20000 }).click({ force: true });
+  if (triggerIndex === 0) cy.contains('Add trigger', { timeout: 20000 }).click({ force: true });
+  else cy.contains('Add another trigger', { timeout: 20000 }).click({ force: true });
 
   if (isEdit) {
     // TODO: Passing button props in EUI accordion was added in newer versions (31.7.0+).
