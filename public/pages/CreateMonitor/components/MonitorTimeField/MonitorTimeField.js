@@ -5,7 +5,6 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import FormikSelect from '../../../../components/FormControls/FormikSelect/FormikSelect';
 import { hasError, isInvalid } from '../../../../utils/validate';
 import { validateTimeField } from './utils/validation';
 import { FormikComboBox } from '../../../../components/FormControls';
@@ -34,6 +33,7 @@ const MonitorTimeField = ({ dataTypes }) => {
         },
         isClearable: false,
         singleSelection: { asPlainText: true },
+        'data-test-subj': 'timeFieldComboBox',
       }}
     />
   );
