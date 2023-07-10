@@ -5,9 +5,14 @@
 
 import React from 'react';
 import { mount } from 'enzyme';
+import {
+  notificationServiceMock,
+  httpServiceMock,
+} from '../../../../../../../../src/core/public/mocks';
 import { AnomalyDetectorData } from '../AnomalyDetectorData';
 import { httpClientMock } from '../../../../../../test/mocks';
 import { CoreContext } from '../../../../../utils/CoreContext';
+import { setClient, setNotifications } from '../../../../../services';
 
 httpClientMock.get.mockResolvedValue({
   ok: true,
@@ -24,6 +29,10 @@ function getMountWrapper() {
 }
 
 describe('AnomalyDetectorData', () => {
+  const notifications = notificationServiceMock.createStartContract();
+  setNotifications(notifications);
+  const httpClient = httpServiceMock.createStartContract();
+  setClient(httpClient);
   beforeEach(() => {
     jest.clearAllMocks();
   });

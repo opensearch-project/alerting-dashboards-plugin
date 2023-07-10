@@ -149,11 +149,12 @@ export function formikToAd(values) {
 export function formikToUiSearch(values) {
   const { searchType, timeField, aggregations, groupBy, bucketValue, bucketUnitOfTime, filters } =
     values;
+  const cleanedGroupBy = groupBy.filter((item) => item !== '');
   return {
     searchType,
     timeField,
     aggregations,
-    groupBy,
+    cleanedGroupBy,
     bucketValue,
     bucketUnitOfTime,
     filters,
