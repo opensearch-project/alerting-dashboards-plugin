@@ -5,7 +5,17 @@
   "configPath": [
     "opensearch_alerting"
   ],
-  "requiredPlugins": [],
+  "requiredPlugins": [
+    "uiActions",
+    "dashboard",
+    "embeddable",
+    "opensearchDashboardsReact",
+    "savedObjects",
+    "expressions",
+    "data",
+    "visAugmenter",
+    "opensearchDashboardsUtils"
+  ],
   "server": true,
   "ui": true
 }

@@ -1,0 +1,20 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`DocumentationTitle renders 1`] = `
+<EuiFlexGroup>
+  <EuiFlexItem>
+    <span
+      data-ui="documentation-title-text"
+    >
+      Documentation
+    </span>
+  </EuiFlexItem>
+  <EuiFlexItem
+    grow={false}
+  >
+    <EuiIcon
+      type="popout"
+    />
+  </EuiFlexItem>
+</EuiFlexGroup>
+`;

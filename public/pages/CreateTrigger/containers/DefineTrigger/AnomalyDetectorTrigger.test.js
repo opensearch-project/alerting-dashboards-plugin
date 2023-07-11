@@ -6,9 +6,14 @@
 import React from 'react';
 import { render, mount } from 'enzyme';
 import { Formik } from 'formik';
+import {
+  notificationServiceMock,
+  httpServiceMock,
+} from '../../../../../../../src/core/public/mocks';
 import { AnomalyDetectorTrigger } from './AnomalyDetectorTrigger';
 import { httpClientMock } from '../../../../../test/mocks';
 import { CoreContext } from '../../../../../public/utils/CoreContext';
+import { setClient, setNotifications } from '../../../../services';
 
 // enabling waiting until all of the promiseds have cleared: https://tinyurl.com/5hym6n9b
 const runAllPromises = () => new Promise(setImmediate);
@@ -18,10 +23,10 @@ beforeEach(() => {
 });
 
 describe('AnomalyDetectorTrigger', () => {
-  const AppContext = React.createContext({
-    httpClient: { httpClientMock },
-    notifications: undefined,
-  });
+  const notifications = notificationServiceMock.createStartContract();
+  setNotifications(notifications);
+  const httpClientMock = httpServiceMock.createStartContract();
+  setClient(httpClientMock);
 
   test('renders no feature', () => {
     const component = <AnomalyDetectorTrigger detectorId="tempId" />;
@@ -196,7 +201,6 @@ describe('AnomalyDetectorTrigger', () => {
     // without update, we will finish mount before the embedded async AnomalyDetectorData finish mounting
     wrapper.update();
 
-    console.log(wrapper.debug());
     expect(wrapper.update().find('[data-test-subj~="empty-prompt"]').exists()).toBe(false);
     expect(
       wrapper
