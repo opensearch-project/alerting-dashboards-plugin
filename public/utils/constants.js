@@ -102,3 +102,8 @@ export const monitorTypesForComposition = new Set([
   MONITOR_TYPE.DOC_LEVEL,
   MONITOR_TYPE.QUERY_LEVEL,
 ]);
+
+export const PLUGIN_AUGMENTATION_ENABLE_SETTING = 'visualization:enablePluginAugmentation';
+
+export const PLUGIN_AUGMENTATION_MAX_OBJECTS_SETTING =
+  'visualization:enablePluginAugmentation.maxPluginObjects';

@@ -5,7 +5,7 @@
 
 import React from 'react';
 import _ from 'lodash';
-import { EuiPanel, EuiText } from '@elastic/eui';
+import { EuiPanel, EuiText, EuiSpacer, EuiLoadingSpinner } from '@elastic/eui';
 import Action from '../../components/Action';
 import ActionEmptyPrompt from '../../components/ActionEmptyPrompt';
 import AddActionButton from '../../components/AddActionButton';
@@ -25,6 +25,7 @@ import { backendErrorNotification } from '../../../../utils/helpers';
 import { TRIGGER_TYPE } from '../CreateTrigger/utils/constants';
 import { formikToTrigger } from '../CreateTrigger/utils/formikToTrigger';
 import { getChannelOptions, toChannelType } from '../../utils/helper';
+import { getInitialActionValues } from '../../components/AddActionButton/utils';
 
 const createActionContext = (context, action) => ({
   ctx: {
@@ -51,6 +52,11 @@ export const checkForError = (response, error) => {
 class ConfigureActions extends React.Component {
   constructor(props) {
     super(props);
+    const { values, fieldPath } = props;
+    const firstActionId = _.get(values, `${fieldPath}actions[0].id`, '');
+    const startActionIndex = 0;
+    const accordionsOpen = firstActionId ? { [startActionIndex]: true } : {};
+
     this.state = {
       destinations: [],
       flattenedDestinations: [],
@@ -58,6 +64,9 @@ class ConfigureActions extends React.Component {
       loadingDestinations: true,
       actionDeleted: false,
       hasNotificationPlugin: false,
+      currentSubmitCount: 0,
+      accordionsOpen,
+      isInitialLoading: true,
     };
   }
 
@@ -84,6 +93,12 @@ class ConfigureActions extends React.Component {
       this.loadDestinations();
     }
   }
+
+  onAccordionToggle = (key) => {
+    const accordionsOpen = { ...this.state.accordionsOpen };
+    accordionsOpen[key] = !accordionsOpen[key];
+    this.setState({ accordionsOpen, currentSubmitCount: this.props.submitCount });
+  };
 
   /**
    * Returns all channels in consecutive requests until all channels are returned
@@ -131,7 +146,7 @@ class ConfigureActions extends React.Component {
   };
 
   loadDestinations = async (searchText = '') => {
-    const { httpClient, values, arrayHelpers, notifications, fieldPath } = this.props;
+    const { httpClient, values, arrayHelpers, notifications, fieldPath, flyoutMode } = this.props;
     const { allowList, actionDeleted } = this.state;
 
     this.setState({ loadingDestinations: true });
@@ -165,23 +180,8 @@ class ConfigureActions extends React.Component {
       });
 
       const monitorType = _.get(arrayHelpers, 'form.values.monitor_type', MONITOR_TYPE.QUERY_LEVEL);
-      const initialActionValues = _.cloneDeep(FORMIK_INITIAL_ACTION_VALUES);
-      switch (monitorType) {
-        case MONITOR_TYPE.BUCKET_LEVEL:
-          _.set(
-            initialActionValues,
-            'message_template.source',
-            DEFAULT_MESSAGE_SOURCE.BUCKET_LEVEL_MONITOR
-          );
-          break;
-        default:
-          _.set(
-            initialActionValues,
-            'message_template.source',
-            DEFAULT_MESSAGE_SOURCE.QUERY_LEVEL_MONITOR
-          );
-          break;
-      }
+      const actions = _.get(values, `${fieldPath}actions`, []);
+      const initialActionValues = getInitialActionValues({ monitorType, flyoutMode, actions });
 
       // If actions is not defined  If user choose to delete actions, it will not override customer's preferences.
       if (
@@ -199,6 +199,8 @@ class ConfigureActions extends React.Component {
         loadingDestinations: false,
       });
     }
+
+    this.setState({ isInitialLoading: false });
   };
 
   sendTestMessage = async (index) => {
@@ -278,72 +280,124 @@ class ConfigureActions extends React.Component {
   };
 
   renderActions = (arrayHelpers) => {
-    const { context, setFlyout, values, fieldPath, httpClient, plugins } = this.props;
-    const { destinations, flattenedDestinations } = this.state;
+    const {
+      context,
+      setFlyout,
+      values,
+      fieldPath,
+      httpClient,
+      plugins,
+      flyoutMode,
+      submitCount,
+      errors,
+    } = this.props;
+    const {
+      destinations,
+      flattenedDestinations,
+      accordionsOpen,
+      isInitialLoading,
+      currentSubmitCount,
+    } = this.state;
     const hasDestinations = !_.isEmpty(destinations);
     const hasActions = !_.isEmpty(_.get(values, `${fieldPath}actions`));
     const shouldRenderActions = hasActions || (hasDestinations && hasActions);
     const hasNotificationPlugin = plugins.indexOf(OS_NOTIFICATION_PLUGIN) !== -1;
+    const numActions = _.get(values, `${fieldPath}actions`, []).length;
 
     return shouldRenderActions ? (
-      _.get(values, `${fieldPath}actions`).map((action, index) => (
-        <Action
-          key={index}
-          action={action}
-          arrayHelpers={arrayHelpers}
-          context={createActionContext(context, action)}
-          destinations={destinations}
-          flattenedDestinations={flattenedDestinations}
-          index={index}
-          onDelete={() => {
-            this.setState({ actionDeleted: true });
-            arrayHelpers.remove(index);
-          }}
-          sendTestMessage={this.sendTestMessage}
-          setFlyout={setFlyout}
-          httpClient={httpClient}
-          fieldPath={fieldPath}
-          values={values}
-          hasNotificationPlugin={hasNotificationPlugin}
-          loadDestinations={this.loadDestinations}
-        />
-      ))
+      _.get(values, `${fieldPath}actions`).map((action, index) => {
+        const key = action.id;
+        if (flyoutMode && submitCount > currentSubmitCount) {
+          accordionsOpen[index] =
+            accordionsOpen?.[index] || 'actions' in errors.triggerDefinitions[index];
+        }
+
+        return (
+          <Action
+            key={key}
+            action={action}
+            arrayHelpers={arrayHelpers}
+            context={createActionContext(context, action)}
+            destinations={destinations}
+            flattenedDestinations={flattenedDestinations}
+            index={index}
+            onDelete={() => {
+              this.setState({ actionDeleted: true });
+              arrayHelpers.remove(index);
+            }}
+            sendTestMessage={this.sendTestMessage}
+            setFlyout={setFlyout}
+            httpClient={httpClient}
+            fieldPath={fieldPath}
+            values={values}
+            hasNotificationPlugin={hasNotificationPlugin}
+            loadDestinations={this.loadDestinations}
+            flyoutMode={flyoutMode}
+            accordionProps={{
+              isOpen: accordionsOpen[index],
+              onToggle: () => this.onAccordionToggle(index),
+            }}
+            isInitialLoading={isInitialLoading}
+          />
+        );
+      })
     ) : (
       <ActionEmptyPrompt
         arrayHelpers={arrayHelpers}
         hasDestinations={hasDestinations}
         httpClient={httpClient}
         hasNotificationPlugin={hasNotificationPlugin}
+        flyoutMode={flyoutMode}
+        onPostAdd={(initialValues) => this.onAccordionToggle(initialValues.id)}
+        numActions={numActions}
       />
     );
   };
 
   render() {
     const { loadingDestinations } = this.state;
-    const { arrayHelpers, values, fieldPath } = this.props;
-    const numOfActions = _.get(values, `${fieldPath}actions`, []).length;
-    const displayAddActionButton = numOfActions > 0;
+    const { arrayHelpers, values, fieldPath, flyoutMode } = this.props;
+    const numActions = _.get(values, `${fieldPath}actions`, []).length;
+    const displayAddActionButton = numActions > 0;
     //TODO:: Handle loading Destinations inside the Action which will be more intuitive for customers.
     return (
-      <div style={{ paddingLeft: '10px', paddingRight: '10px' }}>
-        <EuiText>
-          <h4>{`Actions (${numOfActions})`}</h4>
-        </EuiText>
-        <EuiText color={'subdued'} size={'xs'} style={{ paddingBottom: '5px' }}>
-          Define actions when trigger conditions are met.
-        </EuiText>
-        <EuiPanel style={{ backgroundColor: '#F7F7F7', padding: '20px' }}>
-          {loadingDestinations && numOfActions < 1 ? (
+      <div style={flyoutMode ? {} : { paddingLeft: '10px', paddingRight: '10px' }}>
+        {!flyoutMode && (
+          <>
+            <EuiText>
+              <h4>{`Actions (${numActions})`}</h4>
+            </EuiText>
+            <EuiText color={'subdued'} size={'xs'} style={{ paddingBottom: '5px' }}>
+              Define actions when trigger conditions are met.
+            </EuiText>
+          </>
+        )}
+        <EuiPanel
+          style={flyoutMode ? {} : { backgroundColor: '#F7F7F7', padding: '20px' }}
+          paddingSize="none"
+          hasShadow={!flyoutMode}
+          hasBorder={!flyoutMode}
+        >
+          {!flyoutMode && !loadingDestinations && numActions < 1 ? (
             <div style={{ display: 'flex', justifyContent: 'center' }}>Loading Destinations...</div>
           ) : (
-            this.renderActions(arrayHelpers)
+            <>
+              {this.renderActions(arrayHelpers)}
+              {flyoutMode && <EuiSpacer size="m" />}
+            </>
           )}
-
-          {displayAddActionButton ? (
-            <div style={{ paddingBottom: '5px', paddingTop: '20px' }}>
-              <AddActionButton arrayHelpers={arrayHelpers} numOfActions={numOfActions} />
+          {displayAddActionButton && (
+            <div style={flyoutMode ? {} : { paddingBottom: '5px', paddingTop: '20px' }}>
+              <AddActionButton
+                arrayHelpers={arrayHelpers}
+                values={values}
+                fieldPath={fieldPath}
+                numActions={numActions}
+                flyoutMode={flyoutMode}
+                onPostAdd={(initialValues) => this.onAccordionToggle(initialValues.id)}
+              />
             </div>
-          ) : null}
+          )}
         </EuiPanel>
       </div>
     );

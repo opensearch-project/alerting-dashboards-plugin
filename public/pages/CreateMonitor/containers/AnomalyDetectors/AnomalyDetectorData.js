@@ -9,6 +9,7 @@ import moment from 'moment';
 import { CoreContext } from '../../../../utils/CoreContext';
 import { AD_PREVIEW_DAYS, DEFAULT_PREVIEW_ERROR_MSG } from '../../../../utils/constants';
 import { backendErrorNotification } from '../../../../utils/helpers';
+import { getClient, getNotifications } from '../../../../services';
 
 class AnomalyDetectorData extends React.Component {
   static contextType = CoreContext;
@@ -53,7 +54,8 @@ class AnomalyDetectorData extends React.Component {
 
   async getPreviewData() {
     const { detectorId, startTime, endTime } = this.props;
-    const { http: httpClient, notifications } = this.context;
+    const httpClient = getClient();
+    const notifications = getNotifications();
     this.setState({
       isLoading: true,
     });

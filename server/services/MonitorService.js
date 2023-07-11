@@ -63,8 +63,7 @@ export default class MonitorService {
       const params = { monitorId: id };
       const { callAsCurrentUser } = await this.esDriver.asScoped(req);
       const response = await callAsCurrentUser('alerting.deleteMonitor', params);
-      console.log('Delete monitor response');
-      console.log(JSON.stringify(response));
+
       return res.ok({
         body: {
           ok: response.result === 'deleted' || response.result === undefined,
@@ -87,8 +86,7 @@ export default class MonitorService {
       const params = { workflowId: id };
       const { callAsCurrentUser } = await this.esDriver.asScoped(req);
       const response = await callAsCurrentUser('alerting.deleteWorkflow', params);
-      console.log('delete workflow response ^*^*^*^*^*');
-      console.log(JSON.stringify(response));
+
       return res.ok({
         body: {
           ok: response.result === 'deleted' || response.result === undefined,
@@ -106,14 +104,11 @@ export default class MonitorService {
   };
 
   getMonitor = async (context, req, res) => {
-    console.log('****** GET MONITOR *****');
     try {
       const { id } = req.params;
       const params = { monitorId: id };
       const { callAsCurrentUser } = await this.esDriver.asScoped(req);
       const getResponse = await callAsCurrentUser('alerting.getMonitor', params);
-      console.log('Get monitor complete response ^^^^^^^^^');
-      console.log(JSON.stringify(getResponse));
       let monitor = _.get(getResponse, 'monitor', null);
       const version = _.get(getResponse, '_version', null);
       const ifSeqNo = _.get(getResponse, '_seq_no', null);
@@ -190,7 +185,6 @@ export default class MonitorService {
   };
 
   getWorkflow = async (context, req, res) => {
-    console.log('****** GET WORKFLOW *****');
     try {
       const { id } = req.params;
       const params = { monitorId: id };
@@ -268,9 +262,8 @@ export default class MonitorService {
   };
 
   getMonitors = async (context, req, res) => {
-    console.log('****** GET MONITORS *****');
     try {
-      const { from, size, search, sortDirection, sortField, state } = req.query;
+      const { from, size, search, sortDirection, sortField, state, monitorIds } = req.query;
 
       let must = { match_all: {} };
       if (search.trim()) {
@@ -287,6 +280,21 @@ export default class MonitorService {
       }
 
       const should = [];
+      const mustList = [must];
+      if (monitorIds !== undefined) {
+        mustList.push({
+          terms: {
+            _id: Array.isArray(monitorIds) ? monitorIds : [monitorIds],
+          },
+        });
+      } else if (monitorIds === 'empty') {
+        mustList.push({
+          terms: {
+            _id: [],
+          },
+        });
+      }
+
       if (state !== 'all') {
         const enabled = state === 'enabled';
         should.push({ term: { 'monitor.enabled': enabled } });
@@ -309,6 +317,7 @@ export default class MonitorService {
           query: {
             bool: {
               should,
+              must: mustList,
             },
           },
           aggregations: {
@@ -338,13 +347,14 @@ export default class MonitorService {
           _version: version,
           _seq_no: ifSeqNo,
           _primary_term: ifPrimaryTerm,
-          _source: monitor,
+          _source,
         } = result;
+        const monitor = _source.monitor ? _source.monitor : _source;
+        monitor[item_type] = monitor.workflow_type || monitor.monitor_type;
         const { name, enabled } = monitor;
         return [id, { id, version, ifSeqNo, ifPrimaryTerm, name, enabled, monitor }];
       }, {});
       const monitorMap = new Map(monitorKeyValueTuples);
-      const monitorIds = [...monitorMap.keys()];
       const associatedCompositeMonitorCountMap = {};
       _.get(
         getResponse,
@@ -353,6 +363,7 @@ export default class MonitorService {
       ).forEach(({ key, doc_count }) => {
         associatedCompositeMonitorCountMap[key] = doc_count;
       });
+      const monitorIdsOutput = [...monitorMap.keys()];
 
       const aggsOrderData = {};
       const aggsSorts = {
@@ -369,7 +380,7 @@ export default class MonitorService {
         index: INDEX.ALL_ALERTS,
         body: {
           size: 0,
-          query: { terms: { monitor_id: monitorIds } },
+          query: { terms: { monitor_id: monitorIdsOutput } },
           aggregations: {
             uniq_monitor_ids: {
               terms: {
@@ -572,9 +583,6 @@ export default class MonitorService {
     try {
       const { query, index, size } = req.body;
       const params = { index, size, body: query };
-
-      console.log('Search monitors ******* ');
-      console.log(JSON.stringify(params));
 
       const { callAsCurrentUser } = await this.esDriver.asScoped(req);
       const results = await callAsCurrentUser('alerting.getMonitors', params);

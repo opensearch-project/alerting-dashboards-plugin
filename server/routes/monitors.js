@@ -19,6 +19,7 @@ export default function (services, router) {
           sortField: schema.string(),
           sortDirection: schema.string(),
           state: schema.string(),
+          monitorIds: schema.maybe(schema.any()),
         }),
       },
     },

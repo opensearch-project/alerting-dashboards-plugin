@@ -8,22 +8,34 @@ import { EuiSpacer } from '@elastic/eui';
 import VisualGraph from '../../CreateMonitor/components/VisualGraph';
 import TriggerExpressions from './TriggerExpressions';
 
-const TriggerGraph = ({ monitorValues, response, thresholdValue, thresholdEnum, fieldPath }) => (
-  <div style={{ padding: '0px 10px' }}>
+const TriggerGraph = ({
+  monitorValues,
+  response,
+  thresholdValue,
+  thresholdEnum,
+  fieldPath,
+  flyoutMode,
+}) => (
+  <div style={flyoutMode ? {} : { padding: '0px 10px' }}>
     <TriggerExpressions
       thresholdValue={thresholdValue}
       thresholdEnum={thresholdEnum}
       keyFieldName={`${fieldPath}thresholdEnum`}
       valueFieldName={`${fieldPath}thresholdValue`}
       label="Trigger condition"
+      flyoutMode={flyoutMode}
     />
-    <EuiSpacer size="m" />
-    <VisualGraph
-      annotation
-      values={monitorValues}
-      thresholdValue={thresholdValue}
-      response={response}
-    />
+    {!flyoutMode && (
+      <>
+        <EuiSpacer size="m" />
+        <VisualGraph
+          annotation
+          values={monitorValues}
+          thresholdValue={thresholdValue}
+          response={response}
+        />
+      </>
+    )}
   </div>
 );
 

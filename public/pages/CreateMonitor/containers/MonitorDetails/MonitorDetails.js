@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { Fragment } from 'react';
+import React, { useMemo, Fragment } from 'react';
 import { EuiSpacer, EuiCallOut } from '@elastic/eui';
 import ContentPanel from '../../../../components/ContentPanel';
 import FormikFieldText from '../../../../components/FormControls/FormikFieldText';
@@ -13,21 +13,20 @@ import MonitorType from '../../components/MonitorType';
 import AnomalyDetectors from '../AnomalyDetectors/AnomalyDetectors';
 import { MONITOR_TYPE } from '../../../../utils/constants';
 
-const renderAnomalyDetector = (httpClient, values, detectorId) => {
-  return {
-    actions: [],
-    content: (
-      <React.Fragment>
-        <AnomalyDetectors
-          httpClient={httpClient}
-          values={values}
-          renderEmptyMessage={renderEmptyMessage}
-          detectorId={detectorId}
-        />
-      </React.Fragment>
-    ),
-  };
-};
+const renderAnomalyDetector = ({ httpClient, values, detectorId, flyoutMode }) => ({
+  actions: [],
+  content: (
+    <React.Fragment>
+      <AnomalyDetectors
+        httpClient={httpClient}
+        values={values}
+        renderEmptyMessage={renderEmptyMessage}
+        detectorId={detectorId}
+        flyoutMode={flyoutMode}
+      />
+    </React.Fragment>
+  ),
+});
 
 function renderEmptyMessage(message) {
   return (
@@ -41,11 +40,26 @@ function renderEmptyMessage(message) {
   );
 }
 
-const MonitorDetails = ({ values, httpClient, monitorToEdit, isAd, plugins, detectorId }) => {
-  const anomalyDetectorContent = isAd && renderAnomalyDetector(httpClient, values, detectorId);
+const MonitorDetails = ({
+  values,
+  errors,
+  httpClient,
+  monitorToEdit,
+  isAd,
+  plugins,
+  detectorId,
+  flyoutMode,
+}) => {
+  const anomalyDetectorContent =
+    isAd && renderAnomalyDetector({ httpClient, values, detectorId, flyoutMode });
   const displayMonitorDefinitionCards = values.monitor_type !== MONITOR_TYPE.CLUSTER_METRICS;
+  const Container = useMemo(
+    () => (flyoutMode ? ({ children }) => <>{children}</> : ContentPanel),
+    [flyoutMode]
+  );
+
   return (
-    <ContentPanel
+    <Container
       title="Monitor details"
       titleSize="s"
       panelStyles={{
@@ -56,11 +70,11 @@ const MonitorDetails = ({ values, httpClient, monitorToEdit, isAd, plugins, dete
       }}
       actions={anomalyDetectorContent.actions}
     >
-      <EuiSpacer size="s" />
+      {!flyoutMode && <EuiSpacer size="s" />}
       <FormikFieldText
         name="name"
         formRow
-        fieldProps={{ validate: validateMonitorName(httpClient, monitorToEdit) }}
+        fieldProps={{ validate: validateMonitorName(httpClient, monitorToEdit, flyoutMode) }}
         rowProps={{
           label: 'Monitor name',
           isInvalid,
@@ -78,9 +92,9 @@ const MonitorDetails = ({ values, httpClient, monitorToEdit, isAd, plugins, dete
         }}
       />
       <EuiSpacer size="m" />
-      <MonitorType values={values} />
+      {!flyoutMode && <MonitorType values={values} />}
 
-      {displayMonitorDefinitionCards ? (
+      {!flyoutMode && displayMonitorDefinitionCards ? (
         <div>
           <EuiSpacer size="m" />
           <MonitorDefinitionCard values={values} plugins={plugins} />
@@ -89,8 +103,9 @@ const MonitorDetails = ({ values, httpClient, monitorToEdit, isAd, plugins, dete
 
       {isAd ? (
         <div>
-          <EuiSpacer size="l" />
+          {!flyoutMode && <EuiSpacer size="l" />}
           {anomalyDetectorContent.content}
+          {flyoutMode && <EuiSpacer size="m" />}
         </div>
       ) : null}
 
@@ -108,7 +123,9 @@ const MonitorDetails = ({ values, httpClient, monitorToEdit, isAd, plugins, dete
           </EuiCallOut>
         </Fragment>
       )}
-    </ContentPanel>
+      {!flyoutMode && <EuiSpacer size="l" />}
+      <Schedule isAd={isAd} flyoutMode={flyoutMode} />
+    </Container>
   );
 };
 

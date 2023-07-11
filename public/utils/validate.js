@@ -13,6 +13,8 @@ import { TRIGGER_TYPE } from '../pages/CreateTrigger/containers/CreateTrigger/ut
 export const isInvalid = (name, form) =>
   !!_.get(form.touched, name, false) && !!_.get(form.errors, name, false);
 
+export const isInvalidWithoutTouch = (name, form) => !!_.get(form.errors, name, false);
+
 export const hasError = (name, form) => _.get(form.errors, name);
 
 export const validateActionName = (monitor, trigger) => (value) => {
@@ -59,6 +61,10 @@ export const required = (value) => {
   if (!value) return 'Required.';
 };
 
+export const requiredValidation = (text) => (value) => {
+  if (!value || (Array.isArray(value) && value.length === 0)) return text;
+};
+
 export const requiredNumber = (value) => {
   if (isNaN(parseFloat(value))) return 'Requires numerical value.';
 };
@@ -94,9 +100,9 @@ export const isInvalidApiPath = (name, form) => {
   return _.get(form.touched, name, false) && _.isEmpty(path);
 };
 
-export const validateMonitorName = (httpClient, monitorToEdit) => async (value) => {
+export const validateMonitorName = (httpClient, monitorToEdit, isFullText) => async (value) => {
   try {
-    if (!value) return 'Required.';
+    if (!value) return isFullText ? 'Monitor name is required.' : 'Required.';
     const options = {
       index: INDEX.SCHEDULED_JOBS,
       query: { query: { term: { 'monitor.name.keyword': value } } },

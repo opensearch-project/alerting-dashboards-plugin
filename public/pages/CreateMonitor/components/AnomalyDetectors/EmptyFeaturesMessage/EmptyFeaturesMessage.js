@@ -5,7 +5,7 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import { EuiEmptyPrompt, EuiButton, EuiText, EuiLoadingChart } from '@elastic/eui';
+import { EuiEmptyPrompt, EuiButton, EuiText, EuiLoadingContent } from '@elastic/eui';
 import {
   OPENSEARCH_DASHBOARDS_AD_PLUGIN,
   PREVIEW_ERROR_TYPE,
@@ -74,7 +74,7 @@ const EmptyFeaturesMessage = (props) => {
       }}
     >
       {props.isLoading ? (
-        <EuiEmptyPrompt style={{ maxWidth: '45em' }} body={<EuiLoadingChart size="xl" />} />
+        <EuiEmptyPrompt style={{ maxWidth: '45em' }} body={<EuiLoadingContent size="xl" />} />
       ) : (
         <EuiEmptyPrompt
           data-test-subj="empty-prompt"

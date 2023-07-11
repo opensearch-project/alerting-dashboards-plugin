@@ -130,35 +130,6 @@ export default class Monitors extends Component {
     };
   }
 
-  // TODO: The getMonitors API is wrapping the 'monitor' field for ClusterMetrics monitors in an additional 'monitor' object.
-  //  This formatGetMonitorsResponse method is a temporary means of resolving that issue until it can be debugged on the backend.
-  formatGetMonitorsResponse = (monitors) => {
-    const unwrappedMonitors = [];
-    monitors.forEach((monitor) => {
-      const monitorType = _.get(monitor, 'monitor.monitor.monitor_type', 'monitor.monitor_type');
-      let unwrappedMonitor = monitor.monitor;
-      switch (monitorType) {
-        case MONITOR_TYPE.CLUSTER_METRICS:
-          _.set(monitor, 'monitor', unwrappedMonitor.monitor);
-          _.set(monitor, 'name', monitor.monitor.name);
-          _.set(monitor, 'enabled', monitor.monitor.enabled);
-          _.set(monitor, 'item_type', monitorType);
-          break;
-        default:
-          _.set(
-            monitor,
-            'item_type',
-            unwrappedMonitor.monitor_type || unwrappedMonitor.workflow_type,
-            '-'
-          );
-          break;
-      }
-
-      unwrappedMonitors.push(monitor);
-    });
-    return unwrappedMonitors;
-  };
-
   async getMonitors(from, size, search, sortField, sortDirection, state) {
     this.setState({ loadingMonitors: true });
     try {
@@ -169,7 +140,7 @@ export default class Monitors extends Component {
       const response = await httpClient.get('../api/alerting/monitors', { query: params });
       if (response.ok) {
         const { monitors, totalMonitors } = response;
-        this.setState({ monitors: this.formatGetMonitorsResponse(monitors), totalMonitors });
+        this.setState({ monitors, totalMonitors });
       } else {
         console.log('error getting monitors:', response);
         // TODO: 'response.ok' is 'false' when there is no alerting config index in the cluster, and notification should not be shown to new Alerting users

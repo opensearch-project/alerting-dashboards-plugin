@@ -5,7 +5,6 @@
 
 import React, { Component, Fragment } from 'react';
 import _ from 'lodash';
-import queryString from 'query-string';
 import { FieldArray, Formik } from 'formik';
 import {
   EuiButton,
@@ -15,24 +14,16 @@ import {
   EuiSpacer,
   EuiTitle,
 } from '@elastic/eui';
-
 import DefineMonitor from '../DefineMonitor';
 import { FORMIK_INITIAL_VALUES } from './utils/constants';
-import monitorToFormik from './utils/monitorToFormik';
 import { formikToMonitor } from './utils/formikToMonitor';
-import { MONITOR_TYPE, SEARCH_TYPE } from '../../../../utils/constants';
-import { initializeFromQueryParams } from './utils/monitorQueryParams';
+import { SEARCH_TYPE } from '../../../../utils/constants';
 import { SubmitErrorHandler } from '../../../../utils/SubmitErrorHandler';
-import { backendErrorNotification } from '../../../../utils/helpers';
 import MonitorDetails from '../MonitorDetails';
 import ConfigureTriggers from '../../../CreateTrigger/containers/ConfigureTriggers';
-import {
-  formikToTrigger,
-  formikToTriggerUiMetadata,
-} from '../../../CreateTrigger/containers/CreateTrigger/utils/formikToTrigger';
 import { triggerToFormik } from '../../../CreateTrigger/containers/CreateTrigger/utils/triggerToFormik';
-import { TRIGGER_TYPE } from '../../../CreateTrigger/containers/CreateTrigger/utils/constants';
 import WorkflowDetails from '../WorkflowDetails/WorkflowDetails';
+import { getInitialValues, getPlugins, submit } from './utils/helpers';
 
 export default class CreateMonitor extends Component {
   static defaultProps = {
@@ -40,63 +31,42 @@ export default class CreateMonitor extends Component {
     monitorToEdit: null,
     detectorId: null,
     updateMonitor: () => {},
+    isDarkMode: false,
   };
 
   constructor(props) {
     super(props);
 
-    //pre-populate some of values if query params exists.
-    let initialValues = _.mergeWith(
-      {},
-      _.cloneDeep(FORMIK_INITIAL_VALUES),
-      initializeFromQueryParams(queryString.parse(this.props.location.search)),
-      (initialValue, queryValue) => (_.isEmpty(queryValue) ? initialValue : queryValue)
-    );
+    const { location, edit, monitorToEdit } = props;
+    const initialValues = getInitialValues({ location, monitorToEdit, edit });
+    let triggerToEdit;
+
+    if (edit && monitorToEdit) {
+      triggerToEdit = triggerToFormik(_.get(monitorToEdit, 'triggers', []), monitorToEdit);
+    }
 
     this.state = {
       plugins: [],
       response: null,
       performanceResponse: null,
+      initialValues,
+      triggerToEdit,
     };
 
-    if (this.props.edit && this.props.monitorToEdit) {
-      const triggers = triggerToFormik(
-        _.get(this.props.monitorToEdit, 'triggers', []),
-        this.props.monitorToEdit
-      );
-      _.set(this.state, 'triggerToEdit', triggers);
-      initialValues = {
-        ...monitorToFormik(this.props.monitorToEdit),
-        triggerDefinitions: triggers.triggerDefinitions,
-      };
-    }
-
-    _.set(this.state, 'initialValues', initialValues);
-
     this.onCancel = this.onCancel.bind(this);
-    this.onCreate = this.onCreate.bind(this);
     this.onSubmit = this.onSubmit.bind(this);
-    this.onUpdate = this.onUpdate.bind(this);
-    this.getPlugins = this.getPlugins.bind(this);
   }
 
   componentDidMount() {
-    this.getPlugins();
-    this.setSchedule();
-  }
-
-  async getPlugins() {
     const { httpClient } = this.props;
-    try {
-      const pluginsResponse = await httpClient.get('../api/alerting/_plugins');
-      if (pluginsResponse.ok) {
-        this.setState({ plugins: pluginsResponse.resp.map((plugin) => plugin.component) });
-      } else {
-        console.error('There was a problem getting plugins list');
-      }
-    } catch (e) {
-      console.error('There was a problem getting plugins list', e);
-    }
+
+    const updatePlugins = async () => {
+      const newPlugins = await getPlugins(httpClient);
+      this.setState({ plugins: newPlugins });
+    };
+
+    updatePlugins();
+    this.setSchedule();
   }
 
   resetResponse() {
@@ -106,38 +76,6 @@ export default class CreateMonitor extends Component {
   onCancel() {
     if (this.props.edit) this.props.history.goBack();
     else this.props.history.push('/monitors');
-  }
-
-  async onCreate(monitor, { setSubmitting, setErrors }) {
-    const { httpClient, notifications } = this.props;
-    try {
-      const resp = await httpClient.post(
-        `../api/alerting/${
-          monitor.workflow_type && monitor.workflow_type === MONITOR_TYPE.COMPOSITE_LEVEL
-            ? 'workflows'
-            : 'monitors'
-        }`,
-        {
-          body: JSON.stringify(monitor),
-        }
-      );
-      setSubmitting(false);
-      const {
-        ok,
-        resp: { _id },
-      } = resp;
-      if (ok) {
-        notifications.toasts.addSuccess(`Monitor "${monitor.name}" successfully created.`);
-        this.props.history.push(`/monitors/${_id}`);
-      } else {
-        console.log('Failed to create:', resp);
-        backendErrorNotification(notifications, 'create', 'monitor', resp.resp);
-      }
-    } catch (err) {
-      console.error(err);
-      setSubmitting(false);
-      // TODO: setErrors
-    }
   }
 
   setSchedule = () => {
@@ -158,103 +96,23 @@ export default class CreateMonitor extends Component {
     }
   };
 
-  prepareTriggers = (trigger, triggerMetadata, monitor) => {
-    const { edit } = this.props;
-    const { ui_metadata: uiMetadata = {}, triggers, monitor_type } = monitor;
-
-    let updatedTriggers;
-    let updatedUiMetadata;
-
-    if (edit) {
-      updatedTriggers = _.isArray(trigger) ? trigger.concat(triggers) : [trigger].concat(triggers);
-      updatedUiMetadata = {
-        ...uiMetadata,
-        triggers: { ...uiMetadata.triggers, ...triggerMetadata },
-      };
-    } else {
-      const { triggerToEdit = [] } = this.state;
-
-      let updatedTriggersMetadata = _.cloneDeep(uiMetadata.triggers || {});
-
-      let triggerType;
-      switch (monitor_type) {
-        case MONITOR_TYPE.BUCKET_LEVEL:
-          triggerType = TRIGGER_TYPE.BUCKET_LEVEL;
-          break;
-        case MONITOR_TYPE.DOC_LEVEL:
-          triggerType = TRIGGER_TYPE.DOC_LEVEL;
-          break;
-        case MONITOR_TYPE.COMPOSITE_LEVEL:
-          triggerType = TRIGGER_TYPE.COMPOSITE_LEVEL;
-          break;
-        default:
-          triggerType = TRIGGER_TYPE.QUERY_LEVEL;
-          break;
-      }
-
-      if (_.isArray(triggerToEdit)) {
-        const names = triggerToEdit.map((entry) => _.get(entry, `${triggerType}.name`));
-        names.forEach((name) => delete updatedTriggersMetadata[name]);
-        updatedTriggers = _.cloneDeep(trigger);
-      } else {
-        const { name } = _.get(triggerToEdit, `${triggerType}`);
-        delete updatedTriggersMetadata[name];
-
-        const findTriggerName = (element) => {
-          return name === _.get(element, `${triggerType}.name`);
-        };
-
-        const indexToUpdate = _.findIndex(triggers, findTriggerName);
-        updatedTriggers = triggers.slice();
-        updatedTriggers.splice(indexToUpdate, 1, trigger);
-      }
-
-      updatedUiMetadata = {
-        ...uiMetadata,
-        triggers: { ...updatedTriggersMetadata, ...triggerMetadata },
-      };
-    }
-
-    return { triggers: updatedTriggers, ui_metadata: updatedUiMetadata };
-  };
-
-  async onUpdate(monitor, { setSubmitting, setErrors }) {
-    const { updateMonitor, notifications } = this.props;
-    const updatedMonitor = _.cloneDeep(monitor);
-    try {
-      const resp = await updateMonitor(updatedMonitor);
-      setSubmitting(false);
-      const { ok, id } = resp;
-      if (ok) {
-        notifications.toasts.addSuccess(`Monitor "${monitor.name}" successfully updated.`);
-        this.props.history.push(`/monitors/${id}`);
-      } else {
-        console.log('Failed to update:', resp);
-      }
-    } catch (err) {
-      console.error(err);
-      setSubmitting(false);
-      // TODO: setErrors
-    }
-  }
-
   onSubmit(values, formikBag) {
-    const { edit } = this.props;
-    let monitor = formikToMonitor(values);
+    const { edit, history, updateMonitor, notifications, httpClient } = this.props;
+    const { triggerToEdit } = this.state;
 
-    if (!_.isEmpty(_.get(values, 'triggerDefinitions'))) {
-      const monitorUiMetadata = _.get(monitor, 'ui_metadata', {});
-      const triggerMetadata = formikToTriggerUiMetadata(values, monitorUiMetadata);
-      const triggers = this.prepareTriggers(
-        formikToTrigger(values, monitorUiMetadata),
-        triggerMetadata,
-        monitor
-      );
-      monitor = { ...monitor, ...triggers };
-    }
-
-    if (edit) this.onUpdate(monitor, formikBag);
-    else this.onCreate(monitor, formikBag);
+    submit({
+      values,
+      formikBag,
+      edit,
+      triggerToEdit,
+      history,
+      updateMonitor,
+      notifications,
+      httpClient,
+      onSuccess: async ({ monitor }) => {
+        notifications.toasts.addSuccess(`Monitor "${monitor.name}" successfully created.`);
+      },
+    });
   }
 
   onCloseTrigger = () => {
