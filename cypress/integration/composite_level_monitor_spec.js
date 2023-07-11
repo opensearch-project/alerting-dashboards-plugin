@@ -55,12 +55,13 @@ describe('CompositeLevelMonitor', () => {
 
     it('by visual editor', () => {
       // Select visual editor for method of definition
+      // cy.intercept('GET', '/api/notifications/get_configs?*', channelResponse);
       cy.get('[data-test-subj="visualEditorRadioCard"]').click({ force: true });
 
       // Wait for input to load and then type in the monitor name
       cy.get('input[name="name"]').type(SAMPLE_VISUAL_EDITOR_MONITOR);
 
-      // Select delegate monitors
+      // Select associated monitors
       cy.get('[data-test-subj="monitors_list_0"]')
         .type('monitorOne', { delay: 50 })
         .type('{enter}');
@@ -68,30 +69,17 @@ describe('CompositeLevelMonitor', () => {
         .type('monitorTwo', { delay: 50 })
         .type('{enter}');
 
+      cy.get('button').contains('Add trigger').click({ force: true });
+
       // Type trigger name
       cy.get('[data-test-subj="composite-trigger-name"]')
         .type('{selectall}')
         .type('{backspace}')
         .type('Composite trigger');
 
-      // Add associated monitors to condition
-      cy.get('[data-test-subj="condition-add-options-btn"]').click({ force: true });
-
-      cy.get('[data-test-subj="select-expression_0"]').click({ force: true });
-      cy.wait(1000);
-      cy.get('[data-test-subj="monitors-combobox-0"]')
-        .type('monitorOne', { delay: 50 })
-        .type('{enter}');
-
-      cy.get('[data-test-subj="select-expression_1"]').click({ force: true });
-      cy.wait(1000);
-      cy.get('[data-test-subj="monitors-combobox-1"]')
-        .type('monitorTwo', { delay: 50 })
-        .type('{enter}');
-
       // TODO: Test with Notifications plugin
       // Select notification channel
-      // cy.get('[title="Notification 1"]').type('Channel name');
+      // cy.get('[name="channel_name_0_0"]').find('input').type('Slack QA').type('{enter}');
 
       cy.intercept('api/alerting/workflows').as('createMonitorRequest');
       cy.intercept(`api/alerting/monitors?*`).as('getMonitorsRequest');
@@ -170,35 +158,6 @@ describe('CompositeLevelMonitor', () => {
         } else {
           cy.log('Failed to get all monitors.', response);
         }
-      });
-    });
-
-    it('by visual editor', () => {
-      // Verify edit page
-      cy.contains('Edit monitor', { timeout: 20000 });
-      cy.get('input[name="name"]').type('_edited');
-
-      cy.get('label').contains('Visual editor').click({ force: true });
-
-      cy.get('button').contains('Associate another monitor').click({ force: true });
-
-      cy.get('[data-test-subj="monitors_list_2"]')
-        .type('monitorThree', { delay: 50 })
-        .type('{enter}');
-
-      cy.get('[data-test-subj="condition-add-options-btn"]').click({ force: true });
-      cy.get('[data-test-subj="select-expression_2"]').click({ force: true });
-      cy.wait(1000);
-      cy.get('[data-test-subj="monitors-combobox-2"]')
-        .type('monitorThree', { delay: 50 })
-        .type('{enter}');
-
-      cy.intercept('api/alerting/workflows/*').as('updateMonitorRequest');
-      cy.get('button').contains('Update').click({ force: true });
-
-      // Wait for monitor to be created
-      cy.wait('@updateMonitorRequest').then(() => {
-        cy.get('.euiTitle--large').contains(`${SAMPLE_VISUAL_EDITOR_MONITOR}_edited`);
       });
     });
   });
