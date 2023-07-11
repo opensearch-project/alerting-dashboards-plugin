@@ -74,7 +74,17 @@ export default class Triggers extends Component {
     this.monitorsById = {};
   }
 
-  async componentDidMount() {
+  componentDidMount() {
+    this.updateMonitorState();
+  }
+
+  componentDidUpdate(prevProps) {
+    if (this.props.monitor !== prevProps.monitor) {
+      this.updateMonitorState();
+    }
+  }
+
+  async updateMonitorState() {
     const { monitor } = this.props;
     const triggers = getUnwrappedTriggers(monitor);
 
