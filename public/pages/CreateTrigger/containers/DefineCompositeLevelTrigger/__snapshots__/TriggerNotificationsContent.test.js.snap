@@ -13,14 +13,14 @@ exports[`TriggerNotificationsContent renders with notifications 1`] = `
     >
       <div
         class="euiFormRow"
-        id="channel_name_0-form-row-row"
+        id="channel_name_undefined_0-form-row-row"
       >
         <div
           class="euiFormRow__labelWrapper"
         >
           <label
             class="euiFormLabel euiFormRow__label"
-            for="channel_name_0-form-row"
+            for="channel_name_undefined_0-form-row"
           >
             Notification channel
           </label>
@@ -32,7 +32,7 @@ exports[`TriggerNotificationsContent renders with notifications 1`] = `
             aria-expanded="false"
             aria-haspopup="listbox"
             class="euiComboBox"
-            name="channel_name_0"
+            name="channel_name_undefined_0"
             role="combobox"
           >
             <div
@@ -58,7 +58,7 @@ exports[`TriggerNotificationsContent renders with notifications 1`] = `
                     <input
                       aria-controls=""
                       data-test-subj="comboBoxSearchInput"
-                      id="channel_name_0"
+                      id="channel_name_undefined_0"
                       role="textbox"
                       style="box-sizing:content-box;width:1px"
                       value=""
@@ -128,14 +128,14 @@ exports[`TriggerNotificationsContent renders without notifications 1`] = `
     >
       <div
         class="euiFormRow"
-        id="channel_name_0-form-row-row"
+        id="channel_name_undefined_0-form-row-row"
       >
         <div
           class="euiFormRow__labelWrapper"
         >
           <label
             class="euiFormLabel euiFormRow__label"
-            for="channel_name_0-form-row"
+            for="channel_name_undefined_0-form-row"
           >
             Notification channel
           </label>
@@ -147,7 +147,7 @@ exports[`TriggerNotificationsContent renders without notifications 1`] = `
             aria-expanded="false"
             aria-haspopup="listbox"
             class="euiComboBox"
-            name="channel_name_0"
+            name="channel_name_undefined_0"
             role="combobox"
           >
             <div
@@ -173,7 +173,7 @@ exports[`TriggerNotificationsContent renders without notifications 1`] = `
                     <input
                       aria-controls=""
                       data-test-subj="comboBoxSearchInput"
-                      id="channel_name_0"
+                      id="channel_name_undefined_0"
                       role="textbox"
                       style="box-sizing:content-box;width:1px"
                       value=""

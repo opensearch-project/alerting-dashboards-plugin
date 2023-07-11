@@ -27,7 +27,7 @@ exports[`ExpressionBuilder renders 1`] = `
             <button
               aria-label="Add condition expression"
               class="euiExpression euiExpression-isClickable euiExpression-isUppercase euiExpression--success"
-              data-test-subj="select-expression_0"
+              data-test-subj="select-expression_undefined_0"
             >
               <span
                 class="euiExpression__description"

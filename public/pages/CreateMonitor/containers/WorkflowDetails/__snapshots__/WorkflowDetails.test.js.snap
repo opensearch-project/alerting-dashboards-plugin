@@ -49,7 +49,7 @@ exports[`WorkflowDetails renders 1`] = `
       style="margin-bottom:0px"
     >
       <h4>
-        Define workflow schedule
+        Schedule
       </h4>
     </div>
     <div
@@ -132,7 +132,7 @@ exports[`WorkflowDetails renders 1`] = `
           </div>
         </div>
         <div
-          class="euiSpacer euiSpacer--m"
+          class="euiSpacer euiSpacer--s"
         />
         <div
           class="euiFlexGroup euiFlexGroup--gutterMedium euiFlexGroup--alignItemsFlexStart euiFlexGroup--directionRow euiFlexGroup--responsive"
@@ -214,7 +214,7 @@ exports[`WorkflowDetails renders 1`] = `
                         selected=""
                         value="MINUTES"
                       >
-                        Minutes
+                        Minute(s)
                       </option>
                       <option
                         value="HOURS"
