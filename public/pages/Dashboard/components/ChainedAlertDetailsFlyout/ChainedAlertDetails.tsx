@@ -113,7 +113,7 @@ export const ChainedAlertDetails = ({ alert, associatedAlerts }) => {
       </EuiFlexGrid>
       <EuiSpacer size='xl' />
       <EuiTitle size='s'>
-        <p>Alerts from associated monitors</p>
+        <p>Delegate monitor alerts</p>
       </EuiTitle>
       <EuiSpacer size='m' />
       <EuiInMemoryTable

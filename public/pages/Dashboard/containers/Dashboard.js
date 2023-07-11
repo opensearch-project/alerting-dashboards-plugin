@@ -13,6 +13,8 @@ import {
   EuiIcon,
   EuiToolTip,
   EuiButtonIcon,
+  EuiFlyout,
+  EuiFlyoutHeader,
 } from '@elastic/eui';
 import ContentPanel from '../../../components/ContentPanel';
 import DashboardEmptyPrompt from '../components/DashboardEmptyPrompt';
@@ -37,6 +39,7 @@ import { DEFAULT_PAGE_SIZE_OPTIONS } from '../../Monitors/containers/Monitors/ut
 import { MAX_ALERT_COUNT } from '../utils/constants';
 import AcknowledgeAlertsModal from '../components/AcknowledgeAlertsModal';
 import { getAlertsFindingColumn } from '../components/FindingsDashboard/findingsUtils';
+import { ChainedAlertDetailsFlyout } from '../components/ChainedAlertDetailsFlyout/ChainedAlertDetailsFlyout';
 
 export default class Dashboard extends Component {
   constructor(props) {
@@ -65,6 +68,7 @@ export default class Dashboard extends Component {
       sortField,
       totalAlerts: 0,
       totalTriggers: 0,
+      chainedAlert: undefined,
     };
   }
 
@@ -287,20 +291,12 @@ export default class Dashboard extends Component {
     }
   };
 
-  closeFlyout = () => {
-    const { setFlyout } = this.props;
-    if (typeof setFlyout === 'function') setFlyout(null);
-    this.setState({ flyoutIsOpen: false });
+  openChainedAlertsFlyout = (chainedAlert) => {
+    this.setState({ chainedAlert });
   };
 
-  openChainedAlertsFlyout = (payload) => {
-    this.setState({ flyoutIsOpen: true });
-    if (!_.isEmpty(payload)) {
-      this.props.setFlyout({
-        type: 'chainedAlertDetailsFlyout',
-        payload: { ...payload },
-      });
-    }
+  closeChainedAlertsFlyout = () => {
+    this.setState({ chainedAlert: undefined });
   };
 
   closeFlyout = () => {
@@ -359,6 +355,7 @@ export default class Dashboard extends Component {
       alerts,
       alertsByTriggers,
       alertState,
+      chainedAlert,
       flyoutIsOpen,
       loadingMonitors,
       monitors,
@@ -425,11 +422,7 @@ export default class Dashboard extends Component {
                       data-test-subj={`view-details-icon`}
                       iconType={'inspect'}
                       onClick={() => {
-                        this.openChainedAlertsFlyout({
-                          alert,
-                          closeFlyout: this.closeFlyout,
-                          httpClient,
-                        });
+                        this.openChainedAlertsFlyout(alert);
                       }}
                     />
                   </EuiToolTip>
@@ -538,48 +531,57 @@ export default class Dashboard extends Component {
     };
 
     return (
-      <ContentPanel
-        title={perAlertView ? 'Alerts' : 'Alerts by triggers'}
-        titleSize={monitorIds.length ? 's' : 'l'}
-        bodyStyles={{ padding: 'initial' }}
-        actions={actions()}
-      >
-        <DashboardControls
-          activePage={page}
-          pageCount={Math.ceil(totalItems / size) || 1}
-          search={search}
-          severity={severityLevel}
-          state={alertState}
-          onSearchChange={this.onSearchChange}
-          onSeverityChange={this.onSeverityLevelChange}
-          onStateChange={this.onAlertStateChange}
-          onPageChange={this.onPageClick}
-          isAlertsFlyout={isAlertsFlyout}
-          monitorType={monitorType}
-        />
+      <>
+        {chainedAlert && (
+          <ChainedAlertDetailsFlyout
+            httpClient={httpClient}
+            closeFlyout={this.closeChainedAlertsFlyout}
+            alert={chainedAlert}
+          />
+        )}
+        <ContentPanel
+          title={perAlertView ? 'Alerts' : 'Alerts by triggers'}
+          titleSize={monitorIds.length ? 's' : 'l'}
+          bodyStyles={{ padding: 'initial' }}
+          actions={actions()}
+        >
+          <DashboardControls
+            activePage={page}
+            pageCount={Math.ceil(totalItems / size) || 1}
+            search={search}
+            severity={severityLevel}
+            state={alertState}
+            onSearchChange={this.onSearchChange}
+            onSeverityChange={this.onSeverityLevelChange}
+            onStateChange={this.onAlertStateChange}
+            onPageChange={this.onPageClick}
+            isAlertsFlyout={isAlertsFlyout}
+            monitorType={monitorType}
+          />
 
-        <EuiHorizontalRule margin="xs" />
+          <EuiHorizontalRule margin="xs" />
 
-        <EuiBasicTable
-          items={perAlertView ? alerts : alertsByTriggers}
-          /*
-           * If using just ID, doesn't update selectedItems when doing acknowledge
-           * because the next getAlerts have the same id
-           * $id-$version will correctly remove selected items
-           * */
-          itemId={getItemId}
-          columns={columnType}
-          pagination={perAlertView ? pagination : undefined}
-          sorting={sorting}
-          isSelectable={true}
-          selection={selection}
-          onChange={this.onTableChange}
-          noItemsMessage={<DashboardEmptyPrompt onCreateTrigger={onCreateTrigger} />}
-          data-test-subj={'alertsDashboard_table'}
-        />
+          <EuiBasicTable
+            items={perAlertView ? alerts : alertsByTriggers}
+            /*
+             * If using just ID, doesn't update selectedItems when doing acknowledge
+             * because the next getAlerts have the same id
+             * $id-$version will correctly remove selected items
+             * */
+            itemId={getItemId}
+            columns={columnType}
+            pagination={perAlertView ? pagination : undefined}
+            sorting={sorting}
+            isSelectable={true}
+            selection={selection}
+            onChange={this.onTableChange}
+            noItemsMessage={<DashboardEmptyPrompt onCreateTrigger={onCreateTrigger} />}
+            data-test-subj={'alertsDashboard_table'}
+          />
 
-        {this.state.showAlertsModal && this.renderModal()}
-      </ContentPanel>
+          {this.state.showAlertsModal && this.renderModal()}
+        </ContentPanel>
+      </>
     );
   }
 }

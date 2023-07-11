@@ -364,11 +364,7 @@ export default class AlertsDashboardFlyoutComponent extends Component {
                       data-test-subj={`view-details-icon`}
                       iconType={'inspect'}
                       onClick={() => {
-                        this.props.openChainedAlertsFlyout?.({
-                          alert,
-                          closeFlyout: this.props.closeFlyout,
-                          httpClient,
-                        });
+                        this.props.openChainedAlertsFlyout?.(alert);
                       }}
                     />
                   </EuiToolTip>

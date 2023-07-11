@@ -12,6 +12,7 @@ import _ from 'lodash';
 import ContentPanel from '../../../../components/ContentPanel';
 import { MONITOR_TYPE } from '../../../../utils/constants';
 import { TRIGGER_TYPE } from '../../../CreateTrigger/containers/CreateTrigger/utils/constants';
+import { conditionToExpressions } from '../../../CreateTrigger/components/CompositeTriggerCondition/ExpressionBuilder';
 
 export const MAX_TRIGGERS = 10;
 
@@ -32,6 +33,27 @@ export function getUnwrappedTriggers(monitor) {
   });
 }
 
+const expressionsToCondition = (expressions) => {
+  const conditionMap = {
+    AND: 'AND ',
+    OR: 'OR ',
+    NOT: 'NOT',
+    '': '',
+    AND_NOT: 'AND NOT',
+    OR_NOT: 'OR NOT',
+  };
+
+  const condition = expressions.reduce((query, expression) => {
+    if (expression?.monitor_name) {
+      query += ` ${conditionMap[expression.description]} ${expression.monitor_name}`;
+      query = query.trim();
+    }
+    return query;
+  }, '');
+
+  return condition;
+};
+
 export default class Triggers extends Component {
   constructor(props) {
     super(props);
@@ -41,12 +63,31 @@ export default class Triggers extends Component {
       tableKey: uuidv4(),
       direction: 'asc',
       selectedItems: [],
+      items: [],
+      triggerConditionsById: {},
     };
 
     this.onDelete = this.onDelete.bind(this);
     this.onEdit = this.onEdit.bind(this);
     this.onSelectionChange = this.onSelectionChange.bind(this);
     this.onTableChange = this.onTableChange.bind(this);
+    this.monitorsById = {};
+  }
+
+  async componentDidMount() {
+    const { monitor } = this.props;
+    const triggers = getUnwrappedTriggers(monitor);
+
+    if (monitor.monitor_type === MONITOR_TYPE.COMPOSITE_LEVEL) {
+      for (const trigger of triggers) {
+        const { condition, id } = trigger;
+        await this.initializeTriggerConditionsWithMonitorNames(condition.script.source, id);
+      }
+
+      this.setState({ items: triggers });
+    } else {
+      this.setState({ items: triggers });
+    }
   }
 
   componentWillReceiveProps(nextProps, nextContext) {
@@ -57,6 +98,43 @@ export default class Triggers extends Component {
       // which will cause the table component to remount
       this.setState({ tableKey: uuidv4() });
     }
+  }
+
+  async getMonitor(id) {
+    return this.props.httpClient
+      .get(`../api/alerting/monitors/${id}`)
+      .then((res) => {
+        return res.resp;
+      })
+      .catch((err) => {
+        console.error('err', err);
+        return undefined;
+      });
+  }
+
+  async updateMonitorNameInExpression(expression) {
+    const { monitor_id } = expression;
+    if (!this.monitorsById[monitor_id]) {
+      const monitor = await this.getMonitor(monitor_id);
+      if (!monitor) return;
+
+      this.monitorsById[monitor_id] = monitor;
+      expression.monitor_name = monitor.name;
+    }
+  }
+
+  async initializeTriggerConditionsWithMonitorNames(condition, triggerId) {
+    const expressions = conditionToExpressions(condition, []);
+    for (const expression of expressions) {
+      await this.updateMonitorNameInExpression(expression);
+    }
+
+    this.setState({
+      triggerConditionsById: {
+        ...this.state.triggerConditionsById,
+        [triggerId]: expressionsToCondition(expressions),
+      },
+    });
   }
 
   onDelete() {
@@ -88,7 +166,7 @@ export default class Triggers extends Component {
   }
 
   render() {
-    const { direction, field, tableKey } = this.state;
+    const { direction, field, tableKey, items } = this.state;
     const { monitor } = this.props;
     const numOfTriggers = _.get(monitor, 'triggers', []).length;
 
@@ -113,23 +191,21 @@ export default class Triggers extends Component {
         name: 'Severity',
         sortable: true,
         truncateText: false,
-        width: '20%',
+        width: '10%',
       },
     ];
 
     if (monitor.monitor_type === MONITOR_TYPE.COMPOSITE_LEVEL) {
       columns.splice(1, 0, {
-        name: 'Condition -- (formatting pending...)',
-        truncateText: true,
+        name: 'Condition',
         render: (item) => {
-          return item.condition.script.source;
+          return this.state.triggerConditionsById[item.id] ?? '–';
         },
         width: '50%',
       });
     }
 
     const sorting = { sort: { field, direction } };
-    const items = getUnwrappedTriggers(monitor);
 
     return (
       <ContentPanel
@@ -153,6 +229,7 @@ export default class Triggers extends Component {
 
 Triggers.propTypes = {
   monitor: PropTypes.object.isRequired,
+  httpClient: PropTypes.object.isRequired,
   updateMonitor: PropTypes.func.isRequired,
   onEditTrigger: PropTypes.func.isRequired,
   onCreateTrigger: PropTypes.func.isRequired,

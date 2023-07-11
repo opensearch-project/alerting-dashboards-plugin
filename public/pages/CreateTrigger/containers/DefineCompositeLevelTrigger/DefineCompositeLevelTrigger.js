@@ -14,8 +14,20 @@ import CompositeTriggerCondition from '../../components/CompositeTriggerConditio
 import TriggerNotifications from './TriggerNotifications';
 import { FORMIK_COMPOSITE_INITIAL_TRIGGER_VALUES } from '../CreateTrigger/utils/constants';
 
+export const titleTemplate = (title, subTitle) => (
+  <EuiText>
+    <h5>{title}</h5>
+    {subTitle && (
+      <EuiText color={'subdued'} size={'xs'}>
+        {subTitle}
+      </EuiText>
+    )}
+    <EuiSpacer size={'s'} />
+  </EuiText>
+);
+
 const defaultRowProps = {
-  label: 'Trigger name',
+  label: titleTemplate('Trigger name'),
   style: { paddingLeft: '10px' },
   isInvalid,
   error: hasError,
@@ -42,18 +54,6 @@ const propTypes = {
   values: PropTypes.object.isRequired,
   isDarkMode: PropTypes.bool.isRequired,
 };
-
-export const titleTemplate = (title, subTitle) => (
-  <EuiText>
-    <div style={{ fontWeight: 'bold' }}>{title}</div>
-    {subTitle && (
-      <EuiText color={'subdued'} size={'xs'}>
-        {subTitle}
-      </EuiText>
-    )}
-    <EuiSpacer size={'s'} />
-  </EuiText>
-);
 
 class DefineCompositeLevelTrigger extends Component {
   render() {
@@ -105,65 +105,67 @@ class DefineCompositeLevelTrigger extends Component {
         }
         style={{ paddingBottom: '15px', paddingTop: '10px' }}
       >
-        <EuiSpacer size={'m'} />
+        <div style={{ padding: '0px 30px' }}>
+          <EuiSpacer size={'m'} />
 
-        <FormikFieldText
-          name={`${formikFieldPath}name`}
-          fieldProps={{}}
-          formRow
-          rowProps={{
-            ...defaultRowProps,
-            style: {
-              paddingLeft: 0,
-            },
-          }}
-          inputProps={{
-            ...defaultInputProps,
-            value: triggerName,
-            'data-test-subj': 'composite-trigger-name',
-          }}
-        />
+          <FormikFieldText
+            name={`${formikFieldPath}name`}
+            fieldProps={{}}
+            formRow
+            rowProps={{
+              ...defaultRowProps,
+              style: {
+                paddingLeft: 0,
+              },
+            }}
+            inputProps={{
+              ...defaultInputProps,
+              value: triggerName,
+              'data-test-subj': 'composite-trigger-name',
+            }}
+          />
 
-        <EuiSpacer size={'l'} />
+          <EuiSpacer size={'l'} />
 
-        <CompositeTriggerCondition
-          triggerIndex={triggerIndex}
-          edit={edit}
-          formikFieldPath={formikFieldPath}
-          formikFieldName={`triggerConditions`}
-          label={titleTemplate(
-            'Trigger condition',
-            'An alert will trigger when the following monitors generate active alerts.'
-          )}
-          values={values}
-          touched={touched}
-          isDarkMode={this.props.isDarkMode}
-          httpClient={httpClient}
-        />
+          <CompositeTriggerCondition
+            triggerIndex={triggerIndex}
+            edit={edit}
+            formikFieldPath={formikFieldPath}
+            formikFieldName={`triggerConditions`}
+            label={titleTemplate(
+              'Trigger condition',
+              'An alert will trigger when the following monitors generate active alerts.'
+            )}
+            values={values}
+            touched={touched}
+            isDarkMode={this.props.isDarkMode}
+            httpClient={httpClient}
+          />
 
-        <EuiSpacer size={'l'} />
+          <EuiSpacer size={'l'} />
 
-        {titleTemplate('Alert severity')}
-        <FormikSelect
-          name={`${formikFieldPath}severity`}
-          formRow
-          fieldProps={selectFieldProps}
-          rowProps={selectRowProps}
-          inputProps={selectInputProps}
-        />
+          {titleTemplate('Alert severity')}
+          <FormikSelect
+            name={`${formikFieldPath}severity`}
+            formRow
+            fieldProps={selectFieldProps}
+            rowProps={selectRowProps}
+            inputProps={selectInputProps}
+          />
 
-        <EuiSpacer size={'xl'} />
+          <EuiSpacer size={'xl'} />
 
-        <TriggerNotifications
-          formikFieldPath={formikFieldPath}
-          triggerIndex={triggerIndex}
-          httpClient={httpClient}
-          plugins={plugins}
-          notifications={notifications}
-          notificationService={notificationService}
-          triggerValues={values}
-          triggerActions={triggerActions}
-        />
+          <TriggerNotifications
+            formikFieldPath={formikFieldPath}
+            triggerIndex={triggerIndex}
+            httpClient={httpClient}
+            plugins={plugins}
+            notifications={notifications}
+            notificationService={notificationService}
+            triggerValues={values}
+            triggerActions={triggerActions}
+          />
+        </div>
       </EuiAccordion>
     );
   }

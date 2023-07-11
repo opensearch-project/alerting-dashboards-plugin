@@ -103,17 +103,16 @@ const TriggerNotifications = ({
     <Fragment>
       {titleTemplate('Notifications')}
       <EuiSpacer size={'m'} />
-      {actions.length &&
-        actions.map((action, actionIndex) => (
-          <EuiAccordion
-            title={`Notification ${actionIndex + 1}`}
-            key={`notification-accordion-${triggerIndex}-${actionIndex}`}
-            id={`notification-accordion-${triggerIndex}-${actionIndex}`}
-            initialIsOpen={!actionIndex}
-            buttonContent={<EuiText>{`Notification ${actionIndex + 1}`}</EuiText>}
-            paddingSize={'s'}
-            extraAction={
-              actions.length > 1 && (
+      {actions.length
+        ? actions.map((action, actionIndex) => (
+            <EuiAccordion
+              title={`Notification ${actionIndex + 1}`}
+              key={`notification-accordion-${triggerIndex}-${actionIndex}`}
+              id={`notification-accordion-${triggerIndex}-${actionIndex}`}
+              initialIsOpen={!actionIndex}
+              buttonContent={<EuiText>{`Notification ${actionIndex + 1}`}</EuiText>}
+              paddingSize={'s'}
+              extraAction={
                 <EuiButtonIcon
                   color={'danger'}
                   aria-label={'Delete notification'}
@@ -121,23 +120,23 @@ const TriggerNotifications = ({
                   onClick={() => onRemoveNotification(actionIndex)}
                   size={'s'}
                 />
-              )
-            }
-          >
-            <TriggerNotificationsContent
-              action={action}
-              options={options}
-              actionIndex={actionIndex}
-              triggerIndex={triggerIndex}
-              notifications={notifications}
-              triggerValues={triggerValues}
-              httpClient={httpClient}
-              hasNotifications={plugins.indexOf(OS_NOTIFICATION_PLUGIN) !== -1}
-              formikFieldPath={formikFieldPath}
-            />
-          </EuiAccordion>
-        ))}
-      <EuiHorizontalRule margin={'s'} />
+              }
+            >
+              <TriggerNotificationsContent
+                action={action}
+                options={options}
+                actionIndex={actionIndex}
+                triggerIndex={triggerIndex}
+                notifications={notifications}
+                triggerValues={triggerValues}
+                httpClient={httpClient}
+                hasNotifications={plugins.indexOf(OS_NOTIFICATION_PLUGIN) !== -1}
+                formikFieldPath={formikFieldPath}
+              />
+            </EuiAccordion>
+          ))
+        : null}
+      {actions.length ? <EuiHorizontalRule margin={'s'} /> : null}
       <EuiButton onClick={() => onAddNotification()}>Add notification</EuiButton>
     </Fragment>
   );

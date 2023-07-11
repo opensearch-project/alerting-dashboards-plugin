@@ -5,7 +5,7 @@
 
 import React from 'react';
 import _ from 'lodash';
-import { EuiLink } from '@elastic/eui';
+import { EuiLink, EuiToolTip } from '@elastic/eui';
 import moment from 'moment';
 import { ALERT_STATE, DEFAULT_EMPTY_DATA } from '../../../utils/constants';
 import { PLUGIN_NAME } from '../../../../utils/constants';
@@ -230,6 +230,19 @@ export const associatedAlertsTableColumns = [
     sortable: false,
     truncateText: false,
     width: '100px',
+  },
+  {
+    field: 'monitor_name',
+    name: 'Delegate monitor',
+    sortable: false,
+    truncateText: true,
+    render: (monitorName) => {
+      return (
+        <EuiToolTip content={monitorName}>
+          <span>{monitorName}</span>
+        </EuiToolTip>
+      );
+    },
   },
   {
     field: 'trigger_name',

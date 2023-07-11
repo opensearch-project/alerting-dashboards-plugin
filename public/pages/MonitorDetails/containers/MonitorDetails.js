@@ -462,6 +462,7 @@ export default class MonitorDetails extends Component {
         <EuiSpacer />
         <Triggers
           monitor={monitor}
+          httpClient={httpClient}
           updateMonitor={this.updateMonitor}
           onEditTrigger={this.onEditTrigger}
           onCreateTrigger={this.onCreateTrigger}
