@@ -55,7 +55,6 @@ describe('CompositeLevelMonitor', () => {
 
     it('by visual editor', () => {
       // Select visual editor for method of definition
-      // cy.intercept('GET', '/api/notifications/get_configs?*', channelResponse);
       cy.get('[data-test-subj="visualEditorRadioCard"]').click({ force: true });
 
       // Wait for input to load and then type in the monitor name
@@ -76,10 +75,6 @@ describe('CompositeLevelMonitor', () => {
         .type('{selectall}')
         .type('{backspace}')
         .type('Composite trigger');
-
-      // TODO: Test with Notifications plugin
-      // Select notification channel
-      // cy.get('[name="channel_name_0_0"]').find('input').type('Slack QA').type('{enter}');
 
       cy.intercept('api/alerting/workflows').as('createMonitorRequest');
       cy.intercept(`api/alerting/monitors?*`).as('getMonitorsRequest');
