@@ -110,7 +110,7 @@ exports[`Monitors renders 1`] = `
           },
           Object {
             "field": "associatedCompositeMonitorCnt",
-            "name": "Associated composite monitors",
+            "name": "Associations with composite monitors",
             "render": [Function],
             "truncateText": false,
           },

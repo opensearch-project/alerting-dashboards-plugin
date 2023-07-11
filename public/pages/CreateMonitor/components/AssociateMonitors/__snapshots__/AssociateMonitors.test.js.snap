@@ -7,7 +7,7 @@ Array [
     style="padding-bottom:0px;margin-bottom:0px"
   >
     <h4>
-      Associate monitors
+      Delegate monitors
     </h4>
   </div>,
   <div
@@ -16,7 +16,23 @@ Array [
     <div
       class="euiTextColor euiTextColor--subdued"
     >
-      Associate two or more monitors to run as part of this workflow.
+      Delegate two or more monitors to run as part of this workflow. The monitor types per query, per bucket, and per document are supported. 
+      <a
+        class="euiLink euiLink--primary"
+        href="https://opensearch.org/docs/latest/observing-your-data/alerting/monitors/#monitor-types"
+        rel="noopener noreferrer"
+        target="_blank"
+      >
+        Learn more.
+        <div>
+          EuiIconMock
+        </div>
+        <span
+          class="euiScreenReaderOnly"
+        >
+          (opens in a new tab or window)
+        </span>
+      </a>
     </div>
   </div>,
   <div

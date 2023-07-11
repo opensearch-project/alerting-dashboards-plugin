@@ -63,7 +63,7 @@ const ExpressionBuilder = ({
   const expressionNamePrefix = `expressionQueries_${triggerIndex}`;
 
   const DEFAULT_CONDITION = 'AND';
-  const DEFAULT_NAME = 'Select associated monitor';
+  const DEFAULT_NAME = 'Select delegate monitor';
   const DEFAULT_EXPRESSION = {
     description: '',
     isOpen: false,

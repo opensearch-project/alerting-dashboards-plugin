@@ -41,28 +41,29 @@ const onChangeDefinition = (e, form) => {
 
 const queryLevelDescription = (
   <EuiText color={'subdued'} size={'xs'} style={{ paddingBottom: '10px', paddingTop: '0px' }}>
-    Per query monitors run a specified query and define triggers that check the results of that
-    query.
+    Per query monitors run a query and generate alerts based on trigger criteria that match query
+    results.
   </EuiText>
 );
 
 const bucketLevelDescription = (
   <EuiText color={'subdued'} size={'xs'} style={{ paddingBottom: '10px', paddingTop: '0px' }}>
-    Per bucket monitors allow you to group results into buckets and define triggers that check each
-    bucket.
+    Per bucket monitors run a query that evaluates trigger criteria based on aggregated values in
+    the dataset.
   </EuiText>
 );
 
 const clusterMetricsDescription = (
   <EuiText color={'subdued'} size={'xs'} style={{ paddingBottom: '10px', paddingTop: '0px' }}>
-    Per cluster metrics monitors allow you to alert based on responses to common REST APIs.
+    Per cluster metrics monitors run API requests to monitor the cluster’s health.
   </EuiText>
 );
 
 const documentLevelDescription = // TODO DRAFT: confirm wording
   (
     <EuiText color={'subdued'} size={'xs'} style={{ paddingBottom: '10px', paddingTop: '0px' }}>
-      Per document monitors allow you to run queries on new documents as they're indexed.
+      Per document monitors run queries that return individual documents matching the trigger
+      conditions.
     </EuiText>
   );
 

@@ -60,7 +60,7 @@ describe('CompositeLevelMonitor', () => {
       // Wait for input to load and then type in the monitor name
       cy.get('input[name="name"]').type(SAMPLE_VISUAL_EDITOR_MONITOR);
 
-      // Select associated monitors
+      // Select delegate monitors
       cy.get('[data-test-subj="monitors_list_0"]')
         .type('monitorOne', { delay: 50 })
         .type('{enter}');

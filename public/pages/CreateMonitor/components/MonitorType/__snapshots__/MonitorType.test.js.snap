@@ -67,7 +67,7 @@ exports[`MonitorType renders 1`] = `
                 <div
                   class="euiTextColor euiTextColor--subdued"
                 >
-                  Per query monitors run a specified query and define triggers that check the results of that query.
+                  Per query monitors run a query and generate alerts based on trigger criteria that match query results.
                 </div>
               </div>
             </div>
@@ -129,7 +129,7 @@ exports[`MonitorType renders 1`] = `
                 <div
                   class="euiTextColor euiTextColor--subdued"
                 >
-                  Per bucket monitors allow you to group results into buckets and define triggers that check each bucket.
+                  Per bucket monitors run a query that evaluates trigger criteria based on aggregated values in the dataset.
                 </div>
               </div>
             </div>
@@ -191,7 +191,7 @@ exports[`MonitorType renders 1`] = `
                 <div
                   class="euiTextColor euiTextColor--subdued"
                 >
-                  Per cluster metrics monitors allow you to alert based on responses to common REST APIs.
+                  Per cluster metrics monitors run API requests to monitor the cluster’s health.
                 </div>
               </div>
             </div>
@@ -253,7 +253,7 @@ exports[`MonitorType renders 1`] = `
                 <div
                   class="euiTextColor euiTextColor--subdued"
                 >
-                  Per document monitors allow you to run queries on new documents as they're indexed.
+                  Per document monitors run queries that return individual documents matching the trigger conditions.
                 </div>
               </div>
             </div>

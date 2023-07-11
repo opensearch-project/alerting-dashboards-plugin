@@ -435,11 +435,17 @@ class ConfigureTriggers extends React.Component {
     const displayAddTriggerButton = numOfTriggers > 0;
     const disableAddTriggerButton = numOfTriggers >= MAX_TRIGGERS;
     const monitorType = monitorValues.monitor_type;
+    const isComposite = monitorType === MONITOR_TYPE.COMPOSITE_LEVEL;
 
     return (
       <ContentPanelStructure
         title={`Triggers (${numOfTriggers})`}
         titleSize={'s'}
+        description={
+          isComposite
+            ? 'Triggers define the conditions that determine when a composite monitor should generate its own alert.'
+            : undefined
+        }
         panelStyles={{ paddingBottom: '0px', paddingLeft: '20px', paddingRight: '20px' }}
         bodyStyles={{ paddingLeft: '0px', padding: '10px' }}
         horizontalRuleClassName={'accordion-horizontal-rule'}

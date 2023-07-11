@@ -22,22 +22,15 @@ const CompositeTriggerCondition = ({
     setGraphUi(values.searchType === 'graph');
   }, [values.searchType]);
 
-  const isValid = () => true;
-  const validate = () => {};
   return (
     <FormikInputWrapper
       name={`${formikFullFieldName}_${triggerIndex}_fieldContainer`}
-      fieldProps={{
-        validate: () => graphUi && validate(),
-      }}
       render={({ form }) => (
         <FormikFormRow
           name={`triggerConditionFieldsContainer_${triggerIndex}`}
           form={form}
           rowProps={{
             label: label,
-            isInvalid: () => form.touched[formikFullFieldName] && !isValid(),
-            error: () => validate(),
             style: {
               maxWidth: 'inherit',
             },

@@ -104,7 +104,7 @@ export const columns = [
   },
   {
     field: 'associatedCompositeMonitorCnt',
-    name: 'Associated composite monitors',
+    name: 'Associations with composite monitors',
     truncateText: false,
     render: (count, item) => (item.item_type === MONITOR_TYPE.COMPOSITE_LEVEL ? '–' : count),
   },

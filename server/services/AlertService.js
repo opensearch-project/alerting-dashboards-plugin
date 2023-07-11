@@ -19,7 +19,6 @@ export default class AlertService {
   }
 
   getAlerts = async (context, req, res) => {
-    console.log('****** GET ALERTS *****');
     const {
       from = 0,
       size = 20,
@@ -31,9 +30,6 @@ export default class AlertService {
       monitorIds = [],
       monitorType = 'monitor',
     } = req.query;
-
-    console.log('get alerts req query from frontend');
-    console.log(JSON.stringify(req.query));
 
     var params;
     switch (sortField) {
@@ -84,9 +80,6 @@ export default class AlertService {
 
     const { callAsCurrentUser } = this.esDriver.asScoped(req);
     try {
-      console.log('Get Alerts params ****');
-      console.log(monitorType);
-      console.log(JSON.stringify(params));
       const resp = await callAsCurrentUser('alerting.getAlerts', params);
       const alerts = resp.alerts.map((hit) => {
         const alert = hit;
@@ -101,9 +94,6 @@ export default class AlertService {
       });
       const totalAlerts = resp.totalAlerts;
 
-      console.log('Get alerts response *****');
-      console.log(JSON.stringify(alerts));
-
       return res.ok({
         body: {
           ok: true,
@@ -112,7 +102,7 @@ export default class AlertService {
         },
       });
     } catch (err) {
-      console.log(err.message);
+      console.error(err.message);
       return res.ok({
         body: {
           ok: false,
@@ -123,15 +113,9 @@ export default class AlertService {
   };
 
   getWorkflowAlerts = async (context, req, res) => {
-    console.log('****** GET WORKFLOW ALERTS *****');
-    console.log('get alerts req query from frontend');
-    console.log(JSON.stringify(req.query));
-
     const { callAsCurrentUser } = this.esDriver.asScoped(req);
     try {
       const resp = await callAsCurrentUser('alerting.getWorkflowAlerts', req.query);
-      console.log('Get workflow alerts response *****');
-      console.log(JSON.stringify(resp));
 
       return res.ok({
         body: {
@@ -140,7 +124,7 @@ export default class AlertService {
         },
       });
     } catch (err) {
-      console.log(err.message);
+      console.error(err.message);
       return res.ok({
         body: {
           ok: false,

@@ -49,7 +49,7 @@ export const DeleteMonitorModal = ({
     warningHeading = `Unable to delete ${monitorNames[0]}`;
     warningBody = (
       <>
-        {`The monitor ${monitorNames[0]} is currently associated with composite monitors. Unlink from the composite monitors before deleting this monitor.`}
+        {`The monitor ${monitorNames[0]} is currently being used as a delegate monitor for composite monitors. Unlink from the following composite monitors before deleting this monitor:`}
         { associatedWorkflows ?
               <ul>
                 {associatedWorkflows.map(({ id, name }) => <li><EuiLink target='_blank' href={`${PLUGIN_NAME}#/monitors/${id}?type=workflow`}>{name}</EuiLink></li>)}

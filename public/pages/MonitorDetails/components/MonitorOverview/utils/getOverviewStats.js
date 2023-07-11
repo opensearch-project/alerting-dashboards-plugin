@@ -135,7 +135,7 @@ export default function getOverviewStats(
 
   if (monitor.associated_workflows) {
     overviewStats.push({
-      header: 'Associated composite monitors',
+      header: 'Associations with composite monitors',
       value:
         monitor.associated_workflows.length > 0 ? (
           <>

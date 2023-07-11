@@ -246,6 +246,90 @@ exports[`WorkflowDetails renders 1`] = `
         </div>
       </div>
     </div>
+    <div
+      class="euiSpacer euiSpacer--xl"
+    />
+    <div
+      class="euiText euiText--medium"
+      style="padding-bottom:0px;margin-bottom:0px"
+    >
+      <h4>
+        Delegate monitors
+      </h4>
+    </div>
+    <div
+      class="euiText euiText--extraSmall"
+    >
+      <div
+        class="euiTextColor euiTextColor--subdued"
+      >
+        Delegate two or more monitors to run as part of this workflow. The monitor types per query, per bucket, and per document are supported. 
+        <a
+          class="euiLink euiLink--primary"
+          href="https://opensearch.org/docs/latest/observing-your-data/alerting/monitors/#monitor-types"
+          rel="noopener noreferrer"
+          target="_blank"
+        >
+          Learn more.
+          <div>
+            EuiIconMock
+          </div>
+          <span
+            class="euiScreenReaderOnly"
+          >
+            (opens in a new tab or window)
+          </span>
+        </a>
+      </div>
+    </div>
+    <div
+      class="euiSpacer euiSpacer--m"
+    />
+    <div
+      class="euiFormRow euiFormRow--fullWidth"
+      id="associatedMonitorsEditor-form-row-row"
+    >
+      <div
+        class="euiFormRow__labelWrapper"
+      >
+        <label
+          class="euiFormLabel euiFormRow__label"
+          for="associatedMonitorsEditor-form-row"
+        >
+          Define workflow
+        </label>
+      </div>
+      <div
+        class="euiFormRow__fieldWrapper"
+      >
+        <div
+          class="euiCodeEditorWrapper"
+          data-test-subj="associatedMonitorsEditor"
+          style="width:80%;height:300px"
+        >
+          <button
+            class="euiCodeEditorKeyboardHint"
+            data-test-subj="codeEditorHint"
+            id="generated-id"
+          >
+            <p
+              class="euiText"
+            >
+              Press Enter to start editing.
+            </p>
+            <p
+              class="euiText"
+            >
+              When you're done, press Escape to stop editing.
+            </p>
+          </button>
+          <div
+            id="generated-id"
+            style="width:80%;height:300px"
+          />
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 `;

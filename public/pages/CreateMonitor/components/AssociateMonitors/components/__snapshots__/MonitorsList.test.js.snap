@@ -166,7 +166,7 @@ exports[`MonitorsList renders 1`] = `
         <span
           class="euiButton__text"
         >
-          Associate another monitor
+          Add another monitor
         </span>
       </span>
     </button>
@@ -176,7 +176,7 @@ exports[`MonitorsList renders 1`] = `
       <div
         class="euiTextColor euiTextColor--subdued"
       >
-        You can associate up to 8 more monitors.
+        You can add up to 8 more monitors.
       </div>
     </div>
   </div>

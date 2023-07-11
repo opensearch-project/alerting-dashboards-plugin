@@ -21,6 +21,7 @@ import {
 } from '../../../../../components/FormControls';
 import { DEFAULT_ASSOCIATED_MONITORS_VALUE } from '../../../containers/CreateMonitor/utils/constants';
 import { getMonitors } from '../AssociateMonitors';
+import { required } from '../../../../../utils/validate';
 
 const MonitorsList = ({ values, httpClient }) => {
   const formikFieldName = 'associatedMonitorsList';
@@ -172,15 +173,11 @@ const MonitorsList = ({ values, httpClient }) => {
 
   const isValid = () => Object.keys(selection).length > 1;
 
-  const validate = () => {
-    if (!isValid()) return 'Required.';
-  };
-
   return (
     <FormikInputWrapper
       name={formikFieldName}
       fieldProps={{
-        validate: validate,
+        validate: required,
       }}
       render={({ form }) => (
         <FormikFormRow
@@ -189,7 +186,7 @@ const MonitorsList = ({ values, httpClient }) => {
           rowProps={{
             label: 'Monitor',
             isInvalid: () => form.touched[formikFieldName] && !isValid(),
-            error: () => validate(),
+            error: () => required(),
           }}
         >
           <Fragment>
@@ -271,10 +268,10 @@ const MonitorsList = ({ values, httpClient }) => {
               onClick={() => onAddMonitor()}
               disabled={fields.length >= 10 || fields.length >= options.length}
             >
-              Associate another monitor
+              Add another monitor
             </EuiButton>
             <EuiText color={'subdued'} size={'xs'}>
-              You can associate up to {10 - fields.length} more monitors.
+              You can add up to {10 - fields.length} more monitors.
             </EuiText>
           </Fragment>
         </FormikFormRow>

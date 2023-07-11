@@ -4,7 +4,7 @@
  */
 
 import React, { Fragment, useState, useEffect } from 'react';
-import { EuiSpacer, EuiText } from '@elastic/eui';
+import { EuiLink, EuiSpacer, EuiText } from '@elastic/eui';
 import MonitorsList from './components/MonitorsList';
 import MonitorsEditor from './components/MonitorsEditor';
 import { monitorTypesForComposition } from '../../../../utils/constants';
@@ -46,10 +46,19 @@ const AssociateMonitors = ({ isDarkMode, values, httpClient, errors }) => {
   return (
     <Fragment>
       <EuiText size={'m'} style={{ paddingBottom: '0px', marginBottom: '0px' }}>
-        <h4>Associate monitors</h4>
+        <h4>Delegate monitors</h4>
       </EuiText>
       <EuiText color={'subdued'} size={'xs'}>
-        Associate two or more monitors to run as part of this workflow.
+        Delegate two or more monitors to run as part of this workflow. The monitor types per query,
+        per bucket, and per document are supported.{' '}
+        <EuiLink
+          href={
+            'https://opensearch.org/docs/latest/observing-your-data/alerting/monitors/#monitor-types'
+          }
+          target="_blank"
+        >
+          Learn more.
+        </EuiLink>
       </EuiText>
 
       <EuiSpacer size="m" />

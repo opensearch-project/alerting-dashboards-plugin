@@ -36,7 +36,7 @@ exports[`ExpressionBuilder renders 1`] = `
               <span
                 class="euiExpression__value"
               >
-                Select associated monitor
+                Select delegate monitor
               </span>
             </button>
           </div>

@@ -3,16 +3,13 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { Fragment } from 'react';
+import React from 'react';
 import ContentPanel from '../../../../components/ContentPanel';
 import Schedule from '../../components/Schedule';
 import AssociateMonitors from '../../components/AssociateMonitors/AssociateMonitors';
 import { EuiSpacer } from '@elastic/eui';
-import { MONITOR_TYPE, SEARCH_TYPE } from '../../../../utils/constants';
 
 const WorkflowDetails = ({ values, isDarkMode, httpClient, errors }) => {
-  const isAd = values.searchType === SEARCH_TYPE.AD;
-  const isComposite = values.monitor_type === MONITOR_TYPE.COMPOSITE_LEVEL;
   return (
     <ContentPanel
       title="Workflow"
@@ -24,19 +21,15 @@ const WorkflowDetails = ({ values, isDarkMode, httpClient, errors }) => {
         paddingTop: '20px',
       }}
     >
-      <Schedule isAd={isAd} />
+      <Schedule isAd={false} />
 
-      {isComposite && (
-        <Fragment>
-          <EuiSpacer size="xl" />
-          <AssociateMonitors
-            isDarkMode={isDarkMode}
-            values={values}
-            httpClient={httpClient}
-            errors={errors}
-          />
-        </Fragment>
-      )}
+      <EuiSpacer size="xl" />
+      <AssociateMonitors
+        isDarkMode={isDarkMode}
+        values={values}
+        httpClient={httpClient}
+        errors={errors}
+      />
     </ContentPanel>
   );
 };

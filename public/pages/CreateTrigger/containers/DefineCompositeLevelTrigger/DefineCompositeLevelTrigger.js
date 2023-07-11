@@ -134,7 +134,7 @@ class DefineCompositeLevelTrigger extends Component {
             formikFieldName={`triggerConditions`}
             label={titleTemplate(
               'Trigger condition',
-              'An alert will trigger when the following monitors generate active alerts.'
+              'When selected monitors meet the specified conditions for alert generation, the composite monitor triggers its own alert.'
             )}
             values={values}
             touched={touched}

@@ -22,14 +22,15 @@ export const FORMIK_INITIAL_WHERE_EXPRESSION_VALUES = {
   fieldRangeEnd: undefined,
 };
 
+/** Sample delegate
+ *  {
+      order: 1,
+      monitor_id: '{{m1}}',
+    }
+ */
 export const DEFAULT_ASSOCIATED_MONITORS_VALUE = {
   sequence: {
-    delegates: [
-      /*{
-        order: 1,
-        monitor_id: '{{m1}}',
-      }*/
-    ],
+    delegates: [],
   },
 };
 
