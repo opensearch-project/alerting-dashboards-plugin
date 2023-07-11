@@ -75,6 +75,11 @@ export default class MonitorDetails extends Component {
   }
 
   isWorkflow = () => {
+    const { monitor } = this.state;
+    if (monitor && monitor.workflow_type) {
+      return true;
+    }
+
     const searchParams = new URLSearchParams(this.props.location.search);
     return (
       searchParams.get('type') === 'workflow' || searchParams.get('monitorType') === 'composite'

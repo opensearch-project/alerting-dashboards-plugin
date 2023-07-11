@@ -12,6 +12,7 @@ import MonitorDefinitionCard from '../../components/MonitorDefinitionCard';
 import MonitorType from '../../components/MonitorType';
 import AnomalyDetectors from '../AnomalyDetectors/AnomalyDetectors';
 import { MONITOR_TYPE } from '../../../../utils/constants';
+import Schedule from '../../components/Schedule';
 
 const renderAnomalyDetector = ({ httpClient, values, detectorId, flyoutMode }) => ({
   actions: [],
@@ -124,7 +125,9 @@ const MonitorDetails = ({
         </Fragment>
       )}
       {!flyoutMode && <EuiSpacer size="l" />}
-      <Schedule isAd={isAd} flyoutMode={flyoutMode} />
+      {values.monitor_type !== MONITOR_TYPE.COMPOSITE_LEVEL ? (
+        <Schedule isAd={isAd} flyoutMode={flyoutMode} />
+      ) : null}
     </Container>
   );
 };

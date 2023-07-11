@@ -17,7 +17,7 @@ import {
 import DefineMonitor from '../DefineMonitor';
 import { FORMIK_INITIAL_VALUES } from './utils/constants';
 import { formikToMonitor } from './utils/formikToMonitor';
-import { SEARCH_TYPE } from '../../../../utils/constants';
+import { MONITOR_TYPE, SEARCH_TYPE } from '../../../../utils/constants';
 import { SubmitErrorHandler } from '../../../../utils/SubmitErrorHandler';
 import MonitorDetails from '../MonitorDetails';
 import ConfigureTriggers from '../../../CreateTrigger/containers/ConfigureTriggers';
@@ -140,6 +140,8 @@ export default class CreateMonitor extends Component {
       <div style={{ padding: '25px 50px' }}>
         <Formik initialValues={initialValues} onSubmit={this.onSubmit} validateOnChange={false}>
           {({ values, errors, handleSubmit, isSubmitting, isValid, touched }) => {
+            const isComposite = values.monitor_type === MONITOR_TYPE.COMPOSITE_LEVEL;
+
             return (
               <Fragment>
                 <EuiTitle size="l">
@@ -161,14 +163,17 @@ export default class CreateMonitor extends Component {
 
                 {values.preventVisualEditor ? null : (
                   <Fragment>
-                    <EuiSpacer />
-
-                    <WorkflowDetails
-                      isDarkMode={isDarkMode}
-                      values={values}
-                      httpClient={httpClient}
-                      errors={errors}
-                    />
+                    {isComposite ? (
+                      <>
+                        <EuiSpacer />
+                        <WorkflowDetails
+                          isDarkMode={isDarkMode}
+                          values={values}
+                          httpClient={httpClient}
+                          errors={errors}
+                        />
+                      </>
+                    ) : null}
 
                     <EuiSpacer />
 
