@@ -10,6 +10,7 @@ import { historyMock, httpClientMock } from '../../../../../test/mocks';
 
 describe('AlertsDashboardFlyoutComponent', () => {
   test('renders', () => {
+    httpClientMock.get.mockResolvedValue({ ok: true, resp: { name: 'random_name' } });
     const wrapper = shallow(
       <AlertsDashboardFlyoutComponent
         location={{ pathname: '/dashboard', search: '' }}

@@ -159,7 +159,7 @@ export default class MonitorService {
 
   getMonitors = async (context, req, res) => {
     try {
-      const { from, size, search, sortDirection, sortField, state } = req.query;
+      const { from, size, search, sortDirection, sortField, state, monitorIds } = req.query;
 
       let must = { match_all: {} };
       if (search.trim()) {
@@ -173,6 +173,21 @@ export default class MonitorService {
             query: `*${search.trim().split(' ').join('* *')}*`,
           },
         };
+      }
+
+      const mustList = [must];
+      if (monitorIds !== undefined) {
+        mustList.push({
+          terms: {
+            _id: Array.isArray(monitorIds) ? monitorIds : [monitorIds],
+          },
+        });
+      } else if (monitorIds === 'empty') {
+        mustList.push({
+          terms: {
+            _id: [],
+          },
+        });
       }
 
       const filter = [{ term: { 'monitor.type': 'monitor' } }];
@@ -197,7 +212,7 @@ export default class MonitorService {
           query: {
             bool: {
               filter,
-              must,
+              must: mustList,
             },
           },
         },
@@ -220,7 +235,7 @@ export default class MonitorService {
         return [id, { id, version, ifSeqNo, ifPrimaryTerm, name, enabled, monitor }];
       }, {});
       const monitorMap = new Map(monitorKeyValueTuples);
-      const monitorIds = [...monitorMap.keys()];
+      const monitorIdsOutput = [...monitorMap.keys()];
 
       const aggsOrderData = {};
       const aggsSorts = {
@@ -237,7 +252,7 @@ export default class MonitorService {
         index: INDEX.ALL_ALERTS,
         body: {
           size: 0,
-          query: { terms: { monitor_id: monitorIds } },
+          query: { terms: { monitor_id: monitorIdsOutput } },
           aggregations: {
             uniq_monitor_ids: {
               terms: {

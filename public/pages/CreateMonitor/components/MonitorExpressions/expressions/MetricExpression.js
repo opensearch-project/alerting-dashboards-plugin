@@ -26,16 +26,18 @@ class MetricExpression extends Component {
   renderFieldItems = (arrayHelpers, fieldOptions, expressionWidth) => {
     const {
       formik: { values },
+      flyoutMode,
     } = this.props;
     return values.aggregations.map((aggregation, index) => {
       return (
-        <span style={{ paddingRight: '5px' }} key={`metric-expr-${index}`}>
+        <span style={flyoutMode ? {} : { paddingRight: '5px' }} key={`metric-expr-${index}`}>
           <MetricItem
             arrayHelpers={arrayHelpers}
             fieldOptions={fieldOptions}
             expressionWidth={expressionWidth}
             aggregation={aggregation}
             index={index}
+            flyoutMode={flyoutMode}
           />
         </span>
       );
@@ -48,6 +50,7 @@ class MetricExpression extends Component {
       errors,
       arrayHelpers,
       dataTypes,
+      flyoutMode,
     } = this.props;
 
     const fieldOptions = getIndexFields(dataTypes, getMetricExpressionAllowedTypes(values));
@@ -92,49 +95,54 @@ class MetricExpression extends Component {
       aggregations.length > MAX_NUM_QUERY_LEVEL_METRICS
     ) {
       errors.aggregations = QUERY_TYPE_METRIC_ERROR;
-    } else {
+    } else if (!flyoutMode) {
       delete errors.aggregations;
     }
 
     return (
       <div id="aggregations">
-        <EuiText size="xs">
-          <strong>Metrics</strong>
-          <i> - optional </i>
-          <IconToolTip content={METRIC_TOOLTIP_TEXT} iconType="questionInCircle" />
-        </EuiText>
-        <EuiSpacer size="s" />
+        {flyoutMode && <>{this.renderFieldItems(arrayHelpers, fieldOptions, expressionWidth)}</>}
+        {!flyoutMode && (
+          <>
+            <EuiText size="xs">
+              <strong>Metrics</strong>
+              <i> - optional </i>
+              <IconToolTip content={METRIC_TOOLTIP_TEXT} iconType="questionInCircle" />
+            </EuiText>
+            <EuiSpacer size="s" />
 
-        {/*For query monitor, if user choose a metric, then don't show this*/}
-        {!(MONITOR_TYPE.QUERY_LEVEL === monitorType && aggregations.length > 0) && (
-          <span style={{ paddingRight: '5px' }}>
-            <EuiBadge color="hollow" style={{ paddingRight: '5px' }}>
-              COUNT OF documents
-            </EuiBadge>
-          </span>
+            {/*For query monitor, if user choose a metric, then don't show this*/}
+            {!(MONITOR_TYPE.QUERY_LEVEL === monitorType && aggregations.length > 0) && (
+              <span style={{ paddingRight: '5px' }}>
+                <EuiBadge color="hollow" style={{ paddingRight: '5px' }}>
+                  COUNT OF documents
+                </EuiBadge>
+              </span>
+            )}
+
+            {this.renderFieldItems(arrayHelpers, fieldOptions, expressionWidth)}
+            <EuiSpacer size="xs" />
+
+            <EuiText color="danger" size="xs">
+              {errors.aggregations}
+            </EuiText>
+
+            {showAddButtonFlag && (
+              <EuiButtonEmpty
+                size="xs"
+                onClick={() => {
+                  arrayHelpers.push(_.cloneDeep(FORMIK_INITIAL_AGG_VALUES));
+                }}
+                data-test-subj="addMetricButton"
+                style={{ paddingTop: '5px' }}
+              >
+                + Add metric
+              </EuiButtonEmpty>
+            )}
+
+            {limitText}
+          </>
         )}
-
-        {this.renderFieldItems(arrayHelpers, fieldOptions, expressionWidth)}
-        <EuiSpacer size="xs" />
-
-        <EuiText color="danger" size="xs">
-          {errors.aggregations}
-        </EuiText>
-
-        {showAddButtonFlag && (
-          <EuiButtonEmpty
-            size="xs"
-            onClick={() => {
-              arrayHelpers.push(_.cloneDeep(FORMIK_INITIAL_AGG_VALUES));
-            }}
-            data-test-subj="addMetricButton"
-            style={{ paddingTop: '5px' }}
-          >
-            + Add metric
-          </EuiButtonEmpty>
-        )}
-
-        {limitText}
       </div>
     );
   }
