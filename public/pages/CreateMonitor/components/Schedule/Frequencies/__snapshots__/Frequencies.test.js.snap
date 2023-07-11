@@ -298,7 +298,7 @@ exports[`Frequencies renders FrequencyPicker 1`] = `
                 selected=""
                 value="MINUTES"
               >
-                Minutes
+                Minute(s)
               </option>
               <option
                 value="HOURS"
@@ -411,7 +411,7 @@ exports[`Frequencies renders Interval 1`] = `
                 selected=""
                 value="MINUTES"
               >
-                Minutes
+                Minute(s)
               </option>
               <option
                 value="HOURS"

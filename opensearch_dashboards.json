@@ -2,10 +2,18 @@
   "id": "alertingDashboards",
   "version": "2.9.0.0",
   "opensearchDashboardsVersion": "2.9.0",
-  "configPath": [
-    "opensearch_alerting"
+  "configPath": ["opensearch_alerting"],
+  "requiredPlugins": [
+    "uiActions",
+    "dashboard",
+    "embeddable",
+    "opensearchDashboardsReact",
+    "savedObjects",
+    "expressions",
+    "data",
+    "visAugmenter",
+    "opensearchDashboardsUtils"
   ],
-  "requiredPlugins": [],
   "server": true,
   "ui": true
 }

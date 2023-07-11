@@ -42,10 +42,9 @@ class AnomalyDetectorTrigger extends React.Component {
     super(props);
   }
   render() {
-    const { adValues, detectorId, fieldPath } = this.props;
-    const { httpClient, notifications } = this.context;
+    const { adValues, detectorId, fieldPath, flyoutMode } = this.props;
     return (
-      <div style={{ padding: '0px 10px' }}>
+      <div style={flyoutMode ? {} : { padding: '0px 10px' }}>
         <AnomalyDetectorData
           detectorId={detectorId}
           render={(anomalyData) => {
@@ -64,17 +63,21 @@ class AnomalyDetectorTrigger extends React.Component {
                     valueFieldName={`${fieldPath}anomalyDetector.anomalyGradeThresholdValue`}
                     label="Anomaly grade threshold"
                   />
-                  <EuiSpacer size="xs" />
-                  <AnomaliesChart
-                    showTitle={false}
-                    showSettings={false}
-                    startDateTime={anomalyData.previewStartTime}
-                    endDateTime={anomalyData.previewEndTime}
-                    anomalies={anomalyData.anomalyResult.anomalies}
-                    isLoading={anomalyData.isLoading}
-                    displayGrade
-                    annotationData={[{ dataValue: adValues.anomalyGradeThresholdValue }]}
-                  />
+                  {!flyoutMode && (
+                    <>
+                      <EuiSpacer size="xs" />
+                      <AnomaliesChart
+                        showTitle={false}
+                        showSettings={false}
+                        startDateTime={anomalyData.previewStartTime}
+                        endDateTime={anomalyData.previewEndTime}
+                        anomalies={anomalyData.anomalyResult.anomalies}
+                        isLoading={anomalyData.isLoading}
+                        displayGrade
+                        annotationData={[{ dataValue: adValues.anomalyGradeThresholdValue }]}
+                      />
+                    </>
+                  )}
                   <EuiSpacer size="m" />
                   <TriggerExpressions
                     thresholdValue={adValues.anomalyConfidenceThresholdValue}
@@ -83,17 +86,21 @@ class AnomalyDetectorTrigger extends React.Component {
                     valueFieldName={`${fieldPath}anomalyDetector.anomalyConfidenceThresholdValue`}
                     label="Anomaly confidence threshold"
                   />
-                  <EuiSpacer size="xs" />
-                  <AnomaliesChart
-                    showTitle={false}
-                    showSettings={false}
-                    startDateTime={anomalyData.previewStartTime}
-                    endDateTime={anomalyData.previewEndTime}
-                    anomalies={anomalyData.anomalyResult.anomalies}
-                    isLoading={anomalyData.isLoading}
-                    displayConfidence
-                    annotationData={[{ dataValue: adValues.anomalyConfidenceThresholdValue }]}
-                  />
+                  {!flyoutMode && (
+                    <>
+                      <EuiSpacer size="xs" />
+                      <AnomaliesChart
+                        showTitle={false}
+                        showSettings={false}
+                        startDateTime={anomalyData.previewStartTime}
+                        endDateTime={anomalyData.previewEndTime}
+                        anomalies={anomalyData.anomalyResult.anomalies}
+                        isLoading={anomalyData.isLoading}
+                        displayConfidence
+                        annotationData={[{ dataValue: adValues.anomalyConfidenceThresholdValue }]}
+                      />
+                    </>
+                  )}
                 </React.Fragment>
               );
             } else if (_.isEmpty(detectorId)) {
