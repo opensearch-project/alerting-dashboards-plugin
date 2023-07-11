@@ -74,24 +74,28 @@ exports[`Monitors renders 1`] = `
         Object {
           "field": "active",
           "name": "Active",
+          "render": [Function],
           "sortable": true,
           "truncateText": false,
         },
         Object {
           "field": "acknowledged",
           "name": "Acknowledged",
+          "render": [Function],
           "sortable": true,
           "truncateText": false,
         },
         Object {
           "field": "errors",
           "name": "Errors",
+          "render": [Function],
           "sortable": true,
           "truncateText": false,
         },
         Object {
           "field": "ignored",
           "name": "Ignored",
+          "render": [Function],
           "sortable": true,
           "truncateText": false,
         },
