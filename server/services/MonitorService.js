@@ -213,8 +213,9 @@ export default class MonitorService {
           _version: version,
           _seq_no: ifSeqNo,
           _primary_term: ifPrimaryTerm,
-          _source: monitor,
+          _source,
         } = result;
+        const monitor = _source.monitor ? _source.monitor : _source;
         const { name, enabled } = monitor;
         return [id, { id, version, ifSeqNo, ifPrimaryTerm, name, enabled, monitor }];
       }, {});

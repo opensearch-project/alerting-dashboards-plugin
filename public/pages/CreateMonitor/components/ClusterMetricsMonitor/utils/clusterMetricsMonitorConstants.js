@@ -3,6 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+export const URL_DEFAULT_PREFIX = 'http://localhost:9200';
 export const API_PATH_REQUIRED_PLACEHOLDER_TEXT = 'Select an API.';
 export const EMPTY_PATH_PARAMS_TEXT = 'Enter remaining path components and path parameters';
 export const GET_API_TYPE_DEBUG_TEXT =
@@ -37,7 +38,7 @@ export const API_TYPES = {
     exampleText: 'indexAlias1,indexAlias2...',
     label: 'Cluster health',
     paths: {
-      withPathParams: '_cluster/health/',
+      withPathParams: '_cluster/health',
       withoutPathParams: '_cluster/health',
     },
     get prependText() {
@@ -55,7 +56,7 @@ export const API_TYPES = {
     exampleText: 'nodeFilter1,nodeFilter2...',
     label: 'Cluster stats',
     paths: {
-      withPathParams: '_cluster/stats/nodes/',
+      withPathParams: '_cluster/stats/nodes',
       withoutPathParams: '_cluster/stats',
     },
     get prependText() {
@@ -127,7 +128,7 @@ export const API_TYPES = {
     exampleText: 'index1,index2...',
     label: 'Recovery',
     paths: {
-      withPathParams: '_cat/recovery/',
+      withPathParams: '_cat/recovery',
       withoutPathParams: '_cat/recovery',
     },
     get prependText() {
@@ -145,7 +146,7 @@ export const API_TYPES = {
     exampleText: 'repositoryName',
     label: 'List snapshots',
     paths: {
-      withPathParams: '_cat/snapshots/',
+      withPathParams: '_cat/snapshots',
       withoutPathParams: undefined,
     },
     get prependText() {

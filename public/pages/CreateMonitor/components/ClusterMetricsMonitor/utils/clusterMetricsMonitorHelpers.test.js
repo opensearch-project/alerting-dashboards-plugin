@@ -89,7 +89,7 @@ describe('clusterMetricsMonitorHelpers', () => {
             api_type: API_TYPES.CLUSTER_HEALTH.type,
             path: path,
             path_params: pathParams,
-            url: `http://localhost:9200/${path}${pathParams}`,
+            url: `http://localhost:9200/${path}/${pathParams}`,
           },
         };
         expect(buildClusterMetricsRequest(values)).toEqual(expectedResult.uri);
