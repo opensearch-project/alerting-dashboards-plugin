@@ -350,7 +350,7 @@ export default class MonitorService {
           _source,
         } = result;
         const monitor = _source.monitor ? _source.monitor : _source;
-        monitor[item_type] = monitor.workflow_type || monitor.monitor_type;
+        monitor['item_type'] = monitor.workflow_type || monitor.monitor_type;
         const { name, enabled } = monitor;
         return [id, { id, version, ifSeqNo, ifPrimaryTerm, name, enabled, monitor }];
       }, {});
