@@ -108,7 +108,7 @@ export const API_TYPES = {
     type: 'CAT_INDICES',
     documentation: 'https://opensearch.org/docs/latest/opensearch/rest-api/cat/cat-indices/',
     exampleText: 'index1,index2...',
-    label: 'Indices',
+    label: 'List indices',
     paths: {
       withPathParams: '_cat/indices',
       withoutPathParams: '_cat/indices',
@@ -145,7 +145,7 @@ export const API_TYPES = {
     type: 'CAT_RECOVERY',
     documentation: 'https://opensearch.org/docs/latest/opensearch/rest-api/cat/cat-recovery/',
     exampleText: 'index1,index2...',
-    label: 'Recovery',
+    label: 'List index and shard recoveries',
     paths: {
       withPathParams: '_cat/recovery',
       withoutPathParams: '_cat/recovery',
@@ -163,7 +163,7 @@ export const API_TYPES = {
     type: 'CAT_SHARDS',
     documentation: 'https://opensearch.org/docs/latest/opensearch/rest-api/cat/cat-shards/',
     exampleText: 'index1,index2...',
-    label: 'Shards',
+    label: 'List shards',
     paths: {
       withPathParams: '_cat/shards',
       withoutPathParams: '_cat/shards',
