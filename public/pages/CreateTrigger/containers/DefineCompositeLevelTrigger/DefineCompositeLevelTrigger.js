@@ -8,7 +8,7 @@ import PropTypes from 'prop-types';
 import _ from 'lodash';
 import { EuiSpacer, EuiText, EuiTitle, EuiAccordion, EuiButton } from '@elastic/eui';
 import { FormikFieldText, FormikSelect } from '../../../../components/FormControls';
-import { hasError, isInvalid } from '../../../../utils/validate';
+import { hasError, isInvalid, required } from '../../../../utils/validate';
 import { DEFAULT_TRIGGER_NAME, SEVERITY_OPTIONS } from '../../utils/constants';
 import CompositeTriggerCondition from '../../components/CompositeTriggerCondition/CompositeTriggerCondition';
 import TriggerNotifications from './TriggerNotifications';
@@ -110,7 +110,9 @@ class DefineCompositeLevelTrigger extends Component {
 
           <FormikFieldText
             name={`${formikFieldPath}name`}
-            fieldProps={{}}
+            fieldProps={{
+              validate: required,
+            }}
             formRow
             rowProps={{
               ...defaultRowProps,
