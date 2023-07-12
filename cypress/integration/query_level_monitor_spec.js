@@ -361,58 +361,76 @@ describe('Query-Level Monitors', () => {
   describe('schedule component displays as intended', () => {
     before(() => {
       cy.deleteAllMonitors();
+
+      // Create the test monitors
+      cy.createMonitor(sampleDaysIntervalQueryLevelMonitor);
+      cy.createMonitor(sampleCronExpressionQueryLevelMonitor);
+    });
+
+    beforeEach(() => {
       cy.reload();
     });
 
     it('for an interval schedule', () => {
-      // Create the test monitor
-      cy.createMonitor(sampleDaysIntervalQueryLevelMonitor);
-
       // Confirm we can see the created monitors in the list
-      cy.get(`input[type="search"]`).focus().type(SAMPLE_DAYS_INTERVAL_MONITOR);
-      cy.contains(SAMPLE_DAYS_INTERVAL_MONITOR, { timeout: 20000 });
+      cy.get(`input[type="search"]`)
+        .focus()
+        .type(SAMPLE_DAYS_INTERVAL_MONITOR + '{enter}');
+      cy.contains(SAMPLE_DAYS_INTERVAL_MONITOR);
+      cy.wait(1000);
 
       // Select the existing monitor
-      cy.get(`[data-test-subj="${SAMPLE_DAYS_INTERVAL_MONITOR}"]`).click({ force: true });
+      cy.get(`[data-test-subj="${SAMPLE_DAYS_INTERVAL_MONITOR}"]`).click({
+        force: true,
+      });
+
+      // Wait for monitor details page to load
+      cy.contains('Overview');
 
       // Click Edit button
       cy.contains('Edit').click({ force: true });
 
       // Wait for input to load and then check the Schedule component
-      cy.get('[data-test-subj="frequency_field"]', { timeout: 20000 }).contains('By interval');
+      cy.get('[data-test-subj="frequency_field"]').contains('By interval');
 
-      cy.get('[data-test-subj="interval_interval_field"]', { timeout: 20000 }).should(
-        'have.value',
-        7
-      );
+      cy.get('[data-test-subj="interval_interval_field"]', {
+        timeout: 20000,
+      }).should('have.value', 7);
 
-      cy.get('[data-test-subj="interval_unit_field"]', { timeout: 20000 }).contains('Days');
+      cy.get('[data-test-subj="interval_unit_field"]', {
+        timeout: 20000,
+      }).contains('Days');
     });
 
     it('for a cron expression schedule', () => {
-      // Create the test monitor
-      cy.createMonitor(sampleCronExpressionQueryLevelMonitor);
-
       // Confirm we can see the created monitors in the list
-      cy.get(`input[type="search"]`).focus().type(SAMPLE_CRON_EXPRESSION_MONITOR);
-      cy.contains(SAMPLE_CRON_EXPRESSION_MONITOR, { timeout: 20000 });
+      cy.get(`input[type="search"]`)
+        .focus()
+        .type(SAMPLE_CRON_EXPRESSION_MONITOR + '{enter}');
+      cy.contains(SAMPLE_CRON_EXPRESSION_MONITOR);
+      cy.wait(1000);
 
       // Select the existing monitor
-      cy.get(`[data-test-subj="${SAMPLE_CRON_EXPRESSION_MONITOR}"]`).click({ force: true });
+      cy.get(`[data-test-subj="${SAMPLE_CRON_EXPRESSION_MONITOR}"]`).click({
+        force: true,
+      });
+
+      // Wait for monitor details page to load
+      cy.contains('Overview');
 
       // Click Edit button
       cy.contains('Edit').click({ force: true });
 
       // Wait for input to load and then check the Schedule component
-      cy.get('[data-test-subj="frequency_field"]', { timeout: 20000 }).contains(
-        'Custom cron expression'
-      );
+      cy.get('[data-test-subj="frequency_field"]').contains('Custom cron expression');
 
-      cy.get('[data-test-subj="customCron_cronExpression_field"]', { timeout: 20000 }).contains(
-        '30 11 * * 1-5'
-      );
+      cy.get('[data-test-subj="customCron_cronExpression_field"]', {
+        timeout: 20000,
+      }).contains('30 11 * * 1-5');
 
-      cy.get('[data-test-subj="timezoneComboBox"]', { timeout: 20000 }).contains('US/Pacific');
+      cy.get('[data-test-subj="timezoneComboBox"]', {
+        timeout: 20000,
+      }).contains('US/Pacific');
     });
   });
 
