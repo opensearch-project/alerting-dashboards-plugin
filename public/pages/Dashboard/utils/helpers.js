@@ -33,6 +33,9 @@ export function addFirstAlert(firstAlert) {
     last_notification_time,
     monitor_name,
     monitor_id,
+    workflow_id,
+    workflow_name,
+    alert_source,
   } = firstAlert;
   let newAlertList = _.cloneDeep(EMPTY_ALERT_LIST);
   newAlertList[state]++;
@@ -45,8 +48,9 @@ export function addFirstAlert(firstAlert) {
     severity,
     start_time,
     last_notification_time,
-    monitor_name,
-    monitor_id,
+    monitor_name: monitor_name || workflow_name,
+    monitor_id: monitor_id || workflow_id,
+    alert_source,
   };
 }
 

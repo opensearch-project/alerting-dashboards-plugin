@@ -5,8 +5,12 @@
 
 import _ from 'lodash';
 import { getDigitId, getUniqueName } from '../../../../utils/helpers';
-import { FORMIK_INITIAL_TRIGGER_VALUES } from '../../containers/CreateTrigger/utils/constants';
+import {
+  FORMIK_COMPOSITE_INITIAL_TRIGGER_VALUES,
+  FORMIK_INITIAL_TRIGGER_VALUES,
+} from '../../containers/CreateTrigger/utils/constants';
 import { getInitialActionValues } from '../AddActionButton/utils';
+import { MONITOR_TYPE } from '../../../../utils/constants';
 
 export const getInitialTriggerValues = ({
   script = FORMIK_INITIAL_TRIGGER_VALUES.script,
@@ -14,7 +18,10 @@ export const getInitialTriggerValues = ({
   triggers,
   monitorType,
 }) => {
-  const initialValues = _.cloneDeep({ ...FORMIK_INITIAL_TRIGGER_VALUES, script });
+  const initialValues =
+    monitorType === MONITOR_TYPE.COMPOSITE_LEVEL
+      ? _.cloneDeep(FORMIK_COMPOSITE_INITIAL_TRIGGER_VALUES)
+      : _.cloneDeep({ ...FORMIK_INITIAL_TRIGGER_VALUES, script });
 
   if (flyoutMode) {
     const id = getDigitId();

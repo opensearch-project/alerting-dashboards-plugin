@@ -1,0 +1,48 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ExpressionBuilder renders 1`] = `
+<div
+  class="euiFormRow"
+  id="pathtriggerCondition_value-form-row-row"
+  style="max-width:inherit"
+>
+  <div
+    class="euiFormRow__fieldWrapper"
+  >
+    <div
+      class="euiFlexGroup euiFlexGroup--gutterSmall euiFlexGroup--directionRow euiFlexGroup--responsive expressionQueries"
+      data-test-subj="pathtriggerCondition"
+      id="pathtriggerCondition_value-form-row"
+    >
+      <div
+        class="euiFlexItem euiFlexItem--flexGrowZero"
+      >
+        <div
+          class="euiPopover euiPopover--anchorUpCenter"
+          id="selection_0"
+        >
+          <div
+            class="euiPopover__anchor"
+          >
+            <button
+              aria-label="Add condition expression"
+              class="euiExpression euiExpression-isClickable euiExpression-isUppercase euiExpression--success"
+              data-test-subj="select-expression_undefined_0"
+            >
+              <span
+                class="euiExpression__description"
+              />
+               
+              <span
+                class="euiExpression__value"
+              >
+                Select delegate monitor
+              </span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;

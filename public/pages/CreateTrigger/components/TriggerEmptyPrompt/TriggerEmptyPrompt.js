@@ -8,11 +8,15 @@ import { EuiEmptyPrompt, EuiText } from '@elastic/eui';
 import AddTriggerButton from '../AddTriggerButton';
 import { FORMIK_INITIAL_TRIGGER_VALUES } from '../../containers/CreateTrigger/utils/constants';
 
-const addTriggerButton = (arrayHelpers, script) => (
-  <AddTriggerButton arrayHelpers={arrayHelpers} script={script} />
+const addTriggerButton = (arrayHelpers, monitorType, script) => (
+  <AddTriggerButton arrayHelpers={arrayHelpers} script={script} monitorType={monitorType} />
 );
 
-const TriggerEmptyPrompt = ({ arrayHelpers, script = FORMIK_INITIAL_TRIGGER_VALUES.script }) => (
+const TriggerEmptyPrompt = ({
+  arrayHelpers,
+  monitorType,
+  script = FORMIK_INITIAL_TRIGGER_VALUES.script,
+}) => (
   <EuiEmptyPrompt
     style={{ maxWidth: '45em' }}
     body={
@@ -21,7 +25,7 @@ const TriggerEmptyPrompt = ({ arrayHelpers, script = FORMIK_INITIAL_TRIGGER_VALU
         <p>Add a trigger to define conditions and actions.</p>
       </EuiText>
     }
-    actions={addTriggerButton(arrayHelpers, script)}
+    actions={addTriggerButton(arrayHelpers, monitorType, script)}
   />
 );
 

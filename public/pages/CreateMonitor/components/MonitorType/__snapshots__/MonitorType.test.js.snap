@@ -67,7 +67,7 @@ exports[`MonitorType renders 1`] = `
                 <div
                   class="euiTextColor euiTextColor--subdued"
                 >
-                  Per query monitors run a specified query and define triggers that check the results of that query.
+                  Per query monitors run a query and generate alerts based on trigger criteria that match query results.
                 </div>
               </div>
             </div>
@@ -129,7 +129,7 @@ exports[`MonitorType renders 1`] = `
                 <div
                   class="euiTextColor euiTextColor--subdued"
                 >
-                  Per bucket monitors allow you to group results into buckets and define triggers that check each bucket.
+                  Per bucket monitors run a query that evaluates trigger criteria based on aggregated values in the dataset.
                 </div>
               </div>
             </div>
@@ -191,7 +191,7 @@ exports[`MonitorType renders 1`] = `
                 <div
                   class="euiTextColor euiTextColor--subdued"
                 >
-                  Per cluster metrics monitors allow you to alert based on responses to common REST APIs.
+                  Per cluster metrics monitors run API requests to monitor the cluster’s health.
                 </div>
               </div>
             </div>
@@ -253,7 +253,69 @@ exports[`MonitorType renders 1`] = `
                 <div
                   class="euiTextColor euiTextColor--subdued"
                 >
-                  Per document monitors allow you to run queries on new documents as they're indexed.
+                  Per document monitors run queries that return individual documents matching the trigger conditions.
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div
+    class="euiFlexItem euiFlexItem--flexGrowZero"
+  >
+    <div
+      class="euiFormRow euiFormRow--hasEmptyLabelSpace"
+      id="monitorTypeCompositeLevel-form-row-row"
+    >
+      <div
+        class="euiFormRow__fieldWrapper"
+      >
+        <div
+          class="euiPanel euiPanel--borderRadiusMedium euiPanel--plain euiPanel--hasShadow euiPanel--hasBorder euiPanel--flexGrowZero euiSplitPanel euiSplitPanel--row euiCheckableCard"
+        >
+          <div
+            class="euiPanel euiPanel--paddingMedium euiPanel--borderRadiusNone euiPanel--subdued euiPanel--noShadow euiPanel--noBorder euiPanel--flexGrowZero euiPanel--isClickable euiSplitPanel__inner"
+          >
+            <div
+              class="euiRadio euiRadio--noLabel"
+              data-test-subj="compositeLevelMonitorRadioCard"
+            >
+              <input
+                class="euiRadio__input"
+                id="compositeLevelMonitorRadioCard"
+                name="monitorTypeCompositeLevel"
+                type="radio"
+                value="composite"
+              />
+              <div
+                class="euiRadio__circle"
+              />
+            </div>
+          </div>
+          <div
+            class="euiPanel euiPanel--paddingMedium euiPanel--borderRadiusNone euiPanel--transparent euiPanel--noShadow euiPanel--noBorder euiSplitPanel__inner"
+          >
+            <label
+              aria-describedby="compositeLevelMonitorRadioCard-details"
+              class="euiCheckableCard__label"
+              for="compositeLevelMonitorRadioCard"
+            >
+              Composite monitor
+            </label>
+            <div
+              class="euiCheckableCard__children"
+              id="compositeLevelMonitorRadioCard-details"
+            >
+              <div
+                class="euiText euiText--extraSmall"
+                style="padding-bottom:10px;padding-top:0px"
+              >
+                <div
+                  class="euiTextColor euiTextColor--subdued"
+                >
+                  Composite monitors chain the outputs of different monitor types and focus trigger conditions to reduce alert noise.
                 </div>
               </div>
             </div>

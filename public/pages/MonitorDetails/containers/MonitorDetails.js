@@ -40,12 +40,13 @@ import {
   TRIGGER_ACTIONS,
 } from '../../../utils/constants';
 import { migrateTriggerMetadata } from './utils/helpers';
-import { backendErrorNotification } from '../../../utils/helpers';
+import { backendErrorNotification, deleteMonitor } from '../../../utils/helpers';
 import { getUnwrappedTriggers } from './Triggers/Triggers';
 import { formikToMonitor } from '../../CreateMonitor/containers/CreateMonitor/utils/formikToMonitor';
 import monitorToFormik from '../../CreateMonitor/containers/CreateMonitor/utils/monitorToFormik';
 import FindingsDashboard from '../../Dashboard/containers/FindingsDashboard';
 import { TABLE_TAB_IDS } from '../../Dashboard/components/FindingsDashboard/findingsUtils';
+import { DeleteMonitorModal } from '../../../components/DeleteModal/DeleteMonitorModal';
 
 export default class MonitorDetails extends Component {
   constructor(props) {
@@ -69,8 +70,21 @@ export default class MonitorDetails extends Component {
       },
       isJsonModalOpen: false,
       tabId: TABLE_TAB_IDS.ALERTS.id,
+      showDeleteModal: false,
     };
   }
+
+  isWorkflow = () => {
+    const { monitor } = this.state;
+    if (monitor && monitor.workflow_type) {
+      return true;
+    }
+
+    const searchParams = new URLSearchParams(this.props.location.search);
+    return (
+      searchParams.get('type') === 'workflow' || searchParams.get('monitorType') === 'composite'
+    );
+  };
 
   componentDidMount() {
     this.getMonitor(this.props.match.params.monitorId);
@@ -112,7 +126,7 @@ export default class MonitorDetails extends Component {
   getMonitor = (id) => {
     const { httpClient } = this.props;
     httpClient
-      .get(`../api/alerting/monitors/${id}`)
+      .get(`../api/alerting/${this.isWorkflow() ? 'workflows' : 'monitors'}/${id}`)
       .then((resp) => {
         const {
           ok,
@@ -168,10 +182,17 @@ export default class MonitorDetails extends Component {
 
     this.setState({ updating: true });
     return httpClient
-      .put(`../api/alerting/monitors/${monitorId}`, {
-        query: { ...query },
-        body: JSON.stringify({ ...monitor, ...update }),
-      })
+      .put(
+        `../api/alerting/${
+          monitor.workflow_type && monitor.workflow_type === MONITOR_TYPE.COMPOSITE_LEVEL
+            ? 'workflows'
+            : 'monitors'
+        }/${monitorId}`,
+        {
+          query: { ...query },
+          body: JSON.stringify({ ...monitor, ...update }),
+        }
+      )
       .then((resp) => {
         if (resp.ok) {
           const { version: monitorVersion } = resp;
@@ -252,6 +273,15 @@ export default class MonitorDetails extends Component {
     return { ...formikToMonitor(monitorValues), triggers };
   };
 
+  onDeleteClick = () => {
+    this.setState({ showDeleteModal: true });
+  };
+
+  deleteMonitor = async () => {
+    await deleteMonitor(this.state.monitor, this.props.httpClient, this.props.notifications);
+    this.props.history.push('/monitors');
+  };
+
   renderAlertsTable = () => {
     const { monitor, editMonitor } = this.state;
     const {
@@ -305,11 +335,13 @@ export default class MonitorDetails extends Component {
   };
 
   renderTableTabs = () => {
-    const { tabId } = this.state;
-    const tabs = [
-      { ...TABLE_TAB_IDS.ALERTS, content: this.renderAlertsTable() },
-      { ...TABLE_TAB_IDS.FINDINGS, content: this.renderFindingsTable() },
-    ];
+    const { tabId, monitor } = this.state;
+    const tabs = [{ ...TABLE_TAB_IDS.ALERTS, content: this.renderAlertsTable() }];
+
+    if (monitor.monitor_type !== MONITOR_TYPE.COMPOSITE_LEVEL) {
+      tabs.push({ ...TABLE_TAB_IDS.FINDINGS, content: this.renderFindingsTable() });
+    }
+
     return tabs.map((tab, index) => (
       <EuiTab
         key={`${tab.id}${index}`}
@@ -337,6 +369,7 @@ export default class MonitorDetails extends Component {
       loading,
       editMonitor,
       isJsonModalOpen,
+      showDeleteModal,
     } = this.state;
     const {
       location,
@@ -374,7 +407,9 @@ export default class MonitorDetails extends Component {
       );
     }
 
-    const displayTableTabs = monitor.monitor_type === MONITOR_TYPE.DOC_LEVEL;
+    const displayTableTabs = [MONITOR_TYPE.DOC_LEVEL, MONITOR_TYPE.COMPOSITE_LEVEL].includes(
+      monitor.monitor_type
+    );
     return (
       <div style={{ padding: '25px 50px' }}>
         {this.renderNoTriggersCallOut()}
@@ -414,6 +449,11 @@ export default class MonitorDetails extends Component {
           <EuiFlexItem grow={false}>
             <EuiButton onClick={this.showJsonModal}>Export as JSON</EuiButton>
           </EuiFlexItem>
+          <EuiFlexItem grow={false}>
+            <EuiButton onClick={this.onDeleteClick} color="danger">
+              Delete
+            </EuiButton>
+          </EuiFlexItem>
         </EuiFlexGroup>
         <EuiSpacer />
         <MonitorOverview
@@ -427,6 +467,7 @@ export default class MonitorDetails extends Component {
         <EuiSpacer />
         <Triggers
           monitor={monitor}
+          httpClient={httpClient}
           updateMonitor={this.updateMonitor}
           onEditTrigger={this.onEditTrigger}
           onCreateTrigger={this.onCreateTrigger}
@@ -447,12 +488,12 @@ export default class MonitorDetails extends Component {
 
         {displayTableTabs ? (
           <div>
-            <EuiTabs>{this.renderTableTabs()}</EuiTabs>
+            {monitor.monitor_type !== MONITOR_TYPE.COMPOSITE_LEVEL ? (
+              <EuiTabs>{this.renderTableTabs()}</EuiTabs>
+            ) : null}
             {this.state.tabContent}
           </div>
-        ) : (
-          this.renderAlertsTable()
-        )}
+        ) : null}
 
         {isJsonModalOpen && (
           <EuiOverlayMask>
@@ -479,6 +520,13 @@ export default class MonitorDetails extends Component {
               </EuiModalFooter>
             </EuiModal>
           </EuiOverlayMask>
+        )}
+        {showDeleteModal && (
+          <DeleteMonitorModal
+            monitors={[monitor]}
+            closeDeleteModal={() => this.setState({ showDeleteModal: false })}
+            onClickDelete={() => this.deleteMonitor()}
+          />
         )}
       </div>
     );
