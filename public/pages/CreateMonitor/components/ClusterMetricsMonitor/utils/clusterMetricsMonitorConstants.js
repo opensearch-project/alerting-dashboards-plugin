@@ -104,6 +104,25 @@ export const API_TYPES = {
       source: 'ctx.results[0].nodes.NODE_ID.jvm.mem.heap_used_percent > 60',
     },
   },
+  CAT_INDICES: {
+    type: 'CAT_INDICES',
+    documentation: 'https://opensearch.org/docs/latest/opensearch/rest-api/cat/cat-indices/',
+    exampleText: 'index1,index2...',
+    label: 'List indices',
+    paths: {
+      withPathParams: '_cat/indices',
+      withoutPathParams: '_cat/indices',
+    },
+    get prependText() {
+      return this.paths.withPathParams || this.paths.withoutPathParams;
+    },
+    appendText: '',
+    defaultCondition: {
+      ...DEFAULT_CLUSTER_METRICS_SCRIPT,
+      source: `for (int i = 0; i < ctx.results[0].indices.size(); ++i)
+        if (ctx.results[0].indices[i].health != "green") return true`,
+    },
+  },
   CAT_PENDING_TASKS: {
     type: 'CAT_PENDING_TASKS',
     documentation: 'https://opensearch.org/docs/latest/opensearch/rest-api/cat/cat-pending-tasks/',
@@ -126,7 +145,7 @@ export const API_TYPES = {
     type: 'CAT_RECOVERY',
     documentation: 'https://opensearch.org/docs/latest/opensearch/rest-api/cat/cat-recovery/',
     exampleText: 'index1,index2...',
-    label: 'Recovery',
+    label: 'List index and shard recoveries',
     paths: {
       withPathParams: '_cat/recovery',
       withoutPathParams: '_cat/recovery',
@@ -138,6 +157,25 @@ export const API_TYPES = {
     defaultCondition: {
       ...DEFAULT_CLUSTER_METRICS_SCRIPT,
       source: 'ctx.results[0].INDEX_NAME.shards.length <= 0',
+    },
+  },
+  CAT_SHARDS: {
+    type: 'CAT_SHARDS',
+    documentation: 'https://opensearch.org/docs/latest/opensearch/rest-api/cat/cat-shards/',
+    exampleText: 'index1,index2...',
+    label: 'List shards',
+    paths: {
+      withPathParams: '_cat/shards',
+      withoutPathParams: '_cat/shards',
+    },
+    get prependText() {
+      return this.paths.withPathParams || this.paths.withoutPathParams;
+    },
+    appendText: '',
+    defaultCondition: {
+      ...DEFAULT_CLUSTER_METRICS_SCRIPT,
+      source: `for (int i = 0; i < ctx.results[0].shards.size(); ++i)
+        if (ctx.results[0].shards[i]["unassigned.for"] != null) return true`,
     },
   },
   CAT_SNAPSHOTS: {
