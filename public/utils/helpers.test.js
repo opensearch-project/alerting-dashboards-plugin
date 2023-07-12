@@ -3,8 +3,9 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { backendErrorNotification } from './helpers';
+import { backendErrorNotification, deleteMonitor } from './helpers';
 import coreMock from '../../test/mocks/CoreMock';
+import { httpClientMock } from '../../test/mocks';
 
 describe('backendErrorNotification', () => {
   test('can generate error notifications as desired', () => {
@@ -18,5 +19,26 @@ describe('backendErrorNotification', () => {
     };
     backendErrorNotification(coreMock.notifications, actionName, objectName, response.resp);
     expect(coreMock.notifications.toasts.addDanger).toHaveBeenCalledWith(toastProps);
+  });
+});
+
+describe('deleteMonitor', () => {
+  test('deleteMonitor calls delete', async () => {
+    httpClientMock.delete = jest
+      .fn()
+      .mockResolvedValueOnce({ ok: true })
+      .mockRejectedValueOnce(new Error('random delete error'));
+    const mockMonitor = {
+      id: 'delete_id',
+      version: 15,
+      item_type: 'monitor',
+    };
+    const response = await deleteMonitor(mockMonitor, httpClientMock, coreMock.notifications);
+
+    expect(httpClientMock.delete).toHaveBeenCalled();
+    expect(httpClientMock.delete).toHaveBeenCalledWith(`../api/alerting/monitors/delete_id`, {
+      query: { version: 15 },
+    });
+    expect(response).toEqual({ ok: true });
   });
 });

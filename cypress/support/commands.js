@@ -85,6 +85,27 @@ Cypress.Commands.add('createAndExecuteMonitor', (monitorJSON) => {
   );
 });
 
+Cypress.Commands.add('executeMonitor', (monitorID) => {
+  cy.request('POST', `${Cypress.env('opensearch')}${API.MONITOR_BASE}/${monitorID}/_execute`);
+});
+
+Cypress.Commands.add('executeCompositeMonitor', (monitorID) => {
+  cy.request('POST', `${Cypress.env('opensearch')}${API.WORKFLOW_BASE}/${monitorID}/_execute`);
+});
+
+Cypress.Commands.add('deleteAllAlerts', () => {
+  cy.request({
+    method: 'POST',
+    url: `${Cypress.env('opensearch')}/.opendistro-alerting-alert*/_delete_by_query`,
+    body: {
+      query: {
+        match_all: {},
+      },
+    },
+    failOnStatusCode: false,
+  });
+});
+
 Cypress.Commands.add('deleteMonitorByName', (monitorName) => {
   const body = {
     query: {
@@ -110,9 +131,7 @@ Cypress.Commands.add('deleteAllMonitors', () => {
   const body = {
     size: 200,
     query: {
-      exists: {
-        field: 'monitor',
-      },
+      match_all: {},
     },
   };
   cy.request({
@@ -122,11 +141,19 @@ Cypress.Commands.add('deleteAllMonitors', () => {
     body,
   }).then((response) => {
     if (response.status === 200) {
-      for (let i = 0; i < response.body.hits.total.value; i++) {
-        cy.request(
-          'DELETE',
-          `${Cypress.env('opensearch')}${API.MONITOR_BASE}/${response.body.hits.hits[i]._id}`
-        );
+      const monitors = response.body.hits.hits.sort((monitor) =>
+        monitor._source.type === 'workflow' ? -1 : 1
+      );
+      for (let i = 0; i < monitors.length; i++) {
+        if (monitors[i]._id) {
+          cy.request({
+            method: 'DELETE',
+            url: `${Cypress.env('opensearch')}${
+              monitors[i]._source.type === 'workflow' ? API.WORKFLOW_BASE : API.MONITOR_BASE
+            }/${monitors[i]._id}`,
+            failOnStatusCode: false,
+          });
+        }
       }
     } else {
       cy.log('Failed to get all monitors.', response);
@@ -134,12 +161,16 @@ Cypress.Commands.add('deleteAllMonitors', () => {
   });
 });
 
-Cypress.Commands.add('createIndexByName', (indexName) => {
-  cy.request('PUT', `${Cypress.env('opensearch')}/${indexName}`);
+Cypress.Commands.add('createIndexByName', (indexName, body = {}) => {
+  cy.request('PUT', `${Cypress.env('opensearch')}/${indexName}`, body);
 });
 
 Cypress.Commands.add('deleteIndexByName', (indexName) => {
-  cy.request('DELETE', `${Cypress.env('opensearch')}/${indexName}`);
+  cy.request({
+    method: 'DELETE',
+    url: `${Cypress.env('opensearch')}/${indexName}`,
+    failOnStatusCode: false,
+  });
 });
 
 Cypress.Commands.add('insertDocumentToIndex', (indexName, documentId, documentBody) => {

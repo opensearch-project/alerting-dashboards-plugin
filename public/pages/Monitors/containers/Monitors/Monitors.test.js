@@ -166,27 +166,6 @@ describe('Monitors', () => {
     expect(error.message).toBe('random error');
   });
 
-  test('deleteMonitor calls delete', async () => {
-    const deleteMonitor = jest.spyOn(Monitors.prototype, 'deleteMonitor');
-    httpClientMock.delete = jest
-      .fn()
-      .mockResolvedValueOnce({ ok: true })
-      .mockRejectedValueOnce(new Error('random delete error'));
-    const mountWrapper = getMountWrapper();
-    const response = await mountWrapper.instance().deleteMonitor({ id: 'delete_id', version: 15 });
-    mountWrapper.update();
-
-    expect(deleteMonitor).toHaveBeenCalled();
-    expect(httpClientMock.delete).toHaveBeenCalled();
-    expect(httpClientMock.delete).toHaveBeenCalledWith(`../api/alerting/monitors/delete_id`, {
-      query: { version: 15 },
-    });
-    expect(response).toEqual({ ok: true });
-    const error = await mountWrapper.instance().deleteMonitor({ id: 'delete_id', version: 15 });
-    expect(httpClientMock.delete).toHaveBeenCalledTimes(2);
-    expect(error.message).toBe('random delete error');
-  });
-
   test('onClickAcknowledge calls getActiveAlerts with monitor', () => {
     const onClickAcknowledge = jest.spyOn(Monitors.prototype, 'onClickAcknowledge');
     const getActiveAlerts = jest.spyOn(Monitors.prototype, 'getActiveAlerts');
@@ -252,14 +231,13 @@ describe('Monitors', () => {
 
   test('onClickDelete calls deleteMonitors with monitor', () => {
     const onClickDelete = jest.spyOn(Monitors.prototype, 'onClickDelete');
-    const deleteMonitors = jest.spyOn(Monitors.prototype, 'deleteMonitors');
     const mountWrapper = getMountWrapper();
     const monitor = alertingFakes.randomMonitor();
+    const setState = jest.spyOn(mountWrapper.instance(), 'setState');
     mountWrapper.instance().onClickDelete(monitor);
 
     expect(onClickDelete).toHaveBeenCalled();
-    expect(deleteMonitors).toHaveBeenCalled();
-    expect(deleteMonitors).toHaveBeenCalledWith([monitor]);
+    expect(setState).toHaveBeenCalled();
   });
 
   test('onClickDisable calls updateMonitors with monitor and enable:false update', () => {
@@ -309,7 +287,6 @@ describe('Monitors', () => {
 
   test('onBulkDelete calls deleteMonitors with selectedItems', () => {
     const onBulkDelete = jest.spyOn(Monitors.prototype, 'onBulkDelete');
-    const deleteMonitors = jest.spyOn(Monitors.prototype, 'deleteMonitors');
     const mountWrapper = getMountWrapper();
     const monitor = alertingFakes.randomMonitor();
     const selectedItems = [{ id: 'selected', version: 15, monitor }];
@@ -320,8 +297,6 @@ describe('Monitors', () => {
     mountWrapper.instance().onBulkDelete();
 
     expect(onBulkDelete).toHaveBeenCalled();
-    expect(deleteMonitors).toHaveBeenCalled();
-    expect(deleteMonitors).toHaveBeenCalledWith(selectedItems);
   });
 
   test('onBulkDisable calls updateMonitors with selectedItems and update to apply', () => {

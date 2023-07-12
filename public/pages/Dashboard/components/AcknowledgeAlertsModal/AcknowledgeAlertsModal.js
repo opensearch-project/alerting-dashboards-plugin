@@ -53,15 +53,8 @@ export default class AcknowledgeAlertsModal extends Component {
     super(props);
     const { location, monitor_id } = this.props;
 
-    const {
-      alertState,
-      from,
-      search,
-      severityLevel,
-      size,
-      sortDirection,
-      sortField,
-    } = getURLQueryParams(location);
+    const { alertState, from, search, severityLevel, size, sortDirection, sortField } =
+      getURLQueryParams(location);
 
     this.state = {
       alerts: [],
@@ -82,16 +75,8 @@ export default class AcknowledgeAlertsModal extends Component {
   }
 
   componentDidMount() {
-    const {
-      alertState,
-      page,
-      search,
-      severityLevel,
-      size,
-      sortDirection,
-      sortField,
-      monitorIds,
-    } = this.state;
+    const { alertState, page, search, severityLevel, size, sortDirection, sortField, monitorIds } =
+      this.state;
     this.getAlerts(
       page * size,
       size,
@@ -133,15 +118,8 @@ export default class AcknowledgeAlertsModal extends Component {
 
   getAlerts = async () => {
     this.setState({ ...this.state, loading: true });
-    const {
-      from,
-      search,
-      sortField,
-      sortDirection,
-      severityLevel,
-      alertState,
-      monitorIds,
-    } = this.state;
+    const { from, search, sortField, sortDirection, severityLevel, alertState, monitorIds } =
+      this.state;
 
     const { httpClient, history, notifications, triggerId } = this.props;
 
@@ -184,41 +162,10 @@ export default class AcknowledgeAlertsModal extends Component {
 
     if (!selectedItems.length) return;
 
-    const selectedAlerts = filterActiveAlerts(selectedItems);
+    await this.props.acknowledgeAlerts(selectedItems);
 
-    const monitorAlerts = selectedAlerts.reduce((monitorAlerts, alert) => {
-      const { id, monitor_id: monitorId } = alert;
-      if (monitorAlerts[monitorId]) monitorAlerts[monitorId].push(id);
-      else monitorAlerts[monitorId] = [id];
-      return monitorAlerts;
-    }, {});
-
-    Object.entries(monitorAlerts).map(([monitorId, alerts]) =>
-      httpClient
-        .post(`../api/alerting/monitors/${monitorId}/_acknowledge/alerts`, {
-          body: JSON.stringify({ alerts }),
-        })
-        .then((resp) => {
-          if (!resp.ok) {
-            backendErrorNotification(notifications, 'acknowledge', 'alert', resp.resp);
-          } else {
-            const successfulCount = _.get(resp, 'resp.success', []).length;
-            displayAcknowledgedAlertsToast(notifications, successfulCount);
-          }
-        })
-        .catch((error) => error)
-    );
-
-    const {
-      page,
-      size,
-      search,
-      sortField,
-      sortDirection,
-      severityLevel,
-      alertState,
-      monitorIds,
-    } = this.state;
+    const { page, size, search, sortField, sortDirection, severityLevel, alertState, monitorIds } =
+      this.state;
     await this.getAlerts(
       page * size,
       size,
@@ -274,15 +221,8 @@ export default class AcknowledgeAlertsModal extends Component {
   };
 
   render() {
-    const {
-      httpClient,
-      location,
-      history,
-      monitor,
-      notifications,
-      onClose,
-      triggerName,
-    } = this.props;
+    const { httpClient, location, history, monitor, notifications, onClose, triggerName } =
+      this.props;
     const detectorId = _.get(monitor, MONITOR_INPUT_DETECTOR_ID);
     const groupBy = _.get(monitor, MONITOR_GROUP_BY);
     const monitorType = _.get(monitor, 'monitor_type', MONITOR_TYPE.QUERY_LEVEL);
@@ -481,4 +421,5 @@ AcknowledgeAlertsModal.propTypes = {
   triggerId: PropTypes.string.isRequired,
   triggerName: PropTypes.string.isRequired,
   onClose: PropTypes.func.isRequired,
+  acknowledgeAlerts: PropTypes.func.isRequired,
 };

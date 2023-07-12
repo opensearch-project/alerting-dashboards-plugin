@@ -35,6 +35,13 @@ exports[`AcknowledgeAlertsModal renders 1`] = `
     Object {
       "aggregationType": "count",
       "aggregations": Array [],
+      "associatedMonitors": Object {
+        "sequence": Object {
+          "delegates": Array [],
+        },
+      },
+      "associatedMonitorsEditor": "",
+      "associatedMonitorsList": Array [],
       "bucketUnitOfTime": "h",
       "bucketValue": 1,
       "cronExpression": "0 */1 * * *",
@@ -65,6 +72,7 @@ exports[`AcknowledgeAlertsModal renders 1`] = `
         "interval": 1,
         "unit": "MINUTES",
       },
+      "preventVisualEditor": false,
       "queries": Array [],
       "query": "{
     \\"size\\": 0,
