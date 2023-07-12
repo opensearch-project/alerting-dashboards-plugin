@@ -1,5 +1,5 @@
-## Version 2.8.0.0 2023-05-26
-Compatible with OpenSearch Dashboards 2.8.0
+## Version 2.9.0.0 2023-07-11
+Compatible with OpenSearch Dashboards 2.9.0
 
 ### Maintenance
 * Increment version to 2.9.0.0. ([#580](https://github.com/opensearch-project/alerting-dashboards-plugin/pull/580))
