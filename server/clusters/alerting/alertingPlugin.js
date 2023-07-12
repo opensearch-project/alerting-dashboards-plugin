@@ -163,12 +163,6 @@ export default function alertingPlugin(Client, config, components) {
   alerting.getAlerts = ca({
     url: {
       fmt: `${MONITOR_BASE_API}/alerts`,
-      req: {
-        workflowIds: {
-          type: 'string',
-          required: false,
-        },
-      },
     },
     method: 'GET',
   });
