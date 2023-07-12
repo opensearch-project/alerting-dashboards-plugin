@@ -5,7 +5,7 @@
 
 import React from 'react';
 import _ from 'lodash';
-import { EuiLink } from '@elastic/eui';
+import { EuiLink, EuiToolTip } from '@elastic/eui';
 import moment from 'moment';
 import { ALERT_STATE, DEFAULT_EMPTY_DATA } from '../../../utils/constants';
 import { PLUGIN_NAME } from '../../../../utils/constants';
@@ -208,7 +208,47 @@ export const alertColumns = (
     truncateText: true,
     textOnly: true,
     render: (name, alert) => (
-      <EuiLink href={`${PLUGIN_NAME}#/monitors/${alert.monitor_id}`}>{name}</EuiLink>
+      <EuiLink href={`${PLUGIN_NAME}#/monitors/${alert.monitor_id}?type=${alert.alert_source}`}>
+        {name}
+      </EuiLink>
     ),
+  },
+];
+
+export const associatedAlertsTableColumns = [
+  {
+    field: 'start_time',
+    name: 'Alert start time',
+    sortable: true,
+    truncateText: false,
+    render: renderTime,
+    dataType: 'date',
+  },
+  {
+    field: 'severity',
+    name: 'Severity',
+    sortable: false,
+    truncateText: false,
+    width: '100px',
+  },
+  {
+    field: 'monitor_name',
+    name: 'Delegate monitor',
+    sortable: false,
+    truncateText: true,
+    render: (monitorName) => {
+      return (
+        <EuiToolTip content={monitorName}>
+          <span>{monitorName}</span>
+        </EuiToolTip>
+      );
+    },
+  },
+  {
+    field: 'trigger_name',
+    name: 'Trigger name',
+    sortable: true,
+    truncateText: true,
+    textOnly: true,
   },
 ];

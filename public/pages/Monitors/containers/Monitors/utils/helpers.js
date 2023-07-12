@@ -3,6 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+import { MONITOR_TYPE } from '../../../../../utils/constants';
 import { DEFAULT_QUERY_PARAMS } from './constants';
 import queryString from 'query-string';
 
@@ -24,4 +25,21 @@ export function getURLQueryParams(location) {
     sortDirection,
     state,
   };
+}
+
+export function getItemLevelType(itemType) {
+  switch (itemType) {
+    case MONITOR_TYPE.QUERY_LEVEL:
+      return 'Per query';
+    case MONITOR_TYPE.BUCKET_LEVEL:
+      return 'Per bucket';
+    case MONITOR_TYPE.CLUSTER_METRICS:
+      return 'Per cluster metrics';
+    case MONITOR_TYPE.DOC_LEVEL:
+      return 'Per document';
+    case MONITOR_TYPE.COMPOSITE_LEVEL:
+      return 'Composite';
+    default:
+      return '-';
+  }
 }

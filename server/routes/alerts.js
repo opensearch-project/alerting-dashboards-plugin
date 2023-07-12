@@ -21,9 +21,23 @@ export default function (services, router) {
           severityLevel: schema.maybe(schema.string()),
           alertState: schema.maybe(schema.string()),
           monitorIds: schema.maybe(schema.string()),
+          monitorType: schema.maybe(schema.string()),
         }),
       },
     },
     alertService.getAlerts
+  );
+
+  router.get(
+    {
+      path: '/api/alerting/workflows/alerts',
+      validate: {
+        query: schema.object({
+          workflowIds: schema.string(),
+          getAssociatedAlerts: schema.boolean(),
+        }),
+      },
+    },
+    alertService.getWorkflowAlerts
   );
 }

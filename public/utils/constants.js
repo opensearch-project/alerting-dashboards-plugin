@@ -30,6 +30,7 @@ export const MONITOR_TYPE = {
   BUCKET_LEVEL: 'bucket_level_monitor',
   CLUSTER_METRICS: 'cluster_metrics_monitor',
   DOC_LEVEL: 'doc_level_monitor',
+  COMPOSITE_LEVEL: 'composite',
 };
 
 export const DESTINATION_ACTIONS = {
@@ -95,6 +96,12 @@ export const PREVIEW_ERROR_TYPE = {
   NO_ENABLED_FEATURES: 2,
   SPARSE_DATA: 3,
 };
+
+export const monitorTypesForComposition = new Set([
+  MONITOR_TYPE.BUCKET_LEVEL,
+  MONITOR_TYPE.DOC_LEVEL,
+  MONITOR_TYPE.QUERY_LEVEL,
+]);
 
 export const PLUGIN_AUGMENTATION_ENABLE_SETTING = 'visualization:enablePluginAugmentation';
 

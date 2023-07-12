@@ -6,7 +6,10 @@
 import React from 'react';
 import _ from 'lodash';
 import { EuiButton } from '@elastic/eui';
-import { FORMIK_INITIAL_TRIGGER_VALUES } from '../../containers/CreateTrigger/utils/constants';
+import {
+  FORMIK_COMPOSITE_INITIAL_TRIGGER_VALUES,
+  FORMIK_INITIAL_TRIGGER_VALUES,
+} from '../../containers/CreateTrigger/utils/constants';
 import EnhancedAccordion from '../../../../components/FeatureAnywhereContextMenu/EnhancedAccordion';
 import { getInitialTriggerValues } from './utils';
 import { MONITOR_TYPE } from '../../../../utils/constants';
@@ -14,6 +17,7 @@ import { MONITOR_TYPE } from '../../../../utils/constants';
 const AddTriggerButton = ({
   arrayHelpers,
   disabled,
+  monitorType,
   script = FORMIK_INITIAL_TRIGGER_VALUES.script,
   flyoutMode,
   onPostAdd,

@@ -1,0 +1,274 @@
+{
+  "sample_composite_monitor": {
+    "type": "workflow",
+    "schema_version": 0,
+    "name": "sampleComponentLevelMonitor",
+    "workflow_type": "composite",
+    "enabled": true,
+    "enabled_time": 1686908176848,
+    "schedule": {
+      "period": {
+        "interval": 1,
+        "unit": "MINUTES"
+      }
+    },
+    "inputs": [
+      {
+        "composite_input": {
+          "sequence": {
+            "delegates": [
+              {
+                "order": 1,
+                "monitor_id": "qdYBw4gB2qeAWe54jQyZ"
+              },
+              {
+                "order": 2,
+                "monitor_id": "rtYBw4gB2qeAWe54wAx5"
+              }
+            ]
+          }
+        }
+      }
+    ],
+    "triggers": [
+      {
+        "chained_alert_trigger": {
+          "id": "pNaQw4gB2qeAWe54Fg2U",
+          "name": "sample_trigger",
+          "severity": "1",
+          "condition": {
+            "script": {
+              "source": "(monitor[id=qdYBw4gB2qeAWe54jQyZ]) && (monitor[id=rtYBw4gB2qeAWe54wAx5])",
+              "lang": "painless"
+            }
+          },
+          "actions": [
+            {
+              "id": "pdaQw4gB2qeAWe54Fg2U",
+              "name": "sample_channel",
+              "destination_id": "6dYFw4gB2qeAWe54NgyL",
+              "message_template": {
+                "source": "Monitor {{ctx.monitor.name}} just entered alert status. Please investigate the issue.\n  - Trigger: {{ctx.trigger.name}}\n  - Severity: {{ctx.trigger.severity}}\n  - Period start: {{ctx.periodStart}}\n  - Period end: {{ctx.periodEnd}}",
+                "lang": "mustache"
+              },
+              "throttle_enabled": false,
+              "subject_template": {
+                "source": "Monitor {{ctx.monitor.name}} triggered an alert {{ctx.trigger.name}}",
+                "lang": "mustache"
+              }
+            }
+          ]
+        }
+      }
+    ],
+    "last_update_time": 1686908180116,
+    "owner": "alerting",
+    "monitor_type": "composite"
+  },
+  "sample_composite_index": {
+    "mappings": {
+      "properties": {
+        "audit_category": {
+          "type": "text",
+          "fields": {
+            "keyword": {
+              "type": "keyword",
+              "ignore_above": 256
+            }
+          }
+        },
+        "audit_node_host_name": {
+          "type": "text",
+          "fields": {
+            "keyword": {
+              "type": "keyword",
+              "ignore_above": 256
+            }
+          }
+        },
+        "audit_node_id": {
+          "type": "text",
+          "fields": {
+            "keyword": {
+              "type": "keyword",
+              "ignore_above": 256
+            }
+          }
+        }
+      }
+    }
+  },
+  "sample_composite_associated_monitor_1": {
+    "name": "monitorOne",
+    "type": "monitor",
+    "monitor_type": "doc_level_monitor",
+    "enabled": false,
+    "schedule": {
+      "period": {
+        "unit": "MINUTES",
+        "interval": 1
+      }
+    },
+    "inputs": [
+      {
+        "doc_level_input": {
+          "description": "",
+          "indices": ["sample_index_1"],
+          "queries": [
+            {
+              "id": "monitor_1_query_1",
+              "name": "monitor_1_query_1",
+              "query": "NOT (audit_category:\"sample_text\")",
+              "tags": []
+            },
+            {
+              "id": "monitor_1_query_2",
+              "name": "monitor_1_query_2",
+              "query": "NOT (audit_node_host_name:\"sample_text\")",
+              "tags": []
+            },
+            {
+              "id": "monitor_1_query_3",
+              "name": "monitor_1_query_3",
+              "query": "NOT (audit_node_id:\"sample_text\")",
+              "tags": []
+            }
+          ]
+        }
+      }
+    ],
+    "triggers": [
+      {
+        "document_level_trigger": {
+          "id": "sample_trigger_id_1",
+          "name": "monitor_1_query_2",
+          "severity": "1",
+          "condition": {
+            "script": {
+              "source": "query[name=monitor_1_query_1] || query[name=monitor_1_query_2] && query[name=monitor_1_query_3]",
+              "lang": "painless"
+            }
+          },
+          "actions": []
+        }
+      }
+    ]
+  },
+  "sample_composite_associated_monitor_2": {
+    "name": "monitorTwo",
+    "type": "monitor",
+    "monitor_type": "doc_level_monitor",
+    "enabled": false,
+    "schedule": {
+      "period": {
+        "unit": "MINUTES",
+        "interval": 1
+      }
+    },
+    "inputs": [
+      {
+        "doc_level_input": {
+          "description": "",
+          "indices": ["sample_index_2"],
+          "queries": [
+            {
+              "id": "monitor_2_query_1",
+              "name": "monitor_2_query_1",
+              "query": "NOT (audit_category:\"sample_text\")",
+              "tags": []
+            },
+            {
+              "id": "monitor_2_query_2",
+              "name": "monitor_2_query_2",
+              "query": "NOT (audit_node_host_name:\"sample_text\")",
+              "tags": []
+            },
+            {
+              "id": "monitor_2_query_3",
+              "name": "monitor_2_query_3",
+              "query": "NOT (audit_node_id:\"sample_text\")",
+              "tags": []
+            }
+          ]
+        }
+      }
+    ],
+    "triggers": [
+      {
+        "document_level_trigger": {
+          "id": "sample_trigger_2",
+          "name": "monitor_2_query_2",
+          "severity": "1",
+          "condition": {
+            "script": {
+              "source": "query[name=monitor_2_query_1] || query[name=monitor_2_query_2] && query[name=monitor_2_query_3]",
+              "lang": "painless"
+            }
+          },
+          "actions": []
+        }
+      }
+    ]
+  },
+  "sample_composite_associated_monitor_3": {
+    "name": "monitorThree",
+    "type": "monitor",
+    "monitor_type": "doc_level_monitor",
+    "enabled": false,
+    "schedule": {
+      "period": {
+        "unit": "MINUTES",
+        "interval": 1
+      }
+    },
+    "inputs": [
+      {
+        "doc_level_input": {
+          "description": "",
+          "indices": ["sample_index_2"],
+          "queries": [
+            {
+              "id": "monitor_2_query_1",
+              "name": "monitor_2_query_1",
+              "query": "NOT (audit_category:\"sample_text\")",
+              "tags": []
+            },
+            {
+              "id": "monitor_2_query_2",
+              "name": "monitor_2_query_2",
+              "query": "NOT (audit_node_host_name:\"sample_text\")",
+              "tags": []
+            },
+            {
+              "id": "monitor_2_query_3",
+              "name": "monitor_2_query_3",
+              "query": "NOT (audit_node_id:\"sample_text\")",
+              "tags": []
+            }
+          ]
+        }
+      }
+    ],
+    "triggers": [
+      {
+        "document_level_trigger": {
+          "id": "sample_trigger_2",
+          "name": "monitor_2_query_2",
+          "severity": "1",
+          "condition": {
+            "script": {
+              "source": "query[name=monitor_2_query_1] || query[name=monitor_2_query_2] && query[name=monitor_2_query_3]",
+              "lang": "painless"
+            }
+          },
+          "actions": []
+        }
+      }
+    ]
+  },
+  "sample_composite_associated_index_document": {
+    "audit_category": "FAILED_LOGIN",
+    "audit_node_host_name": "127.0.0.1",
+    "audit_node_id": "sample_node_id"
+  }
+}
