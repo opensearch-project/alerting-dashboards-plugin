@@ -28,6 +28,7 @@ export default class AlertService {
       severityLevel = 'ALL',
       alertState = 'ALL',
       monitorIds = [],
+      monitorType = 'monitor',
     } = req.query;
 
     var params;
@@ -72,8 +73,10 @@ export default class AlertService {
     params.alertState = alertState;
     params.searchString = search;
     if (search.trim()) params.searchString = `*${search.trim().split(' ').join('* *')}*`;
-    if (monitorIds.length > 0)
-      params.monitorId = !Array.isArray(monitorIds) ? monitorIds : monitorIds[0];
+    if (monitorIds.length > 0) {
+      const idField = monitorType === 'composite' ? 'workflowIds' : 'monitorId';
+      params[idField] = !Array.isArray(monitorIds) ? monitorIds : monitorIds[0];
+    }
 
     const { callAsCurrentUser } = this.esDriver.asScoped(req);
     try {
@@ -82,7 +85,12 @@ export default class AlertService {
         const alert = hit;
         const id = hit.alert_id;
         const version = hit.alert_version;
-        return { id, ...alert, version };
+        return {
+          id,
+          ...alert,
+          version,
+          alert_source: !!alert.workflow_id ? 'workflow' : 'monitor',
+        };
       });
       const totalAlerts = resp.totalAlerts;
 
@@ -94,7 +102,29 @@ export default class AlertService {
         },
       });
     } catch (err) {
-      console.log(err.message);
+      console.error(err.message);
+      return res.ok({
+        body: {
+          ok: false,
+          err: err.message,
+        },
+      });
+    }
+  };
+
+  getWorkflowAlerts = async (context, req, res) => {
+    const { callAsCurrentUser } = this.esDriver.asScoped(req);
+    try {
+      const resp = await callAsCurrentUser('alerting.getWorkflowAlerts', req.query);
+
+      return res.ok({
+        body: {
+          ok: true,
+          resp,
+        },
+      });
+    } catch (err) {
+      console.error(err.message);
       return res.ok({
         body: {
           ok: false,

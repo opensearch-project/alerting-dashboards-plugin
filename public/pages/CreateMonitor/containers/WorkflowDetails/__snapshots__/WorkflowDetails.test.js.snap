@@ -1,0 +1,335 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`WorkflowDetails renders 1`] = `
+<div
+  class="euiPanel euiPanel--paddingMedium euiPanel--borderRadiusMedium euiPanel--plain euiPanel--hasShadow"
+  style="padding-left:10px;padding-right:10px;padding-bottom:20px;padding-top:20px"
+>
+  <div
+    class="euiFlexGroup euiFlexGroup--gutterLarge euiFlexGroup--alignItemsCenter euiFlexGroup--justifyContentSpaceBetween euiFlexGroup--directionRow euiFlexGroup--responsive"
+    style="padding:0px 10px"
+  >
+    <div
+      class="euiFlexItem"
+    >
+      <h3
+        class="euiTitle euiTitle--small"
+      >
+        Workflow
+      </h3>
+    </div>
+    <div
+      class="euiFlexItem euiFlexItem--flexGrowZero"
+    >
+      <div
+        class="euiFlexGroup euiFlexGroup--gutterLarge euiFlexGroup--alignItemsCenter euiFlexGroup--justifyContentSpaceBetween euiFlexGroup--directionRow euiFlexGroup--responsive"
+      >
+        <div
+          class="euiFlexItem"
+        />
+      </div>
+    </div>
+  </div>
+  <div
+    class="euiText euiText--extraSmall"
+    style="padding:0px 10px"
+  >
+    <div
+      class="euiTextColor euiTextColor--subdued"
+    />
+  </div>
+  <hr
+    class="euiHorizontalRule euiHorizontalRule--full euiHorizontalRule--marginXSmall"
+  />
+  <div
+    style="padding:0px 10px"
+  >
+    <div
+      class="euiText euiText--medium"
+      style="margin-bottom:0px"
+    >
+      <h4>
+        Schedule
+      </h4>
+    </div>
+    <div
+      class="euiSpacer euiSpacer--m"
+    />
+    <div
+      style="max-width:400px"
+    >
+      <div>
+        <div
+          class="euiFormRow"
+          id="frequency-form-row-row"
+        >
+          <div
+            class="euiFormRow__labelWrapper"
+          >
+            <label
+              aria-invalid="false"
+              class="euiFormLabel euiFormRow__label"
+              for="frequency-form-row"
+            >
+              Frequency
+            </label>
+          </div>
+          <div
+            class="euiFormRow__fieldWrapper"
+          >
+            <div
+              class="euiFormControlLayout"
+            >
+              <div
+                class="euiFormControlLayout__childrenWrapper"
+              >
+                <select
+                  class="euiSelect"
+                  data-test-subj="frequency_field"
+                  id="frequency"
+                  name="frequency"
+                >
+                  <option
+                    selected=""
+                    value="interval"
+                  >
+                    By interval
+                  </option>
+                  <option
+                    value="daily"
+                  >
+                    Daily
+                  </option>
+                  <option
+                    value="weekly"
+                  >
+                    Weekly
+                  </option>
+                  <option
+                    value="monthly"
+                  >
+                    Monthly
+                  </option>
+                  <option
+                    value="cronExpression"
+                  >
+                    Custom cron expression
+                  </option>
+                </select>
+                <div
+                  class="euiFormControlLayoutIcons euiFormControlLayoutIcons--right"
+                >
+                  <span
+                    class="euiFormControlLayoutCustomIcon"
+                  >
+                    <div>
+                      EuiIconMock
+                    </div>
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div
+          class="euiSpacer euiSpacer--s"
+        />
+        <div
+          class="euiFlexGroup euiFlexGroup--gutterMedium euiFlexGroup--alignItemsFlexStart euiFlexGroup--directionRow euiFlexGroup--responsive"
+        >
+          <div
+            class="euiFlexItem"
+          >
+            <div
+              class="euiFormRow"
+              id="period.interval-form-row-row"
+            >
+              <div
+                class="euiFormRow__labelWrapper"
+              >
+                <label
+                  aria-invalid="false"
+                  class="euiFormLabel euiFormRow__label"
+                  for="period.interval-form-row"
+                >
+                  Run every
+                </label>
+              </div>
+              <div
+                class="euiFormRow__fieldWrapper"
+              >
+                <div
+                  class="euiFormControlLayout"
+                >
+                  <div
+                    class="euiFormControlLayout__childrenWrapper"
+                  >
+                    <input
+                      class="euiFieldNumber euiFieldNumber--withIcon"
+                      data-test-subj="interval_interval_field"
+                      min="1"
+                      name="period.interval"
+                      type="number"
+                      value="1"
+                    />
+                    <div
+                      class="euiFormControlLayoutIcons"
+                    >
+                      <span
+                        class="euiFormControlLayoutCustomIcon"
+                      >
+                        <div>
+                          EuiIconMock
+                        </div>
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div
+            class="euiFlexItem"
+          >
+            <div
+              class="euiFormRow euiFormRow--hasEmptyLabelSpace"
+              id="period.unit-form-row-row"
+            >
+              <div
+                class="euiFormRow__fieldWrapper"
+              >
+                <div
+                  class="euiFormControlLayout"
+                >
+                  <div
+                    class="euiFormControlLayout__childrenWrapper"
+                  >
+                    <select
+                      class="euiSelect"
+                      data-test-subj="interval_unit_field"
+                      id="period.unit"
+                      name="period.unit"
+                    >
+                      <option
+                        selected=""
+                        value="MINUTES"
+                      >
+                        Minute(s)
+                      </option>
+                      <option
+                        value="HOURS"
+                      >
+                        Hours
+                      </option>
+                      <option
+                        value="DAYS"
+                      >
+                        Days
+                      </option>
+                    </select>
+                    <div
+                      class="euiFormControlLayoutIcons euiFormControlLayoutIcons--right"
+                    >
+                      <span
+                        class="euiFormControlLayoutCustomIcon"
+                      >
+                        <div>
+                          EuiIconMock
+                        </div>
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div
+      class="euiSpacer euiSpacer--xl"
+    />
+    <div
+      class="euiText euiText--medium"
+      style="padding-bottom:0px;margin-bottom:0px"
+    >
+      <h4>
+        Delegate monitors
+      </h4>
+    </div>
+    <div
+      class="euiText euiText--extraSmall"
+    >
+      <div
+        class="euiTextColor euiTextColor--subdued"
+      >
+        Delegate two or more monitors to run as part of this workflow. The monitor types per query, per bucket, and per document are supported. 
+        <a
+          class="euiLink euiLink--primary"
+          href="https://opensearch.org/docs/latest/observing-your-data/alerting/monitors/#monitor-types"
+          rel="noopener noreferrer"
+          target="_blank"
+        >
+          Learn more.
+          <div>
+            EuiIconMock
+          </div>
+          <span
+            class="euiScreenReaderOnly"
+          >
+            (opens in a new tab or window)
+          </span>
+        </a>
+      </div>
+    </div>
+    <div
+      class="euiSpacer euiSpacer--m"
+    />
+    <div
+      class="euiFormRow euiFormRow--fullWidth"
+      id="associatedMonitorsEditor-form-row-row"
+    >
+      <div
+        class="euiFormRow__labelWrapper"
+      >
+        <label
+          class="euiFormLabel euiFormRow__label"
+          for="associatedMonitorsEditor-form-row"
+        >
+          Define workflow
+        </label>
+      </div>
+      <div
+        class="euiFormRow__fieldWrapper"
+      >
+        <div
+          class="euiCodeEditorWrapper"
+          data-test-subj="associatedMonitorsEditor"
+          style="width:80%;height:300px"
+        >
+          <button
+            class="euiCodeEditorKeyboardHint"
+            data-test-subj="codeEditorHint"
+            id="generated-id"
+          >
+            <p
+              class="euiText"
+            >
+              Press Enter to start editing.
+            </p>
+            <p
+              class="euiText"
+            >
+              When you're done, press Escape to stop editing.
+            </p>
+          </button>
+          <div
+            id="generated-id"
+            style="width:80%;height:300px"
+          />
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;

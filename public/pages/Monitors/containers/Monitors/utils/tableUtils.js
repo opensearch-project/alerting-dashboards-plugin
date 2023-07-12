@@ -6,8 +6,9 @@
 import React from 'react';
 import { EuiLink } from '@elastic/eui';
 import moment from 'moment';
-import { DEFAULT_EMPTY_DATA } from '../../../../../utils/constants';
+import { DEFAULT_EMPTY_DATA, MONITOR_TYPE } from '../../../../../utils/constants';
 import { PLUGIN_NAME } from '../../../../../../utils/constants';
+import { getItemLevelType } from './helpers';
 
 const renderTime = (time) => {
   const momentTime = moment(time);
@@ -22,10 +23,27 @@ export const columns = [
     sortable: true,
     textOnly: true,
     render: (name, item) => (
-      <EuiLink data-test-subj={name} href={`${PLUGIN_NAME}#/monitors/${item.id}`}>
+      <EuiLink
+        data-test-subj={name}
+        href={`${PLUGIN_NAME}#/monitors/${item.id}?type=${item.monitor.type}`}
+      >
         {name}
       </EuiLink>
     ),
+  },
+  {
+    field: 'enabled',
+    name: 'State',
+    sortable: false,
+    truncateText: false,
+    render: (enabled) => (enabled ? 'Enabled' : 'Disabled'),
+  },
+  {
+    field: 'item_type',
+    name: 'Type',
+    sortable: false,
+    truncateText: false,
+    render: (item_type) => getItemLevelType(item_type),
   },
   {
     field: 'user',
@@ -39,8 +57,7 @@ export const columns = [
     2. Monitors are created when security plugin is disabled, these will have empty User object.
        (`monitor.user.name`, `monitor.user.roles` are empty )
     3. Monitors are created when security plugin is enabled, these will have an User object. */
-    render: (_, item) =>
-      item.monitor.user && item.monitor.user.name ? item.monitor.user.name : '-',
+    render: (_, item) => (item.user && item.user.name ? item.user.name : '-'),
   },
   {
     field: 'latestAlert',
@@ -48,13 +65,6 @@ export const columns = [
     sortable: false,
     truncateText: true,
     textOnly: true,
-  },
-  {
-    field: 'enabled',
-    name: 'State',
-    sortable: false,
-    truncateText: false,
-    render: (enabled) => (enabled ? 'Enabled' : 'Disabled'),
   },
   {
     field: 'lastNotificationTime',
@@ -91,5 +101,11 @@ export const columns = [
     sortable: true,
     truncateText: false,
     render: (count) => count || 0,
+  },
+  {
+    field: 'associatedCompositeMonitorCnt',
+    name: 'Associations with composite monitors',
+    truncateText: false,
+    render: (count, item) => (item.item_type === MONITOR_TYPE.COMPOSITE_LEVEL ? '–' : count),
   },
 ];

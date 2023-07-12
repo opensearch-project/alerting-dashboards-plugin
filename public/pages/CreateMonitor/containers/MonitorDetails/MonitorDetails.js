@@ -3,16 +3,16 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useMemo } from 'react';
-import { EuiSpacer } from '@elastic/eui';
+import React, { useMemo, Fragment } from 'react';
+import { EuiSpacer, EuiCallOut } from '@elastic/eui';
 import ContentPanel from '../../../../components/ContentPanel';
 import FormikFieldText from '../../../../components/FormControls/FormikFieldText';
 import { hasError, isInvalid, required, validateMonitorName } from '../../../../utils/validate';
-import Schedule from '../../components/Schedule';
 import MonitorDefinitionCard from '../../components/MonitorDefinitionCard';
 import MonitorType from '../../components/MonitorType';
 import AnomalyDetectors from '../AnomalyDetectors/AnomalyDetectors';
 import { MONITOR_TYPE } from '../../../../utils/constants';
+import Schedule from '../../components/Schedule';
 
 const renderAnomalyDetector = ({ httpClient, values, detectorId, flyoutMode }) => ({
   actions: [],
@@ -54,9 +54,10 @@ const MonitorDetails = ({
   const anomalyDetectorContent =
     isAd && renderAnomalyDetector({ httpClient, values, detectorId, flyoutMode });
   const displayMonitorDefinitionCards = values.monitor_type !== MONITOR_TYPE.CLUSTER_METRICS;
-  const Container = useMemo(() => (flyoutMode ? ({ children }) => <>{children}</> : ContentPanel), [
-    flyoutMode,
-  ]);
+  const Container = useMemo(
+    () => (flyoutMode ? ({ children }) => <>{children}</> : ContentPanel),
+    [flyoutMode]
+  );
 
   return (
     <Container
@@ -109,8 +110,24 @@ const MonitorDetails = ({
         </div>
       ) : null}
 
+      {values.preventVisualEditor && (
+        <Fragment>
+          <EuiSpacer size={'l'} />
+          <EuiCallOut
+            title="You have advanced configurations not supported by the visual editor"
+            iconType="iInCircle"
+            color={'warning'}
+          >
+            <p>
+              To view or modify all of your configurations, switch to the Extraction query editor.
+            </p>
+          </EuiCallOut>
+        </Fragment>
+      )}
       {!flyoutMode && <EuiSpacer size="l" />}
-      <Schedule isAd={isAd} flyoutMode={flyoutMode} />
+      {values.monitor_type !== MONITOR_TYPE.COMPOSITE_LEVEL ? (
+        <Schedule isAd={isAd} flyoutMode={flyoutMode} />
+      ) : null}
     </Container>
   );
 };

@@ -8,12 +8,32 @@ import { EuiFlexGroup, EuiFlexItem, EuiLink, EuiText } from '@elastic/eui';
 import FormikCheckableCard from '../../../../components/FormControls/FormikCheckableCard/FormikCheckableCard';
 import { OS_AD_PLUGIN, MONITOR_TYPE, SEARCH_TYPE } from '../../../../utils/constants';
 import { URL } from '../../../../../utils/constants';
+import _ from 'lodash';
+import { conditionToExpressions } from '../../../CreateTrigger/components/CompositeTriggerCondition/ExpressionBuilder';
 
 const MONITOR_DEFINITION_CARD_WIDTH = '275';
 
-const onChangeDefinition = (e, form) => {
+const onChangeDefinition = (e, form, values) => {
   const type = e.target.value;
   form.setFieldValue('searchType', type, false);
+
+  let preventVisualEditor = false;
+
+  if (values.monitor_type === MONITOR_TYPE.COMPOSITE_LEVEL && type === 'graph') {
+    const triggerDefinitions = _.get(values, 'triggerDefinitions', []);
+    const monitors = _.get(values, 'monitorOptions', []);
+    for (let trigger of triggerDefinitions) {
+      const triggerConditions = trigger.triggerConditions || '';
+      const parsedConditions = conditionToExpressions(triggerConditions, monitors);
+
+      if (triggerConditions !== '()' && !!triggerConditions.length && !parsedConditions.length) {
+        preventVisualEditor = true;
+        break;
+      }
+    }
+  }
+
+  form.setFieldValue('preventVisualEditor', preventVisualEditor);
 };
 
 const MonitorDefinitionCard = ({ values, plugins }) => {
@@ -52,7 +72,7 @@ const MonitorDefinitionCard = ({ values, plugins }) => {
               checked: values.searchType === SEARCH_TYPE.GRAPH,
               value: SEARCH_TYPE.GRAPH,
               onChange: (e, field, form) => {
-                onChangeDefinition(e, form);
+                onChangeDefinition(e, form, values);
               },
               'data-test-subj': 'visualEditorRadioCard',
             }}
@@ -68,7 +88,7 @@ const MonitorDefinitionCard = ({ values, plugins }) => {
               checked: values.searchType === SEARCH_TYPE.QUERY,
               value: SEARCH_TYPE.QUERY,
               onChange: (e, field, form) => {
-                onChangeDefinition(e, form);
+                onChangeDefinition(e, form, values);
               },
               'data-test-subj': 'extractionQueryEditorRadioCard',
             }}
@@ -85,7 +105,7 @@ const MonitorDefinitionCard = ({ values, plugins }) => {
                 checked: values.searchType === SEARCH_TYPE.AD,
                 value: SEARCH_TYPE.AD,
                 onChange: (e, field, form) => {
-                  onChangeDefinition(e, form);
+                  onChangeDefinition(e, form, values);
                 },
                 'data-test-subj': 'anomalyDetectorRadioCard',
               }}

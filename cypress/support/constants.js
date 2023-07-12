@@ -13,6 +13,7 @@ export const INDEX = {
 
 export const API = {
   MONITOR_BASE: `${API_ROUTE_PREFIX}/monitors`,
+  WORKFLOW_BASE: `${API_ROUTE_PREFIX}/workflows`,
   DESTINATION_BASE: `${API_ROUTE_PREFIX}/destinations`,
 };
 

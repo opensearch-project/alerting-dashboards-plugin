@@ -25,6 +25,9 @@ const onChangeDefinition = (e, form) => {
   form.setFieldValue('searchType', FORMIK_INITIAL_VALUES.searchType);
   form.setFieldValue('triggerDefinitions', FORMIK_INITIAL_TRIGGER_VALUES.triggerConditions);
   switch (type) {
+    case MONITOR_TYPE.COMPOSITE_LEVEL:
+      form.setFieldValue('searchType', SEARCH_TYPE.GRAPH);
+      break;
     case MONITOR_TYPE.CLUSTER_METRICS:
       form.setFieldValue('searchType', SEARCH_TYPE.CLUSTER_METRICS);
       break;
@@ -38,27 +41,36 @@ const onChangeDefinition = (e, form) => {
 
 const queryLevelDescription = (
   <EuiText color={'subdued'} size={'xs'} style={{ paddingBottom: '10px', paddingTop: '0px' }}>
-    Per query monitors run a specified query and define triggers that check the results of that
-    query.
+    Per query monitors run a query and generate alerts based on trigger criteria that match query
+    results.
   </EuiText>
 );
 
 const bucketLevelDescription = (
   <EuiText color={'subdued'} size={'xs'} style={{ paddingBottom: '10px', paddingTop: '0px' }}>
-    Per bucket monitors allow you to group results into buckets and define triggers that check each
-    bucket.
+    Per bucket monitors run a query that evaluates trigger criteria based on aggregated values in
+    the dataset.
   </EuiText>
 );
 
 const clusterMetricsDescription = (
   <EuiText color={'subdued'} size={'xs'} style={{ paddingBottom: '10px', paddingTop: '0px' }}>
-    Per cluster metrics monitors allow you to alert based on responses to common REST APIs.
+    Per cluster metrics monitors run API requests to monitor the cluster’s health.
   </EuiText>
 );
 
-const documentLevelDescription = ( // TODO DRAFT: confirm wording
+const documentLevelDescription = // TODO DRAFT: confirm wording
+  (
+    <EuiText color={'subdued'} size={'xs'} style={{ paddingBottom: '10px', paddingTop: '0px' }}>
+      Per document monitors run queries that return individual documents matching the trigger
+      conditions.
+    </EuiText>
+  );
+
+const compositeLevelDescription = (
   <EuiText color={'subdued'} size={'xs'} style={{ paddingBottom: '10px', paddingTop: '0px' }}>
-    Per document monitors allow you to run queries on new documents as they're indexed.
+    Composite monitors chain the outputs of different monitor types and focus trigger conditions to
+    reduce alert noise.
   </EuiText>
 );
 
@@ -125,6 +137,22 @@ const MonitorType = ({ values }) => (
           onChange: (e, field, form) => onChangeDefinition(e, form),
           children: documentLevelDescription,
           'data-test-subj': 'docLevelMonitorRadioCard',
+        }}
+      />
+    </EuiFlexItem>
+    <EuiFlexItem grow={false}>
+      <FormikCheckableCard
+        name="monitorTypeCompositeLevel"
+        formRow
+        rowProps={{ hasEmptyLabelSpace: true }}
+        inputProps={{
+          id: 'compositeLevelMonitorRadioCard',
+          label: 'Composite monitor',
+          checked: values.monitor_type === MONITOR_TYPE.COMPOSITE_LEVEL,
+          value: MONITOR_TYPE.COMPOSITE_LEVEL,
+          onChange: (e, field, form) => onChangeDefinition(e, form),
+          children: compositeLevelDescription,
+          'data-test-subj': 'compositeLevelMonitorRadioCard',
         }}
       />
     </EuiFlexItem>

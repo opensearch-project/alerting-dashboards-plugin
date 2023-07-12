@@ -16,6 +16,7 @@ import {
 } from '../../../../../utils/constants';
 import { API_TYPES } from '../../../../CreateMonitor/components/ClusterMetricsMonitor/utils/clusterMetricsMonitorConstants';
 import { getApiType } from '../../../../CreateMonitor/components/ClusterMetricsMonitor/utils/clusterMetricsMonitorHelpers';
+import { PLUGIN_NAME } from '../../../../../../utils/constants';
 
 // TODO: used in multiple places, move into helper
 export function getTime(time) {
@@ -50,6 +51,8 @@ function getMonitorLevelType(monitorType) {
       return 'Per cluster metrics monitor';
     case MONITOR_TYPE.DOC_LEVEL:
       return 'Per document monitor';
+    case MONITOR_TYPE.COMPOSITE_LEVEL:
+      return 'Composite monitor';
     default:
       // TODO: May be valuable to implement a toast that displays in this case.
       console.log('Unexpected monitor type:', monitorType);
@@ -84,8 +87,11 @@ export default function getOverviewStats(
         },
       ]
     : [];
-  const monitorLevelType = _.get(monitor, 'ui_metadata.monitor_type', 'query_level_monitor');
-  return [
+  let monitorLevelType = _.get(monitor, 'monitor_type', undefined);
+  if (!monitorLevelType) {
+    monitorLevelType = _.get(monitor, 'ui_metadata.monitor_type', 'query_level_monitor');
+  }
+  const overviewStats = [
     {
       header: 'Monitor type',
       value: getMonitorLevelType(monitorLevelType),
@@ -126,4 +132,32 @@ export default function getOverviewStats(
       value: monitor.user && monitor.user.name ? monitor.user.name : '-',
     },
   ];
+
+  if (monitor.associated_workflows) {
+    overviewStats.push({
+      header: 'Associations with composite monitors',
+      value:
+        monitor.associated_workflows.length > 0 ? (
+          <>
+            {monitor.associated_workflows.map(({ id, name }, idx) => {
+              return (
+                <EuiLink
+                  className="associated-comp-monitor-link"
+                  target="_blank"
+                  key={id}
+                  href={`${PLUGIN_NAME}#/monitors/${id}?type=${'workflow'}`}
+                >
+                  {name}
+                  {`${idx < monitor.associated_workflows.length - 1 ? ', ' : ''}`}
+                </EuiLink>
+              );
+            })}
+          </>
+        ) : (
+          '-'
+        ),
+    });
+  }
+
+  return overviewStats;
 }

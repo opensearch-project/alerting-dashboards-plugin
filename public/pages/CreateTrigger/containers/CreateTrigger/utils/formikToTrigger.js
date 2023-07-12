@@ -35,6 +35,8 @@ export function formikToTriggerDefinition(values, monitorUiMetadata) {
       return formikToBucketLevelTrigger(values, monitorUiMetadata);
     case MONITOR_TYPE.DOC_LEVEL:
       return formikToDocumentLevelTrigger(values, monitorUiMetadata);
+    case MONITOR_TYPE.COMPOSITE_LEVEL:
+      return formikToCompositeLevelTrigger(values, monitorUiMetadata);
     default:
       return formikToQueryLevelTrigger(values, monitorUiMetadata);
   }
@@ -86,6 +88,20 @@ export function formikToDocumentLevelTrigger(values, monitorUiMetadata) {
   };
 }
 
+export function formikToCompositeLevelTrigger(values, monitorUiMetadata) {
+  const condition = formikToCompositeTriggerCondition(values, monitorUiMetadata);
+  const actions = formikToCompositeTriggerAction(values);
+  return {
+    chained_alert_trigger: {
+      id: values.id,
+      name: values.name,
+      severity: values.severity,
+      condition: condition,
+      actions: actions,
+    },
+  };
+}
+
 export function formikToDocumentLevelTriggerCondition(values, monitorUiMetadata) {
   const triggerConditions = _.get(values, 'triggerConditions', []);
   const searchType = _.get(monitorUiMetadata, 'search.searchType', SEARCH_TYPE.QUERY);
@@ -95,6 +111,17 @@ export function formikToDocumentLevelTriggerCondition(values, monitorUiMetadata)
     script: {
       lang: 'painless',
       source: source,
+    },
+  };
+}
+
+export function formikToCompositeTriggerCondition(values) {
+  const triggerConditions = _.get(values, 'triggerConditions', '');
+
+  return {
+    script: {
+      lang: 'painless',
+      source: triggerConditions,
     },
   };
 }
@@ -127,6 +154,51 @@ export function formikToAction(values) {
 }
 
 export function formikToBucketLevelTriggerAction(values) {
+  const actions = values.actions;
+  const executionPolicyPath = 'action_execution_policy.action_execution_scope';
+  if (actions && actions.length > 0) {
+    return actions.map((action) => {
+      let formattedAction = _.cloneDeep(action);
+
+      switch (formattedAction.throttle_enabled) {
+        case true:
+          _.set(formattedAction, 'throttle.unit', FORMIK_INITIAL_ACTION_VALUES.throttle.unit);
+          break;
+        case false:
+          formattedAction = _.omit(formattedAction, ['throttle']);
+          break;
+      }
+
+      const notifyOption = _.get(formattedAction, `${executionPolicyPath}`);
+      const notifyOptionId = _.isString(notifyOption) ? notifyOption : _.keys(notifyOption)[0];
+      switch (notifyOptionId) {
+        case NOTIFY_OPTIONS_VALUES.PER_ALERT:
+          const actionableAlerts = _.get(
+            formattedAction,
+            `${executionPolicyPath}.${NOTIFY_OPTIONS_VALUES.PER_ALERT}.actionable_alerts`,
+            []
+          );
+          _.set(
+            formattedAction,
+            `${executionPolicyPath}.${NOTIFY_OPTIONS_VALUES.PER_ALERT}.actionable_alerts`,
+            actionableAlerts.map((entry) => entry.value)
+          );
+          break;
+        case NOTIFY_OPTIONS_VALUES.PER_EXECUTION:
+          _.set(
+            formattedAction,
+            `${executionPolicyPath}.${NOTIFY_OPTIONS_VALUES.PER_EXECUTION}`,
+            {}
+          );
+          break;
+      }
+      return formattedAction;
+    });
+  }
+  return actions;
+}
+
+export function formikToCompositeTriggerAction(values) {
   const actions = values.actions;
   const executionPolicyPath = 'action_execution_policy.action_execution_scope';
   if (actions && actions.length > 0) {
@@ -210,6 +282,7 @@ export function formikToTriggerUiMetadata(values, monitorUiMetadata) {
         bucketLevelTriggersUiMetadata[trigger.name] = triggerMetadata;
       });
       return bucketLevelTriggersUiMetadata;
+
     case MONITOR_TYPE.DOC_LEVEL:
       const docLevelTriggersUiMetadata = {};
       _.get(values, 'triggerDefinitions', []).forEach((trigger) => {
@@ -221,6 +294,13 @@ export function formikToTriggerUiMetadata(values, monitorUiMetadata) {
         docLevelTriggersUiMetadata[trigger.name] = triggerMetadata;
       });
       return docLevelTriggersUiMetadata;
+
+    case MONITOR_TYPE.COMPOSITE_LEVEL:
+      const compositeTriggersUiMetadata = {};
+      _.get(values, 'triggerDefinitions', []).forEach((trigger) => {
+        compositeTriggersUiMetadata[trigger.name] = _.get(trigger, 'triggerConditions', '');
+      });
+      return compositeTriggersUiMetadata;
   }
 }
 

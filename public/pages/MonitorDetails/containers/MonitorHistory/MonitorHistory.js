@@ -230,13 +230,14 @@ class MonitorHistory extends PureComponent {
       isLoading: true,
     });
     const { timeSeriesWindow } = this.state;
-    const { httpClient, triggers, monitorId, notifications } = this.props;
+    const { httpClient, triggers, monitorId, notifications, monitorType } = this.props;
     try {
       const params = {
         size: HistoryConstants.MAX_DOC_COUNT_FOR_ALERTS,
         sortField: 'start_time',
         sortDirection: 'asc',
         monitorIds: monitorId,
+        monitorType,
       };
 
       const resp = await httpClient.get('../api/alerting/alerts', { query: params });
