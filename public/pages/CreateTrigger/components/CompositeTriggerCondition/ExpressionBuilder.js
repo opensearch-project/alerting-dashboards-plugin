@@ -20,11 +20,11 @@ export const conditionToExpressions = (condition = '', monitors) => {
     '||': 'OR',
     '!': 'NOT',
     '': '',
-    '&& !': 'AND_NOT',
-    '|| !': 'OR_NOT',
+    '&& !': 'AND NOT',
+    '|| !': 'OR NOT',
   };
   const queryToExpressionRegex = new RegExp(
-    /( && || \|\| || && \!|| \|\| \!)?(monitor\[id=(.*?)\])/,
+    /(!|| && || \|\| || && \!|| \|\| \!)?(monitor\[id=(.*?)\])/,
     'gm'
   );
   const matcher = condition.matchAll(queryToExpressionRegex);
@@ -74,12 +74,15 @@ const ExpressionBuilder = ({
     ...DEFAULT_EXPRESSION,
     description: DEFAULT_CONDITION,
   };
-  const FIRST_EXPRESSION_CONDITIONS_MAP = [{ description: 'NOT', label: 'NOT' }];
+  const FIRST_EXPRESSION_CONDITIONS_MAP = [
+    { description: '', label: '' },
+    { description: 'NOT', label: 'NOT' },
+  ];
   const EXPRESSION_CONDITIONS_MAP = [
     { description: 'AND', label: 'AND' },
     { description: 'OR', label: 'OR' },
-    { description: 'AND_NOT', label: 'AND NOT' },
-    { description: 'OR_NOT', label: 'OR NOT' },
+    { description: 'AND NOT', label: 'AND NOT' },
+    { description: 'OR NOT', label: 'OR NOT' },
   ];
 
   const [usedExpressions, setUsedExpressions] = useState([DEFAULT_EXPRESSION]);
@@ -144,8 +147,8 @@ const ExpressionBuilder = ({
       OR: '|| ',
       NOT: '!',
       '': '',
-      AND_NOT: '&& !',
-      OR_NOT: '|| !',
+      'AND NOT': '&& !',
+      'OR NOT': '|| !',
     };
 
     const condition = expressions.reduce((query, expression) => {
