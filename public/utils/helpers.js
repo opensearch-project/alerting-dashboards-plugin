@@ -47,6 +47,22 @@ export const inputLimitText = (
   );
 };
 
+export async function deleteMonitor(monitor, httpClient, notifications) {
+  const { id, version } = monitor;
+  const poolType = monitor.item_type === 'composite' ? 'workflows' : 'monitors';
+  return httpClient
+    .delete(`../api/alerting/${poolType}/${id}`, { query: { version } })
+    .then((resp) => {
+      if (!resp.ok) {
+        backendErrorNotification(notifications, 'delete', 'monitor', resp.resp);
+      } else {
+        notifications.toasts.addSuccess(`Monitor deleted successfully.`);
+      }
+      return resp;
+    })
+    .catch((err) => err);
+}
+
 export const getDigitId = (length = 6) =>
   Math.floor(Date.now() * Math.random())
     .toString()

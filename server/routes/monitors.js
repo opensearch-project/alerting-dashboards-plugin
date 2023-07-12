@@ -48,6 +48,16 @@ export default function (services, router) {
 
   router.post(
     {
+      path: '/api/alerting/workflows',
+      validate: {
+        body: schema.any(),
+      },
+    },
+    monitorService.createWorkflow
+  );
+
+  router.post(
+    {
       path: '/api/alerting/monitors/_execute',
       validate: {
         query: schema.object({
@@ -57,6 +67,18 @@ export default function (services, router) {
       },
     },
     monitorService.executeMonitor
+  );
+
+  router.get(
+    {
+      path: '/api/alerting/workflows/{id}',
+      validate: {
+        params: schema.object({
+          id: schema.string(),
+        }),
+      },
+    },
+    monitorService.getWorkflow
   );
 
   router.get(
@@ -88,6 +110,23 @@ export default function (services, router) {
     monitorService.updateMonitor
   );
 
+  router.put(
+    {
+      path: '/api/alerting/workflows/{id}',
+      validate: {
+        params: schema.object({
+          id: schema.string(),
+        }),
+        query: schema.object({
+          ifSeqNo: schema.maybe(schema.number()),
+          ifPrimaryTerm: schema.maybe(schema.number()),
+        }),
+        body: schema.any(),
+      },
+    },
+    monitorService.updateMonitor
+  );
+
   router.delete(
     {
       path: '/api/alerting/monitors/{id}',
@@ -103,6 +142,21 @@ export default function (services, router) {
     monitorService.deleteMonitor
   );
 
+  router.delete(
+    {
+      path: '/api/alerting/workflows/{id}',
+      validate: {
+        params: schema.object({
+          id: schema.string(),
+        }),
+        query: schema.object({
+          version: schema.number(),
+        }),
+      },
+    },
+    monitorService.deleteWorkflow
+  );
+
   router.post(
     {
       path: '/api/alerting/monitors/{id}/_acknowledge/alerts',
@@ -114,5 +168,18 @@ export default function (services, router) {
       },
     },
     monitorService.acknowledgeAlerts
+  );
+
+  router.post(
+    {
+      path: '/api/alerting/workflows/{id}/_acknowledge/alerts',
+      validate: {
+        params: schema.object({
+          id: schema.string(),
+        }),
+        body: schema.any(),
+      },
+    },
+    monitorService.acknowledgeChainedAlerts
   );
 }

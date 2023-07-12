@@ -1,0 +1,332 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`DefineCompositeLevelTrigger renders 1`] = `
+<div
+  class="euiAccordion"
+  style="padding-bottom:15px;padding-top:10px"
+>
+  <div
+    class="euiAccordion__triggerWrapper"
+  >
+    <button
+      aria-controls="Trigger"
+      aria-expanded="false"
+      class="euiAccordion__button"
+      id="generated-id"
+      type="button"
+    >
+      <span
+        class="euiAccordion__iconWrapper"
+      >
+        <div>
+          EuiIconMock
+        </div>
+      </span>
+      <span
+        class="euiIEFlexWrapFix"
+      >
+        <h1
+          class="euiTitle euiTitle--small"
+          data-test-subj="triggerDefinitions[undefined]._triggerAccordion"
+        >
+          Trigger
+        </h1>
+      </span>
+    </button>
+    <div
+      class="euiAccordion__optionalAction"
+    >
+      <button
+        class="euiButton euiButton--danger euiButton--small"
+        type="button"
+      >
+        <span
+          class="euiButtonContent euiButton__content"
+        >
+          <span
+            class="euiButton__text"
+          >
+            Remove trigger
+          </span>
+        </span>
+      </button>
+    </div>
+  </div>
+  <div
+    aria-labelledby="generated-id"
+    class="euiAccordion__childWrapper"
+    id="Trigger"
+    role="region"
+    tabindex="-1"
+  >
+    <div>
+      <div
+        class=""
+      >
+        <div
+          style="padding:0px 30px"
+        >
+          <div
+            class="euiSpacer euiSpacer--m"
+          />
+          <div
+            class="euiFormRow"
+            id="triggerDefinitions[undefined].name-form-row-row"
+            style="padding-left:0"
+          >
+            <div
+              class="euiFormRow__labelWrapper"
+            >
+              <label
+                aria-invalid="false"
+                class="euiFormLabel euiFormRow__label"
+                for="triggerDefinitions[undefined].name-form-row"
+              >
+                <div
+                  class="euiText euiText--medium"
+                >
+                  <h5>
+                    Trigger name
+                  </h5>
+                  <div
+                    class="euiSpacer euiSpacer--s"
+                  />
+                </div>
+              </label>
+            </div>
+            <div
+              class="euiFormRow__fieldWrapper"
+            >
+              <div
+                class="euiFormControlLayout"
+              >
+                <div
+                  class="euiFormControlLayout__childrenWrapper"
+                >
+                  <input
+                    class="euiFieldText"
+                    data-test-subj="composite-trigger-name"
+                    name="triggerDefinitions[undefined].name"
+                    type="text"
+                    value="Trigger"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+          <div
+            class="euiSpacer euiSpacer--l"
+          />
+          <div
+            class="euiFormRow"
+            id="triggerConditionFieldsContainer_undefined-form-row-row"
+            style="max-width:inherit"
+          >
+            <div
+              class="euiFormRow__labelWrapper"
+            >
+              <label
+                class="euiFormLabel euiFormRow__label"
+                for="triggerConditionFieldsContainer_undefined-form-row"
+              >
+                <div
+                  class="euiText euiText--medium"
+                >
+                  <h5>
+                    Trigger condition
+                  </h5>
+                  <div
+                    class="euiText euiText--extraSmall"
+                  >
+                    <div
+                      class="euiTextColor euiTextColor--subdued"
+                    >
+                      When selected monitors meet the specified conditions for alert generation, the composite monitor triggers its own alert.
+                    </div>
+                  </div>
+                  <div
+                    class="euiSpacer euiSpacer--s"
+                  />
+                </div>
+              </label>
+            </div>
+            <div
+              class="euiFormRow__fieldWrapper"
+            >
+              <div
+                class="euiFlexGroup euiFlexGroup--gutterSmall euiFlexGroup--directionRow euiFlexGroup--responsive"
+                data-test-subj="triggerDefinitions[undefined].triggerConditionsundefined"
+                id="triggerConditionFieldsContainer_undefined-form-row"
+              >
+                <div
+                  class="euiFlexItem"
+                >
+                  <div
+                    class="euiFormRow euiFormRow--fullWidth"
+                    id="triggerDefinitions_undefined__triggerConditions_undefined_code-form-row-row"
+                  >
+                    <div
+                      class="euiFormRow__labelWrapper"
+                    >
+                      <label
+                        class="euiFormLabel euiFormRow__label"
+                        for="triggerDefinitions_undefined__triggerConditions_undefined_code-form-row"
+                      >
+                        Trigger condition
+                      </label>
+                    </div>
+                    <div
+                      class="euiFormRow__fieldWrapper"
+                    >
+                      <div
+                        class="euiCodeEditorWrapper"
+                        data-test-subj="compositeTriggerConditionEditor_undefined"
+                        style="width:80%;height:300px"
+                      >
+                        <button
+                          class="euiCodeEditorKeyboardHint"
+                          data-test-subj="codeEditorHint"
+                          id="generated-id"
+                        >
+                          <p
+                            class="euiText"
+                          >
+                            Press Enter to start editing.
+                          </p>
+                          <p
+                            class="euiText"
+                          >
+                            When you're done, press Escape to stop editing.
+                          </p>
+                        </button>
+                        <div
+                          id="generated-id"
+                          style="width:80%;height:300px"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div
+            class="euiSpacer euiSpacer--l"
+          />
+          <div
+            class="euiText euiText--medium"
+          >
+            <h5>
+              Alert severity
+            </h5>
+            <div
+              class="euiSpacer euiSpacer--s"
+            />
+          </div>
+          <div
+            class="euiFormRow"
+            id="triggerDefinitions[undefined].severity-form-row-row"
+            style="padding-left:10px;margin-top:0px"
+          >
+            <div
+              class="euiFormRow__labelWrapper"
+            >
+              <label
+                aria-invalid="false"
+                class="euiFormLabel euiFormRow__label"
+                for="triggerDefinitions[undefined].severity-form-row"
+              >
+                Severity level
+              </label>
+            </div>
+            <div
+              class="euiFormRow__fieldWrapper"
+            >
+              <div
+                class="euiFormControlLayout"
+              >
+                <div
+                  class="euiFormControlLayout__childrenWrapper"
+                >
+                  <select
+                    class="euiSelect"
+                    id="triggerDefinitions[undefined].severity"
+                    name="triggerDefinitions[undefined].severity"
+                  >
+                    <option
+                      value="1"
+                    >
+                      1 (Highest)
+                    </option>
+                    <option
+                      value="2"
+                    >
+                      2 (High)
+                    </option>
+                    <option
+                      value="3"
+                    >
+                      3 (Medium)
+                    </option>
+                    <option
+                      value="4"
+                    >
+                      4 (Low)
+                    </option>
+                    <option
+                      value="5"
+                    >
+                      5 (Lowest)
+                    </option>
+                  </select>
+                  <div
+                    class="euiFormControlLayoutIcons euiFormControlLayoutIcons--right"
+                  >
+                    <span
+                      class="euiFormControlLayoutCustomIcon"
+                    >
+                      <div>
+                        EuiIconMock
+                      </div>
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div
+            class="euiSpacer euiSpacer--xl"
+          />
+          <div
+            class="euiText euiText--medium"
+          >
+            <h5>
+              Notifications
+            </h5>
+            <div
+              class="euiSpacer euiSpacer--s"
+            />
+          </div>
+          <div
+            class="euiSpacer euiSpacer--m"
+          />
+          <button
+            class="euiButton euiButton--primary"
+            type="button"
+          >
+            <span
+              class="euiButtonContent euiButton__content"
+            >
+              <span
+                class="euiButton__text"
+              >
+                Add notification
+              </span>
+            </span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;

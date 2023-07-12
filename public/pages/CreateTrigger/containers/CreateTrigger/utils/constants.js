@@ -9,6 +9,7 @@ export const TRIGGER_TYPE = {
   ALERT_TRIGGER: 'alerting_trigger',
   QUERY_LEVEL: 'query_level_trigger',
   DOC_LEVEL: 'document_level_trigger',
+  COMPOSITE_LEVEL: 'chained_alert_trigger',
 };
 
 export const FORMIK_INITIAL_BUCKET_SELECTOR_VALUES = {
@@ -64,6 +65,17 @@ export const FORMIK_INITIAL_TRIGGER_VALUES = {
     anomalyConfidenceThresholdEnum: 'ABOVE',
   },
   filters: [], // array of FORMIK_INITIAL_WHERE_EXPRESSION_VALUES with default 'operator' of 'includes'
+  actions: undefined,
+};
+
+export const FORMIK_COMPOSITE_INITIAL_TRIGGER_VALUES = {
+  name: '',
+  severity: '1',
+  script: {
+    lang: 'painless',
+    source: ``,
+  },
+  triggerConditions: '',
   actions: undefined,
 };
 

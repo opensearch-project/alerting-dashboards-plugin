@@ -11,6 +11,7 @@ import {
   DOC_LEVEL_INPUT_FIELD,
   QUERY_STRING_QUERY_OPERATORS,
 } from '../../../components/DocumentLevelMonitorQueries/utils/constants';
+import { conditionToExpressions } from '../../../../CreateTrigger/components/CompositeTriggerCondition/ExpressionBuilder';
 
 // Convert Monitor JSON to Formik values used in UI forms
 export default function monitorToFormik(monitor) {
@@ -23,6 +24,7 @@ export default function monitorToFormik(monitor) {
     schedule: { cron: { expression: cronExpression = formikValues.cronExpression, timezone } = {} },
     inputs,
     ui_metadata: { schedule = {}, search = {} } = {},
+    monitorOptions = [],
   } = monitor;
   // Default searchType to query, because if there is no ui_metadata or search then it was created through API or overwritten by API
   // In that case we don't want to guess on the UI what selections a user made, so we will default to just showing the extraction query
@@ -38,6 +40,21 @@ export default function monitorToFormik(monitor) {
         };
       case MONITOR_TYPE.DOC_LEVEL:
         return docLevelInputToFormik(monitor);
+      case MONITOR_TYPE.COMPOSITE_LEVEL:
+        const triggerConditions = _.get(
+          monitor,
+          'triggers[0].chained_alert_trigger.condition.script.source',
+          ''
+        );
+
+        const parsedConditions = conditionToExpressions(triggerConditions, monitorOptions);
+        const preventVisualEditor =
+          !!triggerConditions.length && triggerConditions !== '()' && !parsedConditions.length;
+
+        return {
+          associatedMonitors: _.get(monitor, 'inputs[0].composite_input', {}),
+          searchType: preventVisualEditor ? 'query' : 'graph',
+        };
       default:
         return {
           index: indicesToFormik(inputs[0].search.indices),
@@ -59,10 +76,10 @@ export default function monitorToFormik(monitor) {
     cronExpression,
 
     /* DEFINE MONITOR */
+    searchType,
     ...monitorInputs(),
     monitor_type,
     ...search,
-    searchType,
     fieldName: fieldName ? [{ label: fieldName }] : [],
     timezone: timezone ? [{ label: timezone }] : [],
     detectorId: isAD ? _.get(inputs, INPUTS_DETECTOR_ID) : undefined,

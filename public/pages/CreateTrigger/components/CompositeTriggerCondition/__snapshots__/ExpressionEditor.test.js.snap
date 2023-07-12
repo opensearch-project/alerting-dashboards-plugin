@@ -1,0 +1,49 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ExpressionEditor renders 1`] = `
+<div
+  class="euiFormRow euiFormRow--fullWidth"
+  id="pathtriggerCondition_undefined_code-form-row-row"
+>
+  <div
+    class="euiFormRow__labelWrapper"
+  >
+    <label
+      class="euiFormLabel euiFormRow__label"
+      for="pathtriggerCondition_undefined_code-form-row"
+    >
+      Trigger condition
+    </label>
+  </div>
+  <div
+    class="euiFormRow__fieldWrapper"
+  >
+    <div
+      class="euiCodeEditorWrapper"
+      data-test-subj="compositeTriggerConditionEditor_undefined"
+      style="width:80%;height:300px"
+    >
+      <button
+        class="euiCodeEditorKeyboardHint"
+        data-test-subj="codeEditorHint"
+        id="generated-id"
+      >
+        <p
+          class="euiText"
+        >
+          Press Enter to start editing.
+        </p>
+        <p
+          class="euiText"
+        >
+          When you're done, press Escape to stop editing.
+        </p>
+      </button>
+      <div
+        id="generated-id"
+        style="width:80%;height:300px"
+      />
+    </div>
+  </div>
+</div>
+`;

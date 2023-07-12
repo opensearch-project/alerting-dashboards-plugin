@@ -35,19 +35,65 @@ export default class MonitorService {
     }
   };
 
+  createWorkflow = async (context, req, res) => {
+    try {
+      const params = { body: req.body };
+      const { callAsCurrentUser } = await this.esDriver.asScoped(req);
+      const createResponse = await callAsCurrentUser('alerting.createWorkflow', params);
+      return res.ok({
+        body: {
+          ok: true,
+          resp: createResponse,
+        },
+      });
+    } catch (err) {
+      console.error('Alerting - MonitorService - createWorkflow:', err);
+      return res.ok({
+        body: {
+          ok: false,
+          resp: err.message,
+        },
+      });
+    }
+  };
+
   deleteMonitor = async (context, req, res) => {
     try {
       const { id } = req.params;
       const params = { monitorId: id };
       const { callAsCurrentUser } = await this.esDriver.asScoped(req);
       const response = await callAsCurrentUser('alerting.deleteMonitor', params);
+
       return res.ok({
         body: {
-          ok: response.result === 'deleted',
+          ok: response.result === 'deleted' || response.result === undefined,
         },
       });
     } catch (err) {
       console.error('Alerting - MonitorService - deleteMonitor:', err);
+      return res.ok({
+        body: {
+          ok: false,
+          resp: err.message,
+        },
+      });
+    }
+  };
+
+  deleteWorkflow = async (context, req, res) => {
+    try {
+      const { id } = req.params;
+      const params = { workflowId: id };
+      const { callAsCurrentUser } = await this.esDriver.asScoped(req);
+      const response = await callAsCurrentUser('alerting.deleteWorkflow', params);
+
+      return res.ok({
+        body: {
+          ok: response.result === 'deleted' || response.result === undefined,
+        },
+      });
+    } catch (err) {
+      console.error('Alerting - MonitorService - deleteWorkflow:', err);
       return res.ok({
         body: {
           ok: false,
@@ -63,13 +109,14 @@ export default class MonitorService {
       const params = { monitorId: id };
       const { callAsCurrentUser } = await this.esDriver.asScoped(req);
       const getResponse = await callAsCurrentUser('alerting.getMonitor', params);
-      const monitor = _.get(getResponse, 'monitor', null);
+      let monitor = _.get(getResponse, 'monitor', null);
       const version = _.get(getResponse, '_version', null);
       const ifSeqNo = _.get(getResponse, '_seq_no', null);
       const ifPrimaryTerm = _.get(getResponse, '_primary_term', null);
+      const associated_workflows = _.get(getResponse, 'associated_workflows', null);
       if (monitor) {
         const { callAsCurrentUser } = this.esDriver.asScoped(req);
-        const searchResponse = await callAsCurrentUser('alerting.getMonitors', {
+        const aggsParams = {
           index: INDEX.ALL_ALERTS,
           body: {
             size: 0,
@@ -96,13 +143,26 @@ export default class MonitorService {
               },
             },
           },
-        });
+        };
+        const searchResponse = await callAsCurrentUser('alerting.getMonitors', aggsParams);
         const dayCount = _.get(searchResponse, 'aggregations.24_hour_count.buckets.0.doc_count', 0);
         const activeBuckets = _.get(searchResponse, 'aggregations.active_count.buckets', []);
         const activeCount = activeBuckets.reduce(
           (acc, curr) => (curr.key === 'ACTIVE' ? curr.doc_count : acc),
           0
         );
+        if (associated_workflows) {
+          monitor = {
+            ...monitor,
+            associated_workflows,
+          };
+        }
+        monitor = {
+          ...monitor,
+          item_type: monitor.workflow_type || monitor.monitor_type,
+          id,
+          version,
+        };
         return res.ok({
           body: { ok: true, resp: monitor, activeCount, dayCount, version, ifSeqNo, ifPrimaryTerm },
         });
@@ -124,10 +184,51 @@ export default class MonitorService {
     }
   };
 
+  getWorkflow = async (context, req, res) => {
+    try {
+      const { id } = req.params;
+      const params = { monitorId: id };
+      const { callAsCurrentUser } = await this.esDriver.asScoped(req);
+      const getResponse = await callAsCurrentUser('alerting.getWorkflow', params);
+      let workflow = _.get(getResponse, 'workflow', null);
+      const version = _.get(getResponse, '_version', null);
+      const ifSeqNo = _.get(getResponse, '_seq_no', null);
+      const ifPrimaryTerm = _.get(getResponse, '_primary_term', null);
+      workflow.monitor_type = workflow.workflow_type;
+      workflow = {
+        ...workflow,
+        item_type: workflow.workflow_type,
+        id,
+        version,
+      };
+
+      return res.ok({
+        body: {
+          ok: true,
+          resp: workflow,
+          activeCount: 0,
+          dayCount: 0,
+          version,
+          ifSeqNo,
+          ifPrimaryTerm,
+        },
+      });
+    } catch (err) {
+      console.error('Alerting - MonitorService - getWorkflow:', err);
+      return res.ok({
+        body: {
+          ok: false,
+          resp: err.message,
+        },
+      });
+    }
+  };
+
   updateMonitor = async (context, req, res) => {
     try {
       const { id } = req.params;
       const params = { monitorId: id, body: req.body, refresh: 'wait_for' };
+      const { type } = req.body;
 
       // TODO DRAFT: Are we sure we need to include ifSeqNo and ifPrimaryTerm from the UI side when updating monitors?
       const { ifSeqNo, ifPrimaryTerm } = req.query;
@@ -137,7 +238,10 @@ export default class MonitorService {
       }
 
       const { callAsCurrentUser } = await this.esDriver.asScoped(req);
-      const updateResponse = await callAsCurrentUser('alerting.updateMonitor', params);
+      const updateResponse = await callAsCurrentUser(
+        `alerting.${type === 'workflow' ? 'updateWorkflow' : 'updateMonitor'}`,
+        params
+      );
       const { _version, _id } = updateResponse;
       return res.ok({
         body: {
@@ -175,6 +279,7 @@ export default class MonitorService {
         };
       }
 
+      const should = [];
       const mustList = [must];
       if (monitorIds !== undefined) {
         mustList.push({
@@ -190,10 +295,10 @@ export default class MonitorService {
         });
       }
 
-      const filter = [{ term: { 'monitor.type': 'monitor' } }];
       if (state !== 'all') {
         const enabled = state === 'enabled';
-        filter.push({ term: { 'monitor.enabled': enabled } });
+        should.push({ term: { 'monitor.enabled': enabled } });
+        should.push({ term: { 'workflow.enabled': enabled } });
       }
 
       const monitorSorts = { name: 'monitor.name.keyword' };
@@ -211,8 +316,22 @@ export default class MonitorService {
           ...monitorSortPageData,
           query: {
             bool: {
-              filter,
+              should,
               must: mustList,
+            },
+          },
+          aggregations: {
+            associated_composite_monitors: {
+              nested: {
+                path: 'workflow.inputs.composite_input.sequence.delegates',
+              },
+              aggs: {
+                monitor_ids: {
+                  terms: {
+                    field: 'workflow.inputs.composite_input.sequence.delegates.monitor_id',
+                  },
+                },
+              },
             },
           },
         },
@@ -231,10 +350,19 @@ export default class MonitorService {
           _source,
         } = result;
         const monitor = _source.monitor ? _source.monitor : _source;
-        const { name, enabled } = monitor;
-        return [id, { id, version, ifSeqNo, ifPrimaryTerm, name, enabled, monitor }];
+        monitor['item_type'] = monitor.workflow_type || monitor.monitor_type;
+        const { name, enabled, item_type } = monitor;
+        return [id, { id, version, ifSeqNo, ifPrimaryTerm, name, enabled, item_type, monitor }];
       }, {});
       const monitorMap = new Map(monitorKeyValueTuples);
+      const associatedCompositeMonitorCountMap = {};
+      _.get(
+        getResponse,
+        'aggregations.associated_composite_monitors.monitor_ids.buckets',
+        []
+      ).forEach(({ key, doc_count }) => {
+        associatedCompositeMonitorCountMap[key] = doc_count;
+      });
       const monitorIdsOutput = [...monitorMap.keys()];
 
       const aggsOrderData = {};
@@ -321,6 +449,7 @@ export default class MonitorService {
             active,
             errors,
             currentTime: Date.now(),
+            associatedCompositeMonitorCnt: associatedCompositeMonitorCountMap[id] || 0,
           };
         }
       );
@@ -334,6 +463,7 @@ export default class MonitorService {
         errors: 0,
         latestAlert: '--',
         currentTime: Date.now(),
+        associatedCompositeMonitorCnt: associatedCompositeMonitorCountMap[monitor.id] || 0,
       }));
 
       let results = _.orderBy(buckets.concat(unusedMonitors), [sortField], [sortDirection]);
@@ -384,6 +514,35 @@ export default class MonitorService {
       });
     } catch (err) {
       console.error('Alerting - MonitorService - acknowledgeAlerts:', err);
+      return res.ok({
+        body: {
+          ok: false,
+          resp: err.message,
+        },
+      });
+    }
+  };
+
+  acknowledgeChainedAlerts = async (context, req, res) => {
+    try {
+      const { id } = req.params;
+      const params = {
+        workflowId: id,
+        body: req.body,
+      };
+      const { callAsCurrentUser } = this.esDriver.asScoped(req);
+      const acknowledgeResponse = await callAsCurrentUser(
+        'alerting.acknowledgeChainedAlerts',
+        params
+      );
+      return res.ok({
+        body: {
+          ok: !acknowledgeResponse.failed.length,
+          resp: acknowledgeResponse,
+        },
+      });
+    } catch (err) {
+      console.error('Alerting - MonitorService - acknowledgeChainedAlerts:', err);
       return res.ok({
         body: {
           ok: false,

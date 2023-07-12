@@ -17,7 +17,6 @@ import {
 } from '../../../../CreateTrigger/containers/CreateTrigger/utils/formikToTrigger';
 import { triggerToFormik } from '../../../../CreateTrigger/containers/CreateTrigger/utils/triggerToFormik';
 import { TRIGGER_TYPE } from '../../../../CreateTrigger/containers/CreateTrigger/utils/constants';
-import { FORMIK_INITIAL_AGG_VALUES } from '../../CreateMonitor/utils/constants';
 import { getInitialTriggerValues } from '../../../../CreateTrigger/components/AddTriggerButton/utils';
 import { AGGREGATION_TYPES } from '../../../components/MonitorExpressions/expressions/utils/constants';
 
@@ -136,6 +135,9 @@ export const prepareTriggers = ({
       case MONITOR_TYPE.DOC_LEVEL:
         triggerType = TRIGGER_TYPE.DOC_LEVEL;
         break;
+      case MONITOR_TYPE.COMPOSITE_LEVEL:
+        triggerType = TRIGGER_TYPE.COMPOSITE_LEVEL;
+        break;
       default:
         triggerType = TRIGGER_TYPE.QUERY_LEVEL;
         break;
@@ -178,7 +180,9 @@ export const create = async ({
   const { setSubmitting } = formikBag;
 
   try {
-    const resp = await httpClient.post('../api/alerting/monitors', {
+    const isWorkflow = monitor.workflow_type === MONITOR_TYPE.COMPOSITE_LEVEL;
+    const creationPool = isWorkflow ? 'workflows' : 'monitors';
+    const resp = await httpClient.post(`../api/alerting/${creationPool}`, {
       body: JSON.stringify(monitor),
     });
     setSubmitting(false);
@@ -187,7 +191,7 @@ export const create = async ({
       resp: { _id },
     } = resp;
     if (ok) {
-      history.push(`/monitors/${_id}`);
+      history.push(`/monitors/${_id}?type=${isWorkflow ? 'workflow' : 'monitor'}`);
 
       if (onSuccess) {
         onSuccess({ monitor: { _id, ...monitor } });
@@ -206,12 +210,13 @@ export const update = async ({ history, updateMonitor, notifications, monitor, f
   const { setSubmitting } = formikBag;
   const updatedMonitor = _.cloneDeep(monitor);
   try {
+    const isWorkflow = updatedMonitor.workflow_type === MONITOR_TYPE.COMPOSITE_LEVEL;
     const resp = await updateMonitor(updatedMonitor);
     setSubmitting(false);
     const { ok, id } = resp;
     if (ok) {
       notifications.toasts.addSuccess(`Monitor "${monitor.name}" successfully updated.`);
-      history.push(`/monitors/${id}`);
+      history.push(`/monitors/${id}?type=${isWorkflow ? 'workflow' : 'monitor'}`);
     } else {
       console.log('Failed to update:', resp);
     }

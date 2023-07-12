@@ -31,6 +31,7 @@ import {
 } from '../../../CreateMonitor/components/ClusterMetricsMonitor/utils/clusterMetricsMonitorHelpers';
 import { FORMIK_INITIAL_VALUES } from '../../../CreateMonitor/containers/CreateMonitor/utils/constants';
 import { getDefaultScript } from '../../utils/helper';
+import DefineCompositeLevelTrigger from '../DefineCompositeLevelTrigger';
 import EnhancedAccordion from '../../../../components/FeatureAnywhereContextMenu/EnhancedAccordion';
 
 class ConfigureTriggers extends React.Component {
@@ -86,7 +87,23 @@ class ConfigureTriggers extends React.Component {
       'monitorValues.uri.api_type',
       FORMIK_INITIAL_VALUES.uri.api_type
     );
-    if (prevSearchType !== currSearchType || prevApiType !== currApiType) {
+    const prevMonitorType = _.get(
+      prevProps,
+      'monitorValues.monitor_type',
+      FORMIK_INITIAL_VALUES.monitor_type
+    );
+    const currMonitorType = _.get(
+      this.props,
+      'monitorValues.monitor_type',
+      FORMIK_INITIAL_VALUES.monitor_type
+    );
+
+    if (
+      prevSearchType !== currSearchType ||
+      prevApiType !== currApiType ||
+      prevMonitorType !== currMonitorType
+    ) {
+      this.setState({ addTriggerButton: this.prepareAddTriggerButton() });
       this.setState({ triggerEmptyPrompt: this.prepareTriggerEmptyPrompt() });
     }
 
@@ -119,6 +136,7 @@ class ConfigureTriggers extends React.Component {
       <AddTriggerButton
         arrayHelpers={triggerArrayHelpers}
         disabled={disableAddTriggerButton}
+        monitorType={monitorValues.monitor_type}
         script={getDefaultScript(monitorValues)}
       />
     );
@@ -129,6 +147,7 @@ class ConfigureTriggers extends React.Component {
     return (
       <TriggerEmptyPrompt
         arrayHelpers={triggerArrayHelpers}
+        monitorType={monitorValues.monitor_type}
         script={getDefaultScript(monitorValues)}
         flyoutMode={flyoutMode}
       />
@@ -317,6 +336,33 @@ class ConfigureTriggers extends React.Component {
     );
   };
 
+  renderCompositeLevelTrigger = (triggerArrayHelpers, index) => {
+    const {
+      edit,
+      monitorValues,
+      isDarkMode,
+      httpClient,
+      notifications,
+      notificationService,
+      plugins,
+      touched,
+    } = this.props;
+    return (
+      <DefineCompositeLevelTrigger
+        triggerArrayHelpers={triggerArrayHelpers}
+        triggerIndex={index}
+        edit={edit}
+        values={monitorValues}
+        touched={touched}
+        isDarkMode={isDarkMode}
+        httpClient={httpClient}
+        notifications={notifications}
+        notificationService={notificationService}
+        plugins={plugins}
+      />
+    );
+  };
+
   renderTriggers = (triggerArrayHelpers) => {
     const { monitorValues, triggerValues, flyoutMode, errors, submitCount } = this.props;
     const { triggerEmptyPrompt, TriggerContainer, accordionsOpen, currentSubmitCount } = this.state;
@@ -328,6 +374,8 @@ class ConfigureTriggers extends React.Component {
           return this.renderDefineBucketLevelTrigger(arrayHelpers, index);
         case MONITOR_TYPE.DOC_LEVEL:
           return this.renderDefineDocumentLevelTrigger(arrayHelpers, index);
+        case MONITOR_TYPE.COMPOSITE_LEVEL:
+          return this.renderCompositeLevelTrigger(arrayHelpers, index);
         default:
           return this.renderDefineTrigger(arrayHelpers, index);
       }
@@ -387,11 +435,17 @@ class ConfigureTriggers extends React.Component {
     const displayAddTriggerButton = numOfTriggers > 0;
     const disableAddTriggerButton = numOfTriggers >= MAX_TRIGGERS;
     const monitorType = monitorValues.monitor_type;
+    const isComposite = monitorType === MONITOR_TYPE.COMPOSITE_LEVEL;
 
     return (
       <ContentPanelStructure
         title={`Triggers (${numOfTriggers})`}
         titleSize={'s'}
+        description={
+          isComposite
+            ? 'Triggers define the conditions that determine when a composite monitor should generate its own alert.'
+            : undefined
+        }
         panelStyles={{ paddingBottom: '0px', paddingLeft: '20px', paddingRight: '20px' }}
         bodyStyles={{ paddingLeft: '0px', padding: '10px' }}
         horizontalRuleClassName={'accordion-horizontal-rule'}
