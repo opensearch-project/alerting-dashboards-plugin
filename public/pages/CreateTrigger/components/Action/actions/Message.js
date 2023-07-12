@@ -181,6 +181,10 @@ export default function Message(
       actionableAlertsSelections = [];
       _.set(action, 'action_execution_policy.action_execution_scope', actionExecutionScopeId);
       break;
+    case MONITOR_TYPE.COMPOSITE_LEVEL:
+      displayActionableAlertsOptions = false;
+      displayThrottlingSettings = true;
+      break;
     default:
       displayActionableAlertsOptions = false;
       displayThrottlingSettings = actionExecutionScopeId !== NOTIFY_OPTIONS_VALUES.PER_EXECUTION;
@@ -204,6 +208,7 @@ export default function Message(
     preview = err.message;
     console.error('There was an error rendering mustache template', err);
   }
+
   return (
     <div>
       {!isSubjectDisabled ? (

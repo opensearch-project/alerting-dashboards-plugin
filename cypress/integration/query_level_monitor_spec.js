@@ -244,6 +244,8 @@ describe('Query-Level Monitors', () => {
 
       // Click the Delete button
       cy.contains('Delete').click({ force: true });
+      cy.wait(1000);
+      cy.get('[data-test-subj="confirmModalConfirmButton"]').click({ force: true });
 
       // Confirm we can see an empty monitor list
       cy.contains('There are no existing monitors');

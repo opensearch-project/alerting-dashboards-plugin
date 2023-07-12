@@ -3,8 +3,6 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { SEARCH_TYPE } from '../../../../../utils/constants';
-
 export const initializeFromQueryParams = (queryParams) => {
   return {
     searchType: queryParams.searchType || undefined,
