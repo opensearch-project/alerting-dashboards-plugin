@@ -351,8 +351,8 @@ export default class MonitorService {
         } = result;
         const monitor = _source.monitor ? _source.monitor : _source;
         monitor['item_type'] = monitor.workflow_type || monitor.monitor_type;
-        const { name, enabled } = monitor;
-        return [id, { id, version, ifSeqNo, ifPrimaryTerm, name, enabled, monitor }];
+        const { name, enabled, item_type } = monitor;
+        return [id, { id, version, ifSeqNo, ifPrimaryTerm, name, enabled, item_type, monitor }];
       }, {});
       const monitorMap = new Map(monitorKeyValueTuples);
       const associatedCompositeMonitorCountMap = {};
