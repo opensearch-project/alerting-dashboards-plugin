@@ -85,8 +85,6 @@ describe('CompositeLevelMonitor', () => {
         // Verify the monitor name on details page
         cy.contains(SAMPLE_VISUAL_EDITOR_MONITOR);
 
-        const monitorId = interceptor.response.body.resp._id;
-
         // Go back to the Monitors list
         cy.get('a').contains('Monitors').click({ force: true });
 
