@@ -15,4 +15,4 @@ Compatible with OpenSearch Dashboards 2.8.0
 * Temporary fix for blank monitor name on Monitors page issue. ([#593](https://github.com/opensearch-project/alerting-dashboards-plugin/pull/593))
 
 ### Documentation
-* Added 2.9.0 release notes. ([#]())
+* Added 2.9.0 release notes. ([#621](https://github.com/opensearch-project/alerting-dashboards-plugin/pull/621))
