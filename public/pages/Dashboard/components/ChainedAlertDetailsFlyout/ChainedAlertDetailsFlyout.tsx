@@ -22,7 +22,9 @@ export const ChainedAlertDetailsFlyout = ({ closeFlyout, alert, httpClient }) =>
     httpClient.get('../api/alerting/workflows/alerts', { query: { workflowIds: alert.workflow_id, getAssociatedAlerts: true }})
     .then((response: any) => {
       if (response.ok) {
-        setAssociatedAlerts(response.resp.associatedAlerts);
+        const associatedAlertIds = new Set(alert.associated_alert_ids);
+        const associatedAlerts = response.resp.associatedAlerts.filter(a => associatedAlertIds.has(a.id));
+        setAssociatedAlerts(associatedAlerts);
       }
     })
   }, []);
