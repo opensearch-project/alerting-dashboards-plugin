@@ -159,14 +159,16 @@ export function formikToClusterMetricsInput(values) {
   pathParams = _.trim(pathParams);
   // Trim '/' characters from the beginning and end of the path
   pathParams = pathParams?.replace(/^\/+|\/+$/g, '');
-  pathParams = '/' + pathParams;
   const hasPathParams = !_.isEmpty(pathParams);
   const path = getApiPath(hasPathParams, apiType);
   let url = FORMIK_INITIAL_VALUES.uri.url;
   if (!_.isEmpty(apiType)) {
     url = URL_DEFAULT_PREFIX;
     if (!_.isEmpty(path)) url = url + '/' + path;
-    if (hasPathParams) url = url + pathParams + _.get(API_TYPES, `${apiType}.appendText`, '');
+    if (hasPathParams) {
+      pathParams = '/' + pathParams;
+      url = url + pathParams + _.get(API_TYPES, `${apiType}.appendText`, '');
+    }
   }
   return {
     uri: {
