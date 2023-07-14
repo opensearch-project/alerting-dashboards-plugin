@@ -493,7 +493,9 @@ export default class MonitorDetails extends Component {
             ) : null}
             {this.state.tabContent}
           </div>
-        ) : null}
+        ) : (
+          this.renderAlertsTable()
+        )}
 
         {isJsonModalOpen && (
           <EuiOverlayMask>
