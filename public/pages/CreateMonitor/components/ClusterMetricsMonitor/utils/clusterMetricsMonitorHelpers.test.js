@@ -88,7 +88,7 @@ describe('clusterMetricsMonitorHelpers', () => {
           uri: {
             api_type: API_TYPES.CLUSTER_HEALTH.type,
             path: path,
-            path_params: pathParams,
+            path_params: '/' + pathParams,
             url: `http://localhost:9200/${path}/${pathParams}`,
           },
         };
