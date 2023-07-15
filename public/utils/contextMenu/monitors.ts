@@ -22,7 +22,7 @@ const getMonitors = async (params) => {
 
 const parseMonitor = (monitor) => {
   const state = monitor.monitor.enabled ? 'enabled' : 'disabled';
-  const latestAlert = monitor.latestAlert === "--" ? undefined : monitor.latestAlert;
+  const latestAlert = monitor.lastNotificationTime === "--" ? undefined : monitor.lastNotificationTime;
   return {
     name: monitor.name,
     state: state,
