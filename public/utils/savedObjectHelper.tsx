@@ -126,14 +126,9 @@ export const deleteAlertingAugmentVisSavedObj = async (
   ).then(async (resp) => {
     if (resp !== undefined) {
       const savedAugmentObjects = get(resp, 'hits', []);
-      // gets all the saved object for this visualization
-      const savedAugmentForThisVisualization = savedAugmentObjects.filter(
-        (savedObj) => get(savedObj, 'visId', '') === visId
-      );
-
       // find saved Augment object matching detector we want to unlink
       // There should only be one detector and vis pairing
-      const savedAugmentToUnlink = savedAugmentForThisVisualization.find(
+      const savedAugmentToUnlink = savedAugmentObjects.find(
         (savedObject) => get(savedObject, 'pluginResource.id', '') === monitorId
       );
       const savedObjectToUnlinkId = get(savedAugmentToUnlink, 'id', '');
