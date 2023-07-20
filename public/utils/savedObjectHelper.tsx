@@ -51,14 +51,14 @@ export const validateAssociationIsAllow = async (visId, sendDangerToast = false)
 export const getCountOfAssociatedObjects = async (visId) => {
   const loader = getSavedAugmentVisLoader();
 
-  return await loader.findAll().then(async (resp) => {
+  return await loader.findAll('', 100, [], {
+      type: 'visualization',
+      id: visId,
+    }
+  ).then(async (resp) => {
     if (resp !== undefined) {
       const savedAugmentObjects = get(resp, 'hits', []);
-      // gets all the saved object for this visualization
-      const savedObjectsForThisVisualization = savedAugmentObjects.filter(
-        (savedObj) => get(savedObj, 'visId', '') === visId
-      );
-      return savedObjectsForThisVisualization.length;
+      return savedAugmentObjects.length;
     }
   });
 };
@@ -119,17 +119,16 @@ export const deleteAlertingAugmentVisSavedObj = async (
   monitorId: string
 ): Promise<void> => {
   const savedObjectLoader = getSavedAugmentVisLoader();
-  await savedObjectLoader.findAll().then(async (resp) => {
+  await savedObjectLoader.findAll('', 100, [], {
+      type: 'visualization',
+      id: visId,
+    }
+  ).then(async (resp) => {
     if (resp !== undefined) {
       const savedAugmentObjects = get(resp, 'hits', []);
-      // gets all the saved object for this visualization
-      const savedAugmentForThisVisualization = savedAugmentObjects.filter(
-        (savedObj) => get(savedObj, 'visId', '') === visId
-      );
-
       // find saved Augment object matching detector we want to unlink
       // There should only be one detector and vis pairing
-      const savedAugmentToUnlink = savedAugmentForThisVisualization.find(
+      const savedAugmentToUnlink = savedAugmentObjects.find(
         (savedObject) => get(savedObject, 'pluginResource.id', '') === monitorId
       );
       const savedObjectToUnlinkId = get(savedAugmentToUnlink, 'id', '');
