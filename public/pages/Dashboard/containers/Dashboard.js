@@ -25,7 +25,7 @@ import {
   MONITOR_TYPE,
   OPENSEARCH_DASHBOARDS_AD_PLUGIN,
 } from '../../../utils/constants';
-import { backendErrorNotification } from '../../../utils/helpers';
+import { acknowledgeAlerts, backendErrorNotification } from '../../../utils/helpers';
 import {
   displayAcknowledgedAlertsToast,
   filterActiveAlerts,
@@ -194,35 +194,7 @@ export default class Dashboard extends Component {
 
   acknowledgeAlerts = async (alerts) => {
     const { httpClient, notifications } = this.props;
-    const selectedAlerts = filterActiveAlerts(alerts);
-
-    const monitorAlerts = selectedAlerts.reduce((monitorAlerts, alert) => {
-      const id = alert.id;
-      const monitorId = alert.workflow_id || alert.monitor_id;
-      if (monitorAlerts[monitorId]) monitorAlerts[monitorId].alerts.push(id);
-      else
-        monitorAlerts[monitorId] = {
-          alerts: [id],
-          poolType: !!alert.workflow_id ? 'workflows' : 'monitors',
-        };
-      return monitorAlerts;
-    }, {});
-
-    Object.entries(monitorAlerts).map(([monitorId, { alerts, poolType }]) =>
-      httpClient
-        .post(`../api/alerting/${poolType}/${monitorId}/_acknowledge/alerts`, {
-          body: JSON.stringify({ alerts }),
-        })
-        .then((resp) => {
-          if (!resp.ok) {
-            backendErrorNotification(notifications, 'acknowledge', 'alert', resp.resp);
-          } else {
-            const successfulCount = _.get(resp, 'resp.success', []).length;
-            displayAcknowledgedAlertsToast(notifications, successfulCount);
-          }
-        })
-        .catch((error) => error)
-    );
+    await Promise.all(acknowledgeAlerts(httpClient, notifications, alerts));
   };
 
   // TODO: exists in both Dashboard and Monitors, should be moved to redux when implemented

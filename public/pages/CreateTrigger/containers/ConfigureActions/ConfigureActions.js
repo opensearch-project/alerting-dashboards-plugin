@@ -378,7 +378,7 @@ class ConfigureActions extends React.Component {
           hasShadow={!flyoutMode}
           hasBorder={!flyoutMode}
         >
-          {!flyoutMode && !loadingDestinations && numActions < 1 ? (
+          {!flyoutMode && loadingDestinations && numActions < 1 ? (
             <div style={{ display: 'flex', justifyContent: 'center' }}>Loading Destinations...</div>
           ) : (
             <>

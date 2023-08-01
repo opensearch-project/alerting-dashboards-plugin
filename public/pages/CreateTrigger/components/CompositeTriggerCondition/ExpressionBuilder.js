@@ -7,6 +7,7 @@ import {
   EuiButtonIcon,
   EuiExpression,
   EuiToolTip,
+  EuiSelect,
 } from '@elastic/eui';
 import * as _ from 'lodash';
 import { FormikFormRow, FormikInputWrapper } from '../../../../components/FormControls';
@@ -183,7 +184,7 @@ const ExpressionBuilder = ({
   const changeCondition = (selection, exp, idx, form) => {
     const expressions = _.cloneDeep(usedExpressions);
 
-    expressions[idx] = { ...expressions[idx], description: selection[0].description };
+    expressions[idx] = { ...expressions[idx], description: selection };
     setUsedExpressions(expressions);
     onChange(form, expressions);
   };
@@ -244,21 +245,16 @@ const ExpressionBuilder = ({
       data-test-subj={`${formikFullFieldName}_${triggerIndex}_${idx}_options`}
     >
       <EuiFlexItem grow={false}>
-        <EuiComboBox
-          style={{ width: '150px' }}
-          singleSelection={{ asPlainText: true }}
-          data-test-subj={`condition-combobox-${triggerIndex}-${idx}`}
+        <EuiSelect
           compressed
-          selectedOptions={[
-            {
-              label: expression.description,
-              description: expression.description,
-            },
-          ]}
-          onChange={(selection) => changeCondition(selection, expression, idx, form)}
+          style={{ width: '100px' }}
+          data-test-subj={`condition-combobox-${triggerIndex}-${idx}`}
+          value={expression.description}
+          onChange={(event) => changeCondition(event.target.value, expression, idx, form)}
+          options={(idx === 0 ? FIRST_EXPRESSION_CONDITIONS_MAP : EXPRESSION_CONDITIONS_MAP).map(
+            (opt) => ({ value: opt.description, text: opt.label })
+          )}
           onBlur={() => onBlur(form, usedExpressions)}
-          options={idx === 0 ? FIRST_EXPRESSION_CONDITIONS_MAP : EXPRESSION_CONDITIONS_MAP}
-          autoFocus={false}
         />
       </EuiFlexItem>
       <EuiFlexItem grow={false}>{renderMonitorOptions(expression, idx, form)}</EuiFlexItem>

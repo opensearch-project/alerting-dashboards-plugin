@@ -71,7 +71,7 @@ exports[`AlertsDashboardFlyoutComponent renders 1`] = `
         </strong>
         <p>
           <EuiLink
-            href="alerting#/monitors/undefined"
+            href="alerting#/monitors/undefinedfalse"
           />
         </p>
       </EuiText>
