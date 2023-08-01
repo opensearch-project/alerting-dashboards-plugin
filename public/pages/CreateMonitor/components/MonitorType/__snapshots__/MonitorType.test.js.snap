@@ -1,328 +1,288 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`MonitorType renders 1`] = `
-<div
-  class="euiFlexGrid euiFlexGrid--gutterMedium euiFlexGrid--wrap euiFlexGrid--responsive"
->
+Array [
+  <label
+    class="euiFormLabel"
+  >
+    Monitor type
+  </label>,
   <div
-    class="euiFlexItem euiFlexItem--flexGrowZero"
+    class="euiSpacer euiSpacer--xs"
+  />,
+  <div
+    class="euiFlexGrid euiFlexGrid--gutterMedium euiFlexGrid--wrap euiFlexGrid--responsive"
   >
     <div
-      class="euiFormRow"
-      id="monitorTypeQueryLevel-form-row-row"
+      class="euiFlexItem euiFlexItem--flexGrowZero"
+      style="width:350px"
     >
       <div
-        class="euiFormRow__labelWrapper"
-      >
-        <label
-          class="euiFormLabel euiFormRow__label"
-          for="monitorTypeQueryLevel-form-row"
-        >
-          Monitor type
-        </label>
-      </div>
-      <div
-        class="euiFormRow__fieldWrapper"
+        class="euiPanel euiPanel--borderRadiusMedium euiPanel--plain euiPanel--hasShadow euiPanel--hasBorder euiPanel--flexGrowZero euiSplitPanel euiSplitPanel--row euiCheckableCard eui-fullHeight"
       >
         <div
-          class="euiPanel euiPanel--borderRadiusMedium euiPanel--plain euiPanel--hasShadow euiPanel--hasBorder euiPanel--flexGrowZero euiSplitPanel euiSplitPanel--row euiCheckableCard"
+          class="euiPanel euiPanel--paddingMedium euiPanel--borderRadiusNone euiPanel--subdued euiPanel--noShadow euiPanel--noBorder euiPanel--flexGrowZero euiPanel--isClickable euiSplitPanel__inner"
         >
           <div
-            class="euiPanel euiPanel--paddingMedium euiPanel--borderRadiusNone euiPanel--subdued euiPanel--noShadow euiPanel--noBorder euiPanel--flexGrowZero euiPanel--isClickable euiSplitPanel__inner"
+            class="euiRadio euiRadio--noLabel"
+            data-test-subj="queryLevelMonitorRadioCard"
           >
+            <input
+              class="euiRadio__input"
+              id="queryLevelMonitorRadioCard"
+              name="monitorTypeQueryLevel"
+              type="radio"
+              value="query_level_monitor"
+            />
             <div
-              class="euiRadio euiRadio--noLabel"
-              data-test-subj="queryLevelMonitorRadioCard"
-            >
-              <input
-                class="euiRadio__input"
-                id="queryLevelMonitorRadioCard"
-                name="monitorTypeQueryLevel"
-                type="radio"
-                value="query_level_monitor"
-              />
-              <div
-                class="euiRadio__circle"
-              />
-            </div>
+              class="euiRadio__circle"
+            />
           </div>
-          <div
-            class="euiPanel euiPanel--paddingMedium euiPanel--borderRadiusNone euiPanel--transparent euiPanel--noShadow euiPanel--noBorder euiSplitPanel__inner"
+        </div>
+        <div
+          class="euiPanel euiPanel--paddingMedium euiPanel--borderRadiusNone euiPanel--transparent euiPanel--noShadow euiPanel--noBorder euiSplitPanel__inner"
+        >
+          <label
+            aria-describedby="queryLevelMonitorRadioCard-details"
+            class="euiCheckableCard__label"
+            for="queryLevelMonitorRadioCard"
           >
-            <label
-              aria-describedby="queryLevelMonitorRadioCard-details"
-              class="euiCheckableCard__label"
-              for="queryLevelMonitorRadioCard"
-            >
-              Per query monitor
-            </label>
+            Per query monitor
+          </label>
+          <div
+            class="euiCheckableCard__children"
+            id="queryLevelMonitorRadioCard-details"
+          >
             <div
-              class="euiCheckableCard__children"
-              id="queryLevelMonitorRadioCard-details"
+              class="euiText euiText--extraSmall"
+              style="padding-bottom:10px;padding-top:0px"
             >
               <div
-                class="euiText euiText--extraSmall"
-                style="padding-bottom:10px;padding-top:0px"
+                class="euiTextColor euiTextColor--subdued"
               >
-                <div
-                  class="euiTextColor euiTextColor--subdued"
-                >
-                  Per query monitors run a query and generate alerts based on trigger criteria that match query results.
-                </div>
+                Per query monitors run a query and generate alerts based on trigger criteria that match query results.
               </div>
             </div>
           </div>
         </div>
       </div>
     </div>
-  </div>
-  <div
-    class="euiFlexItem euiFlexItem--flexGrowZero"
-  >
     <div
-      class="euiFormRow euiFormRow--hasEmptyLabelSpace"
-      id="monitorTypeBucketLevel-form-row-row"
+      class="euiFlexItem euiFlexItem--flexGrowZero"
+      style="width:350px"
     >
       <div
-        class="euiFormRow__fieldWrapper"
+        class="euiPanel euiPanel--borderRadiusMedium euiPanel--plain euiPanel--hasShadow euiPanel--hasBorder euiPanel--flexGrowZero euiSplitPanel euiSplitPanel--row euiCheckableCard eui-fullHeight"
       >
         <div
-          class="euiPanel euiPanel--borderRadiusMedium euiPanel--plain euiPanel--hasShadow euiPanel--hasBorder euiPanel--flexGrowZero euiSplitPanel euiSplitPanel--row euiCheckableCard"
+          class="euiPanel euiPanel--paddingMedium euiPanel--borderRadiusNone euiPanel--subdued euiPanel--noShadow euiPanel--noBorder euiPanel--flexGrowZero euiPanel--isClickable euiSplitPanel__inner"
         >
           <div
-            class="euiPanel euiPanel--paddingMedium euiPanel--borderRadiusNone euiPanel--subdued euiPanel--noShadow euiPanel--noBorder euiPanel--flexGrowZero euiPanel--isClickable euiSplitPanel__inner"
+            class="euiRadio euiRadio--noLabel"
+            data-test-subj="bucketLevelMonitorRadioCard"
           >
+            <input
+              class="euiRadio__input"
+              id="bucketLevelMonitorRadioCard"
+              name="monitorTypeBucketLevel"
+              type="radio"
+              value="bucket_level_monitor"
+            />
             <div
-              class="euiRadio euiRadio--noLabel"
-              data-test-subj="bucketLevelMonitorRadioCard"
-            >
-              <input
-                class="euiRadio__input"
-                id="bucketLevelMonitorRadioCard"
-                name="monitorTypeBucketLevel"
-                type="radio"
-                value="bucket_level_monitor"
-              />
-              <div
-                class="euiRadio__circle"
-              />
-            </div>
+              class="euiRadio__circle"
+            />
           </div>
-          <div
-            class="euiPanel euiPanel--paddingMedium euiPanel--borderRadiusNone euiPanel--transparent euiPanel--noShadow euiPanel--noBorder euiSplitPanel__inner"
+        </div>
+        <div
+          class="euiPanel euiPanel--paddingMedium euiPanel--borderRadiusNone euiPanel--transparent euiPanel--noShadow euiPanel--noBorder euiSplitPanel__inner"
+        >
+          <label
+            aria-describedby="bucketLevelMonitorRadioCard-details"
+            class="euiCheckableCard__label"
+            for="bucketLevelMonitorRadioCard"
           >
-            <label
-              aria-describedby="bucketLevelMonitorRadioCard-details"
-              class="euiCheckableCard__label"
-              for="bucketLevelMonitorRadioCard"
-            >
-              Per bucket monitor
-            </label>
+            Per bucket monitor
+          </label>
+          <div
+            class="euiCheckableCard__children"
+            id="bucketLevelMonitorRadioCard-details"
+          >
             <div
-              class="euiCheckableCard__children"
-              id="bucketLevelMonitorRadioCard-details"
+              class="euiText euiText--extraSmall"
+              style="padding-bottom:10px;padding-top:0px"
             >
               <div
-                class="euiText euiText--extraSmall"
-                style="padding-bottom:10px;padding-top:0px"
+                class="euiTextColor euiTextColor--subdued"
               >
-                <div
-                  class="euiTextColor euiTextColor--subdued"
-                >
-                  Per bucket monitors run a query that evaluates trigger criteria based on aggregated values in the dataset.
-                </div>
+                Per bucket monitors run a query that evaluates trigger criteria based on aggregated values in the dataset.
               </div>
             </div>
           </div>
         </div>
       </div>
     </div>
-  </div>
-  <div
-    class="euiFlexItem euiFlexItem--flexGrowZero"
-  >
     <div
-      class="euiFormRow euiFormRow--hasEmptyLabelSpace"
-      id="monitorTypeClusterMetrics-form-row-row"
+      class="euiFlexItem euiFlexItem--flexGrowZero"
+      style="width:350px"
     >
       <div
-        class="euiFormRow__fieldWrapper"
+        class="euiPanel euiPanel--borderRadiusMedium euiPanel--plain euiPanel--hasShadow euiPanel--hasBorder euiPanel--flexGrowZero euiSplitPanel euiSplitPanel--row euiCheckableCard eui-fullHeight"
       >
         <div
-          class="euiPanel euiPanel--borderRadiusMedium euiPanel--plain euiPanel--hasShadow euiPanel--hasBorder euiPanel--flexGrowZero euiSplitPanel euiSplitPanel--row euiCheckableCard"
+          class="euiPanel euiPanel--paddingMedium euiPanel--borderRadiusNone euiPanel--subdued euiPanel--noShadow euiPanel--noBorder euiPanel--flexGrowZero euiPanel--isClickable euiSplitPanel__inner"
         >
           <div
-            class="euiPanel euiPanel--paddingMedium euiPanel--borderRadiusNone euiPanel--subdued euiPanel--noShadow euiPanel--noBorder euiPanel--flexGrowZero euiPanel--isClickable euiSplitPanel__inner"
+            class="euiRadio euiRadio--noLabel"
+            data-test-subj="clusterMetricsMonitorRadioCard"
           >
+            <input
+              class="euiRadio__input"
+              id="clusterMetricsMonitorRadioCard"
+              name="monitorTypeClusterMetrics"
+              type="radio"
+              value="cluster_metrics_monitor"
+            />
             <div
-              class="euiRadio euiRadio--noLabel"
-              data-test-subj="clusterMetricsMonitorRadioCard"
-            >
-              <input
-                class="euiRadio__input"
-                id="clusterMetricsMonitorRadioCard"
-                name="monitorTypeClusterMetrics"
-                type="radio"
-                value="cluster_metrics_monitor"
-              />
-              <div
-                class="euiRadio__circle"
-              />
-            </div>
+              class="euiRadio__circle"
+            />
           </div>
-          <div
-            class="euiPanel euiPanel--paddingMedium euiPanel--borderRadiusNone euiPanel--transparent euiPanel--noShadow euiPanel--noBorder euiSplitPanel__inner"
+        </div>
+        <div
+          class="euiPanel euiPanel--paddingMedium euiPanel--borderRadiusNone euiPanel--transparent euiPanel--noShadow euiPanel--noBorder euiSplitPanel__inner"
+        >
+          <label
+            aria-describedby="clusterMetricsMonitorRadioCard-details"
+            class="euiCheckableCard__label"
+            for="clusterMetricsMonitorRadioCard"
           >
-            <label
-              aria-describedby="clusterMetricsMonitorRadioCard-details"
-              class="euiCheckableCard__label"
-              for="clusterMetricsMonitorRadioCard"
-            >
-              Per cluster metrics monitor
-            </label>
+            Per cluster metrics monitor
+          </label>
+          <div
+            class="euiCheckableCard__children"
+            id="clusterMetricsMonitorRadioCard-details"
+          >
             <div
-              class="euiCheckableCard__children"
-              id="clusterMetricsMonitorRadioCard-details"
+              class="euiText euiText--extraSmall"
+              style="padding-bottom:10px;padding-top:0px"
             >
               <div
-                class="euiText euiText--extraSmall"
-                style="padding-bottom:10px;padding-top:0px"
+                class="euiTextColor euiTextColor--subdued"
               >
-                <div
-                  class="euiTextColor euiTextColor--subdued"
-                >
-                  Per cluster metrics monitors run API requests to monitor the cluster’s health.
-                </div>
+                Per cluster metrics monitors run API requests to monitor the cluster’s health.
               </div>
             </div>
           </div>
         </div>
       </div>
     </div>
-  </div>
-  <div
-    class="euiFlexItem euiFlexItem--flexGrowZero"
-  >
     <div
-      class="euiFormRow euiFormRow--hasEmptyLabelSpace"
-      id="monitorTypeDocLevel-form-row-row"
+      class="euiFlexItem euiFlexItem--flexGrowZero"
+      style="width:350px"
     >
       <div
-        class="euiFormRow__fieldWrapper"
+        class="euiPanel euiPanel--borderRadiusMedium euiPanel--plain euiPanel--hasShadow euiPanel--hasBorder euiPanel--flexGrowZero euiSplitPanel euiSplitPanel--row euiCheckableCard eui-fullHeight"
       >
         <div
-          class="euiPanel euiPanel--borderRadiusMedium euiPanel--plain euiPanel--hasShadow euiPanel--hasBorder euiPanel--flexGrowZero euiSplitPanel euiSplitPanel--row euiCheckableCard"
+          class="euiPanel euiPanel--paddingMedium euiPanel--borderRadiusNone euiPanel--subdued euiPanel--noShadow euiPanel--noBorder euiPanel--flexGrowZero euiPanel--isClickable euiSplitPanel__inner"
         >
           <div
-            class="euiPanel euiPanel--paddingMedium euiPanel--borderRadiusNone euiPanel--subdued euiPanel--noShadow euiPanel--noBorder euiPanel--flexGrowZero euiPanel--isClickable euiSplitPanel__inner"
+            class="euiRadio euiRadio--noLabel"
+            data-test-subj="docLevelMonitorRadioCard"
           >
+            <input
+              class="euiRadio__input"
+              id="docLevelMonitorRadioCard"
+              name="monitorTypeDocLevel"
+              type="radio"
+              value="doc_level_monitor"
+            />
             <div
-              class="euiRadio euiRadio--noLabel"
-              data-test-subj="docLevelMonitorRadioCard"
-            >
-              <input
-                class="euiRadio__input"
-                id="docLevelMonitorRadioCard"
-                name="monitorTypeDocLevel"
-                type="radio"
-                value="doc_level_monitor"
-              />
-              <div
-                class="euiRadio__circle"
-              />
-            </div>
+              class="euiRadio__circle"
+            />
           </div>
-          <div
-            class="euiPanel euiPanel--paddingMedium euiPanel--borderRadiusNone euiPanel--transparent euiPanel--noShadow euiPanel--noBorder euiSplitPanel__inner"
+        </div>
+        <div
+          class="euiPanel euiPanel--paddingMedium euiPanel--borderRadiusNone euiPanel--transparent euiPanel--noShadow euiPanel--noBorder euiSplitPanel__inner"
+        >
+          <label
+            aria-describedby="docLevelMonitorRadioCard-details"
+            class="euiCheckableCard__label"
+            for="docLevelMonitorRadioCard"
           >
-            <label
-              aria-describedby="docLevelMonitorRadioCard-details"
-              class="euiCheckableCard__label"
-              for="docLevelMonitorRadioCard"
-            >
-              Per document monitor
-            </label>
+            Per document monitor
+          </label>
+          <div
+            class="euiCheckableCard__children"
+            id="docLevelMonitorRadioCard-details"
+          >
             <div
-              class="euiCheckableCard__children"
-              id="docLevelMonitorRadioCard-details"
+              class="euiText euiText--extraSmall"
+              style="padding-bottom:10px;padding-top:0px"
             >
               <div
-                class="euiText euiText--extraSmall"
-                style="padding-bottom:10px;padding-top:0px"
+                class="euiTextColor euiTextColor--subdued"
               >
-                <div
-                  class="euiTextColor euiTextColor--subdued"
-                >
-                  Per document monitors run queries that return individual documents matching the trigger conditions.
-                </div>
+                Per document monitors run queries that return individual documents matching the trigger conditions.
               </div>
             </div>
           </div>
         </div>
       </div>
     </div>
-  </div>
-  <div
-    class="euiFlexItem euiFlexItem--flexGrowZero"
-  >
     <div
-      class="euiFormRow euiFormRow--hasEmptyLabelSpace"
-      id="monitorTypeCompositeLevel-form-row-row"
+      class="euiFlexItem euiFlexItem--flexGrowZero"
+      style="width:350px"
     >
       <div
-        class="euiFormRow__fieldWrapper"
+        class="euiPanel euiPanel--borderRadiusMedium euiPanel--plain euiPanel--hasShadow euiPanel--hasBorder euiPanel--flexGrowZero euiSplitPanel euiSplitPanel--row euiCheckableCard eui-fullHeight"
       >
         <div
-          class="euiPanel euiPanel--borderRadiusMedium euiPanel--plain euiPanel--hasShadow euiPanel--hasBorder euiPanel--flexGrowZero euiSplitPanel euiSplitPanel--row euiCheckableCard"
+          class="euiPanel euiPanel--paddingMedium euiPanel--borderRadiusNone euiPanel--subdued euiPanel--noShadow euiPanel--noBorder euiPanel--flexGrowZero euiPanel--isClickable euiSplitPanel__inner"
         >
           <div
-            class="euiPanel euiPanel--paddingMedium euiPanel--borderRadiusNone euiPanel--subdued euiPanel--noShadow euiPanel--noBorder euiPanel--flexGrowZero euiPanel--isClickable euiSplitPanel__inner"
+            class="euiRadio euiRadio--noLabel"
+            data-test-subj="compositeLevelMonitorRadioCard"
           >
+            <input
+              class="euiRadio__input"
+              id="compositeLevelMonitorRadioCard"
+              name="monitorTypeCompositeLevel"
+              type="radio"
+              value="composite"
+            />
             <div
-              class="euiRadio euiRadio--noLabel"
-              data-test-subj="compositeLevelMonitorRadioCard"
-            >
-              <input
-                class="euiRadio__input"
-                id="compositeLevelMonitorRadioCard"
-                name="monitorTypeCompositeLevel"
-                type="radio"
-                value="composite"
-              />
-              <div
-                class="euiRadio__circle"
-              />
-            </div>
+              class="euiRadio__circle"
+            />
           </div>
-          <div
-            class="euiPanel euiPanel--paddingMedium euiPanel--borderRadiusNone euiPanel--transparent euiPanel--noShadow euiPanel--noBorder euiSplitPanel__inner"
+        </div>
+        <div
+          class="euiPanel euiPanel--paddingMedium euiPanel--borderRadiusNone euiPanel--transparent euiPanel--noShadow euiPanel--noBorder euiSplitPanel__inner"
+        >
+          <label
+            aria-describedby="compositeLevelMonitorRadioCard-details"
+            class="euiCheckableCard__label"
+            for="compositeLevelMonitorRadioCard"
           >
-            <label
-              aria-describedby="compositeLevelMonitorRadioCard-details"
-              class="euiCheckableCard__label"
-              for="compositeLevelMonitorRadioCard"
-            >
-              Composite monitor
-            </label>
+            Composite monitor
+          </label>
+          <div
+            class="euiCheckableCard__children"
+            id="compositeLevelMonitorRadioCard-details"
+          >
             <div
-              class="euiCheckableCard__children"
-              id="compositeLevelMonitorRadioCard-details"
+              class="euiText euiText--extraSmall"
+              style="padding-bottom:10px;padding-top:0px"
             >
               <div
-                class="euiText euiText--extraSmall"
-                style="padding-bottom:10px;padding-top:0px"
+                class="euiTextColor euiTextColor--subdued"
               >
-                <div
-                  class="euiTextColor euiTextColor--subdued"
-                >
-                  Composite monitors chain the outputs of different monitor types and focus trigger conditions to reduce alert noise.
-                </div>
+                Composite monitors chain the outputs of different monitor types and focus trigger conditions to reduce alert noise.
               </div>
             </div>
           </div>
         </div>
       </div>
     </div>
-  </div>
-</div>
+  </div>,
+]
 `;

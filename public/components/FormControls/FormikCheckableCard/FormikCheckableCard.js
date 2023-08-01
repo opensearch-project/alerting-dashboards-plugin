@@ -6,29 +6,15 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { EuiCheckableCard } from '@elastic/eui';
-
 import FormikInputWrapper from '../FormikInputWrapper';
-import FormikFormRow from '../FormikFormRow';
 
-const FormikCheckableCard = ({
-  name,
-  formRow = false,
-  fieldProps = {},
-  rowProps = {},
-  inputProps = {},
-}) => (
+const FormikCheckableCard = ({ name, fieldProps = {}, inputProps = {} }) => (
   <FormikInputWrapper
     name={name}
     fieldProps={fieldProps}
-    render={({ field, form }) =>
-      formRow ? (
-        <FormikFormRow name={name} form={form} rowProps={rowProps}>
-          <FieldCheckableCard name={name} form={form} field={field} inputProps={inputProps} />
-        </FormikFormRow>
-      ) : (
-        <FieldCheckableCard name={name} form={form} field={field} inputProps={inputProps} />
-      )
-    }
+    render={({ field, form }) => (
+      <FieldCheckableCard name={name} form={form} field={field} inputProps={inputProps} />
+    )}
   />
 );
 
@@ -47,14 +33,13 @@ const FieldCheckableCard = ({
     onChange={(e) =>
       typeof onChange === 'function' ? onChange(e, field, form) : field.onChange(e)
     }
+    className="eui-fullHeight"
   />
 );
 
 FormikCheckableCard.propTypes = {
   name: PropTypes.string.isRequired,
-  formRow: PropTypes.bool,
   fieldProps: PropTypes.object,
-  rowProps: PropTypes.object,
   inputProps: PropTypes.object,
 };
 

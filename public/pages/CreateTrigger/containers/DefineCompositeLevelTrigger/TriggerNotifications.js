@@ -105,35 +105,38 @@ const TriggerNotifications = ({
       <EuiSpacer size={'m'} />
       {actions.length
         ? actions.map((action, actionIndex) => (
-            <EuiAccordion
-              title={`Notification ${actionIndex + 1}`}
-              key={`notification-accordion-${triggerIndex}-${actionIndex}`}
-              id={`notification-accordion-${triggerIndex}-${actionIndex}`}
-              initialIsOpen={!actionIndex}
-              buttonContent={<EuiText>{`Notification ${actionIndex + 1}`}</EuiText>}
-              paddingSize={'s'}
-              extraAction={
-                <EuiButtonIcon
-                  color={'danger'}
-                  aria-label={'Delete notification'}
-                  iconType={'trash'}
-                  onClick={() => onRemoveNotification(actionIndex)}
-                  size={'s'}
+            <>
+              {actionIndex > 0 && <EuiHorizontalRule margin={'s'} />}
+              <EuiAccordion
+                title={`Notification ${actionIndex + 1}`}
+                key={`notification-accordion-${triggerIndex}-${actionIndex}`}
+                id={`notification-accordion-${triggerIndex}-${actionIndex}`}
+                initialIsOpen={!actionIndex}
+                buttonContent={<EuiText>{`Notification ${actionIndex + 1}`}</EuiText>}
+                paddingSize={'s'}
+                extraAction={
+                  <EuiButtonIcon
+                    color={'danger'}
+                    aria-label={'Delete notification'}
+                    iconType={'trash'}
+                    onClick={() => onRemoveNotification(actionIndex)}
+                    size={'s'}
+                  />
+                }
+              >
+                <TriggerNotificationsContent
+                  action={action}
+                  options={options}
+                  actionIndex={actionIndex}
+                  triggerIndex={triggerIndex}
+                  notifications={notifications}
+                  triggerValues={triggerValues}
+                  httpClient={httpClient}
+                  hasNotifications={plugins.indexOf(OS_NOTIFICATION_PLUGIN) !== -1}
+                  formikFieldPath={formikFieldPath}
                 />
-              }
-            >
-              <TriggerNotificationsContent
-                action={action}
-                options={options}
-                actionIndex={actionIndex}
-                triggerIndex={triggerIndex}
-                notifications={notifications}
-                triggerValues={triggerValues}
-                httpClient={httpClient}
-                hasNotifications={plugins.indexOf(OS_NOTIFICATION_PLUGIN) !== -1}
-                formikFieldPath={formikFieldPath}
-              />
-            </EuiAccordion>
+              </EuiAccordion>
+            </>
           ))
         : null}
       {actions.length ? <EuiHorizontalRule margin={'s'} /> : null}

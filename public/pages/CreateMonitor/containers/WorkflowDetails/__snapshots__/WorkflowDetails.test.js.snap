@@ -263,7 +263,7 @@ exports[`WorkflowDetails renders 1`] = `
       <div
         class="euiTextColor euiTextColor--subdued"
       >
-        Delegate two or more monitors to run as part of this workflow. The monitor types per query, per bucket, and per document are supported. 
+        Delegate two or more monitors to run as part of this workflow. The order in which you select the monitors determines their order in the workflow. The monitor types per query, per bucket, and per document are supported. 
         <a
           class="euiLink euiLink--primary"
           href="https://opensearch.org/docs/latest/observing-your-data/alerting/monitors/#monitor-types"
