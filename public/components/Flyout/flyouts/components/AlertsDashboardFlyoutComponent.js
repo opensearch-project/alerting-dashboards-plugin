@@ -548,7 +548,7 @@ export default class AlertsDashboardFlyoutComponent extends Component {
         break;
     }
     const monitorUrl = `${PLUGIN_NAME}#/monitors/${monitor_id}${
-      monitorType === MONITOR_TYPE.COMPOSITE_LEVEL && '?type=workflow'
+      monitorType === MONITOR_TYPE.COMPOSITE_LEVEL ? '?type=workflow' : ''
     }`;
 
     return (
