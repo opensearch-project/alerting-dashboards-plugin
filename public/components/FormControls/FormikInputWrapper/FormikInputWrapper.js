@@ -15,7 +15,7 @@ const FormikInputWrapper = ({ name, fieldProps, render }) => (
 
 FormikInputWrapper.propTypes = {
   name: PropTypes.string.isRequired,
-  fieldProps: PropTypes.object.isRequired,
+  fieldProps: PropTypes.object,
   render: PropTypes.func.isRequired,
 };
 
