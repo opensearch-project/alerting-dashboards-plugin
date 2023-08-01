@@ -92,6 +92,7 @@ describe('savedObjectHelper', function () {
     });
     it('createSavedObject with max associated objects to be 0', async () => {
       setUIAugSettings(uiSettingsMock, true, 0);
+      setAugLoader([]);
       try {
         await createSavedObjectAssociation('monitorId', embeddable);
       } catch (e) {
