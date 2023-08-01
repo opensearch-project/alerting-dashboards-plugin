@@ -248,7 +248,7 @@ const ExpressionBuilder = ({
         <EuiSelect
           compressed
           style={{ width: '100px' }}
-          data-test-subj={`condition-combobox-${triggerIndex}-${idx}`}
+          data-test-subj={`condition-select-${triggerIndex}-${idx}`}
           value={expression.description}
           onChange={(event) => changeCondition(event.target.value, expression, idx, form)}
           options={(idx === 0 ? FIRST_EXPRESSION_CONDITIONS_MAP : EXPRESSION_CONDITIONS_MAP).map(
