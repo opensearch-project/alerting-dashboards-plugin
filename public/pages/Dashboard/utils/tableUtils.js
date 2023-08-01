@@ -251,4 +251,10 @@ export const associatedAlertsTableColumns = [
     truncateText: true,
     textOnly: true,
   },
+  {
+    field: 'state',
+    name: 'State',
+    truncateText: true,
+    textOnly: true,
+  },
 ];

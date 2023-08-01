@@ -4,7 +4,15 @@
  */
 
 import React from 'react';
-import { EuiFlexGrid, EuiFlexItem, EuiText } from '@elastic/eui';
+import {
+  EuiFlexGrid,
+  EuiFlexGroup,
+  EuiFlexItem,
+  EuiFormLabel,
+  EuiFormRow,
+  EuiSpacer,
+  EuiText,
+} from '@elastic/eui';
 import FormikCheckableCard from '../../../../components/FormControls/FormikCheckableCard';
 import { MONITOR_TYPE, SEARCH_TYPE } from '../../../../utils/constants';
 import { FORMIK_INITIAL_TRIGGER_VALUES } from '../../../CreateTrigger/containers/CreateTrigger/utils/constants';
@@ -75,88 +83,82 @@ const compositeLevelDescription = (
 );
 
 const MonitorType = ({ values }) => (
-  <EuiFlexGrid gutterSize={'m'}>
-    <EuiFlexItem grow={false}>
-      <FormikCheckableCard
-        name="monitorTypeQueryLevel"
-        formRow
-        rowProps={{ label: 'Monitor type' }}
-        inputProps={{
-          id: 'queryLevelMonitorRadioCard',
-          label: 'Per query monitor',
-          checked: values.monitor_type === MONITOR_TYPE.QUERY_LEVEL,
-          value: MONITOR_TYPE.QUERY_LEVEL,
-          onChange: (e, field, form) => onChangeDefinition(e, form),
-          children: queryLevelDescription,
-          'data-test-subj': 'queryLevelMonitorRadioCard',
-        }}
-      />
-    </EuiFlexItem>
-    <EuiFlexItem grow={false}>
-      <FormikCheckableCard
-        name="monitorTypeBucketLevel"
-        formRow
-        rowProps={{ hasEmptyLabelSpace: true }}
-        inputProps={{
-          id: 'bucketLevelMonitorRadioCard',
-          label: 'Per bucket monitor',
-          checked: values.monitor_type === MONITOR_TYPE.BUCKET_LEVEL,
-          value: MONITOR_TYPE.BUCKET_LEVEL,
-          onChange: (e, field, form) => onChangeDefinition(e, form),
-          children: bucketLevelDescription,
-          'data-test-subj': 'bucketLevelMonitorRadioCard',
-        }}
-      />
-    </EuiFlexItem>
-    <EuiFlexItem grow={false}>
-      <FormikCheckableCard
-        name="monitorTypeClusterMetrics"
-        formRow
-        rowProps={{ hasEmptyLabelSpace: true }}
-        inputProps={{
-          id: 'clusterMetricsMonitorRadioCard',
-          label: 'Per cluster metrics monitor',
-          checked: values.monitor_type === MONITOR_TYPE.CLUSTER_METRICS,
-          value: MONITOR_TYPE.CLUSTER_METRICS,
-          onChange: (e, field, form) => onChangeDefinition(e, form),
-          children: clusterMetricsDescription,
-          'data-test-subj': 'clusterMetricsMonitorRadioCard',
-        }}
-      />
-    </EuiFlexItem>
-    <EuiFlexItem grow={false}>
-      <FormikCheckableCard
-        name="monitorTypeDocLevel"
-        formRow
-        rowProps={{ hasEmptyLabelSpace: true }}
-        inputProps={{
-          id: 'docLevelMonitorRadioCard',
-          label: 'Per document monitor',
-          checked: values.monitor_type === MONITOR_TYPE.DOC_LEVEL,
-          value: MONITOR_TYPE.DOC_LEVEL,
-          onChange: (e, field, form) => onChangeDefinition(e, form),
-          children: documentLevelDescription,
-          'data-test-subj': 'docLevelMonitorRadioCard',
-        }}
-      />
-    </EuiFlexItem>
-    <EuiFlexItem grow={false}>
-      <FormikCheckableCard
-        name="monitorTypeCompositeLevel"
-        formRow
-        rowProps={{ hasEmptyLabelSpace: true }}
-        inputProps={{
-          id: 'compositeLevelMonitorRadioCard',
-          label: 'Composite monitor',
-          checked: values.monitor_type === MONITOR_TYPE.COMPOSITE_LEVEL,
-          value: MONITOR_TYPE.COMPOSITE_LEVEL,
-          onChange: (e, field, form) => onChangeDefinition(e, form),
-          children: compositeLevelDescription,
-          'data-test-subj': 'compositeLevelMonitorRadioCard',
-        }}
-      />
-    </EuiFlexItem>
-  </EuiFlexGrid>
+  <>
+    <EuiFormLabel>Monitor type</EuiFormLabel>
+    <EuiSpacer size="xs" />
+    <EuiFlexGrid gutterSize={'m'}>
+      <EuiFlexItem grow={false} style={{ width: 350 }}>
+        <FormikCheckableCard
+          name="monitorTypeQueryLevel"
+          inputProps={{
+            id: 'queryLevelMonitorRadioCard',
+            label: 'Per query monitor',
+            checked: values.monitor_type === MONITOR_TYPE.QUERY_LEVEL,
+            value: MONITOR_TYPE.QUERY_LEVEL,
+            onChange: (e, field, form) => onChangeDefinition(e, form),
+            children: queryLevelDescription,
+            'data-test-subj': 'queryLevelMonitorRadioCard',
+          }}
+        />
+      </EuiFlexItem>
+      <EuiFlexItem grow={false} style={{ width: 350 }}>
+        <FormikCheckableCard
+          name="monitorTypeBucketLevel"
+          inputProps={{
+            id: 'bucketLevelMonitorRadioCard',
+            label: 'Per bucket monitor',
+            checked: values.monitor_type === MONITOR_TYPE.BUCKET_LEVEL,
+            value: MONITOR_TYPE.BUCKET_LEVEL,
+            onChange: (e, field, form) => onChangeDefinition(e, form),
+            children: bucketLevelDescription,
+            'data-test-subj': 'bucketLevelMonitorRadioCard',
+          }}
+        />
+      </EuiFlexItem>
+      <EuiFlexItem grow={false} style={{ width: 350 }}>
+        <FormikCheckableCard
+          name="monitorTypeClusterMetrics"
+          inputProps={{
+            id: 'clusterMetricsMonitorRadioCard',
+            label: 'Per cluster metrics monitor',
+            checked: values.monitor_type === MONITOR_TYPE.CLUSTER_METRICS,
+            value: MONITOR_TYPE.CLUSTER_METRICS,
+            onChange: (e, field, form) => onChangeDefinition(e, form),
+            children: clusterMetricsDescription,
+            'data-test-subj': 'clusterMetricsMonitorRadioCard',
+          }}
+        />
+      </EuiFlexItem>
+      <EuiFlexItem grow={false} style={{ width: 350 }}>
+        <FormikCheckableCard
+          name="monitorTypeDocLevel"
+          inputProps={{
+            id: 'docLevelMonitorRadioCard',
+            label: 'Per document monitor',
+            checked: values.monitor_type === MONITOR_TYPE.DOC_LEVEL,
+            value: MONITOR_TYPE.DOC_LEVEL,
+            onChange: (e, field, form) => onChangeDefinition(e, form),
+            children: documentLevelDescription,
+            'data-test-subj': 'docLevelMonitorRadioCard',
+          }}
+        />
+      </EuiFlexItem>
+      <EuiFlexItem grow={false} style={{ width: 350 }}>
+        <FormikCheckableCard
+          name="monitorTypeCompositeLevel"
+          inputProps={{
+            id: 'compositeLevelMonitorRadioCard',
+            label: 'Composite monitor',
+            checked: values.monitor_type === MONITOR_TYPE.COMPOSITE_LEVEL,
+            value: MONITOR_TYPE.COMPOSITE_LEVEL,
+            onChange: (e, field, form) => onChangeDefinition(e, form),
+            children: compositeLevelDescription,
+            'data-test-subj': 'compositeLevelMonitorRadioCard',
+          }}
+        />
+      </EuiFlexItem>
+    </EuiFlexGrid>
+  </>
 );
 
 export default MonitorType;

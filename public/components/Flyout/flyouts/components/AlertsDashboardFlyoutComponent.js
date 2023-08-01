@@ -33,7 +33,7 @@ import {
 import { TRIGGER_TYPE } from '../../../../pages/CreateTrigger/containers/CreateTrigger/utils/constants';
 import { UNITS_OF_TIME } from '../../../../pages/CreateMonitor/components/MonitorExpressions/expressions/utils/constants';
 import { DEFAULT_WHERE_EXPRESSION_TEXT } from '../../../../pages/CreateMonitor/components/MonitorExpressions/expressions/utils/whereHelpers';
-import { backendErrorNotification } from '../../../../utils/helpers';
+import { acknowledgeAlerts, backendErrorNotification } from '../../../../utils/helpers';
 import {
   displayAcknowledgedAlertsToast,
   filterActiveAlerts,
@@ -132,7 +132,7 @@ export default class AlertsDashboardFlyoutComponent extends Component {
     }
     const { monitorType } = this.state;
     if (
-      monitorType === MONITOR_TYPE.DOC_LEVEL &&
+      [MONITOR_TYPE.DOC_LEVEL, MONITOR_TYPE.COMPOSITE_LEVEL].includes(monitorType) &&
       !_.isEqual(prevState.selectedItems, this.state.selectedItems)
     )
       this.setState({ tabContent: this.renderAlertsTable() });
@@ -213,34 +213,10 @@ export default class AlertsDashboardFlyoutComponent extends Component {
 
   acknowledgeAlerts = async () => {
     const { selectedItems } = this.state;
-    const { httpClient, notifications } = this.props;
-
     if (!selectedItems.length) return;
 
-    const selectedAlerts = filterActiveAlerts(selectedItems);
-
-    const monitorAlerts = selectedAlerts.reduce((monitorAlerts, alert) => {
-      const { id, monitor_id: monitorId } = alert;
-      if (monitorAlerts[monitorId]) monitorAlerts[monitorId].push(id);
-      else monitorAlerts[monitorId] = [id];
-      return monitorAlerts;
-    }, {});
-
-    Object.entries(monitorAlerts).map(([monitorId, alerts]) =>
-      httpClient
-        .post(`../api/alerting/monitors/${monitorId}/_acknowledge/alerts`, {
-          body: JSON.stringify({ alerts }),
-        })
-        .then((resp) => {
-          if (!resp.ok) {
-            backendErrorNotification(notifications, 'acknowledge', 'alert', resp.resp);
-          } else {
-            const successfulCount = _.get(resp, 'resp.success', []).length;
-            displayAcknowledgedAlertsToast(notifications, successfulCount);
-          }
-        })
-        .catch((error) => error)
-    );
+    const { httpClient, notifications } = this.props;
+    acknowledgeAlerts(httpClient, notifications, selectedItems);
 
     const { page, size, search, sortField, sortDirection, severityLevel, alertState, monitorIds } =
       this.state;
@@ -330,6 +306,7 @@ export default class AlertsDashboardFlyoutComponent extends Component {
         case MONITOR_TYPE.QUERY_LEVEL:
         case MONITOR_TYPE.CLUSTER_METRICS:
         case MONITOR_TYPE.DOC_LEVEL:
+        case MONITOR_TYPE.COMPOSITE_LEVEL:
           return `${item.id}-${item.version}`;
         case MONITOR_TYPE.BUCKET_LEVEL:
           return item.id;
@@ -570,6 +547,10 @@ export default class AlertsDashboardFlyoutComponent extends Component {
         displayTableTabs = false;
         break;
     }
+    const monitorUrl = `${PLUGIN_NAME}#/monitors/${monitor_id}${
+      monitorType === MONITOR_TYPE.COMPOSITE_LEVEL ? '?type=workflow' : ''
+    }`;
+
     return (
       <div>
         <EuiFlexGroup>
@@ -614,7 +595,7 @@ export default class AlertsDashboardFlyoutComponent extends Component {
             <EuiText size={'m'} data-test-subj={`alertsDashboardFlyout_monitor_${trigger_name}`}>
               <strong>Monitor</strong>
               <p>
-                <EuiLink href={`${PLUGIN_NAME}#/monitors/${monitor_id}`}>{monitor_name}</EuiLink>
+                <EuiLink href={monitorUrl}>{monitor_name}</EuiLink>
               </p>
             </EuiText>
           </EuiFlexItem>
@@ -632,7 +613,7 @@ export default class AlertsDashboardFlyoutComponent extends Component {
             </EuiText>
           </EuiFlexItem>
 
-          {monitorType !== MONITOR_TYPE.DOC_LEVEL && (
+          {![MONITOR_TYPE.DOC_LEVEL, MONITOR_TYPE.COMPOSITE_LEVEL].includes(monitorType) && (
             <EuiFlexItem>
               <EuiText
                 size={'m'}
@@ -645,7 +626,7 @@ export default class AlertsDashboardFlyoutComponent extends Component {
           )}
         </EuiFlexGroup>
 
-        {monitorType !== MONITOR_TYPE.DOC_LEVEL && (
+        {![MONITOR_TYPE.DOC_LEVEL, MONITOR_TYPE.COMPOSITE_LEVEL].includes(monitorType) && (
           <div>
             <EuiSpacer size={'xxl'} />
 
