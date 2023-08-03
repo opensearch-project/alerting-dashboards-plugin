@@ -49,8 +49,9 @@ const AssociateMonitors = ({ isDarkMode, values, httpClient, errors }) => {
         <h4>Delegate monitors</h4>
       </EuiText>
       <EuiText color={'subdued'} size={'xs'}>
-        Delegate two or more monitors to run as part of this workflow. The monitor types per query,
-        per bucket, and per document are supported.{' '}
+        Delegate two or more monitors to run as part of this workflow. The order in which you select
+        the monitors determines their order in the workflow. The monitor types per query, per
+        bucket, and per document are supported.&nbsp;
         <EuiLink
           href={
             'https://opensearch.org/docs/latest/observing-your-data/alerting/monitors/#monitor-types'

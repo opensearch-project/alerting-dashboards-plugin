@@ -6,6 +6,11 @@
 import React from 'react';
 import { EuiText } from '@elastic/eui';
 import { htmlIdGenerator } from '@elastic/eui/lib/services';
+import {
+  displayAcknowledgedAlertsToast,
+  filterActiveAlerts,
+} from '../pages/Dashboard/utils/helpers';
+import _ from 'lodash';
 
 export const makeId = htmlIdGenerator();
 
@@ -83,3 +88,38 @@ export const getUniqueName = (values, prefix) => {
 
   return getUniqueName(lastDigit);
 };
+
+export async function acknowledgeAlerts(httpClient, notifications, alerts) {
+  const selectedAlerts = filterActiveAlerts(alerts);
+
+  const monitorAlerts = selectedAlerts.reduce((monitorAlerts, alert) => {
+    const id = alert.id;
+    const monitorId = alert.workflow_id || alert.monitor_id;
+    if (monitorAlerts[monitorId]) monitorAlerts[monitorId].alerts.push(id);
+    else
+      monitorAlerts[monitorId] = {
+        alerts: [id],
+        poolType: !!alert.workflow_id ? 'workflows' : 'monitors',
+      };
+    return monitorAlerts;
+  }, {});
+
+  const acknowledgePromises = Object.entries(monitorAlerts).map(
+    ([monitorId, { alerts, poolType }]) =>
+      httpClient
+        .post(`../api/alerting/${poolType}/${monitorId}/_acknowledge/alerts`, {
+          body: JSON.stringify({ alerts }),
+        })
+        .then((resp) => {
+          if (!resp.ok) {
+            backendErrorNotification(notifications, 'acknowledge', 'alert', resp.resp);
+          } else {
+            const successfulCount = _.get(resp, 'resp.success', []).length;
+            displayAcknowledgedAlertsToast(notifications, successfulCount);
+          }
+        })
+        .catch((error) => error)
+  );
+
+  return acknowledgePromises;
+}

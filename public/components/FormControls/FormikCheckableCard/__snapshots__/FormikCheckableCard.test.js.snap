@@ -2,7 +2,7 @@
 
 exports[`FormikCheckableCard render 1`] = `
 <div
-  class="euiPanel euiPanel--borderRadiusMedium euiPanel--plain euiPanel--hasShadow euiPanel--hasBorder euiPanel--flexGrowZero euiSplitPanel euiSplitPanel--row euiCheckableCard"
+  class="euiPanel euiPanel--borderRadiusMedium euiPanel--plain euiPanel--hasShadow euiPanel--hasBorder euiPanel--flexGrowZero euiSplitPanel euiSplitPanel--row euiCheckableCard eui-fullHeight"
 >
   <div
     class="euiPanel euiPanel--paddingMedium euiPanel--borderRadiusNone euiPanel--subdued euiPanel--noShadow euiPanel--noBorder euiPanel--flexGrowZero euiPanel--isClickable euiSplitPanel__inner"
@@ -32,39 +32,30 @@ exports[`FormikCheckableCard render 1`] = `
 
 exports[`FormikCheckableCard render formRow 1`] = `
 <div
-  class="euiFormRow"
-  id="testing-form-row-row"
+  class="euiPanel euiPanel--borderRadiusMedium euiPanel--plain euiPanel--hasShadow euiPanel--hasBorder euiPanel--flexGrowZero euiSplitPanel euiSplitPanel--row euiCheckableCard eui-fullHeight"
 >
   <div
-    class="euiFormRow__fieldWrapper"
+    class="euiPanel euiPanel--paddingMedium euiPanel--borderRadiusNone euiPanel--subdued euiPanel--noShadow euiPanel--noBorder euiPanel--flexGrowZero euiPanel--isClickable euiSplitPanel__inner"
   >
     <div
-      class="euiPanel euiPanel--borderRadiusMedium euiPanel--plain euiPanel--hasShadow euiPanel--hasBorder euiPanel--flexGrowZero euiSplitPanel euiSplitPanel--row euiCheckableCard"
+      class="euiRadio euiRadio--noLabel"
     >
+      <input
+        class="euiRadio__input"
+        name="testing"
+        type="radio"
+      />
       <div
-        class="euiPanel euiPanel--paddingMedium euiPanel--borderRadiusNone euiPanel--subdued euiPanel--noShadow euiPanel--noBorder euiPanel--flexGrowZero euiPanel--isClickable euiSplitPanel__inner"
-      >
-        <div
-          class="euiRadio euiRadio--noLabel"
-        >
-          <input
-            class="euiRadio__input"
-            name="testing"
-            type="radio"
-          />
-          <div
-            class="euiRadio__circle"
-          />
-        </div>
-      </div>
-      <div
-        class="euiPanel euiPanel--paddingMedium euiPanel--borderRadiusNone euiPanel--transparent euiPanel--noShadow euiPanel--noBorder euiSplitPanel__inner"
-      >
-        <label
-          class="euiCheckableCard__label"
-        />
-      </div>
+        class="euiRadio__circle"
+      />
     </div>
+  </div>
+  <div
+    class="euiPanel euiPanel--paddingMedium euiPanel--borderRadiusNone euiPanel--transparent euiPanel--noShadow euiPanel--noBorder euiSplitPanel__inner"
+  >
+    <label
+      class="euiCheckableCard__label"
+    />
   </div>
 </div>
 `;
