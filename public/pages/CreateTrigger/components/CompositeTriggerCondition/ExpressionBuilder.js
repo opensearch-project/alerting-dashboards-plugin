@@ -228,7 +228,8 @@ const ExpressionBuilder = ({
   );
 
   const hasInvalidExpression = () =>
-    !!usedExpressions.filter((expression) => expression.monitor_id === '')?.length;
+    !!usedExpressions.filter((expression) => expression.monitor_id === '')?.length ||
+    options.length < usedExpressions.length;
 
   const isValid = () => options.length > 1 && usedExpressions.length > 1 && !hasInvalidExpression();
 
@@ -236,6 +237,9 @@ const ExpressionBuilder = ({
     if (options.length < 2) return 'Trigger condition requires at least two associated monitors.';
     if (usedExpressions.length < 2)
       return 'Trigger condition requires at least two monitors selected.';
+    if (options.length < usedExpressions.length) {
+      return 'Trigger condition is using unselected Delegate monitor.';
+    }
     if (hasInvalidExpression()) return 'Invalid expressions.';
   };
 
@@ -307,7 +311,7 @@ const ExpressionBuilder = ({
     <FormikInputWrapper
       name={formikFullFieldValue}
       fieldProps={{
-        validate: () => validate(),
+        validate,
       }}
       render={({ form }) => (
         <FormikFormRow
