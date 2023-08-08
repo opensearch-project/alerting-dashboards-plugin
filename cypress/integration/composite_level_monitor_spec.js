@@ -61,12 +61,11 @@ describe('CompositeLevelMonitor', () => {
       cy.get('input[name="name"]').type(SAMPLE_VISUAL_EDITOR_MONITOR);
 
       // Select associated monitors
-      cy.get('[data-test-subj="monitors_list_0"]')
-        .type('monitorOne', { delay: 50 })
-        .type('{enter}');
-      cy.get('[data-test-subj="monitors_list_1"]')
-        .type('monitorTwo', { delay: 50 })
-        .type('{enter}');
+      cy.get('[data-test-subj="monitors_list_0"]').type('monitorOne', { delay: 50 });
+      cy.get('[title="monitorOne"]').click({ force: true });
+
+      cy.get('[data-test-subj="monitors_list_1"]').type('monitorTwo', { delay: 50 });
+      cy.get('[title="monitorTwo"]').click({ force: true });
 
       cy.get('button').contains('Add trigger').click({ force: true });
 
@@ -138,9 +137,8 @@ describe('CompositeLevelMonitor', () => {
 
       cy.get('button').contains('Add another monitor').click({ force: true });
 
-      cy.get('[data-test-subj="monitors_list_2"]')
-        .type('monitorThree', { delay: 50 })
-        .type('{enter}');
+      cy.get('[data-test-subj="monitors_list_2"]').type('monitorThree', { delay: 50 });
+      cy.get('[title="monitorThree"]').click({ force: true });
 
       cy.get('button').contains('Composite trigger').click({ force: true });
 
