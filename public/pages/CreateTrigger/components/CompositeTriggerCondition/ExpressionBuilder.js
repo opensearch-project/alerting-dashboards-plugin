@@ -121,14 +121,9 @@ const ExpressionBuilder = ({
     const condition = _.get(values, formikFullFieldName, '');
 
     let expressions = conditionToExpressions(condition, monitors);
-    if (
-      !edit &&
-      !_.get(touched, formikFullFieldValue, false) &&
-      triggerIndex === 0 &&
-      expressions.length === 0
-    ) {
+    if (!edit && !_.get(touched, formikFullFieldValue, false) && expressions.length === 0) {
       expressions = [];
-      monitorOptions.forEach((monitor, index) => {
+      monitorOptions.slice(0, 2).forEach((monitor, index) => {
         expressions.push({
           description: index ? 'AND' : '',
           monitor_id: monitor.monitor_id,
@@ -139,7 +134,11 @@ const ExpressionBuilder = ({
       _.set(values, formikFullFieldName, expressionsToCondition(expressions));
     }
 
-    setUsedExpressions(expressions?.length ? expressions : [DEFAULT_EXPRESSION]);
+    setUsedExpressions(
+      expressions?.length
+        ? expressions
+        : [{ ...DEFAULT_EXPRESSION }, { ...DEFAULT_NEXT_EXPRESSION }]
+    );
   };
 
   const expressionsToCondition = (expressions) => {
@@ -243,7 +242,7 @@ const ExpressionBuilder = ({
     if (hasInvalidExpression()) return 'Invalid expressions.';
   };
 
-  const renderOptions = (expression, idx = 0, form) => (
+  const renderOptions = (expression, hideDeleteButton, idx = 0, form) => (
     <EuiFlexGroup
       gutterSize="s"
       data-test-subj={`${formikFullFieldName}_${triggerIndex}_${idx}_options`}
@@ -262,18 +261,20 @@ const ExpressionBuilder = ({
         />
       </EuiFlexItem>
       <EuiFlexItem grow={false}>{renderMonitorOptions(expression, idx, form)}</EuiFlexItem>
-      <EuiFlexItem grow={false}>
-        <EuiToolTip content={'Remove monitor'}>
-          <EuiButtonIcon
-            data-test-subj={`selection-exp-field-item-remove-${triggerIndex}-${idx}`}
-            onClick={() => onRemoveExpression(form, idx)}
-            iconType={'trash'}
-            color="danger"
-            aria-label={'Remove condition'}
-            style={{ marginTop: '4px' }}
-          />
-        </EuiToolTip>
-      </EuiFlexItem>
+      {!hideDeleteButton && (
+        <EuiFlexItem grow={false}>
+          <EuiToolTip content={'Remove monitor'}>
+            <EuiButtonIcon
+              data-test-subj={`selection-exp-field-item-remove-${triggerIndex}-${idx}`}
+              onClick={() => onRemoveExpression(form, idx)}
+              iconType={'trash'}
+              color="danger"
+              aria-label={'Remove condition'}
+              style={{ marginTop: '4px' }}
+            />
+          </EuiToolTip>
+        </EuiFlexItem>
+      )}
     </EuiFlexGroup>
   );
 
@@ -355,7 +356,7 @@ const ExpressionBuilder = ({
                   panelPaddingSize="s"
                   anchorPosition="upCenter"
                 >
-                  {renderOptions(expression, idx, form)}
+                  {renderOptions(expression, usedExpressions.length <= 2, idx, form)}
                 </EuiPopover>
               </EuiFlexItem>
             ))}

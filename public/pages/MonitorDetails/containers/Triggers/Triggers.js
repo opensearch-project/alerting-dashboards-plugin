@@ -33,7 +33,7 @@ export function getUnwrappedTriggers(monitor) {
   });
 }
 
-const expressionsToCondition = (expressions) => {
+const expressionsToFormattedCondition = (expressions) => {
   const conditionMap = {
     AND: 'AND ',
     OR: 'OR ',
@@ -76,28 +76,29 @@ export default class Triggers extends Component {
 
   componentDidMount() {
     this.updateMonitorState();
+
+    if (this.props.delegateMonitors.length > 0) {
+      this.formatTriggerCondtions();
+    }
   }
 
   componentDidUpdate(prevProps) {
     if (this.props.monitor !== prevProps.monitor) {
       this.updateMonitorState();
     }
+
+    if (
+      this.props.delegateMonitors !== prevProps.delegateMonitors &&
+      this.props.delegateMonitors.length > 0
+    ) {
+      this.formatTriggerCondtions();
+    }
   }
 
   async updateMonitorState() {
     const { monitor } = this.props;
     const triggers = getUnwrappedTriggers(monitor);
-
-    if (monitor.monitor_type === MONITOR_TYPE.COMPOSITE_LEVEL) {
-      for (const trigger of triggers) {
-        const { condition, id } = trigger;
-        await this.initializeTriggerConditionsWithMonitorNames(condition.script.source, id);
-      }
-
-      this.setState({ items: triggers });
-    } else {
-      this.setState({ items: triggers });
-    }
+    this.setState({ items: triggers });
   }
 
   componentWillReceiveProps(nextProps, nextContext) {
@@ -110,40 +111,19 @@ export default class Triggers extends Component {
     }
   }
 
-  async getMonitor(id) {
-    return this.props.httpClient
-      .get(`../api/alerting/monitors/${id}`)
-      .then((res) => {
-        return res.resp;
-      })
-      .catch((err) => {
-        console.error('err', err);
-        return undefined;
-      });
-  }
+  formatTriggerCondtions() {
+    const { monitor, delegateMonitors } = this.props;
+    const triggers = getUnwrappedTriggers(monitor);
+    const formattedTriggerConditionById = {};
 
-  async updateMonitorNameInExpression(expression) {
-    const { monitor_id } = expression;
-    if (!this.monitorsById[monitor_id]) {
-      const monitor = await this.getMonitor(monitor_id);
-      if (!monitor) return;
-
-      this.monitorsById[monitor_id] = monitor;
-      expression.monitor_name = monitor.name;
-    }
-  }
-
-  async initializeTriggerConditionsWithMonitorNames(condition, triggerId) {
-    const expressions = conditionToExpressions(condition, []);
-    for (const expression of expressions) {
-      await this.updateMonitorNameInExpression(expression);
+    for (const trigger of triggers) {
+      const { condition, id } = trigger;
+      const expressions = conditionToExpressions(condition.script.source, delegateMonitors);
+      formattedTriggerConditionById[id] = expressionsToFormattedCondition(expressions);
     }
 
     this.setState({
-      triggerConditionsById: {
-        ...this.state.triggerConditionsById,
-        [triggerId]: expressionsToCondition(expressions),
-      },
+      triggerConditionsById: formattedTriggerConditionById,
     });
   }
 

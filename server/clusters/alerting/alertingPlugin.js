@@ -374,15 +374,47 @@ export default function alertingPlugin(Client, config, components) {
 
   alerting.getWorkflowAlerts = ca({
     url: {
-      fmt: `${WORKFLOW_BASE_API}/alerts?workflowIds=<%=workflowIds%>&getAssociatedAlerts=<%=getAssociatedAlerts%>`,
+      fmt: `${WORKFLOW_BASE_API}/alerts?workflowIds=<%=workflowIds%>&getAssociatedAlerts=<%=getAssociatedAlerts%>&sortString=<%=sortString%>&sortOrder=<%=sortOrder%>&startIndex=<%=startIndex%>&size=<%=size%>&severityLevel=<%=severityLevel%>&alertState=<%=alertState%>&searchString=<%=searchString%>&alertIds=<%=alertIds%>`,
       req: {
         workflowIds: {
+          type: 'string',
+          required: true,
+        },
+        alertIds: {
           type: 'string',
           required: true,
         },
         getAssociatedAlerts: {
           type: 'boolean',
           required: true,
+        },
+        sortString: {
+          type: 'string',
+          required: true,
+        },
+        sortOrder: {
+          type: 'string',
+          required: true,
+        },
+        startIndex: {
+          type: 'number',
+          required: true,
+        },
+        size: {
+          type: 'number',
+          required: true,
+        },
+        severityLevel: {
+          type: 'string',
+          required: false,
+        },
+        alertState: {
+          type: 'string',
+          required: false,
+        },
+        searchString: {
+          type: 'string',
+          required: false,
         },
       },
     },
