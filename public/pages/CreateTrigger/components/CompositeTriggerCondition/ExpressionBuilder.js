@@ -12,43 +12,7 @@ import {
 import * as _ from 'lodash';
 import { FormikFormRow, FormikInputWrapper } from '../../../../components/FormControls';
 import { getMonitors } from '../../../CreateMonitor/components/AssociateMonitors/AssociateMonitors';
-
-export const conditionToExpressions = (condition = '', monitors) => {
-  if (!condition.length) return [];
-
-  const conditionMap = {
-    '&&': 'AND',
-    '||': 'OR',
-    '!': 'NOT',
-    '': '',
-    '&& !': 'AND NOT',
-    '|| !': 'OR NOT',
-  };
-  const queryToExpressionRegex = new RegExp(
-    /(!|| && || \|\| || && \!|| \|\| \!)?(monitor\[id=(.*?)\])/,
-    'gm'
-  );
-  const matcher = condition.matchAll(queryToExpressionRegex);
-  let match;
-  let expressions = [];
-  let counter = 0;
-  while ((match = matcher.next().value)) {
-    if (counter && !match[1]) return []; // Didn't find condition after the first match
-
-    const monitorId = match[3]?.trim(); // match [3] is the monitor_id
-    const monitor = monitors.filter((mon) => mon.monitor_id === monitorId);
-    expressions.push({
-      description: conditionMap[match[1]?.trim()] || '', // match [1] is the description/condition
-      isOpen: false,
-      monitor_name: monitor[0]?.monitor_name,
-      monitor_id: monitorId,
-    });
-
-    counter++;
-  }
-
-  return expressions;
-};
+import { conditionToExpressions } from '../../utils/helper';
 
 const ExpressionBuilder = ({
   formikFieldPath = '',
@@ -123,21 +87,34 @@ const ExpressionBuilder = ({
     let expressions = conditionToExpressions(condition, monitors);
     if (!edit && !_.get(touched, formikFullFieldValue, false) && expressions.length === 0) {
       expressions = [];
-      monitorOptions.slice(0, 2).forEach((monitor, index) => {
+      monitorOptions.forEach((monitor, index) => {
         expressions.push({
           description: index ? 'AND' : '',
           monitor_id: monitor.monitor_id,
           monitor_name: monitor.label,
         });
       });
-
-      _.set(values, formikFullFieldName, expressionsToCondition(expressions));
+    } else {
+      // verify that expressions has only selected monitors
+      for (let i = expressions.length - 1; i > -1; i--) {
+        const exp = expressions[i];
+        if (!monitorOptions.find((monitor) => monitor.monitor_id === exp.monitor_id)) {
+          if (expressions.length > 2) {
+            expressions.splice(i, 1);
+          } else {
+            expressions[i] = { ...(i === 0 ? DEFAULT_EXPRESSION : DEFAULT_NEXT_EXPRESSION) };
+          }
+        }
+      }
     }
 
+    if (expressions.length === 1) {
+      expressions.push({ ...DEFAULT_NEXT_EXPRESSION });
+    }
+
+    _.set(values, formikFullFieldName, expressionsToCondition(expressions));
     setUsedExpressions(
-      expressions?.length
-        ? expressions
-        : [{ ...DEFAULT_EXPRESSION }, { ...DEFAULT_NEXT_EXPRESSION }]
+      expressions.length ? expressions : [{ ...DEFAULT_EXPRESSION }, { ...DEFAULT_NEXT_EXPRESSION }]
     );
   };
 

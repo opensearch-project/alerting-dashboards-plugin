@@ -12,7 +12,7 @@ import _ from 'lodash';
 import ContentPanel from '../../../../components/ContentPanel';
 import { MONITOR_TYPE } from '../../../../utils/constants';
 import { TRIGGER_TYPE } from '../../../CreateTrigger/containers/CreateTrigger/utils/constants';
-import { conditionToExpressions } from '../../../CreateTrigger/components/CompositeTriggerCondition/ExpressionBuilder';
+import { conditionToExpressions } from '../../../CreateTrigger/utils/helper';
 
 export const MAX_TRIGGERS = 10;
 
