@@ -76,10 +76,7 @@ export default class Triggers extends Component {
 
   componentDidMount() {
     this.updateMonitorState();
-
-    if (this.props.delegateMonitors.length > 0) {
-      this.formatTriggerCondtions();
-    }
+    this.formatTriggerCondtions();
   }
 
   componentDidUpdate(prevProps) {
@@ -87,10 +84,7 @@ export default class Triggers extends Component {
       this.updateMonitorState();
     }
 
-    if (
-      this.props.delegateMonitors !== prevProps.delegateMonitors &&
-      this.props.delegateMonitors.length > 0
-    ) {
+    if (this.props.delegateMonitors !== prevProps.delegateMonitors) {
       this.formatTriggerCondtions();
     }
   }
@@ -113,6 +107,11 @@ export default class Triggers extends Component {
 
   formatTriggerCondtions() {
     const { monitor, delegateMonitors } = this.props;
+
+    if (!delegateMonitors?.length) {
+      return;
+    }
+
     const triggers = getUnwrappedTriggers(monitor);
     const formattedTriggerConditionById = {};
 

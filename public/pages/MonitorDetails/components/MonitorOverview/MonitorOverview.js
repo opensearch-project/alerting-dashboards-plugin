@@ -37,7 +37,7 @@ const MonitorOverview = ({
   if (monitor.associated_workflows) {
     const links = monitor.associated_workflows.map(({ id, name }) => ({
       name,
-      href: `${PLUGIN_NAME}#/monitors/${id}?type=${'workflow'}`,
+      href: `${PLUGIN_NAME}#/monitors/${id}?type=workflow`,
     }));
 
     relatedMonitorsData = {
@@ -48,7 +48,7 @@ const MonitorOverview = ({
   } else if (delegateMonitors.length) {
     const links = delegateMonitors.map(({ id, name }) => ({
       name,
-      href: `${PLUGIN_NAME}#/monitors/${id}?type=${'monitor'}`,
+      href: `${PLUGIN_NAME}#/monitors/${id}?type=monitor`,
     }));
 
     relatedMonitorsData = {
