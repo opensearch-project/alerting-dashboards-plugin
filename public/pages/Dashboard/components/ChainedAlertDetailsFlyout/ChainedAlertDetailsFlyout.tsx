@@ -19,7 +19,20 @@ export const ChainedAlertDetailsFlyout = ({ closeFlyout, alert, httpClient }) =>
   const [associatedAlerts, setAssociatedAlerts] = useState([]);
 
   useEffect(() => {
-    httpClient.get('../api/alerting/workflows/alerts', { query: { workflowIds: alert.workflow_id, getAssociatedAlerts: true }})
+    httpClient.get('../api/alerting/workflows/alerts', { 
+      query: { 
+        workflowIds: alert.workflow_id,
+        getAssociatedAlerts: true,
+        sortString: 'start_time',
+        sortOrder: 'desc',
+        startIndex: 0,
+        size: 1000,
+        alertIds: alert.id,
+        severityLevel: 'ALL',
+        alertState: 'ALL',
+        searchString: ''
+      }
+    })
     .then((response: any) => {
       if (response.ok) {
         const associatedAlertIds = new Set(alert.associated_alert_ids);

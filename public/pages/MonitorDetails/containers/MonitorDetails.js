@@ -62,6 +62,7 @@ export default class MonitorDetails extends Component {
       updating: false,
       error: null,
       triggerToEdit: null,
+      delegateMonitors: [],
       editMonitor: () => {
         this.props.history.push({
           ...this.props.location,
@@ -123,10 +124,42 @@ export default class MonitorDetails extends Component {
       });
   };
 
+  updateDelegateMonitors = async (monitor) => {
+    const getMonitor = async (id) => {
+      return this.props.httpClient
+        .get(`../api/alerting/monitors/${id}`)
+        .then((res) => {
+          return res.resp;
+        })
+        .catch((err) => {
+          console.error('err', err);
+          return undefined;
+        });
+    };
+
+    const delegateMonitors = [];
+
+    for (const { monitor_id } of monitor.inputs[0].composite_input.sequence.delegates) {
+      const monitor = await getMonitor(monitor_id);
+      if (!monitor) return;
+
+      delegateMonitors.push(monitor);
+    }
+
+    this.setState({
+      delegateMonitors: delegateMonitors.map((mon) => ({
+        ...mon,
+        monitor_id: mon.id,
+        monitor_name: mon.name,
+      })),
+    });
+  };
+
   getMonitor = (id) => {
     const { httpClient } = this.props;
+    const isWorkflow = this.isWorkflow();
     httpClient
-      .get(`../api/alerting/${this.isWorkflow() ? 'workflows' : 'monitors'}/${id}`)
+      .get(`../api/alerting/${isWorkflow ? 'workflows' : 'monitors'}/${id}`)
       .then((resp) => {
         const {
           ok,
@@ -138,6 +171,9 @@ export default class MonitorDetails extends Component {
           ifPrimaryTerm,
         } = resp;
         if (ok) {
+          if (isWorkflow) {
+            this.updateDelegateMonitors(monitor);
+          }
           this.setState({
             ifSeqNo,
             ifPrimaryTerm,
@@ -370,6 +406,7 @@ export default class MonitorDetails extends Component {
       editMonitor,
       isJsonModalOpen,
       showDeleteModal,
+      delegateMonitors,
     } = this.state;
     const {
       location,
@@ -463,11 +500,13 @@ export default class MonitorDetails extends Component {
           activeCount={activeCount}
           detector={detector}
           detectorId={detectorId}
+          delegateMonitors={delegateMonitors}
         />
         <EuiSpacer />
         <Triggers
           monitor={monitor}
           httpClient={httpClient}
+          delegateMonitors={delegateMonitors}
           updateMonitor={this.updateMonitor}
           onEditTrigger={this.onEditTrigger}
           onCreateTrigger={this.onCreateTrigger}
