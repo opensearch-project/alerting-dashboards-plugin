@@ -11,7 +11,7 @@ import {
   DOC_LEVEL_INPUT_FIELD,
   QUERY_STRING_QUERY_OPERATORS,
 } from '../../../components/DocumentLevelMonitorQueries/utils/constants';
-import { conditionToExpressions } from '../../../../CreateTrigger/components/CompositeTriggerCondition/ExpressionBuilder';
+import { conditionToExpressions } from '../../../../CreateTrigger/utils/helper';
 
 // Convert Monitor JSON to Formik values used in UI forms
 export default function monitorToFormik(monitor) {

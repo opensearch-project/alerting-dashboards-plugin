@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { Fragment, useState, useEffect } from 'react';
+import React, { Fragment, useState, useEffect, useCallback } from 'react';
 import * as _ from 'lodash';
 import {
   EuiButton,
@@ -22,6 +22,7 @@ import {
 import { DEFAULT_ASSOCIATED_MONITORS_VALUE } from '../../../containers/CreateMonitor/utils/constants';
 import { getMonitors } from '../AssociateMonitors';
 import { required } from '../../../../../utils/validate';
+import { getItemLevelType } from '../../../../Monitors/containers/Monitors/utils/helpers';
 
 const MonitorsList = ({ values, httpClient }) => {
   const formikFieldName = 'associatedMonitorsList';
@@ -81,9 +82,10 @@ const MonitorsList = ({ values, httpClient }) => {
   };
 
   const monitorsToOptions = (monitors) =>
-    monitors.map((monitor) => ({
-      label: monitor.monitor_name,
-      value: monitor.monitor_id,
+    monitors.map(({ monitor_name, monitor_id, monitor_type }) => ({
+      label: monitor_name,
+      value: monitor_id,
+      monitor_type,
     }));
 
   const onChange = (options, monitorIdx, form) => {
@@ -173,6 +175,22 @@ const MonitorsList = ({ values, httpClient }) => {
 
   const isValid = () => Object.keys(selection).length > 1;
 
+  const getGroupedOptions = useCallback(() => {
+    const monitorsByType = {};
+    options.forEach((option) => {
+      const { monitor_type } = option;
+      monitorsByType[monitor_type] = monitorsByType[monitor_type] || [];
+      monitorsByType[monitor_type].push(option);
+    });
+
+    return Object.entries(monitorsByType).map(([monitorType, monitors]) => {
+      return {
+        label: `${getItemLevelType(monitorType)} monitor(s)`,
+        options: monitors,
+      };
+    });
+  }, [options]);
+
   return (
     <FormikInputWrapper
       name={formikFieldName}
@@ -206,7 +224,7 @@ const MonitorsList = ({ values, httpClient }) => {
                       placeholder: 'Select a monitor',
                       onChange: (options, field, form) => onChange(options, monitorIdx, form),
                       onBlur: (e, field, form) => onBlur(e, field, form),
-                      options: options,
+                      options: getGroupedOptions(),
                       singleSelection: { asPlainText: true },
                       selectedOptions: selection[monitorIdx] ? [selection[monitorIdx]] : undefined,
                       'data-test-subj': `monitors_list_${monitorIdx}`,
