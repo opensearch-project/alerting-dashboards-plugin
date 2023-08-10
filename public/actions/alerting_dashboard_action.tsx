@@ -51,12 +51,13 @@ export const createAlertingAction = ({
     getIconType: () => icon,
     type,
     grouping,
-    // Do not show actions for certin visualizations
+    // Do not show actions for certain visualizations
     isCompatible: async ({ embeddable }: ActionContext) => {
       return Boolean(
         embeddable.parent &&
         embeddable.getInput()?.viewMode === 'view' &&
         isDashboard(embeddable.parent) &&
+        embeddable.vis &&
         isEligibleForVisLayers(embeddable.vis, getUISettings())
       );
     },
