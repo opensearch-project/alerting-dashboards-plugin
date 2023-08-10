@@ -11,11 +11,12 @@ import {
   EuiAccordion,
   EuiHorizontalRule,
   EuiButtonIcon,
+  EuiToolTip,
 } from '@elastic/eui';
 import TriggerNotificationsContent from './TriggerNotificationsContent';
-import { titleTemplate } from './DefineCompositeLevelTrigger';
 import { MAX_CHANNELS_RESULT_SIZE, OS_NOTIFICATION_PLUGIN } from '../../../../utils/constants';
 import { CHANNEL_TYPES } from '../../utils/constants';
+import { titleTemplate } from '../../../../utils/helpers';
 
 const TriggerNotifications = ({
   httpClient,
@@ -115,13 +116,15 @@ const TriggerNotifications = ({
                 buttonContent={<EuiText>{`Notification ${actionIndex + 1}`}</EuiText>}
                 paddingSize={'s'}
                 extraAction={
-                  <EuiButtonIcon
-                    color={'danger'}
-                    aria-label={'Delete notification'}
-                    iconType={'trash'}
-                    onClick={() => onRemoveNotification(actionIndex)}
-                    size={'s'}
-                  />
+                  <EuiToolTip content={'Remove notification'}>
+                    <EuiButtonIcon
+                      color={'danger'}
+                      aria-label={'Delete notification'}
+                      iconType={'trash'}
+                      onClick={() => onRemoveNotification(actionIndex)}
+                      size={'s'}
+                    />
+                  </EuiToolTip>
                 }
               >
                 <TriggerNotificationsContent

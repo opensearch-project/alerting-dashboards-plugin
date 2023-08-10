@@ -155,6 +155,7 @@ export default class MonitorService {
           monitor = {
             ...monitor,
             associated_workflows,
+            associatedCompositeMonitorCnt: associated_workflows.length,
           };
         }
         monitor = {
