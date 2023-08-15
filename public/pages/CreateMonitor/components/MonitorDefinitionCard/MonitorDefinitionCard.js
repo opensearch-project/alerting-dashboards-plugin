@@ -9,7 +9,7 @@ import FormikCheckableCard from '../../../../components/FormControls/FormikCheck
 import { OS_AD_PLUGIN, MONITOR_TYPE, SEARCH_TYPE } from '../../../../utils/constants';
 import { URL } from '../../../../../utils/constants';
 import _ from 'lodash';
-import { conditionToExpressions } from '../../../CreateTrigger/components/CompositeTriggerCondition/ExpressionBuilder';
+import { conditionToExpressions } from '../../../CreateTrigger/utils/helper';
 
 const MONITOR_DEFINITION_CARD_WIDTH = '275';
 

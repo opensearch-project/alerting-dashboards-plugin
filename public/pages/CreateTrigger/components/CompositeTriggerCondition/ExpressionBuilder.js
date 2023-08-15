@@ -12,43 +12,7 @@ import {
 import * as _ from 'lodash';
 import { FormikFormRow, FormikInputWrapper } from '../../../../components/FormControls';
 import { getMonitors } from '../../../CreateMonitor/components/AssociateMonitors/AssociateMonitors';
-
-export const conditionToExpressions = (condition = '', monitors) => {
-  if (!condition.length) return [];
-
-  const conditionMap = {
-    '&&': 'AND',
-    '||': 'OR',
-    '!': 'NOT',
-    '': '',
-    '&& !': 'AND NOT',
-    '|| !': 'OR NOT',
-  };
-  const queryToExpressionRegex = new RegExp(
-    /(!|| && || \|\| || && \!|| \|\| \!)?(monitor\[id=(.*?)\])/,
-    'gm'
-  );
-  const matcher = condition.matchAll(queryToExpressionRegex);
-  let match;
-  let expressions = [];
-  let counter = 0;
-  while ((match = matcher.next().value)) {
-    if (counter && !match[1]) return []; // Didn't find condition after the first match
-
-    const monitorId = match[3]?.trim(); // match [3] is the monitor_id
-    const monitor = monitors.filter((mon) => mon.monitor_id === monitorId);
-    expressions.push({
-      description: conditionMap[match[1]?.trim()] || '', // match [1] is the description/condition
-      isOpen: false,
-      monitor_name: monitor[0]?.monitor_name,
-      monitor_id: monitorId,
-    });
-
-    counter++;
-  }
-
-  return expressions;
-};
+import { conditionToExpressions } from '../../utils/helper';
 
 const ExpressionBuilder = ({
   formikFieldPath = '',
@@ -121,12 +85,7 @@ const ExpressionBuilder = ({
     const condition = _.get(values, formikFullFieldName, '');
 
     let expressions = conditionToExpressions(condition, monitors);
-    if (
-      !edit &&
-      !_.get(touched, formikFullFieldValue, false) &&
-      triggerIndex === 0 &&
-      expressions.length === 0
-    ) {
+    if (!edit && !_.get(touched, formikFullFieldValue, false) && expressions.length === 0) {
       expressions = [];
       monitorOptions.forEach((monitor, index) => {
         expressions.push({
@@ -135,11 +94,28 @@ const ExpressionBuilder = ({
           monitor_name: monitor.label,
         });
       });
-
-      _.set(values, formikFullFieldName, expressionsToCondition(expressions));
+    } else {
+      // verify that expressions has only selected monitors
+      for (let i = expressions.length - 1; i > -1; i--) {
+        const exp = expressions[i];
+        if (!monitorOptions.find((monitor) => monitor.monitor_id === exp.monitor_id)) {
+          if (expressions.length > 2) {
+            expressions.splice(i, 1);
+          } else {
+            expressions[i] = { ...(i === 0 ? DEFAULT_EXPRESSION : DEFAULT_NEXT_EXPRESSION) };
+          }
+        }
+      }
     }
 
-    setUsedExpressions(expressions?.length ? expressions : [DEFAULT_EXPRESSION]);
+    if (expressions.length === 1) {
+      expressions.push({ ...DEFAULT_NEXT_EXPRESSION });
+    }
+
+    _.set(values, formikFullFieldName, expressionsToCondition(expressions));
+    setUsedExpressions(
+      expressions.length ? expressions : [{ ...DEFAULT_EXPRESSION }, { ...DEFAULT_NEXT_EXPRESSION }]
+    );
   };
 
   const expressionsToCondition = (expressions) => {
@@ -243,7 +219,7 @@ const ExpressionBuilder = ({
     if (hasInvalidExpression()) return 'Invalid expressions.';
   };
 
-  const renderOptions = (expression, idx = 0, form) => (
+  const renderOptions = (expression, hideDeleteButton, idx = 0, form) => (
     <EuiFlexGroup
       gutterSize="s"
       data-test-subj={`${formikFullFieldName}_${triggerIndex}_${idx}_options`}
@@ -262,18 +238,20 @@ const ExpressionBuilder = ({
         />
       </EuiFlexItem>
       <EuiFlexItem grow={false}>{renderMonitorOptions(expression, idx, form)}</EuiFlexItem>
-      <EuiFlexItem grow={false}>
-        <EuiToolTip content={'Remove monitor'}>
-          <EuiButtonIcon
-            data-test-subj={`selection-exp-field-item-remove-${triggerIndex}-${idx}`}
-            onClick={() => onRemoveExpression(form, idx)}
-            iconType={'trash'}
-            color="danger"
-            aria-label={'Remove condition'}
-            style={{ marginTop: '4px' }}
-          />
-        </EuiToolTip>
-      </EuiFlexItem>
+      {!hideDeleteButton && (
+        <EuiFlexItem grow={false}>
+          <EuiToolTip content={'Remove monitor'}>
+            <EuiButtonIcon
+              data-test-subj={`selection-exp-field-item-remove-${triggerIndex}-${idx}`}
+              onClick={() => onRemoveExpression(form, idx)}
+              iconType={'trash'}
+              color="danger"
+              aria-label={'Remove condition'}
+              style={{ marginTop: '4px' }}
+            />
+          </EuiToolTip>
+        </EuiFlexItem>
+      )}
     </EuiFlexGroup>
   );
 
@@ -355,7 +333,7 @@ const ExpressionBuilder = ({
                   panelPaddingSize="s"
                   anchorPosition="upCenter"
                 >
-                  {renderOptions(expression, idx, form)}
+                  {renderOptions(expression, usedExpressions.length <= 2, idx, form)}
                 </EuiPopover>
               </EuiFlexItem>
             ))}

@@ -23,6 +23,7 @@ describe('MonitorOverview', () => {
             },
           },
         }}
+        delegateMonitors={[]}
         monitorVersion={3}
         dayCount={5}
         activeCount={17}
