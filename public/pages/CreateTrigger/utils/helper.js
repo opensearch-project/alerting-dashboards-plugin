@@ -65,3 +65,40 @@ export const getTriggerContext = (executeResponse, monitor, values, triggerIndex
     monitor: monitor,
   };
 };
+
+export const conditionToExpressions = (condition = '', monitors) => {
+  if (!condition.length) return [];
+
+  const conditionMap = {
+    '&&': 'AND',
+    '||': 'OR',
+    '!': 'NOT',
+    '': '',
+    '&& !': 'AND NOT',
+    '|| !': 'OR NOT',
+  };
+  const queryToExpressionRegex = new RegExp(
+    /(!|| && || \|\| || && \!|| \|\| \!)?(monitor\[id=(.*?)\])/,
+    'gm'
+  );
+  const matcher = condition.matchAll(queryToExpressionRegex);
+  let match;
+  let expressions = [];
+  let counter = 0;
+  while ((match = matcher.next().value)) {
+    if (counter && !match[1]) return []; // Didn't find condition after the first match
+
+    const monitorId = match[3]?.trim(); // match [3] is the monitor_id
+    const monitor = monitors.filter((mon) => mon.monitor_id === monitorId);
+    expressions.push({
+      description: conditionMap[match[1]?.trim()] || '', // match [1] is the description/condition
+      isOpen: false,
+      monitor_name: monitor[0]?.monitor_name,
+      monitor_id: monitorId,
+    });
+
+    counter++;
+  }
+
+  return expressions;
+};

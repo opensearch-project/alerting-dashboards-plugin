@@ -29,7 +29,11 @@ export const getMonitors = async (httpClient) => {
           monitor.monitor?.type === 'monitor' &&
           monitorTypesForComposition.has(monitor.monitor?.monitor_type)
       )
-      .map((monitor) => ({ monitor_id: monitor.id, monitor_name: monitor.name }));
+      .map((monitor) => ({
+        monitor_id: monitor.id,
+        monitor_name: monitor.name,
+        monitor_type: monitor.monitor?.monitor_type,
+      }));
   } else {
     console.log('error getting monitors:', response);
     return [];

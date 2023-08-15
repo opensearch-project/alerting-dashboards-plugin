@@ -14,6 +14,7 @@ const props = {
   monitor: {
     triggers: [{ name: 'Random Trigger', severity: 1, actions: [{ name: 'Random Action' }] }],
   },
+  delegateMonitors: [],
   updateMonitor: jest.fn(),
   onEditTrigger: jest.fn(),
   onCreateTrigger: jest.fn(),
