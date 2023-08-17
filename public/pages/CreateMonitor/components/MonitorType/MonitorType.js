@@ -78,7 +78,7 @@ const documentLevelDescription = // TODO DRAFT: confirm wording
 const compositeLevelDescription = (
   <EuiText color={'subdued'} size={'xs'} style={{ paddingBottom: '10px', paddingTop: '0px' }}>
     Composite monitors chain the outputs of different monitor types and focus trigger conditions to
-    reduce alert noise.
+    reduce alert noise and generate finer results.
   </EuiText>
 );
 

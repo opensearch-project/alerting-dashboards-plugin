@@ -227,19 +227,20 @@ export const associatedAlertsTableColumns = [
   {
     field: 'severity',
     name: 'Severity',
-    sortable: false,
+    sortable: true,
     truncateText: false,
     width: '100px',
   },
   {
-    field: 'monitor_name',
     name: 'Delegate monitor',
-    sortable: false,
+    sortable: true,
     truncateText: true,
-    render: (monitorName) => {
+    render: ({ monitor_id, monitor_name }) => {
       return (
-        <EuiToolTip content={monitorName}>
-          <span>{monitorName}</span>
+        <EuiToolTip content={monitor_name}>
+          <EuiLink href={`${PLUGIN_NAME}#/monitors/${monitor_id}?type='monitor'`} target="_blank">
+            {monitor_name}
+          </EuiLink>
         </EuiToolTip>
       );
     },

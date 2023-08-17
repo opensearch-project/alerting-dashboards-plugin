@@ -82,16 +82,11 @@ exports[`DefineCompositeLevelTrigger renders 1`] = `
                 class="euiFormLabel euiFormRow__label"
                 for="triggerDefinitions[undefined].name-form-row"
               >
-                <div
-                  class="euiText euiText--medium"
+                <h4
+                  class="euiTitle euiTitle--xsmall"
                 >
-                  <h5>
-                    Trigger name
-                  </h5>
-                  <div
-                    class="euiSpacer euiSpacer--s"
-                  />
-                </div>
+                  Trigger name
+                </h4>
               </label>
             </div>
             <div
@@ -129,24 +124,21 @@ exports[`DefineCompositeLevelTrigger renders 1`] = `
                 class="euiFormLabel euiFormRow__label"
                 for="triggerConditionFieldsContainer_undefined-form-row"
               >
-                <div
-                  class="euiText euiText--medium"
+                <h4
+                  class="euiTitle euiTitle--xsmall"
                 >
-                  <h5>
-                    Trigger condition
-                  </h5>
+                  Trigger condition
+                </h4>
+                <div
+                  class="euiText euiText--extraSmall"
+                >
                   <div
-                    class="euiText euiText--extraSmall"
+                    class="euiTextColor euiTextColor--subdued"
                   >
-                    <div
-                      class="euiTextColor euiTextColor--subdued"
-                    >
+                    <p>
                       When selected monitors meet the specified conditions for alert generation, the composite monitor triggers its own alert.
-                    </div>
+                    </p>
                   </div>
-                  <div
-                    class="euiSpacer euiSpacer--s"
-                  />
                 </div>
               </label>
             </div>
@@ -213,16 +205,11 @@ exports[`DefineCompositeLevelTrigger renders 1`] = `
           <div
             class="euiSpacer euiSpacer--l"
           />
-          <div
-            class="euiText euiText--medium"
+          <h4
+            class="euiTitle euiTitle--xsmall"
           >
-            <h5>
-              Alert severity
-            </h5>
-            <div
-              class="euiSpacer euiSpacer--s"
-            />
-          </div>
+            Alert severity
+          </h4>
           <div
             class="euiFormRow"
             id="triggerDefinitions[undefined].severity-form-row-row"
@@ -297,16 +284,11 @@ exports[`DefineCompositeLevelTrigger renders 1`] = `
           <div
             class="euiSpacer euiSpacer--xl"
           />
-          <div
-            class="euiText euiText--medium"
+          <h4
+            class="euiTitle euiTitle--xsmall"
           >
-            <h5>
-              Notifications
-            </h5>
-            <div
-              class="euiSpacer euiSpacer--s"
-            />
-          </div>
+            Notifications
+          </h4>
           <div
             class="euiSpacer euiSpacer--m"
           />
