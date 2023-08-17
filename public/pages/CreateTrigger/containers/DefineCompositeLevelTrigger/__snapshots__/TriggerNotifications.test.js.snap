@@ -2,16 +2,11 @@
 
 exports[`TriggerNotifications renders 1`] = `
 Array [
-  <div
-    class="euiText euiText--medium"
+  <h4
+    class="euiTitle euiTitle--xsmall"
   >
-    <h5>
-      Notifications
-    </h5>
-    <div
-      class="euiSpacer euiSpacer--s"
-    />
-  </div>,
+    Notifications
+  </h4>,
   <div
     class="euiSpacer euiSpacer--m"
   />,
