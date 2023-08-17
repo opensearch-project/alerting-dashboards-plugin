@@ -4,7 +4,7 @@
  */
 
 import React from 'react';
-import { EuiText } from '@elastic/eui';
+import { EuiText, EuiTitle } from '@elastic/eui';
 import { htmlIdGenerator } from '@elastic/eui/lib/services';
 import {
   displayAcknowledgedAlertsToast,
@@ -123,3 +123,16 @@ export async function acknowledgeAlerts(httpClient, notifications, alerts) {
 
   return acknowledgePromises;
 }
+
+export const titleTemplate = (title, subTitle) => (
+  <>
+    <EuiTitle size="xs">
+      <h4>{title}</h4>
+    </EuiTitle>
+    {subTitle && (
+      <EuiText color={'subdued'} size={'xs'}>
+        <p>{subTitle}</p>
+      </EuiText>
+    )}
+  </>
+);

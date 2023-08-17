@@ -13,14 +13,13 @@ import {
   EuiModalHeader,
   EuiModalHeaderTitle,
 } from '@elastic/eui';
-import { titleTemplate } from './DefineCompositeLevelTrigger';
 import Message from '../../components/Action/actions';
 import { FORMIK_INITIAL_ACTION_VALUES } from '../../utils/constants';
 import { getTriggerContext } from '../../utils/helper';
 import { formikToMonitor } from '../../../CreateMonitor/containers/CreateMonitor/utils/formikToMonitor';
 import _ from 'lodash';
 import { formikToTrigger } from '../CreateTrigger/utils/formikToTrigger';
-import { backendErrorNotification } from '../../../../utils/helpers';
+import { backendErrorNotification, titleTemplate } from '../../../../utils/helpers';
 import { checkForError } from '../ConfigureActions/ConfigureActions';
 import { TRIGGER_TYPE } from '../CreateTrigger/utils/constants';
 
