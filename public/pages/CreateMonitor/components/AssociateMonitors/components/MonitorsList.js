@@ -269,7 +269,7 @@ const MonitorsList = ({ values, httpClient }) => {
                       bottom: '24px',
                     }}
                   >
-                    <EuiToolTip title={'Remove monitor'}>
+                    <EuiToolTip content={'Remove monitor'}>
                       <EuiButtonIcon
                         aria-label={'Delete selection'}
                         iconType={'trash'}

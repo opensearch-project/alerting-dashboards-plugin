@@ -4,10 +4,11 @@
  */
 
 import React, { Fragment, useState, useEffect } from 'react';
-import { EuiLink, EuiSpacer, EuiText } from '@elastic/eui';
+import { EuiLink, EuiSpacer, EuiText, EuiTitle } from '@elastic/eui';
 import MonitorsList from './components/MonitorsList';
 import MonitorsEditor from './components/MonitorsEditor';
 import { monitorTypesForComposition } from '../../../../utils/constants';
+import { titleTemplate } from '../../../../utils/helpers';
 
 export const getMonitors = async (httpClient) => {
   const response = await httpClient.get('../api/alerting/monitors', {
@@ -49,9 +50,7 @@ const AssociateMonitors = ({ isDarkMode, values, httpClient, errors }) => {
 
   return (
     <Fragment>
-      <EuiText size={'m'} style={{ paddingBottom: '0px', marginBottom: '0px' }}>
-        <h4>Delegate monitors</h4>
-      </EuiText>
+      {titleTemplate('Delegate monitors')}
       <EuiText color={'subdued'} size={'xs'}>
         Delegate two or more monitors to run as part of this workflow. The order in which you select
         the monitors determines their order in the workflow. The monitor types per query, per

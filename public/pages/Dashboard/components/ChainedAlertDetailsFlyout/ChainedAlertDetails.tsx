@@ -17,10 +17,6 @@ import { associatedAlertsTableColumns, renderTime } from '../../utils/tableUtils
 import _ from 'lodash';
 
 export const ChainedAlertDetails = ({ alert, associatedAlerts }) => {
-  const [itemIdToExpandedRowMap, setItemIdToExpandedRowMap] = useState<{
-    [key: string]: JSX.Element;
-  }>({});
-
   const overviewItems = [
     {
       header: 'Trigger name',
@@ -55,8 +51,6 @@ export const ChainedAlertDetails = ({ alert, associatedAlerts }) => {
       <EuiInMemoryTable
         columns={associatedAlertsTableColumns as EuiBasicTableColumn<any>[]}
         items={associatedAlerts}
-        itemId='id'
-        itemIdToExpandedRowMap={itemIdToExpandedRowMap}
         isExpandable={true}
         pagination={true}
         sorting={true}

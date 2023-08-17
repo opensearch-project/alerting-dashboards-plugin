@@ -2,14 +2,11 @@
 
 exports[`AssociateMonitors renders 1`] = `
 Array [
-  <div
-    class="euiText euiText--medium"
-    style="padding-bottom:0px;margin-bottom:0px"
+  <h4
+    class="euiTitle euiTitle--xsmall"
   >
-    <h4>
-      Delegate monitors
-    </h4>
-  </div>,
+    Delegate monitors
+  </h4>,
   <div
     class="euiText euiText--extraSmall"
   >
