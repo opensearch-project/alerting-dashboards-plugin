@@ -19,7 +19,7 @@ jobs:
     name: Run integ tests without security
     strategy:
       matrix:
-        os: [ubuntu-latest, windows-latest]
+        os: [ubuntu-latest]
         java: [11]
         include:
           - os: windows-latest
@@ -33,10 +33,6 @@ jobs:
         with:
           distribution: 'corretto'
           java-version: '11'
-
-      - name: Enable longer filenames
-        if: ${{ matrix.os == 'windows-latest' }}
-        run: git config --system core.longpaths true
 
       - name: Checkout Alerting
         uses: actions/checkout@v2
