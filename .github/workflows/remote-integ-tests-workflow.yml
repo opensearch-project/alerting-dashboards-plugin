@@ -3,12 +3,9 @@
 # yet we build the cluster from source (besides core Opensearch, which is a pulled min artifact).
 name: Remote integ tests workflow
 on:
-  push:
-    branches:
-      - "*"
-  pull_request:
-    branches:
-      - "*"
+  pull_request_target:
+    types:
+      - labeled
 env:
   OPENSEARCH_DASHBOARDS_VERSION: '2.9'
   OPENSEARCH_VERSION: '2.9.0-SNAPSHOT'
@@ -22,8 +19,6 @@ jobs:
         os: [ubuntu-latest]
         java: [11]
         include:
-          - os: windows-latest
-            cypress_cache_folder: ~/AppData/Local/Cypress/Cache
           - os: ubuntu-latest
             cypress_cache_folder: ~/.cache/Cypress
     runs-on: ${{ matrix.os }}
@@ -43,6 +38,9 @@ jobs:
 
       - name: Run OpenSearch with plugin
         run: |
+          echo ${{ github.event }}
+          echo ${{ github.event.label }}
+          echo ${{ github.event.number }}
           cd alerting
             ./gradlew run -Dopensearch.version=${{ env.OPENSEARCH_VERSION }} &
             timeout 300 bash -c 'while [[ "$(curl -s -o /dev/null -w ''%{http_code}'' localhost:9200)" != "200" ]]; do sleep 5; done'
