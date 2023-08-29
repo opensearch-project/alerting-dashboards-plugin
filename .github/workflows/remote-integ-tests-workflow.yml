@@ -1,7 +1,11 @@
 name: Remote integ tests workflow
 on:
-  issue_comment:
-    types: [created]
+  push:
+    branches:
+      - "**"
+  pull_request:
+    branches:
+      - "**"
 env:
   OPENSEARCH_DASHBOARDS_VERSION: '2.9'
   OPENSEARCH_VERSION: '2.9.0-SNAPSHOT'
@@ -46,6 +50,7 @@ jobs:
 
       - name: Run OpenSearch with plugin
         run: |
+          echo ${{ github.event.pull_request.body }}
           echo ${{ github.event.comment.body }}
           echo "comment"
           echo ${{ steps.get-pr-comment.outputs.group1 }}
