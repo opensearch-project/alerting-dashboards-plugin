@@ -26,6 +26,12 @@ jobs:
             cypress_cache_folder: ~/.cache/Cypress
     runs-on: ${{ matrix.os }}
     steps:
+      - name: Get PR comment
+        uses: actions-ecosystem/action-regex-match@v2
+        id: get-pr-remote
+        with:
+          text: ${{ github.event.pull_request.body }}
+          regex: '^(remote:)([\s]*)([^\s]*)$'
       - name: Set up Java 11
         uses: actions/setup-java@v3
         with:
@@ -41,11 +47,12 @@ jobs:
 
       - name: Run OpenSearch with plugin
         run: |
-          echo ${{ github.event }}
-          echo ${{ github.event.label }}
-          echo ${{ github.event.number }}
-          echo ${{ github.event.pull_request.title }}
-          echo ${{ github.event.pull_request.body }}
+           echo "${{ steps.get-pr-remote.outputs.group3 }}"
+#          echo ${{ github.event }}
+#          echo ${{ github.event.label }}
+#          echo ${{ github.event.number }}
+#          echo ${{ github.event.pull_request.title }}
+#          echo ${{ github.event.pull_request.body }}
           cd alerting
             ./gradlew run -Dopensearch.version=${{ env.OPENSEARCH_VERSION }} &
             timeout 300 bash -c 'while [[ "$(curl -s -o /dev/null -w ''%{http_code}'' localhost:9200)" != "200" ]]; do sleep 5; done'
@@ -106,7 +113,7 @@ jobs:
         uses: actions/checkout@v2
         with:
           path: opensearch-dashboards-functional-test
-          repository: lezzago/opensearch-dashboards-functional-test
+          repository: ${{ steps.get-pr-remote.outputs.group3 }}/opensearch-dashboards-functional-test
           ref: ${{ env.OPENSEARCH_DASHBOARDS_FTREPO_VERSION }}
 
       - name: Get Cypress version
