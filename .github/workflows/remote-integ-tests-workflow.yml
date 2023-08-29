@@ -44,6 +44,9 @@ jobs:
 
       - name: Run OpenSearch with plugin
         run: |
+          echo ${{ steps.get-pr-remote.outputs.group1 }}
+          echo ${{ steps.get-pr-remote.outputs.group2 }}
+          echo ${{ steps.get-pr-remote.outputs.group3 }}
           echo "${{ steps.get-pr-remote.outputs.group3 }}"
           cd alerting
             ./gradlew run -Dopensearch.version=${{ env.OPENSEARCH_VERSION }} &
