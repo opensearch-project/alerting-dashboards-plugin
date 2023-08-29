@@ -3,9 +3,12 @@
 # yet we build the cluster from source (besides core Opensearch, which is a pulled min artifact).
 name: Remote integ tests workflow
 on:
-  pull_request_target:
-    types:
-      - labeled
+  push:
+    branches:
+      - "**"
+  pull_request:
+    branches:
+      - "**"
 env:
   OPENSEARCH_DASHBOARDS_VERSION: '2.9'
   OPENSEARCH_VERSION: '2.9.0-SNAPSHOT'
@@ -41,6 +44,8 @@ jobs:
           echo ${{ github.event }}
           echo ${{ github.event.label }}
           echo ${{ github.event.number }}
+          echo ${{ github.event.pull_request.title }}
+          echo ${{ github.event.pull_request.body }}
           cd alerting
             ./gradlew run -Dopensearch.version=${{ env.OPENSEARCH_VERSION }} &
             timeout 300 bash -c 'while [[ "$(curl -s -o /dev/null -w ''%{http_code}'' localhost:9200)" != "200" ]]; do sleep 5; done'
