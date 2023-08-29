@@ -1,5 +1,7 @@
 name: Remote integ tests workflow
-on: [issue_comment]
+on:
+  issue_comment:
+    types: [created]
 env:
   OPENSEARCH_DASHBOARDS_VERSION: '2.9'
   OPENSEARCH_VERSION: '2.9.0-SNAPSHOT'
