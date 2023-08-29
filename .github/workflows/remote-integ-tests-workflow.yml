@@ -50,7 +50,6 @@ jobs:
 
       - name: Run OpenSearch with plugin
         run: |
-          echo ${{ github.event.pull_request.body }}
           echo ${{ github.event.comment.body }}
           echo "comment"
           echo ${{ steps.get-pr-comment.outputs.group1 }}
