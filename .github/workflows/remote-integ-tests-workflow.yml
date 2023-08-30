@@ -35,6 +35,12 @@ jobs:
         with:
           text: ${{ github.event.comment.body }}
           regex: '^(remote:)([\s]*)([^\s]*)$'
+      - name: Get PR body2
+        uses: actions-ecosystem/action-regex-match@v2
+        id: get-match-all
+        with:
+          text: ${{ github.event.pull_request.body }}
+          regex: '([^\s]*)$'
       - name: Set up Java 11
         uses: actions/setup-java@v3
         with:
@@ -50,8 +56,10 @@ jobs:
 
       - name: Run OpenSearch with plugin
         run: |
-          echo ${{ github.event.pull_request.body }}
-          echo ${{ github.event.comment.body }}
+          echo "${{ steps.get-pr-comment.outputs.match }}"
+          echo "${{ steps.get-match-all.outputs.match }}"
+          echo "${{ github.event.pull_request.body }}"
+          echo "${{ github.event.comment.body }}"
           echo "comment"
           echo ${{ steps.get-pr-comment.outputs.group1 }}
           echo ${{ steps.get-pr-comment.outputs.group2 }}
