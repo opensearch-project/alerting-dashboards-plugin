@@ -28,21 +28,8 @@ jobs:
         id: get-pr-remote
         with:
           text: ${{ github.event.pull_request.body }}
-          regex: '^(remote:)([\s]*)([^\s]*)$'
+          regex: '^(remote:)([\s]*)([^\s]*)(\s*)(branch:)([\s]*)([^\s]*)$'
           flags: m
-      - name: Get PR comment
-        uses: actions-ecosystem/action-regex-match@v2
-        id: get-pr-comment
-        with:
-          text: ${{ github.event.comment.body }}
-          regex: '^(remote:)([\s]*)([^\s]*)$'
-      - name: Get PR body2
-        uses: actions-ecosystem/action-regex-match@v2
-        id: get-match-all
-        with:
-          text: ${{ github.event.pull_request.body }}
-          regex: '([^\s]*)$'
-          flags: gm
       - name: Set up Java 11
         uses: actions/setup-java@v3
         with:
@@ -59,18 +46,10 @@ jobs:
       - name: Run OpenSearch with plugin
         run: |
           echo "${{ steps.get-pr-remote.outputs.match }}"
-          echo "${{ steps.get-pr-comment.outputs.match }}"
-          echo "${{ steps.get-match-all.outputs.match }}"
-          echo "${{ github.event.pull_request.body }}"
-          echo "${{ github.event.comment.body }}"
-          echo "comment"
-          echo ${{ steps.get-pr-comment.outputs.group1 }}
-          echo ${{ steps.get-pr-comment.outputs.group2 }}
-          echo "remote"
           echo ${{ steps.get-pr-remote.outputs.group1 }}
           echo ${{ steps.get-pr-remote.outputs.group2 }}
           echo ${{ steps.get-pr-remote.outputs.group3 }}
-          echo "${{ steps.get-pr-remote.outputs.group3 }}"
+          echo ${{ steps.get-pr-remote.outputs.group7 }}
 #          cd alerting
 #            ./gradlew run -Dopensearch.version=${{ env.OPENSEARCH_VERSION }} &
 #            timeout 300 bash -c 'while [[ "$(curl -s -o /dev/null -w ''%{http_code}'' localhost:9200)" != "200" ]]; do sleep 5; done'
