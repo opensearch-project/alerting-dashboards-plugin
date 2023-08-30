@@ -29,7 +29,7 @@ jobs:
         with:
           text: ${{ github.event.pull_request.body }}
           regex: '^(remote:)([\s]*)([^\s]*)$'
-          flags: gm
+          flags: m
       - name: Get PR comment
         uses: actions-ecosystem/action-regex-match@v2
         id: get-pr-comment
