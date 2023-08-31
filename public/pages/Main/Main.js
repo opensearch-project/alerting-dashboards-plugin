@@ -44,7 +44,7 @@ class Main extends Component {
       this.props.history,
       this.props.location
     );
-    this.context.chrome.setBreadcrumbs(breadcrumbs);
+    this.context.chrome?.setBreadcrumbs(breadcrumbs);
   }
 
   // TODO: Want to move this to redux store so we don't have to pass down setFlyout through components
