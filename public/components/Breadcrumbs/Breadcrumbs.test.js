@@ -5,13 +5,12 @@
 
 import React from 'react';
 import { mount, shallow } from 'enzyme';
-import { EuiBreadcrumbs } from '@elastic/eui';
 
 import Breadcrumbs, {
   createEuiBreadcrumb,
-  getBreadcrumbs,
   parseLocationHash,
   getBreadcrumb,
+  getBreadcrumbs,
 } from './Breadcrumbs';
 import { historyMock, httpClientMock } from '../../../test/mocks';
 import { MONITOR_ACTIONS, TRIGGER_ACTIONS } from '../../utils/constants';
@@ -28,39 +27,10 @@ beforeEach(() => {
   jest.clearAllMocks();
 });
 
-describe('Breadcrumbs', () => {
-  const title = 'Alerting';
-  httpClientMock.get = jest.fn().mockResolvedValue({ ok: true, resp: { name: 'random monitor' } });
-  delete global.window.location;
-  global.window.location = { hash: '' };
-
-  test('renders', () => {
-    const wrapper = shallow(
-      <Breadcrumbs
-        title={title}
-        location={location}
-        httpClient={httpClientMock}
-        history={historyMock}
-      />
-    );
-
-    expect(wrapper).toMatchSnapshot();
-  });
-
-  test('calls getBreadcrumbs on mount and when pathname+search are updated', () => {
-    const getBreadcrumbs = jest.spyOn(Breadcrumbs.prototype, 'getBreadcrumbs');
-    const wrapper = mount(
-      <Breadcrumbs
-        title={title}
-        location={location}
-        httpClient={httpClientMock}
-        history={historyMock}
-      />
-    );
-
-    expect(getBreadcrumbs).toHaveBeenCalledTimes(1);
-    wrapper.setProps({ location: { ...location, search: '?search=new' } });
-    expect(getBreadcrumbs).toHaveBeenCalledTimes(2);
+describe('getBreadcrumbs', () => {
+  test('returns Eui formatted breadcrumbs', async () => {
+    window.location.hash = '#/dashboard';
+    expect(await getBreadcrumbs(httpClientMock, historyMock, {})).toMatchSnapshot();
   });
 });
 

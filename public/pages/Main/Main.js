@@ -5,19 +5,47 @@
 
 import React, { Component } from 'react';
 import { Switch, Route } from 'react-router-dom';
-import { CoreConsumer } from '../../utils/CoreContext';
+import { CoreConsumer, CoreContext } from '../../utils/CoreContext';
 
 import Home from '../Home';
-import Breadcrumbs from '../../components/Breadcrumbs';
 import CreateMonitor from '../CreateMonitor';
 import MonitorDetails from '../MonitorDetails/containers/MonitorDetails';
 import CreateDestination from '../Destinations/containers/CreateDestination';
 import Flyout from '../../components/Flyout';
 import { APP_PATH } from '../../utils/constants';
 import { ServicesConsumer } from '../../services';
+import { getBreadcrumbs } from '../../components/Breadcrumbs/Breadcrumbs';
 
 class Main extends Component {
+  static contextType = CoreContext;
   state = { flyout: null };
+
+  async componentDidMount() {
+    if (this.context) {
+      this.updateBreadcrumbs();
+    }
+  }
+
+  async componentDidUpdate(prevProps) {
+    const {
+      location: { pathname: prevPathname, search: prevSearch },
+    } = prevProps;
+    const {
+      location: { pathname, search },
+    } = this.props;
+    if (this.context && prevPathname + prevSearch !== pathname + search) {
+      this.updateBreadcrumbs();
+    }
+  }
+
+  async updateBreadcrumbs() {
+    const breadcrumbs = await getBreadcrumbs(
+      this.context.http,
+      this.props.history,
+      this.props.location
+    );
+    this.context.chrome.setBreadcrumbs(breadcrumbs);
+  }
 
   // TODO: Want to move this to redux store so we don't have to pass down setFlyout through components
   setFlyout = (flyout) => {
@@ -41,7 +69,6 @@ class Main extends Component {
               {(services) =>
                 services && (
                   <div style={{ padding: '15px 0px' }}>
-                    <Breadcrumbs history={history} httpClient={core.http} {...rest} />
                     <Flyout
                       flyout={flyout}
                       onClose={() => {
