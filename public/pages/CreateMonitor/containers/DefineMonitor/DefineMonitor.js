@@ -7,7 +7,15 @@ import React, { Component, Fragment } from 'react';
 import moment from 'moment';
 import _ from 'lodash';
 import PropTypes from 'prop-types';
-import { EuiSpacer, EuiButton, EuiCallOut, EuiAccordion, EuiLoadingSpinner } from '@elastic/eui';
+import {
+  EuiSpacer,
+  EuiButton,
+  EuiCallOut,
+  EuiAccordion,
+  EuiLoadingSpinner,
+  EuiEmptyPrompt,
+  EuiPanel,
+} from '@elastic/eui';
 import ContentPanel from '../../../../components/ContentPanel';
 import VisualGraph from '../../components/VisualGraph';
 import ExtractionQuery from '../../components/ExtractionQuery';
@@ -34,13 +42,9 @@ import { validateWhereFilters } from '../../components/MonitorExpressions/expres
 
 function renderEmptyMessage(message) {
   return (
-    <div style={{ padding: '20px', border: '1px solid #D9D9D9', borderRadius: '5px' }}>
-      <div
-        style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '450px' }}
-      >
-        <div>{_.isEmpty(message) ? <EuiLoadingSpinner size="xl" /> : message}</div>
-      </div>
-    </div>
+    <EuiPanel hasShadow={false} style={{ height: 450, display: 'flex', alignItems: 'center' }}>
+      <EuiEmptyPrompt body={_.isEmpty(message) ? <EuiLoadingSpinner size="xl" /> : message} />
+    </EuiPanel>
   );
 }
 

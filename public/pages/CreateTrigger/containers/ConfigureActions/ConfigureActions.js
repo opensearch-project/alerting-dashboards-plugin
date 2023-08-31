@@ -373,7 +373,7 @@ class ConfigureActions extends React.Component {
           </>
         )}
         <EuiPanel
-          style={flyoutMode ? {} : { backgroundColor: '#F7F7F7', padding: '20px' }}
+          style={flyoutMode ? {} : { padding: '20px' }}
           paddingSize="none"
           hasShadow={!flyoutMode}
           hasBorder={!flyoutMode}
