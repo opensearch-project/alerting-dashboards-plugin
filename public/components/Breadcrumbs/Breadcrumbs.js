@@ -3,11 +3,8 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
 import _ from 'lodash';
 import queryString from 'query-string';
-import { EuiBreadcrumbs } from '@elastic/eui';
 import {
   APP_PATH,
   DESTINATION_ACTIONS,
@@ -15,65 +12,12 @@ import {
   TRIGGER_ACTIONS,
 } from '../../utils/constants';
 
-const propTypes = {
-  history: PropTypes.object.isRequired,
-  httpClient: PropTypes.object.isRequired,
-  location: PropTypes.object.isRequired,
-  title: PropTypes.string.isRequired,
-};
+export async function getBreadcrumbs(httpClient, history, location) {
+  const { state: routeState } = location;
+  const rawBreadcrumbs = await getBreadcrumbsData(window.location.hash, routeState, httpClient);
 
-export default class Breadcrumbs extends Component {
-  constructor(props) {
-    super(props);
-
-    this.state = { breadcrumbs: [] };
-
-    this.getBreadcrumbs = this.getBreadcrumbs.bind(this);
-  }
-
-  componentDidMount() {
-    this.getBreadcrumbs();
-  }
-
-  componentDidUpdate(prevProps) {
-    const {
-      location: { pathname: prevPathname, search: prevSearch },
-    } = prevProps;
-    const {
-      location: { pathname, search },
-    } = this.props;
-    if (prevPathname + prevSearch !== pathname + search) {
-      this.getBreadcrumbs();
-    }
-  }
-
-  async getBreadcrumbs() {
-    const {
-      httpClient,
-      history,
-      location: { state: routeState },
-    } = this.props;
-    const rawBreadcrumbs = await getBreadcrumbs(window.location.hash, routeState, httpClient);
-    const breadcrumbs = rawBreadcrumbs.map((breadcrumb) =>
-      createEuiBreadcrumb(breadcrumb, history)
-    );
-    this.setState({ breadcrumbs });
-  }
-
-  render() {
-    const { breadcrumbs } = this.state;
-    return (
-      <EuiBreadcrumbs
-        breadcrumbs={breadcrumbs}
-        responsive={false}
-        truncate={true}
-        style={{ padding: '0px 15px' }}
-      />
-    );
-  }
+  return rawBreadcrumbs.map((breadcrumb) => createEuiBreadcrumb(breadcrumb, history));
 }
-
-Breadcrumbs.propTypes = propTypes;
 
 export function createEuiBreadcrumb(breadcrumb, history) {
   const { text, href } = breadcrumb;
@@ -87,7 +31,7 @@ export function createEuiBreadcrumb(breadcrumb, history) {
   };
 }
 
-export async function getBreadcrumbs(hash, routeState, httpClient) {
+export async function getBreadcrumbsData(hash, routeState, httpClient) {
   const routes = parseLocationHash(hash);
   const asyncBreadcrumbs = await Promise.all(
     routes.map((route) => getBreadcrumb(route, routeState, httpClient))
