@@ -4,7 +4,8 @@ on:
     branches:
       - "**"
   pull_request:
-    types: [opened, edited]
+    branches:
+      - "**"
 
 env:
   OPENSEARCH_DASHBOARDS_VERSION: '2.9'
