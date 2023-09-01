@@ -46,7 +46,6 @@ jobs:
 
       - name: Run OpenSearch with plugin
         run: |
-          echo "${{ steps.get-pr-remote.outputs.match }}"
           echo ${{ steps.get-pr-remote.outputs.group1 }}
           echo ${{ steps.get-pr-remote.outputs.group2 }}
           echo ${{ steps.get-pr-remote.outputs.group3 }}
