@@ -48,7 +48,7 @@ exports[`WhereExpression renders 1`] = `
       </span>
     </button>
     <div
-      class="euiText euiText--extraSmall"
+      class="euiText euiText--medium"
       style="padding-left:10px"
     >
       <div

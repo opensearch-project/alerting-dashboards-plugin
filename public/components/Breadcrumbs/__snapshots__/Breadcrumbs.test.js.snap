@@ -1,18 +1,5 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Breadcrumbs renders 1`] = `
-<EuiBreadcrumbs
-  breadcrumbs={Array []}
-  responsive={false}
-  style={
-    Object {
-      "padding": "0px 15px",
-    }
-  }
-  truncate={true}
-/>
-`;
-
 exports[`createEuiBreadcrumbs creates breadcrumbs for EuiBreadcrumbs 1`] = `
 Object {
   "href": "#/this-is-the-href",
@@ -137,6 +124,21 @@ Array [
   Object {
     "href": "/monitors/soDk30SjdsekoaSoMcj1",
     "text": "soDk30SjdsekoaSoMcj1",
+  },
+]
+`;
+
+exports[`getBreadcrumbs returns Eui formatted breadcrumbs 1`] = `
+Array [
+  Object {
+    "href": "#/",
+    "onClick": [Function],
+    "text": "Alerting",
+  },
+  Object {
+    "href": "#/dashboard",
+    "onClick": [Function],
+    "text": "Alerts",
   },
 ]
 `;
