@@ -46,7 +46,7 @@ export const inputLimitText = (
     limit === 1 ? singularKeyword : pluralKeyword
   }.`;
   return (
-    <EuiText color={'subdued'} size={'xs'} style={styleProps}>
+    <EuiText color={'subdued'} size={'m'} style={styleProps}>
       {difference > 0 ? remainingLimit : reachedLimit}
     </EuiText>
   );

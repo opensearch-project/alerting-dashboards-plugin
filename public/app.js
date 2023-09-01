@@ -34,7 +34,12 @@ export function renderApp(coreStart, params) {
     <Router>
       <ServicesContext.Provider value={services}>
         <CoreContext.Provider
-          value={{ http: coreStart.http, isDarkMode, notifications: coreStart.notifications }}
+          value={{
+            http: coreStart.http,
+            isDarkMode,
+            notifications: coreStart.notifications,
+            chrome: coreStart.chrome,
+          }}
         >
           <Route render={(props) => <Main title="Alerting" {...props} />} />
         </CoreContext.Provider>
