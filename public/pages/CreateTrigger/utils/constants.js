@@ -40,7 +40,7 @@ export const FORMIK_INITIAL_ACTION_VALUES = {
   destination_id: '',
   subject_template: {
     lang: 'mustache',
-    source: '',
+    source: 'Alerting Notification action',
   },
   message_template: {
     lang: 'mustache',
