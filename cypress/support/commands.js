@@ -71,7 +71,11 @@ Cypress.Commands.overwrite('request', (originalFn, ...args) => {
 });
 
 Cypress.Commands.add('createMonitor', (monitorJSON) => {
-  cy.request('POST', `${Cypress.env('opensearch')}${API.MONITOR_BASE}`, monitorJSON);
+  cy.request('POST', `${Cypress.env('opensearch')}${API.MONITOR_BASE}`, monitorJSON).then(
+    (response) => {
+      if (response.status !== 200) throw 'Failed to create the monitor';
+    }
+  );
 });
 
 Cypress.Commands.add('createAndExecuteMonitor', (monitorJSON) => {
@@ -80,17 +84,27 @@ Cypress.Commands.add('createAndExecuteMonitor', (monitorJSON) => {
       cy.request(
         'POST',
         `${Cypress.env('opensearch')}${API.MONITOR_BASE}/${response.body._id}/_execute`
-      );
+      ).then((executeResponse) => {
+        if (executeResponse.status !== 200) throw 'Failed to execute the monitor';
+      });
     }
   );
 });
 
 Cypress.Commands.add('executeMonitor', (monitorID) => {
-  cy.request('POST', `${Cypress.env('opensearch')}${API.MONITOR_BASE}/${monitorID}/_execute`);
+  cy.request('POST', `${Cypress.env('opensearch')}${API.MONITOR_BASE}/${monitorID}/_execute`).then(
+    (response) => {
+      if (response.status !== 200) throw 'Failed to execute the monitor';
+    }
+  );
 });
 
 Cypress.Commands.add('executeCompositeMonitor', (monitorID) => {
-  cy.request('POST', `${Cypress.env('opensearch')}${API.WORKFLOW_BASE}/${monitorID}/_execute`);
+  cy.request('POST', `${Cypress.env('opensearch')}${API.WORKFLOW_BASE}/${monitorID}/_execute`).then(
+    (response) => {
+      if (response.status !== 200) throw 'Failed to execute the workflow';
+    }
+  );
 });
 
 Cypress.Commands.add('deleteAllAlerts', () => {
@@ -103,6 +117,8 @@ Cypress.Commands.add('deleteAllAlerts', () => {
       },
     },
     failOnStatusCode: false,
+  }).then((response) => {
+    if (response.status !== 200) throw 'Failed to delete all the alerts';
   });
 });
 
@@ -122,7 +138,9 @@ Cypress.Commands.add('deleteMonitorByName', (monitorName) => {
       cy.request(
         'DELETE',
         `${Cypress.env('opensearch')}${API.MONITOR_BASE}/${response.body.hits.hits[0]._id}`
-      );
+      ).then((deleteResponse) => {
+        if (deleteResponse.status !== 200) throw 'Failed to delete the monitor';
+      });
     }
   );
 });
@@ -152,6 +170,8 @@ Cypress.Commands.add('deleteAllMonitors', () => {
               monitors[i]._source.type === 'workflow' ? API.WORKFLOW_BASE : API.MONITOR_BASE
             }/${monitors[i]._id}`,
             failOnStatusCode: false,
+          }).then((deleteResponse) => {
+            if (deleteResponse.status !== 200) throw 'Failed to delete all the monitors';
           });
         }
       }
@@ -162,7 +182,9 @@ Cypress.Commands.add('deleteAllMonitors', () => {
 });
 
 Cypress.Commands.add('createIndexByName', (indexName, body = {}) => {
-  cy.request('PUT', `${Cypress.env('opensearch')}/${indexName}`, body);
+  cy.request('PUT', `${Cypress.env('opensearch')}/${indexName}`, body).then((response) => {
+    if (response.status !== 200) throw 'Failed to create the index';
+  });
 });
 
 Cypress.Commands.add('deleteIndexByName', (indexName) => {
@@ -170,11 +192,19 @@ Cypress.Commands.add('deleteIndexByName', (indexName) => {
     method: 'DELETE',
     url: `${Cypress.env('opensearch')}/${indexName}`,
     failOnStatusCode: false,
+  }).then((response) => {
+    if (response.status !== 200) throw 'Failed to delete the index';
   });
 });
 
 Cypress.Commands.add('insertDocumentToIndex', (indexName, documentId, documentBody) => {
-  cy.request('PUT', `${Cypress.env('opensearch')}/${indexName}/_doc/${documentId}`, documentBody);
+  cy.request(
+    'PUT',
+    `${Cypress.env('opensearch')}/${indexName}/_doc/${documentId}`,
+    documentBody
+  ).then((response) => {
+    if (response.status !== 200) throw 'Failed to insert the document';
+  });
 });
 
 Cypress.Commands.add('loadSampleEcommerceData', () => {
@@ -182,6 +212,8 @@ Cypress.Commands.add('loadSampleEcommerceData', () => {
     method: 'POST',
     headers: { 'osd-xsrf': 'opensearch-dashboards' },
     url: `${Cypress.env('opensearch_dashboards')}/api/sample_data/ecommerce`,
+  }).then((response) => {
+    if (response.status !== 200) throw 'Failed to load sample ecommerce data';
   });
 });
 
@@ -190,5 +222,7 @@ Cypress.Commands.add('loadSampleFlightsData', () => {
     method: 'POST',
     headers: { 'osd-xsrf': 'opensearch-dashboards' },
     url: `${Cypress.env('opensearch_dashboards')}/api/sample_data/flights`,
+  }).then((response) => {
+    if (response.status !== 200) throw 'Failed to load sample flight data';
   });
 });
