@@ -72,9 +72,7 @@ Cypress.Commands.overwrite('request', (originalFn, ...args) => {
 
 Cypress.Commands.add('createMonitor', (monitorJSON) => {
   cy.request('POST', `${Cypress.env('opensearch')}${API.MONITOR_BASE}`, monitorJSON).then(
-    (response) => {
-      if (response.status >= 300 && response.status < 200) throw 'Failed to create the monitor';
-    }
+    ({ body }) => body
   );
 });
 
@@ -84,27 +82,20 @@ Cypress.Commands.add('createAndExecuteMonitor', (monitorJSON) => {
       cy.request(
         'POST',
         `${Cypress.env('opensearch')}${API.MONITOR_BASE}/${response.body._id}/_execute`
-      ).then((executeResponse) => {
-        if (executeResponse.status >= 300 && executeResponse.status < 200)
-          throw 'Failed to execute the monitor';
-      });
+      ).then(({ body }) => body);
     }
   );
 });
 
 Cypress.Commands.add('executeMonitor', (monitorID) => {
   cy.request('POST', `${Cypress.env('opensearch')}${API.MONITOR_BASE}/${monitorID}/_execute`).then(
-    (response) => {
-      if (response.status >= 300 && response.status < 200) throw 'Failed to execute the monitor';
-    }
+    ({ body }) => body
   );
 });
 
 Cypress.Commands.add('executeCompositeMonitor', (monitorID) => {
   cy.request('POST', `${Cypress.env('opensearch')}${API.WORKFLOW_BASE}/${monitorID}/_execute`).then(
-    (response) => {
-      if (response.status >= 300 && response.status < 200) throw 'Failed to execute the workflow';
-    }
+    ({ body }) => body
   );
 });
 
@@ -118,9 +109,7 @@ Cypress.Commands.add('deleteAllAlerts', () => {
       },
     },
     failOnStatusCode: false,
-  }).then((response) => {
-    if (response.status >= 300 && response.status < 200) throw 'Failed to delete all the alerts';
-  });
+  }).then(({ body }) => body);
 });
 
 Cypress.Commands.add('deleteMonitorByName', (monitorName) => {
@@ -139,10 +128,7 @@ Cypress.Commands.add('deleteMonitorByName', (monitorName) => {
       cy.request(
         'DELETE',
         `${Cypress.env('opensearch')}${API.MONITOR_BASE}/${response.body.hits.hits[0]._id}`
-      ).then((deleteResponse) => {
-        if (deleteResponse.status >= 300 && deleteResponse.status < 200)
-          throw 'Failed to delete the monitor';
-      });
+      ).then(({ body }) => body);
     }
   );
 });
@@ -172,10 +158,7 @@ Cypress.Commands.add('deleteAllMonitors', () => {
               monitors[i]._source.type === 'workflow' ? API.WORKFLOW_BASE : API.MONITOR_BASE
             }/${monitors[i]._id}`,
             failOnStatusCode: false,
-          }).then((deleteResponse) => {
-            if (deleteResponse.status >= 300 && deleteResponse.status < 200)
-              throw 'Failed to delete all the monitors';
-          });
+          }).then(({ body }) => body);
         }
       }
     } else {
@@ -185,9 +168,7 @@ Cypress.Commands.add('deleteAllMonitors', () => {
 });
 
 Cypress.Commands.add('createIndexByName', (indexName, body = {}) => {
-  cy.request('PUT', `${Cypress.env('opensearch')}/${indexName}`, body).then((response) => {
-    if (response.status >= 300 && response.status < 200) throw 'Failed to create the index';
-  });
+  cy.request('PUT', `${Cypress.env('opensearch')}/${indexName}`, body).then(({ body }) => body);
 });
 
 Cypress.Commands.add('deleteIndexByName', (indexName) => {
@@ -195,9 +176,7 @@ Cypress.Commands.add('deleteIndexByName', (indexName) => {
     method: 'DELETE',
     url: `${Cypress.env('opensearch')}/${indexName}`,
     failOnStatusCode: false,
-  }).then((response) => {
-    if (response.status >= 300 && response.status < 200) throw 'Failed to delete the index';
-  });
+  }).then(({ body }) => body);
 });
 
 Cypress.Commands.add('insertDocumentToIndex', (indexName, documentId, documentBody) => {
@@ -205,9 +184,7 @@ Cypress.Commands.add('insertDocumentToIndex', (indexName, documentId, documentBo
     'PUT',
     `${Cypress.env('opensearch')}/${indexName}/_doc/${documentId}`,
     documentBody
-  ).then((response) => {
-    if (response.status >= 300 && response.status < 200) throw 'Failed to insert the document';
-  });
+  ).then(({ body }) => body);
 });
 
 Cypress.Commands.add('loadSampleEcommerceData', () => {
@@ -215,10 +192,10 @@ Cypress.Commands.add('loadSampleEcommerceData', () => {
     method: 'POST',
     headers: { 'osd-xsrf': 'opensearch-dashboards' },
     url: `${Cypress.env('opensearch_dashboards')}/api/sample_data/ecommerce`,
-  }).then((response) => {
-    if (response.status >= 300 && response.status < 200)
-      throw 'Failed to load sample ecommerce data';
-  });
+  }).then(({ body }) => body);
+
+  // Wait a minute to ensure all the data has been loaded into the cluster
+  cy.wait(60000);
 });
 
 Cypress.Commands.add('loadSampleFlightsData', () => {
@@ -226,7 +203,8 @@ Cypress.Commands.add('loadSampleFlightsData', () => {
     method: 'POST',
     headers: { 'osd-xsrf': 'opensearch-dashboards' },
     url: `${Cypress.env('opensearch_dashboards')}/api/sample_data/flights`,
-  }).then((response) => {
-    if (response.status >= 300 && response.status < 200) throw 'Failed to load sample flight data';
-  });
+  }).then(({ body }) => body);
+
+  // Wait a minute to ensure all the data has been loaded into the cluster
+  cy.wait(60000);
 });
