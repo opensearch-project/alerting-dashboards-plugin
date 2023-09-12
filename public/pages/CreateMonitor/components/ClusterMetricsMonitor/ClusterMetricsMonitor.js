@@ -211,7 +211,7 @@ const ClusterMetricsMonitor = ({
               label: (
                 <div>
                   <EuiText size={'xs'}>
-                    <strong>Query parameters</strong>
+                    <strong>Path parameters</strong>
                     {!requirePathParams && <i> - optional </i>}
                   </EuiText>
                   <EuiText color={'subdued'} size={'xs'}>
@@ -243,7 +243,7 @@ const ClusterMetricsMonitor = ({
                   size={'s'}
                   style={{ backgroundColor: 'transparent', paddingRight: !hidePathParams && '0px' }}
                 >
-                  GET {_.get(API_TYPES, `${apiType}.prependText`)}
+                  GET {'/' + _.get(API_TYPES, `${apiType}.prependText`) + '/'}
                 </EuiText>
               ),
               append: !_.isEmpty(_.get(API_TYPES, `${apiType}.appendText`)) && (
