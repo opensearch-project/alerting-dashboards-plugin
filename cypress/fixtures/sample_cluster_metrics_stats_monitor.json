@@ -1,0 +1,73 @@
+{
+  "name": "sample_cluster_metrics_stats_monitor",
+  "type": "monitor",
+  "monitor_type": "cluster_metrics_monitor",
+  "enabled": true,
+  "schedule": {
+    "period": {
+      "unit": "MINUTES",
+      "interval": 1
+    }
+  },
+  "inputs": [
+    {
+      "uri": {
+        "api_type": "CLUSTER_STATS",
+        "path": "_cluster/stats/",
+        "path_params": "",
+        "url": "http://localhost:9200/_cluster/stats/"
+      }
+    }
+  ],
+  "triggers": [
+    {
+      "query_level_trigger": {
+        "id": "Y5mmA4kBIezNcMbMJnEy",
+        "name": "sample_cluster_metrics_stats_monitor-trigger1",
+        "severity": "1",
+        "condition": {
+          "script": {
+            "source": "ctx.results[0].indices.count >= 0",
+            "lang": "painless"
+          }
+        },
+        "actions": []
+      }
+    }
+  ],
+  "ui_metadata": {
+    "schedule": {
+      "timezone": null,
+      "frequency": "interval",
+      "period": {
+        "unit": "MINUTES",
+        "interval": 1
+      },
+      "daily": 0,
+      "weekly": {
+        "tue": false,
+        "wed": false,
+        "thur": false,
+        "sat": false,
+        "fri": false,
+        "mon": false,
+        "sun": false
+      },
+      "monthly": {
+        "type": "day",
+        "day": 1
+      },
+      "cronExpression": "0 */1 * * *"
+    },
+    "search": {
+      "searchType": "clusterMetrics",
+      "timeField": "",
+      "aggregations": [],
+      "groupBy": [],
+      "bucketValue": 1,
+      "bucketUnitOfTime": "h",
+      "filters": []
+    },
+    "monitor_type": "cluster_metrics_monitor"
+  }
+}
