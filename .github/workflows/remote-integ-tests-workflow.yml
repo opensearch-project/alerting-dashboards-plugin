@@ -133,6 +133,27 @@ jobs:
         uses: cypress-io/github-action@v2
         with:
           working-directory: opensearch-dashboards-functional-test
-          command: yarn run cypress run --env SECURITY_ENABLED=false --spec cypress/integration/plugins/alerting-dashboards-plugin/*.js
+          command: yarn run cypress run --env SECURITY_ENABLED=false --browser chromium --spec cypress/integration/plugins/alerting-dashboards-plugin/*.js
         env:
           CYPRESS_CACHE_FOLDER: ${{ matrix.cypress_cache_folder }}
+
+      - uses: actions/upload-artifact@v3
+        if: failure()
+        with:
+          name: ftr-cypress-screenshots
+          path: opensearch-dashboards-functional-test/cypress/screenshots
+          retention-days: 1
+
+      - uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: ftr-cypress-videos
+          path: opensearch-dashboards-functional-test/cypress/videos
+          retention-days: 1
+
+      - uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: ftr-cypress-results
+          path: opensearch-dashboards-functional-test/cypress/results
+          retention-days: 1
