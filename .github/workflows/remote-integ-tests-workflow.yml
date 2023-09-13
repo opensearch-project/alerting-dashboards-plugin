@@ -133,7 +133,7 @@ jobs:
         uses: cypress-io/github-action@v2
         with:
           working-directory: opensearch-dashboards-functional-test
-          command: yarn run cypress run --env SECURITY_ENABLED=false --browser chromium --spec cypress/integration/plugins/alerting-dashboards-plugin/*.js
+          command: yarn run cypress run --env SECURITY_ENABLED=false --browser electron --spec cypress/integration/plugins/alerting-dashboards-plugin/*.js
         env:
           CYPRESS_CACHE_FOLDER: ${{ matrix.cypress_cache_folder }}
 
