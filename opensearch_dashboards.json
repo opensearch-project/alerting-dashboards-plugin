@@ -1,8 +1,10 @@
 {
   "id": "alertingDashboards",
-  "version": "2.10.0.0",
-  "opensearchDashboardsVersion": "2.10.0",
-  "configPath": ["opensearch_alerting"],
+  "version": "2.11.0.0",
+  "opensearchDashboardsVersion": "2.11.0",
+  "configPath": [
+    "opensearch_alerting"
+  ],
   "requiredPlugins": [
     "uiActions",
     "dashboard",
