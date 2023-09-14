@@ -22,6 +22,7 @@ jobs:
         include:
           - os: ubuntu-latest
             cypress_cache_folder: ~/.cache/Cypress
+            os_java_options: -Xmx8192M
     runs-on: ${{ matrix.os }}
     steps:
       - name: Get PR body
