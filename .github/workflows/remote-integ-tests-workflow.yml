@@ -130,10 +130,10 @@ jobs:
       - run: npx cypress cache path
 
       - name: Run Alerting cypress tests
-        uses: cypress-io/github-action@v2
+        uses: cypress-io/github-action@v6
         with:
           working-directory: opensearch-dashboards-functional-test
-          command: yarn run cypress run --env SECURITY_ENABLED=false --browser electron --spec cypress/integration/plugins/alerting-dashboards-plugin/*.js
+          command: yarn run cypress run --env SECURITY_ENABLED=false --spec cypress/integration/plugins/alerting-dashboards-plugin/*.js
         env:
           CYPRESS_CACHE_FOLDER: ${{ matrix.cypress_cache_folder }}
 
