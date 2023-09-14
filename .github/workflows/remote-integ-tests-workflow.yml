@@ -134,8 +134,8 @@ jobs:
         uses: cypress-io/github-action@v6
         with:
           working-directory: opensearch-dashboards-functional-test
-          command: yarn run cypress run --env SECURITY_ENABLED=false --browser chromium --spec cypress/integration/plugins/alerting-dashboards-plugin/*.js
-          wait-on: 'http://localhost:5601'
+          command: yarn run cypress run --env SECURITY_ENABLED=false --spec cypress/integration/plugins/alerting-dashboards-plugin/*.js
+          wait-on: 'http://localhost:9200, http://localhost:5601'
         env:
           CYPRESS_CACHE_FOLDER: ${{ matrix.cypress_cache_folder }}
 
