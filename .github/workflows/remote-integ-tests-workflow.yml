@@ -3,8 +3,8 @@ on:
   push:
     branches:
       - "**"
-  pull_request:
-    types: "**"
+#  pull_request:
+#    types: "**"
 
 env:
   OPENSEARCH_DASHBOARDS_VERSION: '2.9'
@@ -27,7 +27,9 @@ jobs:
       - uses: 8BitJonny/gh-get-current-pr@2.2.0
         id: PR
 
-      - run: echo "PR ${{ steps.PR.outputs.number }} is ${{ steps.PR.outputs.pr_body }} ${{ github.event.pull_request.body }}"
+      - run: echo "PR ${{ steps.PR.outputs.number }} is ${{ steps.PR.outputs.pr_body }}"
+
+      - run: echo "og PR ${{ github.event.pull_request.body }}"
 #
 #      - name: Get PR body
 #        uses: actions-ecosystem/action-regex-match@v2
