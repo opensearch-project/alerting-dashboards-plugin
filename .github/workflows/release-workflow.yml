@@ -2,8 +2,8 @@ name: Release workflow
 # This workflow is triggered on creating tags to main or an opensearch release branch
 on:
   push:
-    tags:
-      - 'v*'
+    branches:
+      - main
 
 jobs:
   build:
