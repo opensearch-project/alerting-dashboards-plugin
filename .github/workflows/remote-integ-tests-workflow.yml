@@ -51,7 +51,7 @@ jobs:
       - name: Get remote and branch
         id: remote-branch
         run: |
-          if [[git ls-remote git@github.com:${{ steps.get-pr-remote.outputs.group3 }}/alerting-dashboards-plugin-1.git ${{ steps.get-pr-remote.outputs.group7 }}]]; then
+          if [[git ls-remote git@github.com:${{ steps.get-pr-remote.outputs.group3 }}/opensearch-dashboards-functional-test.git ${{ steps.get-pr-remote.outputs.group7 }}]]; then
             echo "::set-output name=remote::${{ steps.get-pr-remote.outputs.group3 }}"
             echo "::set-output name=branch::${{ steps.get-pr-remote.outputs.group7 }}"
           else
