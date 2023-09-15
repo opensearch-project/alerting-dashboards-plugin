@@ -1,13 +1,12 @@
 name: Remote integ tests workflow
 on:
-#  push:
-#    branches:
-#      - "**"
-#  pull_request:
-#    branches:
-#      - "**"
-  issues:
-    types: [ opened, edited ]
+  push:
+    branches:
+      - "**"
+  pull_request:
+    branches:
+      - "**"
+    types: [opened, edited]
 
 env:
   OPENSEARCH_DASHBOARDS_VERSION: '2.9'
