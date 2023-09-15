@@ -5,8 +5,7 @@ on:
       - "**"
   pull_request:
     branches:
-      - "**"
-#    types: "**"
+    types: [opened, edited, synchronize]
 
 env:
   OPENSEARCH_DASHBOARDS_VERSION: '2.9'
