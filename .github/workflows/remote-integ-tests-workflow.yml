@@ -10,30 +10,12 @@ env:
   OPENSEARCH_DASHBOARDS_VERSION: '2.9'
   OPENSEARCH_VERSION: '2.9.0-SNAPSHOT'
   ALERTING_PLUGIN_VERSION: '2.9'
+
 jobs:
   test-without-security:
     name: Run integ tests without security
-    strategy:
-      matrix:
-        os: [ubuntu-latest]
-        java: [11]
-        include:
-          - os: ubuntu-latest
-            cypress_cache_folder: ~/.cache/Cypress
-            os_java_options: -Xmx8192M
-    runs-on: ${{ matrix.os }}
+    runs-on: ubuntu-latest
     steps:
-      - uses: 8BitJonny/gh-get-current-pr@2.2.0
-        id: PR
-        with:
-          sha: ${{ github.event.pull_request.head.sha }}
-
-      - run: echo "PR ${{ steps.PR.outputs.number }} is ${{ steps.PR.outputs.pr_body }}"
-
-      - run: echo "og PR ${{ github.event.pull_request.body }}"
-
-      - run: echo "og PR ${{ github.pull_request.body }}"
-
       - name: Get PR body
         uses: actions-ecosystem/action-regex-match@v2
         id: get-pr-remote
@@ -57,129 +39,110 @@ jobs:
             echo "remote=opensearch-project" >> $GITHUB_OUTPUT
             echo "branch=${{ env.OPENSEARCH_DASHBOARDS_VERSION }}" >> $GITHUB_OUTPUT
           fi
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - run: echo "remote - ${{ steps.remote-branch.outputs.remote }} and branch - ${{ steps.remote-branch.outputs.branch }}"
-#
-#      - name: Checkout Alerting
-#        uses: actions/checkout@v2
-#        with:
-#          path: alerting
-#          repository: opensearch-project/alerting
-#          ref: ${{ env.ALERTING_PLUGIN_VERSION }}
-#
-#      - name: Run OpenSearch with plugin
-#        run: |
-#          echo ${{ steps.get-pr-remote.outputs.group1 }}
-#          echo ${{ steps.get-pr-remote.outputs.group2 }}
-#          echo ${{ steps.get-pr-remote.outputs.group3 }}
-#          echo ${{ steps.get-pr-remote.outputs.group7 }}
-#          cd alerting
-#            ./gradlew run -Dopensearch.version=${{ env.OPENSEARCH_VERSION }} &
-#            timeout 300 bash -c 'while [[ "$(curl -s -o /dev/null -w ''%{http_code}'' localhost:9200)" != "200" ]]; do sleep 5; done'
-#        shell: bash
-#
-#      - name: Checkout OpenSearch Dashboards
-#        uses: actions/checkout@v2
-#        with:
-#          repository: opensearch-project/OpenSearch-Dashboards
-#          ref: ${{ env.OPENSEARCH_DASHBOARDS_VERSION }}
-#          path: OpenSearch-Dashboards
-#
-#      - name: Checkout Alerting OpenSearch Dashboards plugin
-#        uses: actions/checkout@v2
-#        with:
-#          path: OpenSearch-Dashboards/plugins/alerting-dashboards-plugin
-#
-#      - name: Setup Node
-#        uses: actions/setup-node@v3
-#        with:
-#          node-version-file: './OpenSearch-Dashboards/.nvmrc'
-#          registry-url: 'https://registry.npmjs.org'
-#
-#      - name: Install Yarn
-#        # Need to use bash to avoid having a windows/linux specific step
-#        shell: bash
-#        run: |
-#          YARN_VERSION=$(node -p "require('./OpenSearch-Dashboards/package.json').engines.yarn")
-#          echo "Installing yarn@$YARN_VERSION"
-#          npm i -g yarn@$YARN_VERSION
-#
-#      - run: node -v
-#      - run: yarn -v
-#
-#      - name: Bootstrap the plugin
-#        run: |
-#          cd OpenSearch-Dashboards/plugins/alerting-dashboards-plugin
-#          yarn osd bootstrap
-#
-#      - name: Run OpenSearch Dashboards server
-#        run: |
-#          cd OpenSearch-Dashboards
-#          yarn start --no-base-path --no-watch --server.host="0.0.0.0" &
-#        shell: bash
-#
-#      # Window is slow so wait longer
-##      - name: Sleep until OSD server starts - windows
-##        if: ${{ matrix.os == 'windows-latest' }}
-##        run: Start-Sleep -s 400
-##        shell: powershell
-#
-##      - name: Sleep until OSD server starts - non-windows
-##        if: ${{ matrix.os != 'windows-latest' }}
-##        run: sleep 300
-##        shell: bash
-#
-#      - name: Checkout opensearch-dashboards-functional-test
-#        uses: actions/checkout@v2
-#        with:
-#          path: opensearch-dashboards-functional-test
-#          repository: ${{ steps.get-pr-remote.outputs.group3 }}/opensearch-dashboards-functional-test
-#          ref: ${{ steps.get-pr-remote.outputs.group7 }}
-#
-#      - name: Get Cypress version
-#        id: cypress_version
-#        run: |
-#          echo "::set-output name=cypress_version::$(cat ./opensearch-dashboards-functional-test/package.json | jq '.devDependencies.cypress' | tr -d '"')"
-#
-#      - name: Cache Cypress
-#        id: cache-cypress
-#        uses: actions/cache@v1
-#        with:
-#          path: ${{ matrix.cypress_cache_folder }}
-#          key: cypress-cache-v2-${{ runner.os }}-${{ hashFiles('**/package.json') }}
-#        env:
-#          CYPRESS_INSTALL_BINARY: ${{ steps.cypress_version.outputs.cypress_version }}
-#      - run: npx cypress cache list
-#      - run: npx cypress cache path
-#
-#      - name: Run Alerting cypress tests
-#        uses: cypress-io/github-action@v6
-#        with:
-#          working-directory: opensearch-dashboards-functional-test
-#          command: yarn run cypress run --env SECURITY_ENABLED=false --spec cypress/integration/plugins/alerting-dashboards-plugin/*.js
-#          wait-on: 'http://localhost:9200, http://localhost:5601'
-#        env:
-#          CYPRESS_CACHE_FOLDER: ${{ matrix.cypress_cache_folder }}
-#
-#      - uses: actions/upload-artifact@v3
-#        if: failure()
-#        with:
-#          name: ftr-cypress-screenshots
-#          path: opensearch-dashboards-functional-test/cypress/screenshots
-#          retention-days: 1
-#
-#      - uses: actions/upload-artifact@v3
-#        if: always()
-#        with:
-#          name: ftr-cypress-videos
-#          path: opensearch-dashboards-functional-test/cypress/videos
-#          retention-days: 1
-#
-#      - uses: actions/upload-artifact@v3
-#        if: always()
-#        with:
-#          name: ftr-cypress-results
-#          path: opensearch-dashboards-functional-test/cypress/results
-#          retention-days: 1
+      - name: Checkout Alerting
+        uses: actions/checkout@v2
+        with:
+          path: alerting
+          repository: opensearch-project/alerting
+          ref: ${{ env.ALERTING_PLUGIN_VERSION }}
+
+      - name: Run OpenSearch with plugin
+        run: |
+          cd alerting
+            ./gradlew run -Dopensearch.version=${{ env.OPENSEARCH_VERSION }} &
+            timeout 300 bash -c 'while [[ "$(curl -s -o /dev/null -w ''%{http_code}'' localhost:9200)" != "200" ]]; do sleep 5; done'
+        shell: bash
+
+      - name: Checkout OpenSearch Dashboards
+        uses: actions/checkout@v2
+        with:
+          repository: opensearch-project/OpenSearch-Dashboards
+          ref: ${{ env.OPENSEARCH_DASHBOARDS_VERSION }}
+          path: OpenSearch-Dashboards
+
+      - name: Checkout Alerting OpenSearch Dashboards plugin
+        uses: actions/checkout@v2
+        with:
+          path: OpenSearch-Dashboards/plugins/alerting-dashboards-plugin
+
+      - name: Setup Node
+        uses: actions/setup-node@v3
+        with:
+          node-version-file: './OpenSearch-Dashboards/.nvmrc'
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: Install Yarn
+        # Need to use bash to avoid having a windows/linux specific step
+        shell: bash
+        run: |
+          YARN_VERSION=$(node -p "require('./OpenSearch-Dashboards/package.json').engines.yarn")
+          echo "Installing yarn@$YARN_VERSION"
+          npm i -g yarn@$YARN_VERSION
+
+      - run: node -v
+      - run: yarn -v
+
+      - name: Bootstrap the plugin
+        run: |
+          cd OpenSearch-Dashboards/plugins/alerting-dashboards-plugin
+          yarn osd bootstrap
+
+      - name: Run OpenSearch Dashboards server
+        run: |
+          cd OpenSearch-Dashboards
+          yarn start --no-base-path --no-watch --server.host="0.0.0.0" &
+        shell: bash
+
+      - name: Checkout opensearch-dashboards-functional-test
+        uses: actions/checkout@v2
+        with:
+          path: opensearch-dashboards-functional-test
+          repository: ${{ steps.remote-branch.outputs.remote }}/opensearch-dashboards-functional-test
+          ref: ${{ steps.remote-branch.outputs.branch }}
+
+      - name: Get Cypress version
+        id: cypress_version
+        run: |
+          echo "::set-output name=cypress_version::$(cat ./opensearch-dashboards-functional-test/package.json | jq '.devDependencies.cypress' | tr -d '"')"
+
+      - name: Cache Cypress
+        id: cache-cypress
+        uses: actions/cache@v1
+        with:
+          path: ~/.cache/Cypress
+          key: cypress-cache-v2-${{ runner.os }}-${{ hashFiles('**/package.json') }}
+        env:
+          CYPRESS_INSTALL_BINARY: ${{ steps.cypress_version.outputs.cypress_version }}
+      - run: npx cypress cache list
+      - run: npx cypress cache path
+
+      - name: Run Alerting cypress tests
+        uses: cypress-io/github-action@v6
+        with:
+          working-directory: opensearch-dashboards-functional-test
+          command: yarn run cypress run --env SECURITY_ENABLED=false --spec cypress/integration/plugins/alerting-dashboards-plugin/*.js
+          wait-on: 'http://localhost:9200, http://localhost:5601'
+        env:
+          CYPRESS_CACHE_FOLDER: ~/.cache/Cypress
+
+      - uses: actions/upload-artifact@v3
+        if: failure()
+        with:
+          name: ftr-cypress-screenshots
+          path: opensearch-dashboards-functional-test/cypress/screenshots
+          retention-days: 1
+
+      - uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: ftr-cypress-videos
+          path: opensearch-dashboards-functional-test/cypress/videos
+          retention-days: 1
+
+      - uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: ftr-cypress-results
+          path: opensearch-dashboards-functional-test/cypress/results
+          retention-days: 1
