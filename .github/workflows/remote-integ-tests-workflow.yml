@@ -34,7 +34,7 @@ jobs:
 
       - run: echo "og PR ${{ github.event.pull_request.body }}"
 
-      - run: echo "og PR ${{ github.event.after.pull_request.body }}"
+      - run: echo "og PR ${{ github.pull_request.body }}"
 #
 #      - name: Get PR body
 #        uses: actions-ecosystem/action-regex-match@v2
