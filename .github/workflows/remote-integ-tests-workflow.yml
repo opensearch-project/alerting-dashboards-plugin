@@ -52,11 +52,11 @@ jobs:
         id: remote-branch
         run: |
           if [[git ls-remote git@github.com:${{ steps.get-pr-remote.outputs.group3 }}/alerting-dashboards-plugin-1.git ${{ steps.get-pr-remote.outputs.group7 }}]]; then
-            echo "::set-output name=remote::${{ steps.get-pr-remote.outputs.group3 }}
-            echo "::set-output name=branch::${{ steps.get-pr-remote.outputs.group7 }}
+            echo "::set-output name=remote::${{ steps.get-pr-remote.outputs.group3 }}"
+            echo "::set-output name=branch::${{ steps.get-pr-remote.outputs.group7 }}"
           else
-            echo "::set-output name=remote::opensearch-project
-            echo "::set-output name=branch::${{ env.OPENSEARCH_DASHBOARDS_VERSION }}
+            echo "::set-output name=remote::opensearch-project"
+            echo "::set-output name=branch::${{ env.OPENSEARCH_DASHBOARDS_VERSION }}"
           fi
 
       - run: echo "remote - ${{ steps.remote-branch.remote }} and branch - ${{ steps.remote-branch.branch }}"
