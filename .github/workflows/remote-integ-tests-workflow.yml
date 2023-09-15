@@ -53,7 +53,7 @@ jobs:
           echo ${{ steps.get-pr-remote.outputs.group7 }}
           cd alerting
             ./gradlew run -Dopensearch.version=${{ env.OPENSEARCH_VERSION }} &
-#            timeout 300 bash -c 'while [[ "$(curl -s -o /dev/null -w ''%{http_code}'' localhost:9200)" != "200" ]]; do sleep 5; done'
+            timeout 300 bash -c 'while [[ "$(curl -s -o /dev/null -w ''%{http_code}'' localhost:9200)" != "200" ]]; do sleep 5; done'
         shell: bash
 
       - name: Checkout OpenSearch Dashboards
@@ -95,7 +95,6 @@ jobs:
           cd OpenSearch-Dashboards
           yarn start --no-base-path --no-watch --server.host="0.0.0.0" &
         shell: bash
-        wait-on: 'http://localhost:9200'
 
       # Window is slow so wait longer
 #      - name: Sleep until OSD server starts - windows
