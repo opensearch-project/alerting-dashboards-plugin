@@ -5,7 +5,7 @@ on:
       - "**"
   pull_request:
     branches:
-    types: [opened, edited, synchronize]
+      - "**"
 
 env:
   OPENSEARCH_DASHBOARDS_VERSION: '2.9'
@@ -33,6 +33,8 @@ jobs:
       - run: echo "PR ${{ steps.PR.outputs.number }} is ${{ steps.PR.outputs.pr_body }}"
 
       - run: echo "og PR ${{ github.event.pull_request.body }}"
+
+      - run: echo "og PR ${{ github.event.after.pull_request.body }}"
 #
 #      - name: Get PR body
 #        uses: actions-ecosystem/action-regex-match@v2
