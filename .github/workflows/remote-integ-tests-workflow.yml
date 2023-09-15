@@ -55,11 +55,11 @@ jobs:
             echo "::set-output name=remote::${{ steps.get-pr-remote.outputs.group3 }}"
             echo "::set-output name=branch::${{ steps.get-pr-remote.outputs.group7 }}"
           else
-            echo "::set-output name=remote::opensearch-project"
-            echo "::set-output name=branch::${{ env.OPENSEARCH_DASHBOARDS_VERSION }}"
+            echo "remote=opensearch-project" >> $GITHUB_OUTPUT
+            echo "branch=${{ env.OPENSEARCH_DASHBOARDS_VERSION }}" >> $GITHUB_OUTPUT
           fi
 
-      - run: echo "remote - ${{ steps.remote-branch.remote }} and branch - ${{ steps.remote-branch.branch }}"
+      - run: echo "remote - ${{ steps.remote-branch.outputs.remote }} and branch - ${{ steps.remote-branch.outputs.branch }}"
 #
 #      - name: Checkout Alerting
 #        uses: actions/checkout@v2
