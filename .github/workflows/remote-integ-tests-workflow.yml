@@ -57,6 +57,8 @@ jobs:
             echo "remote=opensearch-project" >> $GITHUB_OUTPUT
             echo "branch=${{ env.OPENSEARCH_DASHBOARDS_VERSION }}" >> $GITHUB_OUTPUT
           fi
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - run: echo "remote - ${{ steps.remote-branch.outputs.remote }} and branch - ${{ steps.remote-branch.outputs.branch }}"
 #
