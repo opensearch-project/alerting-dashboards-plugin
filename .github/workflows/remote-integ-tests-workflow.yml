@@ -59,7 +59,7 @@ jobs:
             echo "::set-output name=branch::${{ env.OPENSEARCH_DASHBOARDS_VERSION }}
           fi
 
-      - run: echo "remote - ${{ steps.remote-branch.remote }} and branch - ${{ steps.remote-branch.branch }}
+      - run: echo "remote - ${{ steps.remote-branch.remote }} and branch - ${{ steps.remote-branch.branch }}"
 #
 #      - name: Checkout Alerting
 #        uses: actions/checkout@v2
