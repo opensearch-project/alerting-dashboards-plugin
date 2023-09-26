@@ -9,11 +9,6 @@ import { EuiPanel, EuiText, EuiSpacer, EuiLoadingSpinner } from '@elastic/eui';
 import Action from '../../components/Action';
 import ActionEmptyPrompt from '../../components/ActionEmptyPrompt';
 import AddActionButton from '../../components/AddActionButton';
-import {
-  CHANNEL_TYPES,
-  DEFAULT_MESSAGE_SOURCE,
-  FORMIK_INITIAL_ACTION_VALUES,
-} from '../../utils/constants';
 import { getAllowList } from '../../../Destinations/utils/helpers';
 import {
   MAX_QUERY_RESULT_SIZE,
@@ -111,10 +106,11 @@ class ConfigureActions extends React.Component {
     let channels = [];
     let index = 0;
     const getChannels = async () => {
+      const config_types = await this.props.notificationService.getServerFeatures();
       const getChannelsQuery = {
         from_index: index,
         max_items: MAX_CHANNELS_RESULT_SIZE,
-        config_type: CHANNEL_TYPES,
+        config_type: config_types,
         sort_field: 'name',
         sort_order: 'asc',
       };
@@ -172,7 +168,7 @@ class ConfigureActions extends React.Component {
       let channels = await this.getChannels();
 
       const destinationsAndChannels = destinations.concat(channels);
-      const channelOptionsByType = getChannelOptions(destinationsAndChannels, CHANNEL_TYPES);
+      const channelOptionsByType = getChannelOptions(destinationsAndChannels);
       this.setState({
         destinations: channelOptionsByType,
         flattenedDestinations: destinationsAndChannels,

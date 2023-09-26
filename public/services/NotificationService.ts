@@ -16,6 +16,7 @@ const NODE_API_BASE_PATH = '/api/notifications';
 const NODE_API = Object.freeze({
   GET_CONFIGS: `${NODE_API_BASE_PATH}/get_configs`,
   GET_CONFIG: `${NODE_API_BASE_PATH}/get_config`,
+  GET_AVAILABLE_FEATURES: `${NODE_API_BASE_PATH}/features`,
 });
 
 export default class NotificationService {
@@ -24,6 +25,18 @@ export default class NotificationService {
   constructor(httpClient: HttpSetup) {
     this.httpClient = httpClient;
   }
+
+  getServerFeatures = async (): Promise<Array<String>> => {
+    try {
+      const response = await this.httpClient.get(
+        NODE_API.GET_AVAILABLE_FEATURES
+      );
+      return response.allowed_config_type_list as Array<String>;
+    } catch (error) {
+      console.error('error fetching available features', error);
+      return null;
+    }
+  };
 
   getConfigs = async (queryObject: HttpFetchQuery) => {
     return this.httpClient.get<ConfigsResponse>(NODE_API.GET_CONFIGS, {
