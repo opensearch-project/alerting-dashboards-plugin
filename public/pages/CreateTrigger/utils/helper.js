@@ -18,12 +18,12 @@ import {
 import moment from 'moment';
 import { formikToTrigger } from '../containers/CreateTrigger/utils/formikToTrigger';
 
-export const getChannelOptions = (channels, allowedTypes) =>
-  allowedTypes.map((type) => ({
-    key: type,
-    label: type,
+export const getChannelOptions = (channels) =>
+  channels.map((channel) => ({
+    key: channel.type,
+    label: channel.type,
     options: channels
-      .filter((channel) => channel.type === type)
+      .filter((local_channel) => local_channel.type === channel.type)
       .map((option) => ({ key: option.value, ...option })),
   }));
 

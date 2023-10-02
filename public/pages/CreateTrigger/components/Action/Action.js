@@ -25,11 +25,11 @@ import {
 } from '@elastic/eui';
 import { FormikFieldText, FormikComboBox } from '../../../../components/FormControls';
 import { isInvalid, hasError, validateActionName } from '../../../../utils/validate';
-import { ActionsMap } from './utils/constants';
 import { validateDestination } from './utils/validate';
 import { DEFAULT_ACTION_TYPE, MANAGE_CHANNELS_PATH } from '../../utils/constants';
 import NotificationsCallOut from '../NotificationsCallOut';
 import MinimalAccordion from '../../../../components/FeatureAnywhereContextMenu/MinimalAccordion';
+import Message from './actions';
 
 const Action = ({
   action,
@@ -60,8 +60,14 @@ const Action = ({
   );
   const type = _.get(selectedDestination, '0.type', DEFAULT_ACTION_TYPE);
   const { name } = action;
-  const ActionComponent = ActionsMap[type].component;
-  const actionLabel = ActionsMap[type].label;
+  let ActionComponent;
+  const actionLabel = 'Notification';
+  if (type === 'webhook') {
+    ActionComponent = (props) => <Message isSubjectDisabled {...props} />;
+  } else {
+    ActionComponent = (props) => <Message {...props} />;
+  }
+
   const manageChannelsUrl = httpClient.basePath.prepend(MANAGE_CHANNELS_PATH);
   const isFirstAction = index !== undefined && index === 0;
   const refreshDestinations = useMemo(() => {
