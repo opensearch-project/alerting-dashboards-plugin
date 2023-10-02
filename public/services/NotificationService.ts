@@ -34,7 +34,7 @@ export default class NotificationService {
       return response.allowed_config_type_list as Array<String>;
     } catch (error) {
       console.error('error fetching available features', error);
-      return null;
+      return [];
     }
   };
 
