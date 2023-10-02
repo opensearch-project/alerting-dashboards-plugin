@@ -15,7 +15,6 @@ import {
 } from '@elastic/eui';
 import TriggerNotificationsContent from './TriggerNotificationsContent';
 import { MAX_CHANNELS_RESULT_SIZE, OS_NOTIFICATION_PLUGIN } from '../../../../utils/constants';
-import { CHANNEL_TYPES } from '../../utils/constants';
 import { titleTemplate } from '../../../../utils/helpers';
 
 const TriggerNotifications = ({
@@ -52,10 +51,11 @@ const TriggerNotifications = ({
     let channels = [];
     let index = 0;
     const getChannels = async () => {
+      const config_types = await this.props.notificationService.getServerFeatures();
       const getChannelsQuery = {
         from_index: index,
         max_items: MAX_CHANNELS_RESULT_SIZE,
-        config_type: CHANNEL_TYPES,
+        config_type: config_types,
         sort_field: 'name',
         sort_order: 'asc',
       };
