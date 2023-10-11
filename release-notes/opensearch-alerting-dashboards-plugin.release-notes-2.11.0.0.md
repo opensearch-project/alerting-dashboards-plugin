@@ -8,4 +8,4 @@ Compatible with OpenSearch Dashboards 2.10.0
 * Support any channel types from Notification. ([#743](https://github.com/opensearch-project/alerting-dashboards-plugin/pull/743))
 
 ### Documentation
-* Add 2.11.0 release notes ([#]())
+* Add 2.11.0 release notes ([#764](https://github.com/opensearch-project/alerting-dashboards-plugin/pull/764))
