@@ -307,22 +307,25 @@ export default class CreateMonitor extends Component {
               )}
 
               <FieldArray name={'triggerDefinitions'} validateOnChange={true}>
-                {(triggerArrayHelpers) => (
-                  <ConfigureTriggers
-                    edit={edit}
-                    triggerArrayHelpers={triggerArrayHelpers}
-                    monitor={formikToMonitor(values)}
-                    monitorValues={values}
-                    setFlyout={this.props.setFlyout}
-                    triggers={_.get(formikToMonitor(values), 'triggers', [])}
-                    triggerValues={values}
-                    isDarkMode={this.props.isDarkMode}
-                    httpClient={httpClient}
-                    notifications={notifications}
-                    notificationService={notificationService}
-                    plugins={plugins}
-                  />
-                )}
+                {(triggerArrayHelpers) => {
+                  return (
+                    <ConfigureTriggers
+                      edit={edit}
+                      triggerArrayHelpers={triggerArrayHelpers}
+                      monitor={formikToMonitor(values)}
+                      monitorValues={values}
+                      setFlyout={this.props.setFlyout}
+                      triggers={_.get(formikToMonitor(values), 'triggers', [])}
+                      triggerValues={values}
+                      isDarkMode={this.props.isDarkMode}
+                      httpClient={httpClient}
+                      notifications={notifications}
+                      notificationService={notificationService}
+                      plugins={plugins}
+                      isNewMonitor={true}
+                    />
+                  );
+                }}
               </FieldArray>
 
               <EuiSpacer />

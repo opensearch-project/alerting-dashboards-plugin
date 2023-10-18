@@ -44,7 +44,7 @@ export function formikToMonitor(values) {
     enabled: !values.disabled,
     schedule,
     inputs: [formikToInputs(values)],
-    triggers: [],
+    triggers: values.triggerDefinitions || [],
     ui_metadata: {
       schedule: uiSchedule,
       monitor_type: values.monitor_type,
@@ -147,15 +147,8 @@ export function formikToAd(values) {
 }
 
 export function formikToUiSearch(values) {
-  const {
-    searchType,
-    timeField,
-    aggregations,
-    groupBy,
-    bucketValue,
-    bucketUnitOfTime,
-    filters,
-  } = values;
+  const { searchType, timeField, aggregations, groupBy, bucketValue, bucketUnitOfTime, filters } =
+    values;
   return {
     searchType,
     timeField,

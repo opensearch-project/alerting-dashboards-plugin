@@ -92,7 +92,7 @@ class DefineTrigger extends Component {
   }
 
   onRunExecute = (triggers = []) => {
-    const { httpClient, monitor, notifications } = this.props;
+    const { httpClient, monitor, notifications, isNewMonitor } = this.props;
     const formikValues = monitorToFormik(monitor);
     const searchType = formikValues.searchType;
     const monitorToExecute = _.cloneDeep(monitor);
@@ -141,6 +141,7 @@ class DefineTrigger extends Component {
       triggers,
       triggerValues,
       isDarkMode,
+      isNewMonitor,
       triggerIndex,
       httpClient,
       notifications,
@@ -217,7 +218,12 @@ class DefineTrigger extends Component {
         <div style={{ padding: '0px 20px', paddingTop: '20px' }}>
           <FormikFieldText
             name={`${fieldPath}name`}
-            fieldProps={{ validate: validateTriggerName(triggers, triggerValues, fieldPath) }}
+            fieldProps={{
+              validate: (val) => {
+                var r = validateTriggerName(triggers, triggerValues, fieldPath, isNewMonitor)(val);
+                return r;
+              },
+            }}
             formRow
             rowProps={defaultRowProps}
             inputProps={defaultInputProps}

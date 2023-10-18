@@ -193,6 +193,7 @@ class ConfigureTriggers extends React.Component {
       triggers,
       triggerValues,
       isDarkMode,
+      isNewMonitor,
       httpClient,
       notificationService,
       plugins,
@@ -207,6 +208,7 @@ class ConfigureTriggers extends React.Component {
         monitorValues={monitorValues}
         onRun={this.onRunExecute}
         setFlyout={setFlyout}
+        isNewMonitor={isNewMonitor}
         triggers={triggers}
         triggerValues={triggerValues}
         isDarkMode={isDarkMode}
@@ -328,7 +330,7 @@ class ConfigureTriggers extends React.Component {
     const displayAddTriggerButton = numOfTriggers > 0;
     return (
       <ContentPanel
-        title={`Triggers (${numOfTriggers})`}
+        title={`Triggerssdf (${numOfTriggers})`}
         titleSize={'s'}
         panelStyles={{ paddingBottom: '0px', paddingLeft: '20px', paddingRight: '20px' }}
         bodyStyles={{ paddingLeft: '0px', padding: '10px' }}
