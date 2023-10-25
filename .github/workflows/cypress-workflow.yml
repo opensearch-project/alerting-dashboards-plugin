@@ -7,8 +7,8 @@ on:
     branches:
       - "**"
 env:
-  OPENSEARCH_DASHBOARDS_VERSION: '2.x'
-  ALERTING_PLUGIN_BRANCH: '2.x'
+  OPENSEARCH_DASHBOARDS_VERSION: '2.11.0'
+  ALERTING_PLUGIN_BRANCH: '2.11.0.0'
 jobs:
   tests:
     name: Run Cypress E2E tests
@@ -66,7 +66,7 @@ jobs:
       - name: Run OpenSearch Dashboards server
         run: |
           cd OpenSearch-Dashboards
-          yarn start --no-base-path --no-watch &
+          yarn start --no-base-path --no-watch --server.host="0.0.0.0" &
           sleep 300
         # timeout 300 bash -c 'while [[ "$(curl -s -o /dev/null -w ''%{http_code}'' localhost:5601/api/status)" != "200" ]]; do sleep 5; done'
       - name: Run Cypress tests
