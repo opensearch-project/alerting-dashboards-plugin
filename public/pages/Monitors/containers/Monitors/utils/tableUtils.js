@@ -32,6 +32,20 @@ export const columns = [
     ),
   },
   {
+    field: 'enabled',
+    name: 'State',
+    sortable: false,
+    truncateText: false,
+    render: (enabled) => (enabled ? 'Enabled' : 'Disabled'),
+  },
+  {
+    field: 'item_type',
+    name: 'Type',
+    sortable: false,
+    truncateText: false,
+    render: (item_type) => getItemLevelType(item_type),
+  },
+  {
     field: 'latestAlert',
     name: 'Latest alert',
     sortable: false,
