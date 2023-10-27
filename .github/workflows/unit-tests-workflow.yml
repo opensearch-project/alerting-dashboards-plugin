@@ -9,11 +9,10 @@ on:
 env:
   OPENSEARCH_DASHBOARDS_VERSION: 'main'
 jobs:
-
-Get-CI-Image-Tag:
-  uses: opensearch-project/opensearch-build/.github/workflows/get-ci-image-tag.yml@main
-  with:
-    product: opensearch-dashboards
+  Get-CI-Image-Tag:
+    uses: opensearch-project/opensearch-build/.github/workflows/get-ci-image-tag.yml@main
+    with:
+      product: opensearch-dashboards
 
   tests-linux:
     needs: Get-CI-Image-Tag
