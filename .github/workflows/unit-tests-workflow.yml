@@ -9,11 +9,48 @@ on:
 env:
   OPENSEARCH_DASHBOARDS_VERSION: 'main'
 jobs:
-  tests:
+  Get-CI-Image-Tag:
+    uses: opensearch-project/opensearch-build/.github/workflows/get-ci-image-tag.yml@main
+    with:
+      product: opensearch-dashboards
+
+  tests-linux:
+    needs: Get-CI-Image-Tag
+    name: Run unit tests
+    runs-on: ubuntu-latest
+    container:
+      # using the same image which is used by opensearch-build team to build the OpenSearch Distribution
+      # this image tag is subject to change as more dependencies and updates will arrive over time
+      image: ${{ needs.Get-CI-Image-Tag.outputs.ci-image-version-linux }}
+      # need to switch to root so that github actions can install runner binary on container without permission issues.
+      options: --user root
+
+    steps:
+      - name: Checkout OpenSearch Dashboards
+        uses: actions/checkout@v2
+        with:
+          repository: opensearch-project/OpenSearch-Dashboards
+          ref: ${{ env.OPENSEARCH_DASHBOARDS_VERSION }}
+          path: OpenSearch-Dashboards
+      - name: Checkout Alerting OpenSearch Dashboards plugin
+        uses: actions/checkout@v2
+        with:
+          path: OpenSearch-Dashboards/plugins/alerting-dashboards-plugin
+      - name: Run non-window tests
+        run: |
+          chown -R 1000:1000 `pwd`
+          cd ./OpenSearch-Dashboards/
+          su `id -un 1000` -c "source $NVM_DIR/nvm.sh && nvm use && node -v && yarn -v &&
+                               cd ./plugins/alerting-dashboards-plugin &&
+                               whoami && yarn osd bootstrap && yarn build && yarn run test:jest --coverage"
+      - name: Uploads coverage
+        uses: codecov/codecov-action@v1
+
+  tests-macos-windows:
     name: Run unit tests
     strategy:
       matrix:
-        os: [ ubuntu-latest, macos-latest, windows-latest ]
+        os: [ macos-latest, windows-latest ]
     runs-on: ${{ matrix.os }}
     steps:
       # Enable longer filenames for windows
@@ -58,6 +95,3 @@ jobs:
         run: |
           cd OpenSearch-Dashboards/plugins/alerting-dashboards-plugin
           yarn run test:jest --coverage
-      - name: Uploads coverage
-        if: ${{ matrix.os == 'ubuntu-latest' }}
-        uses: codecov/codecov-action@v1
