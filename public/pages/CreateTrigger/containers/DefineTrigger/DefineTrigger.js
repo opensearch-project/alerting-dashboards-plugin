@@ -239,7 +239,10 @@ class DefineTrigger extends Component {
       <FormikFieldText
         name={`${fieldPath}name`}
         fieldProps={{
-          validate: validateTriggerName(triggers, triggerValues, fieldPath, flyoutMode),
+          validate: (val) => {
+            var r = validateTriggerName(triggerValues?.triggerDefinitions, triggerIndex)(val);
+            return r;
+          },
         }}
         formRow
         rowProps={{ ...defaultRowProps, ...(flyoutMode ? { style: {} } : {}) }}

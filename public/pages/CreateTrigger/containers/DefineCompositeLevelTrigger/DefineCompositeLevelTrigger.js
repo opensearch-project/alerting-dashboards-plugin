@@ -100,7 +100,10 @@ class DefineCompositeLevelTrigger extends Component {
           <FormikFieldText
             name={`${formikFieldPath}name`}
             fieldProps={{
-              validate: required,
+              validate: (val) => {
+                var r = validateTriggerName(triggerValues?.triggerDefinitions, triggerIndex)(val);
+                return r;
+              },
             }}
             formRow
             rowProps={{

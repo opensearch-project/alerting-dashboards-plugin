@@ -309,7 +309,12 @@ class DefineBucketLevelTrigger extends Component {
         <div style={{ padding: '0px 10px', paddingTop: '10px' }}>
           <FormikFieldText
             name={`${fieldPath}name`}
-            fieldProps={{ validate: validateTriggerName(triggers, triggerValues, fieldPath) }}
+            fieldProps={{
+              validate: (val) => {
+                var r = validateTriggerName(triggerValues?.triggerDefinitions, triggerIndex)(val);
+                return r;
+              },
+            }}
             formRow
             rowProps={defaultRowProps}
             inputProps={defaultInputProps}

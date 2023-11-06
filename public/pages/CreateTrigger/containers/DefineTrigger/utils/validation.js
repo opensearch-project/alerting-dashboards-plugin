@@ -4,27 +4,23 @@
  */
 import _ from 'lodash';
 
-import { FORMIK_INITIAL_TRIGGER_VALUES, TRIGGER_TYPE } from '../../CreateTrigger/utils/constants';
-
-export const validateTriggerName = (triggers, triggerToEdit, fieldPath, isFullText) => (value) => {
-  if (!value) return isFullText ? 'Trigger name is required.' : 'Required.';
-  const nameExists = triggers.filter((trigger) => {
-    const triggerId = _.get(
-      trigger,
-      `${TRIGGER_TYPE.BUCKET_LEVEL}.id`,
-      _.get(trigger, `${TRIGGER_TYPE.QUERY_LEVEL}.id`)
-    );
-    const triggerName = _.get(
-      trigger,
-      `${TRIGGER_TYPE.BUCKET_LEVEL}.name`,
-      _.get(trigger, `${TRIGGER_TYPE.QUERY_LEVEL}.name`, FORMIK_INITIAL_TRIGGER_VALUES.name)
-    );
-    const triggerToEditId = _.get(triggerToEdit, `${fieldPath}id`, triggerToEdit.id);
-    return triggerToEditId !== triggerId && triggerName.toLowerCase() === value.toLowerCase();
-  });
-  if (nameExists.length > 0) {
-    return 'Trigger name already used.';
-  }
-  // TODO: character restrictions
-  // TODO: character limits
+export const validateTriggerName = (triggers, index) => {
+  return (value) => {
+    if (!value) return 'Trigger name is required.';
+    console.log(triggers, index);
+    const nameExists = triggers.filter(() => {
+      const triggerName = _.get(triggers, `[${index}]name`, undefined);
+      const triggerNameExistWithIndex = triggers.filter((trigger, i) => {
+        return i !== index && triggerName === trigger.name;
+      });
+      if (triggerNameExistWithIndex.length > 0) {
+        return 'Trigger name already used.';
+      }
+    });
+    if (nameExists.length > 0) {
+      return 'Trigger name already used.';
+    }
+    // TODO: character restrictions
+    // TODO: character limits
+  };
 };
