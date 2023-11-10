@@ -7,7 +7,6 @@ import _ from 'lodash';
 export const validateTriggerName = (triggers, index) => {
   return (value) => {
     if (!value) return 'Trigger name is required.';
-    console.log(triggers, index);
     const nameExists = triggers.filter(() => {
       const triggerName = _.get(triggers, `[${index}]name`, undefined);
       const triggerNameExistWithIndex = triggers.filter((trigger, i) => {
