@@ -31,6 +31,7 @@ describe('MonitorIndex', () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
+
   test('renders', () => {
     const wrapper = getMountWrapper();
     expect(wrapper).toMatchSnapshot();
