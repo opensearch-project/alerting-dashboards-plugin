@@ -2,23 +2,18 @@
  * Copyright OpenSearch Contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-import _ from 'lodash';
 
-export const validateTriggerName = (triggers, index) => {
+export const validateTriggerName = (triggers = [], index, isFullText) => {
   return (value) => {
-    if (!value) return 'Trigger name is required.';
-    const nameExists = triggers.filter(() => {
-      const triggerName = _.get(triggers, `[${index}]name`, undefined);
-      const triggerNameExistWithIndex = triggers.filter((trigger, i) => {
-        return i !== index && triggerName === trigger.name;
-      });
-      if (triggerNameExistWithIndex.length > 0) {
-        return 'Trigger name already used.';
-      }
+    const trimmedValue = value.trim();
+    if (!trimmedValue) return !isFullText ? 'Trigger name is required.' : 'Required.';
+    const triggerNameExistWithIndex = triggers.some((trigger, i) => {
+      return i !== index && trimmedValue === trigger.name.trim();
     });
-    if (nameExists.length > 0) {
+    if (triggerNameExistWithIndex) {
       return 'Trigger name already used.';
     }
+
     // TODO: character restrictions
     // TODO: character limits
   };
