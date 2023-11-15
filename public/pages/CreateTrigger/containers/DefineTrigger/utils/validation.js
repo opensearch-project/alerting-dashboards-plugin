@@ -3,10 +3,10 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-export const validateTriggerName = (triggers = [], index, isFullText) => {
+export const validateTriggerName = (triggers = [], index, isShortText) => {
   return (value) => {
     const trimmedValue = value.trim();
-    if (!trimmedValue) return !isFullText ? 'Trigger name is required.' : 'Required.';
+    if (!trimmedValue) return isShortText ? 'Required.' : 'Trigger name is required.';
     const triggerNameExistWithIndex = triggers.some((trigger, i) => {
       return i !== index && trimmedValue === trigger.name.trim();
     });
