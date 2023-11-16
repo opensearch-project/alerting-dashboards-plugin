@@ -42,6 +42,7 @@ exports[`Monitors renders 1`] = `
           "textOnly": true,
         },
         Object {
+<<<<<<< HEAD
           "field": "user",
           "name": "Last updated by",
           "render": [Function],
@@ -50,6 +51,8 @@ exports[`Monitors renders 1`] = `
           "truncateText": true,
         },
         Object {
+=======
+>>>>>>> 48e8be2 (remove last updated backported to 2.2)
           "field": "latestAlert",
           "name": "Latest alert",
           "sortable": false,

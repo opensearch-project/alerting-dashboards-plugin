@@ -28,6 +28,7 @@ export const columns = [
     ),
   },
   {
+<<<<<<< HEAD
     field: 'user',
     name: 'Last updated by',
     sortable: true,
@@ -43,6 +44,8 @@ export const columns = [
       item.monitor.user && item.monitor.user.name ? item.monitor.user.name : '-',
   },
   {
+=======
+>>>>>>> 48e8be2 (remove last updated backported to 2.2)
     field: 'latestAlert',
     name: 'Latest alert',
     sortable: false,
