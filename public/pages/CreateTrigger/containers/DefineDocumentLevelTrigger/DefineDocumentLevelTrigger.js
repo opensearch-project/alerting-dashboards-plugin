@@ -281,7 +281,7 @@ class DefineDocumentLevelTrigger extends Component {
                 validateTriggerName(
                   triggerValues?.triggerDefinitions,
                   triggerIndex,
-                  flyoutMode
+                  setFlyout !== null
                 )(val),
             }}
             formRow
