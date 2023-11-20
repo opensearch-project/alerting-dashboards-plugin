@@ -75,7 +75,7 @@ export const getDigitId = (length = 6) =>
 
 // Assumes that values is an array of objects with "name" inside
 export const getUniqueName = (values, prefix) => {
-  const lastValue = values.at(-1);
+  const lastValue = _.last(values);
   const lastName = lastValue ? lastValue.name : '';
   const lastDigit = Number.parseInt(lastName.match(/\d+$/)?.[0] || 0, 10);
 
