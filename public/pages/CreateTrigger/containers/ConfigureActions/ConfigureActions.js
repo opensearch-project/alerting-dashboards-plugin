@@ -5,7 +5,7 @@
 
 import React from 'react';
 import _ from 'lodash';
-import { EuiPanel, EuiText, EuiSpacer, EuiLoadingSpinner } from '@elastic/eui';
+import { EuiPanel, EuiText, EuiSpacer } from '@elastic/eui';
 import Action from '../../components/Action';
 import ActionEmptyPrompt from '../../components/ActionEmptyPrompt';
 import AddActionButton from '../../components/AddActionButton';
@@ -22,12 +22,27 @@ import { formikToTrigger } from '../CreateTrigger/utils/formikToTrigger';
 import { getChannelOptions, toChannelType } from '../../utils/helper';
 import { getInitialActionValues } from '../../components/AddActionButton/utils';
 
-const createActionContext = (context, action) => ({
-  ctx: {
-    ...context,
-    action,
-  },
-});
+const createActionContext = (context, action) => {
+  let trigger = context.trigger;
+  const triggerType = Object.keys(trigger)[0];
+  if (
+    Object.keys(trigger).length === 1 &&
+    !_.isEmpty(triggerType) &&
+    Object.values(TRIGGER_TYPE).includes(triggerType)
+  ) {
+    // If the trigger values is wrapped in the trigger type, unwrap it
+    trigger = trigger[triggerType];
+  } else {
+    console.warn(`Unknown trigger type "${triggerType}".`, context);
+  }
+  return {
+    ctx: {
+      ...context,
+      trigger: { ...trigger },
+      action,
+    },
+  };
+};
 
 export const checkForError = (response, error) => {
   for (const trigger_name in response.resp.trigger_results) {

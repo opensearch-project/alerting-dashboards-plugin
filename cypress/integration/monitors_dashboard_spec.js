@@ -34,7 +34,7 @@ const clusterHealthMonitor = {
         severity: '1',
         condition: {
           script: {
-            source: 'ctx.results[0].status != "green"',
+            source: 'ctx.results[0].status != "blue"',
             lang: 'painless',
           },
         },
@@ -101,6 +101,11 @@ describe('Monitors dashboard page', () => {
   });
 
   it('Displays expected number of alerts', () => {
+    // Wait for table to finish loading
+    cy.get('tbody > tr', { timeout: 20000 }).should(($tr) =>
+      expect($tr).to.have.length.greaterThan(1)
+    );
+
     // Ensure the 'Monitor name' column is sorted in ascending order by sorting another column first
     cy.contains('Last notification time').click({ force: true });
     cy.contains('Monitor name').click({ force: true });
