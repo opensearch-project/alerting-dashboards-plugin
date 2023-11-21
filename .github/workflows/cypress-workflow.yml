@@ -2,10 +2,10 @@ name: E2E Cypress tests
 on:
   pull_request:
     branches:
-      - "*"
+      - '*'
   push:
     branches:
-      - "*"
+      - '*'
 env:
   OPENSEARCH_DASHBOARDS_VERSION: '2.5.0'
   OPENSEARCH_VERSION: '2.5.0-SNAPSHOT'
@@ -68,7 +68,7 @@ jobs:
       - name: Run OpenSearch Dashboards server
         run: |
           cd OpenSearch-Dashboards
-          yarn start --no-base-path --no-watch &
+          yarn start --no-base-path --no-watch --server.host="0.0.0.0" &
           sleep 300
         # timeout 300 bash -c 'while [[ "$(curl -s -o /dev/null -w ''%{http_code}'' localhost:5601/api/status)" != "200" ]]; do sleep 5; done'
       - name: Run Cypress tests
