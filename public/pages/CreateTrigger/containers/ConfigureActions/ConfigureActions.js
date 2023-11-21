@@ -5,7 +5,7 @@
 
 import React from 'react';
 import _ from 'lodash';
-import { EuiPanel, EuiText, EuiSpacer, EuiLoadingSpinner } from '@elastic/eui';
+import { EuiPanel, EuiText, EuiSpacer } from '@elastic/eui';
 import Action from '../../components/Action';
 import ActionEmptyPrompt from '../../components/ActionEmptyPrompt';
 import AddActionButton from '../../components/AddActionButton';
