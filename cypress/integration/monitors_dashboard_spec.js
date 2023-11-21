@@ -102,7 +102,7 @@ describe('Monitors dashboard page', () => {
 
   it('Displays expected number of alerts', () => {
     // Ensure the 'Monitor name' column is sorted in ascending order by sorting another column first
-    cy.contains('Last updated by').click({ force: true });
+    cy.contains('Last notification time').click({ force: true });
     cy.contains('Monitor name').click({ force: true });
 
     testMonitors.forEach((entry) => {
