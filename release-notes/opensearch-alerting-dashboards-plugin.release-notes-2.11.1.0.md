@@ -8,4 +8,4 @@ Compatible with OpenSearch Dashboards 2.11.1
 * Removed "last updated by" sections from the UI. ( ([#767](https://github.com/opensearch-project/alerting-dashboards-plugin/pull/767))
 
 ### Documentation
-* Add 2.11.1 release notes. ([#]())
+* Add 2.11.1 release notes. ([#828](https://github.com/opensearch-project/alerting-dashboards-plugin/pull/828))
