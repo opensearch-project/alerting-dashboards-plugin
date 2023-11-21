@@ -1,4 +1,4 @@
-## Version 2.11.1.0 2023-09-06
+## Version 2.11.1.0 2023-11-21
 Compatible with OpenSearch Dashboards 2.11.1
 
 ### Maintenance
