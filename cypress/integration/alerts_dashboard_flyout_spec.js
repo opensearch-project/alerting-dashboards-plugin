@@ -3,7 +3,6 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React from 'react';
 import { INDEX, PLUGIN_NAME } from '../support/constants';
 import sampleAlertsFlyoutBucketMonitor from '../fixtures/sample_alerts_flyout_bucket_level_monitor.json';
 import sampleAlertsFlyoutQueryMonitor from '../fixtures/sample_alerts_flyout_query_level_monitor.json';
@@ -23,12 +22,19 @@ describe('Alerts by trigger flyout', () => {
     // Load sample data
     cy.loadSampleEcommerceData();
 
+    // Ensure monitors have been deleted
+    cy.visit(`${Cypress.env('opensearch_dashboards')}/app/${PLUGIN_NAME}#/monitors`);
+    cy.contains('There are no existing monitors. Create a monitor to add triggers and actions.', {
+      timeout: TWENTY_SECONDS,
+    });
+
     // Create the test monitors
     cy.createMonitor(sampleAlertsFlyoutBucketMonitor);
     cy.createMonitor(sampleAlertsFlyoutQueryMonitor);
 
     // Visit Alerting OpenSearch Dashboards
     cy.visit(`${Cypress.env('opensearch_dashboards')}/app/${PLUGIN_NAME}#/monitors`);
+    cy.reload();
 
     // Confirm test monitors were created successfully
     cy.contains(BUCKET_MONITOR, { timeout: TWENTY_SECONDS });
@@ -41,6 +47,7 @@ describe('Alerts by trigger flyout', () => {
   beforeEach(() => {
     // Reloading the page to close any flyouts that were not closed by other tests that had failures.
     cy.visit(`${Cypress.env('opensearch_dashboards')}/app/${PLUGIN_NAME}#/dashboard`);
+    cy.contains('Alerts by triggers', { timeout: TWENTY_SECONDS });
 
     // Waiting 5 seconds for alerts to finish loading.
     // This short wait period alleviates flakiness observed during these tests.
@@ -60,9 +67,10 @@ describe('Alerts by trigger flyout', () => {
       timeout: TWENTY_SECONDS,
     }).within(() => {
       // Confirm flyout header contains expected text.
-      cy.get(
-        `[data-test-subj="alertsDashboardFlyout_header_${BUCKET_TRIGGER}"]`
-      ).contains(`Alerts by ${BUCKET_TRIGGER}`, { timeout: TWENTY_SECONDS });
+      cy.get(`[data-test-subj="alertsDashboardFlyout_header_${BUCKET_TRIGGER}"]`).contains(
+        `Alerts by ${BUCKET_TRIGGER}`,
+        { timeout: TWENTY_SECONDS }
+      );
 
       // Confirm 'Trigger name' sections renders as expected.
       cy.get(`[data-test-subj="alertsDashboardFlyout_triggerName_${BUCKET_TRIGGER}"]`).as(
@@ -154,9 +162,10 @@ describe('Alerts by trigger flyout', () => {
       timeout: TWENTY_SECONDS,
     }).within(() => {
       // Confirm flyout header contains expected text.
-      cy.get(
-        `[data-test-subj="alertsDashboardFlyout_header_${QUERY_TRIGGER}"]`
-      ).contains(`Alerts by ${QUERY_TRIGGER}`, { timeout: TWENTY_SECONDS });
+      cy.get(`[data-test-subj="alertsDashboardFlyout_header_${QUERY_TRIGGER}"]`).contains(
+        `Alerts by ${QUERY_TRIGGER}`,
+        { timeout: TWENTY_SECONDS }
+      );
 
       // Confirm 'Trigger name' sections renders as expected.
       cy.get(`[data-test-subj="alertsDashboardFlyout_triggerName_${QUERY_TRIGGER}"]`).as(
