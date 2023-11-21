@@ -196,7 +196,7 @@ export function formikToUiSearch(values) {
     searchType,
     timeField,
     aggregations,
-    cleanedGroupBy,
+    groupBy: cleanedGroupBy,
     bucketValue,
     bucketUnitOfTime,
     filters,

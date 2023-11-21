@@ -75,9 +75,9 @@ export const renderEmptyValue = (value) => {
 export function insertGroupByColumn(groupBy = []) {
   let result = _.cloneDeep(bucketColumns);
   groupBy.map((fieldName) =>
-    result.splice(0, 0, {
+    result.push({
       field: `agg_alert_content.bucket.key.${fieldName}`,
-      name: fieldName,
+      name: _.capitalize(fieldName),
       render: renderEmptyValue,
       sortable: false,
       truncateText: false,
