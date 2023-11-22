@@ -575,24 +575,24 @@ describe('Dashboard/utils/helpers', () => {
     test('with valid groupBy list', () => {
       const groupBy = ['keyword1', 'keyword2', 'keyword3'];
       const expectedOutput = _.cloneDeep(bucketColumns);
-      expectedOutput.unshift(
+      expectedOutput.push(
         {
-          field: 'agg_alert_content.bucket.key.keyword3',
-          name: 'keyword3',
+          field: 'agg_alert_content.bucket.key.keyword1',
+          name: 'Keyword1',
           render: renderEmptyValue,
           sortable: false,
           truncateText: false,
         },
         {
           field: 'agg_alert_content.bucket.key.keyword2',
-          name: 'keyword2',
+          name: 'Keyword2',
           render: renderEmptyValue,
           sortable: false,
           truncateText: false,
         },
         {
-          field: 'agg_alert_content.bucket.key.keyword1',
-          name: 'keyword1',
+          field: 'agg_alert_content.bucket.key.keyword3',
+          name: 'Keyword3',
           render: renderEmptyValue,
           sortable: false,
           truncateText: false,
