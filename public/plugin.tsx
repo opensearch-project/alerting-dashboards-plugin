@@ -19,6 +19,7 @@ import { overlayAlertsFunction } from './expressions/overlay_alerts';
 import { setClient, setEmbeddable, setNotifications, setOverlays, setSavedAugmentVisLoader, setUISettings, setQueryService } from './services';
 import { VisAugmenterStart } from '../../../src/plugins/vis_augmenter/public';
 import { DataPublicPluginStart } from '../../../src/plugins/data/public';
+import { AssistantPublicPluginSetup } from './../../../plugins/dashboards-assistant/public';
 
 declare module '../../../src/plugins/ui_actions/public' {
   export interface ActionContextMapping {
@@ -33,6 +34,7 @@ export interface AlertingStart {}
 export interface AlertingSetupDeps {
   expressions: ExpressionsSetup;
   uiActions: UiActionsSetup;
+  assistantDashboards?: AssistantPublicPluginSetup;
 }
 
 export interface AlertingStartDeps {
@@ -42,7 +44,7 @@ export interface AlertingStartDeps {
 }
 
 export class AlertingPlugin implements Plugin<AlertingSetup, AlertingStart, AlertingSetupDeps, AlertingStartDeps> {
-  public setup(core: CoreSetup<AlertingStartDeps, AlertingStart>, { expressions, uiActions }: AlertingSetupDeps): AlertingSetup {
+  public setup(core: CoreSetup<AlertingStartDeps, AlertingStart>, { expressions, uiActions, assistantDashboards }: AlertingSetupDeps): AlertingSetup {
     core.application.register({
       id: PLUGIN_NAME,
       title: 'Alerting',
@@ -59,6 +61,16 @@ export class AlertingPlugin implements Plugin<AlertingSetup, AlertingStart, Aler
         return renderApp(coreStart, params);
       },
     });
+
+    if (assistantDashboards) {
+      assistantDashboards.registerPalantir([
+        {
+          key: 'query_level_monitor',
+          description: 'Monitoring on the query level',
+          suggestion: 'How to better configure my monitor?',
+        },
+      ]);
+    }
 
     setUISettings(core.uiSettings);
 
