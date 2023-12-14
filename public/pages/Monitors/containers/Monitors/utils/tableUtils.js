@@ -9,6 +9,7 @@ import moment from 'moment';
 import { DEFAULT_EMPTY_DATA, MONITOR_TYPE } from '../../../../../utils/constants';
 import { PLUGIN_NAME } from '../../../../../../utils/constants';
 import { getItemLevelType } from './helpers';
+import { PalantirComponent } from '../../../../../../../../plugins/dashboards-assistant/public';
 
 const renderTime = (time) => {
   const momentTime = moment(time);
@@ -22,14 +23,25 @@ export const columns = [
     name: 'Monitor name',
     sortable: true,
     textOnly: true,
-    render: (name, item) => (
-      <EuiLink
-        data-test-subj={name}
-        href={`${PLUGIN_NAME}#/monitors/${item.id}?type=${item.monitor.type}`}
-      >
-        {name}
-      </EuiLink>
-    ),
+    render: (name, item) =>
+      PalantirComponent ? (
+        <PalantirComponent>
+          <EuiLink
+            key={`${item.item_type}`}
+            data-test-subj={name}
+            href={`${PLUGIN_NAME}#/monitors/${item.id}?type=${item.monitor.type}`}
+          >
+            {name}
+          </EuiLink>
+        </PalantirComponent>
+      ) : (
+        <EuiLink
+          data-test-subj={name}
+          href={`${PLUGIN_NAME}#/monitors/${item.id}?type=${item.monitor.type}`}
+        >
+          {name}
+        </EuiLink>
+      ),
   },
   {
     field: 'enabled',
