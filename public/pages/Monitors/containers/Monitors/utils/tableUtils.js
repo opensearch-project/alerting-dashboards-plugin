@@ -9,7 +9,7 @@ import moment from 'moment';
 import { DEFAULT_EMPTY_DATA, MONITOR_TYPE } from '../../../../../utils/constants';
 import { PLUGIN_NAME } from '../../../../../../utils/constants';
 import { getItemLevelType } from './helpers';
-import { PalantirComponent } from '../../../../../../../../plugins/dashboards-assistant/public';
+import { IncontextInsightComponent } from './../../../../../plugin';
 
 const renderTime = (time) => {
   const momentTime = moment(time);
@@ -24,7 +24,7 @@ export const columns = [
     sortable: true,
     textOnly: true,
     render: (name, item) => (
-      <PalantirComponent>
+      <IncontextInsightComponent>
         <EuiLink
           key={`${item.item_type}`}
           data-test-subj={name}
@@ -32,7 +32,7 @@ export const columns = [
         >
           {name}
         </EuiLink>
-      </PalantirComponent>
+      </IncontextInsightComponent>
     ),
   },
   {

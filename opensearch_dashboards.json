@@ -20,9 +20,6 @@
   "requiredEnginePlugins": {
     "opensearch-alerting": "*"
   },
-  "requiredBundles": [
-    "assistantDashboards"
-  ],
   "server": true,
   "ui": true
 }

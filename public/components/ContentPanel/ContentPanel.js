@@ -13,6 +13,7 @@ import {
   EuiTitle,
   EuiText,
 } from '@elastic/eui';
+import { IncontextInsightComponent } from './../../plugin';
 
 const ContentPanel = ({
   title = '',
@@ -28,9 +29,11 @@ const ContentPanel = ({
   <EuiPanel style={{ paddingLeft: '0px', paddingRight: '0px', ...panelStyles }}>
     <EuiFlexGroup style={{ padding: '0px 10px' }} justifyContent="spaceBetween" alignItems="center">
       <EuiFlexItem>
-        <EuiTitle size={titleSize}>
-          <h3>{title}</h3>
-        </EuiTitle>
+        <IncontextInsightComponent>
+          <EuiTitle key={`content_panel_${title}`} size={titleSize}>
+            <h3>{title}</h3>
+          </EuiTitle>
+        </IncontextInsightComponent>
       </EuiFlexItem>
       <EuiFlexItem grow={false}>
         <EuiFlexGroup justifyContent="spaceBetween" alignItems="center">
