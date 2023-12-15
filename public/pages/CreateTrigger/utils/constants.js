@@ -3,6 +3,9 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+import React from 'react';
+import Message from '../components/Action/actions';
+
 export const DEFAULT_MESSAGE_SOURCE = {
   BUCKET_LEVEL_MONITOR: `
   Monitor {{ctx.monitor.name}} just entered alert status. Please investigate the issue.
@@ -77,3 +80,8 @@ export const DEFAULT_TRIGGER_NAME = 'New trigger';
 export const DEFAULT_ACTION_TYPE = 'slack';
 
 export const MANAGE_CHANNELS_PATH = `/app/notifications-dashboards#/channels`;
+
+export const webhookNotificationActionMessageComponent = (props) => (
+  <Message isSubjectDisabled {...props} />
+);
+export const defaultNotificationActionMessageComponent = (props) => <Message {...props} />;
