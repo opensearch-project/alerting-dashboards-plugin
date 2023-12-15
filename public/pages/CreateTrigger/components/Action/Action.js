@@ -26,10 +26,14 @@ import {
 import { FormikFieldText, FormikComboBox } from '../../../../components/FormControls';
 import { isInvalid, hasError, validateActionName } from '../../../../utils/validate';
 import { validateDestination } from './utils/validate';
-import { DEFAULT_ACTION_TYPE, MANAGE_CHANNELS_PATH } from '../../utils/constants';
+import {
+  DEFAULT_ACTION_TYPE,
+  MANAGE_CHANNELS_PATH,
+  webhookNotificationActionMessageComponent,
+  defaultNotificationActionMessageComponent,
+} from '../../utils/constants';
 import NotificationsCallOut from '../NotificationsCallOut';
 import MinimalAccordion from '../../../../components/FeatureAnywhereContextMenu/MinimalAccordion';
-import Message from './actions';
 
 const Action = ({
   action,
@@ -63,9 +67,9 @@ const Action = ({
   let ActionComponent;
   const actionLabel = 'Notification';
   if (type === 'webhook') {
-    ActionComponent = (props) => <Message isSubjectDisabled {...props} />;
+    ActionComponent = webhookNotificationActionMessageComponent;
   } else {
-    ActionComponent = (props) => <Message {...props} />;
+    ActionComponent = defaultNotificationActionMessageComponent;
   }
 
   const manageChannelsUrl = httpClient.basePath.prepend(MANAGE_CHANNELS_PATH);
