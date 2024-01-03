@@ -66,7 +66,8 @@ export class AlertingPlugin implements Plugin<AlertingSetup, AlertingStart, Aler
       assistantDashboards.registerPalantir([
         {
           key: 'query_level_monitor',
-          description: 'Monitoring on the query level',
+          type: 'summaryWithSuggestions',
+          summary: 'Monitoring on the query level',
           suggestion: 'How to better configure my monitor?',
         },
       ]);
