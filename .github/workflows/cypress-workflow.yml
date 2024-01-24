@@ -1,4 +1,4 @@
-name: E2E Cypress tests
+name: E2E tests workflow
 on:
   pull_request:
     branches:
@@ -24,8 +24,8 @@ jobs:
         uses: actions/setup-java@v1
         with:
           # TODO: Parse this from alerting plugin
-          java-version: 14
-      - name: Checkout
+          java-version: 11
+      - name: Checkout alerting
         uses: actions/checkout@v2
         with:
           path: alerting
@@ -34,18 +34,19 @@ jobs:
       - name: Run Opensearch with plugin
         run: |
           cd alerting
-          ./gradlew run -Dopensearch.version=${{ env.OPENSEARCH_VERSION }} &
-          timeout 300 bash -c 'while [[ "$(curl -s -o /dev/null -w ''%{http_code}'' localhost:9200)" != "200" ]]; do sleep 5; done'
-      - name: Checkout OpenSearch Dashboards
+          ./gradlew run &
+          sleep 300
+        # timeout 300 bash -c 'while [[ "$(curl -s -o /dev/null -w ''%{http_code}'' localhost:9200)" != "200" ]]; do sleep 5; done'
+      - name: Checkout Alerting Dashboards plugin
+        uses: actions/checkout@v2
+        with:
+          path: alerting-dashboards-plugin
+      - name: Checkout OpenSearch-Dashboards
         uses: actions/checkout@v2
         with:
           repository: opensearch-project/OpenSearch-Dashboards
-          ref: ${{ env.OPENSEARCH_DASHBOARDS_VERSION }}
           path: OpenSearch-Dashboards
-      - name: Checkout Alerting OpenSearch Dashboards plugin
-        uses: actions/checkout@v2
-        with:
-          path: OpenSearch-Dashboards/plugins/alerting-dashboards-plugin
+          ref: ${{ env.OPENSEARCH_DASHBOARDS_VERSION }}
       - name: Setup Node
         uses: actions/setup-node@v3
         with:
@@ -60,22 +61,26 @@ jobs:
           npm i -g yarn@$YARN_VERSION
       - run: node -v
       - run: yarn -v
-      - name: Bootstrap OpenSearch Dashboards with plugin
+      - name: Bootstrap plugin/OpenSearch-Dashboards
         run: |
+          mkdir -p OpenSearch-Dashboards/plugins
+          mv alerting-dashboards-plugin OpenSearch-Dashboards/plugins
           cd OpenSearch-Dashboards/plugins/alerting-dashboards-plugin
           yarn osd bootstrap
-      - name: Run OpenSearch Dashboards server
+      - name: Run OpenSearch-Dashboards server
         run: |
           cd OpenSearch-Dashboards
           yarn start --no-base-path --no-watch --server.host="0.0.0.0" &
           sleep 300
-        # timeout 300 bash -c 'while [[ "$(curl -s -o /dev/null -w ''%{http_code}'' localhost:5601/api/status)" != "200" ]]; do sleep 5; done'
-      - name: Run Cypress tests
+        # timeout 300 bash -c 'while [[ "$(curl -s localhost:5601/api/status | jq -r '.status.overall.state')" != "green" ]]; do sleep 5; done'
+      # for now just chrome, use matrix to do all browsers later
+      - name: Cypress tests
         uses: cypress-io/github-action@v2
         with:
           working-directory: OpenSearch-Dashboards/plugins/alerting-dashboards-plugin
           command: yarn run cypress run
-
+          wait-on: 'http://localhost:5601'
+          browser: chrome
       # Screenshots are only captured on failure, will change this once we do visual regression tests
       - uses: actions/upload-artifact@v1
         if: failure()
