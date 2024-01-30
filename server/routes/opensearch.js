@@ -54,6 +54,18 @@ export default function (services, router) {
     opensearchService.getMappings
   );
 
+  router.post(
+    {
+      path: '/api/alerting/_roles',
+      validate: {
+        body: schema.object({
+          role: schema.string(),
+        }),
+      },
+    },
+    opensearchService.getRoles
+  );
+
   router.get(
     {
       path: '/api/alerting/_plugins',

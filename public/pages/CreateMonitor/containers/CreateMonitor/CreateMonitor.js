@@ -24,6 +24,7 @@ import ConfigureTriggers from '../../../CreateTrigger/containers/ConfigureTrigge
 import { triggerToFormik } from '../../../CreateTrigger/containers/CreateTrigger/utils/triggerToFormik';
 import WorkflowDetails from '../WorkflowDetails/WorkflowDetails';
 import { getInitialValues, getPlugins, submit } from './utils/helpers';
+import MonitorSecurity from '../MonitorSecurity';
 
 export default class CreateMonitor extends Component {
   static defaultProps = {
@@ -172,6 +173,8 @@ export default class CreateMonitor extends Component {
                           httpClient={httpClient}
                           errors={errors}
                         />
+                        <EuiSpacer />
+                        <MonitorSecurity values={values} httpClient={httpClient} errors={errors} />
                       </>
                     ) : null}
 

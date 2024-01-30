@@ -57,6 +57,86 @@ exports[`DefineMonitor renders 1`] = `
         \\"match_all\\": {}
     }
 }",
+          "roles": Array [],
+          "searchType": "graph",
+          "timeField": "",
+          "timezone": Array [],
+          "uri": Object {
+            "api_type": "",
+            "path": "",
+            "path_params": "",
+            "url": "",
+          },
+          "weekly": Object {
+            "fri": false,
+            "mon": false,
+            "sat": false,
+            "sun": false,
+            "thur": false,
+            "tue": false,
+            "wed": false,
+          },
+        }
+      }
+    />
+    <EuiSpacer />
+  </div>
+  <div>
+    <MonitorSecurity
+      dataTypes={Object {}}
+      errors={Object {}}
+      httpClient={[MockFunction]}
+      isMinimal={false}
+      values={
+        Object {
+          "aggregationType": "count",
+          "aggregations": Array [],
+          "associatedMonitors": Object {
+            "sequence": Object {
+              "delegates": Array [],
+            },
+          },
+          "associatedMonitorsEditor": "",
+          "associatedMonitorsList": Array [],
+          "bucketUnitOfTime": "h",
+          "bucketValue": 1,
+          "cronExpression": "0 */1 * * *",
+          "daily": 0,
+          "description": "",
+          "detectorId": "",
+          "disabled": false,
+          "fieldName": Array [],
+          "filters": Array [],
+          "frequency": "interval",
+          "groupBy": Array [],
+          "groupByField": Array [
+            Object {
+              "label": "",
+            },
+          ],
+          "groupedOverFieldName": "bytes",
+          "groupedOverTop": 5,
+          "index": Array [],
+          "monitor_type": "query_level_monitor",
+          "monthly": Object {
+            "day": 1,
+            "type": "day",
+          },
+          "name": "",
+          "overDocuments": "all documents",
+          "period": Object {
+            "interval": 1,
+            "unit": "MINUTES",
+          },
+          "preventVisualEditor": false,
+          "queries": Array [],
+          "query": "{
+    \\"size\\": 0,
+    \\"query\\": {
+        \\"match_all\\": {}
+    }
+}",
+          "roles": Array [],
           "searchType": "graph",
           "timeField": "",
           "timezone": Array [],
@@ -124,6 +204,85 @@ exports[`DefineMonitor renders 1`] = `
 
 exports[`DefineMonitor should show warning in case of Ad monitor and plugin is not installed 1`] = `
 <div>
+  <div>
+    <MonitorSecurity
+      dataTypes={Object {}}
+      errors={Object {}}
+      httpClient={[MockFunction]}
+      isMinimal={false}
+      values={
+        Object {
+          "aggregationType": "count",
+          "aggregations": Array [],
+          "associatedMonitors": Object {
+            "sequence": Object {
+              "delegates": Array [],
+            },
+          },
+          "associatedMonitorsEditor": "",
+          "associatedMonitorsList": Array [],
+          "bucketUnitOfTime": "h",
+          "bucketValue": 1,
+          "cronExpression": "0 */1 * * *",
+          "daily": 0,
+          "description": "",
+          "detectorId": "",
+          "disabled": false,
+          "fieldName": Array [],
+          "filters": Array [],
+          "frequency": "interval",
+          "groupBy": Array [],
+          "groupByField": Array [
+            Object {
+              "label": "",
+            },
+          ],
+          "groupedOverFieldName": "bytes",
+          "groupedOverTop": 5,
+          "index": Array [],
+          "monitor_type": "query_level_monitor",
+          "monthly": Object {
+            "day": 1,
+            "type": "day",
+          },
+          "name": "",
+          "overDocuments": "all documents",
+          "period": Object {
+            "interval": 1,
+            "unit": "MINUTES",
+          },
+          "preventVisualEditor": false,
+          "queries": Array [],
+          "query": "{
+    \\"size\\": 0,
+    \\"query\\": {
+        \\"match_all\\": {}
+    }
+}",
+          "roles": Array [],
+          "searchType": "ad",
+          "timeField": "",
+          "timezone": Array [],
+          "uri": Object {
+            "api_type": "",
+            "path": "",
+            "path_params": "",
+            "url": "",
+          },
+          "weekly": Object {
+            "fri": false,
+            "mon": false,
+            "sat": false,
+            "sun": false,
+            "thur": false,
+            "tue": false,
+            "wed": false,
+          },
+        }
+      }
+    />
+    <EuiSpacer />
+  </div>
   <ContentPanel
     actions={
       Array [
