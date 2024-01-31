@@ -62,13 +62,24 @@ export class AlertingPlugin implements Plugin<AlertingSetup, AlertingStart, Aler
       },
     });
 
+    // TODO: For 2.12
+    // Connect with FE engineer
+    // Owning the release? Alerting dashboards
+    // note to inc add more features related to plugins
+    // feedback tbd
+    // telemetry AOS, ashwinpc
+    // use availiability service
+    // call out the dynamic nature for summary and suggestion
+    // --- prioritize hardcoded
+    // default type
+    // support inline
+    // pull in josh
     if (assistantDashboards) {
       assistantDashboards.registerPalantir([
         {
           key: 'query_level_monitor',
-          type: 'summaryWithSuggestions',
           summary: 'Monitoring on the query level',
-          suggestion: 'How to better configure my monitor?',
+          suggestions: ['How to better configure my monitor?'],
         },
       ]);
     }

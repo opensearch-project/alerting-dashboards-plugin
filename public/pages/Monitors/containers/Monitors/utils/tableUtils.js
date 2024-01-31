@@ -23,25 +23,17 @@ export const columns = [
     name: 'Monitor name',
     sortable: true,
     textOnly: true,
-    render: (name, item) =>
-      PalantirComponent ? (
-        <PalantirComponent>
-          <EuiLink
-            key={`${item.item_type}`}
-            data-test-subj={name}
-            href={`${PLUGIN_NAME}#/monitors/${item.id}?type=${item.monitor.type}`}
-          >
-            {name}
-          </EuiLink>
-        </PalantirComponent>
-      ) : (
+    render: (name, item) => (
+      <PalantirComponent>
         <EuiLink
+          key={`${item.item_type}`}
           data-test-subj={name}
           href={`${PLUGIN_NAME}#/monitors/${item.id}?type=${item.monitor.type}`}
         >
           {name}
         </EuiLink>
-      ),
+      </PalantirComponent>
+    ),
   },
   {
     field: 'enabled',
