@@ -24,6 +24,7 @@ import { getTime } from '../../../../pages/MonitorDetails/components/MonitorOver
 import { PLUGIN_NAME } from '../../../../../utils/constants';
 import {
   ALERT_STATE,
+  DEFAULT_EMPTY_DATA,
   MONITOR_GROUP_BY,
   MONITOR_INPUT_DETECTOR_ID,
   MONITOR_TYPE,
@@ -35,8 +36,6 @@ import { UNITS_OF_TIME } from '../../../../pages/CreateMonitor/components/Monito
 import { DEFAULT_WHERE_EXPRESSION_TEXT } from '../../../../pages/CreateMonitor/components/MonitorExpressions/expressions/utils/whereHelpers';
 import { acknowledgeAlerts, backendErrorNotification } from '../../../../utils/helpers';
 import {
-  displayAcknowledgedAlertsToast,
-  filterActiveAlerts,
   getQueryObjectFromState,
   getURLQueryParams,
   insertGroupByColumn,
@@ -54,6 +53,11 @@ import {
   TABLE_TAB_IDS,
 } from '../../../../pages/Dashboard/components/FindingsDashboard/findingsUtils';
 import FindingsDashboard from '../../../../pages/Dashboard/containers/FindingsDashboard';
+import { CLUSTER_METRICS_CROSS_CLUSTER_ALERT_TABLE_COLUMN } from '../../../../pages/CreateMonitor/components/ClusterMetricsMonitor/utils/clusterMetricsMonitorConstants';
+import {
+  getDataSources,
+  getLocalClusterName,
+} from '../../../../pages/CreateMonitor/components/CrossClusterConfigurations/utils/helpers';
 
 export const DEFAULT_NUM_FLYOUT_ROWS = 10;
 
@@ -73,6 +77,7 @@ export default class AlertsDashboardFlyoutComponent extends Component {
       alerts: [],
       alertState: alertState,
       loading: true,
+      localClusterName: undefined,
       monitor: monitor,
       monitorIds: [monitor_id],
       monitorType: monitorType,
@@ -103,6 +108,7 @@ export default class AlertsDashboardFlyoutComponent extends Component {
       alertState,
       monitorIds
     );
+    this.getLocalClusterName();
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -141,13 +147,19 @@ export default class AlertsDashboardFlyoutComponent extends Component {
   getMultipleGraphConditions = (trigger) => {
     let conditions = _.get(trigger, 'condition.script.source');
     if (_.isEmpty(conditions)) {
-      return '-';
+      return DEFAULT_EMPTY_DATA;
     } else {
       conditions = conditions.replaceAll(' && ', '&AND&');
       conditions = conditions.replaceAll(' || ', '&OR&');
       conditions = conditions.split(/&/);
       return conditions.join('\n');
     }
+  };
+
+  getLocalClusterName = async () => {
+    this.setState({
+      localClusterName: await getLocalClusterName(this.props.httpClient),
+    });
   };
 
   getSeverityText = (severity) => {
@@ -318,6 +330,10 @@ export default class AlertsDashboardFlyoutComponent extends Component {
       switch (monitorType) {
         case MONITOR_TYPE.BUCKET_LEVEL:
           columns = insertGroupByColumn(groupBy);
+          break;
+        case MONITOR_TYPE.CLUSTER_METRICS:
+          columns = _.cloneDeep(queryColumns);
+          columns.push(CLUSTER_METRICS_CROSS_CLUSTER_ALERT_TABLE_COLUMN);
           break;
         case MONITOR_TYPE.DOC_LEVEL:
           columns = _.cloneDeep(queryColumns);
@@ -495,7 +511,7 @@ export default class AlertsDashboardFlyoutComponent extends Component {
       triggerID,
       trigger_name,
     } = this.props;
-    const { loading, monitor, monitorType, tabContent } = this.state;
+    const { loading, localClusterName, monitor, monitorType, tabContent } = this.state;
     const searchType = _.get(monitor, 'ui_metadata.search.searchType', SEARCH_TYPE.GRAPH);
     const triggerType = this.getTriggerType(monitorType);
 
@@ -511,7 +527,7 @@ export default class AlertsDashboardFlyoutComponent extends Component {
       searchType === SEARCH_TYPE.GRAPH &&
       (monitorType === MONITOR_TYPE.BUCKET_LEVEL || monitorType === MONITOR_TYPE.DOC_LEVEL)
         ? this.getMultipleGraphConditions(trigger)
-        : _.get(trigger, 'condition.script.source', '-');
+        : _.get(trigger, 'condition.script.source', DEFAULT_EMPTY_DATA);
 
     let displayMultipleConditions;
     switch (monitorType) {
@@ -526,7 +542,7 @@ export default class AlertsDashboardFlyoutComponent extends Component {
     const filters =
       monitorType === MONITOR_TYPE.BUCKET_LEVEL && searchType === SEARCH_TYPE.GRAPH
         ? this.getBucketLevelGraphFilter(trigger)
-        : '-';
+        : DEFAULT_EMPTY_DATA;
 
     const bucketValue = _.get(monitor, 'ui_metadata.search.bucketValue');
     let bucketUnitOfTime = _.get(monitor, 'ui_metadata.search.bucketUnitOfTime');
@@ -536,7 +552,7 @@ export default class AlertsDashboardFlyoutComponent extends Component {
     const timeRangeForLast =
       bucketValue !== undefined && !_.isEmpty(bucketUnitOfTime)
         ? `${bucketValue} ${bucketUnitOfTime}`
-        : '-';
+        : DEFAULT_EMPTY_DATA;
 
     let displayTableTabs;
     switch (monitorType) {
@@ -551,6 +567,7 @@ export default class AlertsDashboardFlyoutComponent extends Component {
       monitorType === MONITOR_TYPE.COMPOSITE_LEVEL ? '?type=workflow' : ''
     }`;
 
+    const dataSources = getDataSources(monitor, localClusterName).join('\n');
     return (
       <div>
         <EuiFlexGroup>
@@ -566,7 +583,7 @@ export default class AlertsDashboardFlyoutComponent extends Component {
           <EuiFlexItem>
             <EuiText size={'m'} data-test-subj={`alertsDashboardFlyout_severity_${trigger_name}`}>
               <strong>Severity</strong>
-              <p>{this.getSeverityText(severity) || severity || '-'}</p>
+              <p>{this.getSeverityText(severity) || severity || DEFAULT_EMPTY_DATA}</p>
             </EuiText>
           </EuiFlexItem>
         </EuiFlexGroup>
@@ -597,6 +614,12 @@ export default class AlertsDashboardFlyoutComponent extends Component {
               <p>
                 <EuiLink href={monitorUrl}>{monitor_name}</EuiLink>
               </p>
+            </EuiText>
+          </EuiFlexItem>
+          <EuiFlexItem>
+            <EuiText size={'m'}>
+              <strong>Monitor data sources</strong>
+              <p style={{ whiteSpace: 'pre-wrap' }}>{dataSources}</p>
             </EuiText>
           </EuiFlexItem>
         </EuiFlexGroup>
@@ -651,7 +674,7 @@ export default class AlertsDashboardFlyoutComponent extends Component {
                       ? 'Loading groups...'
                       : !_.isEmpty(groupBy)
                       ? _.join(_.orderBy(groupBy), ', ')
-                      : '-'}
+                      : DEFAULT_EMPTY_DATA}
                   </p>
                 </EuiText>
               </EuiFlexItem>

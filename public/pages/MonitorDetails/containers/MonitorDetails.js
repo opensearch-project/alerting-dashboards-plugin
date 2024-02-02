@@ -47,6 +47,7 @@ import monitorToFormik from '../../CreateMonitor/containers/CreateMonitor/utils/
 import FindingsDashboard from '../../Dashboard/containers/FindingsDashboard';
 import { TABLE_TAB_IDS } from '../../Dashboard/components/FindingsDashboard/findingsUtils';
 import { DeleteMonitorModal } from '../../../components/DeleteModal/DeleteMonitorModal';
+import { getLocalClusterName } from '../../CreateMonitor/components/CrossClusterConfigurations/utils/helpers';
 
 export default class MonitorDetails extends Component {
   constructor(props) {
@@ -72,6 +73,7 @@ export default class MonitorDetails extends Component {
       isJsonModalOpen: false,
       tabId: TABLE_TAB_IDS.ALERTS.id,
       showDeleteModal: false,
+      localClusterName: undefined,
     };
   }
 
@@ -89,6 +91,7 @@ export default class MonitorDetails extends Component {
 
   componentDidMount() {
     this.getMonitor(this.props.match.params.monitorId);
+    this.getLocalClusterName();
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -103,6 +106,12 @@ export default class MonitorDetails extends Component {
   componentWillUnmount() {
     this.props.setFlyout(null);
   }
+
+  getLocalClusterName = async () => {
+    this.setState({
+      localClusterName: await getLocalClusterName(this.props.httpClient),
+    });
+  };
 
   getDetector = (id) => {
     const { httpClient, notifications } = this.props;
@@ -407,6 +416,7 @@ export default class MonitorDetails extends Component {
       isJsonModalOpen,
       showDeleteModal,
       delegateMonitors,
+      localClusterName,
     } = this.state;
     const {
       location,
@@ -501,6 +511,8 @@ export default class MonitorDetails extends Component {
           detector={detector}
           detectorId={detectorId}
           delegateMonitors={delegateMonitors}
+          localClusterName={localClusterName}
+          setFlyout={setFlyout}
         />
         <EuiSpacer />
         <Triggers
