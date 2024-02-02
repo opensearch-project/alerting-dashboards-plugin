@@ -40,7 +40,15 @@ exports[`Triggers renders 1`] = `
     itemId="id"
     items={
       Array [
-        undefined,
+        Object {
+          "actions": Array [
+            Object {
+              "name": "Random Action",
+            },
+          ],
+          "name": "Random Trigger",
+          "severity": 1,
+        },
       ]
     }
     key="0"

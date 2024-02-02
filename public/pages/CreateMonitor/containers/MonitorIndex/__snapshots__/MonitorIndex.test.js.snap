@@ -15,6 +15,7 @@ exports[`MonitorIndex renders 1`] = `
       "associatedMonitorsList": Array [],
       "bucketUnitOfTime": "h",
       "bucketValue": 1,
+      "clusterNames": Array [],
       "cronExpression": "0 */1 * * *",
       "daily": 0,
       "description": "",
@@ -56,6 +57,7 @@ exports[`MonitorIndex renders 1`] = `
       "timezone": Array [],
       "uri": Object {
         "api_type": "",
+        "clusters": Array [],
         "path": "",
         "path_params": "",
         "url": "",
@@ -86,6 +88,7 @@ exports[`MonitorIndex renders 1`] = `
         Object {
           "async": true,
           "data-test-subj": "indicesComboBox",
+          "delimiter": ",",
           "isClearable": true,
           "isLoading": true,
           "onBlur": [Function],
@@ -160,6 +163,7 @@ exports[`MonitorIndex renders 1`] = `
                   "associatedMonitorsList": Array [],
                   "bucketUnitOfTime": "h",
                   "bucketValue": 1,
+                  "clusterNames": Array [],
                   "cronExpression": "0 */1 * * *",
                   "daily": 0,
                   "description": "",
@@ -201,6 +205,7 @@ exports[`MonitorIndex renders 1`] = `
                   "timezone": Array [],
                   "uri": Object {
                     "api_type": "",
+                    "clusters": Array [],
                     "path": "",
                     "path_params": "",
                     "url": "",
@@ -251,6 +256,7 @@ exports[`MonitorIndex renders 1`] = `
                   "associatedMonitorsList": Array [],
                   "bucketUnitOfTime": "h",
                   "bucketValue": 1,
+                  "clusterNames": Array [],
                   "cronExpression": "0 */1 * * *",
                   "daily": 0,
                   "description": "",
@@ -292,6 +298,7 @@ exports[`MonitorIndex renders 1`] = `
                   "timezone": Array [],
                   "uri": Object {
                     "api_type": "",
+                    "clusters": Array [],
                     "path": "",
                     "path_params": "",
                     "url": "",
@@ -406,6 +413,7 @@ exports[`MonitorIndex renders 1`] = `
                           "associatedMonitorsList": Array [],
                           "bucketUnitOfTime": "h",
                           "bucketValue": 1,
+                          "clusterNames": Array [],
                           "cronExpression": "0 */1 * * *",
                           "daily": 0,
                           "description": "",
@@ -447,6 +455,7 @@ exports[`MonitorIndex renders 1`] = `
                           "timezone": Array [],
                           "uri": Object {
                             "api_type": "",
+                            "clusters": Array [],
                             "path": "",
                             "path_params": "",
                             "url": "",
@@ -497,6 +506,7 @@ exports[`MonitorIndex renders 1`] = `
                           "associatedMonitorsList": Array [],
                           "bucketUnitOfTime": "h",
                           "bucketValue": 1,
+                          "clusterNames": Array [],
                           "cronExpression": "0 */1 * * *",
                           "daily": 0,
                           "description": "",
@@ -538,6 +548,7 @@ exports[`MonitorIndex renders 1`] = `
                           "timezone": Array [],
                           "uri": Object {
                             "api_type": "",
+                            "clusters": Array [],
                             "path": "",
                             "path_params": "",
                             "url": "",
@@ -559,6 +570,7 @@ exports[`MonitorIndex renders 1`] = `
                       Object {
                         "async": true,
                         "data-test-subj": "indicesComboBox",
+                        "delimiter": ",",
                         "isClearable": true,
                         "isLoading": true,
                         "onBlur": [Function],
@@ -588,6 +600,7 @@ exports[`MonitorIndex renders 1`] = `
                       async={true}
                       compressed={false}
                       data-test-subj="indicesComboBox"
+                      delimiter=","
                       fullWidth={false}
                       id="index"
                       isClearable={true}
