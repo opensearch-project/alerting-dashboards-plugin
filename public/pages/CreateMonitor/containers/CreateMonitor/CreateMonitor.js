@@ -24,6 +24,10 @@ import ConfigureTriggers from '../../../CreateTrigger/containers/ConfigureTrigge
 import { triggerToFormik } from '../../../CreateTrigger/containers/CreateTrigger/utils/triggerToFormik';
 import WorkflowDetails from '../WorkflowDetails/WorkflowDetails';
 import { getInitialValues, getPlugins, submit } from './utils/helpers';
+import {
+  getPerformanceModal,
+  RECOMMENDED_DURATION,
+} from '../../components/QueryPerformance/QueryPerformance';
 
 export default class CreateMonitor extends Component {
   static defaultProps = {
@@ -51,10 +55,13 @@ export default class CreateMonitor extends Component {
       performanceResponse: null,
       initialValues,
       triggerToEdit,
+      createModalOpen: false,
+      formikBag: undefined,
     };
 
     this.onCancel = this.onCancel.bind(this);
     this.onSubmit = this.onSubmit.bind(this);
+    this.evaluateSubmission = this.evaluateSubmission.bind(this);
   }
 
   componentDidMount() {
@@ -96,6 +103,27 @@ export default class CreateMonitor extends Component {
     }
   };
 
+  evaluateSubmission(values, formikBag) {
+    const { performanceResponse } = this.props;
+    const { createModalOpen } = this.state;
+    const monitorDurationCallout = _.get(performanceResponse, 'took') >= RECOMMENDED_DURATION;
+
+    // TODO: Need to confirm the purpose of requestDuration.
+    //  There's no explanation for it in the frontend code even back to opendistro implementation.
+    const requestDurationCallout =
+      _.get(performanceResponse, 'invalid.path') >= RECOMMENDED_DURATION;
+    const displayPerfCallOut = monitorDurationCallout || requestDurationCallout;
+
+    if (!createModalOpen && displayPerfCallOut) {
+      this.setState({
+        createModalOpen: true,
+        formikBag: formikBag,
+      });
+    } else {
+      this.onSubmit(values, formikBag);
+    }
+  }
+
   onSubmit(values, formikBag) {
     const { edit, history, updateMonitor, notifications, httpClient } = this.props;
     const { triggerToEdit } = this.state;
@@ -134,11 +162,15 @@ export default class CreateMonitor extends Component {
       isDarkMode,
       notificationService,
     } = this.props;
-    const { initialValues, plugins } = this.state;
+    const { createModalOpen, initialValues, plugins } = this.state;
 
     return (
       <div style={{ padding: '25px 50px' }}>
-        <Formik initialValues={initialValues} onSubmit={this.onSubmit} validateOnChange={false}>
+        <Formik
+          initialValues={initialValues}
+          onSubmit={this.evaluateSubmission}
+          validateOnChange={false}
+        >
           {({ values, errors, handleSubmit, isSubmitting, isValid, touched }) => {
             const isComposite = values.monitor_type === MONITOR_TYPE.COMPOSITE_LEVEL;
 
@@ -239,6 +271,23 @@ export default class CreateMonitor extends Component {
                     })
                   }
                 />
+
+                {createModalOpen &&
+                  getPerformanceModal({
+                    edit: edit,
+                    onClose: () => {
+                      this.state.formikBag.setSubmitting(false);
+                      this.setState({
+                        createModalOpen: false,
+                        formikBag: undefined,
+                      });
+                    },
+                    onSubmit: () => {
+                      this.onSubmit(values, this.state.formikBag);
+                      this.setState({ createModalOpen: false });
+                    },
+                    values: values,
+                  })}
               </Fragment>
             );
           }}
