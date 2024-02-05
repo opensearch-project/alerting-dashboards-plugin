@@ -13,6 +13,7 @@ import { validateIndex, hasError, isInvalid } from '../../../../utils/validate';
 import { canAppendWildcard, createReasonableWait, getMatchedOptions } from './utils/helpers';
 import { MONITOR_TYPE } from '../../../../utils/constants';
 import CrossClusterConfiguration from '../../components/CrossClusterConfigurations/containers';
+import { REMOTE_MONITORING_ENABLED_SETTING_PATH } from '../../components/CrossClusterConfigurations/components/ExperimentalBanner';
 
 const CustomOption = ({ option, searchValue, contentClassName }) => {
   const { health, label, index } = option;
@@ -54,6 +55,7 @@ class MonitorIndex extends React.Component {
       allAliases: [],
       partialMatchedAliases: [],
       exactMatchedAliases: [],
+      remoteMonitoringEnabled: false,
     };
 
     this.onCreateOption = this.onCreateOption.bind(this);
@@ -61,11 +63,44 @@ class MonitorIndex extends React.Component {
     this.handleQueryIndices = this.handleQueryIndices.bind(this);
     this.handleQueryAliases = this.handleQueryAliases.bind(this);
     this.onFetch = this.onFetch.bind(this);
+    this.getSettings = this.getSettings.bind(this);
   }
 
   componentDidMount() {
     // Simulate initial load.
     this.onSearchChange('');
+    this.getSettings();
+  }
+
+  async getSettings() {
+    this.setState({ isLoading: true });
+    try {
+      const { httpClient } = this.props;
+      const response = await httpClient.get('../api/alerting/_settings');
+      console.info(`hurnneyt getSettings::response = ${JSON.stringify(response, null, 4)}`);
+      if (response.ok) {
+        const { defaults, transient, persistent } = response.resp;
+        let remoteMonitoringEnabled = _.get(
+          // If present, take the 'transient' setting.
+          transient,
+          REMOTE_MONITORING_ENABLED_SETTING_PATH,
+          // Else take the 'persistent' setting.
+          _.get(
+            persistent,
+            REMOTE_MONITORING_ENABLED_SETTING_PATH,
+            // Else take the 'default' setting.
+            _.get(defaults, REMOTE_MONITORING_ENABLED_SETTING_PATH, false)
+          )
+        );
+        // Boolean settings are returned as strings (e.g., `"true"`, and `"false"`). Constructing boolean value from the string.
+        if (typeof remoteMonitoringEnabled === 'string')
+          remoteMonitoringEnabled = JSON.parse(remoteMonitoringEnabled);
+        this.setState({ remoteMonitoringEnabled: remoteMonitoringEnabled });
+      }
+    } catch (e) {
+      console.log('Error while retrieving settings', e);
+    }
+    this.setState({ isLoading: false });
   }
 
   onCreateOption(searchValue, selectedOptions, setFieldValue, supportMultipleIndices) {
@@ -207,6 +242,7 @@ class MonitorIndex extends React.Component {
       allAliases,
       partialMatchedAliases,
       exactMatchedAliases,
+      remoteMonitoringEnabled,
     } = this.state;
 
     const { visibleOptions } = getMatchedOptions(
@@ -236,7 +272,7 @@ class MonitorIndex extends React.Component {
 
     return (
       <>
-        {supportsCrossClusterMonitoring ? (
+        {remoteMonitoringEnabled && supportsCrossClusterMonitoring ? (
           <CrossClusterConfiguration monitorType={this.props.monitorType} httpClient={httpClient} />
         ) : (
           <FormikComboBox

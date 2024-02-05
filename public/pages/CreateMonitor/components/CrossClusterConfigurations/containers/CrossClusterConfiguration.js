@@ -10,6 +10,7 @@ import { FormikComboBox } from '../../../../../components/FormControls';
 import { MONITOR_TYPE } from '../../../../../utils/constants';
 import { connect } from 'formik';
 import { validateIndex } from '../../../../../utils/validate';
+import { ExperimentalBanner } from '../components/ExperimentalBanner';
 
 export const CROSS_CLUSTER_SETUP_LINK =
   'https://opensearch.org/docs/latest/security/access-control/cross-cluster-search/';
@@ -322,6 +323,7 @@ export class CrossClusterConfiguration extends Component {
 
     return (
       <>
+        <ExperimentalBanner />
         <FormikComboBox
           name={'clusterNames'}
           formRow={true}
@@ -349,6 +351,7 @@ export class CrossClusterConfiguration extends Component {
             renderOption: this.renderClusterOption,
             onChange: this.onClustersChange,
             selectedOptions: selectedClusters,
+            'data-test-subj': 'clustersComboBox',
           }}
         />
 
@@ -382,6 +385,7 @@ export class CrossClusterConfiguration extends Component {
               onChange: this.onIndexesChange,
               onCreateOption: this.onCreateOption,
               selectedOptions: selectedIndexes,
+              'data-test-subj': 'indicesComboBox',
             }}
           />
         )}
