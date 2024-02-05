@@ -20,13 +20,12 @@ export const ExperimentalBanner = () => {
             href="https://opensearch.org/docs/latest/observing-your-data/alerting/monitors/"
             target="_blank"
           >
-            Alerting Documentation
+            Alerting documentation
           </EuiLink>
           . To leave feedback, visit&nbsp;
           <EuiLink target="_blank" href="https://forum.opensearch.org/">
             forum.opensearch.org
           </EuiLink>
-          .
         </p>
       </EuiCallOut>
       <EuiSpacer />
