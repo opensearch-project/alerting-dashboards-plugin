@@ -20,16 +20,10 @@ const MonitorOverview = ({
   detector,
   detectorId,
   delegateMonitors,
+  localClusterName,
+  setFlyout,
 }) => {
   const [flyoutData, setFlyoutData] = useState(undefined);
-  const items = getOverviewStats(
-    monitor,
-    monitorId,
-    monitorVersion,
-    activeCount,
-    detector,
-    detectorId
-  );
 
   let relatedMonitorsStat = null;
   let relatedMonitorsData = null;
@@ -76,6 +70,16 @@ const MonitorOverview = ({
 
   const onFlyoutClose = () => setFlyoutData(undefined);
 
+  const items = getOverviewStats(
+    monitor,
+    monitorId,
+    monitorVersion,
+    activeCount,
+    detector,
+    detectorId,
+    localClusterName,
+    setFlyout
+  );
   return (
     <>
       {flyoutData && (

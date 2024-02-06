@@ -27,6 +27,10 @@ describe('getOverviewStats', () => {
         value: 'Extraction Query',
       },
       {
+        header: 'Data sources',
+        value: DEFAULT_EMPTY_DATA,
+      },
+      {
         header: 'Total active alerts',
         value: activeCount,
       },

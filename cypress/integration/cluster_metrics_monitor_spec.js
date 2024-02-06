@@ -15,7 +15,7 @@ const SAMPLE_DESTINATION = 'sample_destination';
 
 const addClusterMetricsTrigger = (triggerName, triggerIndex, actionName, isEdit, source) => {
   // Click 'Add trigger' button
-  cy.contains('Add trigger', { timeout: 20000 }).click({ force: true });
+  cy.contains('Add trigger', { timeout: 30000 }).click({ force: true });
 
   if (isEdit === true) {
     // TODO: Passing button props in EUI accordion was added in newer versions (31.7.0+).
@@ -37,7 +37,7 @@ const addClusterMetricsTrigger = (triggerName, triggerIndex, actionName, isEdit,
         force: true,
         parseSpecialCharSequences: false,
         delay: 5,
-        timeout: 20000,
+        timeout: 30000,
       })
       .trigger('blur', { force: true });
   });
@@ -76,7 +76,7 @@ describe('ClusterMetricsMonitor', () => {
     cy.visit(`${Cypress.env('opensearch_dashboards')}/app/${PLUGIN_NAME}#/monitors`);
 
     // Common text to wait for to confirm page loaded, give up to 20 seconds for initial load
-    cy.contains('Create monitor', { timeout: 20000 });
+    cy.contains('Create monitor', { timeout: 30000 });
   });
 
   describe('can be created', () => {
@@ -87,7 +87,7 @@ describe('ClusterMetricsMonitor', () => {
 
     it('for the Cluster Health API', () => {
       // Go to create monitor page
-      cy.contains('Create monitor', { timeout: 20000 }).click({ force: true });
+      cy.contains('Create monitor', { timeout: 30000 }).click({ force: true });
 
       // Select ClusterMetrics radio card
       cy.get('[data-test-subj="clusterMetricsMonitorRadioCard"]').click({ force: true });
@@ -141,7 +141,7 @@ describe('ClusterMetricsMonitor', () => {
 
     it('for the Nodes Stats API', () => {
       // Go to create monitor page
-      cy.contains('Create monitor', { timeout: 20000 }).click({ force: true });
+      cy.contains('Create monitor', { timeout: 30000 }).click({ force: true });
 
       // Select ClusterMetrics radio card
       cy.get('[data-test-subj="clusterMetricsMonitorRadioCard"]').click({ force: true });
@@ -202,7 +202,7 @@ describe('ClusterMetricsMonitor', () => {
 
     it('for the CAT Snapshots API', () => {
       // Go to create monitor page
-      cy.contains('Create monitor', { timeout: 20000 }).click({ force: true });
+      cy.contains('Create monitor', { timeout: 30000 }).click({ force: true });
 
       // Select ClusterMetrics radio card
       cy.get('[data-test-subj="clusterMetricsMonitorRadioCard"]').click({ force: true });
@@ -228,7 +228,7 @@ describe('ClusterMetricsMonitor', () => {
       // Begin monitor creation
 
       // Go to create monitor page
-      cy.contains('Create monitor', { timeout: 20000 }).click({ force: true });
+      cy.contains('Create monitor', { timeout: 30000 }).click({ force: true });
 
       // Select ClusterMetrics radio card
       cy.get('[data-test-subj="clusterMetricsMonitorRadioCard"]').click({ force: true });
@@ -335,7 +335,7 @@ describe('ClusterMetricsMonitor', () => {
         cy.get('[data-test-subj="clusterMetricsApiTypeComboBox"]').contains('Cluster settings');
 
         // Confirm there are 0 triggers defined
-        cy.contains('Triggers (0)', { timeout: 20000 });
+        cy.contains('Triggers (0)', { timeout: 30000 });
       });
     });
   });

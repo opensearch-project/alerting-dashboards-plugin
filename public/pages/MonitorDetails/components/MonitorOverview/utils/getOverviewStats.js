@@ -5,7 +5,7 @@
 
 import React from 'react';
 import _ from 'lodash';
-import { EuiIcon, EuiLink } from '@elastic/eui';
+import { EuiBadge, EuiLink } from '@elastic/eui';
 import moment from 'moment-timezone';
 import getScheduleFromMonitor from './getScheduleFromMonitor';
 import {
@@ -16,6 +16,8 @@ import {
 } from '../../../../../utils/constants';
 import { API_TYPES } from '../../../../CreateMonitor/components/ClusterMetricsMonitor/utils/clusterMetricsMonitorConstants';
 import { getApiType } from '../../../../CreateMonitor/components/ClusterMetricsMonitor/utils/clusterMetricsMonitorHelpers';
+import { DATA_SOURCES_FLYOUT_TYPE } from '../../../../../components/Flyout/flyouts/dataSources';
+import { getDataSources } from '../../../../CreateMonitor/components/CrossClusterConfigurations/utils/helpers';
 
 // TODO: used in multiple places, move into helper
 export function getTime(time) {
@@ -59,13 +61,56 @@ function getMonitorLevelType(monitorType) {
   }
 }
 
+const getDataSourcesDisplay = (
+  dataSources = [],
+  localClusterName = DEFAULT_EMPTY_DATA,
+  monitorType,
+  setFlyout
+) => {
+  const closeFlyout = () => {
+    if (typeof setFlyout === 'function') setFlyout(null);
+  };
+
+  const openFlyout = () => {
+    if (typeof setFlyout === 'function') {
+      setFlyout({
+        type: DATA_SOURCES_FLYOUT_TYPE,
+        payload: {
+          closeFlyout: closeFlyout,
+          dataSources: dataSources,
+          localClusterName: localClusterName,
+          monitorType: monitorType,
+        },
+      });
+    }
+  };
+
+  return dataSources.length <= 1 ? (
+    dataSources[0] || localClusterName
+  ) : (
+    <>
+      {dataSources[0]}&nbsp;
+      <EuiBadge
+        color={'primary'}
+        onClick={openFlyout}
+        onClickAriaLabel={'View all data sources'}
+        data-test-subj={'dataSourcesFlyout_badge'}
+      >
+        View all {dataSources.length}
+      </EuiBadge>
+    </>
+  );
+};
+
 export default function getOverviewStats(
   monitor,
   monitorId,
   monitorVersion,
   activeCount,
   detector,
-  detectorId
+  detectorId,
+  localClusterName,
+  setFlyout
 ) {
   const searchType = _.has(monitor, 'inputs[0].uri')
     ? SEARCH_TYPE.CLUSTER_METRICS
@@ -90,6 +135,9 @@ export default function getOverviewStats(
   if (!monitorLevelType) {
     monitorLevelType = _.get(monitor, 'ui_metadata.monitor_type', 'query_level_monitor');
   }
+
+  const dataSources = getDataSources(monitor, localClusterName);
+
   const overviewStats = [
     {
       header: 'Monitor type',
@@ -100,6 +148,10 @@ export default function getOverviewStats(
       value: getMonitorType(searchType, monitor),
     },
     ...detectorOverview,
+    {
+      header: 'Data sources',
+      value: getDataSourcesDisplay(dataSources, localClusterName, monitorLevelType, setFlyout),
+    },
     {
       header: 'Total active alerts',
       value: activeCount,

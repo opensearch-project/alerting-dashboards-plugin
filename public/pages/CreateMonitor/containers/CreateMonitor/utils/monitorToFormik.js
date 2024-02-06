@@ -37,6 +37,8 @@ export default function monitorToFormik(monitor) {
         return {
           index: FORMIK_INITIAL_VALUES.index,
           uri: inputs[0].uri,
+          clusterNames: inputs[0].uri.clusters || [],
+          searchType: SEARCH_TYPE.CLUSTER_METRICS,
         };
       case MONITOR_TYPE.DOC_LEVEL:
         return docLevelInputToFormik(monitor);
