@@ -68,6 +68,7 @@ describe('clusterMetricsMonitorHelpers', () => {
             path: path,
             path_params: '',
             url: `http://localhost:9200/${path}`,
+            clusters: [],
           },
         };
         expect(buildClusterMetricsRequest(values)).toEqual(expectedResult.uri);
@@ -90,6 +91,7 @@ describe('clusterMetricsMonitorHelpers', () => {
             path: path,
             path_params: '/' + pathParams,
             url: `http://localhost:9200/${path}/${pathParams}`,
+            clusters: [],
           },
         };
         expect(buildClusterMetricsRequest(values)).toEqual(expectedResult.uri);

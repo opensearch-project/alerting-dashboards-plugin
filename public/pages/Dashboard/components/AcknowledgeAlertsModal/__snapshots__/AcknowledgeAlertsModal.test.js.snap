@@ -44,6 +44,7 @@ exports[`AcknowledgeAlertsModal renders 1`] = `
       "associatedMonitorsList": Array [],
       "bucketUnitOfTime": "h",
       "bucketValue": 1,
+      "clusterNames": Array [],
       "cronExpression": "0 */1 * * *",
       "daily": 0,
       "description": "",
@@ -85,6 +86,7 @@ exports[`AcknowledgeAlertsModal renders 1`] = `
       "timezone": Array [],
       "uri": Object {
         "api_type": "",
+        "clusters": Array [],
         "path": "",
         "path_params": "",
         "url": "",

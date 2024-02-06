@@ -20,16 +20,26 @@ export const MAX_TRIGGERS = 10;
 //   retrieving the 'id' and causing it to behave strangely
 export function getUnwrappedTriggers(monitor) {
   return monitor.triggers.map((trigger) => {
-    switch (monitor.monitor_type) {
-      case MONITOR_TYPE.BUCKET_LEVEL:
-        return trigger[TRIGGER_TYPE.BUCKET_LEVEL];
-      case MONITOR_TYPE.DOC_LEVEL:
-        return trigger[TRIGGER_TYPE.DOC_LEVEL];
-      case MONITOR_TYPE.COMPOSITE_LEVEL:
-        return trigger[TRIGGER_TYPE.COMPOSITE_LEVEL];
-      default:
-        return trigger[TRIGGER_TYPE.QUERY_LEVEL];
+    let unwrappedTrigger = trigger;
+    if (Object.keys(trigger).length === 1) {
+      switch (monitor.monitor_type) {
+        case MONITOR_TYPE.BUCKET_LEVEL:
+          unwrappedTrigger = trigger[TRIGGER_TYPE.BUCKET_LEVEL];
+          break;
+        case MONITOR_TYPE.DOC_LEVEL:
+          unwrappedTrigger = trigger[TRIGGER_TYPE.DOC_LEVEL];
+          break;
+        case MONITOR_TYPE.COMPOSITE_LEVEL:
+          unwrappedTrigger = trigger[TRIGGER_TYPE.COMPOSITE_LEVEL];
+          break;
+        case MONITOR_TYPE.CLUSTER_METRICS:
+        case MONITOR_TYPE.QUERY_LEVEL:
+        default:
+          unwrappedTrigger = trigger[TRIGGER_TYPE.QUERY_LEVEL];
+          break;
+      }
     }
+    return unwrappedTrigger;
   });
 }
 

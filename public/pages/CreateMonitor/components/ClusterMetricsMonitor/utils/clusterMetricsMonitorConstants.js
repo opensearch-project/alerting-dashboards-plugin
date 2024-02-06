@@ -3,6 +3,9 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+import _ from 'lodash';
+import { DEFAULT_EMPTY_DATA } from '../../../../../utils/constants';
+
 export const URL_DEFAULT_PREFIX = 'http://localhost:9200';
 export const API_PATH_REQUIRED_PLACEHOLDER_TEXT = 'Select an API.';
 export const EMPTY_PATH_PARAMS_TEXT = 'Enter remaining path components and path parameters';
@@ -29,6 +32,14 @@ export const REST_API_REFERENCE = 'https://opensearch.org/docs/latest/opensearch
 export const DEFAULT_CLUSTER_METRICS_SCRIPT = {
   lang: 'painless',
   source: 'ctx.results[0] != null',
+};
+
+export const CLUSTER_METRICS_CROSS_CLUSTER_ALERT_TABLE_COLUMN = {
+  field: 'clusters',
+  name: 'Triggered clusters',
+  sortable: true,
+  truncateText: true,
+  render: (clusters = [DEFAULT_EMPTY_DATA]) => _.sortBy(clusters).join(', '),
 };
 
 export const API_TYPES = {

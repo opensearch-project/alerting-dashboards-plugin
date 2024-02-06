@@ -36,27 +36,7 @@ exports[`QueryPerformance renders 1`] = `
   >
     <div
       class="euiTextColor euiTextColor--subdued"
-    >
-      <span>
-        Check the performance of your query and make sure to follow best practices. 
-        <a
-          class="euiLink euiLink--primary"
-          href="https://docs-beta.opensearch.org/monitoring-plugins/alerting/"
-          rel="noopener noreferrer"
-          target="_blank"
-        >
-          Learn more
-          <div>
-            EuiIconMock
-          </div>
-          <span
-            class="euiScreenReaderOnly"
-          >
-            (opens in a new tab or window)
-          </span>
-        </a>
-      </span>
-    </div>
+    />
   </div>
   <hr
     class="euiHorizontalRule euiHorizontalRule--full euiHorizontalRule--marginXSmall"

@@ -69,4 +69,12 @@ export default function (services, router) {
     },
     opensearchService.getSettings
   );
+
+  router.get(
+    {
+      path: '/api/alerting/_health',
+      validate: false,
+    },
+    opensearchService.getClusterHealth
+  );
 }

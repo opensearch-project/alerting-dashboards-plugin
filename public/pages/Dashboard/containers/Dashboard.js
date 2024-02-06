@@ -40,6 +40,7 @@ import { MAX_ALERT_COUNT } from '../utils/constants';
 import AcknowledgeAlertsModal from '../components/AcknowledgeAlertsModal';
 import { getAlertsFindingColumn } from '../components/FindingsDashboard/findingsUtils';
 import { ChainedAlertDetailsFlyout } from '../components/ChainedAlertDetailsFlyout/ChainedAlertDetailsFlyout';
+import { CLUSTER_METRICS_CROSS_CLUSTER_ALERT_TABLE_COLUMN } from '../../CreateMonitor/components/ClusterMetricsMonitor/utils/clusterMetricsMonitorConstants';
 
 export default class Dashboard extends Component {
   constructor(props) {
@@ -363,6 +364,10 @@ export default class Dashboard extends Component {
       switch (monitorType) {
         case MONITOR_TYPE.BUCKET_LEVEL:
           columnType = insertGroupByColumn(groupBy);
+          break;
+        case MONITOR_TYPE.CLUSTER_METRICS:
+          columnType = _.cloneDeep(queryColumns);
+          columnType.push(CLUSTER_METRICS_CROSS_CLUSTER_ALERT_TABLE_COLUMN);
           break;
         case MONITOR_TYPE.DOC_LEVEL:
           columnType = _.cloneDeep(queryColumns);
