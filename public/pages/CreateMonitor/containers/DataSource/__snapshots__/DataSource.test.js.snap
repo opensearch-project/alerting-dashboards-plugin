@@ -20,9 +20,7 @@ exports[`DataSource renders 1`] = `
     httpClient={[MockFunction]}
     monitorType="query_level_monitor"
   />
-  <EuiSpacer
-    size="s"
-  />
+  <EuiSpacer />
   <MonitorTimeField />
 </ContentPanel>
 `;

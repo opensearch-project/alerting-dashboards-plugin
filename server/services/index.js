@@ -9,6 +9,7 @@ import OpensearchService from './OpensearchService';
 import MonitorService from './MonitorService';
 import AnomalyDetectorService from './AnomalyDetectorService';
 import FindingService from './FindingService';
+import CrossClusterService from './CrossClusterService';
 
 export {
   AlertService,
@@ -17,4 +18,5 @@ export {
   MonitorService,
   AnomalyDetectorService,
   FindingService,
+  CrossClusterService,
 };

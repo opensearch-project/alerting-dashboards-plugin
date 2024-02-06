@@ -49,8 +49,10 @@ export const FORMIK_INITIAL_VALUES = {
   /* DEFINE MONITOR */
   monitor_type: MONITOR_TYPE.QUERY_LEVEL,
   searchType: 'graph',
+  clusterNames: [],
   uri: {
     api_type: '',
+    clusters: [],
     path: '',
     path_params: '',
     url: '',

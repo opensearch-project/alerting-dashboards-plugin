@@ -10,6 +10,7 @@ import {
   EMAIL_ACCOUNT_BASE_API,
   EMAIL_GROUP_BASE_API,
   WORKFLOW_BASE_API,
+  CROSS_CLUSTER_BASE_API,
 } from '../../services/utils/constants';
 
 export default function alertingPlugin(Client, config, components) {
@@ -418,6 +419,24 @@ export default function alertingPlugin(Client, config, components) {
         },
       },
     },
+    method: 'GET',
+  });
+
+  alerting.getRemoteIndexes = ca({
+    url: {
+      fmt: `${CROSS_CLUSTER_BASE_API}/indexes?indexes=<%=indexes%>&include_mappings=<%=include_mappings%>`,
+      req: {
+        indexes: {
+          type: 'string',
+          required: true,
+        },
+        include_mappings: {
+          type: 'boolean',
+          required: false,
+        },
+      },
+    },
+    needBody: true,
     method: 'GET',
   });
 }

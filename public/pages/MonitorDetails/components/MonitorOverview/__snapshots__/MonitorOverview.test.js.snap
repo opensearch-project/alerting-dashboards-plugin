@@ -82,6 +82,20 @@ exports[`MonitorOverview renders 1`] = `
           class="euiText euiText--extraSmall"
         >
           <strong>
+            Data sources
+          </strong>
+          <div>
+            -
+          </div>
+        </div>
+      </div>
+      <div
+        class="euiFlexItem"
+      >
+        <div
+          class="euiText euiText--extraSmall"
+        >
+          <strong>
             Total active alerts
           </strong>
           <div>

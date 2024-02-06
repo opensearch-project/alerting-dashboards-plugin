@@ -170,12 +170,15 @@ export function formikToClusterMetricsInput(values) {
       url = url + pathParams + _.get(API_TYPES, `${apiType}.appendText`, '');
     }
   }
+  const clusterNames = _.get(values, 'clusterNames', []);
+
   return {
     uri: {
       api_type: apiType,
       path: path,
       path_params: pathParams,
       url: url,
+      clusters: clusterNames,
     },
   };
 }
@@ -204,7 +207,10 @@ export function formikToUiSearch(values) {
 }
 
 export function formikToIndices(values) {
-  return values.index.map(({ label }) => label);
+  const hasRemoteClusters = values.index.some(
+    ({ cluster, value }) => !_.isEmpty(cluster) && !_.isEmpty(value)
+  );
+  return values.index.map(({ label, value }) => (hasRemoteClusters ? value : label));
 }
 
 export function formikToQuery(values) {

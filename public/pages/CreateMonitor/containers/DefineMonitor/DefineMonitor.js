@@ -39,6 +39,7 @@ import ConfigureDocumentLevelQueries from '../../components/DocumentLevelMonitor
 import FindingsDashboard from '../../../Dashboard/containers/FindingsDashboard';
 import { validDocLevelGraphQueries } from '../../components/DocumentLevelMonitorQueries/utils/helpers';
 import { validateWhereFilters } from '../../components/MonitorExpressions/expressions/utils/whereHelpers';
+import { REMOTE_MONITORING_ENABLED_SETTING_PATH } from '../../components/CrossClusterConfigurations/components/ExperimentalBanner';
 
 function renderEmptyMessage(message) {
   return (
@@ -74,6 +75,7 @@ class DefineMonitor extends Component {
       plugins: [],
       loadingResponse: false,
       PanelComponent: props.flyoutMode ? ({ children }) => <>{children}</> : ContentPanel,
+      remoteMonitoringEnabled: false,
     };
 
     this.renderGraph = this.renderGraph.bind(this);
@@ -88,6 +90,7 @@ class DefineMonitor extends Component {
     this.getPlugins = this.getPlugins.bind(this);
     this.getSupportedApiList = this.getSupportedApiList.bind(this);
     this.showPluginWarning = this.showPluginWarning.bind(this);
+    this.getSettings = this.getSettings.bind(this);
   }
 
   componentDidMount() {
@@ -96,6 +99,7 @@ class DefineMonitor extends Component {
     const isGraph = searchType === SEARCH_TYPE.GRAPH;
     const hasIndices = !!index.length;
     const hasTimeField = !!timeField;
+    this.getSettings();
     if (isGraph && hasIndices) {
       this.onQueryMappings();
       if (hasTimeField || !this.requiresTimeField()) this.onRunQuery();
@@ -172,6 +176,34 @@ class DefineMonitor extends Component {
     if (prevSearchType !== searchType || prevMonitorType !== monitor_type || groupByCleared) {
       this.resetResponse();
       if (searchType === SEARCH_TYPE.CLUSTER_METRICS) this.getSupportedApiList();
+    }
+  }
+
+  async getSettings() {
+    try {
+      const { httpClient } = this.props;
+      const response = await httpClient.get('../api/alerting/_settings');
+      if (response.ok) {
+        const { defaults, transient, persistent } = response.resp;
+        let remoteMonitoringEnabled = _.get(
+          // If present, take the 'transient' setting.
+          transient,
+          REMOTE_MONITORING_ENABLED_SETTING_PATH,
+          // Else take the 'persistent' setting.
+          _.get(
+            persistent,
+            REMOTE_MONITORING_ENABLED_SETTING_PATH,
+            // Else take the 'default' setting.
+            _.get(defaults, REMOTE_MONITORING_ENABLED_SETTING_PATH, false)
+          )
+        );
+        // Boolean settings are returned as strings (e.g., `"true"`, and `"false"`). Constructing boolean value from the string.
+        if (typeof remoteMonitoringEnabled === 'string')
+          remoteMonitoringEnabled = JSON.parse(remoteMonitoringEnabled);
+        this.setState({ remoteMonitoringEnabled: remoteMonitoringEnabled });
+      }
+    } catch (e) {
+      console.log('Error while retrieving settings', e);
     }
   }
 
@@ -406,7 +438,8 @@ class DefineMonitor extends Component {
   }
 
   async onQueryMappings() {
-    const index = this.props.values.index.map(({ label }) => label);
+    // Indexes for remote clusters will store the index name in the 'value' attribute of the object, not the 'label' attribute.
+    const index = this.props.values.index.map(({ label, value }) => value || label);
     try {
       const mappings = await this.queryMappings(index);
       const dataTypes = getPathsPerDataType(mappings);
@@ -417,16 +450,34 @@ class DefineMonitor extends Component {
   }
 
   async queryMappings(index) {
-    if (!index.length) {
-      return {};
-    }
+    if (!index.length) return {};
 
     try {
-      const response = await this.props.httpClient.post('../api/alerting/_mappings', {
-        body: JSON.stringify({ index }),
-      });
+      // If any index contain ":", it indicates at least 1 remote index is configured.
+      const hasRemoteClusters = index.some((indexName) => indexName.includes(':'));
+      const response = hasRemoteClusters
+        ? await this.props.httpClient.get('../api/alerting/remote/indexes', {
+            query: {
+              indexes: index.join(','),
+              include_mappings: true,
+            },
+          })
+        : // Otherwise, all configured indexes are on the local cluster.
+          await this.props.httpClient.post('../api/alerting/_mappings', {
+            body: JSON.stringify({ index }),
+          });
       if (response.ok) {
-        return response.resp;
+        if (hasRemoteClusters) {
+          const mappings = {};
+          Object.entries(response.resp).forEach(([_, clusterInfo]) => {
+            Object.entries(clusterInfo.indexes).forEach(([indexName, indexInfo]) => {
+              mappings[indexName] = { mappings: indexInfo.mappings };
+            });
+          });
+          return mappings;
+        } else {
+          return response.resp;
+        }
       }
       return {};
     } catch (err) {
@@ -528,7 +579,9 @@ class DefineMonitor extends Component {
       requiresPathParams = _.isEmpty(requiresPathParams);
       if (!requiresPathParams) {
         const path = _.get(API_TYPES, `${apiKey}.paths.withoutPathParams`);
-        const values = { uri: { ...FORMIK_INITIAL_VALUES.uri, path } };
+        const values = {
+          uri: { ...FORMIK_INITIAL_VALUES.uri, path, clusterNames: [] },
+        };
         requests.push(buildClusterMetricsRequest(values));
       }
     });
@@ -593,16 +646,27 @@ class DefineMonitor extends Component {
   }
 
   render() {
-    const { values, errors, httpClient, detectorId, notifications, isDarkMode, flyoutMode } =
-      this.props;
-    const { dataTypes, PanelComponent } = this.state;
+    const {
+      values,
+      values: { monitor_type },
+      errors,
+      httpClient,
+      detectorId,
+      notifications,
+      isDarkMode,
+      flyoutMode,
+    } = this.props;
+    const { dataTypes, PanelComponent, remoteMonitoringEnabled } = this.state;
     const monitorContent = this.getMonitorContent();
     const { searchType } = this.props.values;
-    const isGraphOrQuery = searchType === SEARCH_TYPE.GRAPH || searchType === SEARCH_TYPE.QUERY;
+    const displayDataSourcePanel =
+      searchType === SEARCH_TYPE.GRAPH ||
+      searchType === SEARCH_TYPE.QUERY ||
+      (remoteMonitoringEnabled && monitor_type === MONITOR_TYPE.CLUSTER_METRICS);
 
     return (
       <div>
-        {!flyoutMode && isGraphOrQuery && (
+        {!flyoutMode && displayDataSourcePanel && (
           <div>
             <DataSource
               values={values}
@@ -612,6 +676,7 @@ class DefineMonitor extends Component {
               detectorId={detectorId}
               notifications={notifications}
               isDarkMode={isDarkMode}
+              remoteMonitoringEnabled={remoteMonitoringEnabled}
             />
             <EuiSpacer />
           </div>

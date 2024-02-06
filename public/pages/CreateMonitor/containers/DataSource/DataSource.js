@@ -33,15 +33,26 @@ class DataSource extends Component {
   }
 
   render() {
-    const { isMinimal } = this.props;
+    const { isMinimal, remoteMonitoringEnabled } = this.props;
     const { monitor_type, searchType } = this.props.values;
     const displayTimeField =
-      searchType === SEARCH_TYPE.GRAPH && monitor_type !== MONITOR_TYPE.DOC_LEVEL;
+      searchType === SEARCH_TYPE.GRAPH &&
+      monitor_type !== MONITOR_TYPE.DOC_LEVEL &&
+      monitor_type !== MONITOR_TYPE.CLUSTER_METRICS;
     const monitorIndexDisplay = (
       <>
-        <MonitorIndex httpClient={this.props.httpClient} monitorType={monitor_type} />
-        <EuiSpacer size="s" />
-        {displayTimeField && <MonitorTimeField dataTypes={this.props.dataTypes} />}
+        <MonitorIndex
+          httpClient={this.props.httpClient}
+          monitorType={monitor_type}
+          remoteMonitoringEnabled={remoteMonitoringEnabled}
+        />
+
+        {displayTimeField && (
+          <>
+            <EuiSpacer />
+            <MonitorTimeField dataTypes={this.props.dataTypes} />
+          </>
+        )}
       </>
     );
 

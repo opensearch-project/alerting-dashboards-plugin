@@ -76,6 +76,24 @@ exports[`AlertsDashboardFlyoutComponent renders 1`] = `
         </p>
       </EuiText>
     </EuiFlexItem>
+    <EuiFlexItem>
+      <EuiText
+        size="m"
+      >
+        <strong>
+          Monitor data sources
+        </strong>
+        <p
+          style={
+            Object {
+              "whiteSpace": "pre-wrap",
+            }
+          }
+        >
+          -
+        </p>
+      </EuiText>
+    </EuiFlexItem>
   </EuiFlexGroup>
   <EuiHorizontalRule
     margin="xxl"

@@ -12,8 +12,17 @@ import {
   MonitorService,
   AnomalyDetectorService,
   FindingService,
+  CrossClusterService,
 } from './services';
-import { alerts, destinations, opensearch, monitors, detectors, findings } from '../server/routes';
+import {
+  alerts,
+  destinations,
+  opensearch,
+  monitors,
+  detectors,
+  findings,
+  crossCluster,
+} from '../server/routes';
 
 export class AlertingPlugin {
   constructor(initializerContext) {
@@ -36,6 +45,7 @@ export class AlertingPlugin {
     const destinationsService = new DestinationsService(alertingESClient);
     const anomalyDetectorService = new AnomalyDetectorService(adESClient);
     const findingService = new FindingService(alertingESClient);
+    const crossClusterService = new CrossClusterService(alertingESClient);
     const services = {
       alertService,
       destinationsService,
@@ -43,6 +53,7 @@ export class AlertingPlugin {
       monitorService,
       anomalyDetectorService,
       findingService,
+      crossClusterService,
     };
 
     // Create router
@@ -54,6 +65,7 @@ export class AlertingPlugin {
     monitors(services, router);
     detectors(services, router);
     findings(services, router);
+    crossCluster(services, router);
 
     return {};
   }
