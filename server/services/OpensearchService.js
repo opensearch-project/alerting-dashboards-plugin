@@ -183,7 +183,7 @@ export default class OpensearchService {
         }
       }
       if (local_indices.length) {
-        local_mappings = await callAsCurrentUser('indices.getMapping', { index });
+        local_mappings = await callAsCurrentUser('indices.getMapping', { index: local_indices });
       }
       return res.ok({
         body: {
