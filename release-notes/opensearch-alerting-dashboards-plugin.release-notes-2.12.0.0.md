@@ -10,3 +10,6 @@ Compatible with OpenSearch Dashboards 2.12.0
 
 ### Bug fixes
 * Do not create Message component on every text change ([#854](https://github.com/opensearch-project/alerting-dashboards-plugin/pull/854))
+
+### Documentation
+* Drafted 2.12 release notes. ([#876](https://github.com/opensearch-project/alerting-dashboards-plugin/pull/876))
