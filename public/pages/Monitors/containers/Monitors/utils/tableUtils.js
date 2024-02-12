@@ -9,6 +9,7 @@ import moment from 'moment';
 import { DEFAULT_EMPTY_DATA, MONITOR_TYPE } from '../../../../../utils/constants';
 import { PLUGIN_NAME } from '../../../../../../utils/constants';
 import { getItemLevelType } from './helpers';
+import { IncontextInsightComponent } from './../../../../../plugin';
 
 const renderTime = (time) => {
   const momentTime = moment(time);
@@ -23,12 +24,15 @@ export const columns = [
     sortable: true,
     textOnly: true,
     render: (name, item) => (
-      <EuiLink
-        data-test-subj={name}
-        href={`${PLUGIN_NAME}#/monitors/${item.id}?type=${item.monitor.type}`}
-      >
-        {name}
-      </EuiLink>
+      <IncontextInsightComponent>
+        <EuiLink
+          key={`${item.item_type}`}
+          data-test-subj={name}
+          href={`${PLUGIN_NAME}#/monitors/${item.id}?type=${item.monitor.type}`}
+        >
+          {name}
+        </EuiLink>
+      </IncontextInsightComponent>
     ),
   },
   {
