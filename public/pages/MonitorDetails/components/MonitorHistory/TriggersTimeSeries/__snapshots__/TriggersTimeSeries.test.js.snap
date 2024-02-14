@@ -35,7 +35,7 @@ exports[`<TriggersTimeSeries/> renders 1`] = `
             style="width:100%;height:100%"
           >
             <div
-              class="rv-xy-plot "
+              class="rv-xy-plot"
               style="width:0px;height:30px"
             >
               <svg
@@ -44,7 +44,7 @@ exports[`<TriggersTimeSeries/> renders 1`] = `
                 width="0"
               >
                 <g
-                  class="rv-xy-plot__series rv-xy-plot__series--bar "
+                  class="rv-xy-plot__series rv-xy-plot__series--bar"
                   transform="translate(0,25)"
                 >
                   <rect
@@ -52,21 +52,21 @@ exports[`<TriggersTimeSeries/> renders 1`] = `
                     style="opacity:1;stroke:#6AAF35;fill:#6AAF35"
                     width="5"
                     x="-5"
-                    y="-32.375"
+                    y="NaN"
                   />
                   <rect
                     height="29.75"
                     style="opacity:1;stroke:#D0021B;fill:#D0021B"
                     width="1"
                     x="-6"
-                    y="-32.375"
+                    y="NaN"
                   />
                   <rect
                     height="29.75"
                     style="opacity:1;stroke:#6AAF35;fill:#6AAF35"
                     width="4"
                     x="-10"
-                    y="-32.375"
+                    y="NaN"
                   />
                 </g>
               </svg>
@@ -89,7 +89,7 @@ exports[`<TriggersTimeSeries/> renders 1`] = `
           style="width:100%;height:100%"
         >
           <div
-            class="rv-xy-plot "
+            class="rv-xy-plot"
             style="width:0px;height:35px"
           >
             <svg
@@ -98,7 +98,7 @@ exports[`<TriggersTimeSeries/> renders 1`] = `
               width="0"
             >
               <g
-                class="rv-xy-plot__axis rv-xy-plot__axis--horizontal "
+                class="rv-xy-plot__axis rv-xy-plot__axis--horizontal"
                 transform="translate(25,-5)"
               >
                 <g
