@@ -50,7 +50,7 @@ exports[`VisualGraph renders 1`] = `
       style="width:100%;height:100%"
     >
       <div
-        class="rv-xy-plot "
+        class="rv-xy-plot"
         style="width:0px;height:400px"
       >
         <svg
@@ -59,7 +59,7 @@ exports[`VisualGraph renders 1`] = `
           width="0"
         >
           <g
-            class="rv-xy-plot__axis rv-xy-plot__axis--horizontal "
+            class="rv-xy-plot__axis rv-xy-plot__axis--horizontal"
             transform="translate(80,330)"
           >
             <line
@@ -196,7 +196,7 @@ exports[`VisualGraph renders 1`] = `
             </g>
           </g>
           <g
-            class="rv-xy-plot__axis rv-xy-plot__axis--vertical "
+            class="rv-xy-plot__axis rv-xy-plot__axis--vertical"
             transform="translate(0,20)"
           >
             <line
@@ -486,13 +486,13 @@ exports[`VisualGraph renders 1`] = `
             </g>
           </g>
           <path
-            class="rv-xy-plot__series rv-xy-plot__series--line "
-            d="M0,310L-20,155L-40,180.83333333333331L-60,206.66666666666669L-80,103.33333333333334L-100,180.83333333333331"
+            class="rv-xy-plot__series rv-xy-plot__series--line"
+            d="M0,310L-20,155L-40,180.833L-60,206.667L-80,103.333L-100,180.833"
             style="opacity:1;stroke-width:1;stroke:#12939A"
             transform="translate(80,20)"
           />
           <g
-            class="rv-xy-plot__series rv-xy-plot__series--mark undefined"
+            class="rv-xy-plot__series rv-xy-plot__series--mark"
             transform="translate(80,20)"
           >
             <circle
@@ -591,7 +591,7 @@ exports[`VisualGraph renders with bucket level monitor 1`] = `
       style="width:100%;height:100%"
     >
       <div
-        class="rv-xy-plot "
+        class="rv-xy-plot"
         style="width:0px;height:400px"
       >
         <svg
@@ -600,7 +600,7 @@ exports[`VisualGraph renders with bucket level monitor 1`] = `
           width="0"
         >
           <g
-            class="rv-xy-plot__axis rv-xy-plot__axis--horizontal "
+            class="rv-xy-plot__axis rv-xy-plot__axis--horizontal"
             transform="translate(80,330)"
           >
             <line
@@ -730,7 +730,7 @@ exports[`VisualGraph renders with bucket level monitor 1`] = `
             </g>
           </g>
           <g
-            class="rv-xy-plot__axis rv-xy-plot__axis--vertical "
+            class="rv-xy-plot__axis rv-xy-plot__axis--vertical"
             transform="translate(0,20)"
           >
             <line
@@ -1061,7 +1061,7 @@ exports[`VisualGraph renders with bucket level monitor 1`] = `
           </g>
         </svg>
         <div
-          class="rv-discrete-color-legend vertical "
+          class="rv-discrete-color-legend vertical"
           style="position:absolute;right:50px;top:10px"
         >
           <div
