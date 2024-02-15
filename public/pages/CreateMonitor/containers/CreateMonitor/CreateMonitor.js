@@ -28,6 +28,7 @@ import {
   getPerformanceModal,
   RECOMMENDED_DURATION,
 } from '../../components/QueryPerformance/QueryPerformance';
+import MonitorSecurity from '../MonitorSecurity';
 
 export default class CreateMonitor extends Component {
   static defaultProps = {
@@ -204,6 +205,8 @@ export default class CreateMonitor extends Component {
                           httpClient={httpClient}
                           errors={errors}
                         />
+                        <EuiSpacer />
+                        <MonitorSecurity values={values} httpClient={httpClient} errors={errors} />
                       </>
                     ) : null}
 
