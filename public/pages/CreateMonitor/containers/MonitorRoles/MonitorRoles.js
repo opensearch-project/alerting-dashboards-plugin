@@ -94,8 +94,7 @@ class MonitorRoles extends React.Component {
         formRow
         rowProps={{
           label: 'Backend roles',
-          helpText:
-            'You can optionally assign one or more backend roles to the monitor (assigned roles have an effect only when filter_by_backend_roles is enabled)',
+          helpText: 'You can optionally assign one or more backend roles to the monitor',
           style: { paddingLeft: '10px' },
         }}
         inputProps={{
