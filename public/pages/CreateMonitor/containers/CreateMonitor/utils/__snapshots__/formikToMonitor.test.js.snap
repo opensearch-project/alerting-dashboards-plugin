@@ -209,6 +209,90 @@ Object {
 }
 `;
 
+exports[`formikToMonitor can build monitor with roles 1`] = `
+Object {
+  "enabled": false,
+  "inputs": Array [
+    Object {
+      "search": Object {
+        "indices": Array [
+          "index1",
+          "index2",
+        ],
+        "query": Object {
+          "aggregations": Object {},
+          "query": Object {
+            "bool": Object {
+              "filter": Array [
+                Object {
+                  "range": Object {
+                    "": Object {
+                      "format": "epoch_millis",
+                      "gte": "{{period_end}}||-1h",
+                      "lte": "{{period_end}}",
+                    },
+                  },
+                },
+              ],
+            },
+          },
+          "size": 0,
+        },
+      },
+    },
+  ],
+  "monitor_type": "query_level_monitor",
+  "name": "random_name",
+  "rbac_roles": Array [
+    "test_bk_role_1",
+    "test_bk_role_2",
+  ],
+  "schedule": Object {
+    "period": Object {
+      "interval": 1,
+      "unit": "MINUTES",
+    },
+  },
+  "triggers": Array [],
+  "type": "monitor",
+  "ui_metadata": Object {
+    "monitor_type": "query_level_monitor",
+    "schedule": Object {
+      "cronExpression": "0 */1 * * *",
+      "daily": 0,
+      "frequency": "interval",
+      "monthly": Object {
+        "day": 1,
+        "type": "day",
+      },
+      "period": Object {
+        "interval": 1,
+        "unit": "MINUTES",
+      },
+      "timezone": "America/Los_Angeles",
+      "weekly": Object {
+        "fri": false,
+        "mon": false,
+        "sat": false,
+        "sun": false,
+        "thur": false,
+        "tue": false,
+        "wed": false,
+      },
+    },
+    "search": Object {
+      "aggregations": Array [],
+      "bucketUnitOfTime": "h",
+      "bucketValue": 1,
+      "filters": Array [],
+      "groupBy": Array [],
+      "searchType": "graph",
+      "timeField": "",
+    },
+  },
+}
+`;
+
 exports[`formikToQuery can build extraction query 1`] = `
 Object {
   "query": Object {
@@ -238,6 +322,13 @@ Object {
   },
   "size": 0,
 }
+`;
+
+exports[`formikToRoles can build roles 1`] = `
+Array [
+  "test_bk_role_1",
+  "test_bk_role_2",
+]
 `;
 
 exports[`formikToUiGraphQuery can build ui graph query 1`] = `

@@ -27,13 +27,17 @@ import { buildRequest } from './utils/searchRequests';
 import { SEARCH_TYPE, OS_AD_PLUGIN, MONITOR_TYPE } from '../../../../utils/constants';
 import { backendErrorNotification } from '../../../../utils/helpers';
 import DataSource from '../DataSource';
+import MonitorSecurity from '../MonitorSecurity';
 import {
   buildClusterMetricsRequest,
   getApiType,
   getApiTypesRequiringPathParams,
 } from '../../components/ClusterMetricsMonitor/utils/clusterMetricsMonitorHelpers';
 import ClusterMetricsMonitor from '../../components/ClusterMetricsMonitor';
-import { FORMIK_INITIAL_VALUES } from '../CreateMonitor/utils/constants';
+import {
+  FORMIK_INITIAL_VALUES,
+  FILTER_BY_BACKEND_ROLES_SETTING_PATH,
+} from '../CreateMonitor/utils/constants';
 import { API_TYPES } from '../../components/ClusterMetricsMonitor/utils/clusterMetricsMonitorConstants';
 import ConfigureDocumentLevelQueries from '../../components/DocumentLevelMonitorQueries/ConfigureDocumentLevelQueries';
 import FindingsDashboard from '../../../Dashboard/containers/FindingsDashboard';
@@ -76,6 +80,7 @@ class DefineMonitor extends Component {
       loadingResponse: false,
       PanelComponent: props.flyoutMode ? ({ children }) => <>{children}</> : ContentPanel,
       remoteMonitoringEnabled: false,
+      filterByBackendRolesEnabled: false,
     };
 
     this.renderGraph = this.renderGraph.bind(this);
@@ -201,6 +206,23 @@ class DefineMonitor extends Component {
         if (typeof remoteMonitoringEnabled === 'string')
           remoteMonitoringEnabled = JSON.parse(remoteMonitoringEnabled);
         this.setState({ remoteMonitoringEnabled: remoteMonitoringEnabled });
+
+        let filterByBackendRolesEnabled = _.get(
+          // If present, take the 'transient' setting.
+          transient,
+          FILTER_BY_BACKEND_ROLES_SETTING_PATH,
+          // Else take the 'persistent' setting.
+          _.get(
+            persistent,
+            FILTER_BY_BACKEND_ROLES_SETTING_PATH,
+            // Else take the 'default' setting.
+            _.get(defaults, FILTER_BY_BACKEND_ROLES_SETTING_PATH, false)
+          )
+        );
+        // Boolean settings are returned as strings (e.g., `"true"`, and `"false"`). Constructing boolean value from the string.
+        if (typeof filterByBackendRolesEnabled === 'string')
+          filterByBackendRolesEnabled = JSON.parse(filterByBackendRolesEnabled);
+        this.setState({ filterByBackendRolesEnabled: filterByBackendRolesEnabled });
       }
     } catch (e) {
       console.log('Error while retrieving settings', e);
@@ -656,7 +678,8 @@ class DefineMonitor extends Component {
       isDarkMode,
       flyoutMode,
     } = this.props;
-    const { dataTypes, PanelComponent, remoteMonitoringEnabled } = this.state;
+    const { dataTypes, PanelComponent, remoteMonitoringEnabled, filterByBackendRolesEnabled } =
+      this.state;
     const monitorContent = this.getMonitorContent();
     const { searchType } = this.props.values;
     const displayDataSourcePanel =
@@ -681,6 +704,12 @@ class DefineMonitor extends Component {
             <EuiSpacer />
           </div>
         )}
+        {filterByBackendRolesEnabled ? (
+          <div>
+            <MonitorSecurity errors={errors} httpClient={httpClient} isDarkMode={isDarkMode} />
+            <EuiSpacer />
+          </div>
+        ) : null}
         <PanelComponent
           title="Query"
           titleSize="s"

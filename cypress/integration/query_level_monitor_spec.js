@@ -155,6 +155,78 @@ describe('Query-Level Monitors', () => {
     });
   });
 
+  if (Cypress.env('security_enabled')) {
+    describe('can be created with backend roles', () => {
+      before(() => {
+        cy.deleteAllMonitors();
+      });
+
+      it('by extraction query', () => {
+        // mock enable backend roles
+        cy.intercept('GET', '/api/alerting/_settings', {
+          statusCode: 200,
+          body: {
+            ok: true,
+            resp: {
+              persistent: {
+                plugins: {
+                  alerting: {
+                    filter_by_backend_roles: 'true',
+                  },
+                },
+              },
+              transient: {},
+            },
+          },
+        });
+
+        // Confirm we loaded empty monitor list
+        cy.contains('There are no existing monitors');
+
+        // Route us to create monitor page
+        cy.contains('Create monitor').click({ force: true });
+
+        // Select the Query-Level Monitor type
+        cy.get('[data-test-subj="queryLevelMonitorRadioCard"]').click();
+
+        // Select extraction query for method of definition
+        cy.get('[data-test-subj="extractionQueryEditorRadioCard"]').click();
+
+        // Wait for input to load and then type in the monitor name
+        cy.get('input[name="name"]').type(SAMPLE_MONITOR, { force: true });
+
+        // Wait for input to load and then type in the index name
+        cy.get('#index').type('*', { force: true });
+
+        // Wait for input to load and then type in the role
+        cy.get('#roles').click();
+        cy.contains('admin').click({ force: true });
+        cy.get('#roles').blur();
+
+        // Add a trigger
+        cy.contains('Add trigger').click({ force: true });
+
+        // Type in the trigger name
+        cy.get('input[name="triggerDefinitions[0].name"]').type(SAMPLE_TRIGGER, { force: true });
+
+        // Click the create button
+        cy.get('button').contains('Create').click({ force: true });
+
+        // Confirm we can see only one row in the trigger list by checking <caption> element
+        cy.contains('This table contains 1 row');
+
+        // Confirm we can see the new trigger
+        cy.contains(SAMPLE_TRIGGER);
+
+        // Go back to the Monitors list
+        cy.get('a').contains('Monitors').click({ force: true });
+
+        // Confirm we can see the created monitor in the list
+        cy.contains(SAMPLE_MONITOR);
+      });
+    });
+  }
+
   describe('can be updated', () => {
     beforeEach(() => {
       cy.deleteAllMonitors();

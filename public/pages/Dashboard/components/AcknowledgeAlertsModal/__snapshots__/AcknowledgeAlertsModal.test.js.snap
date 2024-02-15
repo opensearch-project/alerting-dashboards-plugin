@@ -81,6 +81,7 @@ exports[`AcknowledgeAlertsModal renders 1`] = `
         \\"match_all\\": {}
     }
 }",
+      "roles": Array [],
       "searchType": "graph",
       "timeField": "",
       "timezone": Array [],

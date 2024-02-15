@@ -52,6 +52,7 @@ exports[`AnomalyDetectors renders 1`] = `
         \\"match_all\\": {}
     }
 }",
+      "roles": Array [],
       "searchType": "graph",
       "timeField": "",
       "timezone": Array [],
@@ -126,6 +127,7 @@ exports[`AnomalyDetectors renders 1`] = `
         \\"match_all\\": {}
     }
 }",
+        "roles": Array [],
         "searchType": "graph",
         "timeField": "",
         "timezone": Array [],
@@ -261,6 +263,7 @@ exports[`AnomalyDetectors renders 1`] = `
         \\"match_all\\": {}
     }
 }",
+                    "roles": Array [],
                     "searchType": "graph",
                     "timeField": "",
                     "timezone": Array [],
@@ -354,6 +357,7 @@ exports[`AnomalyDetectors renders 1`] = `
         \\"match_all\\": {}
     }
 }",
+                    "roles": Array [],
                     "searchType": "graph",
                     "timeField": "",
                     "timezone": Array [],
@@ -495,6 +499,7 @@ exports[`AnomalyDetectors renders 1`] = `
         \\"match_all\\": {}
     }
 }",
+                            "roles": Array [],
                             "searchType": "graph",
                             "timeField": "",
                             "timezone": Array [],
@@ -588,6 +593,7 @@ exports[`AnomalyDetectors renders 1`] = `
         \\"match_all\\": {}
     }
 }",
+                            "roles": Array [],
                             "searchType": "graph",
                             "timeField": "",
                             "timezone": Array [],

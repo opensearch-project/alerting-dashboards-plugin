@@ -78,6 +78,7 @@ export const FORMIK_INITIAL_VALUES = {
   associatedMonitorsList: [],
   associatedMonitorsEditor: '',
   preventVisualEditor: false,
+  roles: [],
 };
 
 export const FORMIK_INITIAL_AGG_VALUES = {
@@ -111,6 +112,8 @@ export const DEFAULT_DOCUMENT_LEVEL_QUERY = JSON.stringify(
 );
 
 export const DEFAULT_COMPOSITE_AGG_SIZE = 50;
+
+export const FILTER_BY_BACKEND_ROLES_SETTING_PATH = 'plugins.alerting.filter_by_backend_roles';
 
 export const METRIC_TOOLTIP_TEXT = 'Extracted statistics such as simple calculations of data.';
 export const TIME_RANGE_TOOLTIP_TEXT = 'The time frame of data the plugin should monitor.';
