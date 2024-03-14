@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import sampleClusterMetricsMonitor from '../fixtures/sample_cluster_metrics_monitor.json';
+import sampleClusterMetricsMonitor from '../fixtures/sample_cluster_metrics_health_monitor.json';
 import { INDEX, PLUGIN_NAME } from '../../cypress/support/constants';
 
 const SAMPLE_CLUSTER_METRICS_HEALTH_MONITOR = 'sample_cluster_metrics_health_monitor';
