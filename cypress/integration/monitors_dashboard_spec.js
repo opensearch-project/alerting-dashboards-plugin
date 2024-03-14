@@ -34,7 +34,7 @@ const clusterHealthMonitor = {
         severity: '1',
         condition: {
           script: {
-            source: 'ctx.results[0].status != "green"',
+            source: 'ctx.results[0].status != "blue"',
             lang: 'painless',
           },
         },
