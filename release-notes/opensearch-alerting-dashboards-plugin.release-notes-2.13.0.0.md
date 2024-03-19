@@ -9,4 +9,4 @@ Compatible with OpenSearch Dashboards 2.13.0
 * fix error to disblay monitors with disable/enable state ([#869](https://github.com/opensearch-project/alerting-dashboards-plugin/pull/869))
 
 ### Documentation
-* Added 2.13 release notes. ([]())
+* Added 2.13 release notes. ([#904](https://github.com/opensearch-project/alerting-dashboards-plugin/pull/904))
