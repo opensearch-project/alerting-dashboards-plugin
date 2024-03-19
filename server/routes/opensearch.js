@@ -77,4 +77,16 @@ export default function (services, router) {
     },
     opensearchService.getClusterHealth
   );
+
+  router.post(
+    {
+      path: '/api/alerting/_roles',
+      validate: {
+        body: schema.object({
+          role: schema.string(),
+        }),
+      },
+    },
+    opensearchService.getRoles
+  );
 }

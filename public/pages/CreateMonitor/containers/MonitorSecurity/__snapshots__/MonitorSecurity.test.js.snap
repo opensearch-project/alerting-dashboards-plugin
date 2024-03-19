@@ -1,0 +1,23 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`MonitorSecurity renders 1`] = `
+<ContentPanel
+  bodyStyles={
+    Object {
+      "padding": "initial",
+    }
+  }
+  panelStyles={
+    Object {
+      "paddingLeft": "10px",
+      "paddingRight": "10px",
+    }
+  }
+  title="Monitor security"
+  titleSize="s"
+>
+  <MonitorRoles
+    httpClient={[MockFunction]}
+  />
+</ContentPanel>
+`;

@@ -20,6 +20,7 @@ import {
   formikToAd,
   formikToInputs,
   formikToClusterMetricsInput,
+  formikToRoles,
 } from './formikToMonitor';
 
 import { FORMIK_INITIAL_VALUES } from './constants';
@@ -32,13 +33,21 @@ jest.mock('moment-timezone', () => {
 });
 
 describe('formikToMonitor', () => {
-  const formikValues = _.cloneDeep(FORMIK_INITIAL_VALUES);
-  formikValues.name = 'random_name';
-  formikValues.disabled = true;
-  formikValues.index = [{ label: 'index1' }, { label: 'index2' }];
-  formikValues.fieldName = [{ label: 'bytes' }];
-  formikValues.timezone = [{ label: 'America/Los_Angeles' }];
+  let formikValues;
+  beforeEach(() => {
+    formikValues = _.cloneDeep(FORMIK_INITIAL_VALUES);
+    formikValues.name = 'random_name';
+    formikValues.disabled = true;
+    formikValues.index = [{ label: 'index1' }, { label: 'index2' }];
+    formikValues.fieldName = [{ label: 'bytes' }];
+    formikValues.timezone = [{ label: 'America/Los_Angeles' }];
+    formikValues.roles = [];
+  });
   test('can build monitor', () => {
+    expect(formikToMonitor(formikValues)).toMatchSnapshot();
+  });
+  test('can build monitor with roles', () => {
+    formikValues.roles = [{ label: 'test_bk_role_1' }, { label: 'test_bk_role_2' }];
     expect(formikToMonitor(formikValues)).toMatchSnapshot();
   });
 });
@@ -105,6 +114,14 @@ describe('formikToIndices', () => {
     const formikValues = _.cloneDeep(FORMIK_INITIAL_VALUES);
     formikValues.index = [{ label: 'index1' }, { label: 'index2' }];
     expect(formikToIndices(formikValues)).toMatchSnapshot();
+  });
+});
+
+describe('formikToRoles', () => {
+  test('can build roles', () => {
+    const formikValues = _.cloneDeep(FORMIK_INITIAL_VALUES);
+    formikValues.roles = [{ label: 'test_bk_role_1' }, { label: 'test_bk_role_2' }];
+    expect(formikToRoles(formikValues)).toMatchSnapshot();
   });
 });
 
