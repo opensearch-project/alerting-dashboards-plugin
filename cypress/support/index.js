@@ -37,6 +37,8 @@ Cypress.on('uncaught:exception', (err) => {
 // Dashboard endpoint can still be http when security enabled
 if (Cypress.env('security_enabled')) {
   Cypress.env('opensearch', `https://${Cypress.env('opensearch_url')}`);
+  Cypress.env('remote_opensearch', `https://${Cypress.env('remote_opensearch_url')}`);
 } else {
   Cypress.env('opensearch', `http://${Cypress.env('opensearch_url')}`);
+  Cypress.env('remote_opensearch', `http://${Cypress.env('remote_opensearch_url')}`);
 }

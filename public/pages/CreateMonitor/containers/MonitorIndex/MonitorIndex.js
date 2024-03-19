@@ -108,6 +108,17 @@ class MonitorIndex extends React.Component {
       return [];
     }
 
+    // Remote cluster support is restricted to query and bucket level monitors for now
+    if (
+      index.includes(':') &&
+      !(
+        this.props.monitorType === MONITOR_TYPE.QUERY_LEVEL ||
+        this.props.monitorType === MONITOR_TYPE.BUCKET_LEVEL
+      )
+    ) {
+      return [];
+    }
+
     // This should never match anything so do not bother
     if (index === '') {
       return [];
@@ -135,6 +146,17 @@ class MonitorIndex extends React.Component {
     const alias = rawAlias.trim();
 
     if (alias === '*:') {
+      return [];
+    }
+
+    // Remote cluster support is restricted to query and bucket level monitors for now
+    if (
+      alias.includes(':') &&
+      !(
+        this.props.monitorType === MONITOR_TYPE.QUERY_LEVEL ||
+        this.props.monitorType === MONITOR_TYPE.BUCKET_LEVEL
+      )
+    ) {
       return [];
     }
 

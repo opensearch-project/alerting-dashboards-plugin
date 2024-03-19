@@ -25,7 +25,11 @@ export function filterSystemIndices(indices, isIncludingSystemIndices) {
   const acceptableIndices = isIncludingSystemIndices
     ? indices
     : // All system indices begin with a period.
-      indices.filter((index) => !index.label.startsWith('.'));
+      indices.filter(
+        (index) =>
+          !index.label.startsWith('.') &&
+          (!index.label.includes(':') || !index.label.split(':')[1].startsWith('.'))
+      );
 
   return acceptableIndices.slice(0, MAX_NUMBER_OF_MATCHING_INDICES);
 }
