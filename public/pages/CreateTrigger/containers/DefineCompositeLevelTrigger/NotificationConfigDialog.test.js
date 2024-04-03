@@ -9,9 +9,13 @@ import { render } from 'enzyme';
 import { Formik } from 'formik';
 import { FORMIK_INITIAL_VALUES } from '../../../CreateMonitor/containers/CreateMonitor/utils/constants';
 import NotificationConfigDialog from './NotificationConfigDialog';
+import { uiSettingsServiceMock } from '../../../../../../../src/core/public/mocks';
+import { setUISettings } from '../../../../services';
 
 describe('NotificationConfigDialog', () => {
   test('renders', () => {
+    const uiSettingsMock = uiSettingsServiceMock.createStartContract();
+    setUISettings(uiSettingsMock);
     const component = (
       <Formik initialValues={FORMIK_INITIAL_VALUES} onSubmit={() => {}}>
         <NotificationConfigDialog
