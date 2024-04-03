@@ -5,8 +5,8 @@
 
 import React from 'react';
 import { EuiCallOut, EuiButton, EuiLink, EuiSpacer } from '@elastic/eui';
-import { MANAGE_CHANNELS_PATH } from '../../../CreateTrigger/utils/constants';
 import { NOTIFICATIONS_LEARN_MORE_HREF } from '../../utils/constants';
+import { MANAGE_CHANNELS_URL } from '../../../../utils/constants';
 
 const noNotificationsTitle = 'Unable to send notifications. Notifications plugin is required.';
 const noNotificationsBodyText = (
@@ -43,7 +43,7 @@ const hasNotificationsBodyText = (
   </p>
 );
 const hasNotificationsButton = (
-  <EuiButton href={MANAGE_CHANNELS_PATH}>View in Notifications</EuiButton>
+  <EuiButton href={MANAGE_CHANNELS_URL}>View in Notifications</EuiButton>
 );
 
 const NotificationsInfoCallOut = ({ hasNotificationPlugin }) => {

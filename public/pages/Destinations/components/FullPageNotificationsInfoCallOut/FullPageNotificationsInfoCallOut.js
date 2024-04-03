@@ -5,8 +5,8 @@
 
 import React from 'react';
 import { EuiButton, EuiEmptyPrompt, EuiLink, EuiPanel, EuiText } from '@elastic/eui';
-import { MANAGE_CHANNELS_PATH } from '../../../CreateTrigger/utils/constants';
 import { NOTIFICATIONS_LEARN_MORE_HREF } from '../../utils/constants';
+import { MANAGE_CHANNELS_URL } from '../../../../utils/constants';
 
 const noNotificationsTitle = 'Destinations will become channels in Notifications';
 const noNotificationsText = (
@@ -41,7 +41,7 @@ const hasNotificationsText = (
   </EuiText>
 );
 const hasNotificationsButton = (
-  <EuiButton fill href={MANAGE_CHANNELS_PATH}>
+  <EuiButton fill href={MANAGE_CHANNELS_URL}>
     View in Notifications
   </EuiButton>
 );

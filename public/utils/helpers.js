@@ -11,6 +11,7 @@ import {
   filterActiveAlerts,
 } from '../pages/Dashboard/utils/helpers';
 import _ from 'lodash';
+import { MANAGE_CHANNELS_URL } from './constants';
 
 export const makeId = htmlIdGenerator();
 
@@ -136,3 +137,8 @@ export const titleTemplate = (title, subTitle) => (
     )}
   </>
 );
+
+export function initManageChannelsUrl(httpClient) {
+  const manageChannelsRelativePath = `/app/notifications-dashboards#/channels`;
+  MANAGE_CHANNELS_URL = httpClient.basePath.prepend(manageChannelsRelativePath);
+}

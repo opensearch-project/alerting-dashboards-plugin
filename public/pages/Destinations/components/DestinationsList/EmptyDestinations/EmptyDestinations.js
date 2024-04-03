@@ -6,7 +6,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { EuiButton, EuiEmptyPrompt, EuiLink, EuiText } from '@elastic/eui';
-import { MANAGE_CHANNELS_PATH } from '../../../../CreateTrigger/utils/constants';
+import { MANAGE_CHANNELS_URL } from '../../../../../utils/constants';
 
 const filterText = (hasNotificationPlugin) =>
   hasNotificationPlugin ? (
@@ -17,7 +17,7 @@ const filterText = (hasNotificationPlugin) =>
       </p>
       <p>
         Migrated destinations can be found in&nbsp;
-        {<EuiLink href={MANAGE_CHANNELS_PATH}>Notifications</EuiLink>}
+        {<EuiLink href={MANAGE_CHANNELS_URL}>Notifications</EuiLink>}
       </p>
     </>
   ) : (
