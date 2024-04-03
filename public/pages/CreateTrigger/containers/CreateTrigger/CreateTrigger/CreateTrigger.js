@@ -207,19 +207,15 @@ export default class CreateTrigger extends Component {
     else this.onCreate(trigger, triggerMetadata, formikBag);
   };
 
-  getTriggerContext = (executeResponse, monitor, values) => {
-    const userTimeZone = getUISettings().get('dateFormat:tz', moment.tz.guess()) || moment().format('Z');
-
-    return {
-      periodStart: moment.utc(_.get(executeResponse, 'period_start', Date.now())).tz(getTimeZone()).format(),
-      periodEnd: moment.utc(_.get(executeResponse, 'period_end', Date.now())).tz(getTimeZone()).format(),
-      results: [_.get(executeResponse, 'input_results.results[0]')].filter((result) => !!result),
-      trigger: formikToTrigger(values, _.get(this.props.monitor, 'ui_metadata', {})),
-      alert: null,
-      error: null,
-      monitor: monitor,
-      }
-  };
+  getTriggerContext = (executeResponse, monitor, values) => ({
+    periodStart: moment.utc(_.get(executeResponse, 'period_start', Date.now())).tz(getTimeZone()).format(),
+    periodEnd: moment.utc(_.get(executeResponse, 'period_end', Date.now())).tz(getTimeZone()).format(),
+    results: [_.get(executeResponse, 'input_results.results[0]')].filter((result) => !!result),
+    trigger: formikToTrigger(values, _.get(this.props.monitor, 'ui_metadata', {})),
+    alert: null,
+    error: null,
+    monitor: monitor,
+  });
 
   openExpression = (expression) => {
     this.setState({
