@@ -36,6 +36,7 @@ import DefineBucketLevelTrigger from '../../DefineBucketLevelTrigger';
 import { getPathsPerDataType } from '../../../../CreateMonitor/containers/DefineMonitor/utils/mappings';
 import { MONITOR_TYPE } from '../../../../../utils/constants';
 import { buildClusterMetricsRequest } from '../../../../CreateMonitor/components/ClusterMetricsMonitor/utils/clusterMetricsMonitorHelpers';
+import { getTimeZone } from '../../../utils/helper';
 
 export const DEFAULT_CLOSED_STATES = {
   WHEN: false,
@@ -210,8 +211,8 @@ export default class CreateTrigger extends Component {
     const userTimeZone = getUISettings().get('dateFormat:tz', moment.tz.guess()) || moment().format('Z');
 
     return {
-      periodStart: moment.utc(_.get(executeResponse, 'period_start', Date.now())).tz(userTimeZone).format(),
-      periodEnd: moment.utc(_.get(executeResponse, 'period_end', Date.now())).tz(userTimeZone).format(),
+      periodStart: moment.utc(_.get(executeResponse, 'period_start', Date.now())).tz(getTimeZone()).format(),
+      periodEnd: moment.utc(_.get(executeResponse, 'period_end', Date.now())).tz(getTimeZone()).format(),
       results: [_.get(executeResponse, 'input_results.results[0]')].filter((result) => !!result),
       trigger: formikToTrigger(values, _.get(this.props.monitor, 'ui_metadata', {})),
       alert: null,

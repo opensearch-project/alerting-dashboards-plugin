@@ -15,6 +15,7 @@ import { setUISettings } from '../../../../services';
 describe('NotificationConfigDialog', () => {
   test('renders', () => {
     const uiSettingsMock = uiSettingsServiceMock.createStartContract();
+    uiSettingsMock.get.mockReturnValue('America/Toronto');
     setUISettings(uiSettingsMock);
     const component = (
       <Formik initialValues={FORMIK_INITIAL_VALUES} onSubmit={() => {}}>

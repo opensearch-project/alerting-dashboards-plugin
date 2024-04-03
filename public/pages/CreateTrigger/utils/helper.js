@@ -56,11 +56,10 @@ export const getDefaultScript = (monitorValues) => {
 export const getTriggerContext = (executeResponse, monitor, values, triggerIndex) => {
   let trigger = formikToTrigger(values, _.get(monitor, 'ui_metadata', {}));
   if (_.isArray(trigger) && triggerIndex >= 0) trigger = trigger[triggerIndex];
-  const userTimeZone = getUISettings().get('dateFormat:tz', moment.tz.guess()) || moment().format('Z');
 
   return {
-    periodStart: moment.utc(_.get(executeResponse, 'period_start', Date.now())).tz(userTimeZone).format(),
-    periodEnd: moment.utc(_.get(executeResponse, 'period_end', Date.now())).tz(userTimeZone).format(),
+    periodStart: moment.utc(_.get(executeResponse, 'period_start', Date.now())).tz(getTimeZone()).format(),
+    periodEnd: moment.utc(_.get(executeResponse, 'period_end', Date.now())).tz(getTimeZone()).format(),
     results: [_.get(executeResponse, 'input_results.results[0]')].filter((result) => !!result),
     trigger: trigger,
     alert: null,
@@ -105,3 +104,8 @@ export const conditionToExpressions = (condition = '', monitors) => {
 
   return expressions;
 };
+
+export function getTimeZone() {
+  const detectedTimeZone = getUISettings().get('dateFormat:tz', 'Browser');
+  return detectedTimeZone === 'Browser' ? (moment.tz.guess() || moment.format('Z')) : detectedTimeZone;
+}
