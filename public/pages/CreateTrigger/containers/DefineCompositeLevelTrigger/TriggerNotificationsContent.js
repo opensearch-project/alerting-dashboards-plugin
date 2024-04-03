@@ -11,7 +11,7 @@ import _ from 'lodash';
 import { FORMIK_INITIAL_ACTION_VALUES } from '../../utils/constants';
 import { NOTIFY_OPTIONS_VALUES } from '../../components/Action/actions/Message';
 import { required } from '../../../../utils/validate';
-import { MANAGE_CHANNELS_URL } from '../../../../utils/constants';
+import { getManageChannelsUrl } from '../../../../utils/helpers';
 
 const TriggerNotificationsContent = ({
   action,
@@ -98,7 +98,7 @@ const TriggerNotificationsContent = ({
               iconType={'popout'}
               style={{ marginTop: '22px' }}
               disabled={!hasNotifications}
-              onClick={() => window.open(MANAGE_CHANNELS_URL)}
+              onClick={() => window.open(getManageChannelsUrl())}
             >
               Manage channels
             </EuiButtonEmpty>

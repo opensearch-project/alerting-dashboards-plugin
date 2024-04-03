@@ -33,7 +33,7 @@ import {
 } from '../../utils/constants';
 import NotificationsCallOut from '../NotificationsCallOut';
 import MinimalAccordion from '../../../../components/FeatureAnywhereContextMenu/MinimalAccordion';
-import { MANAGE_CHANNELS_URL } from '../../../../utils/constants';
+import { getManageChannelsUrl } from '../../../../utils/helpers';
 
 const Action = ({
   action,
@@ -167,7 +167,7 @@ const Action = ({
               disabled={!hasNotificationPlugin}
               iconType="popout"
               iconSide="right"
-              onClick={() => window.open(MANAGE_CHANNELS_URL)}
+              onClick={() => window.open(getManageChannelsUrl())}
             >
               Manage channels
             </ManageButton>

@@ -6,7 +6,7 @@
 import React from 'react';
 import { EuiButton, EuiEmptyPrompt, EuiText } from '@elastic/eui';
 import AddActionButton from '../AddActionButton';
-import { MANAGE_CHANNELS_URL } from '../../../../utils/constants';
+import { getManageChannelsUrl } from '../../../../utils/helpers';
 
 const actionEmptyText = 'Add an action to perform when this trigger is triggered.';
 const destinationEmptyText = 'There are no existing channels. Add a channel to create an action.';
@@ -38,7 +38,7 @@ const ActionEmptyPrompt = ({
             disabled={!hasNotificationPlugin}
             iconType="popout"
             iconSide="right"
-            onClick={() => window.open(MANAGE_CHANNELS_URL)}
+            onClick={() => window.open(getManageChannelsUrl())}
           >
             Manage channels
           </EuiButton>

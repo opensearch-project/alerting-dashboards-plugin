@@ -107,6 +107,3 @@ export const PLUGIN_AUGMENTATION_ENABLE_SETTING = 'visualization:enablePluginAug
 
 export const PLUGIN_AUGMENTATION_MAX_OBJECTS_SETTING =
   'visualization:enablePluginAugmentation.maxPluginObjects';
-
-// This is updated to include the server.basepath during plugin's first render inside app.js using `initManageChannelsUrl` function
-export let MANAGE_CHANNELS_URL = '/app/notifications-dashboards#/channels';

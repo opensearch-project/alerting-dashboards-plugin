@@ -6,7 +6,7 @@
 import React from 'react';
 import { EuiCallOut, EuiButton, EuiLink, EuiSpacer } from '@elastic/eui';
 import { NOTIFICATIONS_LEARN_MORE_HREF } from '../../utils/constants';
-import { MANAGE_CHANNELS_URL } from '../../../../utils/constants';
+import { getManageChannelsUrl } from '../../../../utils/helpers';
 
 const noNotificationsTitle = 'Unable to send notifications. Notifications plugin is required.';
 const noNotificationsBodyText = (
@@ -42,11 +42,12 @@ const hasNotificationsBodyText = (
     </EuiLink>
   </p>
 );
-const hasNotificationsButton = (
-  <EuiButton href={MANAGE_CHANNELS_URL}>View in Notifications</EuiButton>
-);
 
 const NotificationsInfoCallOut = ({ hasNotificationPlugin }) => {
+  const hasNotificationsButton = (
+    <EuiButton href={getManageChannelsUrl()}>View in Notifications</EuiButton>
+  );
+
   return (
     <div>
       <EuiCallOut
