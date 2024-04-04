@@ -28,12 +28,12 @@ import { isInvalid, hasError, validateActionName } from '../../../../utils/valid
 import { validateDestination } from './utils/validate';
 import {
   DEFAULT_ACTION_TYPE,
-  MANAGE_CHANNELS_PATH,
   webhookNotificationActionMessageComponent,
   defaultNotificationActionMessageComponent,
 } from '../../utils/constants';
 import NotificationsCallOut from '../NotificationsCallOut';
 import MinimalAccordion from '../../../../components/FeatureAnywhereContextMenu/MinimalAccordion';
+import { getManageChannelsUrl } from '../../../../utils/helpers';
 
 const Action = ({
   action,
@@ -45,7 +45,6 @@ const Action = ({
   onDelete,
   sendTestMessage,
   setFlyout,
-  httpClient,
   fieldPath,
   values,
   hasNotificationPlugin,
@@ -72,7 +71,6 @@ const Action = ({
     ActionComponent = defaultNotificationActionMessageComponent;
   }
 
-  const manageChannelsUrl = httpClient.basePath.prepend(MANAGE_CHANNELS_PATH);
   const isFirstAction = index !== undefined && index === 0;
   const refreshDestinations = useMemo(() => {
     const refresh = async () => {
@@ -169,7 +167,7 @@ const Action = ({
               disabled={!hasNotificationPlugin}
               iconType="popout"
               iconSide="right"
-              onClick={() => window.open(manageChannelsUrl)}
+              onClick={() => window.open(getManageChannelsUrl())}
             >
               Manage channels
             </ManageButton>
