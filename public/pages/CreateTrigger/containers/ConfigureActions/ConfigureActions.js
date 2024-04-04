@@ -338,7 +338,6 @@ class ConfigureActions extends React.Component {
             }}
             sendTestMessage={this.sendTestMessage}
             setFlyout={setFlyout}
-            httpClient={httpClient}
             fieldPath={fieldPath}
             values={values}
             hasNotificationPlugin={hasNotificationPlugin}
@@ -356,7 +355,6 @@ class ConfigureActions extends React.Component {
       <ActionEmptyPrompt
         arrayHelpers={arrayHelpers}
         hasDestinations={hasDestinations}
-        httpClient={httpClient}
         hasNotificationPlugin={hasNotificationPlugin}
         flyoutMode={flyoutMode}
         onPostAdd={(initialValues) => this.onAccordionToggle(initialValues.id)}
