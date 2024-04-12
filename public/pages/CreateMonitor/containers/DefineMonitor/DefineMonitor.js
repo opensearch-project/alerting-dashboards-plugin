@@ -221,16 +221,13 @@ class DefineMonitor extends Component {
           include_mappings: false,
         };
         const response = await httpClient.get(`../api/alerting/remote/indexes`, { query: query });
-        if (response.ok) canCallGetRemoteIndexes = true;
+        canCallGetRemoteIndexes = response.ok;
       } catch (e) {
         console.warn('Error while retrieving clusters:', e);
       }
     }
 
-    this.setState({
-      remoteMonitoringEnabled: remoteMonitoringEnabled,
-      canCallGetRemoteIndexes: canCallGetRemoteIndexes,
-    });
+    this.setState({ remoteMonitoringEnabled, canCallGetRemoteIndexes });
   }
 
   requiresTimeField() {
