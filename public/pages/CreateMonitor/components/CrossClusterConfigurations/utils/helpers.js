@@ -6,6 +6,9 @@
 import _ from 'lodash';
 import { DEFAULT_EMPTY_DATA, MONITOR_TYPE } from '../../../../../utils/constants';
 
+export const CROSS_CLUSTER_MONITORING_ENABLED_SETTING =
+  'plugins.alerting.cross_cluster_monitoring_enabled';
+
 export const getLocalClusterName = async (httpClient) => {
   let localClusterName = DEFAULT_EMPTY_DATA;
   try {

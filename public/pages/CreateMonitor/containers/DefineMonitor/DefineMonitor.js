@@ -39,7 +39,8 @@ import ConfigureDocumentLevelQueries from '../../components/DocumentLevelMonitor
 import FindingsDashboard from '../../../Dashboard/containers/FindingsDashboard';
 import { validDocLevelGraphQueries } from '../../components/DocumentLevelMonitorQueries/utils/helpers';
 import { validateWhereFilters } from '../../components/MonitorExpressions/expressions/utils/whereHelpers';
-import { REMOTE_MONITORING_ENABLED_SETTING_PATH } from '../../components/CrossClusterConfigurations/components/ExperimentalBanner';
+
+import { CROSS_CLUSTER_MONITORING_ENABLED_SETTING } from '../../components/CrossClusterConfigurations/utils/helpers';
 
 function renderEmptyMessage(message) {
   return (
@@ -193,13 +194,13 @@ class DefineMonitor extends Component {
         remoteMonitoringEnabled = _.get(
           // If present, take the 'transient' setting.
           transient,
-          REMOTE_MONITORING_ENABLED_SETTING_PATH,
+          CROSS_CLUSTER_MONITORING_ENABLED_SETTING,
           // Else take the 'persistent' setting.
           _.get(
             persistent,
-            REMOTE_MONITORING_ENABLED_SETTING_PATH,
+            CROSS_CLUSTER_MONITORING_ENABLED_SETTING,
             // Else take the 'default' setting.
-            _.get(defaults, REMOTE_MONITORING_ENABLED_SETTING_PATH, false)
+            _.get(defaults, CROSS_CLUSTER_MONITORING_ENABLED_SETTING, false)
           )
         );
 
