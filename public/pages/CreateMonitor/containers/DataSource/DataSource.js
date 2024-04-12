@@ -33,7 +33,7 @@ class DataSource extends Component {
   }
 
   render() {
-    const { isMinimal, remoteMonitoringEnabled } = this.props;
+    const { isMinimal, canCallGetRemoteIndexes, remoteMonitoringEnabled } = this.props;
     const { monitor_type, searchType } = this.props.values;
     const displayTimeField =
       searchType === SEARCH_TYPE.GRAPH &&
@@ -44,6 +44,7 @@ class DataSource extends Component {
         <MonitorIndex
           httpClient={this.props.httpClient}
           monitorType={monitor_type}
+          canCallGetRemoteIndexes={canCallGetRemoteIndexes}
           remoteMonitoringEnabled={remoteMonitoringEnabled}
         />
 
