@@ -198,7 +198,7 @@ class MonitorIndex extends React.Component {
   }
 
   render() {
-    const { httpClient, remoteMonitoringEnabled } = this.props;
+    const { httpClient, canCallGetRemoteIndexes, remoteMonitoringEnabled } = this.props;
     const {
       isLoading,
       allIndices,
@@ -236,7 +236,7 @@ class MonitorIndex extends React.Component {
 
     return (
       <>
-        {remoteMonitoringEnabled && supportsCrossClusterMonitoring ? (
+        {remoteMonitoringEnabled && canCallGetRemoteIndexes && supportsCrossClusterMonitoring ? (
           <CrossClusterConfiguration monitorType={this.props.monitorType} httpClient={httpClient} />
         ) : (
           <FormikComboBox
