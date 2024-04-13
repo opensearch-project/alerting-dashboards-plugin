@@ -4,6 +4,7 @@ exports[`DefineMonitor renders 1`] = `
 <div>
   <div>
     <DataSource
+      canCallGetRemoteIndexes={false}
       dataTypes={Object {}}
       errors={Object {}}
       httpClient={[MockFunction]}

@@ -10,8 +10,6 @@ import { FormikComboBox } from '../../../../../components/FormControls';
 import { MONITOR_TYPE } from '../../../../../utils/constants';
 import { connect } from 'formik';
 import { validateIndex } from '../../../../../utils/validate';
-import { ExperimentalBanner } from '../components/ExperimentalBanner';
-
 export const CROSS_CLUSTER_SETUP_LINK =
   'https://opensearch.org/docs/latest/security/access-control/cross-cluster-search/';
 
@@ -323,7 +321,6 @@ export class CrossClusterConfiguration extends Component {
 
     return (
       <>
-        <ExperimentalBanner />
         <FormikComboBox
           name={'clusterNames'}
           formRow={true}
