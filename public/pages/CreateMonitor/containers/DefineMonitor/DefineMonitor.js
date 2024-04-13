@@ -39,7 +39,8 @@ import ConfigureDocumentLevelQueries from '../../components/DocumentLevelMonitor
 import FindingsDashboard from '../../../Dashboard/containers/FindingsDashboard';
 import { validDocLevelGraphQueries } from '../../components/DocumentLevelMonitorQueries/utils/helpers';
 import { validateWhereFilters } from '../../components/MonitorExpressions/expressions/utils/whereHelpers';
-import { REMOTE_MONITORING_ENABLED_SETTING_PATH } from '../../components/CrossClusterConfigurations/components/ExperimentalBanner';
+
+import { CROSS_CLUSTER_MONITORING_ENABLED_SETTING } from '../../components/CrossClusterConfigurations/utils/helpers';
 
 function renderEmptyMessage(message) {
   return (
@@ -76,6 +77,7 @@ class DefineMonitor extends Component {
       loadingResponse: false,
       PanelComponent: props.flyoutMode ? ({ children }) => <>{children}</> : ContentPanel,
       remoteMonitoringEnabled: false,
+      canCallGetRemoteIndexes: false,
     };
 
     this.renderGraph = this.renderGraph.bind(this);
@@ -180,31 +182,52 @@ class DefineMonitor extends Component {
   }
 
   async getSettings() {
+    const { httpClient } = this.props;
+    let remoteMonitoringEnabled = false;
+    let canCallGetRemoteIndexes = false;
+
+    // Check whether remote monitoring is enabled
     try {
-      const { httpClient } = this.props;
       const response = await httpClient.get('../api/alerting/_settings');
       if (response.ok) {
         const { defaults, transient, persistent } = response.resp;
-        let remoteMonitoringEnabled = _.get(
+        remoteMonitoringEnabled = _.get(
           // If present, take the 'transient' setting.
           transient,
-          REMOTE_MONITORING_ENABLED_SETTING_PATH,
+          CROSS_CLUSTER_MONITORING_ENABLED_SETTING,
           // Else take the 'persistent' setting.
           _.get(
             persistent,
-            REMOTE_MONITORING_ENABLED_SETTING_PATH,
+            CROSS_CLUSTER_MONITORING_ENABLED_SETTING,
             // Else take the 'default' setting.
-            _.get(defaults, REMOTE_MONITORING_ENABLED_SETTING_PATH, false)
+            _.get(defaults, CROSS_CLUSTER_MONITORING_ENABLED_SETTING, false)
           )
         );
-        // Boolean settings are returned as strings (e.g., `"true"`, and `"false"`). Constructing boolean value from the string.
-        if (typeof remoteMonitoringEnabled === 'string')
+
+        // Boolean settings can be returned as strings (e.g., `"true"`, and `"false"`). Constructing boolean value from the string.
+        if (typeof remoteMonitoringEnabled === 'string') {
           remoteMonitoringEnabled = JSON.parse(remoteMonitoringEnabled);
-        this.setState({ remoteMonitoringEnabled: remoteMonitoringEnabled });
+        }
       }
     } catch (e) {
-      console.log('Error while retrieving settings', e);
+      console.log('Error while retrieving settings:', e);
     }
+
+    // Check whether the user can call GetRemoteIndexes
+    if (remoteMonitoringEnabled) {
+      try {
+        const query = {
+          indexes: '*,*:*',
+          include_mappings: false,
+        };
+        const response = await httpClient.get(`../api/alerting/remote/indexes`, { query: query });
+        canCallGetRemoteIndexes = response.ok;
+      } catch (e) {
+        console.warn('Error while retrieving clusters:', e);
+      }
+    }
+
+    this.setState({ remoteMonitoringEnabled, canCallGetRemoteIndexes });
   }
 
   requiresTimeField() {
@@ -656,13 +679,16 @@ class DefineMonitor extends Component {
       isDarkMode,
       flyoutMode,
     } = this.props;
-    const { dataTypes, PanelComponent, remoteMonitoringEnabled } = this.state;
+    const { dataTypes, PanelComponent, canCallGetRemoteIndexes, remoteMonitoringEnabled } =
+      this.state;
     const monitorContent = this.getMonitorContent();
     const { searchType } = this.props.values;
     const displayDataSourcePanel =
       searchType === SEARCH_TYPE.GRAPH ||
       searchType === SEARCH_TYPE.QUERY ||
-      (remoteMonitoringEnabled && monitor_type === MONITOR_TYPE.CLUSTER_METRICS);
+      (canCallGetRemoteIndexes &&
+        remoteMonitoringEnabled &&
+        monitor_type === MONITOR_TYPE.CLUSTER_METRICS);
 
     return (
       <div>
@@ -676,6 +702,7 @@ class DefineMonitor extends Component {
               detectorId={detectorId}
               notifications={notifications}
               isDarkMode={isDarkMode}
+              canCallGetRemoteIndexes={canCallGetRemoteIndexes}
               remoteMonitoringEnabled={remoteMonitoringEnabled}
             />
             <EuiSpacer />
