@@ -6,7 +6,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
-import { EuiHealth, EuiHighlight } from '@elastic/eui';
+import { EuiHealth, EuiHighlight, EuiText, EuiLink } from '@elastic/eui';
 
 import { FormikComboBox } from '../../../../components/FormControls';
 import { createReasonableWait } from '../MonitorIndex/utils/helpers';
@@ -93,8 +93,24 @@ class MonitorRoles extends React.Component {
         name="roles"
         formRow
         rowProps={{
-          label: 'Backend roles',
-          helpText: 'You can optionally assign one or more backend roles to the monitor',
+          label: (
+            <div>
+              <EuiText size={'xs'}>
+                <strong>Backend roles</strong>
+                <i> - optional </i>
+              </EuiText>
+              <EuiText color={'subdued'} size={'xs'} style={{ width: '400px' }}>
+                Specify role-based access control (RBAC) backend roles.{' '}
+                <EuiLink
+                  external
+                  href={'https://opensearch.org/docs/latest/observing-your-data/alerting/security/'}
+                  target={'_blank'}
+                >
+                  Learn more
+                </EuiLink>
+              </EuiText>
+            </div>
+          ),
           style: { paddingLeft: '10px' },
         }}
         inputProps={{

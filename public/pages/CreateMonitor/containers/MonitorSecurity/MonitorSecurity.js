@@ -10,7 +10,6 @@ import MonitorRoles from '../MonitorRoles';
 import ContentPanel from '../../../../components/ContentPanel';
 
 const propTypes = {
-  values: PropTypes.object.isRequired,
   httpClient: PropTypes.object.isRequired,
   isMinimal: PropTypes.bool,
 };
