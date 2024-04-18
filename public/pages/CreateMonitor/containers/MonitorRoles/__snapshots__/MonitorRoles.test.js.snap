@@ -102,8 +102,37 @@ exports[`MonitorRoles renders 1`] = `
       name="roles"
       rowProps={
         Object {
-          "helpText": "You can optionally assign one or more backend roles to the monitor (assigned roles have an effect only when filter_by_backend_roles is enabled)",
-          "label": "Backend roles",
+          "label": <div>
+            <EuiText
+              size="xs"
+            >
+              <strong>
+                Backend roles
+              </strong>
+              <i>
+                 - optional 
+              </i>
+            </EuiText>
+            <EuiText
+              color="subdued"
+              size="xs"
+              style={
+                Object {
+                  "width": "400px",
+                }
+              }
+            >
+              Specify role-based access control (RBAC) backend roles.
+               
+              <EuiLink
+                external={true}
+                href="https://opensearch.org/docs/latest/observing-your-data/alerting/security/"
+                target="_blank"
+              >
+                Learn more
+              </EuiLink>
+            </EuiText>
+          </div>,
           "style": Object {
             "paddingLeft": "10px",
           },
@@ -302,8 +331,37 @@ exports[`MonitorRoles renders 1`] = `
             name="roles"
             rowProps={
               Object {
-                "helpText": "You can optionally assign one or more backend roles to the monitor (assigned roles have an effect only when filter_by_backend_roles is enabled)",
-                "label": "Backend roles",
+                "label": <div>
+                  <EuiText
+                    size="xs"
+                  >
+                    <strong>
+                      Backend roles
+                    </strong>
+                    <i>
+                       - optional 
+                    </i>
+                  </EuiText>
+                  <EuiText
+                    color="subdued"
+                    size="xs"
+                    style={
+                      Object {
+                        "width": "400px",
+                      }
+                    }
+                  >
+                    Specify role-based access control (RBAC) backend roles.
+                     
+                    <EuiLink
+                      external={true}
+                      href="https://opensearch.org/docs/latest/observing-your-data/alerting/security/"
+                      target="_blank"
+                    >
+                      Learn more
+                    </EuiLink>
+                  </EuiText>
+                </div>,
                 "style": Object {
                   "paddingLeft": "10px",
                 },
@@ -316,9 +374,40 @@ exports[`MonitorRoles renders 1`] = `
               fullWidth={false}
               hasChildLabel={true}
               hasEmptyLabelSpace={false}
-              helpText="You can optionally assign one or more backend roles to the monitor (assigned roles have an effect only when filter_by_backend_roles is enabled)"
               id="roles-form-row"
-              label="Backend roles"
+              label={
+                <div>
+                  <EuiText
+                    size="xs"
+                  >
+                    <strong>
+                      Backend roles
+                    </strong>
+                    <i>
+                       - optional 
+                    </i>
+                  </EuiText>
+                  <EuiText
+                    color="subdued"
+                    size="xs"
+                    style={
+                      Object {
+                        "width": "400px",
+                      }
+                    }
+                  >
+                    Specify role-based access control (RBAC) backend roles.
+                     
+                    <EuiLink
+                      external={true}
+                      href="https://opensearch.org/docs/latest/observing-your-data/alerting/security/"
+                      target="_blank"
+                    >
+                      Learn more
+                    </EuiLink>
+                  </EuiText>
+                </div>
+              }
               labelType="label"
               style={
                 Object {
@@ -348,7 +437,88 @@ exports[`MonitorRoles renders 1`] = `
                       className="euiFormLabel euiFormRow__label"
                       htmlFor="roles-form-row"
                     >
-                      Backend roles
+                      <div>
+                        <EuiText
+                          size="xs"
+                        >
+                          <div
+                            className="euiText euiText--extraSmall"
+                          >
+                            <strong>
+                              Backend roles
+                            </strong>
+                            <i>
+                               - optional 
+                            </i>
+                          </div>
+                        </EuiText>
+                        <EuiText
+                          color="subdued"
+                          size="xs"
+                          style={
+                            Object {
+                              "width": "400px",
+                            }
+                          }
+                        >
+                          <div
+                            className="euiText euiText--extraSmall"
+                            style={
+                              Object {
+                                "width": "400px",
+                              }
+                            }
+                          >
+                            <EuiTextColor
+                              color="subdued"
+                              component="div"
+                            >
+                              <div
+                                className="euiTextColor euiTextColor--subdued"
+                              >
+                                Specify role-based access control (RBAC) backend roles.
+                                 
+                                <EuiLink
+                                  external={true}
+                                  href="https://opensearch.org/docs/latest/observing-your-data/alerting/security/"
+                                  target="_blank"
+                                >
+                                  <a
+                                    className="euiLink euiLink--primary"
+                                    href="https://opensearch.org/docs/latest/observing-your-data/alerting/security/"
+                                    rel="noopener noreferrer"
+                                    target="_blank"
+                                  >
+                                    Learn more
+                                    <EuiIcon
+                                      aria-label="External link"
+                                      className="euiLink__externalIcon"
+                                      size="s"
+                                      type="popout"
+                                    >
+                                      <div>
+                                        EuiIconMock
+                                      </div>
+                                    </EuiIcon>
+                                    <EuiScreenReaderOnly>
+                                      <span
+                                        className="euiScreenReaderOnly"
+                                      >
+                                        <EuiI18n
+                                          default="(opens in a new tab or window)"
+                                          token="euiLink.newTarget.screenReaderOnlyText"
+                                        >
+                                          (opens in a new tab or window)
+                                        </EuiI18n>
+                                      </span>
+                                    </EuiScreenReaderOnly>
+                                  </a>
+                                </EuiLink>
+                              </div>
+                            </EuiTextColor>
+                          </div>
+                        </EuiText>
+                      </div>
                     </label>
                   </EuiFormLabel>
                 </div>
@@ -356,7 +526,6 @@ exports[`MonitorRoles renders 1`] = `
                   className="euiFormRow__fieldWrapper"
                 >
                   <ComboBox
-                    aria-describedby="roles-form-row-help-0"
                     field={
                       Object {
                         "name": "roles",
@@ -783,18 +952,6 @@ exports[`MonitorRoles renders 1`] = `
                       </div>
                     </EuiComboBox>
                   </ComboBox>
-                  <EuiFormHelpText
-                    className="euiFormRow__text"
-                    id="roles-form-row-help-0"
-                    key="You can optionally assign one or more backend roles to the monitor (assigned roles have an effect only when filter_by_backend_roles is enabled)"
-                  >
-                    <div
-                      className="euiFormHelpText euiFormRow__text"
-                      id="roles-form-row-help-0"
-                    >
-                      You can optionally assign one or more backend roles to the monitor (assigned roles have an effect only when filter_by_backend_roles is enabled)
-                    </div>
-                  </EuiFormHelpText>
                 </div>
               </div>
             </EuiFormRow>
