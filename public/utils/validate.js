@@ -154,7 +154,7 @@ export const validateIndex = (options) => {
   if (!options.length) return 'Must specify an index.';
 
   const illegalCharacters = ILLEGAL_CHARACTERS.join(' ');
-  const pattern = options.map(({ label }) => label).join('');
+  const pattern = options.map(({ value, label }) => value || label).join('');
   if (!isIndexPatternQueryValid(pattern, ILLEGAL_CHARACTERS)) {
     return `One of your inputs contains invalid characters or spaces. Please omit: ${illegalCharacters}`;
   }
