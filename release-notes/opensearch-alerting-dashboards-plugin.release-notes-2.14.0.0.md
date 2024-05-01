@@ -10,4 +10,4 @@ Compatible with OpenSearch Dashboards 2.14.0
 * Fetching timezone from ui settings for Trigger context formatting ([#913](https://github.com/opensearch-project/alerting-dashboards-plugin/pull/913))
 
 ### Documentation
-* Added 2.14 release notes. ([#]())
+* Added 2.14 release notes. ([#945](https://github.com/opensearch-project/alerting-dashboards-plugin/pull/945))
