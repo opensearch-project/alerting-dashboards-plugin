@@ -10,6 +10,7 @@ import { EuiTab, EuiTabs } from '@elastic/eui';
 import Dashboard from '../Dashboard/containers/Dashboard';
 import Monitors from '../Monitors/containers/Monitors';
 import DestinationsList from '../Destinations/containers/DestinationsList';
+import { getDataSource } from '../../services';
 
 const getSelectedTabId = (pathname) => {
   if (pathname.includes('monitors')) return 'monitors';
@@ -20,11 +21,11 @@ const getSelectedTabId = (pathname) => {
 export default class Home extends Component {
   constructor(props) {
     super(props);
+    console.log('data source id ', props);
     const {
       location: { pathname },
     } = this.props;
     const selectedTabId = getSelectedTabId(pathname);
-
     this.state = { selectedTabId };
     this.tabs = [
       {
@@ -80,6 +81,7 @@ export default class Home extends Component {
 
   render() {
     const { httpClient, notifications, setFlyout } = this.props;
+
     return (
       <div>
         <EuiTabs>{this.tabs.map(this.renderTab)}</EuiTabs>

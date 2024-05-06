@@ -3,9 +3,13 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+import { request } from 'http';
+import { getClientBasedOnDataSource } from './utils/helpers';
+
 export default class OpensearchService {
-  constructor(esDriver) {
+  constructor(esDriver, dataSourceEnabled) {
     this.esDriver = esDriver;
+    this.dataSourceEnabled = dataSourceEnabled;
   }
 
   // TODO: This will be deprecated as we do not want to support accessing alerting indices directly
@@ -36,8 +40,14 @@ export default class OpensearchService {
   getIndices = async (context, req, res) => {
     try {
       const { index } = req.body;
-      const { callAsCurrentUser } = this.esDriver.asScoped(req);
-      const indices = await callAsCurrentUser('cat.indices', {
+      const client = getClientBasedOnDataSource(
+        context,
+        this.dataSourceEnabled,
+        req.query?.dataSourceId,
+        req,
+        this.esDriver
+      );
+      const indices = await client('cat.indices', {
         index,
         format: 'json',
         h: 'health,index,status',
@@ -72,8 +82,14 @@ export default class OpensearchService {
   getAliases = async (context, req, res) => {
     try {
       const { alias } = req.body;
-      const { callAsCurrentUser } = this.esDriver.asScoped(req);
-      const aliases = await callAsCurrentUser('cat.aliases', {
+      const client = getClientBasedOnDataSource(
+        context,
+        this.dataSourceEnabled,
+        req.query?.dataSourceId,
+        req,
+        this.esDriver
+      );
+      const aliases = await client('cat.aliases', {
         alias,
         format: 'json',
         h: 'alias,index',
@@ -122,8 +138,14 @@ export default class OpensearchService {
   getMappings = async (context, req, res) => {
     try {
       const { index } = req.body;
-      const { callAsCurrentUser } = this.esDriver.asScoped(req);
-      const mappings = await callAsCurrentUser('indices.getMapping', { index });
+      const client = getClientBasedOnDataSource(
+        context,
+        this.dataSourceEnabled,
+        req.query?.dataSourceId,
+        req,
+        this.esDriver
+      );
+      const mappings = await client('indices.getMapping', { index });
       return res.ok({
         body: {
           ok: true,

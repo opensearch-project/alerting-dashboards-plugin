@@ -163,7 +163,6 @@ export default class CreateMonitor extends Component {
       notificationService,
     } = this.props;
     const { createModalOpen, initialValues, plugins } = this.state;
-
     return (
       <div style={{ padding: '25px 50px' }}>
         <Formik
@@ -173,7 +172,6 @@ export default class CreateMonitor extends Component {
         >
           {({ values, errors, handleSubmit, isSubmitting, isValid, touched }) => {
             const isComposite = values.monitor_type === MONITOR_TYPE.COMPOSITE_LEVEL;
-
             return (
               <Fragment>
                 <EuiTitle size="l">

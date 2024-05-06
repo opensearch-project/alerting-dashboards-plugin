@@ -4,8 +4,9 @@
  */
 
 import { schema } from '@osd/config-schema';
+import { validateQuery } from '../services/utils/helpers';
 
-export default function (services, router) {
+export default function (services, router, dataSourceEnabled) {
   const { opensearchService } = services;
 
   router.post(
@@ -13,6 +14,7 @@ export default function (services, router) {
       path: '/api/alerting/_search',
       validate: {
         body: schema.any(),
+        query: validateQuery(dataSourceEnabled),
       },
     },
     opensearchService.search
@@ -25,6 +27,7 @@ export default function (services, router) {
         body: schema.object({
           index: schema.string(),
         }),
+        query: validateQuery(dataSourceEnabled),
       },
     },
     opensearchService.getIndices
@@ -37,6 +40,7 @@ export default function (services, router) {
         body: schema.object({
           alias: schema.string(),
         }),
+        query: validateQuery(dataSourceEnabled),
       },
     },
     opensearchService.getAliases
@@ -49,6 +53,7 @@ export default function (services, router) {
         body: schema.object({
           index: schema.arrayOf(schema.string()),
         }),
+        query: validateQuery(dataSourceEnabled),
       },
     },
     opensearchService.getMappings

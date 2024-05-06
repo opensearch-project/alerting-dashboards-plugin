@@ -208,8 +208,14 @@ export default class CreateTrigger extends Component {
   };
 
   getTriggerContext = (executeResponse, monitor, values) => ({
-    periodStart: moment.utc(_.get(executeResponse, 'period_start', Date.now())).tz(getTimeZone()).format(),
-    periodEnd: moment.utc(_.get(executeResponse, 'period_end', Date.now())).tz(getTimeZone()).format(),
+    periodStart: moment
+      .utc(_.get(executeResponse, 'period_start', Date.now()))
+      .tz(getTimeZone())
+      .format(),
+    periodEnd: moment
+      .utc(_.get(executeResponse, 'period_end', Date.now()))
+      .tz(getTimeZone())
+      .format(),
     results: [_.get(executeResponse, 'input_results.results[0]')].filter((result) => !!result),
     trigger: formikToTrigger(values, _.get(this.props.monitor, 'ui_metadata', {})),
     alert: null,
@@ -257,8 +263,10 @@ export default class CreateTrigger extends Component {
     }
 
     try {
+      const query = createQueryObject();
       const response = await this.props.httpClient.post('../api/alerting/_mappings', {
         body: JSON.stringify({ index }),
+        ...(query && { query }), // Only include query if it exists
       });
       if (response.ok) {
         return response.resp;

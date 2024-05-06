@@ -41,6 +41,7 @@ import AcknowledgeAlertsModal from '../components/AcknowledgeAlertsModal';
 import { getAlertsFindingColumn } from '../components/FindingsDashboard/findingsUtils';
 import { ChainedAlertDetailsFlyout } from '../components/ChainedAlertDetailsFlyout/ChainedAlertDetailsFlyout';
 import { CLUSTER_METRICS_CROSS_CLUSTER_ALERT_TABLE_COLUMN } from '../../CreateMonitor/components/ClusterMetricsMonitor/utils/clusterMetricsMonitorConstants';
+import { createQueryObject } from '../../utils/helpers';
 
 export default class Dashboard extends Component {
   constructor(props) {
@@ -51,6 +52,7 @@ export default class Dashboard extends Component {
     const { alertState, from, search, severityLevel, size, sortDirection, sortField } =
       getURLQueryParams(location);
 
+    // this.dataSourceQuery = createQueryObject();
     this.state = {
       alerts: [],
       alertsByTriggers: [],
@@ -181,6 +183,7 @@ export default class Dashboard extends Component {
       };
       const response = await httpClient.post('../api/alerting/monitors/_search', {
         body: JSON.stringify(params),
+        // ...(this.dataSourceQuery ? { query: this.dataSourceQuery } : {})
       });
       if (response.ok) {
         monitors = _.get(response, 'resp.hits.hits', []);

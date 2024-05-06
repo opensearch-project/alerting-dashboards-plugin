@@ -37,3 +37,12 @@ export interface Alert {
   severity: string;
   action_execution_results: ActionExecutionResult[];
 }
+
+export interface MDSStates {
+  queryParams: MDSQueryParams;
+  selectedDataSourceId: string | undefined;
+}
+
+export type MDSQueryParams = {
+  dataSourceId: string;
+};

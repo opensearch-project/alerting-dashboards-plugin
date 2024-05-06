@@ -7,17 +7,25 @@ import _ from 'lodash';
 
 import { INDEX } from '../../utils/constants';
 import { isIndexNotFoundError } from './utils/helpers';
+import { getClientBasedOnDataSource } from './utils/helpers';
 
 export default class MonitorService {
-  constructor(esDriver) {
+  constructor(esDriver, dataSourceEnabled) {
     this.esDriver = esDriver;
+    this.dataSourceEnabled = dataSourceEnabled;
   }
 
   createMonitor = async (context, req, res) => {
     try {
       const params = { body: req.body };
-      const { callAsCurrentUser } = await this.esDriver.asScoped(req);
-      const createResponse = await callAsCurrentUser('alerting.createMonitor', params);
+      const client = getClientBasedOnDataSource(
+        context,
+        this.dataSourceEnabled,
+        req.query?.dataSourceId,
+        req,
+        this.esDriver
+      );
+      const createResponse = await client('alerting.createMonitor', params);
       return res.ok({
         body: {
           ok: true,

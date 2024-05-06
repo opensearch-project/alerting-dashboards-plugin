@@ -15,6 +15,7 @@ export function getURLQueryParams(location) {
     sortField = DEFAULT_QUERY_PARAMS.sortField,
     sortDirection = DEFAULT_QUERY_PARAMS.sortDirection,
     state = DEFAULT_QUERY_PARAMS.state,
+    dataSourceId,
   } = queryString.parse(location.search);
 
   return {
@@ -24,6 +25,7 @@ export function getURLQueryParams(location) {
     sortField,
     sortDirection,
     state,
+    dataSourceId: dataSourceId === undefined ? undefined : dataSourceId,
   };
 }
 

@@ -3,23 +3,27 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { Component } from 'react';
+import React, { Component, useMemo } from 'react';
 import { Switch, Route } from 'react-router-dom';
 import { CoreConsumer, CoreContext } from '../../utils/CoreContext';
-
 import Home from '../Home';
 import CreateMonitor from '../CreateMonitor';
 import MonitorDetails from '../MonitorDetails/containers/MonitorDetails';
 import CreateDestination from '../Destinations/containers/CreateDestination';
 import Flyout from '../../components/Flyout';
 import { APP_PATH } from '../../utils/constants';
-import { ServicesConsumer } from '../../services';
+import { ServicesConsumer, getDataSource } from '../../services';
 import { getBreadcrumbs } from '../../components/Breadcrumbs/Breadcrumbs';
+import {
+  getDataSourceManagementPlugin,
+  getNotifications,
+  getSavedObjectsClient,
+  setDataSource,
+} from '../../../public/services';
 
 class Main extends Component {
   static contextType = CoreContext;
   state = { flyout: null };
-
   async componentDidMount() {
     if (this.context) {
       this.updateBreadcrumbs();
@@ -58,9 +62,47 @@ class Main extends Component {
     }
   };
 
+  handleDataSourceChange = ([dataSources]) => {
+    const dataSourceId = dataSources?.id;
+    if (this.props.dataSourceEnabled && dataSourceId === undefined) {
+      getNotifications().toasts.addDanger('Unable to set data source.');
+    } else if (this.state.selectedDataSourceId != dataSourceId) {
+      this.setState({
+        selectedDataSourceId: dataSourceId,
+      });
+      setDataSource({ dataSourceId });
+    }
+  };
+
+  renderDataSourceComponent() {
+    const { setActionMenu } = this.props;
+    const DataSourceMenu = getDataSourceManagementPlugin()?.ui.getDataSourceMenu();
+    const componentConfig = {
+      fullWidth: false,
+      activeOption:
+        this.state.selectedDataSourceId === undefined
+          ? undefined
+          : [{ id: this.state.selectedDataSourceId }],
+      savedObjects: getSavedObjectsClient(),
+      notifications: getNotifications(),
+      onSelectedDataSources: (dataSources) => this.handleDataSourceChange(dataSources),
+    };
+
+    return (
+      <DataSourceMenu
+        setMenuMountPoint={setActionMenu}
+        componentType={'DataSourceSelectable'}
+        componentConfig={componentConfig}
+      />
+    );
+  }
   render() {
     const { flyout } = this.state;
-    const { history, ...rest } = this.props;
+    const { history, dataSourceEnabled, ...rest } = this.props;
+    let renderDataSourceComponent = null;
+    if (dataSourceEnabled) {
+      renderDataSourceComponent = this.renderDataSourceComponent();
+    }
     return (
       <CoreConsumer>
         {(core) =>
@@ -75,6 +117,7 @@ class Main extends Component {
                         this.setFlyout(null);
                       }}
                     />
+                    {dataSourceEnabled && renderDataSourceComponent}
                     <Switch>
                       <Route
                         path={APP_PATH.CREATE_MONITOR}
@@ -96,6 +139,7 @@ class Main extends Component {
                             httpClient={core.http}
                             setFlyout={this.setFlyout}
                             notifications={core.notifications}
+                            landingDataSourceId={this.state?.selectedDataSourceId}
                             {...props}
                           />
                         )}
@@ -107,6 +151,8 @@ class Main extends Component {
                             httpClient={core.http}
                             setFlyout={this.setFlyout}
                             notifications={core.notifications}
+                            setActionMenu={setActionMenu}
+                            landingDataSourceId={this.state?.selectedDataSourceId}
                             {...props}
                             edit
                           />
@@ -121,6 +167,7 @@ class Main extends Component {
                             notifications={core.notifications}
                             isDarkMode={core.isDarkMode}
                             notificationService={services.notificationService}
+                            landingDataSourceId={this.state?.selectedDataSourceId}
                             {...props}
                           />
                         )}
@@ -132,6 +179,7 @@ class Main extends Component {
                             {...props}
                             setFlyout={this.setFlyout}
                             notifications={core.notifications}
+                            landingDataSourceId={this.state?.selectedDataSourceId}
                           />
                         )}
                       />

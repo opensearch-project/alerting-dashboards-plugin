@@ -33,6 +33,7 @@ import { FORMIK_INITIAL_VALUES } from '../../../CreateMonitor/containers/CreateM
 import { getDefaultScript } from '../../utils/helper';
 import DefineCompositeLevelTrigger from '../DefineCompositeLevelTrigger';
 import EnhancedAccordion from '../../../../components/FeatureAnywhereContextMenu/EnhancedAccordion';
+import { createQueryObject } from '../../../../../public/pages/utils/helpers';
 
 class ConfigureTriggers extends React.Component {
   constructor(props) {
@@ -197,8 +198,10 @@ class ConfigureTriggers extends React.Component {
     }
 
     try {
+      const query = createQueryObject();
       const response = await this.props.httpClient.post('../api/alerting/_mappings', {
         body: JSON.stringify({ index }),
+        ...(query && { query }), // Only include query if it exists
       });
       if (response.ok) {
         return response.resp;

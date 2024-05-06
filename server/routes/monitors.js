@@ -4,8 +4,9 @@
  */
 
 import { schema } from '@osd/config-schema';
+import { validateQuery } from '../services/utils/helpers';
 
-export default function (services, router) {
+export default function (services, router, dataSourceEnabled) {
   const { monitorService } = services;
 
   router.get(
@@ -31,6 +32,7 @@ export default function (services, router) {
       path: '/api/alerting/monitors/_search',
       validate: {
         body: schema.any(),
+        query: validateQuery(dataSourceEnabled),
       },
     },
     monitorService.searchMonitors
@@ -41,6 +43,7 @@ export default function (services, router) {
       path: '/api/alerting/monitors',
       validate: {
         body: schema.any(),
+        query: validateQuery(dataSourceEnabled),
       },
     },
     monitorService.createMonitor
@@ -51,6 +54,7 @@ export default function (services, router) {
       path: '/api/alerting/workflows',
       validate: {
         body: schema.any(),
+        query: validateQuery(dataSourceEnabled),
       },
     },
     monitorService.createWorkflow
@@ -64,6 +68,7 @@ export default function (services, router) {
           dryrun: schema.maybe(schema.string()),
         }),
         body: schema.any(),
+        query: validateQuery(dataSourceEnabled),
       },
     },
     monitorService.executeMonitor
@@ -76,6 +81,7 @@ export default function (services, router) {
         params: schema.object({
           id: schema.string(),
         }),
+        query: validateQuery(dataSourceEnabled),
       },
     },
     monitorService.getWorkflow
@@ -88,6 +94,7 @@ export default function (services, router) {
         params: schema.object({
           id: schema.string(),
         }),
+        query: validateQuery(dataSourceEnabled),
       },
     },
     monitorService.getMonitor
@@ -105,6 +112,7 @@ export default function (services, router) {
           ifPrimaryTerm: schema.maybe(schema.number()),
         }),
         body: schema.any(),
+        query: validateQuery(dataSourceEnabled),
       },
     },
     monitorService.updateMonitor
@@ -122,6 +130,7 @@ export default function (services, router) {
           ifPrimaryTerm: schema.maybe(schema.number()),
         }),
         body: schema.any(),
+        query: validateQuery(dataSourceEnabled),
       },
     },
     monitorService.updateMonitor
@@ -165,6 +174,7 @@ export default function (services, router) {
           id: schema.string(),
         }),
         body: schema.any(),
+        query: validateQuery(dataSourceEnabled),
       },
     },
     monitorService.acknowledgeAlerts
@@ -178,6 +188,7 @@ export default function (services, router) {
           id: schema.string(),
         }),
         body: schema.any(),
+        query: validateQuery(dataSourceEnabled),
       },
     },
     monitorService.acknowledgeChainedAlerts

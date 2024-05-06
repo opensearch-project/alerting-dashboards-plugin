@@ -16,9 +16,11 @@ import { alertingTriggerAd } from './utils/contextMenu/triggers';
 import { ExpressionsSetup } from '../../../src/plugins/expressions/public';
 import { UiActionsSetup } from '../../../src/plugins/ui_actions/public';
 import { overlayAlertsFunction } from './expressions/overlay_alerts';
-import { setClient, setEmbeddable, setNotifications, setOverlays, setSavedAugmentVisLoader, setUISettings, setQueryService } from './services';
+import { setClient, setEmbeddable, setNotifications, setOverlays, setSavedAugmentVisLoader, setUISettings, setQueryService, setSavedObjectsClient, setDataSourceEnabled, setDataSourceManagementPlugin } from './services';
 import { VisAugmenterStart } from '../../../src/plugins/vis_augmenter/public';
 import { DataPublicPluginStart } from '../../../src/plugins/data/public';
+import { DataSourceManagementPluginSetup } from '../../../src/plugins/data_source_management/public';
+import { DataSourcePluginSetup } from '../../../src/plugins/data_source/public';
 
 declare module '../../../src/plugins/ui_actions/public' {
   export interface ActionContextMapping {
@@ -33,6 +35,8 @@ export interface AlertingStart {}
 export interface AlertingSetupDeps {
   expressions: ExpressionsSetup;
   uiActions: UiActionsSetup;
+  dataSourceManagement: DataSourceManagementPluginSetup;
+  dataSource: DataSourcePluginSetup;
 }
 
 export interface AlertingStartDeps {
@@ -42,7 +46,7 @@ export interface AlertingStartDeps {
 }
 
 export class AlertingPlugin implements Plugin<AlertingSetup, AlertingStart, AlertingSetupDeps, AlertingStartDeps> {
-  public setup(core: CoreSetup<AlertingStartDeps, AlertingStart>, { expressions, uiActions }: AlertingSetupDeps): AlertingSetup {
+  public setup(core: CoreSetup<AlertingStartDeps, AlertingStart>, { expressions, uiActions, dataSourceManagement, dataSource }: AlertingSetupDeps): AlertingSetup {
     core.application.register({
       id: PLUGIN_NAME,
       title: 'Alerting',
@@ -65,6 +69,12 @@ export class AlertingPlugin implements Plugin<AlertingSetup, AlertingStart, Aler
     // Set the HTTP client so it can be pulled into expression fns to make
     // direct server-side calls
     setClient(core.http);
+
+    setDataSourceManagementPlugin(dataSourceManagement);
+
+    const enabled = !!dataSource;
+
+    setDataSourceEnabled({ enabled });
 
     // registers the expression function used to render anomalies on an Augmented Visualization
     expressions.registerFunction(overlayAlertsFunction());
@@ -91,6 +101,7 @@ export class AlertingPlugin implements Plugin<AlertingSetup, AlertingStart, Aler
     setQueryService(data.query);
     setSavedAugmentVisLoader(visAugmenter.savedAugmentVisLoader);
     setNotifications(core.notifications);
+    setSavedObjectsClient(core.savedObjects.client);
     return {};
   }
 
