@@ -19,11 +19,16 @@ import {
   getNotifications,
   getSavedObjectsClient,
   setDataSource,
+  getDataSourceEnabled,
 } from '../../../public/services';
 
 class Main extends Component {
   static contextType = CoreContext;
-  state = { flyout: null };
+  state = {
+    flyout: null,
+    selectedDataSourceId: undefined,
+    dataSourceLoading: this.props.dataSourceEnabled,
+  };
   async componentDidMount() {
     if (this.context) {
       this.updateBreadcrumbs();
@@ -72,22 +77,25 @@ class Main extends Component {
       });
       setDataSource({ dataSourceId });
     }
+    if (this.props.dataSourceEnabled && this.state.dataSourceLoading) {
+      this.setState({
+        dataSourceLoading: false,
+      });
+    }
   };
 
   renderDataSourceComponent() {
     const { setActionMenu } = this.props;
-    const DataSourceMenu = getDataSourceManagementPlugin()?.ui.getDataSourceMenu();
     const componentConfig = {
       fullWidth: false,
-      activeOption:
-        this.state.selectedDataSourceId === undefined
-          ? undefined
-          : [{ id: this.state.selectedDataSourceId }],
+      activeOption: this.state.dataSourceLoading
+        ? undefined
+        : [{ id: this.state.selectedDataSourceId }],
       savedObjects: getSavedObjectsClient(),
       notifications: getNotifications(),
       onSelectedDataSources: (dataSources) => this.handleDataSourceChange(dataSources),
     };
-
+    const DataSourceMenu = getDataSourceManagementPlugin()?.ui.getDataSourceMenu();
     return (
       <DataSourceMenu
         setMenuMountPoint={setActionMenu}
@@ -99,10 +107,7 @@ class Main extends Component {
   render() {
     const { flyout } = this.state;
     const { history, dataSourceEnabled, ...rest } = this.props;
-    let renderDataSourceComponent = null;
-    if (dataSourceEnabled) {
-      renderDataSourceComponent = this.renderDataSourceComponent();
-    }
+
     return (
       <CoreConsumer>
         {(core) =>
@@ -117,7 +122,7 @@ class Main extends Component {
                         this.setFlyout(null);
                       }}
                     />
-                    {dataSourceEnabled && renderDataSourceComponent}
+                    {dataSourceEnabled && this.renderDataSourceComponent()}
                     <Switch>
                       <Route
                         path={APP_PATH.CREATE_MONITOR}
@@ -172,17 +177,19 @@ class Main extends Component {
                           />
                         )}
                       />
-                      <Route
-                        render={(props) => (
-                          <Home
-                            httpClient={core.http}
-                            {...props}
-                            setFlyout={this.setFlyout}
-                            notifications={core.notifications}
-                            landingDataSourceId={this.state?.selectedDataSourceId}
-                          />
-                        )}
-                      />
+                      {!this.state.dataSourceLoading && (
+                        <Route
+                          render={(props) => (
+                            <Home
+                              httpClient={core.http}
+                              {...props}
+                              setFlyout={this.setFlyout}
+                              notifications={core.notifications}
+                              landingDataSourceId={this.state?.selectedDataSourceId}
+                            />
+                          )}
+                        />
+                      )}
                     </Switch>
                   </div>
                 )

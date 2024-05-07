@@ -52,7 +52,7 @@ export default class Dashboard extends Component {
     const { alertState, from, search, severityLevel, size, sortDirection, sortField } =
       getURLQueryParams(location);
 
-    // this.dataSourceQuery = createQueryObject();
+    this.dataSourceQuery = createQueryObject();
     this.state = {
       alerts: [],
       alertsByTriggers: [],
@@ -183,7 +183,7 @@ export default class Dashboard extends Component {
       };
       const response = await httpClient.post('../api/alerting/monitors/_search', {
         body: JSON.stringify(params),
-        // ...(this.dataSourceQuery ? { query: this.dataSourceQuery } : {})
+        ...(this.dataSourceQuery ? { query: this.dataSourceQuery } : {}),
       });
       if (response.ok) {
         monitors = _.get(response, 'resp.hits.hits', []);

@@ -48,6 +48,7 @@ import FindingsDashboard from '../../Dashboard/containers/FindingsDashboard';
 import { TABLE_TAB_IDS } from '../../Dashboard/components/FindingsDashboard/findingsUtils';
 import { DeleteMonitorModal } from '../../../components/DeleteModal/DeleteMonitorModal';
 import { getLocalClusterName } from '../../CreateMonitor/components/CrossClusterConfigurations/utils/helpers';
+import { createQueryObject } from '../../utils/helpers';
 
 export default class MonitorDetails extends Component {
   constructor(props) {
@@ -75,6 +76,7 @@ export default class MonitorDetails extends Component {
       showDeleteModal: false,
       localClusterName: undefined,
     };
+    this.dataSourceQuery = createQueryObject();
   }
 
   isWorkflow = () => {
@@ -135,8 +137,16 @@ export default class MonitorDetails extends Component {
 
   updateDelegateMonitors = async (monitor) => {
     const getMonitor = async (id) => {
+      const queryParams = new URLSearchParams();
+
+      // Append each key-value pair from dataSourceQuery to the query parameters
+      if (this.dataSourceQuery) {
+        for (const key in this.dataSourceQuery) {
+          queryParams.append(key, this.dataSourceQuery[key]);
+        }
+      }
       return this.props.httpClient
-        .get(`../api/alerting/monitors/${id}`)
+        .get(`../api/alerting/monitors/${id}?${queryParams.toString()}`)
         .then((res) => {
           return res.resp;
         })
@@ -167,8 +177,18 @@ export default class MonitorDetails extends Component {
   getMonitor = (id) => {
     const { httpClient } = this.props;
     const isWorkflow = this.isWorkflow();
+    const queryParams = new URLSearchParams();
+
+    // Append each key-value pair from dataSourceQuery to the query parameters
+    if (this.dataSourceQuery) {
+      for (const key in this.dataSourceQuery) {
+        queryParams.append(key, this.dataSourceQuery[key]);
+      }
+    }
     httpClient
-      .get(`../api/alerting/${isWorkflow ? 'workflows' : 'monitors'}/${id}`)
+      .get(
+        `../api/alerting/${isWorkflow ? 'workflows' : 'monitors'}/${id}?${queryParams.toString()}`
+      )
       .then((resp) => {
         const {
           ok,

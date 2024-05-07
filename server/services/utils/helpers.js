@@ -43,8 +43,15 @@ export function getClientBasedOnDataSource(
   }
 }
 
-export function validateQuery(dataSourceEnabled) {
+export function validateQuery(dataSourceEnabled, fields = {}) {
   let query = schema.object({}, { unknowns: 'allow' });
+
+  // Extend the query schema with the specified fields
+  for (const fieldName in fields) {
+    query = query.extends({
+      [fieldName]: fields[fieldName],
+    });
+  }
 
   if (dataSourceEnabled === true) {
     query = query.extends({

@@ -29,6 +29,7 @@ import * as HistoryConstants from './utils/constants';
 import { INDEX } from '../../../../../utils/constants';
 import { backendErrorNotification } from '../../../../utils/helpers';
 import { MONITOR_TYPE } from '../../../../utils/constants';
+import { createQueryObject } from '../../../utils/helpers';
 
 class MonitorHistory extends PureComponent {
   constructor(props) {
@@ -51,7 +52,10 @@ class MonitorHistory extends PureComponent {
         endTime: this.initialEndTime,
       },
     };
+
+    this.dataSourceQuery = createQueryObject();
   }
+
   async componentDidMount() {
     const { triggers } = this.props;
     if (triggers.length > 0) {
@@ -199,6 +203,7 @@ class MonitorHistory extends PureComponent {
       };
       const resp = await httpClient.post('../api/alerting/monitors/_search', {
         body: JSON.stringify(requestBody),
+        ...(this.dataSourceQuery ? { query: this.dataSourceQuery } : {}),
       });
       if (resp.ok) {
         const poiData = get(resp, 'resp.aggregations.alerts_over_time.buckets', []).map((item) => ({

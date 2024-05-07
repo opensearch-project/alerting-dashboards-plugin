@@ -3,6 +3,7 @@ import _ from 'lodash';
 import { getClient } from '../../services';
 import { getAssociatedMonitorIds } from '../savedObjectHelper';
 import { parse } from 'query-string';
+import { createQueryObject } from '../../pages/utils/helpers';
 
 export const stateToLabel = {
   enabled: { label: 'Enabled', color: 'success' },
@@ -11,6 +12,10 @@ export const stateToLabel = {
 
 const getMonitors = async (params) => {
   const httpClient = getClient();
+  const dataSourceQuery = createQueryObject();
+  if(dataSourceQuery && dataSourceQuery.dataSourceId !== undefined) {
+    params.dataSourceId = dataSourceQuery.dataSourceId
+  }
   const monitorResponse = await httpClient.get('../api/alerting/monitors', { query: params });
   if (monitorResponse.ok) {
     return _.get(monitorResponse, 'monitors', []);

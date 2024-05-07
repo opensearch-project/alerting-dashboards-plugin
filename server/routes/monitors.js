@@ -9,19 +9,21 @@ import { validateQuery } from '../services/utils/helpers';
 export default function (services, router, dataSourceEnabled) {
   const { monitorService } = services;
 
+  const fieldValidations = {
+    from: schema.number(),
+    size: schema.number(),
+    search: schema.string(),
+    sortField: schema.string(),
+    sortDirection: schema.string(),
+    state: schema.string(),
+    monitorIds: schema.maybe(schema.any()),
+  };
+
   router.get(
     {
       path: '/api/alerting/monitors',
       validate: {
-        query: schema.object({
-          from: schema.number(),
-          size: schema.number(),
-          search: schema.string(),
-          sortField: schema.string(),
-          sortDirection: schema.string(),
-          state: schema.string(),
-          monitorIds: schema.maybe(schema.any()),
-        }),
+        query: validateQuery(dataSourceEnabled, fieldValidations),
       },
     },
     monitorService.getMonitors
@@ -64,11 +66,10 @@ export default function (services, router, dataSourceEnabled) {
     {
       path: '/api/alerting/monitors/_execute',
       validate: {
-        query: schema.object({
+        body: schema.any(),
+        query: validateQuery(dataSourceEnabled, {
           dryrun: schema.maybe(schema.string()),
         }),
-        body: schema.any(),
-        query: validateQuery(dataSourceEnabled),
       },
     },
     monitorService.executeMonitor
@@ -100,6 +101,11 @@ export default function (services, router, dataSourceEnabled) {
     monitorService.getMonitor
   );
 
+  const fieldValidationForMonitors = {
+    ifSeqNo: schema.maybe(schema.number()),
+    ifPrimaryTerm: schema.maybe(schema.number()),
+  };
+
   router.put(
     {
       path: '/api/alerting/monitors/{id}',
@@ -107,12 +113,8 @@ export default function (services, router, dataSourceEnabled) {
         params: schema.object({
           id: schema.string(),
         }),
-        query: schema.object({
-          ifSeqNo: schema.maybe(schema.number()),
-          ifPrimaryTerm: schema.maybe(schema.number()),
-        }),
         body: schema.any(),
-        query: validateQuery(dataSourceEnabled),
+        query: validateQuery(dataSourceEnabled, fieldValidationForMonitors),
       },
     },
     monitorService.updateMonitor
@@ -125,12 +127,8 @@ export default function (services, router, dataSourceEnabled) {
         params: schema.object({
           id: schema.string(),
         }),
-        query: schema.object({
-          ifSeqNo: schema.maybe(schema.number()),
-          ifPrimaryTerm: schema.maybe(schema.number()),
-        }),
+        query: validateQuery(dataSourceEnabled, fieldValidationForMonitors),
         body: schema.any(),
-        query: validateQuery(dataSourceEnabled),
       },
     },
     monitorService.updateMonitor
@@ -143,7 +141,7 @@ export default function (services, router, dataSourceEnabled) {
         params: schema.object({
           id: schema.string(),
         }),
-        query: schema.object({
+        query: validateQuery(dataSourceEnabled, {
           version: schema.number(),
         }),
       },
@@ -158,7 +156,7 @@ export default function (services, router, dataSourceEnabled) {
         params: schema.object({
           id: schema.string(),
         }),
-        query: schema.object({
+        query: validateQuery(dataSourceEnabled, {
           version: schema.number(),
         }),
       },

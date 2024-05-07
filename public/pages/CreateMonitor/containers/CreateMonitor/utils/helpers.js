@@ -19,6 +19,7 @@ import { triggerToFormik } from '../../../../CreateTrigger/containers/CreateTrig
 import { TRIGGER_TYPE } from '../../../../CreateTrigger/containers/CreateTrigger/utils/constants';
 import { getInitialTriggerValues } from '../../../../CreateTrigger/components/AddTriggerButton/utils';
 import { AGGREGATION_TYPES } from '../../../components/MonitorExpressions/expressions/utils/constants';
+import { createQueryObject } from '../../../../utils/helpers';
 
 export const getInitialValues = ({
   title,
@@ -182,8 +183,10 @@ export const create = async ({
   try {
     const isWorkflow = monitor.workflow_type === MONITOR_TYPE.COMPOSITE_LEVEL;
     const creationPool = isWorkflow ? 'workflows' : 'monitors';
+    const dataSourceQuery = createQueryObject();
     const resp = await httpClient.post(`../api/alerting/${creationPool}`, {
       body: JSON.stringify(monitor),
+      ...(dataSourceQuery ? { query: dataSourceQuery } : {}),
     });
     setSubmitting(false);
     const {

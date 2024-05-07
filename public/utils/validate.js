@@ -111,7 +111,7 @@ export const validateMonitorName = (httpClient, monitorToEdit, isFullText) => as
     };
     const response = await httpClient.post('../api/alerting/monitors/_search', {
       body: JSON.stringify(options),
-      ...(dataSourceQuery && { dataSourceQuery }),
+      ...(dataSourceQuery && { query: dataSourceQuery }),
     });
     if (_.get(response, 'resp.hits.total.value', 0)) {
       if (!monitorToEdit) return 'Monitor name is already used.';

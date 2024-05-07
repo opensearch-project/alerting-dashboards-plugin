@@ -46,8 +46,14 @@ export default class MonitorService {
   createWorkflow = async (context, req, res) => {
     try {
       const params = { body: req.body };
-      const { callAsCurrentUser } = await this.esDriver.asScoped(req);
-      const createResponse = await callAsCurrentUser('alerting.createWorkflow', params);
+      const client = getClientBasedOnDataSource(
+        context,
+        this.dataSourceEnabled,
+        req.query?.dataSourceId,
+        req,
+        this.esDriver
+      );
+      const createResponse = await client('alerting.createWorkflow', params);
       return res.ok({
         body: {
           ok: true,
@@ -69,8 +75,14 @@ export default class MonitorService {
     try {
       const { id } = req.params;
       const params = { monitorId: id };
-      const { callAsCurrentUser } = await this.esDriver.asScoped(req);
-      const response = await callAsCurrentUser('alerting.deleteMonitor', params);
+      const client = getClientBasedOnDataSource(
+        context,
+        this.dataSourceEnabled,
+        req.query?.dataSourceId,
+        req,
+        this.esDriver
+      );
+      const response = await client('alerting.deleteMonitor', params);
 
       return res.ok({
         body: {
@@ -92,8 +104,14 @@ export default class MonitorService {
     try {
       const { id } = req.params;
       const params = { workflowId: id };
-      const { callAsCurrentUser } = await this.esDriver.asScoped(req);
-      const response = await callAsCurrentUser('alerting.deleteWorkflow', params);
+      const client = getClientBasedOnDataSource(
+        context,
+        this.dataSourceEnabled,
+        req.query?.dataSourceId,
+        req,
+        this.esDriver
+      );
+      const response = await client('alerting.deleteWorkflow', params);
 
       return res.ok({
         body: {
@@ -115,15 +133,27 @@ export default class MonitorService {
     try {
       const { id } = req.params;
       const params = { monitorId: id };
-      const { callAsCurrentUser } = await this.esDriver.asScoped(req);
-      const getResponse = await callAsCurrentUser('alerting.getMonitor', params);
+      const client = getClientBasedOnDataSource(
+        context,
+        this.dataSourceEnabled,
+        req.query?.dataSourceId,
+        req,
+        this.esDriver
+      );
+      const getResponse = await client('alerting.getMonitor', params);
       let monitor = _.get(getResponse, 'monitor', null);
       const version = _.get(getResponse, '_version', null);
       const ifSeqNo = _.get(getResponse, '_seq_no', null);
       const ifPrimaryTerm = _.get(getResponse, '_primary_term', null);
       const associated_workflows = _.get(getResponse, 'associated_workflows', null);
       if (monitor) {
-        const { callAsCurrentUser } = this.esDriver.asScoped(req);
+        const client = getClientBasedOnDataSource(
+          context,
+          this.dataSourceEnabled,
+          req.query?.dataSourceId,
+          req,
+          this.esDriver
+        );
         const aggsParams = {
           index: INDEX.ALL_ALERTS,
           body: {
@@ -152,7 +182,7 @@ export default class MonitorService {
             },
           },
         };
-        const searchResponse = await callAsCurrentUser('alerting.getMonitors', aggsParams);
+        const searchResponse = await client('alerting.getMonitors', aggsParams);
         const dayCount = _.get(searchResponse, 'aggregations.24_hour_count.buckets.0.doc_count', 0);
         const activeBuckets = _.get(searchResponse, 'aggregations.active_count.buckets', []);
         const activeCount = activeBuckets.reduce(
@@ -197,8 +227,14 @@ export default class MonitorService {
     try {
       const { id } = req.params;
       const params = { monitorId: id };
-      const { callAsCurrentUser } = await this.esDriver.asScoped(req);
-      const getResponse = await callAsCurrentUser('alerting.getWorkflow', params);
+      const client = getClientBasedOnDataSource(
+        context,
+        this.dataSourceEnabled,
+        req.query?.dataSourceId,
+        req,
+        this.esDriver
+      );
+      const getResponse = await client('alerting.getWorkflow', params);
       let workflow = _.get(getResponse, 'workflow', null);
       const version = _.get(getResponse, '_version', null);
       const ifSeqNo = _.get(getResponse, '_seq_no', null);
@@ -246,8 +282,14 @@ export default class MonitorService {
         params.if_primary_term = ifPrimaryTerm;
       }
 
-      const { callAsCurrentUser } = await this.esDriver.asScoped(req);
-      const updateResponse = await callAsCurrentUser(
+      const client = getClientBasedOnDataSource(
+        context,
+        this.dataSourceEnabled,
+        req.query?.dataSourceId,
+        req,
+        this.esDriver
+      );
+      const updateResponse = await client(
         `alerting.${type === 'workflow' ? 'updateWorkflow' : 'updateMonitor'}`,
         params
       );
@@ -347,8 +389,14 @@ export default class MonitorService {
         },
       };
 
-      const { callAsCurrentUser: alertingCallAsCurrentUser } = await this.esDriver.asScoped(req);
-      const getResponse = await alertingCallAsCurrentUser('alerting.getMonitors', params);
+      const client = getClientBasedOnDataSource(
+        context,
+        this.dataSourceEnabled,
+        req.query?.dataSourceId,
+        req,
+        this.esDriver
+      );
+      const getResponse = await client('alerting.getMonitors', params);
 
       const totalMonitors = _.get(getResponse, 'hits.total.value', 0);
       const monitorKeyValueTuples = _.get(getResponse, 'hits.hits', []).map((result) => {
@@ -426,8 +474,7 @@ export default class MonitorService {
         },
       };
 
-      const { callAsCurrentUser } = this.esDriver.asScoped(req);
-      const esAggsResponse = await callAsCurrentUser('alerting.getMonitors', aggsParams);
+      const esAggsResponse = await client('alerting.getMonitors', aggsParams);
       const buckets = _.get(esAggsResponse, 'aggregations.uniq_monitor_ids.buckets', []).map(
         (bucket) => {
           const {
@@ -514,8 +561,14 @@ export default class MonitorService {
         monitorId: id,
         body: req.body,
       };
-      const { callAsCurrentUser } = this.esDriver.asScoped(req);
-      const acknowledgeResponse = await callAsCurrentUser('alerting.acknowledgeAlerts', params);
+      const client = getClientBasedOnDataSource(
+        context,
+        this.dataSourceEnabled,
+        req.query?.dataSourceId,
+        req,
+        this.esDriver
+      );
+      const acknowledgeResponse = await client('alerting.acknowledgeAlerts', params);
       return res.ok({
         body: {
           ok: !acknowledgeResponse.failed.length,
@@ -540,11 +593,14 @@ export default class MonitorService {
         workflowId: id,
         body: req.body,
       };
-      const { callAsCurrentUser } = this.esDriver.asScoped(req);
-      const acknowledgeResponse = await callAsCurrentUser(
-        'alerting.acknowledgeChainedAlerts',
-        params
+      const client = getClientBasedOnDataSource(
+        context,
+        this.dataSourceEnabled,
+        req.query?.dataSourceId,
+        req,
+        this.esDriver
       );
+      const acknowledgeResponse = await client('alerting.acknowledgeChainedAlerts', params);
       return res.ok({
         body: {
           ok: !acknowledgeResponse.failed.length,
@@ -569,8 +625,14 @@ export default class MonitorService {
         body: req.body,
         dryrun,
       };
-      const { callAsCurrentUser } = await this.esDriver.asScoped(req);
-      const executeResponse = await callAsCurrentUser('alerting.executeMonitor', params);
+      const client = getClientBasedOnDataSource(
+        context,
+        this.dataSourceEnabled,
+        req.query?.dataSourceId,
+        req,
+        this.esDriver
+      );
+      const executeResponse = await client('alerting.executeMonitor', params);
       return res.ok({
         body: {
           ok: true,
@@ -594,8 +656,14 @@ export default class MonitorService {
       const { query, index, size } = req.body;
       const params = { index, size, body: query };
 
-      const { callAsCurrentUser } = await this.esDriver.asScoped(req);
-      const results = await callAsCurrentUser('alerting.getMonitors', params);
+      const client = getClientBasedOnDataSource(
+        context,
+        this.dataSourceEnabled,
+        req.query?.dataSourceId,
+        req,
+        this.esDriver
+      );
+      const results = await client('alerting.getMonitors', params);
       return res.ok({
         body: {
           ok: true,

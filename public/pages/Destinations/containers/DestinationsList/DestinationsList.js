@@ -34,6 +34,7 @@ import { DESTINATION_TYPE } from '../../utils/constants';
 import { backendErrorNotification } from '../../../../utils/helpers';
 import NotificationsInfoCallOut from '../../components/NotificationsInfoCallOut';
 import FullPageNotificationsInfoCallOut from '../../components/FullPageNotificationsInfoCallOut';
+import { createQueryObject } from '../../../utils/helpers';
 
 class DestinationsList extends React.Component {
   constructor(props) {
@@ -63,6 +64,8 @@ class DestinationsList extends React.Component {
       showManageEmailGroups: false,
       hasNotificationPlugin: false,
     };
+
+    this.dataSourceQuery = createQueryObject();
 
     this.columns = [
       ...staticColumns,
@@ -135,6 +138,7 @@ class DestinationsList extends React.Component {
     };
     const resp = await httpClient.post('../api/alerting/monitors/_search', {
       body: JSON.stringify(requestBody),
+      ...(this.dataSourceQuery ? { query: this.dataSourceQuery } : {}),
     });
     const total = _.get(resp, 'resp.hits.total.value');
     return total === 0;

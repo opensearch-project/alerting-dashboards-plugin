@@ -19,6 +19,7 @@ import { MONITOR_ACTIONS, MONITOR_TYPE } from '../../../../utils/constants';
 import { backendErrorNotification, deleteMonitor } from '../../../../utils/helpers';
 import { displayAcknowledgedAlertsToast } from '../../../Dashboard/utils/helpers';
 import { DeleteMonitorModal } from '../../../../components/DeleteModal/DeleteMonitorModal';
+import { createQueryObject } from '../../../utils/helpers';
 
 const MAX_MONITOR_COUNT = 1000;
 
@@ -48,7 +49,7 @@ export default class Monitors extends Component {
       loadingMonitors: true,
       monitorItemsToDelete: undefined,
     };
-
+    this.dataSourceQuery = createQueryObject();
     this.getMonitors = _.debounce(this.getMonitors.bind(this), 500, { leading: true });
     this.onTableChange = this.onTableChange.bind(this);
     this.onMonitorStateChange = this.onMonitorStateChange.bind(this);
@@ -137,6 +138,9 @@ export default class Monitors extends Component {
       const queryParamsString = queryString.stringify(params);
       const { httpClient, history } = this.props;
       history.replace({ ...this.props.location, search: queryParamsString });
+      if (this.dataSourceQuery) {
+        params.dataSourceId = this.dataSourceQuery.dataSourceId;
+      }
       const response = await httpClient.get('../api/alerting/monitors', { query: params });
       if (response.ok) {
         const { monitors, totalMonitors } = response;

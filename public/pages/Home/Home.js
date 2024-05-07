@@ -21,7 +21,6 @@ const getSelectedTabId = (pathname) => {
 export default class Home extends Component {
   constructor(props) {
     super(props);
-    console.log('data source id ', props);
     const {
       location: { pathname },
     } = this.props;
