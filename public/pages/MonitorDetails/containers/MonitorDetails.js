@@ -185,10 +185,16 @@ export default class MonitorDetails extends Component {
         queryParams.append(key, this.dataSourceQuery[key]);
       }
     }
-    httpClient
-      .get(
-        `../api/alerting/${isWorkflow ? 'workflows' : 'monitors'}/${id}?${queryParams.toString()}`
-      )
+
+    // Construct the full URL with the query parameters
+    const url = `../api/alerting/${isWorkflow ? 'workflows' : 'monitors'}/${id}`;
+
+    // Make the HTTP GET request with the constructed URL and query parameters
+    const response = httpClient.get(url, {
+      query: Object.fromEntries(queryParams.entries()),
+    });
+
+    response
       .then((resp) => {
         const {
           ok,
