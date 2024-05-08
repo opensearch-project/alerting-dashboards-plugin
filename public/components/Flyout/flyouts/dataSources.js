@@ -72,7 +72,7 @@ const dataSources = ({
             size={'m'}
             data-test-subj={'dataSourcesFlyout_header'}
           >
-            <h3>{`Data sources`}</h3>
+            <h3>{`Index`}</h3>
           </EuiTitle>
         </EuiFlexItem>
         <EuiFlexItem grow={false}>

@@ -27,7 +27,7 @@ describe('getOverviewStats', () => {
         value: 'Extraction Query',
       },
       {
-        header: 'Data sources',
+        header: 'Index',
         value: DEFAULT_EMPTY_DATA,
       },
       {

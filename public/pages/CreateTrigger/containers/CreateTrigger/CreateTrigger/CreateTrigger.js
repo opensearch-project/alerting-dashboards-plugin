@@ -263,10 +263,10 @@ export default class CreateTrigger extends Component {
     }
 
     try {
-      const query = createQueryObject();
+      const dataSourceQuery = createQueryObject();
       const response = await this.props.httpClient.post('../api/alerting/_mappings', {
         body: JSON.stringify({ index }),
-        ...(query && { query }), // Only include query if it exists
+        ...(dataSourceQuery ? { query: dataSourceQuery } : {}),
       });
       if (response.ok) {
         return response.resp;

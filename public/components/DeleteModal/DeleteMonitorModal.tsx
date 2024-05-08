@@ -10,6 +10,7 @@ import {
   EuiOverlayMask
 } from '@elastic/eui';
 import { PLUGIN_NAME } from '../../../utils/constants';
+import { createQueryObject } from '../../pages/utils/helpers';
 
 interface DeleteModalProps {
   monitors: any[];
@@ -38,7 +39,8 @@ export const DeleteMonitorModal = ({
         setAssociatedWorkflows(monitors[0].associated_workflows);
       }
       else {
-        httpClient?.get(`../api/alerting/monitors/${monitors[0].id}`)
+        const dataSourceQuery = createQueryObject();
+        httpClient?.get(`../api/alerting/monitors/${monitors[0].id}`, {...(dataSourceQuery ? { query: dataSourceQuery } : {})})
         .then((res: any) => {
           setAssociatedWorkflows(res.resp.associated_workflows);
         })

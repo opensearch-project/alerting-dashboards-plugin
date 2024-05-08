@@ -219,6 +219,7 @@ export default class CreateMonitor extends Component {
                             detectorId={this.props.detectorId}
                             notifications={notifications}
                             isDarkMode={isDarkMode}
+                            landingDataSourceId={this.props.landingDataSourceId}
                           />
                           <EuiSpacer />
                         </div>

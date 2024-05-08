@@ -138,15 +138,13 @@ export default class MonitorDetails extends Component {
   updateDelegateMonitors = async (monitor) => {
     const getMonitor = async (id) => {
       const queryParams = new URLSearchParams();
+      // Construct the full URL with the query parameters
+      const url = `../api/alerting/monitors/${id}`;
 
-      // Append each key-value pair from dataSourceQuery to the query parameters
-      if (this.dataSourceQuery) {
-        for (const key in this.dataSourceQuery) {
-          queryParams.append(key, this.dataSourceQuery[key]);
-        }
-      }
       return this.props.httpClient
-        .get(`../api/alerting/monitors/${id}?${queryParams.toString()}`)
+        .get(url, {
+          ...(this.dataSourceQuery ? { query: this.dataSourceQuery } : {}),
+        })
         .then((res) => {
           return res.resp;
         })
@@ -177,21 +175,13 @@ export default class MonitorDetails extends Component {
   getMonitor = (id) => {
     const { httpClient } = this.props;
     const isWorkflow = this.isWorkflow();
-    const queryParams = new URLSearchParams();
-
-    // Append each key-value pair from dataSourceQuery to the query parameters
-    if (this.dataSourceQuery) {
-      for (const key in this.dataSourceQuery) {
-        queryParams.append(key, this.dataSourceQuery[key]);
-      }
-    }
 
     // Construct the full URL with the query parameters
     const url = `../api/alerting/${isWorkflow ? 'workflows' : 'monitors'}/${id}`;
 
     // Make the HTTP GET request with the constructed URL and query parameters
     const response = httpClient.get(url, {
-      query: Object.fromEntries(queryParams.entries()),
+      ...(this.dataSourceQuery ? { query: this.dataSourceQuery } : {}),
     });
 
     response
@@ -260,7 +250,7 @@ export default class MonitorDetails extends Component {
             : 'monitors'
         }/${monitorId}`,
         {
-          query: { ...query },
+          query: { ...query, ...this.dataSourceQuery }, // Include dataSourceQuery along with other query parameters
           body: JSON.stringify({ ...monitor, ...update }),
         }
       )

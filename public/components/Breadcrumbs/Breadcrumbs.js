@@ -67,20 +67,11 @@ export async function getBreadcrumb(route, routeState, httpClient) {
           const searchPool =
             type === 'workflow' || monitorType === 'composite' ? 'workflows' : 'monitors';
           const dataSourceQuery = createQueryObject();
-
-          const queryParams = new URLSearchParams();
-
-          // Append the dataSourceId as a query parameter if it exists
-          if (dataSourceQuery && dataSourceQuery.dataSourceId) {
-            queryParams.append('dataSourceId', dataSourceQuery.dataSourceId);
-          }
-
           // Construct the full URL with the query parameters
           let url = `../api/alerting/${searchPool}/${base}`;
 
-          // Make the HTTP GET request with the constructed URL and query parameters
           const response = await httpClient.get(url, {
-            query: Object.fromEntries(queryParams.entries()),
+            ...(dataSourceQuery ? { query: dataSourceQuery } : {}),
           });
 
           if (response.ok) {

@@ -13,7 +13,7 @@ import { validateIndex, hasError, isInvalid } from '../../../../utils/validate';
 import { canAppendWildcard, createReasonableWait, getMatchedOptions } from './utils/helpers';
 import { MONITOR_TYPE } from '../../../../utils/constants';
 import CrossClusterConfiguration from '../../components/CrossClusterConfigurations/containers';
-import { createQueryObject } from '../../../../../public/pages/utils/helpers';
+import { createQueryObject, isDataSourceChanged } from '../../../../../public/pages/utils/helpers';
 
 const CustomOption = ({ option, searchValue, contentClassName }) => {
   const { health, label, index } = option;
@@ -67,6 +67,12 @@ class MonitorIndex extends React.Component {
     this.onSearchChange('');
   }
 
+  componentDidUpdate(prevProps) {
+    if (isDataSourceChanged(prevProps, this.props)) {
+      this.onSearchChange('');
+    }
+  }
+
   onCreateOption(searchValue, selectedOptions, setFieldValue, supportMultipleIndices) {
     const normalizedSearchValue = searchValue.trim().toLowerCase();
 
@@ -112,10 +118,10 @@ class MonitorIndex extends React.Component {
       return [];
     }
     try {
-      const query = createQueryObject();
+      const dataSourceQuery = createQueryObject();
       const response = await this.props.httpClient.post('../api/alerting/_indices', {
         body: JSON.stringify({ index }),
-        ...(query && { query }), // Only include query if it exists
+        ...(dataSourceQuery ? { query: dataSourceQuery } : {}),
       });
       if (response.ok) {
         const indices = response.resp.map(({ health, index, status }) => ({
@@ -144,10 +150,10 @@ class MonitorIndex extends React.Component {
     }
 
     try {
-      const query = createQueryObject();
+      const dataSourceQuery = createQueryObject();
       const response = await this.props.httpClient.post('../api/alerting/_aliases', {
         body: JSON.stringify({ alias }),
-        ...(query && { query }), // Only include query if it exists
+        ...(dataSourceQuery ? { query: dataSourceQuery } : {}),
       });
       if (response.ok) {
         const indices = response.resp.map(({ alias, index }) => ({ label: alias, index }));

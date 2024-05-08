@@ -11,6 +11,7 @@ import {
   filterActiveAlerts,
 } from '../pages/Dashboard/utils/helpers';
 import _ from 'lodash';
+import { createQueryObject } from '../pages/utils/helpers';
 
 export const makeId = htmlIdGenerator();
 
@@ -54,9 +55,11 @@ export const inputLimitText = (
 
 export async function deleteMonitor(monitor, httpClient, notifications) {
   const { id, version } = monitor;
+  const dataSourceQuery = createQueryObject();
   const poolType = monitor.item_type === 'composite' ? 'workflows' : 'monitors';
+
   return httpClient
-    .delete(`../api/alerting/${poolType}/${id}`, { query: { version } })
+    .delete(`../api/alerting/${poolType}/${id}`, { query: { version, ...dataSourceQuery } })
     .then((resp) => {
       if (!resp.ok) {
         backendErrorNotification(notifications, 'delete', 'monitor', resp.resp);

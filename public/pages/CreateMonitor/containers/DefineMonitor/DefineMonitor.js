@@ -708,6 +708,7 @@ class DefineMonitor extends Component {
               isDarkMode={isDarkMode}
               canCallGetRemoteIndexes={canCallGetRemoteIndexes}
               remoteMonitoringEnabled={remoteMonitoringEnabled}
+              landingDataSourceId={this.props.landingDataSourceId}
             />
             <EuiSpacer />
           </div>

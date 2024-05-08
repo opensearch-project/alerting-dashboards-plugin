@@ -84,7 +84,7 @@ class Main extends Component {
     }
   };
 
-  renderDataSourceComponent() {
+  renderDataSourceComponent(dataSourceType) {
     const { setActionMenu } = this.props;
     const componentConfig = {
       fullWidth: false,
@@ -93,21 +93,25 @@ class Main extends Component {
         : [{ id: this.state.selectedDataSourceId }],
       savedObjects: getSavedObjectsClient(),
       notifications: getNotifications(),
-      onSelectedDataSources: (dataSources) => this.handleDataSourceChange(dataSources),
     };
+    if (dataSourceType === 'DataSourceSelectable') {
+      componentConfig.onSelectedDataSources = this.handleDataSourceChange; // Remove parentheses
+    }
+
     const DataSourceMenu = getDataSourceManagementPlugin()?.ui.getDataSourceMenu();
+
     return (
       <DataSourceMenu
         setMenuMountPoint={setActionMenu}
-        componentType={'DataSourceSelectable'}
+        componentType={dataSourceType}
         componentConfig={componentConfig}
       />
     );
   }
+
   render() {
     const { flyout } = this.state;
     const { history, dataSourceEnabled, ...rest } = this.props;
-
     return (
       <CoreConsumer>
         {(core) =>
@@ -122,7 +126,25 @@ class Main extends Component {
                         this.setFlyout(null);
                       }}
                     />
-                    {dataSourceEnabled && this.renderDataSourceComponent()}
+                    {dataSourceEnabled && (
+                      <>
+                        <Switch>
+                          <Route
+                            path={['/monitors/:monitorId', '/destinations/:destinationId']}
+                            render={(props) => this.renderDataSourceComponent('DataSourceView')}
+                          />
+                          <Route
+                            path={[APP_PATH.CREATE_MONITOR, APP_PATH.CREATE_DESTINATION]}
+                            render={(props) =>
+                              this.renderDataSourceComponent('DataSourceSelectable')
+                            }
+                          />
+                          <Route
+                            render={() => this.renderDataSourceComponent('DataSourceSelectable')}
+                          />
+                        </Switch>
+                      </>
+                    )}
                     <Switch>
                       <Route
                         path={APP_PATH.CREATE_MONITOR}
@@ -134,6 +156,7 @@ class Main extends Component {
                             isDarkMode={core.isDarkMode}
                             notificationService={services.notificationService}
                             {...props}
+                            landingDataSourceId={this.state.selectedDataSourceId}
                           />
                         )}
                       />
@@ -144,7 +167,6 @@ class Main extends Component {
                             httpClient={core.http}
                             setFlyout={this.setFlyout}
                             notifications={core.notifications}
-                            landingDataSourceId={this.state?.selectedDataSourceId}
                             {...props}
                           />
                         )}
@@ -157,7 +179,6 @@ class Main extends Component {
                             setFlyout={this.setFlyout}
                             notifications={core.notifications}
                             setActionMenu={setActionMenu}
-                            landingDataSourceId={this.state?.selectedDataSourceId}
                             {...props}
                             edit
                           />
@@ -172,8 +193,8 @@ class Main extends Component {
                             notifications={core.notifications}
                             isDarkMode={core.isDarkMode}
                             notificationService={services.notificationService}
-                            landingDataSourceId={this.state?.selectedDataSourceId}
                             {...props}
+                            landingDataSourceId={this.state.selectedDataSourceId}
                           />
                         )}
                       />
@@ -185,7 +206,7 @@ class Main extends Component {
                               {...props}
                               setFlyout={this.setFlyout}
                               notifications={core.notifications}
-                              landingDataSourceId={this.state?.selectedDataSourceId}
+                              landingDataSourceId={this.state.selectedDataSourceId}
                             />
                           )}
                         />

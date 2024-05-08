@@ -46,6 +46,7 @@ class DataSource extends Component {
           monitorType={monitor_type}
           canCallGetRemoteIndexes={canCallGetRemoteIndexes}
           remoteMonitoringEnabled={remoteMonitoringEnabled}
+          landingDataSourceId={this.props.landingDataSourceId}
         />
 
         {displayTimeField && (
