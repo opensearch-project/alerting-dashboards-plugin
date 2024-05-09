@@ -4,7 +4,7 @@
  */
 
 import { HttpFetchQuery, HttpSetup } from '../../../../src/core/public';
-import { ChannelItemType } from './models/interfaces';
+import { ChannelItemType, NotificationServerFeatures } from './models/interfaces';
 import { configListToChannels, configToChannel } from './utils/helper';
 
 interface ConfigsResponse {
@@ -26,15 +26,19 @@ export default class NotificationService {
     this.httpClient = httpClient;
   }
 
-  getServerFeatures = async (): Promise<Array<String>> => {
+  getServerFeatures = async (): Promise<NotificationServerFeatures> => {
     try {
       const response = await this.httpClient.get(
         NODE_API.GET_AVAILABLE_FEATURES
       );
-      return response.allowed_config_type_list as Array<String>;
+      return response as NotificationServerFeatures;
     } catch (error) {
       console.error('error fetching available features', error);
-      return [];
+      return {
+        availableChannels: {},
+        availableConfigTypes: [],
+        tooltipSupport: false
+      };
     }
   };
 
