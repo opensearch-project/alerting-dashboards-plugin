@@ -165,6 +165,10 @@ Cypress.Commands.add('createIndexByName', (indexName, body = {}) => {
   cy.request('PUT', `${Cypress.env('opensearch')}/${indexName}`, body);
 });
 
+Cypress.Commands.add('createRemoteIndexByName', (indexName, body = {}) => {
+  cy.request('PUT', `${Cypress.env('remote_opensearch')}/${indexName}`, body);
+});
+
 Cypress.Commands.add('deleteIndexByName', (indexName) => {
   cy.request({
     method: 'DELETE',
@@ -173,8 +177,24 @@ Cypress.Commands.add('deleteIndexByName', (indexName) => {
   });
 });
 
+Cypress.Commands.add('deleteRemoteIndexByName', (indexName) => {
+  cy.request({
+    method: 'DELETE',
+    url: `${Cypress.env('remote_opensearch')}/${indexName}`,
+    failOnStatusCode: false,
+  });
+});
+
 Cypress.Commands.add('insertDocumentToIndex', (indexName, documentId, documentBody) => {
   cy.request('PUT', `${Cypress.env('opensearch')}/${indexName}/_doc/${documentId}`, documentBody);
+});
+
+Cypress.Commands.add('insertDocumentToRemoteIndex', (indexName, documentId, documentBody) => {
+  cy.request(
+    'PUT',
+    `${Cypress.env('remote_opensearch')}/${indexName}/_doc/${documentId}`,
+    documentBody
+  );
 });
 
 Cypress.Commands.add('loadSampleEcommerceData', () => {

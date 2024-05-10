@@ -3,6 +3,8 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+import _ from 'lodash';
+
 export default class OpensearchService {
   constructor(esDriver) {
     this.esDriver = esDriver;
@@ -37,11 +39,24 @@ export default class OpensearchService {
     try {
       const { index } = req.body;
       const { callAsCurrentUser } = this.esDriver.asScoped(req);
-      const indices = await callAsCurrentUser('cat.indices', {
-        index,
-        format: 'json',
-        h: 'health,index,status',
-      });
+      let indices = [];
+      if (index.includes(':')) {
+        const resolve_resp = await callAsCurrentUser('transport.request', {
+          method: 'GET',
+          path: '/_resolve/index/' + index,
+        });
+        indices = resolve_resp.indices.map((item) => ({
+          index: item.name,
+          status: item.attributes[0],
+          health: 'undefined',
+        }));
+      } else {
+        indices = await callAsCurrentUser('cat.indices', {
+          index,
+          format: 'json',
+          h: 'health,index,status',
+        });
+      }
       return res.ok({
         body: {
           ok: true,
@@ -73,11 +88,22 @@ export default class OpensearchService {
     try {
       const { alias } = req.body;
       const { callAsCurrentUser } = this.esDriver.asScoped(req);
-      const aliases = await callAsCurrentUser('cat.aliases', {
-        alias,
-        format: 'json',
-        h: 'alias,index',
-      });
+      let aliases = [];
+      if (alias.includes(':')) {
+        const resolve_resp = await callAsCurrentUser('transport.request', {
+          method: 'GET',
+          path: '/_resolve/index/' + alias,
+        });
+        aliases = resolve_resp.aliases.flatMap((alias_item) =>
+          alias_item.indices.map((index) => ({ alias: alias_item.name, index: index }))
+        );
+      } else {
+        aliases = await callAsCurrentUser('cat.aliases', {
+          alias,
+          format: 'json',
+          h: 'alias,index',
+        });
+      }
       return res.ok({
         body: {
           ok: true,
@@ -123,11 +149,46 @@ export default class OpensearchService {
     try {
       const { index } = req.body;
       const { callAsCurrentUser } = this.esDriver.asScoped(req);
-      const mappings = await callAsCurrentUser('indices.getMapping', { index });
+      let local_mappings = {};
+      let remote_mappings = {};
+      let local_indices = index.filter((e) => !e.includes(':'));
+      let remote_indices = index.filter((e) => e.includes(':'));
+      if (remote_indices.length) {
+        const fc_resp = await callAsCurrentUser('transport.request', {
+          method: 'GET',
+          path: remote_indices.toString() + '/_field_caps?fields=*&include_unmapped',
+        });
+        fc_resp.indices.forEach((index_name) => {
+          remote_mappings[index_name] = {
+            mappings: {
+              properties: {},
+            },
+          };
+        });
+        for (const [k1, v1] of Object.entries(fc_resp.fields)) {
+          if (k1.startsWith('_')) {
+            continue;
+          }
+          for (const [k2, v2] of Object.entries(v1)) {
+            if (k2 == 'unmapped') {
+              continue;
+            }
+            let mapped_indices = _.get(v2, 'indices', fc_resp.indices);
+            mapped_indices.forEach((mapped_index) => {
+              remote_mappings[mapped_index]['mappings']['properties'][k1] = {
+                type: v2.type,
+              };
+            });
+          }
+        }
+      }
+      if (local_indices.length) {
+        local_mappings = await callAsCurrentUser('indices.getMapping', { index: local_indices });
+      }
       return res.ok({
         body: {
           ok: true,
-          resp: mappings,
+          resp: { ...local_mappings, ...remote_mappings },
         },
       });
     } catch (err) {
