@@ -63,7 +63,7 @@ class DataSource extends Component {
     }
     return (
       <ContentPanel
-        title="Select Data"
+        title="Select data"
         titleSize="s"
         panelStyles={{ paddingLeft: '10px', paddingRight: '10px' }}
         bodyStyles={{ padding: 'initial' }}

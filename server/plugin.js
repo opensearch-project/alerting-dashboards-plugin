@@ -33,7 +33,6 @@ export class AlertingPlugin {
   async setup(core, dependencies) {
     // Get the global configuration settings of the cluster
     const globalConfig = await this.globalConfig$.pipe(first()).toPromise();
-    // let dataSource = AlertingSetupDeps.;
 
     const dataSourceEnabled = !!dependencies.dataSource;
 
