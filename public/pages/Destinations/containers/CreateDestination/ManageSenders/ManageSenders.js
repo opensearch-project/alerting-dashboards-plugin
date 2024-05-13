@@ -100,7 +100,7 @@ export default class ManageSenders extends React.Component {
       const dataSourceQuery = getDataSourceQueryObj();
       const response = await httpClient.post(`../api/alerting/destinations/email_accounts`, {
         body: JSON.stringify(body),
-        dataSourceQuery,
+        query: dataSourceQuery?.query,
       });
       if (!response.ok) {
         this.setState({ failedSenders: true });

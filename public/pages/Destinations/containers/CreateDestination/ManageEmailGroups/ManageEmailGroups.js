@@ -111,7 +111,7 @@ export default class ManageEmailGroups extends React.Component {
       const dataSourceQuery = getDataSourceQueryObj();
       const response = await httpClient.post(`../api/alerting/destinations/email_groups`, {
         body: JSON.stringify(body),
-        dataSourceQuery,
+        query: dataSourceQuery?.query,
       });
       if (!response.ok) {
         this.setState({ failedEmailGroups: true });
