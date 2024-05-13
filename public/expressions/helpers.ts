@@ -11,7 +11,7 @@ import {
   PointInTimeEventsVisLayer,
 } from '../../../../src/plugins/vis_augmenter/public';
 import { Alert } from '../models/interfaces';
-import { createQueryObject } from '../pages/utils/helpers';
+import { getDataSourceQueryObj } from '../pages/utils/helpers';
 
 export const getAlerts = async (
   monitorId: string,
@@ -25,6 +25,10 @@ export const getAlerts = async (
     monitorIds: [monitorId],
   };
 
+  const dataSourceQuery = getDataSourceQueryObj();
+  if (dataSourceQuery && dataSourceQuery.query) {
+    params['dataSourceId'] = dataSourceQuery.query.dataSourceId;
+  }
   const resp = await getClient().get('/api/alerting/alerts', { query: params });
 
   if (resp.ok) {
@@ -38,9 +42,9 @@ export const getAlerts = async (
   return [];
 };
 
-export const getMonitorName = async (monitorId: string): Promise<string> => {
-  const dataSourceQuery = createQueryObject();
-  const resp = await getClient().get(`/api/alerting/monitors/${monitorId}`, { ...(dataSourceQuery ? { query: dataSourceQuery } : {})});
+export const getMonitorName = async (monitorId: string, dataSourceEnabled?: boolean): Promise<string> => {
+  const dataSourceQuery = getDataSourceQueryObj();
+  const resp = await getClient().get(`/api/alerting/monitors/${monitorId}`, dataSourceQuery);
   if (resp.ok) {
     return resp.resp.name;
   } else if (resp.resp === '[alerting_exception] Monitor not found.') {

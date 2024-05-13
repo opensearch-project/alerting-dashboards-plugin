@@ -7,24 +7,17 @@ import _ from 'lodash';
 
 import { INDEX } from '../../utils/constants';
 import { isIndexNotFoundError } from './utils/helpers';
-import { getClientBasedOnDataSource } from './utils/helpers';
+import { MDSEnabledClientService } from './MDSEnabledClientService';
 
-export default class MonitorService {
+export default class MonitorService extends MDSEnabledClientService {
   constructor(esDriver, dataSourceEnabled) {
-    this.esDriver = esDriver;
-    this.dataSourceEnabled = dataSourceEnabled;
+    super(esDriver, dataSourceEnabled);
   }
 
   createMonitor = async (context, req, res) => {
     try {
       const params = { body: req.body };
-      const client = getClientBasedOnDataSource(
-        context,
-        this.dataSourceEnabled,
-        req.query?.dataSourceId,
-        req,
-        this.esDriver
-      );
+      const client = this.getClientBasedOnDataSource(context, req);
       const createResponse = await client('alerting.createMonitor', params);
       return res.ok({
         body: {
@@ -46,13 +39,7 @@ export default class MonitorService {
   createWorkflow = async (context, req, res) => {
     try {
       const params = { body: req.body };
-      const client = getClientBasedOnDataSource(
-        context,
-        this.dataSourceEnabled,
-        req.query?.dataSourceId,
-        req,
-        this.esDriver
-      );
+      const client = this.getClientBasedOnDataSource(context, req);
       const createResponse = await client('alerting.createWorkflow', params);
       return res.ok({
         body: {
@@ -75,13 +62,7 @@ export default class MonitorService {
     try {
       const { id } = req.params;
       const params = { monitorId: id };
-      const client = getClientBasedOnDataSource(
-        context,
-        this.dataSourceEnabled,
-        req.query?.dataSourceId,
-        req,
-        this.esDriver
-      );
+      const client = this.getClientBasedOnDataSource(context, req);
       const response = await client('alerting.deleteMonitor', params);
 
       return res.ok({
@@ -104,13 +85,7 @@ export default class MonitorService {
     try {
       const { id } = req.params;
       const params = { workflowId: id };
-      const client = getClientBasedOnDataSource(
-        context,
-        this.dataSourceEnabled,
-        req.query?.dataSourceId,
-        req,
-        this.esDriver
-      );
+      const client = this.getClientBasedOnDataSource(context, req);
       const response = await client('alerting.deleteWorkflow', params);
 
       return res.ok({
@@ -133,13 +108,7 @@ export default class MonitorService {
     try {
       const { id } = req.params;
       const params = { monitorId: id };
-      const client = getClientBasedOnDataSource(
-        context,
-        this.dataSourceEnabled,
-        req.query?.dataSourceId,
-        req,
-        this.esDriver
-      );
+      const client = this.getClientBasedOnDataSource(context, req);
       const getResponse = await client('alerting.getMonitor', params);
       let monitor = _.get(getResponse, 'monitor', null);
       const version = _.get(getResponse, '_version', null);
@@ -147,13 +116,7 @@ export default class MonitorService {
       const ifPrimaryTerm = _.get(getResponse, '_primary_term', null);
       const associated_workflows = _.get(getResponse, 'associated_workflows', null);
       if (monitor) {
-        const client = getClientBasedOnDataSource(
-          context,
-          this.dataSourceEnabled,
-          req.query?.dataSourceId,
-          req,
-          this.esDriver
-        );
+        const client = this.getClientBasedOnDataSource(context, req);
         const aggsParams = {
           index: INDEX.ALL_ALERTS,
           body: {
@@ -227,13 +190,7 @@ export default class MonitorService {
     try {
       const { id } = req.params;
       const params = { monitorId: id };
-      const client = getClientBasedOnDataSource(
-        context,
-        this.dataSourceEnabled,
-        req.query?.dataSourceId,
-        req,
-        this.esDriver
-      );
+      const client = this.getClientBasedOnDataSource(context, req);
       const getResponse = await client('alerting.getWorkflow', params);
       let workflow = _.get(getResponse, 'workflow', null);
       const version = _.get(getResponse, '_version', null);
@@ -282,13 +239,7 @@ export default class MonitorService {
         params.if_primary_term = ifPrimaryTerm;
       }
 
-      const client = getClientBasedOnDataSource(
-        context,
-        this.dataSourceEnabled,
-        req.query?.dataSourceId,
-        req,
-        this.esDriver
-      );
+      const client = this.getClientBasedOnDataSource(context, req);
       const updateResponse = await client(
         `alerting.${type === 'workflow' ? 'updateWorkflow' : 'updateMonitor'}`,
         params
@@ -389,13 +340,7 @@ export default class MonitorService {
         },
       };
 
-      const client = getClientBasedOnDataSource(
-        context,
-        this.dataSourceEnabled,
-        req.query?.dataSourceId,
-        req,
-        this.esDriver
-      );
+      const client = this.getClientBasedOnDataSource(context, req);
       const getResponse = await client('alerting.getMonitors', params);
 
       const totalMonitors = _.get(getResponse, 'hits.total.value', 0);
@@ -561,13 +506,7 @@ export default class MonitorService {
         monitorId: id,
         body: req.body,
       };
-      const client = getClientBasedOnDataSource(
-        context,
-        this.dataSourceEnabled,
-        req.query?.dataSourceId,
-        req,
-        this.esDriver
-      );
+      const client = this.getClientBasedOnDataSource(context, req);
       const acknowledgeResponse = await client('alerting.acknowledgeAlerts', params);
       return res.ok({
         body: {
@@ -593,10 +532,9 @@ export default class MonitorService {
         workflowId: id,
         body: req.body,
       };
-      const client = getClientBasedOnDataSource(
+      const client = this.getClientBasedOnDataSource(
         context,
         this.dataSourceEnabled,
-        req.query?.dataSourceId,
         req,
         this.esDriver
       );
@@ -625,13 +563,7 @@ export default class MonitorService {
         body: req.body,
         dryrun,
       };
-      const client = getClientBasedOnDataSource(
-        context,
-        this.dataSourceEnabled,
-        req.query?.dataSourceId,
-        req,
-        this.esDriver
-      );
+      const client = this.getClientBasedOnDataSource(context, req);
       const executeResponse = await client('alerting.executeMonitor', params);
       return res.ok({
         body: {
@@ -656,13 +588,7 @@ export default class MonitorService {
       const { query, index, size } = req.body;
       const params = { index, size, body: query };
 
-      const client = getClientBasedOnDataSource(
-        context,
-        this.dataSourceEnabled,
-        req.query?.dataSourceId,
-        req,
-        this.esDriver
-      );
+      const client = this.getClientBasedOnDataSource(context, req);
       const results = await client('alerting.getMonitors', params);
       return res.ok({
         body: {

@@ -4,6 +4,7 @@
  */
 
 import _ from 'lodash';
+import { MDSEnabledClientService } from './MDSEnabledClientService';
 
 export const GET_ALERTS_SORT_FILTERS = {
   MONITOR_NAME: 'monitor_name',
@@ -13,9 +14,9 @@ export const GET_ALERTS_SORT_FILTERS = {
   ACKNOWLEDGE_TIME: 'acknowledged_time',
 };
 
-export default class AlertService {
-  constructor(esDriver) {
-    this.esDriver = esDriver;
+export default class AlertService extends MDSEnabledClientService {
+  constructor(esDriver, dataSourceEnabled) {
+    super(esDriver, dataSourceEnabled);
   }
 
   getAlerts = async (context, req, res) => {
@@ -78,9 +79,9 @@ export default class AlertService {
       params[idField] = !Array.isArray(monitorIds) ? monitorIds : monitorIds[0];
     }
 
-    const { callAsCurrentUser } = this.esDriver.asScoped(req);
+    const client = this.getClientBasedOnDataSource(context, req);
     try {
-      const resp = await callAsCurrentUser('alerting.getAlerts', params);
+      const resp = await client('alerting.getAlerts', params);
       const alerts = resp.alerts.map((hit) => {
         const alert = hit;
         const id = hit.alert_id;
@@ -113,9 +114,9 @@ export default class AlertService {
   };
 
   getWorkflowAlerts = async (context, req, res) => {
-    const { callAsCurrentUser } = this.esDriver.asScoped(req);
+    const client = this.getClientBasedOnDataSource(context, req);
     try {
-      const resp = await callAsCurrentUser('alerting.getWorkflowAlerts', req.query);
+      const resp = await client('alerting.getWorkflowAlerts', req.query);
 
       return res.ok({
         body: {

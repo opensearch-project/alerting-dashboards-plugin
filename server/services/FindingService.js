@@ -4,6 +4,7 @@
  */
 
 import _ from 'lodash';
+import { MDSEnabledClientService } from './MDSEnabledClientService';
 
 // TODO DRAFT: Are these sortField options appropriate?
 export const GET_FINDINGS_SORT_FIELDS = {
@@ -24,9 +25,9 @@ export const DEFAULT_GET_FINDINGS_PARAMS = {
   sortField: GET_FINDINGS_SORT_FIELDS.TIMESTAMP,
 };
 
-export default class FindingService {
-  constructor(esDriver) {
-    this.esDriver = esDriver;
+export default class FindingService extends MDSEnabledClientService {
+  constructor(esDriver, dataSourceEnabled) {
+    super(esDriver, dataSourceEnabled);
   }
 
   getFindings = async (context, req, res) => {
@@ -67,9 +68,9 @@ export default class FindingService {
     params.searchString = search;
     if (search.trim()) params.searchString = `*${search.trim().split(' ').join('* *')}*`;
 
-    const { callAsCurrentUser } = this.esDriver.asScoped(req);
+    const client = this.getClientBasedOnDataSource(context, req);
     try {
-      const resp = await callAsCurrentUser('alerting.getFindings', params);
+      const resp = await client('alerting.getFindings', params);
       const findings = resp.findings.map((result) => ({ [result.finding.id]: { ...result } }));
       const totalFindings = resp.totalFindings;
       return res.ok({

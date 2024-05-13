@@ -19,7 +19,7 @@ import { triggerToFormik } from '../../../../CreateTrigger/containers/CreateTrig
 import { TRIGGER_TYPE } from '../../../../CreateTrigger/containers/CreateTrigger/utils/constants';
 import { getInitialTriggerValues } from '../../../../CreateTrigger/components/AddTriggerButton/utils';
 import { AGGREGATION_TYPES } from '../../../components/MonitorExpressions/expressions/utils/constants';
-import { createQueryObject } from '../../../../utils/helpers';
+import { getDataSourceQueryObj } from '../../../../utils/helpers';
 
 export const getInitialValues = ({
   title,
@@ -95,7 +95,8 @@ const getMetricAgg = (embeddable) => {
 
 export const getPlugins = async (httpClient) => {
   try {
-    const pluginsResponse = await httpClient.get('../api/alerting/_plugins');
+    const dataSourceQuery = getDataSourceQueryObj();
+    const pluginsResponse = await httpClient.get('../api/alerting/_plugins', dataSourceQuery);
     if (pluginsResponse.ok) {
       return pluginsResponse.resp.map((plugin) => plugin.component);
     } else {
@@ -183,10 +184,10 @@ export const create = async ({
   try {
     const isWorkflow = monitor.workflow_type === MONITOR_TYPE.COMPOSITE_LEVEL;
     const creationPool = isWorkflow ? 'workflows' : 'monitors';
-    const dataSourceQuery = createQueryObject();
+    const dataSourceQuery = getDataSourceQueryObj();
     const resp = await httpClient.post(`../api/alerting/${creationPool}`, {
       body: JSON.stringify(monitor),
-      ...(dataSourceQuery ? { query: dataSourceQuery } : {}),
+      query: dataSourceQuery?.query,
     });
     setSubmitting(false);
     const {

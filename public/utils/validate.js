@@ -7,7 +7,7 @@ import _ from 'lodash';
 import { INDEX, MAX_THROTTLE_VALUE, WRONG_THROTTLE_WARNING } from '../../utils/constants';
 import { MONITOR_TYPE } from './constants';
 import { TRIGGER_TYPE } from '../pages/CreateTrigger/containers/CreateTrigger/utils/constants';
-import { createQueryObject } from '../pages/utils/helpers';
+import { getDataSourceQueryObj } from '../pages/utils/helpers';
 
 // TODO: Use a validation framework to clean all of this up or create own.
 
@@ -103,16 +103,23 @@ export const isInvalidApiPath = (name, form) => {
 
 export const validateMonitorName = (httpClient, monitorToEdit, isFullText) => async (value) => {
   try {
-    const dataSourceQuery = createQueryObject();
+    const dataSourceQuery = getDataSourceQueryObj();
     if (!value) return isFullText ? 'Monitor name is required.' : 'Required.';
     const options = {
       index: INDEX.SCHEDULED_JOBS,
       query: { query: { term: { 'monitor.name.keyword': value } } },
     };
-    const response = await httpClient.post('../api/alerting/monitors/_search', {
-      body: JSON.stringify(options),
-      ...(dataSourceQuery && { query: dataSourceQuery }),
-    });
+    let response;
+    if (dataSourceQuery) {
+      response = await httpClient.post('../api/alerting/monitors/_search', {
+        body: JSON.stringify(options),
+        query: dataSourceQuery?.query,
+      });
+    } else {
+      response = await httpClient.post('../api/alerting/monitors/_search', {
+        body: JSON.stringify(options),
+      });
+    }
     if (_.get(response, 'resp.hits.total.value', 0)) {
       if (!monitorToEdit) return 'Monitor name is already used.';
       if (monitorToEdit && monitorToEdit.name !== value) {

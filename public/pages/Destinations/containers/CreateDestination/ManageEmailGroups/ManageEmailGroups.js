@@ -27,6 +27,7 @@ import { emailGroupToFormik } from './utils/helpers';
 import getEmailGroups from '../EmailRecipients/utils/helpers';
 import { STATE } from '../../../components/createDestinations/Email/utils/constants';
 import { ignoreEscape } from '../../../../../utils/helpers';
+import { getDataSourceQueryObj } from '../../../../utils/helpers';
 
 const createEmailGroupContext = (emailGroups) => ({
   ctx: {
@@ -107,8 +108,10 @@ export default class ManageEmailGroups extends React.Component {
       emails: emailGroup.emails.map((email) => ({ email: email.label })),
     };
     try {
+      const dataSourceQuery = getDataSourceQueryObj();
       const response = await httpClient.post(`../api/alerting/destinations/email_groups`, {
         body: JSON.stringify(body),
+        dataSourceQuery,
       });
       if (!response.ok) {
         this.setState({ failedEmailGroups: true });
@@ -135,8 +138,9 @@ export default class ManageEmailGroups extends React.Component {
       emails: updatedEmailGroup.emails.map((email) => ({ email: email.label })),
     };
     try {
+      const dataSourceQuery = getDataSourceQueryObj()?.query;
       const response = await httpClient.put(`../api/alerting/destinations/email_groups/${id}`, {
-        query: { ifSeqNo, ifPrimaryTerm },
+        query: { ifSeqNo, ifPrimaryTerm, dataSourceQuery },
         body: JSON.stringify(body),
       });
       if (!response.ok) {
@@ -160,7 +164,11 @@ export default class ManageEmailGroups extends React.Component {
     const { httpClient, notifications } = this.props;
     const { id } = emailGroup;
     try {
-      const response = await httpClient.delete(`../api/alerting/destinations/email_groups/${id}`);
+      const dataSourceQuery = getDataSourceQueryObj();
+      const response = await httpClient.delete(
+        `../api/alerting/destinations/email_groups/${id}`,
+        dataSourceQuery
+      );
       if (!response.ok) {
         this.setState({ failedEmailGroups: true });
         notifications.toasts.addDanger({

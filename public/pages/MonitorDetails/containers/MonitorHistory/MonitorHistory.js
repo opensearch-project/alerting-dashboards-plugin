@@ -29,7 +29,7 @@ import * as HistoryConstants from './utils/constants';
 import { INDEX } from '../../../../../utils/constants';
 import { backendErrorNotification } from '../../../../utils/helpers';
 import { MONITOR_TYPE } from '../../../../utils/constants';
-import { createQueryObject } from '../../../utils/helpers';
+import { getDataSourceQueryObj } from '../../../utils/helpers';
 
 class MonitorHistory extends PureComponent {
   constructor(props) {
@@ -53,7 +53,7 @@ class MonitorHistory extends PureComponent {
       },
     };
 
-    this.dataSourceQuery = createQueryObject();
+    this.dataSourceQuery = getDataSourceQueryObj();
   }
 
   async componentDidMount() {
@@ -201,10 +201,17 @@ class MonitorHistory extends PureComponent {
         ),
         index: INDEX.ALL_ALERTS,
       };
-      const resp = await httpClient.post('../api/alerting/monitors/_search', {
-        body: JSON.stringify(requestBody),
-        ...(this.dataSourceQuery ? { query: this.dataSourceQuery } : {}),
-      });
+      let resp;
+      if (this.dataSourceQuery) {
+        resp = await httpClient.post('../api/alerting/monitors/_search', {
+          body: JSON.stringify(requestBody),
+          query: this.dataSourceQuery?.query,
+        });
+      } else {
+        resp = await httpClient.post('../api/alerting/monitors/_search', {
+          body: JSON.stringify(requestBody),
+        });
+      }
       if (resp.ok) {
         const poiData = get(resp, 'resp.aggregations.alerts_over_time.buckets', []).map((item) => ({
           x: item.key,
@@ -243,8 +250,8 @@ class MonitorHistory extends PureComponent {
         sortDirection: 'asc',
         monitorIds: monitorId,
         monitorType,
+        dataSourceId: this.dataSourceQuery?.query?.dataSourceId,
       };
-
       const resp = await httpClient.get('../api/alerting/alerts', { query: params });
       var alerts;
       if (resp.ok) {

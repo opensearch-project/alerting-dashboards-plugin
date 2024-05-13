@@ -23,7 +23,7 @@ export function renderApp(coreStart, params) {
   const services = { notificationService };
   const mdsProps = {
     setActionMenu: params.setHeaderActionMenu,
-    dataSourceEnabled: getDataSourceEnabled().enabled,
+    dataSourceEnabled: getDataSourceEnabled()?.enabled,
   };
 
   // Load Chart's dark mode CSS

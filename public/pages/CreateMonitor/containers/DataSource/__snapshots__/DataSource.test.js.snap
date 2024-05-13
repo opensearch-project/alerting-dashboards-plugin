@@ -13,7 +13,7 @@ exports[`DataSource renders 1`] = `
       "paddingRight": "10px",
     }
   }
-  title="Data source"
+  title="Select Data"
   titleSize="s"
 >
   <MonitorIndex

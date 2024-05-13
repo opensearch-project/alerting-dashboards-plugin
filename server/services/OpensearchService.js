@@ -4,12 +4,11 @@
  */
 
 import { request } from 'http';
-import { getClientBasedOnDataSource } from './utils/helpers';
+import { MDSEnabledClientService } from './MDSEnabledClientService';
 
-export default class OpensearchService {
+export default class OpensearchService extends MDSEnabledClientService {
   constructor(esDriver, dataSourceEnabled) {
-    this.esDriver = esDriver;
-    this.dataSourceEnabled = dataSourceEnabled;
+    super(esDriver, dataSourceEnabled);
   }
 
   // TODO: This will be deprecated as we do not want to support accessing alerting indices directly
@@ -18,8 +17,8 @@ export default class OpensearchService {
     try {
       const { query, index, size } = req.body;
       const params = { index, size, body: query };
-      const { callAsCurrentUser } = this.esDriver.asScoped(req);
-      const results = await callAsCurrentUser('search', params);
+      const client = this.getClientBasedOnDataSource(context, req);
+      const results = await client('search', params);
       return res.ok({
         body: {
           ok: true,
@@ -40,13 +39,7 @@ export default class OpensearchService {
   getIndices = async (context, req, res) => {
     try {
       const { index } = req.body;
-      const client = getClientBasedOnDataSource(
-        context,
-        this.dataSourceEnabled,
-        req.query?.dataSourceId,
-        req,
-        this.esDriver
-      );
+      const client = this.getClientBasedOnDataSource(context, req);
       const indices = await client('cat.indices', {
         index,
         format: 'json',
@@ -82,13 +75,7 @@ export default class OpensearchService {
   getAliases = async (context, req, res) => {
     try {
       const { alias } = req.body;
-      const client = getClientBasedOnDataSource(
-        context,
-        this.dataSourceEnabled,
-        req.query?.dataSourceId,
-        req,
-        this.esDriver
-      );
+      const client = this.getClientBasedOnDataSource(context, req);
       const aliases = await client('cat.aliases', {
         alias,
         format: 'json',
@@ -113,8 +100,8 @@ export default class OpensearchService {
 
   getClusterHealth = async (context, req, res) => {
     try {
-      const { callAsCurrentUser } = this.esDriver.asScoped(req);
-      const health = await callAsCurrentUser('cat.health', {
+      const client = this.getClientBasedOnDataSource(context, req);
+      const health = await client('cat.health', {
         format: 'json',
         h: 'cluster,status',
       });
@@ -138,13 +125,7 @@ export default class OpensearchService {
   getMappings = async (context, req, res) => {
     try {
       const { index } = req.body;
-      const client = getClientBasedOnDataSource(
-        context,
-        this.dataSourceEnabled,
-        req.query?.dataSourceId,
-        req,
-        this.esDriver
-      );
+      const client = this.getClientBasedOnDataSource(context, req);
       const mappings = await client('indices.getMapping', { index });
       return res.ok({
         body: {
@@ -165,8 +146,8 @@ export default class OpensearchService {
 
   getPlugins = async (context, req, res) => {
     try {
-      const { callAsCurrentUser } = this.esDriver.asScoped(req);
-      const plugins = await callAsCurrentUser('cat.plugins', {
+      const client = this.getClientBasedOnDataSource(context, req);
+      const plugins = await client('cat.plugins', {
         format: 'json',
         h: 'component',
       });
@@ -189,8 +170,8 @@ export default class OpensearchService {
 
   getSettings = async (context, req, res) => {
     try {
-      const { callAsCurrentUser } = this.esDriver.asScoped(req);
-      const settings = await callAsCurrentUser('cluster.getSettings', {
+      const client = this.getClientBasedOnDataSource(context, req);
+      const settings = await client('cluster.getSettings', {
         include_defaults: 'true',
       });
       return res.ok({

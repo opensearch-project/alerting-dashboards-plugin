@@ -4,6 +4,7 @@
  */
 
 import { HttpFetchQuery, HttpSetup } from '../../../../src/core/public';
+import { getDataSourceQueryObj } from '../pages/utils/helpers';
 import { ChannelItemType } from './models/interfaces';
 import { configListToChannels, configToChannel } from './utils/helper';
 
@@ -27,11 +28,12 @@ export default class NotificationService {
   }
 
   getServerFeatures = async (): Promise<Array<String>> => {
+    const dataSourceQuery = getDataSourceQueryObj();
     try {
       const response = await this.httpClient.get(
-        NODE_API.GET_AVAILABLE_FEATURES
+        NODE_API.GET_AVAILABLE_FEATURES, dataSourceQuery
       );
-      return response.allowed_config_type_list as Array<String>;
+      return response.availableConfigTypes as Array<String>;
     } catch (error) {
       console.error('error fetching available features', error);
       return [];
@@ -39,18 +41,27 @@ export default class NotificationService {
   };
 
   getConfigs = async (queryObject: HttpFetchQuery) => {
+    const dataSourceQuery = getDataSourceQueryObj();
+    if(dataSourceQuery?.query && dataSourceQuery?.query?.dataSourceId) {
+      queryObject.dataSourceId = dataSourceQuery?.query?.dataSourceId;
+    }
     return this.httpClient.get<ConfigsResponse>(NODE_API.GET_CONFIGS, {
       query: queryObject,
     });
   };
 
   getConfig = async (id: string) => {
-    return this.httpClient.get<ConfigsResponse>(`${NODE_API.GET_CONFIG}/${id}`);
+    const dataSourceQuery = getDataSourceQueryObj();
+    return this.httpClient.get<ConfigsResponse>(`${NODE_API.GET_CONFIG}/${id}`, dataSourceQuery);
   };
 
   getChannels = async (
     queryObject: HttpFetchQuery // config_type: Object.keys(CHANNEL_TYPE)
   ): Promise<{ items: ChannelItemType[]; total: number }> => {
+    const dataSourceQuery = getDataSourceQueryObj();
+    if(dataSourceQuery?.query) {
+      queryObject.dataSourceId = dataSourceQuery?.query?.dataSourceId;
+    }
     const response = await this.getConfigs(queryObject);
     return {
       items: configListToChannels(response.config_list),

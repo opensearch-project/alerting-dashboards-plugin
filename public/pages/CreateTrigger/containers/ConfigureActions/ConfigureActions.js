@@ -21,6 +21,7 @@ import { TRIGGER_TYPE } from '../CreateTrigger/utils/constants';
 import { formikToTrigger } from '../CreateTrigger/utils/formikToTrigger';
 import { getChannelOptions, toChannelType } from '../../utils/helper';
 import { getInitialActionValues } from '../../components/AddActionButton/utils';
+import { getDataSourceQueryObj } from '../../../utils/helpers';
 
 const createActionContext = (context, action) => {
   let trigger = context.trigger;
@@ -162,8 +163,13 @@ class ConfigureActions extends React.Component {
 
     this.setState({ loadingDestinations: true });
     try {
+      const dataSourceQuery = getDataSourceQueryObj();
       const response = await httpClient.get('../api/alerting/destinations', {
-        query: { search: searchText, size: MAX_QUERY_RESULT_SIZE },
+        query: {
+          search: searchText,
+          size: MAX_QUERY_RESULT_SIZE,
+          dataSourceId: dataSourceQuery?.query?.dataSourceId,
+        },
       });
       let destinations = [];
       if (response.ok) {
@@ -265,10 +271,19 @@ class ConfigureActions extends React.Component {
     const testMonitor = { ...monitor, triggers: [{ ...testTrigger }] };
 
     try {
-      const response = await httpClient.post('../api/alerting/monitors/_execute', {
-        query: { dryrun: false },
-        body: JSON.stringify(testMonitor),
-      });
+      let response;
+      const dataSourceQuery = getDataSourceQueryObj();
+      if (dataSourceQuery && dataSourceQuery.query) {
+        response = await httpClient.post('../api/alerting/monitors/_execute', {
+          query: { dryrun: false, dataSourceId: dataSourceQuery?.query.dataSourceId },
+          body: JSON.stringify(testMonitor),
+        });
+      } else {
+        response = await httpClient.post('../api/alerting/monitors/_execute', {
+          query: { dryrun: false },
+          body: JSON.stringify(testMonitor),
+        });
+      }
       let error = null;
       if (response.ok) {
         error = checkForError(response, error);

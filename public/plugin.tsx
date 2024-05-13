@@ -77,7 +77,7 @@ export class AlertingPlugin implements Plugin<AlertingSetup, AlertingStart, Aler
     setDataSourceEnabled({ enabled });
 
     // registers the expression function used to render anomalies on an Augmented Visualization
-    expressions.registerFunction(overlayAlertsFunction());
+    expressions.registerFunction(overlayAlertsFunction(enabled));
 
     // Create context menu actions. Pass core, to access service for flyouts.
     const actions = getActions();

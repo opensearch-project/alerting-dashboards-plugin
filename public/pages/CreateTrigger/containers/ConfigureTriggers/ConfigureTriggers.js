@@ -33,7 +33,7 @@ import { FORMIK_INITIAL_VALUES } from '../../../CreateMonitor/containers/CreateM
 import { getDefaultScript } from '../../utils/helper';
 import DefineCompositeLevelTrigger from '../DefineCompositeLevelTrigger';
 import EnhancedAccordion from '../../../../components/FeatureAnywhereContextMenu/EnhancedAccordion';
-import { createQueryObject } from '../../../../../public/pages/utils/helpers';
+import { getDataSourceQueryObj } from '../../../../../public/pages/utils/helpers';
 
 class ConfigureTriggers extends React.Component {
   constructor(props) {
@@ -176,8 +176,12 @@ class ConfigureTriggers extends React.Component {
         console.log(`Unsupported searchType found: ${JSON.stringify(searchType)}`, searchType);
     }
 
+    const dataSourceQuery = getDataSourceQueryObj();
     httpClient
-      .post('../api/alerting/monitors/_execute', { body: JSON.stringify(monitorToExecute) })
+      .post('../api/alerting/monitors/_execute', {
+        body: JSON.stringify(monitorToExecute),
+        query: dataSourceQuery?.query,
+      })
       .then((resp) => {
         if (resp.ok) {
           this.setState({ executeResponse: resp.resp });
@@ -198,10 +202,10 @@ class ConfigureTriggers extends React.Component {
     }
 
     try {
-      const dataSourceQuery = createQueryObject();
+      const dataSourceQuery = getDataSourceQueryObj();
       const response = await this.props.httpClient.post('../api/alerting/_mappings', {
         body: JSON.stringify({ index }),
-        ...(dataSourceQuery ? { query: dataSourceQuery } : {}),
+        query: dataSourceQuery?.query,
       });
       if (response.ok) {
         return response.resp;

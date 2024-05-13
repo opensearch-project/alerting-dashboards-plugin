@@ -19,11 +19,7 @@ import { MONITOR_ACTIONS, MONITOR_TYPE } from '../../../../utils/constants';
 import { backendErrorNotification, deleteMonitor } from '../../../../utils/helpers';
 import { displayAcknowledgedAlertsToast } from '../../../Dashboard/utils/helpers';
 import { DeleteMonitorModal } from '../../../../components/DeleteModal/DeleteMonitorModal';
-import {
-  createQueryObject,
-  handleDataSourceChange,
-  isDataSourceChanged,
-} from '../../../utils/helpers';
+import { getDataSourceQueryObj, isDataSourceChanged } from '../../../utils/helpers';
 
 const MAX_MONITOR_COUNT = 1000;
 
@@ -52,7 +48,7 @@ export default class Monitors extends Component {
       loadingMonitors: true,
       monitorItemsToDelete: undefined,
     };
-    this.dataSourceQuery = createQueryObject();
+    this.dataSourceQuery = getDataSourceQueryObj();
     this.getMonitors = _.debounce(this.getMonitors.bind(this), 500, { leading: true });
     this.onTableChange = this.onTableChange.bind(this);
     this.onMonitorStateChange = this.onMonitorStateChange.bind(this);
@@ -121,7 +117,7 @@ export default class Monitors extends Component {
       this.updateMonitorList();
     }
     if (isDataSourceChanged(prevProps, this.props)) {
-      this.dataSourceQuery = createQueryObject();
+      this.dataSourceQuery = getDataSourceQueryObj();
       this.updateMonitorList();
     }
   }
@@ -149,8 +145,8 @@ export default class Monitors extends Component {
       const queryParamsString = queryString.stringify(params);
       const { httpClient, history } = this.props;
       history.replace({ ...this.props.location, search: queryParamsString });
-      if (this.dataSourceQuery) {
-        params.dataSourceId = this.dataSourceQuery.dataSourceId;
+      if (this.dataSourceQuery && this.dataSourceQuery.query) {
+        params.dataSourceId = this.dataSourceQuery.query.dataSourceId;
       }
       const response = await httpClient.get('../api/alerting/monitors', { query: params });
       if (response.ok) {
@@ -189,8 +185,8 @@ export default class Monitors extends Component {
     const { httpClient, notifications } = this.props;
     const { id, ifSeqNo, ifPrimaryTerm, monitor } = item;
     const params = { ifSeqNo, ifPrimaryTerm };
-    if (this.dataSourceQuery) {
-      params.dataSourceId = this.dataSourceQuery.dataSourceId;
+    if (this.dataSourceQuery && this.dataSourceQuery.query) {
+      params.dataSourceId = this.dataSourceQuery.query.dataSourceId;
     }
     return httpClient
       .put(`../api/alerting/monitors/${id}`, {
@@ -222,7 +218,7 @@ export default class Monitors extends Component {
   async deleteMonitors(items) {
     const { httpClient, notifications } = this.props;
     const arrayOfPromises = items.map((item) =>
-      deleteMonitor(item, httpClient, notifications).catch((error) => error)
+      deleteMonitor(item, httpClient, notifications, this.dataSourceQuery).catch((error) => error)
     );
 
     return Promise.all(arrayOfPromises).then((values) => {
@@ -253,6 +249,7 @@ export default class Monitors extends Component {
       httpClient
         .post(`../api/alerting/${poolType}/${monitorId}/_acknowledge/alerts`, {
           body: JSON.stringify({ alerts: ids }),
+          query: this.dataSourceQuery?.query,
         })
         .then((resp) => {
           if (!resp.ok) {
@@ -336,8 +333,8 @@ export default class Monitors extends Component {
     let totalAlertsCount = 0;
 
     if (monitorIds.length > 0) {
-      if (this.dataSourceQuery) {
-        params.dataSourceId = this.dataSourceQuery.dataSourceId;
+      if (this.dataSourceQuery && this.dataSourceQuery.query) {
+        params.dataSourceId = this.dataSourceQuery.query.dataSourceId;
       }
       const monitorAlertsResponse = await httpClient.get('../api/alerting/alerts', {
         query: params,
@@ -353,8 +350,8 @@ export default class Monitors extends Component {
     }
 
     if (workflowIds.length > 0) {
-      if (this.dataSourceQuery) {
-        params.dataSourceId = this.dataSourceQuery.dataSourceId;
+      if (this.dataSourceQuery && this.dataSourceQuery.query) {
+        params.dataSourceId = this.dataSourceQuery.query.dataSourceId;
       }
       const chainedAlertsResponse = await httpClient.get('../api/alerting/alerts', {
         query: { ...params, monitorIds: workflowIds, monitorType: MONITOR_TYPE.COMPOSITE_LEVEL },

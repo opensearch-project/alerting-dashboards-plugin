@@ -52,13 +52,13 @@ export class AlertingPlugin {
     );
 
     // Initialize services
-    const alertService = new AlertService(alertingESClient);
+    const alertService = new AlertService(alertingESClient, dataSourceEnabled);
     const opensearchService = new OpensearchService(alertingESClient, dataSourceEnabled);
     const monitorService = new MonitorService(alertingESClient, dataSourceEnabled);
-    const destinationsService = new DestinationsService(alertingESClient);
-    const anomalyDetectorService = new AnomalyDetectorService(adESClient);
-    const findingService = new FindingService(alertingESClient);
-    const crossClusterService = new CrossClusterService(alertingESClient);
+    const destinationsService = new DestinationsService(alertingESClient, dataSourceEnabled);
+    const anomalyDetectorService = new AnomalyDetectorService(adESClient, dataSourceEnabled);
+    const findingService = new FindingService(alertingESClient, dataSourceEnabled);
+    const crossClusterService = new CrossClusterService(alertingESClient, dataSourceEnabled);
     const services = {
       alertService,
       destinationsService,
@@ -72,13 +72,13 @@ export class AlertingPlugin {
     // Create router
     const router = core.http.createRouter();
     // Add server routes
-    alerts(services, router);
-    destinations(services, router);
+    alerts(services, router, dataSourceEnabled);
+    destinations(services, router, dataSourceEnabled);
     opensearch(services, router, dataSourceEnabled);
     monitors(services, router, dataSourceEnabled);
-    detectors(services, router);
-    findings(services, router);
-    crossCluster(services, router);
+    detectors(services, router, dataSourceEnabled);
+    findings(services, router, dataSourceEnabled);
+    crossCluster(services, router, dataSourceEnabled);
 
     return {};
   }

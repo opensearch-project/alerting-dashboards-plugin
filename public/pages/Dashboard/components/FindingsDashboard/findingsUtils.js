@@ -13,6 +13,7 @@ import { backendErrorNotification } from '../../../../utils/helpers';
 import { MAX_FINDINGS_COUNT } from '../../containers/FindingsDashboard';
 import { OPERATORS_MAP } from '../../../CreateMonitor/components/MonitorExpressions/expressions/utils/constants';
 import { validDocLevelGraphQueries } from '../../../CreateMonitor/components/DocumentLevelMonitorQueries/utils/helpers';
+import { getDataSourceQueryObj } from '../../../utils/helpers';
 
 export const TABLE_TAB_IDS = {
   ALERTS: { id: 'alerts', name: 'Alerts' },
@@ -189,7 +190,10 @@ export async function getFindings({
   // TODO FIXME: Refactor 'size' logic to return all findings for a monitor
   //  once the backend supports retrieving findings for a monitorId.
   params['size'] = Math.max(size, MAX_FINDINGS_COUNT);
-
+  const dataSourceQuery = getDataSourceQueryObj();
+  if (dataSourceQuery && dataSourceQuery.query) {
+    params['dataSourceId'] = dataSourceQuery?.query?.dataSourceId;
+  }
   const resp = await httpClient.get('../api/alerting/findings/_search', { query: params });
   if (resp.ok) {
     return getFindingsForMonitor(resp.findings, monitorId);

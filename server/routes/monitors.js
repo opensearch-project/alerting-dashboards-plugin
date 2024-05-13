@@ -4,7 +4,7 @@
  */
 
 import { schema } from '@osd/config-schema';
-import { validateQuery } from '../services/utils/helpers';
+import { createValidateQuerySchema } from '../services/utils/helpers';
 
 export default function (services, router, dataSourceEnabled) {
   const { monitorService } = services;
@@ -23,7 +23,7 @@ export default function (services, router, dataSourceEnabled) {
     {
       path: '/api/alerting/monitors',
       validate: {
-        query: validateQuery(dataSourceEnabled, fieldValidations),
+        query: createValidateQuerySchema(dataSourceEnabled, fieldValidations),
       },
     },
     monitorService.getMonitors
@@ -34,7 +34,7 @@ export default function (services, router, dataSourceEnabled) {
       path: '/api/alerting/monitors/_search',
       validate: {
         body: schema.any(),
-        query: validateQuery(dataSourceEnabled),
+        query: createValidateQuerySchema(dataSourceEnabled),
       },
     },
     monitorService.searchMonitors
@@ -45,7 +45,7 @@ export default function (services, router, dataSourceEnabled) {
       path: '/api/alerting/monitors',
       validate: {
         body: schema.any(),
-        query: validateQuery(dataSourceEnabled),
+        query: createValidateQuerySchema(dataSourceEnabled),
       },
     },
     monitorService.createMonitor
@@ -56,7 +56,7 @@ export default function (services, router, dataSourceEnabled) {
       path: '/api/alerting/workflows',
       validate: {
         body: schema.any(),
-        query: validateQuery(dataSourceEnabled),
+        query: createValidateQuerySchema(dataSourceEnabled),
       },
     },
     monitorService.createWorkflow
@@ -67,7 +67,7 @@ export default function (services, router, dataSourceEnabled) {
       path: '/api/alerting/monitors/_execute',
       validate: {
         body: schema.any(),
-        query: validateQuery(dataSourceEnabled, {
+        query: createValidateQuerySchema(dataSourceEnabled, {
           dryrun: schema.maybe(schema.string()),
         }),
       },
@@ -82,7 +82,7 @@ export default function (services, router, dataSourceEnabled) {
         params: schema.object({
           id: schema.string(),
         }),
-        query: validateQuery(dataSourceEnabled),
+        query: createValidateQuerySchema(dataSourceEnabled),
       },
     },
     monitorService.getWorkflow
@@ -95,7 +95,7 @@ export default function (services, router, dataSourceEnabled) {
         params: schema.object({
           id: schema.string(),
         }),
-        query: validateQuery(dataSourceEnabled),
+        query: createValidateQuerySchema(dataSourceEnabled),
       },
     },
     monitorService.getMonitor
@@ -114,7 +114,7 @@ export default function (services, router, dataSourceEnabled) {
           id: schema.string(),
         }),
         body: schema.any(),
-        query: validateQuery(dataSourceEnabled, fieldValidationForMonitors),
+        query: createValidateQuerySchema(dataSourceEnabled, fieldValidationForMonitors),
       },
     },
     monitorService.updateMonitor
@@ -127,7 +127,7 @@ export default function (services, router, dataSourceEnabled) {
         params: schema.object({
           id: schema.string(),
         }),
-        query: validateQuery(dataSourceEnabled, fieldValidationForMonitors),
+        query: createValidateQuerySchema(dataSourceEnabled, fieldValidationForMonitors),
         body: schema.any(),
       },
     },
@@ -141,7 +141,7 @@ export default function (services, router, dataSourceEnabled) {
         params: schema.object({
           id: schema.string(),
         }),
-        query: validateQuery(dataSourceEnabled, {
+        query: createValidateQuerySchema(dataSourceEnabled, {
           version: schema.number(),
         }),
       },
@@ -156,7 +156,7 @@ export default function (services, router, dataSourceEnabled) {
         params: schema.object({
           id: schema.string(),
         }),
-        query: validateQuery(dataSourceEnabled, {
+        query: createValidateQuerySchema(dataSourceEnabled, {
           version: schema.number(),
         }),
       },
@@ -172,7 +172,7 @@ export default function (services, router, dataSourceEnabled) {
           id: schema.string(),
         }),
         body: schema.any(),
-        query: validateQuery(dataSourceEnabled),
+        query: createValidateQuerySchema(dataSourceEnabled),
       },
     },
     monitorService.acknowledgeAlerts
@@ -186,7 +186,7 @@ export default function (services, router, dataSourceEnabled) {
           id: schema.string(),
         }),
         body: schema.any(),
-        query: validateQuery(dataSourceEnabled),
+        query: createValidateQuerySchema(dataSourceEnabled),
       },
     },
     monitorService.acknowledgeChainedAlerts

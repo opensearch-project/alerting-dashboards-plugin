@@ -5,7 +5,7 @@
 
 import { schema } from '@osd/config-schema';
 
-export default function (services, router) {
+export default function (services, router, dataSourceEnabled) {
   const { anomalyDetectorService } = services;
 
   router.get(

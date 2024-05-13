@@ -11,7 +11,7 @@ import {
   MONITOR_ACTIONS,
   TRIGGER_ACTIONS,
 } from '../../utils/constants';
-import { createQueryObject } from '../../pages/utils/helpers';
+import { getDataSourceQueryObj } from '../../pages/utils/helpers';
 
 export async function getBreadcrumbs(httpClient, history, location) {
   const { state: routeState } = location;
@@ -66,14 +66,18 @@ export async function getBreadcrumb(route, routeState, httpClient) {
         try {
           const searchPool =
             type === 'workflow' || monitorType === 'composite' ? 'workflows' : 'monitors';
-          const dataSourceQuery = createQueryObject();
+
           // Construct the full URL with the query parameters
-          let url = `../api/alerting/${searchPool}/${base}`;
-
-          const response = await httpClient.get(url, {
-            ...(dataSourceQuery ? { query: dataSourceQuery } : {}),
-          });
-
+          const dataSourceQueryObj = getDataSourceQueryObj();
+          let response;
+          if (dataSourceQueryObj) {
+            response = await httpClient.get(
+              `../api/alerting/${searchPool}/${base}`,
+              dataSourceQueryObj
+            );
+          } else {
+            response = await httpClient.get(`../api/alerting/${searchPool}/${base}`);
+          }
           if (response.ok) {
             monitorName = response.resp.name;
           }

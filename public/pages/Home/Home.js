@@ -95,6 +95,7 @@ export default class Home extends Component {
                   notifications={notifications}
                   perAlertView={false}
                   setFlyout={setFlyout}
+                  landingDataSourceId={landingDataSourceId}
                 />
               )}
             />

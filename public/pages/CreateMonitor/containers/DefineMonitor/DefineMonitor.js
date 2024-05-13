@@ -39,7 +39,7 @@ import ConfigureDocumentLevelQueries from '../../components/DocumentLevelMonitor
 import FindingsDashboard from '../../../Dashboard/containers/FindingsDashboard';
 import { validDocLevelGraphQueries } from '../../components/DocumentLevelMonitorQueries/utils/helpers';
 import { validateWhereFilters } from '../../components/MonitorExpressions/expressions/utils/whereHelpers';
-import { createQueryObject } from '../../../../../public/pages/utils/helpers';
+import { getDataSourceQueryObj } from '../../../../../public/pages/utils/helpers';
 import { CROSS_CLUSTER_MONITORING_ENABLED_SETTING } from '../../components/CrossClusterConfigurations/utils/helpers';
 
 function renderEmptyMessage(message) {
@@ -78,7 +78,6 @@ class DefineMonitor extends Component {
       remoteMonitoringEnabled: false,
       canCallGetRemoteIndexes: false,
     };
-    this.dataSourceQuery = createQueryObject();
     this.renderGraph = this.renderGraph.bind(this);
     this.onRunQuery = this.onRunQuery.bind(this);
     this.resetResponse = this.resetResponse.bind(this);
@@ -187,7 +186,8 @@ class DefineMonitor extends Component {
 
     // Check whether remote monitoring is enabled
     try {
-      const response = await httpClient.get('../api/alerting/_settings');
+      const dataSourceQuery = getDataSourceQueryObj();
+      const response = await httpClient.get('../api/alerting/_settings', dataSourceQuery);
       if (response.ok) {
         const { defaults, transient, persistent } = response.resp;
         remoteMonitoringEnabled = _.get(
@@ -215,9 +215,11 @@ class DefineMonitor extends Component {
     // Check whether the user can call GetRemoteIndexes
     if (remoteMonitoringEnabled) {
       try {
+        const dataSourceQuery = getDataSourceQueryObj();
         const query = {
           indexes: '*,*:*',
           include_mappings: false,
+          dataSourceId: dataSourceQuery?.query?.dataSourceId,
         };
         const response = await httpClient.get(`../api/alerting/remote/indexes`, { query: query });
         canCallGetRemoteIndexes = response.ok;
@@ -249,7 +251,8 @@ class DefineMonitor extends Component {
   async getPlugins() {
     const { httpClient } = this.props;
     try {
-      const pluginsResponse = await httpClient.get('../api/alerting/_plugins');
+      const dataSourceQuery = getDataSourceQueryObj();
+      const pluginsResponse = await httpClient.get('../api/alerting/_plugins', dataSourceQuery);
       if (pluginsResponse.ok) {
         this.setState({ plugins: pluginsResponse.resp.map((plugin) => plugin.component) });
       } else {
@@ -409,15 +412,14 @@ class DefineMonitor extends Component {
           default:
             console.log(`Unsupported searchType found: ${JSON.stringify(searchType)}`, searchType);
         }
-
+        const dataSourceQuery = getDataSourceQueryObj();
         return httpClient.post('../api/alerting/monitors/_execute', {
           body: JSON.stringify(monitor),
-          ...(this.dataSourceQuery ? { query: this.dataSourceQuery } : {}),
+          query: dataSourceQuery?.query,
         });
       });
 
       const [queryResponse, optionalResponse] = await Promise.all(promises);
-
       if (queryResponse.ok) {
         const endTime = moment();
         const duration = moment.duration(endTime.diff(startTime)).milliseconds();
@@ -477,19 +479,20 @@ class DefineMonitor extends Component {
 
     try {
       // If any index contain ":", it indicates at least 1 remote index is configured.
-      // const query = createQueryObject();
+      const dataSourceQuery = getDataSourceQueryObj();
       const hasRemoteClusters = index.some((indexName) => indexName.includes(':'));
       const response = hasRemoteClusters
         ? await this.props.httpClient.get('../api/alerting/remote/indexes', {
             query: {
               indexes: index.join(','),
               include_mappings: true,
+              dataSourceId: dataSourceQuery?.query?.dataSourceId,
             },
           })
         : // Otherwise, all configured indexes are on the local cluster.
           await this.props.httpClient.post('../api/alerting/_mappings', {
             body: JSON.stringify({ index }),
-            ...(this.dataSourceQuery ? { query: this.dataSourceQuery } : {}),
+            query: dataSourceQuery?.query,
           });
       if (response.ok) {
         if (hasRemoteClusters) {
@@ -617,9 +620,10 @@ class DefineMonitor extends Component {
       _.set(monitor, 'name', tempMonitorName);
       _.set(monitor, 'triggers', []);
       _.set(monitor, 'inputs[0].uri', request);
+      const dataSourceQuery = getDataSourceQueryObj();
       return httpClient.post('../api/alerting/monitors/_execute', {
         body: JSON.stringify(monitor),
-        ...(this.dataSourceQuery ? { query: this.dataSourceQuery } : {}),
+        query: dataSourceQuery?.query,
       });
     });
 
@@ -682,7 +686,6 @@ class DefineMonitor extends Component {
       isDarkMode,
       flyoutMode,
     } = this.props;
-
     const { dataTypes, PanelComponent, canCallGetRemoteIndexes, remoteMonitoringEnabled } =
       this.state;
     const monitorContent = this.getMonitorContent();

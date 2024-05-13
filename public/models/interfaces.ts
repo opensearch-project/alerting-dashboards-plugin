@@ -38,11 +38,14 @@ export interface Alert {
   action_execution_results: ActionExecutionResult[];
 }
 
-export interface MDSStates {
-  queryParams: MDSQueryParams;
-  selectedDataSourceId: string | undefined;
+export interface DataSourceEnabled {
+  enabled: boolean;
 }
 
-export type MDSQueryParams = {
+export interface DataSource {
   dataSourceId: string;
-};
+}
+
+export interface DataSourceReadOnly {
+  isReadOnly: boolean;
+}
