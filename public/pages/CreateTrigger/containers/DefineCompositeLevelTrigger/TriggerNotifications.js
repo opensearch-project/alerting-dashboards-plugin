@@ -51,11 +51,12 @@ const TriggerNotifications = ({
     let channels = [];
     let index = 0;
     const getChannels = async () => {
-      const config_types = await notificationService.getServerFeatures();
+      const serverFeatures = await notificationService.getServerFeatures();
+      const configTypes = Object.keys(serverFeatures.availableChannels);
       const getChannelsQuery = {
         from_index: index,
         max_items: MAX_CHANNELS_RESULT_SIZE,
-        config_type: config_types,
+        config_type: configTypes,
         sort_field: 'name',
         sort_order: 'asc',
       };
