@@ -187,4 +187,54 @@ export default class OpensearchService {
       });
     }
   };
+
+  getRoles = async (context, req, res) => {
+    try {
+      const { role } = req.body;
+      const { callAsCurrentUser } = this.esDriver.asScoped(req);
+
+      // Try to get all backend roles in the system if the user has sufficient permission
+      try {
+        const roles_results = await callAsCurrentUser('transport.request', {
+          method: 'GET',
+          path: '_plugins/_security/api/rolesmapping',
+        });
+        let all_backend_roles = new Set();
+
+        for (let key in roles_results) {
+          roles_results[key].backend_roles.forEach((item) => all_backend_roles.add(item));
+        }
+
+        return res.ok({
+          body: {
+            ok: true,
+            resp: Array.from(all_backend_roles).filter((item) => !role || item.includes(role)),
+          },
+        });
+      } catch (err) {
+        console.log('Alerting - OpensearchService - getRoles: get rolemappings:', err.message);
+      }
+
+      // Get users roles
+      const account_results = await callAsCurrentUser('transport.request', {
+        method: 'GET',
+        path: '_plugins/_security/api/account',
+      });
+
+      return res.ok({
+        body: {
+          ok: true,
+          resp: account_results.backend_roles.filter((item) => !role || item.includes(role)),
+        },
+      });
+    } catch (err) {
+      console.error('Alerting - OpensearchService - getRoles:', err);
+      return res.ok({
+        body: {
+          ok: false,
+          resp: err.message,
+        },
+      });
+    }
+  };
 }

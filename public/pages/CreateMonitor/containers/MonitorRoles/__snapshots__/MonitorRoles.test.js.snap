@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`MonitorIndex renders 1`] = `
+exports[`MonitorRoles renders 1`] = `
 <Formik
   initialValues={
     Object {
@@ -75,49 +75,64 @@ exports[`MonitorIndex renders 1`] = `
     }
   }
 >
-  <MonitorIndex
+  <MonitorRoles
     httpClient={[MockFunction]}
   >
     <FormikComboBox
-      fieldProps={
-        Object {
-          "validate": [Function],
-        }
-      }
       formRow={true}
       inputProps={
         Object {
           "async": true,
-          "data-test-subj": "indicesComboBox",
-          "delimiter": ",",
+          "data-test-subj": "rolesComboBox",
           "isClearable": true,
           "isLoading": true,
           "onBlur": [Function],
           "onChange": [Function],
-          "onCreateOption": [Function],
           "onSearchChange": [Function],
           "options": Array [
             Object {
-              "label": "Aliases",
-              "options": Array [],
-            },
-            Object {
-              "label": "Indices",
+              "label": "Backend roles",
               "options": Array [],
             },
           ],
-          "placeholder": "Select indices",
-          "renderOption": [Function],
+          "placeholder": "Select backend roles",
           "singleSelection": false,
         }
       }
-      name="index"
+      name="roles"
       rowProps={
         Object {
-          "error": [Function],
-          "helpText": "You can use a * as a wildcard or date math index resolution in your index pattern",
-          "isInvalid": [Function],
-          "label": "Index",
+          "label": <div>
+            <EuiText
+              size="xs"
+            >
+              <strong>
+                Backend roles
+              </strong>
+              <i>
+                 - optional 
+              </i>
+            </EuiText>
+            <EuiText
+              color="subdued"
+              size="xs"
+              style={
+                Object {
+                  "width": "400px",
+                }
+              }
+            >
+              Specify role-based access control (RBAC) backend roles.
+               
+              <EuiLink
+                external={true}
+                href="https://opensearch.org/docs/latest/observing-your-data/alerting/security/"
+                target="_blank"
+              >
+                Learn more
+              </EuiLink>
+            </EuiText>
+          </div>,
           "style": Object {
             "paddingLeft": "10px",
           },
@@ -125,17 +140,12 @@ exports[`MonitorIndex renders 1`] = `
       }
     >
       <FormikInputWrapper
-        fieldProps={
-          Object {
-            "validate": [Function],
-          }
-        }
-        name="index"
+        fieldProps={Object {}}
+        name="roles"
         render={[Function]}
       >
         <Field
-          name="index"
-          validate={[Function]}
+          name="roles"
         >
           <FormikFormRow
             form={
@@ -318,13 +328,40 @@ exports[`MonitorIndex renders 1`] = `
                 },
               }
             }
-            name="index"
+            name="roles"
             rowProps={
               Object {
-                "error": [Function],
-                "helpText": "You can use a * as a wildcard or date math index resolution in your index pattern",
-                "isInvalid": [Function],
-                "label": "Index",
+                "label": <div>
+                  <EuiText
+                    size="xs"
+                  >
+                    <strong>
+                      Backend roles
+                    </strong>
+                    <i>
+                       - optional 
+                    </i>
+                  </EuiText>
+                  <EuiText
+                    color="subdued"
+                    size="xs"
+                    style={
+                      Object {
+                        "width": "400px",
+                      }
+                    }
+                  >
+                    Specify role-based access control (RBAC) backend roles.
+                     
+                    <EuiLink
+                      external={true}
+                      href="https://opensearch.org/docs/latest/observing-your-data/alerting/security/"
+                      target="_blank"
+                    >
+                      Learn more
+                    </EuiLink>
+                  </EuiText>
+                </div>,
                 "style": Object {
                   "paddingLeft": "10px",
                 },
@@ -337,10 +374,40 @@ exports[`MonitorIndex renders 1`] = `
               fullWidth={false}
               hasChildLabel={true}
               hasEmptyLabelSpace={false}
-              helpText="You can use a * as a wildcard or date math index resolution in your index pattern"
-              id="index-form-row"
-              isInvalid={false}
-              label="Index"
+              id="roles-form-row"
+              label={
+                <div>
+                  <EuiText
+                    size="xs"
+                  >
+                    <strong>
+                      Backend roles
+                    </strong>
+                    <i>
+                       - optional 
+                    </i>
+                  </EuiText>
+                  <EuiText
+                    color="subdued"
+                    size="xs"
+                    style={
+                      Object {
+                        "width": "400px",
+                      }
+                    }
+                  >
+                    Specify role-based access control (RBAC) backend roles.
+                     
+                    <EuiLink
+                      external={true}
+                      href="https://opensearch.org/docs/latest/observing-your-data/alerting/security/"
+                      target="_blank"
+                    >
+                      Learn more
+                    </EuiLink>
+                  </EuiText>
+                </div>
+              }
               labelType="label"
               style={
                 Object {
@@ -350,7 +417,7 @@ exports[`MonitorIndex renders 1`] = `
             >
               <div
                 className="euiFormRow"
-                id="index-form-row-row"
+                id="roles-form-row-row"
                 style={
                   Object {
                     "paddingLeft": "10px",
@@ -361,19 +428,97 @@ exports[`MonitorIndex renders 1`] = `
                   className="euiFormRow__labelWrapper"
                 >
                   <EuiFormLabel
-                    aria-invalid={false}
                     className="euiFormRow__label"
-                    htmlFor="index-form-row"
+                    htmlFor="roles-form-row"
                     isFocused={false}
-                    isInvalid={false}
                     type="label"
                   >
                     <label
-                      aria-invalid={false}
                       className="euiFormLabel euiFormRow__label"
-                      htmlFor="index-form-row"
+                      htmlFor="roles-form-row"
                     >
-                      Index
+                      <div>
+                        <EuiText
+                          size="xs"
+                        >
+                          <div
+                            className="euiText euiText--extraSmall"
+                          >
+                            <strong>
+                              Backend roles
+                            </strong>
+                            <i>
+                               - optional 
+                            </i>
+                          </div>
+                        </EuiText>
+                        <EuiText
+                          color="subdued"
+                          size="xs"
+                          style={
+                            Object {
+                              "width": "400px",
+                            }
+                          }
+                        >
+                          <div
+                            className="euiText euiText--extraSmall"
+                            style={
+                              Object {
+                                "width": "400px",
+                              }
+                            }
+                          >
+                            <EuiTextColor
+                              color="subdued"
+                              component="div"
+                            >
+                              <div
+                                className="euiTextColor euiTextColor--subdued"
+                              >
+                                Specify role-based access control (RBAC) backend roles.
+                                 
+                                <EuiLink
+                                  external={true}
+                                  href="https://opensearch.org/docs/latest/observing-your-data/alerting/security/"
+                                  target="_blank"
+                                >
+                                  <a
+                                    className="euiLink euiLink--primary"
+                                    href="https://opensearch.org/docs/latest/observing-your-data/alerting/security/"
+                                    rel="noopener noreferrer"
+                                    target="_blank"
+                                  >
+                                    Learn more
+                                    <EuiIcon
+                                      aria-label="External link"
+                                      className="euiLink__externalIcon"
+                                      size="s"
+                                      type="popout"
+                                    >
+                                      <div>
+                                        EuiIconMock
+                                      </div>
+                                    </EuiIcon>
+                                    <EuiScreenReaderOnly>
+                                      <span
+                                        className="euiScreenReaderOnly"
+                                      >
+                                        <EuiI18n
+                                          default="(opens in a new tab or window)"
+                                          token="euiLink.newTarget.screenReaderOnlyText"
+                                        >
+                                          (opens in a new tab or window)
+                                        </EuiI18n>
+                                      </span>
+                                    </EuiScreenReaderOnly>
+                                  </a>
+                                </EuiLink>
+                              </div>
+                            </EuiTextColor>
+                          </div>
+                        </EuiText>
+                      </div>
                     </label>
                   </EuiFormLabel>
                 </div>
@@ -381,10 +526,9 @@ exports[`MonitorIndex renders 1`] = `
                   className="euiFormRow__fieldWrapper"
                 >
                   <ComboBox
-                    aria-describedby="index-form-row-help-0"
                     field={
                       Object {
-                        "name": "index",
+                        "name": "roles",
                         "onBlur": [Function],
                         "onChange": [Function],
                         "value": Array [],
@@ -570,65 +714,51 @@ exports[`MonitorIndex renders 1`] = `
                         },
                       }
                     }
-                    id="index-form-row"
+                    id="roles-form-row"
                     inputProps={
                       Object {
                         "async": true,
-                        "data-test-subj": "indicesComboBox",
-                        "delimiter": ",",
+                        "data-test-subj": "rolesComboBox",
                         "isClearable": true,
                         "isLoading": true,
                         "onBlur": [Function],
                         "onChange": [Function],
-                        "onCreateOption": [Function],
                         "onSearchChange": [Function],
                         "options": Array [
                           Object {
-                            "label": "Aliases",
-                            "options": Array [],
-                          },
-                          Object {
-                            "label": "Indices",
+                            "label": "Backend roles",
                             "options": Array [],
                           },
                         ],
-                        "placeholder": "Select indices",
-                        "renderOption": [Function],
+                        "placeholder": "Select backend roles",
                         "singleSelection": false,
                       }
                     }
-                    name="index"
+                    name="roles"
                     onBlur={[Function]}
                     onFocus={[Function]}
                   >
                     <EuiComboBox
                       async={true}
                       compressed={false}
-                      data-test-subj="indicesComboBox"
-                      delimiter=","
+                      data-test-subj="rolesComboBox"
                       fullWidth={false}
-                      id="index"
+                      id="roles"
                       isClearable={true}
                       isLoading={true}
-                      name="index"
+                      name="roles"
                       onBlur={[Function]}
                       onChange={[Function]}
-                      onCreateOption={[Function]}
                       onSearchChange={[Function]}
                       options={
                         Array [
                           Object {
-                            "label": "Aliases",
-                            "options": Array [],
-                          },
-                          Object {
-                            "label": "Indices",
+                            "label": "Backend roles",
                             "options": Array [],
                           },
                         ]
                       }
-                      placeholder="Select indices"
-                      renderOption={[Function]}
+                      placeholder="Select backend roles"
                       selectedOptions={Array []}
                       singleSelection={false}
                       sortMatchesBy="none"
@@ -637,8 +767,8 @@ exports[`MonitorIndex renders 1`] = `
                         aria-expanded={false}
                         aria-haspopup="listbox"
                         className="euiComboBox"
-                        data-test-subj="indicesComboBox"
-                        name="index"
+                        data-test-subj="rolesComboBox"
+                        name="roles"
                         onKeyDown={[Function]}
                         role="combobox"
                       >
@@ -647,7 +777,7 @@ exports[`MonitorIndex renders 1`] = `
                           compressed={false}
                           fullWidth={false}
                           hasSelectedOptions={false}
-                          id="index"
+                          id="roles"
                           inputRef={[Function]}
                           isListOpen={false}
                           isLoading={true}
@@ -659,7 +789,7 @@ exports[`MonitorIndex renders 1`] = `
                           onFocus={[Function]}
                           onOpenListClick={[Function]}
                           onRemoveOption={[Function]}
-                          placeholder="Select indices"
+                          placeholder="Select backend roles"
                           rootId={[Function]}
                           searchValue=""
                           selectedOptions={Array []}
@@ -699,13 +829,13 @@ exports[`MonitorIndex renders 1`] = `
                                   <p
                                     className="euiComboBoxPlaceholder"
                                   >
-                                    Select indices
+                                    Select backend roles
                                   </p>
                                   <AutosizeInput
                                     aria-controls=""
                                     className="euiComboBox__input"
                                     data-test-subj="comboBoxSearchInput"
-                                    id="index"
+                                    id="roles"
                                     injectStyles={true}
                                     inputRef={[Function]}
                                     minWidth={1}
@@ -732,7 +862,7 @@ exports[`MonitorIndex renders 1`] = `
                                       <input
                                         aria-controls=""
                                         data-test-subj="comboBoxSearchInput"
-                                        id="index"
+                                        id="roles"
                                         onBlur={[Function]}
                                         onChange={[Function]}
                                         onFocus={[Function]}
@@ -822,18 +952,6 @@ exports[`MonitorIndex renders 1`] = `
                       </div>
                     </EuiComboBox>
                   </ComboBox>
-                  <EuiFormHelpText
-                    className="euiFormRow__text"
-                    id="index-form-row-help-0"
-                    key="You can use a * as a wildcard or date math index resolution in your index pattern"
-                  >
-                    <div
-                      className="euiFormHelpText euiFormRow__text"
-                      id="index-form-row-help-0"
-                    >
-                      You can use a * as a wildcard or date math index resolution in your index pattern
-                    </div>
-                  </EuiFormHelpText>
                 </div>
               </div>
             </EuiFormRow>
@@ -841,6 +959,6 @@ exports[`MonitorIndex renders 1`] = `
         </Field>
       </FormikInputWrapper>
     </FormikComboBox>
-  </MonitorIndex>
+  </MonitorRoles>
 </Formik>
 `;

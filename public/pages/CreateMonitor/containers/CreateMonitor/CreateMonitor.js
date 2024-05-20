@@ -28,6 +28,8 @@ import {
   getPerformanceModal,
   RECOMMENDED_DURATION,
 } from '../../components/QueryPerformance/QueryPerformance';
+import MonitorSecurity from '../MonitorSecurity';
+import { FILTER_BY_BACKEND_ROLES_SETTING_PATH } from './utils/constants';
 
 export default class CreateMonitor extends Component {
   static defaultProps = {
@@ -57,16 +59,47 @@ export default class CreateMonitor extends Component {
       triggerToEdit,
       createModalOpen: false,
       formikBag: undefined,
+      filterByBackendRolesEnabled: false,
     };
 
     this.onCancel = this.onCancel.bind(this);
     this.onSubmit = this.onSubmit.bind(this);
     this.evaluateSubmission = this.evaluateSubmission.bind(this);
+    this.getSettings = this.getSettings.bind(this);
+  }
+
+  async getSettings() {
+    try {
+      const { httpClient } = this.props;
+      const response = await httpClient.get('../api/alerting/_settings');
+      if (response.ok) {
+        const { defaults, transient, persistent } = response.resp;
+        let filterByBackendRolesEnabled = _.get(
+          // If present, take the 'transient' setting.
+          transient,
+          FILTER_BY_BACKEND_ROLES_SETTING_PATH,
+          // Else take the 'persistent' setting.
+          _.get(
+            persistent,
+            FILTER_BY_BACKEND_ROLES_SETTING_PATH,
+            // Else take the 'default' setting.
+            _.get(defaults, FILTER_BY_BACKEND_ROLES_SETTING_PATH, false)
+          )
+        );
+        // Boolean settings are returned as strings (e.g., `"true"`, and `"false"`). Constructing boolean value from the string.
+        if (typeof filterByBackendRolesEnabled === 'string')
+          filterByBackendRolesEnabled = JSON.parse(filterByBackendRolesEnabled);
+        this.setState({ filterByBackendRolesEnabled: filterByBackendRolesEnabled });
+      }
+    } catch (e) {
+      console.log('Error while retrieving settings', e);
+    }
   }
 
   componentDidMount() {
     const { httpClient } = this.props;
 
+    this.getSettings();
     const updatePlugins = async () => {
       const newPlugins = await getPlugins(httpClient);
       this.setState({ plugins: newPlugins });
@@ -162,7 +195,7 @@ export default class CreateMonitor extends Component {
       isDarkMode,
       notificationService,
     } = this.props;
-    const { createModalOpen, initialValues, plugins } = this.state;
+    const { createModalOpen, initialValues, plugins, filterByBackendRolesEnabled } = this.state;
 
     return (
       <div style={{ padding: '25px 50px' }}>
@@ -204,6 +237,13 @@ export default class CreateMonitor extends Component {
                           httpClient={httpClient}
                           errors={errors}
                         />
+                      </>
+                    ) : null}
+
+                    {isComposite && filterByBackendRolesEnabled ? (
+                      <>
+                        <EuiSpacer />
+                        <MonitorSecurity values={values} httpClient={httpClient} errors={errors} />
                       </>
                     ) : null}
 
