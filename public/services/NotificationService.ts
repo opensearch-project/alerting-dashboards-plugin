@@ -46,12 +46,13 @@ export default class NotificationService {
   };
 
   getConfigs = async (queryObject: HttpFetchQuery) => {
-    const dataSourceQuery = getDataSourceQueryObj();
-    if(dataSourceQuery?.query && dataSourceQuery?.query?.dataSourceId) {
-      queryObject.dataSourceId = dataSourceQuery?.query?.dataSourceId;
-    }
+    const dataSourceId = getDataSourceQueryObj()?.query?.dataSourceId;
+    const extendedParams = {
+      ...(dataSourceId !== undefined && { dataSourceId }), // Only include dataSourceId if it exists
+      ...queryObject // Other parameters
+    };
     return this.httpClient.get<ConfigsResponse>(NODE_API.GET_CONFIGS, {
-      query: queryObject,
+      query: extendedParams,
     });
   };
 
@@ -63,11 +64,12 @@ export default class NotificationService {
   getChannels = async (
     queryObject: HttpFetchQuery // config_type: Object.keys(CHANNEL_TYPE)
   ): Promise<{ items: ChannelItemType[]; total: number }> => {
-    const dataSourceQuery = getDataSourceQueryObj();
-    if(dataSourceQuery?.query) {
-      queryObject.dataSourceId = dataSourceQuery?.query?.dataSourceId;
-    }
-    const response = await this.getConfigs(queryObject);
+    const dataSourceId = getDataSourceQueryObj()?.query?.dataSourceId;
+    const extendedParams = {
+      ...(dataSourceId !== undefined && { dataSourceId }), // Only include dataSourceId if it exists
+      ...queryObject // Other parameters
+    };
+    const response = await this.getConfigs(extendedParams);
     return {
       items: configListToChannels(response.config_list),
       total: response.total_hits || 0,

@@ -272,19 +272,12 @@ class ConfigureActions extends React.Component {
     const testMonitor = { ...monitor, triggers: [{ ...testTrigger }] };
 
     try {
-      let response;
       const dataSourceQuery = getDataSourceQueryObj();
-      if (dataSourceQuery && dataSourceQuery.query) {
-        response = await httpClient.post('../api/alerting/monitors/_execute', {
-          query: { dryrun: false, dataSourceId: dataSourceQuery?.query.dataSourceId },
-          body: JSON.stringify(testMonitor),
-        });
-      } else {
-        response = await httpClient.post('../api/alerting/monitors/_execute', {
-          query: { dryrun: false },
-          body: JSON.stringify(testMonitor),
-        });
-      }
+      const response = await httpClient.post('../api/alerting/monitors/_execute', {
+        query: { dryrun: false, dataSourceId: dataSourceQuery?.query?.dataSourceId },
+        body: JSON.stringify(testMonitor),
+      });
+
       let error = null;
       if (response.ok) {
         error = checkForError(response, error);

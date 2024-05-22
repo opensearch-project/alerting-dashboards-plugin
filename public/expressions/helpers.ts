@@ -25,11 +25,12 @@ export const getAlerts = async (
     monitorIds: [monitorId],
   };
 
-  const dataSourceQuery = getDataSourceQueryObj();
-  if (dataSourceQuery && dataSourceQuery.query) {
-    params['dataSourceId'] = dataSourceQuery.query.dataSourceId;
-  }
-  const resp = await getClient().get('/api/alerting/alerts', { query: params });
+  const dataSourceId = getDataSourceQueryObj()?.query?.dataSourceId;
+  const extendedParams = {
+    ...(dataSourceId !== undefined && { dataSourceId }),
+    ...params // Other parameters
+  };
+  const resp = await getClient().get('/api/alerting/alerts', { query: extendedParams });
 
   if (resp.ok) {
     const filteredAlerts = resp.alerts.filter(

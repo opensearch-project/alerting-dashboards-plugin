@@ -5,10 +5,6 @@
 import { MDSEnabledClientService } from './MDSEnabledClientService';
 
 export default class CrossClusterService extends MDSEnabledClientService {
-  constructor(esDriver, dataSourceEnabled) {
-    super(esDriver, dataSourceEnabled);
-  }
-
   getRemoteIndexes = async (context, req, res) => {
     try {
       const client = this.getClientBasedOnDataSource(context, req);

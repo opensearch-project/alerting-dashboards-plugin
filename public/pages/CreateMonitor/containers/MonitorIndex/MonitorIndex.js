@@ -122,17 +122,11 @@ class MonitorIndex extends React.Component {
     }
     try {
       const dataSourceQuery = getDataSourceQueryObj();
-      let response;
-      if (dataSourceQuery) {
-        response = await this.props.httpClient.post('../api/alerting/_indices', {
-          body: JSON.stringify({ index }),
-          query: dataSourceQuery?.query,
-        });
-      } else {
-        response = await this.props.httpClient.post('../api/alerting/_indices', {
-          body: JSON.stringify({ index }),
-        });
-      }
+      const response = await this.props.httpClient.post('../api/alerting/_indices', {
+        body: JSON.stringify({ index }),
+        query: dataSourceQuery?.query,
+      });
+
       if (response.ok) {
         const indices = response.resp.map(({ health, index, status }) => ({
           label: index,
@@ -161,17 +155,11 @@ class MonitorIndex extends React.Component {
 
     try {
       const dataSourceQuery = getDataSourceQueryObj();
-      let response;
-      if (dataSourceQuery) {
-        response = await this.props.httpClient.post('../api/alerting/_aliases', {
-          body: JSON.stringify({ alias }),
-          query: dataSourceQuery?.query,
-        });
-      } else {
-        response = await this.props.httpClient.post('../api/alerting/_aliases', {
-          body: JSON.stringify({ alias }),
-        });
-      }
+      const response = await this.props.httpClient.post('../api/alerting/_aliases', {
+        body: JSON.stringify({ alias }),
+        query: dataSourceQuery?.query,
+      });
+
       if (response.ok) {
         const indices = response.resp.map(({ alias, index }) => ({ label: alias, index }));
         return _.sortBy(indices, 'label');

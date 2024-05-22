@@ -9,8 +9,7 @@ export function getDataSourceQueryObj() {
   const dataSourceQuery = dataSourceEnabled()
     ? { dataSourceId: getDataSource()?.dataSourceId }
     : undefined;
-  const options = dataSourceQuery ? { query: dataSourceQuery } : undefined;
-  return options;
+  return dataSourceQuery ? { query: dataSourceQuery } : undefined;
 }
 
 export function isDataSourceChanged(prevProps, currProps) {
@@ -30,7 +29,7 @@ export function parseQueryStringAndGetDataSource(queryString) {
     var pair = queryParams[i].split('=');
     params[pair[0]] = pair[1];
   }
-  return params.hasOwnProperty('dataSourceId') ? params['dataSourceId'] : undefined;
+  return params['dataSourceId'];
 }
 
 export function constructUrlFromDataSource(url) {

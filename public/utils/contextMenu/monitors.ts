@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react';
 import _ from 'lodash';
 import { getClient } from '../../services';
 import { getAssociatedMonitorIds } from '../savedObjectHelper';
-import { parse } from 'query-string';
 import { getDataSourceQueryObj } from '../../pages/utils/helpers';
 
 export const stateToLabel = {
@@ -12,11 +11,12 @@ export const stateToLabel = {
 
 const getMonitors = async (params) => {
   const httpClient = getClient();
-  const dataSourceQuery = getDataSourceQueryObj();
-  if(dataSourceQuery && dataSourceQuery.query) {
-    params.dataSourceId = dataSourceQuery.query.dataSourceId;
-  }
-  const monitorResponse = await httpClient.get('../api/alerting/monitors', { query: params });
+  const dataSourceId = getDataSourceQueryObj()?.query?.dataSourceId;
+  const extendedParams = {
+    ...(dataSourceId !== undefined && { dataSourceId }), // Only include dataSourceId if it exists
+    ...params // Other parameters
+  };
+  const monitorResponse = await httpClient.get('../api/alerting/monitors', { query: extendedParams });
   if (monitorResponse.ok) {
     return _.get(monitorResponse, 'monitors', []);
   } else {

@@ -26,10 +26,6 @@ export const DEFAULT_GET_FINDINGS_PARAMS = {
 };
 
 export default class FindingService extends MDSEnabledClientService {
-  constructor(esDriver, dataSourceEnabled) {
-    super(esDriver, dataSourceEnabled);
-  }
-
   getFindings = async (context, req, res) => {
     const {
       id = DEFAULT_GET_FINDINGS_PARAMS.id,

@@ -7,10 +7,6 @@ import { request } from 'http';
 import { MDSEnabledClientService } from './MDSEnabledClientService';
 
 export default class OpensearchService extends MDSEnabledClientService {
-  constructor(esDriver, dataSourceEnabled) {
-    super(esDriver, dataSourceEnabled);
-  }
-
   // TODO: This will be deprecated as we do not want to support accessing alerting indices directly
   //  and that is what this is used for
   search = async (context, req, res) => {

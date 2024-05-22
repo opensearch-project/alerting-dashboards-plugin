@@ -129,7 +129,6 @@ export default class MonitorDetails extends Component {
       .get(`../api/alerting/detectors/${id}`, dataSourceQuery)
       .then((resp) => {
         const { ok, detector, version: detectorVersion, seqNo, primaryTerm } = resp;
-        console.log('Get detctor ', resp);
         if (ok) {
           this.setState({
             detector: detector,
@@ -257,7 +256,6 @@ export default class MonitorDetails extends Component {
         }
       )
       .then((resp) => {
-        console.log('updateMonitor ', resp);
         if (resp.ok) {
           const { version: monitorVersion } = resp;
           this.setState({ monitorVersion, updating: false });
