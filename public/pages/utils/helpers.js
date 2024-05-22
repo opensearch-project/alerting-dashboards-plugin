@@ -23,10 +23,10 @@ export function getURL(url, dataSourceId) {
 }
 
 export function parseQueryStringAndGetDataSource(queryString) {
-  var params = {};
-  var queryParams = queryString.substring(1).split('&');
-  for (var i = 0; i < queryParams.length; i++) {
-    var pair = queryParams[i].split('=');
+  const params = {};
+  const queryParams = queryString.substring(1).split('&');
+  for (const param of queryParams) {
+    const pair = param.split('=');
     params[pair[0]] = pair[1];
   }
   return params['dataSourceId'];

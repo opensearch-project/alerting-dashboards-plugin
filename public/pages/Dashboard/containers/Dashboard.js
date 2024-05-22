@@ -140,10 +140,12 @@ export default class Dashboard extends Component {
       location.search;
       const { httpClient, history, notifications, perAlertView } = this.props;
       history.replace({ ...this.props.location, search: queryParamsString });
-      if (this.dataSourceQuery && this.dataSourceQuery.query) {
-        params['dataSourceId'] = this.dataSourceQuery?.query?.dataSourceId;
-      }
-      httpClient.get('../api/alerting/alerts', { query: params }).then((resp) => {
+      const dataSourceId = this.dataSourceQuery?.query?.dataSourceId;
+      const extendedParams = {
+        ...(dataSourceId !== undefined && { dataSourceId }), // Only include dataSourceId if it exists
+        ...params, // Other parameters
+      };
+      httpClient.get('../api/alerting/alerts', { query: extendedParams }).then((resp) => {
         if (resp.ok) {
           const { alerts, totalAlerts } = resp;
           this.setState({ alerts, totalAlerts });

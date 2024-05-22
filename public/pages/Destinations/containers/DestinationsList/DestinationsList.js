@@ -141,7 +141,7 @@ class DestinationsList extends React.Component {
     };
     const resp = await httpClient.post('../api/alerting/monitors/_search', {
       body: JSON.stringify(requestBody),
-      query: this.dataSourceQuery.query,
+      query: this.dataSourceQuery?.query,
     });
 
     const total = _.get(resp, 'resp.hits.total.value');
@@ -173,10 +173,9 @@ class DestinationsList extends React.Component {
     const { id: destinationId } = this.state.destinationToDelete;
     const { httpClient, notifications } = this.props;
     try {
-      const dataSourceQuery = getDataSourceQueryObj();
       const resp = await httpClient.delete(
         `../api/alerting/destinations/${destinationId}`,
-        dataSourceQuery
+        this.dataSourceQuery
       );
       if (resp.ok) {
         await this.getDestinations();
