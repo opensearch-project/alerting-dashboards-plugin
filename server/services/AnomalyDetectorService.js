@@ -9,10 +9,6 @@ import { MDSEnabledClientService } from './MDSEnabledClientService';
 
 const MAX_DETECTOR_COUNT = 1000;
 export default class DestinationsService extends MDSEnabledClientService {
-  constructor(esDriver, dataSourceEnabled) {
-    super(esDriver, dataSourceEnabled);
-  }
-
   getDetector = async (context, req, res) => {
     const { detectorId } = req.params;
     const client = this.getClientBasedOnDataSource(context, req);
