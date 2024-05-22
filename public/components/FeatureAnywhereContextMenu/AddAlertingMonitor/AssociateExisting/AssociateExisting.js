@@ -20,6 +20,7 @@ import {
 import { stateToLabel } from '../../../../utils/contextMenu/monitors';
 import { dateOptionsLong } from '../../../../utils/contextMenu/helpers';
 import './styles.scss';
+import { constructUrlFromDataSource } from '../../../../pages/utils/helpers';
 
 function AssociateExisting({ monitors, selectedMonitorId, setSelectedMonitorId }) {
   const selectedOptions = useMemo(() => {
@@ -127,7 +128,10 @@ function AssociateExisting({ monitors, selectedMonitorId, setSelectedMonitorId }
               </EuiHealth>
             </EuiFlexItem>
             <EuiFlexItem grow={false}>
-              <EuiLink href={`alerting#/monitors/${monitor.id}`} target="_blank">
+              <EuiLink
+                href={constructUrlFromDataSource(`alerting#/monitors/${monitor.id}`)}
+                target="_blank"
+              >
                 View monitor page
               </EuiLink>
             </EuiFlexItem>

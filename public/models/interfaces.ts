@@ -37,3 +37,15 @@ export interface Alert {
   severity: string;
   action_execution_results: ActionExecutionResult[];
 }
+
+export interface DataSourceEnabled {
+  enabled: boolean;
+}
+
+export interface DataSource {
+  dataSourceId: string;
+}
+
+export interface DataSourceReadOnly {
+  isReadOnly: boolean;
+}

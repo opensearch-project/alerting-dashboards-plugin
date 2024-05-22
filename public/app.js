@@ -2,7 +2,6 @@
  * Copyright OpenSearch Contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { HashRouter as Router, Route } from 'react-router-dom';
@@ -13,7 +12,7 @@ import 'react-vis/dist/style.css';
 import './app.scss';
 import Main from './pages/Main';
 import { CoreContext } from './utils/CoreContext';
-import { ServicesContext, NotificationService } from './services';
+import { ServicesContext, NotificationService, getDataSourceEnabled } from './services';
 import { initManageChannelsUrl } from './utils/helpers';
 
 export function renderApp(coreStart, params) {
@@ -22,6 +21,10 @@ export function renderApp(coreStart, params) {
   coreStart.chrome.setBreadcrumbs([{ text: 'Alerting' }]); // Set Breadcrumbs for the plugin
   const notificationService = new NotificationService(http);
   const services = { notificationService };
+  const mdsProps = {
+    setActionMenu: params.setHeaderActionMenu,
+    dataSourceEnabled: getDataSourceEnabled()?.enabled,
+  };
 
   // Load Chart's dark mode CSS
   if (isDarkMode) {
@@ -44,7 +47,7 @@ export function renderApp(coreStart, params) {
             chrome: coreStart.chrome,
           }}
         >
-          <Route render={(props) => <Main title="Alerting" {...props} />} />
+          <Route render={(props) => <Main title="Alerting" {...mdsProps} {...props} />} />
         </CoreContext.Provider>
       </ServicesContext.Provider>
     </Router>,

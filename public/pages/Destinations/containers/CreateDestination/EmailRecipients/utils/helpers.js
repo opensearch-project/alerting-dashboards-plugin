@@ -4,11 +4,16 @@
  */
 
 import { MAX_QUERY_RESULT_SIZE } from '../../../../../../utils/constants';
+import { getDataSourceId } from '../../../../../utils/helpers';
 
 export default async function getEmailGroups(httpClient, searchText = '') {
   try {
     const response = await httpClient.get('../api/alerting/destinations/email_groups', {
-      query: { search: searchText, size: MAX_QUERY_RESULT_SIZE },
+      query: {
+        search: searchText,
+        size: MAX_QUERY_RESULT_SIZE,
+        dataSourceId: getDataSourceId(),
+      },
     });
     if (response.ok) {
       return response.emailGroups;
