@@ -19,6 +19,11 @@ import { MONITOR_ACTIONS, MONITOR_TYPE } from '../../../../utils/constants';
 import { backendErrorNotification, deleteMonitor } from '../../../../utils/helpers';
 import { displayAcknowledgedAlertsToast } from '../../../Dashboard/utils/helpers';
 import { DeleteMonitorModal } from '../../../../components/DeleteModal/DeleteMonitorModal';
+import {
+  getDataSourceQueryObj,
+  isDataSourceChanged,
+  getDataSourceId,
+} from '../../../utils/helpers';
 
 const MAX_MONITOR_COUNT = 1000;
 
@@ -27,7 +32,6 @@ const MAX_MONITOR_COUNT = 1000;
 export default class Monitors extends Component {
   constructor(props) {
     super(props);
-
     const { from, size, search, sortField, sortDirection, state } = getURLQueryParams(
       this.props.location
     );
@@ -48,7 +52,6 @@ export default class Monitors extends Component {
       loadingMonitors: true,
       monitorItemsToDelete: undefined,
     };
-
     this.getMonitors = _.debounce(this.getMonitors.bind(this), 500, { leading: true });
     this.onTableChange = this.onTableChange.bind(this);
     this.onMonitorStateChange = this.onMonitorStateChange.bind(this);
@@ -114,9 +117,16 @@ export default class Monitors extends Component {
     const prevQuery = this.getQueryObjectFromState(prevState);
     const currQuery = this.getQueryObjectFromState(this.state);
     if (!_.isEqual(prevQuery, currQuery)) {
-      const { page, size, search, sortField, sortDirection, monitorState } = this.state;
-      this.getMonitors(page * size, size, search, sortField, sortDirection, monitorState);
+      this.updateMonitorList();
     }
+    if (isDataSourceChanged(prevProps, this.props)) {
+      this.updateMonitorList();
+    }
+  }
+
+  updateMonitorList() {
+    const { page, size, search, sortField, sortDirection, monitorState } = this.state;
+    this.getMonitors(page * size, size, search, sortField, sortDirection, monitorState);
   }
 
   getQueryObjectFromState({ page, size, search, sortField, sortDirection, monitorState }) {
@@ -137,11 +147,19 @@ export default class Monitors extends Component {
       const queryParamsString = queryString.stringify(params);
       const { httpClient, history } = this.props;
       history.replace({ ...this.props.location, search: queryParamsString });
-      const response = await httpClient.get('../api/alerting/monitors', { query: params });
+      const dataSourceId = getDataSourceId();
+      const extendedParams = {
+        ...(dataSourceId !== undefined && { dataSourceId }), // Only include dataSourceId if it exists
+        ...params, // Other parameters
+      };
+      const response = await httpClient.get('../api/alerting/monitors', { query: extendedParams });
       if (response.ok) {
         const { monitors, totalMonitors } = response;
         this.setState({ monitors, totalMonitors });
       } else {
+        if (dataSourceId !== undefined) {
+          this.setState({ monitors: [], totalMonitors: 0 });
+        }
         console.log('error getting monitors:', response);
         // TODO: 'response.ok' is 'false' when there is no alerting config index in the cluster, and notification should not be shown to new Alerting users
         // backendErrorNotification(notifications, 'get', 'monitors', response.resp);
@@ -173,9 +191,15 @@ export default class Monitors extends Component {
   updateMonitor(item, update) {
     const { httpClient, notifications } = this.props;
     const { id, ifSeqNo, ifPrimaryTerm, monitor } = item;
+    const params = { ifSeqNo, ifPrimaryTerm };
+    const dataSourceId = getDataSourceId();
+    const extendedParams = {
+      ...(dataSourceId !== undefined && { dataSourceId }), // Only include dataSourceId if it exists
+      ...params, // Other parameters
+    };
     return httpClient
       .put(`../api/alerting/monitors/${id}`, {
-        query: { ifSeqNo, ifPrimaryTerm },
+        query: extendedParams,
         body: JSON.stringify({ ...monitor, ...update }),
       })
       .then((resp) => {
@@ -203,7 +227,9 @@ export default class Monitors extends Component {
   async deleteMonitors(items) {
     const { httpClient, notifications } = this.props;
     const arrayOfPromises = items.map((item) =>
-      deleteMonitor(item, httpClient, notifications).catch((error) => error)
+      deleteMonitor(item, httpClient, notifications, getDataSourceQueryObj()).catch(
+        (error) => error
+      )
     );
 
     return Promise.all(arrayOfPromises).then((values) => {
@@ -234,6 +260,7 @@ export default class Monitors extends Component {
       httpClient
         .post(`../api/alerting/${poolType}/${monitorId}/_acknowledge/alerts`, {
           body: JSON.stringify({ alerts: ids }),
+          query: getDataSourceQueryObj()?.query,
         })
         .then((resp) => {
           if (!resp.ok) {
@@ -316,9 +343,15 @@ export default class Monitors extends Component {
     let allAlerts = [];
     let totalAlertsCount = 0;
 
+    const dataSourceId = getDataSourceId();
+    const extendedParams = {
+      ...(dataSourceId !== undefined && { dataSourceId }), // Only include dataSourceId if it exists
+      ...params, // Other parameters
+    };
+
     if (monitorIds.length > 0) {
       const monitorAlertsResponse = await httpClient.get('../api/alerting/alerts', {
-        query: params,
+        query: extendedParams,
       });
       if (!monitorAlertsResponse.ok) {
         console.error(monitorAlertsResponse);
@@ -332,7 +365,11 @@ export default class Monitors extends Component {
 
     if (workflowIds.length > 0) {
       const chainedAlertsResponse = await httpClient.get('../api/alerting/alerts', {
-        query: { ...params, monitorIds: workflowIds, monitorType: MONITOR_TYPE.COMPOSITE_LEVEL },
+        query: {
+          ...extendedParams,
+          monitorIds: workflowIds,
+          monitorType: MONITOR_TYPE.COMPOSITE_LEVEL,
+        },
       });
 
       if (!chainedAlertsResponse.ok) {

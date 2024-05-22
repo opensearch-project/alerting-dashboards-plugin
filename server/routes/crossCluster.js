@@ -4,18 +4,21 @@
  */
 
 import { schema } from '@osd/config-schema';
+import { createValidateQuerySchema } from '../services/utils/helpers';
 
-export default function (services, router) {
+export default function (services, router, dataSourceEnabled) {
   const { crossClusterService } = services;
+
+  const fieldValidations = {
+    indexes: schema.string(),
+    include_mappings: schema.maybe(schema.boolean()),
+  };
 
   router.get(
     {
       path: '/api/alerting/remote/indexes',
       validate: {
-        query: schema.object({
-          indexes: schema.string(),
-          include_mappings: schema.maybe(schema.boolean()),
-        }),
+        query: createValidateQuerySchema(dataSourceEnabled, fieldValidations),
       },
     },
     crossClusterService.getRemoteIndexes

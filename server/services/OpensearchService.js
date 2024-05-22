@@ -3,19 +3,18 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-export default class OpensearchService {
-  constructor(esDriver) {
-    this.esDriver = esDriver;
-  }
+import { request } from 'http';
+import { MDSEnabledClientService } from './MDSEnabledClientService';
 
+export default class OpensearchService extends MDSEnabledClientService {
   // TODO: This will be deprecated as we do not want to support accessing alerting indices directly
   //  and that is what this is used for
   search = async (context, req, res) => {
     try {
       const { query, index, size } = req.body;
       const params = { index, size, body: query };
-      const { callAsCurrentUser } = this.esDriver.asScoped(req);
-      const results = await callAsCurrentUser('search', params);
+      const client = this.getClientBasedOnDataSource(context, req);
+      const results = await client('search', params);
       return res.ok({
         body: {
           ok: true,
@@ -36,8 +35,8 @@ export default class OpensearchService {
   getIndices = async (context, req, res) => {
     try {
       const { index } = req.body;
-      const { callAsCurrentUser } = this.esDriver.asScoped(req);
-      const indices = await callAsCurrentUser('cat.indices', {
+      const client = this.getClientBasedOnDataSource(context, req);
+      const indices = await client('cat.indices', {
         index,
         format: 'json',
         h: 'health,index,status',
@@ -72,8 +71,8 @@ export default class OpensearchService {
   getAliases = async (context, req, res) => {
     try {
       const { alias } = req.body;
-      const { callAsCurrentUser } = this.esDriver.asScoped(req);
-      const aliases = await callAsCurrentUser('cat.aliases', {
+      const client = this.getClientBasedOnDataSource(context, req);
+      const aliases = await client('cat.aliases', {
         alias,
         format: 'json',
         h: 'alias,index',
@@ -97,8 +96,8 @@ export default class OpensearchService {
 
   getClusterHealth = async (context, req, res) => {
     try {
-      const { callAsCurrentUser } = this.esDriver.asScoped(req);
-      const health = await callAsCurrentUser('cat.health', {
+      const client = this.getClientBasedOnDataSource(context, req);
+      const health = await client('cat.health', {
         format: 'json',
         h: 'cluster,status',
       });
@@ -122,8 +121,8 @@ export default class OpensearchService {
   getMappings = async (context, req, res) => {
     try {
       const { index } = req.body;
-      const { callAsCurrentUser } = this.esDriver.asScoped(req);
-      const mappings = await callAsCurrentUser('indices.getMapping', { index });
+      const client = this.getClientBasedOnDataSource(context, req);
+      const mappings = await client('indices.getMapping', { index });
       return res.ok({
         body: {
           ok: true,
@@ -143,8 +142,8 @@ export default class OpensearchService {
 
   getPlugins = async (context, req, res) => {
     try {
-      const { callAsCurrentUser } = this.esDriver.asScoped(req);
-      const plugins = await callAsCurrentUser('cat.plugins', {
+      const client = this.getClientBasedOnDataSource(context, req);
+      const plugins = await client('cat.plugins', {
         format: 'json',
         h: 'component',
       });
@@ -167,8 +166,8 @@ export default class OpensearchService {
 
   getSettings = async (context, req, res) => {
     try {
-      const { callAsCurrentUser } = this.esDriver.asScoped(req);
-      const settings = await callAsCurrentUser('cluster.getSettings', {
+      const client = this.getClientBasedOnDataSource(context, req);
+      const settings = await client('cluster.getSettings', {
         include_defaults: 'true',
       });
       return res.ok({

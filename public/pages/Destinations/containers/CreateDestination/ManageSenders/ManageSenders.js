@@ -28,6 +28,7 @@ import { senderToFormik } from './utils/helpers';
 import getSenders from '../EmailSender/utils/helpers';
 import { STATE } from '../../../components/createDestinations/Email/utils/constants';
 import { ignoreEscape } from '../../../../../utils/helpers';
+import { getDataSourceQueryObj } from '../../../../../../public/pages/utils/helpers';
 
 const createSenderContext = (senders) => ({
   ctx: {
@@ -96,8 +97,10 @@ export default class ManageSenders extends React.Component {
       method: sender.method,
     };
     try {
+      const dataSourceQuery = getDataSourceQueryObj();
       const response = await httpClient.post(`../api/alerting/destinations/email_accounts`, {
         body: JSON.stringify(body),
+        query: dataSourceQuery?.query,
       });
       if (!response.ok) {
         this.setState({ failedSenders: true });
@@ -127,8 +130,9 @@ export default class ManageSenders extends React.Component {
       method: updatedSender.method,
     };
     try {
+      const dataSourceQuery = getDataSourceQueryObj()?.query;
       const response = await httpClient.put(`../api/alerting/destinations/email_accounts/${id}`, {
-        query: { ifSeqNo, ifPrimaryTerm },
+        query: { ifSeqNo, ifPrimaryTerm, dataSourceQuery },
         body: JSON.stringify(body),
       });
       if (!response.ok) {
@@ -152,7 +156,11 @@ export default class ManageSenders extends React.Component {
     const { httpClient, notifications } = this.props;
     const { id } = sender;
     try {
-      const response = await httpClient.delete(`../api/alerting/destinations/email_accounts/${id}`);
+      const dataSourceQuery = getDataSourceQueryObj();
+      const response = await httpClient.delete(
+        `../api/alerting/destinations/email_accounts/${id}`,
+        dataSourceQuery
+      );
       if (!response.ok) {
         this.setState({ failedSenders: true });
         notifications.toasts.addDanger({

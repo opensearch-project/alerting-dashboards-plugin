@@ -37,6 +37,7 @@ import { getPathsPerDataType } from '../../../../CreateMonitor/containers/Define
 import { MONITOR_TYPE } from '../../../../../utils/constants';
 import { buildClusterMetricsRequest } from '../../../../CreateMonitor/components/ClusterMetricsMonitor/utils/clusterMetricsMonitorHelpers';
 import { getTimeZone } from '../../../utils/helper';
+import { getDataSourceQueryObj } from '../../../../utils/helpers';
 
 export const DEFAULT_CLOSED_STATES = {
   WHEN: false,
@@ -153,9 +154,12 @@ export default class CreateTrigger extends Component {
       default:
         console.log(`Unsupported searchType found: ${JSON.stringify(searchType)}`, searchType);
     }
-
+    const dataSourceQuery = getDataSourceQueryObj();
     httpClient
-      .post('../api/alerting/monitors/_execute', { body: JSON.stringify(monitorToExecute) })
+      .post('../api/alerting/monitors/_execute', {
+        body: JSON.stringify(monitorToExecute),
+        query: dataSourceQuery?.query,
+      })
       .then((resp) => {
         if (resp.ok) {
           this.setState({ executeResponse: resp.resp });
@@ -208,8 +212,14 @@ export default class CreateTrigger extends Component {
   };
 
   getTriggerContext = (executeResponse, monitor, values) => ({
-    periodStart: moment.utc(_.get(executeResponse, 'period_start', Date.now())).tz(getTimeZone()).format(),
-    periodEnd: moment.utc(_.get(executeResponse, 'period_end', Date.now())).tz(getTimeZone()).format(),
+    periodStart: moment
+      .utc(_.get(executeResponse, 'period_start', Date.now()))
+      .tz(getTimeZone())
+      .format(),
+    periodEnd: moment
+      .utc(_.get(executeResponse, 'period_end', Date.now()))
+      .tz(getTimeZone())
+      .format(),
     results: [_.get(executeResponse, 'input_results.results[0]')].filter((result) => !!result),
     trigger: formikToTrigger(values, _.get(this.props.monitor, 'ui_metadata', {})),
     alert: null,
@@ -257,8 +267,10 @@ export default class CreateTrigger extends Component {
     }
 
     try {
+      const dataSourceQuery = getDataSourceQueryObj();
       const response = await this.props.httpClient.post('../api/alerting/_mappings', {
         body: JSON.stringify({ index }),
+        query: dataSourceQuery?.query,
       });
       if (response.ok) {
         return response.resp;

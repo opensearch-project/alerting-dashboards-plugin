@@ -13,6 +13,10 @@ import { validateIndex, hasError, isInvalid } from '../../../../utils/validate';
 import { canAppendWildcard, createReasonableWait, getMatchedOptions } from './utils/helpers';
 import { MONITOR_TYPE } from '../../../../utils/constants';
 import CrossClusterConfiguration from '../../components/CrossClusterConfigurations/containers';
+import {
+  getDataSourceQueryObj,
+  isDataSourceChanged,
+} from '../../../../../public/pages/utils/helpers';
 
 const CustomOption = ({ option, searchValue, contentClassName }) => {
   const { health, label, index } = option;
@@ -41,7 +45,6 @@ const propTypes = {
 class MonitorIndex extends React.Component {
   constructor(props) {
     super(props);
-
     this.lastQuery = null;
     this.state = {
       isLoading: false,
@@ -55,7 +58,6 @@ class MonitorIndex extends React.Component {
       partialMatchedAliases: [],
       exactMatchedAliases: [],
     };
-
     this.onCreateOption = this.onCreateOption.bind(this);
     this.onSearchChange = this.onSearchChange.bind(this);
     this.handleQueryIndices = this.handleQueryIndices.bind(this);
@@ -66,6 +68,12 @@ class MonitorIndex extends React.Component {
   componentDidMount() {
     // Simulate initial load.
     this.onSearchChange('');
+  }
+
+  componentDidUpdate(prevProps) {
+    if (isDataSourceChanged(prevProps, this.props)) {
+      this.onSearchChange('');
+    }
   }
 
   onCreateOption(searchValue, selectedOptions, setFieldValue, supportMultipleIndices) {
@@ -113,9 +121,12 @@ class MonitorIndex extends React.Component {
       return [];
     }
     try {
+      const dataSourceQuery = getDataSourceQueryObj();
       const response = await this.props.httpClient.post('../api/alerting/_indices', {
         body: JSON.stringify({ index }),
+        query: dataSourceQuery?.query,
       });
+
       if (response.ok) {
         const indices = response.resp.map(({ health, index, status }) => ({
           label: index,
@@ -143,9 +154,12 @@ class MonitorIndex extends React.Component {
     }
 
     try {
+      const dataSourceQuery = getDataSourceQueryObj();
       const response = await this.props.httpClient.post('../api/alerting/_aliases', {
         body: JSON.stringify({ alias }),
+        query: dataSourceQuery?.query,
       });
+
       if (response.ok) {
         const indices = response.resp.map(({ alias, index }) => ({ label: alias, index }));
         return _.sortBy(indices, 'label');

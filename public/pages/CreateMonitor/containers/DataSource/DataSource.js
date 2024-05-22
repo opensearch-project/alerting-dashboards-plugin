@@ -46,6 +46,7 @@ class DataSource extends Component {
           monitorType={monitor_type}
           canCallGetRemoteIndexes={canCallGetRemoteIndexes}
           remoteMonitoringEnabled={remoteMonitoringEnabled}
+          landingDataSourceId={this.props.landingDataSourceId}
         />
 
         {displayTimeField && (
@@ -62,7 +63,7 @@ class DataSource extends Component {
     }
     return (
       <ContentPanel
-        title="Data source"
+        title="Select data"
         titleSize="s"
         panelStyles={{ paddingLeft: '10px', paddingRight: '10px' }}
         bodyStyles={{ padding: 'initial' }}

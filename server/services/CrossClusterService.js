@@ -2,16 +2,13 @@
  * Copyright OpenSearch Contributors
  * SPDX-License-Identifier: Apache-2.0
  */
+import { MDSEnabledClientService } from './MDSEnabledClientService';
 
-export default class CrossClusterService {
-  constructor(esDriver) {
-    this.esDriver = esDriver;
-  }
-
+export default class CrossClusterService extends MDSEnabledClientService {
   getRemoteIndexes = async (context, req, res) => {
     try {
-      const { callAsCurrentUser } = await this.esDriver.asScoped(req);
-      const response = await callAsCurrentUser('alerting.getRemoteIndexes', req.query);
+      const client = this.getClientBasedOnDataSource(context, req);
+      const response = await client('alerting.getRemoteIndexes', req.query);
 
       return res.ok({
         body: {

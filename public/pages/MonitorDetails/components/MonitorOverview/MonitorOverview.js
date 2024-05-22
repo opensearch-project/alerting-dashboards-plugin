@@ -11,6 +11,7 @@ import getOverviewStats from './utils/getOverviewStats';
 import { PLUGIN_NAME } from '../../../../../utils/constants';
 import { RelatedMonitors } from '../RelatedMonitors/RelatedMonitors';
 import { RelatedMonitorsFlyout } from '../RelatedMonitors/RelatedMonitorsFlyout';
+import { getURL } from '../../../utils/helpers';
 
 const MonitorOverview = ({
   monitor,
@@ -22,18 +23,17 @@ const MonitorOverview = ({
   delegateMonitors,
   localClusterName,
   setFlyout,
+  landingDataSourceId,
 }) => {
   const [flyoutData, setFlyoutData] = useState(undefined);
 
   let relatedMonitorsStat = null;
   let relatedMonitorsData = null;
-
   if (monitor.associated_workflows) {
     const links = monitor.associated_workflows.map(({ id, name }) => ({
       name,
-      href: `${PLUGIN_NAME}#/monitors/${id}?type=workflow`,
+      href: getURL(`${PLUGIN_NAME}#/monitors/${id}?type=workflow`, landingDataSourceId),
     }));
-
     relatedMonitorsData = {
       header: 'Associations with composite monitors',
       tableHeader: 'Composite monitors',
@@ -42,7 +42,7 @@ const MonitorOverview = ({
   } else if (delegateMonitors.length) {
     const links = delegateMonitors.map(({ id, name }) => ({
       name,
-      href: `${PLUGIN_NAME}#/monitors/${id}?type=monitor`,
+      href: getURL(`${PLUGIN_NAME}#/monitors/${id}?type=monitor`, landingDataSourceId),
     }));
 
     relatedMonitorsData = {
@@ -51,7 +51,6 @@ const MonitorOverview = ({
       links,
     };
   }
-
   if (relatedMonitorsData) {
     const { header, links } = relatedMonitorsData;
     const value =

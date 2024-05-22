@@ -48,8 +48,12 @@ import FindingsDashboard from '../../Dashboard/containers/FindingsDashboard';
 import { TABLE_TAB_IDS } from '../../Dashboard/components/FindingsDashboard/findingsUtils';
 import { DeleteMonitorModal } from '../../../components/DeleteModal/DeleteMonitorModal';
 import { getLocalClusterName } from '../../CreateMonitor/components/CrossClusterConfigurations/utils/helpers';
+import { getDataSourceQueryObj } from '../../utils/helpers';
+import { MultiDataSourceContext } from '../../../../public/utils/MultiDataSourceContext';
+import { setDataSource } from '../../../services';
 
 export default class MonitorDetails extends Component {
+  static contextType = MultiDataSourceContext;
   constructor(props) {
     super(props);
     this.state = {
@@ -90,8 +94,12 @@ export default class MonitorDetails extends Component {
   };
 
   componentDidMount() {
+    if (this.context?.dataSourceId) {
+      setDataSource({ dataSourceId: this.context.dataSourceId });
+    }
     this.getMonitor(this.props.match.params.monitorId);
-    this.getLocalClusterName();
+    const dataSourceQuery = getDataSourceQueryObj();
+    this.getLocalClusterName(dataSourceQuery);
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -107,16 +115,17 @@ export default class MonitorDetails extends Component {
     this.props.setFlyout(null);
   }
 
-  getLocalClusterName = async () => {
+  getLocalClusterName = async (dataSourceQuery) => {
     this.setState({
-      localClusterName: await getLocalClusterName(this.props.httpClient),
+      localClusterName: await getLocalClusterName(this.props.httpClient, dataSourceQuery),
     });
   };
 
   getDetector = (id) => {
     const { httpClient, notifications } = this.props;
+    const dataSourceQuery = getDataSourceQueryObj();
     httpClient
-      .get(`../api/alerting/detectors/${id}`)
+      .get(`../api/alerting/detectors/${id}`, dataSourceQuery)
       .then((resp) => {
         const { ok, detector, version: detectorVersion, seqNo, primaryTerm } = resp;
         if (ok) {
@@ -134,9 +143,11 @@ export default class MonitorDetails extends Component {
   };
 
   updateDelegateMonitors = async (monitor) => {
+    const dataSourceQuery = getDataSourceQueryObj();
     const getMonitor = async (id) => {
+      const url = `../api/alerting/monitors/${id}`;
       return this.props.httpClient
-        .get(`../api/alerting/monitors/${id}`)
+        .get(url, dataSourceQuery)
         .then((res) => {
           return res.resp;
         })
@@ -167,8 +178,12 @@ export default class MonitorDetails extends Component {
   getMonitor = (id) => {
     const { httpClient } = this.props;
     const isWorkflow = this.isWorkflow();
-    httpClient
-      .get(`../api/alerting/${isWorkflow ? 'workflows' : 'monitors'}/${id}`)
+    // Construct the full URL with the query parameters
+    const url = `../api/alerting/${isWorkflow ? 'workflows' : 'monitors'}/${id}`;
+    // Make the HTTP GET request with the constructed URL and query parameters
+    const dataSourceQuery = getDataSourceQueryObj();
+    const response = httpClient.get(url, dataSourceQuery);
+    response
       .then((resp) => {
         const {
           ok,
@@ -226,6 +241,7 @@ export default class MonitorDetails extends Component {
     }
 
     this.setState({ updating: true });
+    const dataSourceQuery = getDataSourceQueryObj();
     return httpClient
       .put(
         `../api/alerting/${
@@ -234,8 +250,8 @@ export default class MonitorDetails extends Component {
             : 'monitors'
         }/${monitorId}`,
         {
-          query: { ...query },
           body: JSON.stringify({ ...monitor, ...update }),
+          query: dataSourceQuery?.query,
         }
       )
       .then((resp) => {
@@ -323,7 +339,13 @@ export default class MonitorDetails extends Component {
   };
 
   deleteMonitor = async () => {
-    await deleteMonitor(this.state.monitor, this.props.httpClient, this.props.notifications);
+    const dataSourceQuery = getDataSourceQueryObj();
+    await deleteMonitor(
+      this.state.monitor,
+      this.props.httpClient,
+      this.props.notifications,
+      dataSourceQuery
+    );
     this.props.history.push('/monitors');
   };
 
@@ -513,6 +535,7 @@ export default class MonitorDetails extends Component {
           delegateMonitors={delegateMonitors}
           localClusterName={localClusterName}
           setFlyout={setFlyout}
+          landingDataSourceId={this.context?.dataSourceId}
         />
         <EuiSpacer />
         <Triggers

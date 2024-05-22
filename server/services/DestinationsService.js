@@ -5,17 +5,14 @@
 
 import _ from 'lodash';
 import { isIndexNotFoundError } from './utils/helpers';
+import { MDSEnabledClientService } from './MDSEnabledClientService';
 
-export default class DestinationsService {
-  constructor(esDriver) {
-    this.esDriver = esDriver;
-  }
-
+export default class DestinationsService extends MDSEnabledClientService {
   createDestination = async (context, req, res) => {
     try {
       const params = { body: req.body };
-      const { callAsCurrentUser } = await this.esDriver.asScoped(req);
-      const createResponse = await callAsCurrentUser('alerting.createDestination', params);
+      const client = this.getClientBasedOnDataSource(context, req);
+      const createResponse = await client('alerting.createDestination', params);
       return res.ok({
         body: {
           ok: true,
@@ -43,8 +40,8 @@ export default class DestinationsService {
         ifSeqNo,
         ifPrimaryTerm,
       };
-      const { callAsCurrentUser } = await this.esDriver.asScoped(req);
-      const updateResponse = await callAsCurrentUser('alerting.updateDestination', params);
+      const client = this.getClientBasedOnDataSource(context, req);
+      const updateResponse = await client('alerting.updateDestination', params);
       const { _version, _id } = updateResponse;
       return res.ok({
         body: {
@@ -68,8 +65,8 @@ export default class DestinationsService {
     try {
       const { destinationId } = req.params;
       const params = { destinationId };
-      const { callAsCurrentUser } = await this.esDriver.asScoped(req);
-      const response = await callAsCurrentUser('alerting.deleteDestination', params);
+      const client = this.getClientBasedOnDataSource(context, req);
+      const response = await client('alerting.deleteDestination', params);
       return res.ok({
         body: {
           ok: response.result === 'deleted',
@@ -88,12 +85,12 @@ export default class DestinationsService {
 
   getDestination = async (context, req, res) => {
     const { destinationId } = req.params;
-    const { callAsCurrentUser } = this.esDriver.asScoped(req);
+    const client = this.getClientBasedOnDataSource(context, req);
     try {
       const params = {
         destinationId,
       };
-      const resp = await callAsCurrentUser('alerting.getDestination', params);
+      const resp = await client('alerting.getDestination', params);
 
       const destination = resp.destinations[0];
       const version = destination.schema_version;
@@ -121,7 +118,7 @@ export default class DestinationsService {
   };
 
   getDestinations = async (context, req, res) => {
-    const { callAsCurrentUser } = this.esDriver.asScoped(req);
+    const client = this.getClientBasedOnDataSource(context, req);
 
     const {
       from = 0,
@@ -157,7 +154,7 @@ export default class DestinationsService {
     params.destinationType = type;
 
     try {
-      const resp = await callAsCurrentUser('alerting.searchDestinations', params);
+      const resp = await client('alerting.searchDestinations', params);
 
       const destinations = resp.destinations.map((hit) => {
         const destination = hit;
@@ -201,8 +198,8 @@ export default class DestinationsService {
   createEmailAccount = async (context, req, res) => {
     try {
       const params = { body: req.body };
-      const { callAsCurrentUser } = await this.esDriver.asScoped(req);
-      const createResponse = await callAsCurrentUser('alerting.createEmailAccount', params);
+      const client = this.getClientBasedOnDataSource(context, req);
+      const createResponse = await client('alerting.createEmailAccount', params);
       return res.ok({
         body: {
           ok: true,
@@ -230,8 +227,8 @@ export default class DestinationsService {
         ifPrimaryTerm,
         body: req.body,
       };
-      const { callAsCurrentUser } = await this.esDriver.asScoped(req);
-      const updateResponse = await callAsCurrentUser('alerting.updateEmailAccount', params);
+      const client = this.getClientBasedOnDataSource(context, req);
+      const updateResponse = await client('alerting.updateEmailAccount', params);
       const { _id } = updateResponse;
       return res.ok({
         body: {
@@ -254,8 +251,8 @@ export default class DestinationsService {
     try {
       const { id } = req.params;
       const params = { emailAccountId: id };
-      const { callAsCurrentUser } = await this.esDriver.asScoped(req);
-      const deleteResponse = await callAsCurrentUser('alerting.deleteEmailAccount', params);
+      const client = this.getClientBasedOnDataSource(context, req);
+      const deleteResponse = await client('alerting.deleteEmailAccount', params);
       return res.ok({
         body: {
           ok: deleteResponse.result === 'deleted',
@@ -276,8 +273,8 @@ export default class DestinationsService {
     try {
       const { id } = req.params;
       const params = { emailAccountId: id };
-      const { callAsCurrentUser } = this.esDriver.asScoped(req);
-      const getResponse = await callAsCurrentUser('alerting.getEmailAccount', params);
+      const client = this.getClientBasedOnDataSource(context, req);
+      const getResponse = await client('alerting.getEmailAccount', params);
       const emailAccount = _.get(getResponse, 'email_account', null);
       const ifSeqNo = _.get(getResponse, '_seq_no', null);
       const ifPrimaryTerm = _.get(getResponse, '_primary_term', null);
@@ -348,8 +345,8 @@ export default class DestinationsService {
         },
       };
 
-      const { callAsCurrentUser } = await this.esDriver.asScoped(req);
-      const getResponse = await callAsCurrentUser('alerting.getEmailAccounts', params);
+      const client = this.getClientBasedOnDataSource(context, req);
+      const getResponse = await client('alerting.getEmailAccounts', params);
 
       const totalEmailAccounts = _.get(getResponse, 'hits.total.value', 0);
       const emailAccounts = _.get(getResponse, 'hits.hits', []).map((result) => {
@@ -388,8 +385,8 @@ export default class DestinationsService {
   createEmailGroup = async (context, req, res) => {
     try {
       const params = { body: req.body };
-      const { callAsCurrentUser } = await this.esDriver.asScoped(req);
-      const createResponse = await callAsCurrentUser('alerting.createEmailGroup', params);
+      const client = this.getClientBasedOnDataSource(context, req);
+      const createResponse = await client('alerting.createEmailGroup', params);
       return res.ok({
         body: {
           ok: true,
@@ -417,8 +414,8 @@ export default class DestinationsService {
         ifPrimaryTerm,
         body: req.body,
       };
-      const { callAsCurrentUser } = await this.esDriver.asScoped(req);
-      const updateResponse = await callAsCurrentUser('alerting.updateEmailGroup', params);
+      const client = this.getClientBasedOnDataSource(context, req);
+      const updateResponse = await client('alerting.updateEmailGroup', params);
       const { _id } = updateResponse;
       return res.ok({
         body: {
@@ -441,8 +438,8 @@ export default class DestinationsService {
     try {
       const { id } = req.params;
       const params = { emailGroupId: id };
-      const { callAsCurrentUser } = await this.esDriver.asScoped(req);
-      const deleteResponse = await callAsCurrentUser('alerting.deleteEmailGroup', params);
+      const client = this.getClientBasedOnDataSource(context, req);
+      const deleteResponse = await client('alerting.deleteEmailGroup', params);
       return res.ok({
         body: {
           ok: deleteResponse.result === 'deleted',
@@ -463,8 +460,8 @@ export default class DestinationsService {
     try {
       const { id } = req.params;
       const params = { emailGroupId: id };
-      const { callAsCurrentUser } = this.esDriver.asScoped(req);
-      const getResponse = await callAsCurrentUser('alerting.getEmailGroup', params);
+      const client = this.getClientBasedOnDataSource(context, req);
+      const getResponse = await client('alerting.getEmailGroup', params);
       const emailGroup = _.get(getResponse, 'email_group', null);
       const ifSeqNo = _.get(getResponse, '_seq_no', null);
       const ifPrimaryTerm = _.get(getResponse, '_primary_term', null);
@@ -535,8 +532,8 @@ export default class DestinationsService {
         },
       };
 
-      const { callAsCurrentUser } = await this.esDriver.asScoped(req);
-      const getResponse = await callAsCurrentUser('alerting.getEmailGroups', params);
+      const client = this.getClientBasedOnDataSource(context, req);
+      const getResponse = await client('alerting.getEmailGroups', params);
 
       const totalEmailGroups = _.get(getResponse, 'hits.total.value', 0);
       const emailGroups = _.get(getResponse, 'hits.hits', []).map((result) => {
