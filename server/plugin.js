@@ -30,25 +30,20 @@ export class AlertingPlugin {
     this.globalConfig$ = initializerContext.config.legacy.globalConfig$;
   }
 
-  async setup(core, dependencies) {
+  async setup(core, { dataSource }) {
     // Get the global configuration settings of the cluster
     const globalConfig = await this.globalConfig$.pipe(first()).toPromise();
 
-    const dataSourceEnabled = !!dependencies.dataSource;
+    const dataSourceEnabled = !!dataSource;
 
     // Create clusters
     const alertingESClient = createAlertingCluster(
       core,
       globalConfig,
       dataSourceEnabled,
-      dependencies.dataSource
+      dataSource
     );
-    const adESClient = createAlertingADCluster(
-      core,
-      globalConfig,
-      dataSourceEnabled,
-      dependencies.dataSource
-    );
+    const adESClient = createAlertingADCluster(core, globalConfig, dataSourceEnabled, dataSource);
 
     // Initialize services
     const alertService = new AlertService(alertingESClient, dataSourceEnabled);

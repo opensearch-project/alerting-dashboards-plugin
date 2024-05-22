@@ -10,7 +10,7 @@ import { FormikComboBox } from '../../../../../components/FormControls';
 import { MONITOR_TYPE } from '../../../../../utils/constants';
 import { connect } from 'formik';
 import { validateIndex } from '../../../../../utils/validate';
-import { getDataSourceQueryObj } from '../../../../utils/helpers';
+import { getDataSourceId } from '../../../../utils/helpers';
 export const CROSS_CLUSTER_SETUP_LINK =
   'https://opensearch.org/docs/latest/security/access-control/cross-cluster-search/';
 
@@ -58,7 +58,7 @@ export class CrossClusterConfiguration extends Component {
       const query = {
         indexes: indexes.length === 0 ? '*,*:*' : indexes.join(','),
         include_mappings: !loadedInitialValues,
-        dataSourceId: dataSourceQuery?.query?.dataSourceId,
+        dataSourceId: getDataSourceId(),
       };
       const response = await httpClient.get(`../api/alerting/remote/indexes`, { query: query });
       if (response.ok) {

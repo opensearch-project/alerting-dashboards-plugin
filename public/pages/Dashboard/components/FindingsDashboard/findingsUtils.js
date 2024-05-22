@@ -190,11 +190,12 @@ export async function getFindings({
   // TODO FIXME: Refactor 'size' logic to return all findings for a monitor
   //  once the backend supports retrieving findings for a monitorId.
   params['size'] = Math.max(size, MAX_FINDINGS_COUNT);
-  const dataSourceQuery = getDataSourceQueryObj();
-  if (dataSourceQuery && dataSourceQuery.query) {
-    params['dataSourceId'] = dataSourceQuery?.query?.dataSourceId;
-  }
-  const resp = await httpClient.get('../api/alerting/findings/_search', { query: params });
+  const dataSourceId = getDataSourceQueryObj()?.query?.dataSourceId;
+  const extendedParams = {
+    ...(dataSourceId !== undefined && { dataSourceId }), // Only include dataSourceId if it exists
+    ...params, // Other parameters
+  };
+  const resp = await httpClient.get('../api/alerting/findings/_search', { query: extendedParams });
   if (resp.ok) {
     return getFindingsForMonitor(resp.findings, monitorId);
   } else {

@@ -2,15 +2,19 @@ import { getDataSourceEnabled, getDataSource } from '../../services/services';
 import _ from 'lodash';
 
 export function dataSourceEnabled() {
-  return getDataSourceEnabled()?.enabled === true;
+  return getDataSourceEnabled()?.enabled;
 }
 
 export function getDataSourceQueryObj() {
   const dataSourceQuery = dataSourceEnabled()
     ? { dataSourceId: getDataSource()?.dataSourceId }
     : undefined;
-  const options = dataSourceQuery ? { query: dataSourceQuery } : undefined;
-  return options;
+  return dataSourceQuery ? { query: dataSourceQuery } : undefined;
+}
+
+export function getDataSourceId() {
+  const dataSourceId = dataSourceEnabled() ? getDataSource()?.dataSourceId : undefined;
+  return dataSourceId;
 }
 
 export function isDataSourceChanged(prevProps, currProps) {
@@ -20,20 +24,20 @@ export function isDataSourceChanged(prevProps, currProps) {
 }
 
 export function getURL(url, dataSourceId) {
-  return dataSourceEnabled() ? url + `&dataSourceId=${dataSourceId}` : url;
+  return dataSourceEnabled() ? `${url}&dataSourceId=${dataSourceId}` : url;
 }
 
 export function parseQueryStringAndGetDataSource(queryString) {
-  var params = {};
-  var queryParams = queryString.substring(1).split('&');
-  for (var i = 0; i < queryParams.length; i++) {
-    var pair = queryParams[i].split('=');
+  const params = {};
+  const queryParams = queryString.substring(1).split('&');
+  for (const param of queryParams) {
+    const pair = param.split('=');
     params[pair[0]] = pair[1];
   }
-  return params.hasOwnProperty('dataSourceId') ? params['dataSourceId'] : undefined;
+  return params['dataSourceId'];
 }
 
 export function constructUrlFromDataSource(url) {
   const dataSourceId = getDataSource()?.dataSourceId;
-  return dataSourceEnabled() && dataSourceId ? url + `&dataSourceId=${dataSourceId}` : url;
+  return dataSourceEnabled() && dataSourceId ? `${url}&dataSourceId=${dataSourceId}` : url;
 }

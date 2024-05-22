@@ -14,13 +14,12 @@ import {
   EuiFlyoutBody,
 } from '@elastic/eui';
 import { ChainedAlertDetails } from './ChainedAlertDetails';
-import { getDataSourceQueryObj } from '../../../utils/helpers';
+import { getDataSourceId } from '../../../utils/helpers';
 
 export const ChainedAlertDetailsFlyout = ({ closeFlyout, alert, httpClient }) => {
   const [associatedAlerts, setAssociatedAlerts] = useState([]);
 
   useEffect(() => {
-    const dataSourceQuery = getDataSourceQueryObj();
     httpClient.get('../api/alerting/workflows/alerts', { 
       query: { 
         workflowIds: alert.workflow_id,
@@ -33,7 +32,7 @@ export const ChainedAlertDetailsFlyout = ({ closeFlyout, alert, httpClient }) =>
         severityLevel: 'ALL',
         alertState: 'ALL',
         searchString: '',
-        dataSourceId: dataSourceQuery?.query?.dataSourceId,
+        dataSourceId: getDataSourceId(),
       }
     })
     .then((response: any) => {

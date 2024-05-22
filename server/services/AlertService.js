@@ -15,10 +15,6 @@ export const GET_ALERTS_SORT_FILTERS = {
 };
 
 export default class AlertService extends MDSEnabledClientService {
-  constructor(esDriver, dataSourceEnabled) {
-    super(esDriver, dataSourceEnabled);
-  }
-
   getAlerts = async (context, req, res) => {
     const {
       from = 0,

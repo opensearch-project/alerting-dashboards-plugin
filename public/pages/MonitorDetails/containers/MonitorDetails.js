@@ -95,8 +95,7 @@ export default class MonitorDetails extends Component {
 
   componentDidMount() {
     if (this.context?.dataSourceId) {
-      const dataSourceId = this.context.dataSourceId;
-      setDataSource({ dataSourceId });
+      setDataSource({ dataSourceId: this.context.dataSourceId });
     }
     this.getMonitor(this.props.match.params.monitorId);
     const dataSourceQuery = getDataSourceQueryObj();

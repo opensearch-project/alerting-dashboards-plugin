@@ -10,10 +10,6 @@ import { isIndexNotFoundError } from './utils/helpers';
 import { MDSEnabledClientService } from './MDSEnabledClientService';
 
 export default class MonitorService extends MDSEnabledClientService {
-  constructor(esDriver, dataSourceEnabled) {
-    super(esDriver, dataSourceEnabled);
-  }
-
   createMonitor = async (context, req, res) => {
     try {
       const params = { body: req.body };

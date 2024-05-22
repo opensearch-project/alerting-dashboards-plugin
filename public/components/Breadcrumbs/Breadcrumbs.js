@@ -69,15 +69,12 @@ export async function getBreadcrumb(route, routeState, httpClient) {
 
           // Construct the full URL with the query parameters
           const dataSourceQueryObj = getDataSourceQueryObj();
-          let response;
-          if (dataSourceQueryObj) {
-            response = await httpClient.get(
-              `../api/alerting/${searchPool}/${base}`,
-              dataSourceQueryObj
-            );
-          } else {
-            response = await httpClient.get(`../api/alerting/${searchPool}/${base}`);
-          }
+
+          const response = await httpClient.get(
+            `../api/alerting/${searchPool}/${base}`,
+            dataSourceQueryObj
+          );
+
           if (response.ok) {
             monitorName = response.resp.name;
           }

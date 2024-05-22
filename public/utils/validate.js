@@ -109,17 +109,11 @@ export const validateMonitorName = (httpClient, monitorToEdit, isFullText) => as
       index: INDEX.SCHEDULED_JOBS,
       query: { query: { term: { 'monitor.name.keyword': value } } },
     };
-    let response;
-    if (dataSourceQuery) {
-      response = await httpClient.post('../api/alerting/monitors/_search', {
-        body: JSON.stringify(options),
-        query: dataSourceQuery?.query,
-      });
-    } else {
-      response = await httpClient.post('../api/alerting/monitors/_search', {
-        body: JSON.stringify(options),
-      });
-    }
+    const response = await httpClient.post('../api/alerting/monitors/_search', {
+      body: JSON.stringify(options),
+      query: dataSourceQuery?.query,
+    });
+
     if (_.get(response, 'resp.hits.total.value', 0)) {
       if (!monitorToEdit) return 'Monitor name is already used.';
       if (monitorToEdit && monitorToEdit.name !== value) {

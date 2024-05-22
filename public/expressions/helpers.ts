@@ -11,7 +11,7 @@ import {
   PointInTimeEventsVisLayer,
 } from '../../../../src/plugins/vis_augmenter/public';
 import { Alert } from '../models/interfaces';
-import { getDataSourceQueryObj } from '../pages/utils/helpers';
+import { getDataSourceId, getDataSourceQueryObj } from '../pages/utils/helpers';
 
 export const getAlerts = async (
   monitorId: string,
@@ -25,11 +25,12 @@ export const getAlerts = async (
     monitorIds: [monitorId],
   };
 
-  const dataSourceQuery = getDataSourceQueryObj();
-  if (dataSourceQuery && dataSourceQuery.query) {
-    params['dataSourceId'] = dataSourceQuery.query.dataSourceId;
-  }
-  const resp = await getClient().get('/api/alerting/alerts', { query: params });
+  const dataSourceId = getDataSourceId();
+  const extendedParams = {
+    ...(dataSourceId !== undefined && { dataSourceId }),
+    ...params // Other parameters
+  };
+  const resp = await getClient().get('/api/alerting/alerts', { query: extendedParams });
 
   if (resp.ok) {
     const filteredAlerts = resp.alerts.filter(

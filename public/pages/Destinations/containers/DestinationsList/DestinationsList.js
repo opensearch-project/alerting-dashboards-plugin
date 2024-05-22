@@ -139,17 +139,11 @@ class DestinationsList extends React.Component {
       query: isDeleteAllowedQuery(type, id),
       index: INDEX.SCHEDULED_JOBS,
     };
-    let resp;
-    if (this.dataSourceQuery) {
-      resp = await httpClient.post('../api/alerting/monitors/_search', {
-        body: JSON.stringify(requestBody),
-        query: this.dataSourceQuery.query,
-      });
-    } else {
-      resp = await httpClient.post('../api/alerting/monitors/_search', {
-        body: JSON.stringify(requestBody),
-      });
-    }
+    const resp = await httpClient.post('../api/alerting/monitors/_search', {
+      body: JSON.stringify(requestBody),
+      query: this.dataSourceQuery?.query,
+    });
+
     const total = _.get(resp, 'resp.hits.total.value');
     return total === 0;
   };
@@ -179,10 +173,9 @@ class DestinationsList extends React.Component {
     const { id: destinationId } = this.state.destinationToDelete;
     const { httpClient, notifications } = this.props;
     try {
-      const dataSourceQuery = getDataSourceQueryObj();
       const resp = await httpClient.delete(
         `../api/alerting/destinations/${destinationId}`,
-        dataSourceQuery
+        this.dataSourceQuery
       );
       if (resp.ok) {
         await this.getDestinations();

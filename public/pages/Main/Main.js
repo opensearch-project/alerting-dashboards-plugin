@@ -82,8 +82,8 @@ class Main extends Component {
     }
   };
 
-  handleDataSourceChange = ([dataSources]) => {
-    const dataSourceId = dataSources?.id;
+  handleDataSourceChange = ([dataSource]) => {
+    const dataSourceId = dataSource?.id;
     if (this.props.dataSourceEnabled && dataSourceId === undefined) {
       getNotifications().toasts.addDanger('Unable to set data source.');
     } else if (this.state.selectedDataSourceId != dataSourceId) {
@@ -92,7 +92,7 @@ class Main extends Component {
       });
       setDataSource({ dataSourceId });
     }
-    if (this.props.dataSourceEnabled && this.state.dataSourceLoading) {
+    if (this.state.dataSourceLoading) {
       this.setState({
         dataSourceLoading: false,
       });
@@ -110,7 +110,7 @@ class Main extends Component {
       notifications: getNotifications(),
     };
     if (dataSourceType === 'DataSourceSelectable') {
-      componentConfig.onSelectedDataSources = this.handleDataSourceChange; // Remove parentheses
+      componentConfig.onSelectedDataSources = this.handleDataSourceChange;
     }
 
     const DataSourceMenu = getDataSourceManagementPlugin()?.ui.getDataSourceMenu();

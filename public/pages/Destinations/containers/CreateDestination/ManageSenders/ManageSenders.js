@@ -28,7 +28,7 @@ import { senderToFormik } from './utils/helpers';
 import getSenders from '../EmailSender/utils/helpers';
 import { STATE } from '../../../components/createDestinations/Email/utils/constants';
 import { ignoreEscape } from '../../../../../utils/helpers';
-import { getDataSourceQueryObj } from '../../../../utils/helpers';
+import { getDataSourceQueryObj } from '../../../../../../public/pages/utils/helpers';
 
 const createSenderContext = (senders) => ({
   ctx: {

@@ -41,7 +41,7 @@ import AcknowledgeAlertsModal from '../components/AcknowledgeAlertsModal';
 import { getAlertsFindingColumn } from '../components/FindingsDashboard/findingsUtils';
 import { ChainedAlertDetailsFlyout } from '../components/ChainedAlertDetailsFlyout/ChainedAlertDetailsFlyout';
 import { CLUSTER_METRICS_CROSS_CLUSTER_ALERT_TABLE_COLUMN } from '../../CreateMonitor/components/ClusterMetricsMonitor/utils/clusterMetricsMonitorConstants';
-import { getDataSourceQueryObj, isDataSourceChanged } from '../../utils/helpers';
+import { getDataSourceQueryObj, isDataSourceChanged, getDataSourceId } from '../../utils/helpers';
 
 export default class Dashboard extends Component {
   constructor(props) {
@@ -140,10 +140,12 @@ export default class Dashboard extends Component {
       location.search;
       const { httpClient, history, notifications, perAlertView } = this.props;
       history.replace({ ...this.props.location, search: queryParamsString });
-      if (this.dataSourceQuery && this.dataSourceQuery.query) {
-        params['dataSourceId'] = this.dataSourceQuery?.query?.dataSourceId;
-      }
-      httpClient.get('../api/alerting/alerts', { query: params }).then((resp) => {
+      const dataSourceId = getDataSourceId();
+      const extendedParams = {
+        ...(dataSourceId !== undefined && { dataSourceId }), // Only include dataSourceId if it exists
+        ...params, // Other parameters
+      };
+      httpClient.get('../api/alerting/alerts', { query: extendedParams }).then((resp) => {
         if (resp.ok) {
           const { alerts, totalAlerts } = resp;
           this.setState({ alerts, totalAlerts });
@@ -184,17 +186,12 @@ export default class Dashboard extends Component {
           },
         },
       };
-      let response;
-      if (this.dataSourceQuery) {
-        response = await httpClient.post('../api/alerting/monitors/_search', {
-          body: JSON.stringify(params),
-          query: this.dataSourceQuery?.query,
-        });
-      } else {
-        response = await httpClient.post('../api/alerting/monitors/_search', {
-          body: JSON.stringify(params),
-        });
-      }
+
+      const response = await httpClient.post('../api/alerting/monitors/_search', {
+        body: JSON.stringify(params),
+        query: this.dataSourceQuery?.query,
+      });
+
       if (response.ok) {
         monitors = _.get(response, 'resp.hits.hits', []);
       } else {
