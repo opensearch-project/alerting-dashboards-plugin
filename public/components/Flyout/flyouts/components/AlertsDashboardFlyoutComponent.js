@@ -58,7 +58,7 @@ import {
   getDataSources,
   getLocalClusterName,
 } from '../../../../pages/CreateMonitor/components/CrossClusterConfigurations/utils/helpers';
-import { getDataSourceQueryObj } from '../../../../pages/utils/helpers';
+import { getDataSourceId } from '../../../../pages/utils/helpers';
 
 export const DEFAULT_NUM_FLYOUT_ROWS = 10;
 
@@ -205,7 +205,7 @@ export default class AlertsDashboardFlyoutComponent extends Component {
 
     const queryParamsString = queryString.stringify(params);
     history.replace({ ...this.props.location, search: queryParamsString });
-    const dataSourceId = getDataSourceQueryObj()?.query?.dataSourceId;
+    const dataSourceId = getDataSourceId();
     const extendedParams = {
       ...(dataSourceId !== undefined && { dataSourceId }), // Only include dataSourceId if it exists
       ...params, // Other parameters

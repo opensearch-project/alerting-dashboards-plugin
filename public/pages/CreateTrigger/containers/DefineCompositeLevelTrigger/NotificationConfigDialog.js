@@ -22,7 +22,7 @@ import { formikToTrigger } from '../CreateTrigger/utils/formikToTrigger';
 import { backendErrorNotification, titleTemplate } from '../../../../utils/helpers';
 import { checkForError } from '../ConfigureActions/ConfigureActions';
 import { TRIGGER_TYPE } from '../CreateTrigger/utils/constants';
-import { getDataSourceQueryObj } from '../../../utils/helpers';
+import { getDataSourceId } from '../../../utils/helpers';
 
 const NotificationConfigDialog = ({
   closeModal,
@@ -79,9 +79,8 @@ const NotificationConfigDialog = ({
     const testMonitor = { ...monitor, triggers: [{ ...testTrigger }] };
 
     try {
-      const dataSourceQuery = getDataSourceQueryObj();
       const response = await httpClient.post('../api/alerting/monitors/_execute', {
-        query: { dryrun: false, dataSourceId: dataSourceQuery?.query?.dataSourceId },
+        query: { dryrun: false, dataSourceId: getDataSourceId() },
         body: JSON.stringify(testMonitor),
       });
       let error = null;

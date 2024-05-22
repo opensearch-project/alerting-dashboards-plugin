@@ -29,7 +29,7 @@ import * as HistoryConstants from './utils/constants';
 import { INDEX } from '../../../../../utils/constants';
 import { backendErrorNotification } from '../../../../utils/helpers';
 import { MONITOR_TYPE } from '../../../../utils/constants';
-import { getDataSourceQueryObj } from '../../../utils/helpers';
+import { getDataSourceQueryObj, getDataSourceId } from '../../../utils/helpers';
 
 class MonitorHistory extends PureComponent {
   constructor(props) {
@@ -245,7 +245,7 @@ class MonitorHistory extends PureComponent {
         sortDirection: 'asc',
         monitorIds: monitorId,
         monitorType,
-        dataSourceId: this.dataSourceQuery?.query?.dataSourceId,
+        dataSourceId: getDataSourceId(),
       };
       const resp = await httpClient.get('../api/alerting/alerts', { query: params });
       var alerts;

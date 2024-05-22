@@ -6,7 +6,7 @@
 import { HttpFetchQuery, HttpSetup } from '../../../../src/core/public';
 import { ChannelItemType, NotificationServerFeatures } from './models/interfaces';
 import { configListToChannels, configToChannel } from './utils/helper';
-import { getDataSourceQueryObj } from '../pages/utils/helpers';
+import { getDataSourceQueryObj, getDataSourceId } from '../pages/utils/helpers';
 
 interface ConfigsResponse {
   total_hits: number;
@@ -46,7 +46,7 @@ export default class NotificationService {
   };
 
   getConfigs = async (queryObject: HttpFetchQuery) => {
-    const dataSourceId = getDataSourceQueryObj()?.query?.dataSourceId;
+    const dataSourceId = getDataSourceId();
     const extendedParams = {
       ...(dataSourceId !== undefined && { dataSourceId }), // Only include dataSourceId if it exists
       ...queryObject // Other parameters
@@ -64,7 +64,7 @@ export default class NotificationService {
   getChannels = async (
     queryObject: HttpFetchQuery // config_type: Object.keys(CHANNEL_TYPE)
   ): Promise<{ items: ChannelItemType[]; total: number }> => {
-    const dataSourceId = getDataSourceQueryObj()?.query?.dataSourceId;
+    const dataSourceId = getDataSourceId();
     const extendedParams = {
       ...(dataSourceId !== undefined && { dataSourceId }), // Only include dataSourceId if it exists
       ...queryObject // Other parameters

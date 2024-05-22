@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import _ from 'lodash';
 import { getClient } from '../../services';
 import { getAssociatedMonitorIds } from '../savedObjectHelper';
-import { getDataSourceQueryObj } from '../../pages/utils/helpers';
+import { getDataSourceId } from '../../pages/utils/helpers';
 
 export const stateToLabel = {
   enabled: { label: 'Enabled', color: 'success' },
@@ -11,7 +11,7 @@ export const stateToLabel = {
 
 const getMonitors = async (params) => {
   const httpClient = getClient();
-  const dataSourceId = getDataSourceQueryObj()?.query?.dataSourceId;
+  const dataSourceId = getDataSourceId();
   const extendedParams = {
     ...(dataSourceId !== undefined && { dataSourceId }), // Only include dataSourceId if it exists
     ...params // Other parameters

@@ -41,7 +41,7 @@ import AcknowledgeAlertsModal from '../components/AcknowledgeAlertsModal';
 import { getAlertsFindingColumn } from '../components/FindingsDashboard/findingsUtils';
 import { ChainedAlertDetailsFlyout } from '../components/ChainedAlertDetailsFlyout/ChainedAlertDetailsFlyout';
 import { CLUSTER_METRICS_CROSS_CLUSTER_ALERT_TABLE_COLUMN } from '../../CreateMonitor/components/ClusterMetricsMonitor/utils/clusterMetricsMonitorConstants';
-import { getDataSourceQueryObj, isDataSourceChanged } from '../../utils/helpers';
+import { getDataSourceQueryObj, isDataSourceChanged, getDataSourceId } from '../../utils/helpers';
 
 export default class Dashboard extends Component {
   constructor(props) {
@@ -140,7 +140,7 @@ export default class Dashboard extends Component {
       location.search;
       const { httpClient, history, notifications, perAlertView } = this.props;
       history.replace({ ...this.props.location, search: queryParamsString });
-      const dataSourceId = this.dataSourceQuery?.query?.dataSourceId;
+      const dataSourceId = getDataSourceId();
       const extendedParams = {
         ...(dataSourceId !== undefined && { dataSourceId }), // Only include dataSourceId if it exists
         ...params, // Other parameters

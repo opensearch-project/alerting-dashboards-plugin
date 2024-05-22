@@ -39,7 +39,7 @@ import ConfigureDocumentLevelQueries from '../../components/DocumentLevelMonitor
 import FindingsDashboard from '../../../Dashboard/containers/FindingsDashboard';
 import { validDocLevelGraphQueries } from '../../components/DocumentLevelMonitorQueries/utils/helpers';
 import { validateWhereFilters } from '../../components/MonitorExpressions/expressions/utils/whereHelpers';
-import { getDataSourceQueryObj } from '../../../../../public/pages/utils/helpers';
+import { getDataSourceQueryObj, getDataSourceId } from '../../../../../public/pages/utils/helpers';
 import { CROSS_CLUSTER_MONITORING_ENABLED_SETTING } from '../../components/CrossClusterConfigurations/utils/helpers';
 
 function renderEmptyMessage(message) {
@@ -215,11 +215,10 @@ class DefineMonitor extends Component {
     // Check whether the user can call GetRemoteIndexes
     if (remoteMonitoringEnabled) {
       try {
-        const dataSourceQuery = getDataSourceQueryObj();
         const query = {
           indexes: '*,*:*',
           include_mappings: false,
-          dataSourceId: dataSourceQuery?.query?.dataSourceId,
+          dataSourceId: getDataSourceId(),
         };
         const response = await httpClient.get(`../api/alerting/remote/indexes`, { query: query });
         canCallGetRemoteIndexes = response.ok;
@@ -476,17 +475,16 @@ class DefineMonitor extends Component {
 
   async queryMappings(index) {
     if (!index.length) return {};
-
+    const dataSourceQuery = getDataSourceQueryObj();
     try {
       // If any index contain ":", it indicates at least 1 remote index is configured.
-      const dataSourceQuery = getDataSourceQueryObj();
       const hasRemoteClusters = index.some((indexName) => indexName.includes(':'));
       const response = hasRemoteClusters
         ? await this.props.httpClient.get('../api/alerting/remote/indexes', {
             query: {
               indexes: index.join(','),
               include_mappings: true,
-              dataSourceId: dataSourceQuery?.query?.dataSourceId,
+              dataSourceId: getDataSourceId(),
             },
           })
         : // Otherwise, all configured indexes are on the local cluster.

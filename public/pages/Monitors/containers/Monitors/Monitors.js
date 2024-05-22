@@ -19,7 +19,11 @@ import { MONITOR_ACTIONS, MONITOR_TYPE } from '../../../../utils/constants';
 import { backendErrorNotification, deleteMonitor } from '../../../../utils/helpers';
 import { displayAcknowledgedAlertsToast } from '../../../Dashboard/utils/helpers';
 import { DeleteMonitorModal } from '../../../../components/DeleteModal/DeleteMonitorModal';
-import { getDataSourceQueryObj, isDataSourceChanged } from '../../../utils/helpers';
+import {
+  getDataSourceQueryObj,
+  isDataSourceChanged,
+  getDataSourceId,
+} from '../../../utils/helpers';
 
 const MAX_MONITOR_COUNT = 1000;
 
@@ -143,7 +147,7 @@ export default class Monitors extends Component {
       const queryParamsString = queryString.stringify(params);
       const { httpClient, history } = this.props;
       history.replace({ ...this.props.location, search: queryParamsString });
-      const dataSourceId = getDataSourceQueryObj()?.query?.dataSourceId;
+      const dataSourceId = getDataSourceId();
       const extendedParams = {
         ...(dataSourceId !== undefined && { dataSourceId }), // Only include dataSourceId if it exists
         ...params, // Other parameters
@@ -188,7 +192,7 @@ export default class Monitors extends Component {
     const { httpClient, notifications } = this.props;
     const { id, ifSeqNo, ifPrimaryTerm, monitor } = item;
     const params = { ifSeqNo, ifPrimaryTerm };
-    const dataSourceId = getDataSourceQueryObj()?.query?.dataSourceId;
+    const dataSourceId = getDataSourceId();
     const extendedParams = {
       ...(dataSourceId !== undefined && { dataSourceId }), // Only include dataSourceId if it exists
       ...params, // Other parameters
@@ -339,7 +343,7 @@ export default class Monitors extends Component {
     let allAlerts = [];
     let totalAlertsCount = 0;
 
-    const dataSourceId = getDataSourceQueryObj()?.query?.dataSourceId;
+    const dataSourceId = getDataSourceId();
     const extendedParams = {
       ...(dataSourceId !== undefined && { dataSourceId }), // Only include dataSourceId if it exists
       ...params, // Other parameters

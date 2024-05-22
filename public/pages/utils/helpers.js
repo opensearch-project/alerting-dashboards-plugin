@@ -2,7 +2,7 @@ import { getDataSourceEnabled, getDataSource } from '../../services/services';
 import _ from 'lodash';
 
 export function dataSourceEnabled() {
-  return getDataSourceEnabled()?.enabled === true;
+  return getDataSourceEnabled()?.enabled;
 }
 
 export function getDataSourceQueryObj() {
@@ -12,6 +12,11 @@ export function getDataSourceQueryObj() {
   return dataSourceQuery ? { query: dataSourceQuery } : undefined;
 }
 
+export function getDataSourceId() {
+  const dataSourceId = dataSourceEnabled() ? getDataSource()?.dataSourceId : undefined;
+  return dataSourceId;
+}
+
 export function isDataSourceChanged(prevProps, currProps) {
   return (
     dataSourceEnabled() && !_.isEqual(prevProps.landingDataSourceId, currProps.landingDataSourceId)
@@ -19,7 +24,7 @@ export function isDataSourceChanged(prevProps, currProps) {
 }
 
 export function getURL(url, dataSourceId) {
-  return dataSourceEnabled() ? url + `&dataSourceId=${dataSourceId}` : url;
+  return dataSourceEnabled() ? `${url}&dataSourceId=${dataSourceId}` : url;
 }
 
 export function parseQueryStringAndGetDataSource(queryString) {
@@ -34,5 +39,5 @@ export function parseQueryStringAndGetDataSource(queryString) {
 
 export function constructUrlFromDataSource(url) {
   const dataSourceId = getDataSource()?.dataSourceId;
-  return dataSourceEnabled() && dataSourceId ? url + `&dataSourceId=${dataSourceId}` : url;
+  return dataSourceEnabled() && dataSourceId ? `${url}&dataSourceId=${dataSourceId}` : url;
 }
