@@ -201,17 +201,12 @@ class MonitorHistory extends PureComponent {
         ),
         index: INDEX.ALL_ALERTS,
       };
-      let resp;
-      if (this.dataSourceQuery) {
-        resp = await httpClient.post('../api/alerting/monitors/_search', {
-          body: JSON.stringify(requestBody),
-          query: this.dataSourceQuery?.query,
-        });
-      } else {
-        resp = await httpClient.post('../api/alerting/monitors/_search', {
-          body: JSON.stringify(requestBody),
-        });
-      }
+
+      const resp = await httpClient.post('../api/alerting/monitors/_search', {
+        body: JSON.stringify(requestBody),
+        query: this.dataSourceQuery?.query,
+      });
+
       if (resp.ok) {
         const poiData = get(resp, 'resp.aggregations.alerts_over_time.buckets', []).map((item) => ({
           x: item.key,

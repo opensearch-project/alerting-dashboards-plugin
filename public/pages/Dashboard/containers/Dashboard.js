@@ -184,17 +184,12 @@ export default class Dashboard extends Component {
           },
         },
       };
-      let response;
-      if (this.dataSourceQuery) {
-        response = await httpClient.post('../api/alerting/monitors/_search', {
-          body: JSON.stringify(params),
-          query: this.dataSourceQuery?.query,
-        });
-      } else {
-        response = await httpClient.post('../api/alerting/monitors/_search', {
-          body: JSON.stringify(params),
-        });
-      }
+
+      const response = await httpClient.post('../api/alerting/monitors/_search', {
+        body: JSON.stringify(params),
+        query: this.dataSourceQuery?.query,
+      });
+
       if (response.ok) {
         monitors = _.get(response, 'resp.hits.hits', []);
       } else {
