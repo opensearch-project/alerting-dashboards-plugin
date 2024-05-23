@@ -215,7 +215,6 @@ class DefineMonitor extends Component {
     // Check whether the user can call GetRemoteIndexes
     if (remoteMonitoringEnabled) {
       try {
-        const dataSourceQuery = getDataSourceQueryObj();
         const query = {
           indexes: '*,*:*',
           include_mappings: false,
@@ -479,7 +478,6 @@ class DefineMonitor extends Component {
     const dataSourceQuery = getDataSourceQueryObj();
     try {
       // If any index contain ":", it indicates at least 1 remote index is configured.
-      const dataSourceQuery = getDataSourceQueryObj();
       const hasRemoteClusters = index.some((indexName) => indexName.includes(':'));
       const response = hasRemoteClusters
         ? await this.props.httpClient.get('../api/alerting/remote/indexes', {

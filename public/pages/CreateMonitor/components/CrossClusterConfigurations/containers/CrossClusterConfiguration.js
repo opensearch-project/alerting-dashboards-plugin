@@ -54,7 +54,6 @@ export class CrossClusterConfiguration extends Component {
       const indexes = selectedClusters.map((cluster) =>
         cluster.hub_cluster ? '*' : `${cluster.cluster}:*`
       );
-      const dataSourceQuery = getDataSourceQueryObj();
       const query = {
         indexes: indexes.length === 0 ? '*,*:*' : indexes.join(','),
         include_mappings: !loadedInitialValues,

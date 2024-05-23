@@ -79,7 +79,6 @@ const NotificationConfigDialog = ({
     const testMonitor = { ...monitor, triggers: [{ ...testTrigger }] };
 
     try {
-      const dataSourceQuery = getDataSourceQueryObj();
       const response = await httpClient.post('../api/alerting/monitors/_execute', {
         query: { dryrun: false, dataSourceId: getDataSourceId() },
         body: JSON.stringify(testMonitor),

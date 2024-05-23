@@ -10,7 +10,6 @@ import { getDataSourceId } from '../../../../utils/helpers';
 export const validateDestinationName = (httpClient, destinationToEdit) => async (value) => {
   try {
     if (!value) return 'Required';
-    const dataSourceQuery = getDataSourceQueryObj();
     const response = await httpClient.get('../api/alerting/destinations', {
       query: {
         search: value,

@@ -164,7 +164,6 @@ class ConfigureActions extends React.Component {
 
     this.setState({ loadingDestinations: true });
     try {
-      const dataSourceQuery = getDataSourceQueryObj();
       const response = await httpClient.get('../api/alerting/destinations', {
         query: {
           search: searchText,

@@ -350,9 +350,6 @@ export default class Monitors extends Component {
     };
 
     if (monitorIds.length > 0) {
-      if (this.dataSourceQuery && this.dataSourceQuery.query) {
-        params.dataSourceId = this.dataSourceQuery.query.dataSourceId;
-      }
       const monitorAlertsResponse = await httpClient.get('../api/alerting/alerts', {
         query: extendedParams,
       });
@@ -367,9 +364,6 @@ export default class Monitors extends Component {
     }
 
     if (workflowIds.length > 0) {
-      if (this.dataSourceQuery && this.dataSourceQuery.query) {
-        params.dataSourceId = this.dataSourceQuery.query.dataSourceId;
-      }
       const chainedAlertsResponse = await httpClient.get('../api/alerting/alerts', {
         query: {
           ...extendedParams,
