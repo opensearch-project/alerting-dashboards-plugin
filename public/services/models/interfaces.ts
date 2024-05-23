@@ -37,3 +37,9 @@ export interface ChannelItemType extends ConfigType {
     };
   };
 }
+
+export interface NotificationServerFeatures {
+  availableChannels: Partial<typeof CHANNEL_TYPE>;
+  availableConfigTypes: string[]; // available backend config types
+  tooltipSupport: boolean; // if true, IAM role for SNS is optional and helper text should be available
+}
