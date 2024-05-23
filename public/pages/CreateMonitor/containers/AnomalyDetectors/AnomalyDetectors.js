@@ -7,17 +7,11 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { get } from 'lodash';
 import { FormikComboBox } from '../../../../components/FormControls';
-import {
-  hasError,
-  isInvalid,
-  required,
-  validateDetector,
-  validateMonitorName,
-} from '../../../../utils/validate';
+import { hasError, isInvalid, validateDetector } from '../../../../utils/validate';
 import { CoreContext } from '../../../../utils/CoreContext';
-import { backendErrorNotification } from '../../../../utils/helpers';
 import FormikFieldText from '../../../../components/FormControls/FormikFieldText';
 import { getClient } from '../../../../services';
+import { getDataSourceQueryObj } from '../../../utils/helpers';
 
 class AnomalyDetectors extends React.Component {
   static contextType = CoreContext;
@@ -36,7 +30,10 @@ class AnomalyDetectors extends React.Component {
   async searchDetectors() {
     const httpClient = getClient();
     try {
-      const response = await httpClient.post('../api/alerting/detectors/_search');
+      const dataSourceQuery = getDataSourceQueryObj();
+      const response = await httpClient.post('../api/alerting/detectors/_search', {
+        query: dataSourceQuery?.query,
+      });
       if (response.ok) {
         const detectorOptions = response.detectors
           .filter((detector) => detector.detectionDateRange === undefined)

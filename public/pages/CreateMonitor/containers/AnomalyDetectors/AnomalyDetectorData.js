@@ -10,6 +10,7 @@ import { CoreContext } from '../../../../utils/CoreContext';
 import { AD_PREVIEW_DAYS, DEFAULT_PREVIEW_ERROR_MSG } from '../../../../utils/constants';
 import { backendErrorNotification } from '../../../../utils/helpers';
 import { getClient, getNotifications } from '../../../../services';
+import { getDataSourceId } from '../../../utils/helpers';
 
 class AnomalyDetectorData extends React.Component {
   static contextType = CoreContext;
@@ -66,8 +67,13 @@ class AnomalyDetectorData extends React.Component {
       preview: this.props.preview,
     };
     try {
+      const dataSourceId = getDataSourceId();
+      const extendedParams = {
+        ...(dataSourceId !== undefined && { dataSourceId }), // Only include dataSourceId if it exists
+        ...requestParams, // Other parameters
+      };
       const response = await httpClient.get(`../api/alerting/detectors/${detectorId}/results`, {
-        query: requestParams,
+        query: extendedParams,
       });
       if (response.ok) {
         const { anomalyResult, detector } = response.response;
