@@ -23,7 +23,11 @@ import { MONITOR_TYPE, SEARCH_TYPE } from '../../../../utils/constants';
 import { getPathsPerDataType } from '../../../CreateMonitor/containers/DefineMonitor/utils/mappings';
 import monitorToFormik from '../../../CreateMonitor/containers/CreateMonitor/utils/monitorToFormik';
 import { buildRequest } from '../../../CreateMonitor/containers/DefineMonitor/utils/searchRequests';
-import { backendErrorNotification, inputLimitText } from '../../../../utils/helpers';
+import {
+  backendErrorNotification,
+  getDigitId,
+  inputLimitText,
+} from '../../../../utils/helpers';
 import DefineDocumentLevelTrigger from '../DefineDocumentLevelTrigger/DefineDocumentLevelTrigger';
 import {
   buildClusterMetricsRequest,
@@ -395,11 +399,13 @@ class ConfigureTriggers extends React.Component {
     }
 
     return hasTriggers
-      ? triggerValues.triggerDefinitions.map((trigger, index) => (
-          <div key={trigger.id}>
+      ? triggerValues.triggerDefinitions.map((trigger, index) => {
+        const triggerId = trigger.id || `trigger${getDigitId()}`;
+        return (
+          <div key={triggerId}>
             <TriggerContainer
               {...{
-                id: `configure-trigger__${trigger.id}`,
+                id: `configure-trigger__${triggerId}`,
                 isOpen: accordionsOpen[index],
                 onToggle: () => this.onAccordionToggle(index),
                 title: (
@@ -425,7 +431,7 @@ class ConfigureTriggers extends React.Component {
             {!flyoutMode && <EuiHorizontalRule margin={'s'} />}
             {flyoutMode && <EuiSpacer size="m" />}
           </div>
-        ))
+        )})
       : !flyoutMode && triggerEmptyPrompt;
   };
 

@@ -4,5 +4,7 @@
  */
 
 import DataSource from './DataSource';
+import DataSourceFlyout from './DataSourceFlyout';
 
 export default DataSource;
+export { DataSource, DataSourceFlyout } ;
