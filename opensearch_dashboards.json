@@ -16,6 +16,11 @@
     "visAugmenter",
     "opensearchDashboardsUtils"
   ],
+  "optionalPlugins": ["assistantDashboards"],
+  "requiredEnginePlugins": {
+    "opensearch-alerting": "*"
+  },
+  "requiredBundles": ["assistantDashboards"],
   "server": true,
   "ui": true
 }
