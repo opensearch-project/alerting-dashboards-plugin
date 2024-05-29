@@ -1,3 +1,4 @@
+/* eslint-disable camelcase */
 /*
  * Copyright OpenSearch Contributors
  * SPDX-License-Identifier: Apache-2.0
@@ -143,7 +144,6 @@ export default class Dashboard extends Component {
       };
 
       const queryParamsString = queryString.stringify(params);
-      location.search;
       const { httpClient, history, notifications, perAlertView } = this.props;
       history.replace({ ...this.props.location, search: queryParamsString });
       const dataSourceId = getDataSourceId();
@@ -221,7 +221,7 @@ export default class Dashboard extends Component {
 
     if (!selectedItems.length) return;
 
-    let selectedAlerts = perAlertView ? selectedItems : _.get(selectedItems, '0.alerts', []);
+    const selectedAlerts = perAlertView ? selectedItems : _.get(selectedItems, '0.alerts', []);
     await this.acknowledgeAlerts(selectedAlerts);
 
     this.setState({ selectedItems: [] });
@@ -373,7 +373,7 @@ export default class Dashboard extends Component {
       notifications,
       isAlertsFlyout = false,
     } = this.props;
-    let totalItems = perAlertView ? totalAlerts : totalTriggers;
+    const totalItems = perAlertView ? totalAlerts : totalTriggers;
     const isBucketMonitor = monitorType === MONITOR_TYPE.BUCKET_LEVEL;
 
     let columns;
@@ -466,7 +466,7 @@ export default class Dashboard extends Component {
       onSelectionChange: this.onSelectionChange,
       selectable: perAlertView
         ? (item) => item.state === ALERT_STATE.ACTIVE
-        : (item) => item.ACTIVE > 0,
+        : (item) => item.ACTIVE >= 0,
       selectableMessage: perAlertView
         ? (selectable) => (selectable ? undefined : 'Only active alerts can be acknowledged.')
         : (selectable) =>
