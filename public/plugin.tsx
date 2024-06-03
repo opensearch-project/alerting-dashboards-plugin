@@ -20,10 +20,11 @@ import {
   setSavedAugmentVisLoader,
   setUISettings,
   setQueryService,
+  setAssistantDashboards,
 } from './services';
 import { VisAugmenterStart } from '../../../src/plugins/vis_augmenter/public';
 import { DataPublicPluginStart } from '../../../src/plugins/data/public';
-import { AssistantPublicPluginSetup } from './../../../plugins/dashboards-assistant/public';
+import { AssistantSetup } from './types';
 
 declare module '../../../src/plugins/ui_actions/public' {
   export interface ActionContextMapping {
@@ -39,7 +40,7 @@ export interface AlertingStart {}
 export interface AlertingSetupDeps {
   expressions: ExpressionsSetup;
   uiActions: UiActionsSetup;
-  assistantDashboards?: AssistantPublicPluginSetup;
+  assistantDashboards?: AssistantSetup;
 }
 
 export interface AlertingStartDeps {
@@ -71,13 +72,9 @@ export class AlertingPlugin
       },
     });
 
-    if (assistantDashboards) {
+    setAssistantDashboards(assistantDashboards || { chatEnabled: () => false });
+    if (assistantDashboards && assistantDashboards?.chatEnabled()) {
       assistantDashboards.registerIncontextInsight([
-        {
-          key: 'query_level_monitor',
-          type: 'chatWithSuggestions',
-          suggestions: ['How to better configure my monitor?'],
-        },
         {
           key: 'alerts',
           type: 'chatWithSuggestions',
@@ -108,7 +105,7 @@ export class AlertingPlugin
     uiActions.registerTrigger(alertingTriggerAd);
     uiActions.addTriggerAction(alertingTriggerAd.id, adAction);
 
-    return;
+    return {};
   }
 
   public start(

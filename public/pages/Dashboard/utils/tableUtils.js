@@ -9,7 +9,7 @@ import { EuiLink, EuiToolTip } from '@elastic/eui';
 import moment from 'moment';
 import { ALERT_STATE, DEFAULT_EMPTY_DATA } from '../../../utils/constants';
 import { PLUGIN_NAME } from '../../../../utils/constants';
-import { IncontextInsightComponent } from '../../../../../../plugins/dashboards-assistant/public';
+import { getAssistantDashboards } from '../../../services';
 
 export const renderTime = (time) => {
   const momentTime = moment(time);
@@ -132,62 +132,9 @@ export const alertColumns = (
     sortable: true,
     truncateText: false,
     render: (total, alert) => {
-      return IncontextInsightComponent ? (
-        <IncontextInsightComponent
-          contextProvider={async () => {
-            // console.log(JSON.stringify(alert));
-            const monitorId = alert.monitor_id;
-            const monitorResp = await httpClient.get(`/api/alerting/monitors/${monitorId}`);
-            const search = monitorResp.resp.inputs[0].search;
-            const indices = search.indices;
-            let query = JSON.stringify(search.query);
-            if (query.indexOf('{{period_end}}') !== -1) {
-              query = query.replaceAll('{{period_end}}', alert.start_time);
-            }
-            const alertData = await httpClient.post(`/api/console/proxy`, {
-              query: {
-                path: `${indices}/_search`,
-                method: 'GET',
-                dataSourceId: '',
-              },
-              body: query,
-              prependBasePath: true,
-              asResponse: true,
-              withLongNumeralsSupport: true,
-            });
-
-            const monitorDefinition = monitorResp.resp;
-            delete monitorDefinition.ui_metadata;
-            delete monitorDefinition.data_sources;
-            const alertTriggeredByData = JSON.stringify(alertData.body);
-            return `Monitor definition: ${JSON.stringify(monitorDefinition)}\n, Trigger Name: ${
-              alert.trigger_name
-            }\n, Data triggers the alert: ${alertTriggeredByData}\n`;
-          }}
-        >
-          <EuiLink
-            key="alerts"
-            onClick={() => {
-              openFlyout({
-                ...alert,
-                history,
-                httpClient,
-                loadingMonitors,
-                location,
-                monitors,
-                notifications,
-                setFlyout,
-                closeFlyout,
-                refreshDashboard,
-              });
-            }}
-            data-test-subj={`euiLink_${alert.trigger_name}`}
-          >
-            {`${total} alerts`}
-          </EuiLink>
-        </IncontextInsightComponent>
-      ) : (
+      const component = (
         <EuiLink
+          key="alerts"
           onClick={() => {
             openFlyout({
               ...alert,
@@ -207,6 +154,39 @@ export const alertColumns = (
           {`${total} alerts`}
         </EuiLink>
       );
+      const contextProvider = async () => {
+        const monitorId = alert.monitor_id;
+        const monitorResp = await httpClient.get(`/api/alerting/monitors/${monitorId}`);
+        const search = monitorResp.resp.inputs[0].search;
+        const indices = search.indices;
+        let query = JSON.stringify(search.query);
+        if (query.indexOf('{{period_end}}') !== -1) {
+          query = query.replaceAll('{{period_end}}', alert.start_time);
+        }
+        const alertData = await httpClient.post(`/api/console/proxy`, {
+          query: {
+            path: `${indices}/_search`,
+            method: 'GET',
+            dataSourceId: '',
+          },
+          body: query,
+          prependBasePath: true,
+          asResponse: true,
+          withLongNumeralsSupport: true,
+        });
+
+        const monitorDefinition = monitorResp.resp;
+        delete monitorDefinition.ui_metadata;
+        delete monitorDefinition.data_sources;
+        const alertTriggeredByData = JSON.stringify(alertData.body);
+        return `Monitor definition: ${JSON.stringify(monitorDefinition)}\n, Trigger Name: ${
+          alert.trigger_name
+        }\n, Data triggers the alert: ${alertTriggeredByData}\n`;
+      };
+
+      return getAssistantDashboards().chatEnabled()
+        ? getAssistantDashboards().renderIncontextInsight({ children: component, contextProvider })
+        : component;
     },
   },
   {
