@@ -157,7 +157,7 @@ export default class CreateMonitor extends Component {
       this.setState({
         initialValues: {
           ...this.state.initialValues,
-          dataSourceId: this.props.dataSourceId
+          dataSourceId: this.props.landingDataSourceId
         }
       });
     }

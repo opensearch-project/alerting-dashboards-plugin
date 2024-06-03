@@ -9,6 +9,7 @@ import {
 } from '../../../components/MonitorExpressions/expressions/utils/constants';
 import { MONITOR_TYPE } from '../../../../../utils/constants';
 import { SUPPORTED_DOC_LEVEL_QUERY_OPERATORS } from '../../../components/DocumentLevelMonitorQueries/utils/constants';
+import { dataSourceEnabled } from '../../../../utils/helpers';
 
 export const BUCKET_COUNT = 5;
 
@@ -78,8 +79,11 @@ export const FORMIK_INITIAL_VALUES = {
   associatedMonitorsList: [],
   associatedMonitorsEditor: '',
   preventVisualEditor: false,
-  dataSourceId: ''
 };
+
+if (dataSourceEnabled()) {
+  FORMIK_INITIAL_VALUES["dataSourceId"] = "random-dataSourceId";
+}
 
 export const FORMIK_INITIAL_AGG_VALUES = {
   aggregationType: 'count',
