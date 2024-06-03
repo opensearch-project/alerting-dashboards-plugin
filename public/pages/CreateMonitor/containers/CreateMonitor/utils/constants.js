@@ -78,6 +78,7 @@ export const FORMIK_INITIAL_VALUES = {
   associatedMonitorsList: [],
   associatedMonitorsEditor: '',
   preventVisualEditor: false,
+  dataSourceId: ''
 };
 
 export const FORMIK_INITIAL_AGG_VALUES = {
