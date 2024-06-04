@@ -28,6 +28,7 @@ import {
   getPerformanceModal,
   RECOMMENDED_DURATION,
 } from '../../components/QueryPerformance/QueryPerformance';
+import { isDataSourceChanged } from '../../../utils/helpers';
 
 export default class CreateMonitor extends Component {
   static defaultProps = {
@@ -151,6 +152,17 @@ export default class CreateMonitor extends Component {
     this.props.setFlyout(null);
   }
 
+  componentDidUpdate(prevProps) {
+    if (isDataSourceChanged(prevProps, this.props)) {
+      this.setState({
+        initialValues: {
+          ...this.state.initialValues,
+          dataSourceId: this.props.landingDataSourceId
+        }
+      });
+    }
+  }  
+
   render() {
     const {
       edit,
@@ -170,6 +182,7 @@ export default class CreateMonitor extends Component {
           initialValues={initialValues}
           onSubmit={this.evaluateSubmission}
           validateOnChange={false}
+          enableReinitialize={true}
         >
           {({ values, errors, handleSubmit, isSubmitting, isValid, touched }) => {
             const isComposite = values.monitor_type === MONITOR_TYPE.COMPOSITE_LEVEL;

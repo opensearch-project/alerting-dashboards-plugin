@@ -4,6 +4,7 @@
  */
 
 import { schema } from '@osd/config-schema';
+import { createValidateQuerySchema } from '../services/utils/helpers';
 
 export default function (services, router) {
   const { anomalyDetectorService } = services;
@@ -15,6 +16,7 @@ export default function (services, router) {
         params: schema.object({
           detectorId: schema.string(),
         }),
+        query: createValidateQuerySchema(dataSourceEnabled),
       },
     },
     anomalyDetectorService.getDetector
@@ -35,7 +37,7 @@ export default function (services, router) {
         params: schema.object({
           detectorId: schema.string(),
         }),
-        query: schema.any(),
+        query: createValidateQuerySchema(dataSourceEnabled),
       },
     },
     anomalyDetectorService.getDetectorResults
