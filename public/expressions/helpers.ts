@@ -16,7 +16,7 @@ import { getDataSourceId, getDataSourceQueryObj } from '../pages/utils/helpers';
 export const getAlerts = async (
   monitorId: string,
   startTime: number,
-  endTime: number
+  endTime: number,
 ): Promise<Alert[]> => {
   const params = {
     size: 1000,
