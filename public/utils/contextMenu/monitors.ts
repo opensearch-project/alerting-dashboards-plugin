@@ -34,7 +34,7 @@ const parseMonitor = (monitor) => {
     date: latestAlert, // this is the last alert time
     id: monitor.id,
     type: monitor.monitor.monitor_type,
-    indexes: monitor.monitor.inputs[0].search.indices,
+    indexes: monitor.monitor.inputs[0].search?.indices,
     triggers: [{ name: 'example trigger' }],
     activeAlerts: monitor.active,
   };

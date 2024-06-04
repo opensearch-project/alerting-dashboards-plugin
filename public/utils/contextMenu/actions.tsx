@@ -12,7 +12,8 @@ import { createAlertingAction } from '../../actions/alerting_dashboard_action';
 import { Action } from '../../../../../src/plugins/ui_actions/public';
 import DocumentationTitle from '../../components/FeatureAnywhereContextMenu/DocumentationTitle';
 import Container from '../../components/FeatureAnywhereContextMenu/Container';
-import { getOverlays, getSavedObjectsClient, setDataSource } from '../../services';
+import { getOverlays, setDataSource } from '../../services';
+import { dataSourceEnabled } from '../../pages/utils/helpers';
 
 export const ALERTING_ACTION_CONTEXT = 'ALERTING_ACTION_CONTEXT';
 export const ALERTING_ACTION_CONTEXT_GROUP_ID = 'ALERTING_ACTION_CONTEXT_GROUP_ID';
@@ -29,12 +30,6 @@ declare module '../../../../../src/plugins/ui_actions/public' {
   }
 }
 
-interface References {
-  id: string;
-  name: string;
-  type: string;
-}
-
 export const openContainerInFlyout = async ({
   defaultFlyoutMode,
   embeddable,
@@ -44,8 +39,12 @@ export const openContainerInFlyout = async ({
   embeddable: any;
   detectorId?: string;
 }) => {
-  const indexPatternId = embeddable.vis.data.aggs.indexPattern.id;
-  await setDataSourceIdFromSavedObject(indexPatternId);
+  
+  if (dataSourceEnabled()) {
+    const indexPattern = embeddable.vis.data.indexPattern;
+    setDataSourceIdFromSavedObject(indexPattern);
+  }
+  
   const clonedEmbeddable = await _.cloneDeep(embeddable);
   const overlayService = getOverlays();
   const openFlyout = overlayService.openFlyout;
@@ -127,11 +126,9 @@ export const getAdAction = () =>
       }),
   });
 
-async function setDataSourceIdFromSavedObject(indexPatternId: string) {
+function setDataSourceIdFromSavedObject(indexPattern: any) {
   try {
-    const indexPattern = await getSavedObjectsClient().get('index-pattern', indexPatternId);
-    const refs = indexPattern.references as References[];
-    const foundRef = refs.find(ref => ref.type === 'data-source');
+    const foundRef = indexPattern.dataSourceRef
     const dataSourceId = foundRef ? foundRef.id : ''; 
     setDataSource({ dataSourceId });
   } catch (error) {
