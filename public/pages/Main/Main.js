@@ -39,6 +39,21 @@ class Main extends Component {
   }
 
   async updateBreadcrumbs() {
+    if (this.props.dataSourceEnabled && this.props.location) {
+      const search = this.props.location?.search;
+      const dataSourceId = search ? parseQueryStringAndGetDataSource(search) : parseQueryStringAndGetDataSource(this.props.location?.pathname);
+      if (dataSourceId) {
+        setDataSource({ dataSourceId });
+        this.setState({
+          selectedDataSourceId: dataSourceId,
+        });
+        if (this.state.dataSourceLoading) {
+          this.setState({
+            dataSourceLoading: false,
+          });
+        }
+      }
+    }
     const breadcrumbs = await getBreadcrumbs(
       this.context.http,
       this.props.history,

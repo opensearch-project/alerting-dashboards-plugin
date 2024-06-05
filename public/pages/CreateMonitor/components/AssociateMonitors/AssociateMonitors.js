@@ -9,17 +9,20 @@ import MonitorsList from './components/MonitorsList';
 import MonitorsEditor from './components/MonitorsEditor';
 import { monitorTypesForComposition } from '../../../../utils/constants';
 import { titleTemplate } from '../../../../utils/helpers';
+import { getDataSourceId } from '../../../utils/helpers';
 
 export const getMonitors = async (httpClient) => {
+  const queryObj = {
+    from: 0,
+    size: 1000,
+    search: '',
+    sortField: 'name',
+    sortDirection: 'desc',
+    state: 'all',
+    dataSourceId: getDataSourceId()
+  };
   const response = await httpClient.get('../api/alerting/monitors', {
-    query: {
-      from: 0,
-      size: 1000,
-      search: '',
-      sortField: 'name',
-      sortDirection: 'desc',
-      state: 'all',
-    },
+    query: queryObj,
   });
 
   if (response.ok) {
