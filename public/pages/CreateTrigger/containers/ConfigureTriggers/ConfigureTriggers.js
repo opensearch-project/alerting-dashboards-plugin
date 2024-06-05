@@ -217,7 +217,7 @@ class ConfigureTriggers extends React.Component {
   }
 
   async onQueryMappings() {
-    const indices = this.props.monitor.inputs[0].search.indices;
+    const indices = this.props.monitor.inputs[0].search?.indices || [];
     try {
       const mappings = await this.queryMappings(indices);
       const dataTypes = getPathsPerDataType(mappings);

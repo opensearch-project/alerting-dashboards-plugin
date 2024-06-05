@@ -22,6 +22,7 @@ import { useColumns } from './helpers';
 import { ConfirmUnlinkDetectorModal } from './ConfirmUnlinkModal';
 import { deleteAlertingAugmentVisSavedObj } from '../../../utils/savedObjectHelper';
 import { getNotifications } from '../../../services';
+import { constructUrlFromDataSource } from '../../../pages/utils/helpers';
 
 const AssociatedMonitors = ({ embeddable, closeFlyout, setFlyoutMode, monitors, isAssociateAllowed, limitReachedCallout, setAssociatedMonitors }) => {
   const title = embeddable.vis.title;
@@ -37,7 +38,7 @@ const AssociatedMonitors = ({ embeddable, closeFlyout, setFlyoutMode, monitors, 
   }, []);
   const onEdit = useCallback(
     (item) => {
-      window.open(`alerting#/monitors/${item.id}?action=update-monitor`, '_blank');
+      window.open(constructUrlFromDataSource(`alerting#/monitors/${item.id}?action=update-monitor`), '_blank');
     },
     []
   );

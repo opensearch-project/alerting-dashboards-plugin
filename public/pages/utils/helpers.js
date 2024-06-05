@@ -38,6 +38,5 @@ export function parseQueryStringAndGetDataSource(queryString) {
 }
 
 export function constructUrlFromDataSource(url) {
-  const dataSourceId = getDataSource()?.dataSourceId;
-  return dataSourceEnabled() && dataSourceId ? `${url}&dataSourceId=${dataSourceId}` : url;
+  return dataSourceEnabled() ? `${url}&dataSourceId=${getDataSource()?.dataSourceId}` : url;
 }
