@@ -11,6 +11,7 @@ import {
   filterActiveAlerts,
 } from '../pages/Dashboard/utils/helpers';
 import _ from 'lodash';
+import { getDataSourceQueryObj } from '../pages/utils/helpers';
 
 export const makeId = htmlIdGenerator();
 
@@ -52,11 +53,12 @@ export const inputLimitText = (
   );
 };
 
-export async function deleteMonitor(monitor, httpClient, notifications) {
+export async function deleteMonitor(monitor, httpClient, notifications, dataSourceQuery) {
   const { id, version } = monitor;
   const poolType = monitor.item_type === 'composite' ? 'workflows' : 'monitors';
+
   return httpClient
-    .delete(`../api/alerting/${poolType}/${id}`, { query: { version } })
+    .delete(`../api/alerting/${poolType}/${id}`, { query: { version, ...dataSourceQuery?.query } })
     .then((resp) => {
       if (!resp.ok) {
         backendErrorNotification(notifications, 'delete', 'monitor', resp.resp);
@@ -104,11 +106,13 @@ export async function acknowledgeAlerts(httpClient, notifications, alerts) {
     return monitorAlerts;
   }, {});
 
+  const dataSourceQuery = getDataSourceQueryObj();
   const acknowledgePromises = Object.entries(monitorAlerts).map(
     ([monitorId, { alerts, poolType }]) =>
       httpClient
         .post(`../api/alerting/${poolType}/${monitorId}/_acknowledge/alerts`, {
           body: JSON.stringify({ alerts }),
+          query: dataSourceQuery?.query,
         })
         .then((resp) => {
           if (!resp.ok) {

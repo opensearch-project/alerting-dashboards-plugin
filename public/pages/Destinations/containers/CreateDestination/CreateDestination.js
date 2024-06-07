@@ -28,6 +28,7 @@ import { Webhook, CustomWebhook, Email } from '../../components/createDestinatio
 import { SubmitErrorHandler } from '../../../../utils/SubmitErrorHandler';
 import { getAllowList } from '../../utils/helpers';
 import { backendErrorNotification } from '../../../../utils/helpers';
+import { getDataSourceQueryObj } from '../../../utils/helpers';
 
 const destinationType = {
   [DESTINATION_TYPE.SLACK]: (props) => <Webhook {...props} />,
@@ -79,7 +80,11 @@ class CreateDestination extends React.Component {
   getDestination = async (destinationId) => {
     const { httpClient, history, notifications } = this.props;
     try {
-      const resp = await httpClient.get(`../api/alerting/destinations/${destinationId}`);
+      const dataSourceQuery = getDataSourceQueryObj();
+      const resp = await httpClient.get(
+        `../api/alerting/destinations/${destinationId}`,
+        dataSourceQuery
+      );
       if (resp.ok) {
         const ifSeqNo = _.get(resp, 'ifSeqNo');
         const ifPrimaryTerm = _.get(resp, 'ifPrimaryTerm');
@@ -108,8 +113,9 @@ class CreateDestination extends React.Component {
     } = this.props;
     const { ifSeqNo, ifPrimaryTerm } = this.state;
     try {
+      const dataSourceQuery = getDataSourceQueryObj()?.query;
       const resp = await httpClient.put(`../api/alerting/destinations/${destinationId}`, {
-        query: { ifSeqNo, ifPrimaryTerm },
+        query: { ifSeqNo, ifPrimaryTerm, dataSourceQuery },
         body: JSON.stringify(requestData),
       });
       if (resp.ok) {
@@ -129,8 +135,10 @@ class CreateDestination extends React.Component {
   handleCreate = async (requestData, { setSubmitting }) => {
     const { httpClient, history, notifications } = this.props;
     try {
+      const dataSourceQuery = getDataSourceQueryObj();
       const resp = await httpClient.post('../api/alerting/destinations', {
         body: JSON.stringify(requestData),
+        query: dataSourceQuery?.query,
       });
       setSubmitting(false);
       if (resp.ok) {

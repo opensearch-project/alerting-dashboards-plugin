@@ -31,6 +31,7 @@ import { backendErrorNotification, inputLimitText } from '../../../../utils/help
 import monitorToFormik from '../../../CreateMonitor/containers/CreateMonitor/utils/monitorToFormik';
 import { buildRequest } from '../../../CreateMonitor/containers/DefineMonitor/utils/searchRequests';
 import { getTriggerContext } from '../../utils/helper';
+import { getDataSourceQueryObj } from '../../../utils/helpers';
 
 const MAX_TRIGGER_CONDITIONS = 10;
 
@@ -98,8 +99,12 @@ class DefineDocumentLevelTrigger extends Component {
         console.log(`Unsupported searchType found: ${JSON.stringify(searchType)}`, searchType);
     }
 
+    const dataSourceQuery = getDataSourceQueryObj();
     httpClient
-      .post('../api/alerting/monitors/_execute', { body: JSON.stringify(monitorToExecute) })
+      .post('../api/alerting/monitors/_execute', {
+        body: JSON.stringify(monitorToExecute),
+        query: dataSourceQuery?.query,
+      })
       .then((resp) => {
         if (resp.ok) {
           this.setState({ executeResponse: resp.resp });

@@ -5,12 +5,17 @@
 
 import _ from 'lodash';
 import { getAllowList } from '../../../utils/helpers';
+import { getDataSourceId } from '../../../../utils/helpers';
 
 export const validateDestinationName = (httpClient, destinationToEdit) => async (value) => {
   try {
     if (!value) return 'Required';
     const response = await httpClient.get('../api/alerting/destinations', {
-      query: { search: value, sortField: 'destination.name.keyword' },
+      query: {
+        search: value,
+        sortField: 'destination.name.keyword',
+        dataSourceId: getDataSourceId(),
+      },
     });
     if (_.get(response, 'totalDestinations', 0)) {
       if (!destinationToEdit) return 'Destination name is already used';

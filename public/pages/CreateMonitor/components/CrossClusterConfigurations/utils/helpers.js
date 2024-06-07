@@ -9,10 +9,10 @@ import { DEFAULT_EMPTY_DATA, MONITOR_TYPE } from '../../../../../utils/constants
 export const CROSS_CLUSTER_MONITORING_ENABLED_SETTING =
   'plugins.alerting.cross_cluster_monitoring_enabled';
 
-export const getLocalClusterName = async (httpClient) => {
+export const getLocalClusterName = async (httpClient, dataSourceQuery) => {
   let localClusterName = DEFAULT_EMPTY_DATA;
   try {
-    const response = await httpClient.get('../api/alerting/_health');
+    const response = await httpClient.get('../api/alerting/_health', dataSourceQuery);
     if (response.ok) {
       localClusterName = response.resp[0]?.cluster;
     } else {

@@ -37,6 +37,7 @@ import {
 import { DEFAULT_TRIGGER_NAME, SEVERITY_OPTIONS } from '../../utils/constants';
 import MinimalAccordion from '../../../../components/FeatureAnywhereContextMenu/MinimalAccordion';
 import { getTriggerContext } from '../../utils/helper';
+import { getDataSourceQueryObj } from '../../../utils/helpers';
 
 const defaultRowProps = {
   label: 'Trigger name',
@@ -134,8 +135,12 @@ class DefineTrigger extends Component {
         console.log(`Unsupported searchType found: ${JSON.stringify(searchType)}`, searchType);
     }
 
+    const dataSourceQuery = getDataSourceQueryObj();
     httpClient
-      .post('../api/alerting/monitors/_execute', { body: JSON.stringify(monitorToExecute) })
+      .post('../api/alerting/monitors/_execute', {
+        body: JSON.stringify(monitorToExecute),
+        query: dataSourceQuery?.query,
+      })
       .then((resp) => {
         if (resp.ok) {
           this.setState({ executeResponse: resp.resp });

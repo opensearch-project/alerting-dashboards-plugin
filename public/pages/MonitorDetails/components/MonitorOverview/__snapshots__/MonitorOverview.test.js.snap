@@ -82,7 +82,7 @@ exports[`MonitorOverview renders 1`] = `
           class="euiText euiText--extraSmall"
         >
           <strong>
-            Data sources
+            Index
           </strong>
           <div>
             -

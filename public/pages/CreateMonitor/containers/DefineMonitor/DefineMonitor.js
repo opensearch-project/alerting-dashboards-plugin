@@ -39,7 +39,7 @@ import ConfigureDocumentLevelQueries from '../../components/DocumentLevelMonitor
 import FindingsDashboard from '../../../Dashboard/containers/FindingsDashboard';
 import { validDocLevelGraphQueries } from '../../components/DocumentLevelMonitorQueries/utils/helpers';
 import { validateWhereFilters } from '../../components/MonitorExpressions/expressions/utils/whereHelpers';
-
+import { getDataSourceQueryObj, getDataSourceId } from '../../../../../public/pages/utils/helpers';
 import { CROSS_CLUSTER_MONITORING_ENABLED_SETTING } from '../../components/CrossClusterConfigurations/utils/helpers';
 
 function renderEmptyMessage(message) {
@@ -67,7 +67,6 @@ const defaultProps = {
 class DefineMonitor extends Component {
   constructor(props) {
     super(props);
-
     this.state = {
       dataTypes: {},
       performanceResponse: null,
@@ -79,7 +78,6 @@ class DefineMonitor extends Component {
       remoteMonitoringEnabled: false,
       canCallGetRemoteIndexes: false,
     };
-
     this.renderGraph = this.renderGraph.bind(this);
     this.onRunQuery = this.onRunQuery.bind(this);
     this.resetResponse = this.resetResponse.bind(this);
@@ -188,7 +186,8 @@ class DefineMonitor extends Component {
 
     // Check whether remote monitoring is enabled
     try {
-      const response = await httpClient.get('../api/alerting/_settings');
+      const dataSourceQuery = getDataSourceQueryObj();
+      const response = await httpClient.get('../api/alerting/_settings', dataSourceQuery);
       if (response.ok) {
         const { defaults, transient, persistent } = response.resp;
         remoteMonitoringEnabled = _.get(
@@ -219,6 +218,7 @@ class DefineMonitor extends Component {
         const query = {
           indexes: '*,*:*',
           include_mappings: false,
+          dataSourceId: getDataSourceId(),
         };
         const response = await httpClient.get(`../api/alerting/remote/indexes`, { query: query });
         canCallGetRemoteIndexes = response.ok;
@@ -250,7 +250,8 @@ class DefineMonitor extends Component {
   async getPlugins() {
     const { httpClient } = this.props;
     try {
-      const pluginsResponse = await httpClient.get('../api/alerting/_plugins');
+      const dataSourceQuery = getDataSourceQueryObj();
+      const pluginsResponse = await httpClient.get('../api/alerting/_plugins', dataSourceQuery);
       if (pluginsResponse.ok) {
         this.setState({ plugins: pluginsResponse.resp.map((plugin) => plugin.component) });
       } else {
@@ -410,14 +411,14 @@ class DefineMonitor extends Component {
           default:
             console.log(`Unsupported searchType found: ${JSON.stringify(searchType)}`, searchType);
         }
-
+        const dataSourceQuery = getDataSourceQueryObj();
         return httpClient.post('../api/alerting/monitors/_execute', {
           body: JSON.stringify(monitor),
+          query: dataSourceQuery?.query,
         });
       });
 
       const [queryResponse, optionalResponse] = await Promise.all(promises);
-
       if (queryResponse.ok) {
         const endTime = moment();
         const duration = moment.duration(endTime.diff(startTime)).milliseconds();
@@ -474,7 +475,7 @@ class DefineMonitor extends Component {
 
   async queryMappings(index) {
     if (!index.length) return {};
-
+    const dataSourceQuery = getDataSourceQueryObj();
     try {
       // If any index contain ":", it indicates at least 1 remote index is configured.
       const hasRemoteClusters = index.some((indexName) => indexName.includes(':'));
@@ -483,11 +484,13 @@ class DefineMonitor extends Component {
             query: {
               indexes: index.join(','),
               include_mappings: true,
+              dataSourceId: getDataSourceId(),
             },
           })
         : // Otherwise, all configured indexes are on the local cluster.
           await this.props.httpClient.post('../api/alerting/_mappings', {
             body: JSON.stringify({ index }),
+            query: dataSourceQuery?.query,
           });
       if (response.ok) {
         if (hasRemoteClusters) {
@@ -615,8 +618,10 @@ class DefineMonitor extends Component {
       _.set(monitor, 'name', tempMonitorName);
       _.set(monitor, 'triggers', []);
       _.set(monitor, 'inputs[0].uri', request);
+      const dataSourceQuery = getDataSourceQueryObj();
       return httpClient.post('../api/alerting/monitors/_execute', {
         body: JSON.stringify(monitor),
+        query: dataSourceQuery?.query,
       });
     });
 
@@ -704,6 +709,7 @@ class DefineMonitor extends Component {
               isDarkMode={isDarkMode}
               canCallGetRemoteIndexes={canCallGetRemoteIndexes}
               remoteMonitoringEnabled={remoteMonitoringEnabled}
+              landingDataSourceId={this.props.landingDataSourceId}
             />
             <EuiSpacer />
           </div>

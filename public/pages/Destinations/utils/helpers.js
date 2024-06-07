@@ -5,11 +5,12 @@
 
 import _ from 'lodash';
 import { ALLOW_LIST_SETTING_PATH } from './constants';
-import { backendErrorNotification } from '../../../utils/helpers';
+import { getDataSourceQueryObj } from '../../utils/helpers';
 
 export async function getAllowList(httpClient) {
   try {
-    const response = await httpClient.get('../api/alerting/_settings');
+    const dataSourceQuery = getDataSourceQueryObj();
+    const response = await httpClient.get('../api/alerting/_settings', dataSourceQuery);
     if (response.ok) {
       // Attempt to resolve the value of allow_list in the order of 'persistent, 'transient' and 'defaults' settings
       const { defaults, transient, persistent } = response.resp;
