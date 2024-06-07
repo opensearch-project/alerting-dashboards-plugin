@@ -9,6 +9,7 @@ exports[`CreateMonitor renders 1`] = `
   }
 >
   <Formik
+    enableReinitialize={true}
     initialValues={
       Object {
         "adResultIndex": undefined,
