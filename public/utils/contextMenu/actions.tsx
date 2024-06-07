@@ -12,7 +12,8 @@ import { createAlertingAction } from '../../actions/alerting_dashboard_action';
 import { Action } from '../../../../../src/plugins/ui_actions/public';
 import DocumentationTitle from '../../components/FeatureAnywhereContextMenu/DocumentationTitle';
 import Container from '../../components/FeatureAnywhereContextMenu/Container';
-import { getOverlays } from '../../services';
+import { getOverlays, setDataSource } from '../../services';
+import { dataSourceEnabled } from '../../pages/utils/helpers';
 
 export const ALERTING_ACTION_CONTEXT = 'ALERTING_ACTION_CONTEXT';
 export const ALERTING_ACTION_CONTEXT_GROUP_ID = 'ALERTING_ACTION_CONTEXT_GROUP_ID';
@@ -38,6 +39,12 @@ export const openContainerInFlyout = async ({
   embeddable: any;
   detectorId?: string;
 }) => {
+  
+  if (dataSourceEnabled()) {
+    const indexPattern = embeddable.vis.data.indexPattern;
+    setDataSourceIdFromSavedObject(indexPattern);
+  }
+  
   const clonedEmbeddable = await _.cloneDeep(embeddable);
   const overlayService = getOverlays();
   const openFlyout = overlayService.openFlyout;
@@ -118,3 +125,14 @@ export const getAdAction = () =>
         defaultFlyoutMode: 'adMonitor',
       }),
   });
+
+function setDataSourceIdFromSavedObject(indexPattern: any) {
+  try {
+    const foundRef = indexPattern.dataSourceRef
+    const dataSourceId = foundRef ? foundRef.id : ''; 
+    setDataSource({ dataSourceId });
+  } catch (error) {
+    console.error("Error fetching index pattern:", error);
+  }
+}
+
