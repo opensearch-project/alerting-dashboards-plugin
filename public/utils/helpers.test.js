@@ -24,6 +24,7 @@ describe('backendErrorNotification', () => {
 
 describe('deleteMonitor', () => {
   test('deleteMonitor calls delete', async () => {
+    const mockDataSource = {};
     httpClientMock.delete = jest
       .fn()
       .mockResolvedValueOnce({ ok: true })
@@ -33,7 +34,12 @@ describe('deleteMonitor', () => {
       version: 15,
       item_type: 'monitor',
     };
-    const response = await deleteMonitor(mockMonitor, httpClientMock, coreMock.notifications);
+    const response = await deleteMonitor(
+      mockMonitor,
+      httpClientMock,
+      coreMock.notifications,
+      mockDataSource
+    );
 
     expect(httpClientMock.delete).toHaveBeenCalled();
     expect(httpClientMock.delete).toHaveBeenCalledWith(`../api/alerting/monitors/delete_id`, {

@@ -7,6 +7,7 @@ import _ from 'lodash';
 import { INDEX, MAX_THROTTLE_VALUE, WRONG_THROTTLE_WARNING } from '../../utils/constants';
 import { MONITOR_TYPE } from './constants';
 import { TRIGGER_TYPE } from '../pages/CreateTrigger/containers/CreateTrigger/utils/constants';
+import { getDataSourceQueryObj } from '../pages/utils/helpers';
 
 // TODO: Use a validation framework to clean all of this up or create own.
 
@@ -102,6 +103,7 @@ export const isInvalidApiPath = (name, form) => {
 
 export const validateMonitorName = (httpClient, monitorToEdit, isFullText) => async (value) => {
   try {
+    const dataSourceQuery = getDataSourceQueryObj();
     if (!value) return isFullText ? 'Monitor name is required.' : 'Required.';
     const options = {
       index: INDEX.SCHEDULED_JOBS,
@@ -109,7 +111,9 @@ export const validateMonitorName = (httpClient, monitorToEdit, isFullText) => as
     };
     const response = await httpClient.post('../api/alerting/monitors/_search', {
       body: JSON.stringify(options),
+      query: dataSourceQuery?.query,
     });
+
     if (_.get(response, 'resp.hits.total.value', 0)) {
       if (!monitorToEdit) return 'Monitor name is already used.';
       if (monitorToEdit && monitorToEdit.name !== value) {

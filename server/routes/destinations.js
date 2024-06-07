@@ -4,22 +4,24 @@
  */
 
 import { schema } from '@osd/config-schema';
+import { createValidateQuerySchema } from '../services/utils/helpers';
 
-export default function (services, router) {
+export default function (services, router, dataSourceEnabled) {
   const { destinationsService } = services;
 
+  const fieldValidations = {
+    from: schema.maybe(schema.number()),
+    size: schema.maybe(schema.number()),
+    search: schema.maybe(schema.string()),
+    sortField: schema.maybe(schema.string()),
+    sortDirection: schema.maybe(schema.string()),
+    type: schema.maybe(schema.string()),
+  };
   router.get(
     {
       path: '/api/alerting/destinations',
       validate: {
-        query: schema.object({
-          from: schema.maybe(schema.number()),
-          size: schema.maybe(schema.number()),
-          search: schema.maybe(schema.string()),
-          sortField: schema.maybe(schema.string()),
-          sortDirection: schema.maybe(schema.string()),
-          type: schema.maybe(schema.string()),
-        }),
+        query: createValidateQuerySchema(dataSourceEnabled, fieldValidations),
       },
     },
     destinationsService.getDestinations
@@ -32,6 +34,7 @@ export default function (services, router) {
         params: schema.object({
           destinationId: schema.string(),
         }),
+        query: createValidateQuerySchema(dataSourceEnabled),
       },
     },
     destinationsService.getDestination
@@ -42,10 +45,16 @@ export default function (services, router) {
       path: '/api/alerting/destinations',
       validate: {
         body: schema.any(),
+        query: createValidateQuerySchema(dataSourceEnabled),
       },
     },
     destinationsService.createDestination
   );
+
+  const destinationsFieldValidation = {
+    ifSeqNo: schema.string(),
+    ifPrimaryTerm: schema.string(),
+  };
 
   router.put(
     {
@@ -54,10 +63,7 @@ export default function (services, router) {
         params: schema.object({
           destinationId: schema.string(),
         }),
-        query: schema.object({
-          ifSeqNo: schema.string(),
-          ifPrimaryTerm: schema.string(),
-        }),
+        query: createValidateQuerySchema(dataSourceEnabled, destinationsFieldValidation),
         body: schema.any(),
       },
     },
@@ -71,19 +77,21 @@ export default function (services, router) {
         params: schema.object({
           destinationId: schema.string(),
         }),
+        query: createValidateQuerySchema(dataSourceEnabled),
       },
     },
     destinationsService.deleteDestination
   );
 
+  const queryValidationFields = {
+    search: schema.maybe(schema.string()),
+    size: schema.number(),
+  };
   router.get(
     {
       path: '/api/alerting/destinations/email_accounts',
       validate: {
-        query: schema.object({
-          search: schema.maybe(schema.string()),
-          size: schema.number(),
-        }),
+        query: createValidateQuerySchema(dataSourceEnabled, queryValidationFields),
       },
     },
     destinationsService.getEmailAccounts
@@ -94,6 +102,7 @@ export default function (services, router) {
       path: '/api/alerting/destinations/email_accounts',
       validate: {
         body: schema.any(),
+        query: createValidateQuerySchema(dataSourceEnabled, queryValidationFields),
       },
     },
     destinationsService.createEmailAccount
@@ -106,6 +115,7 @@ export default function (services, router) {
         params: schema.object({
           id: schema.string(),
         }),
+        query: createValidateQuerySchema(dataSourceEnabled, queryValidationFields),
       },
     },
     destinationsService.getEmailAccount
@@ -118,10 +128,7 @@ export default function (services, router) {
         params: schema.object({
           id: schema.string(),
         }),
-        query: schema.object({
-          ifSeqNo: schema.number(),
-          ifPrimaryTerm: schema.number(),
-        }),
+        query: createValidateQuerySchema(dataSourceEnabled, destinationsFieldValidation),
         body: schema.any(),
       },
     },
@@ -135,6 +142,7 @@ export default function (services, router) {
         params: schema.object({
           id: schema.string(),
         }),
+        query: createValidateQuerySchema(dataSourceEnabled),
       },
     },
     destinationsService.deleteEmailAccount
@@ -144,10 +152,7 @@ export default function (services, router) {
     {
       path: '/api/alerting/destinations/email_groups',
       validate: {
-        query: schema.object({
-          search: schema.maybe(schema.string()),
-          size: schema.number(),
-        }),
+        query: createValidateQuerySchema(dataSourceEnabled, queryValidationFields),
       },
     },
     destinationsService.getEmailGroups
@@ -158,6 +163,7 @@ export default function (services, router) {
       path: '/api/alerting/destinations/email_groups',
       validate: {
         body: schema.any(),
+        query: createValidateQuerySchema(dataSourceEnabled),
       },
     },
     destinationsService.createEmailGroup
@@ -170,6 +176,7 @@ export default function (services, router) {
         params: schema.object({
           id: schema.string(),
         }),
+        query: createValidateQuerySchema(dataSourceEnabled),
       },
     },
     destinationsService.getEmailGroup
@@ -182,10 +189,7 @@ export default function (services, router) {
         params: schema.object({
           id: schema.string(),
         }),
-        query: schema.object({
-          ifSeqNo: schema.number(),
-          ifPrimaryTerm: schema.number(),
-        }),
+        query: createValidateQuerySchema(dataSourceEnabled, destinationsFieldValidation),
         body: schema.any(),
       },
     },
@@ -199,6 +203,7 @@ export default function (services, router) {
         params: schema.object({
           id: schema.string(),
         }),
+        query: createValidateQuerySchema(dataSourceEnabled),
       },
     },
     destinationsService.deleteEmailGroup

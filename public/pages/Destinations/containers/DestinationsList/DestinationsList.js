@@ -34,6 +34,7 @@ import { DESTINATION_TYPE } from '../../utils/constants';
 import { backendErrorNotification } from '../../../../utils/helpers';
 import NotificationsInfoCallOut from '../../components/NotificationsInfoCallOut';
 import FullPageNotificationsInfoCallOut from '../../components/FullPageNotificationsInfoCallOut';
+import { getDataSourceQueryObj } from '../../../utils/helpers';
 
 class DestinationsList extends React.Component {
   constructor(props) {
@@ -63,6 +64,8 @@ class DestinationsList extends React.Component {
       showManageEmailGroups: false,
       hasNotificationPlugin: false,
     };
+
+    this.dataSourceQuery = getDataSourceQueryObj();
 
     this.columns = [
       ...staticColumns,
@@ -109,7 +112,10 @@ class DestinationsList extends React.Component {
   async getPlugins() {
     const { httpClient } = this.props;
     try {
-      const pluginsResponse = await httpClient.get('../api/alerting/_plugins');
+      const pluginsResponse = await httpClient.get(
+        '../api/alerting/_plugins',
+        this.dataSourceQuery
+      );
       if (pluginsResponse.ok) {
         const plugins = pluginsResponse.resp.map((plugin) => plugin.component);
         const hasNotificationPlugin = plugins.indexOf(OS_NOTIFICATION_PLUGIN) !== -1;
@@ -135,7 +141,9 @@ class DestinationsList extends React.Component {
     };
     const resp = await httpClient.post('../api/alerting/monitors/_search', {
       body: JSON.stringify(requestBody),
+      query: this.dataSourceQuery?.query,
     });
+
     const total = _.get(resp, 'resp.hits.total.value');
     return total === 0;
   };
@@ -165,7 +173,10 @@ class DestinationsList extends React.Component {
     const { id: destinationId } = this.state.destinationToDelete;
     const { httpClient, notifications } = this.props;
     try {
-      const resp = await httpClient.delete(`../api/alerting/destinations/${destinationId}`);
+      const resp = await httpClient.delete(
+        `../api/alerting/destinations/${destinationId}`,
+        this.dataSourceQuery
+      );
       if (resp.ok) {
         await this.getDestinations();
       } else {
@@ -222,7 +233,7 @@ class DestinationsList extends React.Component {
       });
       try {
         const resp = await httpClient.get('../api/alerting/destinations', {
-          query: { from, ...params },
+          query: { from, ...params, ...this.dataSourceQuery?.query },
         });
         if (resp.ok) {
           this.setState({

@@ -7,6 +7,7 @@ import _ from 'lodash';
 import { URL_TYPE, CONTENT_TYPE_KEY } from './constants';
 import { DESTINATION_TYPE } from '../../../utils/constants';
 import { RECIPIENT_TYPE } from '../EmailRecipients/utils/constants';
+import { getDataSourceQueryObj } from '../../../../utils/helpers';
 
 const getAttributeArrayFromValues = (attributes) =>
   Object.keys(attributes).map((currentKey) => ({
@@ -39,7 +40,11 @@ const customWebhookToFormik = ({
 
 const getSender = async (httpClient, id) => {
   try {
-    const response = await httpClient.get(`../api/alerting/destinations/email_accounts/${id}`);
+    const dataSourceQuery = getDataSourceQueryObj();
+    const response = await httpClient.get(
+      `../api/alerting/destinations/email_accounts/${id}`,
+      dataSourceQuery
+    );
     if (response.ok) {
       return response.resp;
     }
@@ -52,7 +57,11 @@ const getSender = async (httpClient, id) => {
 
 const getEmailGroup = async (httpClient, id) => {
   try {
-    const response = await httpClient.get(`../api/alerting/destinations/email_groups/${id}`);
+    const dataSourceQuery = getDataSourceQueryObj();
+    const response = await httpClient.get(
+      `../api/alerting/destinations/email_groups/${id}`,
+      dataSourceQuery
+    );
     if (response.ok) {
       return response.resp;
     }

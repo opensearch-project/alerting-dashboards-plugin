@@ -73,10 +73,14 @@ describe('getBreadcrumb', () => {
 
   describe('when matching document IDs', () => {
     test('calls get monitor route', async () => {
+      const routeState = {}; // Provide a non-empty routeState object if necessary
       httpClientMock.get.mockResolvedValue({ ok: true, resp: { name: 'random_name' } });
-      await getBreadcrumb(monitorId, {}, httpClientMock);
+      await getBreadcrumb(monitorId, routeState, httpClientMock);
       expect(httpClientMock.get).toHaveBeenCalled();
-      expect(httpClientMock.get).toHaveBeenCalledWith(`../api/alerting/monitors/${monitorId}`);
+      expect(httpClientMock.get).toHaveBeenCalledWith(
+        `../api/alerting/monitors/${monitorId}`,
+        undefined
+      );
     });
 
     test('returns monitor name', async () => {

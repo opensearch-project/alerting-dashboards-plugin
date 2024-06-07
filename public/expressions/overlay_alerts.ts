@@ -30,7 +30,7 @@ export type OverlayAlertsExpressionFunctionDefinition = ExpressionFunctionDefini
   >;
 
 
-export const overlayAlertsFunction = (): OverlayAlertsExpressionFunctionDefinition => ({
+export const overlayAlertsFunction = (dataSourceEnabled): OverlayAlertsExpressionFunctionDefinition => ({
   name,
   type: 'vis_layers',
   inputTypes: ['vis_layers'],
@@ -66,7 +66,7 @@ export const overlayAlertsFunction = (): OverlayAlertsExpressionFunctionDefiniti
     }
 
     const alerts = await getAlerts(monitorId, startTimeInMillis, endTimeInMillis);
-    const monitorName = await getMonitorName(monitorId);
+    const monitorName = await getMonitorName(monitorId, dataSourceEnabled);
     let error: VisLayerError | undefined;
     if (monitorName === VisLayerErrorTypes.RESOURCE_DELETED)
       error = {

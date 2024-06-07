@@ -30,22 +30,29 @@ export class AlertingPlugin {
     this.globalConfig$ = initializerContext.config.legacy.globalConfig$;
   }
 
-  async setup(core) {
+  async setup(core, { dataSource }) {
     // Get the global configuration settings of the cluster
     const globalConfig = await this.globalConfig$.pipe(first()).toPromise();
 
+    const dataSourceEnabled = !!dataSource;
+
     // Create clusters
-    const alertingESClient = createAlertingCluster(core, globalConfig);
-    const adESClient = createAlertingADCluster(core, globalConfig);
+    const alertingESClient = createAlertingCluster(
+      core,
+      globalConfig,
+      dataSourceEnabled,
+      dataSource
+    );
+    const adESClient = createAlertingADCluster(core, globalConfig, dataSourceEnabled, dataSource);
 
     // Initialize services
-    const alertService = new AlertService(alertingESClient);
-    const opensearchService = new OpensearchService(alertingESClient);
-    const monitorService = new MonitorService(alertingESClient);
-    const destinationsService = new DestinationsService(alertingESClient);
-    const anomalyDetectorService = new AnomalyDetectorService(adESClient);
-    const findingService = new FindingService(alertingESClient);
-    const crossClusterService = new CrossClusterService(alertingESClient);
+    const alertService = new AlertService(alertingESClient, dataSourceEnabled);
+    const opensearchService = new OpensearchService(alertingESClient, dataSourceEnabled);
+    const monitorService = new MonitorService(alertingESClient, dataSourceEnabled);
+    const destinationsService = new DestinationsService(alertingESClient, dataSourceEnabled);
+    const anomalyDetectorService = new AnomalyDetectorService(adESClient, dataSourceEnabled);
+    const findingService = new FindingService(alertingESClient, dataSourceEnabled);
+    const crossClusterService = new CrossClusterService(alertingESClient, dataSourceEnabled);
     const services = {
       alertService,
       destinationsService,
@@ -59,13 +66,13 @@ export class AlertingPlugin {
     // Create router
     const router = core.http.createRouter();
     // Add server routes
-    alerts(services, router);
-    destinations(services, router);
-    opensearch(services, router);
-    monitors(services, router);
-    detectors(services, router);
-    findings(services, router);
-    crossCluster(services, router);
+    alerts(services, router, dataSourceEnabled);
+    destinations(services, router, dataSourceEnabled);
+    opensearch(services, router, dataSourceEnabled);
+    monitors(services, router, dataSourceEnabled);
+    detectors(services, router, dataSourceEnabled);
+    findings(services, router, dataSourceEnabled);
+    crossCluster(services, router, dataSourceEnabled);
 
     return {};
   }

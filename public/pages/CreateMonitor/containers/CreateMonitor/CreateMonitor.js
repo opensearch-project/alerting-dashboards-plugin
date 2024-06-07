@@ -28,6 +28,7 @@ import {
   getPerformanceModal,
   RECOMMENDED_DURATION,
 } from '../../components/QueryPerformance/QueryPerformance';
+import { isDataSourceChanged } from '../../../utils/helpers';
 
 export default class CreateMonitor extends Component {
   static defaultProps = {
@@ -151,6 +152,17 @@ export default class CreateMonitor extends Component {
     this.props.setFlyout(null);
   }
 
+  componentDidUpdate(prevProps) {
+    if (isDataSourceChanged(prevProps, this.props)) {
+      this.setState({
+        initialValues: {
+          ...this.state.initialValues,
+          dataSourceId: this.props.landingDataSourceId
+        }
+      });
+    }
+  }  
+
   render() {
     const {
       edit,
@@ -163,17 +175,16 @@ export default class CreateMonitor extends Component {
       notificationService,
     } = this.props;
     const { createModalOpen, initialValues, plugins } = this.state;
-
     return (
       <div style={{ padding: '25px 50px' }}>
         <Formik
           initialValues={initialValues}
           onSubmit={this.evaluateSubmission}
           validateOnChange={false}
+          enableReinitialize={true}
         >
           {({ values, errors, handleSubmit, isSubmitting, isValid, touched }) => {
             const isComposite = values.monitor_type === MONITOR_TYPE.COMPOSITE_LEVEL;
-
             return (
               <Fragment>
                 <EuiTitle size="l">
@@ -221,6 +232,7 @@ export default class CreateMonitor extends Component {
                             detectorId={this.props.detectorId}
                             notifications={notifications}
                             isDarkMode={isDarkMode}
+                            landingDataSourceId={this.props.landingDataSourceId}
                           />
                           <EuiSpacer />
                         </div>

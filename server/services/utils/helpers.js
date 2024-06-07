@@ -2,8 +2,8 @@
  * Copyright OpenSearch Contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-
 import { get, map, mapKeys, mapValues, isPlainObject, snakeCase, camelCase } from 'lodash';
+import { schema } from '@osd/config-schema';
 
 export function mapKeysDeep(obj, fn) {
   if (Array.isArray(obj)) {
@@ -26,3 +26,13 @@ export const isIndexNotFoundError = (err) => {
       'Configured indices are not found: [.opendistro-alerting-config]'
   );
 };
+
+export function createValidateQuerySchema(dataSourceEnabled, fields = {}) {
+  // Extend the query schema with the specified fields
+  const schemaObj = { ...fields };
+
+  if (dataSourceEnabled) {
+    schemaObj['dataSourceId'] = schema.string();
+  }
+  return schema.object(schemaObj);
+}

@@ -149,7 +149,7 @@ export default function getOverviewStats(
     },
     ...detectorOverview,
     {
-      header: 'Data sources',
+      header: 'Index',
       value: getDataSourcesDisplay(dataSources, localClusterName, monitorLevelType, setFlyout),
     },
     {

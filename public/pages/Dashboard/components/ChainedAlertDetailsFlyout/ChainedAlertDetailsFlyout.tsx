@@ -14,6 +14,7 @@ import {
   EuiFlyoutBody,
 } from '@elastic/eui';
 import { ChainedAlertDetails } from './ChainedAlertDetails';
+import { getDataSourceId } from '../../../utils/helpers';
 
 export const ChainedAlertDetailsFlyout = ({ closeFlyout, alert, httpClient }) => {
   const [associatedAlerts, setAssociatedAlerts] = useState([]);
@@ -30,7 +31,8 @@ export const ChainedAlertDetailsFlyout = ({ closeFlyout, alert, httpClient }) =>
         alertIds: alert.id,
         severityLevel: 'ALL',
         alertState: 'ALL',
-        searchString: ''
+        searchString: '',
+        dataSourceId: getDataSourceId(),
       }
     })
     .then((response: any) => {
