@@ -69,34 +69,39 @@ export const appendCommentsAction = (columns, httpClient) => {
 };
 
 export async function getIsCommentsEnabled(httpClient) {
-  let alertCommentsEnabled = false;
+  let commentsEnabled = await getClusterSetting(httpClient, COMMENTS_ENABLED_SETTING, false);
+
+  if (typeof commentsEnabled === 'string') {
+    return JSON.parse(commentsEnabled);
+  }
+
+  return commentsEnabled;
+}
+
+export async function getClusterSetting(httpClient, setting, defaultValue) {
+  let cluserSetting = defaultValue;
 
   try {
     const dataSourceQuery = getDataSourceQueryObj();
     const response = await httpClient.get('../api/alerting/_settings', dataSourceQuery);
     if (response.ok) {
       const { defaults, transient, persistent } = response.resp;
-      alertCommentsEnabled = _.get(
+      cluserSetting = _.get(
         // If present, take the 'transient' setting.
         transient,
-        COMMENTS_ENABLED_SETTING,
+        setting,
         // Else take the 'persistent' setting.
         _.get(
           persistent,
-          COMMENTS_ENABLED_SETTING,
+          setting,
           // Else take the 'default' setting.
-          _.get(defaults, COMMENTS_ENABLED_SETTING, false)
+          _.get(defaults, setting, defaultValue)
         )
       );
-
-      // Boolean settings can be returned as strings (e.g., `"true"`, and `"false"`). Constructing boolean value from the string.
-      if (typeof alertCommentsEnabled === 'string') {
-        alertCommentsEnabled = JSON.parse(alertCommentsEnabled);
-      }
     }
   } catch (e) {
     console.log('Error while retrieving settings:', e);
   }
 
-  return alertCommentsEnabled;
+  return cluserSetting;
 }
