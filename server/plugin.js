@@ -13,6 +13,7 @@ import {
   AnomalyDetectorService,
   FindingService,
   CrossClusterService,
+  CommentsService,
 } from './services';
 import {
   alerts,
@@ -22,6 +23,7 @@ import {
   detectors,
   findings,
   crossCluster,
+  comments,
 } from '../server/routes';
 
 export class AlertingPlugin {
@@ -53,6 +55,7 @@ export class AlertingPlugin {
     const anomalyDetectorService = new AnomalyDetectorService(adESClient, dataSourceEnabled);
     const findingService = new FindingService(alertingESClient, dataSourceEnabled);
     const crossClusterService = new CrossClusterService(alertingESClient, dataSourceEnabled);
+    const commentsService = new CommentsService(alertingESClient, dataSourceEnabled);
     const services = {
       alertService,
       destinationsService,
@@ -61,6 +64,7 @@ export class AlertingPlugin {
       anomalyDetectorService,
       findingService,
       crossClusterService,
+      commentsService,
     };
 
     // Create router
@@ -73,6 +77,7 @@ export class AlertingPlugin {
     detectors(services, router, dataSourceEnabled);
     findings(services, router, dataSourceEnabled);
     crossCluster(services, router, dataSourceEnabled);
+    comments(services, router, dataSourceEnabled);
 
     return {};
   }
