@@ -42,10 +42,10 @@ import { MAX_ALERT_COUNT } from '../../utils/constants';
 import { DEFAULT_PAGE_SIZE_OPTIONS } from '../../../Monitors/containers/Monitors/utils/constants';
 import DashboardControls from '../DashboardControls';
 import ContentPanel from '../../../../components/ContentPanel';
-import { queryColumns } from '../../utils/tableUtils';
+import { appendCommentsAction, queryColumns } from '../../utils/tableUtils';
 import DashboardEmptyPrompt from '../DashboardEmptyPrompt';
 import { getAlertsFindingColumn } from '../FindingsDashboard/findingsUtils';
-import { getDataSourceId } from '../../../utils/helpers';
+import { getDataSourceId, getIsCommentsEnabled } from '../../../utils/helpers';
 
 export const DEFAULT_NUM_MODAL_ROWS = 10;
 
@@ -72,6 +72,7 @@ export default class AcknowledgeAlertsModal extends Component {
       sortDirection: sortDirection,
       sortField: sortField,
       totalAlerts: 0,
+      commentsEnabled: false,
     };
   }
 
@@ -88,6 +89,9 @@ export default class AcknowledgeAlertsModal extends Component {
       alertState,
       monitorIds
     );
+    getIsCommentsEnabled(this.props.httpClient).then((commentsEnabled) => {
+      this.setState({ commentsEnabled });
+    });
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -282,9 +286,10 @@ export default class AcknowledgeAlertsModal extends Component {
       sortDirection,
       sortField,
       totalAlerts,
+      commentsEnabled,
     } = this.state;
 
-    const columnType = () => {
+    const getColumns = () => {
       let columns;
       switch (monitorType) {
         case MONITOR_TYPE.BUCKET_LEVEL:
@@ -310,7 +315,13 @@ export default class AcknowledgeAlertsModal extends Component {
           columns = queryColumns;
           break;
       }
-      return removeColumns(['trigger_name'], columns);
+      columns = removeColumns(['trigger_name'], columns);
+
+      if (commentsEnabled) {
+        columns = appendCommentsAction(columns, httpClient);
+      }
+
+      return columns;
     };
 
     const pagination = {
@@ -379,7 +390,7 @@ export default class AcknowledgeAlertsModal extends Component {
                      * $id-$version will correctly remove selected items
                      * */
                     itemId={getItemId}
-                    columns={columnType()}
+                    columns={getColumns()}
                     loading={loading}
                     pagination={pagination}
                     sorting={sorting}

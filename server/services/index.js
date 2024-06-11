@@ -10,6 +10,7 @@ import MonitorService from './MonitorService';
 import AnomalyDetectorService from './AnomalyDetectorService';
 import FindingService from './FindingService';
 import CrossClusterService from './CrossClusterService';
+import CommentsService from './CommentsService';
 
 export {
   AlertService,
@@ -19,4 +20,5 @@ export {
   AnomalyDetectorService,
   FindingService,
   CrossClusterService,
+  CommentsService,
 };
