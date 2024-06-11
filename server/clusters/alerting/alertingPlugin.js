@@ -11,6 +11,7 @@ import {
   EMAIL_GROUP_BASE_API,
   WORKFLOW_BASE_API,
   CROSS_CLUSTER_BASE_API,
+  COMMENTS_BASE_API,
 } from '../../services/utils/constants';
 
 export default function alertingPlugin(Client, config, components) {
@@ -438,5 +439,56 @@ export default function alertingPlugin(Client, config, components) {
     },
     needBody: true,
     method: 'GET',
+  });
+
+  // Comments
+  alerting.createComment = ca({
+    url: {
+      fmt: `${COMMENTS_BASE_API}/<%=alertId%>`,
+      req: {
+        alertId: {
+          type: 'string',
+          required: true,
+        },
+      },
+    },
+    needBody: true,
+    method: 'POST',
+  });
+
+  alerting.updateComment = ca({
+    url: {
+      fmt: `${COMMENTS_BASE_API}/<%=commentId%>`,
+      req: {
+        commentId: {
+          type: 'string',
+          required: true,
+        },
+      },
+    },
+    needBody: true,
+    method: 'PUT',
+  });
+
+  alerting.searchComments = ca({
+    url: {
+      fmt: `${COMMENTS_BASE_API}/_search`,
+    },
+    needBody: true,
+    method: 'POST',
+  });
+
+  alerting.deleteComment = ca({
+    url: {
+      fmt: `${COMMENTS_BASE_API}/<%=commentId%>`,
+      req: {
+        commentId: {
+          type: 'string',
+          required: true,
+        },
+      },
+    },
+    needBody: false,
+    method: 'DELETE',
   });
 }

@@ -39,7 +39,11 @@ import ConfigureDocumentLevelQueries from '../../components/DocumentLevelMonitor
 import FindingsDashboard from '../../../Dashboard/containers/FindingsDashboard';
 import { validDocLevelGraphQueries } from '../../components/DocumentLevelMonitorQueries/utils/helpers';
 import { validateWhereFilters } from '../../components/MonitorExpressions/expressions/utils/whereHelpers';
-import { getDataSourceQueryObj, getDataSourceId } from '../../../../../public/pages/utils/helpers';
+import {
+  getDataSourceQueryObj,
+  getDataSourceId,
+  getClusterSetting,
+} from '../../../../../public/pages/utils/helpers';
 import { CROSS_CLUSTER_MONITORING_ENABLED_SETTING } from '../../components/CrossClusterConfigurations/utils/helpers';
 
 function renderEmptyMessage(message) {
@@ -181,35 +185,16 @@ class DefineMonitor extends Component {
 
   async getSettings() {
     const { httpClient } = this.props;
-    let remoteMonitoringEnabled = false;
     let canCallGetRemoteIndexes = false;
+    let remoteMonitoringEnabled = await getClusterSetting(
+      httpClient,
+      CROSS_CLUSTER_MONITORING_ENABLED_SETTING,
+      false
+    );
 
-    // Check whether remote monitoring is enabled
-    try {
-      const dataSourceQuery = getDataSourceQueryObj();
-      const response = await httpClient.get('../api/alerting/_settings', dataSourceQuery);
-      if (response.ok) {
-        const { defaults, transient, persistent } = response.resp;
-        remoteMonitoringEnabled = _.get(
-          // If present, take the 'transient' setting.
-          transient,
-          CROSS_CLUSTER_MONITORING_ENABLED_SETTING,
-          // Else take the 'persistent' setting.
-          _.get(
-            persistent,
-            CROSS_CLUSTER_MONITORING_ENABLED_SETTING,
-            // Else take the 'default' setting.
-            _.get(defaults, CROSS_CLUSTER_MONITORING_ENABLED_SETTING, false)
-          )
-        );
-
-        // Boolean settings can be returned as strings (e.g., `"true"`, and `"false"`). Constructing boolean value from the string.
-        if (typeof remoteMonitoringEnabled === 'string') {
-          remoteMonitoringEnabled = JSON.parse(remoteMonitoringEnabled);
-        }
-      }
-    } catch (e) {
-      console.log('Error while retrieving settings:', e);
+    // Boolean settings can be returned as strings (e.g., `"true"`, and `"false"`). Constructing boolean value from the string.
+    if (typeof remoteMonitoringEnabled === 'string') {
+      remoteMonitoringEnabled = JSON.parse(remoteMonitoringEnabled);
     }
 
     // Check whether the user can call GetRemoteIndexes

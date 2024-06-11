@@ -13,8 +13,6 @@ import {
   EuiIcon,
   EuiToolTip,
   EuiButtonIcon,
-  EuiFlyout,
-  EuiFlyoutHeader,
 } from '@elastic/eui';
 import ContentPanel from '../../../components/ContentPanel';
 import DashboardEmptyPrompt from '../components/DashboardEmptyPrompt';
@@ -27,8 +25,6 @@ import {
 } from '../../../utils/constants';
 import { acknowledgeAlerts, backendErrorNotification } from '../../../utils/helpers';
 import {
-  displayAcknowledgedAlertsToast,
-  filterActiveAlerts,
   getInitialSize,
   getQueryObjectFromState,
   getURLQueryParams,
@@ -41,7 +37,13 @@ import AcknowledgeAlertsModal from '../components/AcknowledgeAlertsModal';
 import { getAlertsFindingColumn } from '../components/FindingsDashboard/findingsUtils';
 import { ChainedAlertDetailsFlyout } from '../components/ChainedAlertDetailsFlyout/ChainedAlertDetailsFlyout';
 import { CLUSTER_METRICS_CROSS_CLUSTER_ALERT_TABLE_COLUMN } from '../../CreateMonitor/components/ClusterMetricsMonitor/utils/clusterMetricsMonitorConstants';
-import { getDataSourceQueryObj, isDataSourceChanged, getDataSourceId } from '../../utils/helpers';
+import {
+  getDataSourceQueryObj,
+  isDataSourceChanged,
+  getDataSourceId,
+  appendCommentsAction,
+  getIsCommentsEnabled,
+} from '../../utils/helpers';
 
 export default class Dashboard extends Component {
   constructor(props) {
@@ -72,6 +74,7 @@ export default class Dashboard extends Component {
       totalAlerts: 0,
       totalTriggers: 0,
       chainedAlert: undefined,
+      commentsEnabled: false,
     };
   }
 
@@ -93,6 +96,9 @@ export default class Dashboard extends Component {
       alertState,
       monitorIds
     );
+    getIsCommentsEnabled(this.props.httpClient).then((commentsEnabled) => {
+      this.setState({ commentsEnabled });
+    });
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -351,6 +357,7 @@ export default class Dashboard extends Component {
       sortField,
       totalAlerts,
       totalTriggers,
+      commentsEnabled,
     } = this.state;
     const {
       monitorIds,
@@ -369,19 +376,19 @@ export default class Dashboard extends Component {
     let totalItems = perAlertView ? totalAlerts : totalTriggers;
     const isBucketMonitor = monitorType === MONITOR_TYPE.BUCKET_LEVEL;
 
-    let columnType;
+    let columns;
     if (perAlertView) {
       switch (monitorType) {
         case MONITOR_TYPE.BUCKET_LEVEL:
-          columnType = insertGroupByColumn(groupBy);
+          columns = insertGroupByColumn(groupBy);
           break;
         case MONITOR_TYPE.CLUSTER_METRICS:
-          columnType = _.cloneDeep(queryColumns);
-          columnType.push(CLUSTER_METRICS_CROSS_CLUSTER_ALERT_TABLE_COLUMN);
+          columns = _.cloneDeep(queryColumns);
+          columns.push(CLUSTER_METRICS_CROSS_CLUSTER_ALERT_TABLE_COLUMN);
           break;
         case MONITOR_TYPE.DOC_LEVEL:
-          columnType = _.cloneDeep(queryColumns);
-          columnType.splice(
+          columns = _.cloneDeep(queryColumns);
+          columns.splice(
             0,
             0,
             getAlertsFindingColumn(
@@ -396,8 +403,8 @@ export default class Dashboard extends Component {
           );
           break;
         case MONITOR_TYPE.COMPOSITE_LEVEL:
-          columnType = _.cloneDeep(queryColumns);
-          columnType.push({
+          columns = _.cloneDeep(queryColumns);
+          columns.push({
             name: 'Actions',
             sortable: false,
             actions: [
@@ -419,11 +426,15 @@ export default class Dashboard extends Component {
           });
           break;
         default:
-          columnType = queryColumns;
+          columns = _.cloneDeep(queryColumns);
           break;
       }
+
+      if (commentsEnabled) {
+        columns = appendCommentsAction(columns, httpClient);
+      }
     } else {
-      columnType = alertColumns(
+      columns = alertColumns(
         history,
         httpClient,
         loadingMonitors,
@@ -556,7 +567,7 @@ export default class Dashboard extends Component {
              * $id-$version will correctly remove selected items
              * */
             itemId={getItemId}
-            columns={columnType}
+            columns={columns}
             pagination={perAlertView ? pagination : undefined}
             sorting={sorting}
             isSelectable={true}

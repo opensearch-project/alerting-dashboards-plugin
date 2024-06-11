@@ -36,7 +36,8 @@
     "@elastic/eslint-import-resolver-kibana": "link:../../packages/osd-eslint-import-resolver-opensearch-dashboards",
     "cypress": "9.5.4",
     "husky": "^3.0.0",
-    "lint-staged": "^10.2.0"
+    "lint-staged": "^10.2.0",
+    "@types/react": "^16.14.23"
   },
   "dependencies": {
     "brace": "0.11.1",
