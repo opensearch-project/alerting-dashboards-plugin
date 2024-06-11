@@ -58,7 +58,11 @@ import {
   getDataSources,
   getLocalClusterName,
 } from '../../../../pages/CreateMonitor/components/CrossClusterConfigurations/utils/helpers';
-import { getDataSourceId } from '../../../../pages/utils/helpers';
+import {
+  appendCommentsAction,
+  getDataSourceId,
+  getIsCommentsEnabled,
+} from '../../../../pages/utils/helpers';
 
 export const DEFAULT_NUM_FLYOUT_ROWS = 10;
 
@@ -93,6 +97,7 @@ export default class AlertsDashboardFlyoutComponent extends Component {
       tabContent: undefined,
       tabId: TABLE_TAB_IDS.ALERTS.id,
       totalAlerts: 0,
+      commentsEnabled: false,
     };
   }
 
@@ -110,6 +115,11 @@ export default class AlertsDashboardFlyoutComponent extends Component {
       monitorIds
     );
     this.getLocalClusterName();
+    getIsCommentsEnabled(this.props.httpClient).then((commentsEnabled) => {
+      this.setState({
+        commentsEnabled,
+      });
+    });
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -313,6 +323,7 @@ export default class AlertsDashboardFlyoutComponent extends Component {
       sortDirection,
       sortField,
       totalAlerts,
+      commentsEnabled,
     } = this.state;
 
     const detectorId = _.get(monitor, MONITOR_INPUT_DETECTOR_ID);
@@ -330,7 +341,7 @@ export default class AlertsDashboardFlyoutComponent extends Component {
       }
     };
 
-    const columnType = () => {
+    const getColumns = () => {
       let columns;
       switch (monitorType) {
         case MONITOR_TYPE.BUCKET_LEVEL:
@@ -375,7 +386,13 @@ export default class AlertsDashboardFlyoutComponent extends Component {
           columns = queryColumns;
           break;
       }
-      return removeColumns(['severity', 'trigger_name'], columns);
+      columns = removeColumns(['severity', 'trigger_name'], columns);
+
+      if (commentsEnabled) {
+        columns = appendCommentsAction(columns, httpClient);
+      }
+
+      return columns;
     };
 
     const pagination = {
@@ -452,7 +469,7 @@ export default class AlertsDashboardFlyoutComponent extends Component {
            * $id-$version will correctly remove selected items
            * */
           itemId={getItemId}
-          columns={columnType()}
+          columns={getColumns()}
           loading={loading}
           pagination={pagination}
           sorting={sorting}

@@ -10,5 +10,6 @@ import monitors from './monitors';
 import detectors from './anomalyDetector';
 import findings from './findings';
 import crossCluster from './crossCluster';
+import comments from './comments';
 
-export { alerts, destinations, opensearch, monitors, detectors, findings, crossCluster };
+export { alerts, destinations, opensearch, monitors, detectors, findings, crossCluster, comments };
