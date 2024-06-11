@@ -15,4 +15,4 @@ Compatible with OpenSearch Dashboards 2.15.0
 * Refactored code to account for notifications server features API change. ([#966](https://github.com/opensearch-project/alerting-dashboards-plugin/pull/966))
 
 ### Documentation
-* Added v2.15 release notes. ([#]())
+* Added v2.15 release notes. ([#972](https://github.com/opensearch-project/alerting-dashboards-plugin/pull/972))
