@@ -1,11 +1,14 @@
 {
   "id": "alertingDashboards",
-  "version": "2.15.0.0",
-  "opensearchDashboardsVersion": "2.15.0",
+  "version": "2.16.0.0",
+  "opensearchDashboardsVersion": "2.16.0",
   "configPath": [
     "opensearch_alerting"
   ],
-  "optionalPlugins": ["dataSource", "dataSourceManagement"],
+  "optionalPlugins": [
+    "dataSource",
+    "dataSourceManagement"
+  ],
   "requiredPlugins": [
     "uiActions",
     "dashboard",
