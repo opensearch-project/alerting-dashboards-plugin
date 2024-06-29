@@ -5,7 +5,10 @@
   "configPath": [
     "opensearch_alerting"
   ],
-  "optionalPlugins": ["dataSource", "dataSourceManagement"],
+  "optionalPlugins": [
+    "dataSource",
+    "dataSourceManagement"
+  ],
   "requiredPlugins": [
     "uiActions",
     "dashboard",
