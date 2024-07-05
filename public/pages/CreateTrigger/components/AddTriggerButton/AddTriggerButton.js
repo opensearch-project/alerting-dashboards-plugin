@@ -44,7 +44,7 @@ const AddTriggerButton = ({
           id: 'addTrigger',
           isOpen: false,
           isButton: true,
-          iconType: 'plusInCircle',
+          iconType: 'plus',
           onToggle: onClick,
           title: 'Add trigger',
         }}

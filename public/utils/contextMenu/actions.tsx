@@ -39,12 +39,12 @@ export const openContainerInFlyout = async ({
   embeddable: any;
   detectorId?: string;
 }) => {
-  
+
   if (dataSourceEnabled()) {
     const indexPattern = embeddable.vis.data.indexPattern;
     setDataSourceIdFromSavedObject(indexPattern);
   }
-  
+
   const clonedEmbeddable = await _.cloneDeep(embeddable);
   const overlayService = getOverlays();
   const openFlyout = overlayService.openFlyout;
@@ -81,7 +81,7 @@ export const getActions = () =>
       title: i18n.translate('dashboard.actions.alertingMenuItem.addAlertingMonitor.displayName', {
         defaultMessage: 'Add alerting monitor',
       }),
-      icon: 'plusInCircle' as EuiIconType,
+      icon: 'plus' as EuiIconType,
       order: 100,
       onExecute: ({ embeddable }) =>
         openContainerInFlyout({ embeddable, defaultFlyoutMode: 'create' }),
@@ -129,7 +129,7 @@ export const getAdAction = () =>
 function setDataSourceIdFromSavedObject(indexPattern: any) {
   try {
     const foundRef = indexPattern.dataSourceRef
-    const dataSourceId = foundRef ? foundRef.id : ''; 
+    const dataSourceId = foundRef ? foundRef.id : '';
     setDataSource({ dataSourceId });
   } catch (error) {
     console.error("Error fetching index pattern:", error);

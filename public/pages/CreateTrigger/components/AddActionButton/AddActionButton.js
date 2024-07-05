@@ -36,7 +36,7 @@ const AddActionButton = ({
     <EuiPanel paddingSize="none">
       <EuiButtonEmpty
         onClick={onClick}
-        iconType="plusInCircle"
+        iconType="plus"
         className="add-action-button__flyout-button"
       >
         Add notification
