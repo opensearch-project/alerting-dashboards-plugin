@@ -349,7 +349,7 @@ const ExpressionBuilder = ({
                       setUsedExpressions(expressions);
                     }}
                     color={'primary'}
-                    iconType="plus"
+                    iconType="plusInCircleFilled"
                     aria-label={'Add one more condition'}
                     data-test-subj={`condition-add-options-btn_${triggerIndex}`}
                     style={{ marginTop: '1px' }}
