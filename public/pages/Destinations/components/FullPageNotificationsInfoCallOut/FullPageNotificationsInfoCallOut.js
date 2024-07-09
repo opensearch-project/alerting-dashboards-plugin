@@ -30,7 +30,7 @@ const noNotificationsButton = (
 
 const hasNotificationsTitle = 'Destinations have become channels in Notifications';
 const hasNotificationsText = (
-  <EuiText>
+  <EuiText size="s">
     <p>
       Your destinations have been migrated as channels in Notifications, a new centralized place to
       manage your notification channels. Destinations will be deprecated going forward.&nbsp;
@@ -47,7 +47,7 @@ const FullPageNotificationsInfoCallOut = ({ hasNotificationPlugin }) => {
       View in Notifications
     </EuiButton>
   );
-  
+
   return (
     <EuiPanel>
       <EuiEmptyPrompt
@@ -57,6 +57,6 @@ const FullPageNotificationsInfoCallOut = ({ hasNotificationPlugin }) => {
       />
     </EuiPanel>
   );
-}
+};
 
 export default FullPageNotificationsInfoCallOut;

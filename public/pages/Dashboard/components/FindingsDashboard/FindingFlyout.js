@@ -126,7 +126,7 @@ export default class FindingFlyout extends Component {
         <EuiFlyoutBody>
           <EuiFlexGrid columns={2} direction={'column'} gutterSize={'m'}>
             <EuiFlexItem grow={false}>
-              <EuiText size={'m'}>
+              <EuiText size="s">
                 <strong>Document ID</strong>
                 <p>{docId}</p>
               </EuiText>
@@ -135,7 +135,7 @@ export default class FindingFlyout extends Component {
             {/*TODO FIXME: ExecuteMonitor API currently only returns a list of query names/IDs and the relevant docIds */}
             {!_.isEmpty(findingId) && (
               <EuiFlexItem grow={false}>
-                <EuiText size={'m'}>
+                <EuiText size="s">
                   <strong>Finding ID</strong>
                   <p>{findingId}</p>
                 </EuiText>
@@ -143,7 +143,7 @@ export default class FindingFlyout extends Component {
             )}
 
             <EuiFlexItem grow={false}>
-              <EuiText size={'m'}>
+              <EuiText size="s">
                 <strong>Index</strong>
                 <p>{index}</p>
               </EuiText>
@@ -152,14 +152,14 @@ export default class FindingFlyout extends Component {
 
           <EuiHorizontalRule margin={'l'} />
 
-          <EuiText size={'m'}>
+          <EuiText size="s">
             <strong>Queries</strong>
             {queriesDisplay}
           </EuiText>
 
           <EuiHorizontalRule margin={'l'} />
 
-          <EuiText size={'m'}>
+          <EuiText size="s">
             <strong>Document</strong>
           </EuiText>
           <EuiCodeBlock

@@ -149,7 +149,7 @@ function CreateNew({ embeddable, flyoutMode, formikProps, history, setFlyout, de
           title: values.name,
           subTitle: values.frequency === 'interval' && (
             <>
-              <EuiText size="m" className="create-monitor__frequency">
+              <EuiText size="s" className="create-monitor__frequency">
                 <p>
                   Runs every {values.period.interval} <span>{unitToLabel[values.period.unit]}</span>
                 </p>

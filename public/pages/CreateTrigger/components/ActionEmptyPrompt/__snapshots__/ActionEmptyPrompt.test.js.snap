@@ -14,7 +14,9 @@ exports[`ActionEmptyPrompt renders 1`] = `
     </EuiButton>
   }
   body={
-    <EuiText>
+    <EuiText
+      size="s"
+    >
       <p>
         There are no existing channels. Add a channel to create an action.
       </p>
