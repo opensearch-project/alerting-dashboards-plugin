@@ -10,7 +10,7 @@ import {
   EuiFlexGroup,
   EuiFlexItem,
   EuiPagination,
-  EuiSelect,
+  EuiCompressedSelect,
 } from '@elastic/eui';
 import { DESTINATION_OPTIONS } from '../../../utils/constants';
 
@@ -55,7 +55,7 @@ const DestinationsControls = ({
         />
       </EuiFlexItem>
       <EuiFlexItem grow={false}>
-        <EuiSelect options={filterTypes} value={type} onChange={onTypeChange} />
+        <EuiCompressedSelect options={filterTypes} value={type} onChange={onTypeChange} />
       </EuiFlexItem>
       <EuiFlexItem grow={false} style={{ justifyContent: 'center' }}>
         <EuiPagination pageCount={pageCount} activePage={activePage} onPageClick={onPageClick} />

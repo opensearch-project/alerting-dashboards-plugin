@@ -8,7 +8,7 @@ import _ from 'lodash';
 import {
   EuiCompressedFieldSearch,
   EuiFlexGroup,
-  EuiSelect,
+  EuiCompressedSelect,
   EuiFlexItem,
   EuiPagination,
 } from '@elastic/eui';
@@ -67,12 +67,12 @@ const DashboardControls = ({
 
       {isAlertsFlyout ? null : (
         <EuiFlexItem grow={false}>
-          <EuiSelect options={severityOptions} value={severity} onChange={onSeverityChange} />
+          <EuiCompressedSelect options={severityOptions} value={severity} onChange={onSeverityChange} />
         </EuiFlexItem>
       )}
 
       <EuiFlexItem grow={false}>
-        <EuiSelect
+        <EuiCompressedSelect
           options={supportedStateOptions}
           value={state}
           onChange={onStateChange}

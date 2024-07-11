@@ -9,7 +9,7 @@ import {
   EuiFlexGroup,
   EuiFlexItem,
   EuiPagination,
-  EuiSelect,
+  EuiCompressedSelect,
 } from '@elastic/eui';
 
 const MONITOR_STATES = {
@@ -43,7 +43,7 @@ const MonitorControls = ({
       />
     </EuiFlexItem>
     <EuiFlexItem grow={false}>
-      <EuiSelect options={states} value={state} onChange={onStateChange} />
+      <EuiCompressedSelect options={states} value={state} onChange={onStateChange} />
     </EuiFlexItem>
     <EuiFlexItem grow={false} style={{ justifyContent: 'center' }}>
       <EuiPagination pageCount={pageCount} activePage={activePage} onPageClick={onPageClick} />

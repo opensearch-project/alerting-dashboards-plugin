@@ -11,7 +11,7 @@ import {
   EuiFlexGroup,
   EuiFlexItem,
   EuiCompressedFormRow,
-  EuiSelect,
+  EuiCompressedSelect,
 } from '@elastic/eui';
 import { AND_OR_CONDITION_OPTIONS, THRESHOLD_ENUM_OPTIONS } from '../../utils/constants';
 
@@ -58,7 +58,7 @@ class BucketLevelTriggerExpression extends Component {
                   isInvalid={touched.andOrCondition && !!errors.andOrCondition}
                   error={errors.andOrCondition}
                 >
-                  <EuiSelect options={AND_OR_CONDITION_OPTIONS} {...rest} />
+                  <EuiCompressedSelect options={AND_OR_CONDITION_OPTIONS} {...rest} />
                 </EuiCompressedFormRow>
               )}
             </Field>
@@ -81,7 +81,7 @@ class BucketLevelTriggerExpression extends Component {
                 isInvalid={touched.queryMetric && !!errors.queryMetric}
                 error={errors.queryMetric}
               >
-                <EuiSelect fullWidth={true} options={queryMetrics} {...rest} />
+                <EuiCompressedSelect fullWidth={true} options={queryMetrics} {...rest} />
               </EuiCompressedFormRow>
             )}
           </Field>
@@ -96,7 +96,7 @@ class BucketLevelTriggerExpression extends Component {
                 isInvalid={touched.thresholdEnum && !!errors.thresholdEnum}
                 error={errors.thresholdEnum}
               >
-                <EuiSelect options={THRESHOLD_ENUM_OPTIONS} {...rest} />
+                <EuiCompressedSelect options={THRESHOLD_ENUM_OPTIONS} {...rest} />
               </EuiCompressedFormRow>
             )}
           </Field>

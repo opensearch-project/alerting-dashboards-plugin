@@ -10,7 +10,7 @@ import {
   EuiFlexGroup,
   EuiFlexItem,
   EuiCompressedFormRow,
-  EuiSelect,
+  EuiCompressedSelect,
 } from '@elastic/eui';
 import { THRESHOLD_ENUM_OPTIONS } from '../../utils/constants';
 
@@ -36,7 +36,7 @@ class TriggerExpressions extends Component {
                   isInvalid={touched.thresholdEnum && !!errors.thresholdEnum}
                   error={errors.thresholdEnum}
                 >
-                  <EuiSelect
+                  <EuiCompressedSelect
                     options={THRESHOLD_ENUM_OPTIONS}
                     data-test-subj={`${keyFieldName}_conditionEnumField`}
                     {...rest}
