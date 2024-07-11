@@ -7,7 +7,7 @@ import React, { Fragment, useState, useEffect, useCallback } from 'react';
 import * as _ from 'lodash';
 import {
   EuiSmallButton,
-  EuiButtonIcon,
+  EuiSmallButtonIcon,
   EuiFlexGroup,
   EuiFlexItem,
   EuiSpacer,
@@ -246,7 +246,7 @@ const MonitorsList = ({ values, httpClient }) => {
                     }}
                   >
                     <EuiToolTip content={'View monitor'}>
-                      <EuiButtonIcon
+                      <EuiSmallButtonIcon
                         aria-label={'View monitor'}
                         iconType={'inspect'}
                         color="text"
@@ -270,7 +270,7 @@ const MonitorsList = ({ values, httpClient }) => {
                     }}
                   >
                     <EuiToolTip content={'Remove monitor'}>
-                      <EuiButtonIcon
+                      <EuiSmallButtonIcon
                         aria-label={'Delete selection'}
                         iconType={'trash'}
                         color="danger"

@@ -15,7 +15,7 @@ import {
   EuiFlexGroup,
   EuiFlexItem,
   EuiText,
-  EuiButtonIcon,
+  EuiSmallButtonIcon,
   EuiButtonEmpty,
   EuiModal,
   EuiModalBody,
@@ -194,7 +194,7 @@ const Action = ({
                 id: name,
                 title: name,
                 extraAction: (
-                  <EuiButtonIcon
+                  <EuiSmallButtonIcon
                     iconType="trash"
                     color="text"
                     aria-label={`Delete Notification`}

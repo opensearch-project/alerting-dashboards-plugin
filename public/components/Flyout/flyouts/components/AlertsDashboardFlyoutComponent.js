@@ -18,7 +18,7 @@ import {
   EuiTabs,
   EuiText,
   EuiToolTip,
-  EuiButtonIcon,
+  EuiSmallButtonIcon,
 } from '@elastic/eui';
 import { getTime } from '../../../../pages/MonitorDetails/components/MonitorOverview/utils/getOverviewStats';
 import { PLUGIN_NAME } from '../../../../../utils/constants';
@@ -368,7 +368,7 @@ export default class AlertsDashboardFlyoutComponent extends Component {
               {
                 render: (alert) => (
                   <EuiToolTip content={'View details'}>
-                    <EuiButtonIcon
+                    <EuiSmallButtonIcon
                       aria-label={'View details'}
                       data-test-subj={`view-details-icon`}
                       iconType={'inspect'}

@@ -12,7 +12,7 @@ import {
   EuiHorizontalRule,
   EuiIcon,
   EuiToolTip,
-  EuiButtonIcon,
+  EuiSmallButtonIcon,
 } from '@elastic/eui';
 import ContentPanel from '../../../components/ContentPanel';
 import DashboardEmptyPrompt from '../components/DashboardEmptyPrompt';
@@ -411,7 +411,7 @@ export default class Dashboard extends Component {
               {
                 render: (alert) => (
                   <EuiToolTip content={'View details'}>
-                    <EuiButtonIcon
+                    <EuiSmallButtonIcon
                       aria-label={'View details'}
                       data-test-subj={`view-details-icon`}
                       iconType={'inspect'}
