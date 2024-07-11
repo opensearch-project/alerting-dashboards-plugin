@@ -10,7 +10,7 @@ import {
   EuiFieldNumber,
   EuiFlexGroup,
   EuiFlexItem,
-  EuiFormRow,
+  EuiCompressedFormRow,
   EuiSelect,
 } from '@elastic/eui';
 import { AND_OR_CONDITION_OPTIONS, THRESHOLD_ENUM_OPTIONS } from '../../utils/constants';
@@ -54,12 +54,12 @@ class BucketLevelTriggerExpression extends Component {
           <EuiFlexItem grow={false} style={{ width: `${AND_OR_FIELD_WIDTH}px` }}>
             <Field name={andOrConditionFieldName}>
               {({ field: { onBlur, ...rest }, form: { touched, errors } }) => (
-                <EuiFormRow
+                <EuiCompressedFormRow
                   isInvalid={touched.andOrCondition && !!errors.andOrCondition}
                   error={errors.andOrCondition}
                 >
                   <EuiSelect options={AND_OR_CONDITION_OPTIONS} {...rest} />
-                </EuiFormRow>
+                </EuiCompressedFormRow>
               )}
             </Field>
           </EuiFlexItem>
@@ -75,14 +75,14 @@ class BucketLevelTriggerExpression extends Component {
         >
           <Field name={queryMetricFieldName} fullWidth={true}>
             {({ field: { onBlur, ...rest }, form: { touched, errors } }) => (
-              <EuiFormRow
+              <EuiCompressedFormRow
                 fullWidth={true}
                 label={isFirstCondition ? 'Metric' : null}
                 isInvalid={touched.queryMetric && !!errors.queryMetric}
                 error={errors.queryMetric}
               >
                 <EuiSelect fullWidth={true} options={queryMetrics} {...rest} />
-              </EuiFormRow>
+              </EuiCompressedFormRow>
             )}
           </Field>
         </EuiFlexItem>
@@ -90,14 +90,14 @@ class BucketLevelTriggerExpression extends Component {
         <EuiFlexItem grow={false} style={{ width: `${THRESHOLD_FIELD_WIDTH}px` }}>
           <Field name={enumFieldName} fullWidth={true}>
             {({ field: { onBlur, ...rest }, form: { touched, errors } }) => (
-              <EuiFormRow
+              <EuiCompressedFormRow
                 fullWidth={true}
                 label={isFirstCondition ? 'Threshold' : null}
                 isInvalid={touched.thresholdEnum && !!errors.thresholdEnum}
                 error={errors.thresholdEnum}
               >
                 <EuiSelect options={THRESHOLD_ENUM_OPTIONS} {...rest} />
-              </EuiFormRow>
+              </EuiCompressedFormRow>
             )}
           </Field>
         </EuiFlexItem>
@@ -105,13 +105,13 @@ class BucketLevelTriggerExpression extends Component {
         <EuiFlexItem grow={false} style={{ width: `${VALUE_FIELD_WIDTH}px` }}>
           <Field name={valueFieldName}>
             {({ field, form: { touched, errors } }) => (
-              <EuiFormRow
+              <EuiCompressedFormRow
                 label={isFirstCondition ? 'Value' : null}
                 isInvalid={touched.thresholdValue && !!errors.thresholdValue}
                 error={errors.thresholdValue}
               >
                 <EuiFieldNumber {...field} />
-              </EuiFormRow>
+              </EuiCompressedFormRow>
             )}
           </Field>
         </EuiFlexItem>

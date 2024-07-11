@@ -10,7 +10,7 @@ import {
   EuiCheckbox,
   EuiFlexGroup,
   EuiFlexItem,
-  EuiFormRow,
+  EuiCompressedFormRow,
   EuiLink,
   EuiSpacer,
   EuiText,
@@ -258,7 +258,7 @@ export default function Message(
         }}
       />
 
-      <EuiFormRow style={{ maxWidth: '100%' }}>
+      <EuiCompressedFormRow style={{ maxWidth: '100%' }}>
         {renderSendTestMessageButton(
           index,
           sendTestMessage,
@@ -267,10 +267,10 @@ export default function Message(
           onDisplayPreviewChange,
           fieldPath
         )}
-      </EuiFormRow>
+      </EuiCompressedFormRow>
 
       {displayPreview ? (
-        <EuiFormRow label="Message preview" style={{ maxWidth: '100%' }}>
+        <EuiCompressedFormRow label="Message preview" style={{ maxWidth: '100%' }}>
           <EuiTextArea
             placeholder="Preview of mustache template"
             fullWidth
@@ -278,7 +278,7 @@ export default function Message(
             readOnly
             className="read-only-text-area"
           />
-        </EuiFormRow>
+        </EuiCompressedFormRow>
       ) : null}
 
       <EuiSpacer size="m" />
@@ -290,7 +290,7 @@ export default function Message(
       <EuiSpacer size="m" />
 
       {editableActionExecutionPolicy ? (
-        <EuiFormRow
+        <EuiCompressedFormRow
           label={<span style={{ color: '#343741' }}>Perform action</span>}
           style={{ maxWidth: '100%' }}
         >
@@ -324,7 +324,7 @@ export default function Message(
 
             {actionExecutionScopeId === NOTIFY_OPTIONS_VALUES.PER_ALERT &&
             displayActionableAlertsOptions ? (
-              <EuiFormRow style={{ maxWidth: '100%' }}>
+              <EuiCompressedFormRow style={{ maxWidth: '100%' }}>
                 <EuiFlexGroup
                   alignItems="center"
                   style={{
@@ -358,10 +358,10 @@ export default function Message(
                     }}
                   />
                 </EuiFlexGroup>
-              </EuiFormRow>
+              </EuiCompressedFormRow>
             ) : null}
           </EuiFlexGroup>
-        </EuiFormRow>
+        </EuiCompressedFormRow>
       ) : (
         <div>
           <OverviewStat header={'Perform action'} value={'Per monitor execution'} />
@@ -370,7 +370,10 @@ export default function Message(
       )}
 
       {displayThrottlingSettings ? (
-        <EuiFormRow label={'Throttling'} style={{ paddingBottom: '10px', maxWidth: '100%' }}>
+        <EuiCompressedFormRow
+          label={'Throttling'}
+          style={{ paddingBottom: '10px', maxWidth: '100%' }}
+        >
           <EuiFlexGroup direction="column">
             <EuiFlexItem grow={false} style={{ marginBottom: '0px' }}>
               <FormikCheckbox
@@ -383,7 +386,7 @@ export default function Message(
               style={{ margin: '0px', display: _.get(action, `throttle_enabled`) ? '' : 'none' }}
             >
               <EuiFlexItem grow={false} style={{ marginRight: '0px' }}>
-                <EuiFormRow label="Throttle actions to only trigger every">
+                <EuiCompressedFormRow label="Throttle actions to only trigger every">
                   <FormikFieldNumber
                     name={`${actionPath}.throttle.value`}
                     fieldProps={{ validate: validateActionThrottle(action) }}
@@ -411,11 +414,11 @@ export default function Message(
                       disabled: !_.get(action, `throttle_enabled`) ? 'disabled' : '',
                     }}
                   />
-                </EuiFormRow>
+                </EuiCompressedFormRow>
               </EuiFlexItem>
             </EuiFlexGroup>
           </EuiFlexGroup>
-        </EuiFormRow>
+        </EuiCompressedFormRow>
       ) : null}
     </div>
   );

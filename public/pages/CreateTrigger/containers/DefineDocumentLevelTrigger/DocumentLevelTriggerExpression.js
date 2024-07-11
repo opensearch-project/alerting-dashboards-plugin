@@ -5,7 +5,7 @@
 
 import React, { Component } from 'react';
 import _ from 'lodash';
-import { EuiSmallButton, EuiFlexGroup, EuiFlexItem, EuiFormRow } from '@elastic/eui';
+import { EuiSmallButton, EuiFlexGroup, EuiFlexItem, EuiCompressedFormRow } from '@elastic/eui';
 import { FormikComboBox, FormikSelect } from '../../../../components/FormControls';
 import { AND_OR_CONDITION_OPTIONS } from '../../utils/constants';
 import { hasError, isInvalid, required } from '../../../../utils/validate';
@@ -87,7 +87,7 @@ class DocumentLevelTriggerExpression extends Component {
         {/* Do not display this button for the first condition */}
         {!isFirstCondition && (
           <EuiFlexItem grow={false}>
-            <EuiFormRow hasEmptyLabelSpace={true}>
+            <EuiCompressedFormRow hasEmptyLabelSpace={true}>
               <EuiSmallButton
                 color={'danger'}
                 onClick={() => arrayHelpers.remove(index)}
@@ -95,7 +95,7 @@ class DocumentLevelTriggerExpression extends Component {
               >
                 Remove condition
               </EuiSmallButton>
-            </EuiFormRow>
+            </EuiCompressedFormRow>
           </EuiFlexItem>
         )}
       </EuiFlexGroup>

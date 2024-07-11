@@ -6,7 +6,7 @@
 import React, { Fragment } from 'react';
 import { Field } from 'formik';
 import _ from 'lodash';
-import { EuiFormRow, EuiFlexGroup, EuiFlexItem, EuiCheckbox } from '@elastic/eui';
+import { EuiCompressedFormRow, EuiFlexGroup, EuiFlexItem, EuiCheckbox } from '@elastic/eui';
 import Daily from './Daily';
 
 const days = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'];
@@ -35,7 +35,7 @@ const Weekly = () => (
   <Fragment>
     <Field name="weekly" validate={validate}>
       {({ field: { value }, form: { touched, errors, setFieldValue, setFieldTouched } }) => (
-        <EuiFormRow
+        <EuiCompressedFormRow
           label="Run every"
           isInvalid={touched.weekly && !!errors.weekly}
           error={errors.weekly}
@@ -44,7 +44,7 @@ const Weekly = () => (
           <EuiFlexGroup alignItems="center">
             {days.map((day) => checkboxFlexItem(day, value[day], setFieldValue, setFieldTouched))}
           </EuiFlexGroup>
-        </EuiFormRow>
+        </EuiCompressedFormRow>
       )}
     </Field>
     <Daily />

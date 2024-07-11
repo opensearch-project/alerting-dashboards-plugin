@@ -5,7 +5,13 @@
 
 import React, { Component } from 'react';
 import { Field } from 'formik';
-import { EuiFieldNumber, EuiFlexGroup, EuiFlexItem, EuiFormRow, EuiSelect } from '@elastic/eui';
+import {
+  EuiFieldNumber,
+  EuiFlexGroup,
+  EuiFlexItem,
+  EuiCompressedFormRow,
+  EuiSelect,
+} from '@elastic/eui';
 import { THRESHOLD_ENUM_OPTIONS } from '../../utils/constants';
 
 export const Expressions = { THRESHOLD: 'THRESHOLD' };
@@ -18,12 +24,15 @@ class TriggerExpressions extends Component {
   render() {
     const { label, keyFieldName, valueFieldName, flyoutMode } = this.props;
     return (
-      <EuiFormRow label={label} style={flyoutMode ? { maxWidth: '100%' } : { width: '390px' }}>
+      <EuiCompressedFormRow
+        label={label}
+        style={flyoutMode ? { maxWidth: '100%' } : { width: '390px' }}
+      >
         <EuiFlexGroup alignItems={'flexStart'} gutterSize={'m'}>
           <EuiFlexItem grow={1}>
             <Field name={keyFieldName}>
               {({ field: { onBlur, ...rest }, form: { touched, errors } }) => (
-                <EuiFormRow
+                <EuiCompressedFormRow
                   isInvalid={touched.thresholdEnum && !!errors.thresholdEnum}
                   error={errors.thresholdEnum}
                 >
@@ -32,7 +41,7 @@ class TriggerExpressions extends Component {
                     data-test-subj={`${keyFieldName}_conditionEnumField`}
                     {...rest}
                   />
-                </EuiFormRow>
+                </EuiCompressedFormRow>
               )}
             </Field>
           </EuiFlexItem>
@@ -40,7 +49,7 @@ class TriggerExpressions extends Component {
           <EuiFlexItem grow={1}>
             <Field name={valueFieldName}>
               {({ field, form: { touched, errors } }) => (
-                <EuiFormRow
+                <EuiCompressedFormRow
                   isInvalid={touched.thresholdValue && !!errors.thresholdValue}
                   error={errors.thresholdValue}
                 >
@@ -48,12 +57,12 @@ class TriggerExpressions extends Component {
                     data-test-subj={`${valueFieldName}_conditionValueField`}
                     {...field}
                   />
-                </EuiFormRow>
+                </EuiCompressedFormRow>
               )}
             </Field>
           </EuiFlexItem>
         </EuiFlexGroup>
-      </EuiFormRow>
+      </EuiCompressedFormRow>
     );
   }
 }

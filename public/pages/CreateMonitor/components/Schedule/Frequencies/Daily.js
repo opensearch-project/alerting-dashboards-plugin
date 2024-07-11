@@ -6,7 +6,7 @@
 import React from 'react';
 import { Field } from 'formik';
 import moment from 'moment';
-import { EuiFormRow, EuiDatePicker, EuiFlexGroup, EuiFlexItem } from '@elastic/eui';
+import { EuiCompressedFormRow, EuiDatePicker, EuiFlexGroup, EuiFlexItem } from '@elastic/eui';
 import TimezoneComboBox from './TimezoneComboBox';
 
 const Daily = () => (
@@ -17,7 +17,7 @@ const Daily = () => (
           field: { value, onChange, onBlur, ...rest },
           form: { touched, errors, setFieldValue },
         }) => (
-          <EuiFormRow label="Around" style={{ marginTop: '0px' }}>
+          <EuiCompressedFormRow label="Around" style={{ marginTop: '0px' }}>
             <EuiDatePicker
               showTimeSelect
               showTimeSelectOnly
@@ -29,7 +29,7 @@ const Daily = () => (
               timeIntervals={60}
               {...rest}
             />
-          </EuiFormRow>
+          </EuiCompressedFormRow>
         )}
       </Field>
     </EuiFlexItem>

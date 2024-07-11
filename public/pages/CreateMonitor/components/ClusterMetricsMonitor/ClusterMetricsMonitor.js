@@ -12,7 +12,7 @@ import {
   EuiCodeEditor,
   EuiFlexGroup,
   EuiFlexItem,
-  EuiFormRow,
+  EuiCompressedFormRow,
   EuiLink,
   EuiModal,
   EuiModalBody,
@@ -276,7 +276,7 @@ const ClusterMetricsMonitor = ({
 
       <EuiSpacer size={'l'} />
 
-      <EuiFormRow label={'Response'} fullWidth={true}>
+      <EuiCompressedFormRow label={'Response'} fullWidth={true}>
         <EuiCodeEditor
           mode={'json'}
           theme={isDarkMode ? 'sense-dark' : 'github'}
@@ -286,7 +286,7 @@ const ClusterMetricsMonitor = ({
           readOnly
           data-test-subj={'clusterMetricsRunResponseBox'}
         />
-      </EuiFormRow>
+      </EuiCompressedFormRow>
     </div>
   );
 };
