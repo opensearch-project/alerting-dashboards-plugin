@@ -5,7 +5,7 @@
 
 import React, { useState } from 'react';
 import {
-  EuiButton,
+  EuiSmallButton,
   EuiButtonEmpty,
   EuiModal,
   EuiModalBody,
@@ -39,7 +39,7 @@ export const ConfirmUnlinkDetectorModal = (props) => {
               Cancel
             </EuiButtonEmpty>
           )}
-          <EuiButton
+          <EuiSmallButton
             data-test-subj="confirmButton"
             color="primary"
             fill
@@ -50,7 +50,7 @@ export const ConfirmUnlinkDetectorModal = (props) => {
             }}
           >
             {'Remove association'}
-          </EuiButton>
+          </EuiSmallButton>
         </EuiModalFooter>
       </EuiModal>
     </EuiOverlayMask>

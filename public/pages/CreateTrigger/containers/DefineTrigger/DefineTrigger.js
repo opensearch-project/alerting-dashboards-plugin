@@ -8,7 +8,7 @@ import PropTypes from 'prop-types';
 import _ from 'lodash';
 import {
   EuiAccordion,
-  EuiButton,
+  EuiSmallButton,
   EuiCallOut,
   EuiSpacer,
   EuiText,
@@ -272,7 +272,7 @@ class DefineTrigger extends Component {
         }
         initialIsOpen={edit ? false : triggerIndex === 0}
         extraAction={
-          <EuiButton
+          <EuiSmallButton
             color={'danger'}
             onClick={() => {
               triggerArrayHelpers.remove(triggerIndex);
@@ -280,7 +280,7 @@ class DefineTrigger extends Component {
             size={'s'}
           >
             Remove trigger
-          </EuiButton>
+          </EuiSmallButton>
         }
         style={{ paddingBottom: '15px', paddingTop: '10px' }}
       >

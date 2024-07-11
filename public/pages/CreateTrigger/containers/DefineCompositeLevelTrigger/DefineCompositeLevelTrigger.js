@@ -6,7 +6,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
-import { EuiSpacer, EuiTitle, EuiAccordion, EuiButton } from '@elastic/eui';
+import { EuiSpacer, EuiTitle, EuiAccordion, EuiSmallButton } from '@elastic/eui';
 import { FormikFieldText, FormikSelect } from '../../../../components/FormControls';
 import { hasError, isInvalid, required } from '../../../../utils/validate';
 import { DEFAULT_TRIGGER_NAME, SEVERITY_OPTIONS } from '../../utils/constants';
@@ -83,7 +83,7 @@ class DefineCompositeLevelTrigger extends Component {
         }
         initialIsOpen={edit ? false : triggerIndex === 0}
         extraAction={
-          <EuiButton
+          <EuiSmallButton
             color={'danger'}
             onClick={() => {
               triggerArrayHelpers.remove(triggerIndex);
@@ -91,7 +91,7 @@ class DefineCompositeLevelTrigger extends Component {
             size={'s'}
           >
             Remove trigger
-          </EuiButton>
+          </EuiSmallButton>
         }
         style={{ paddingBottom: '15px', paddingTop: '10px' }}
       >

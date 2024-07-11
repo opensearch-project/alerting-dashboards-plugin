@@ -8,7 +8,7 @@ import _ from 'lodash';
 import moment from 'moment-timezone';
 import { Formik, FieldArray } from 'formik';
 import {
-  EuiButton,
+  EuiSmallButton,
   EuiButtonEmpty,
   EuiCallOut,
   EuiFlexGroup,
@@ -375,9 +375,9 @@ export default class CreateTrigger extends Component {
                   <EuiButtonEmpty onClick={onCloseTrigger}>Cancel</EuiButtonEmpty>
                 </EuiFlexItem>
                 <EuiFlexItem grow={false}>
-                  <EuiButton onClick={handleSubmit} isLoading={isSubmitting} fill>
+                  <EuiSmallButton onClick={handleSubmit} isLoading={isSubmitting} fill>
                     {edit ? 'Update' : 'Create'}
-                  </EuiButton>
+                  </EuiSmallButton>
                 </EuiFlexItem>
               </EuiFlexGroup>
               <SubmitErrorHandler

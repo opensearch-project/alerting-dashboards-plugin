@@ -6,7 +6,7 @@
 import React, { Component } from 'react';
 import { Field } from 'formik';
 import {
-  EuiButton,
+  EuiSmallButton,
   EuiFieldNumber,
   EuiFlexGroup,
   EuiFlexItem,
@@ -117,14 +117,14 @@ class BucketLevelTriggerExpression extends Component {
         </EuiFlexItem>
         {!isFirstCondition ? (
           <EuiFlexItem grow={false}>
-            <EuiButton
+            <EuiSmallButton
               color={'danger'}
               onClick={() => {
                 arrayHelpers.remove(index);
               }}
             >
               Remove condition
-            </EuiButton>
+            </EuiSmallButton>
           </EuiFlexItem>
         ) : null}
       </EuiFlexGroup>

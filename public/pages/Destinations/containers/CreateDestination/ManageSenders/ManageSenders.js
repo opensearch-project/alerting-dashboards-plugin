@@ -7,7 +7,7 @@ import React from 'react';
 import _ from 'lodash';
 import { Formik, FieldArray } from 'formik';
 import {
-  EuiButton,
+  EuiSmallButton,
   EuiButtonEmpty,
   EuiFlexGroup,
   EuiFlexItem,

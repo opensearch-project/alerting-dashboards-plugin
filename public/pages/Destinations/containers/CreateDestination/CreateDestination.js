@@ -12,7 +12,7 @@ import {
   EuiTitle,
   EuiFlexGroup,
   EuiFlexItem,
-  EuiButton,
+  EuiSmallButton,
   EuiButtonEmpty,
 } from '@elastic/eui';
 import ContentPanel from '../../../../components/ContentPanel';

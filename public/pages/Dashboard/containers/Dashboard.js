@@ -8,7 +8,7 @@ import _ from 'lodash';
 import queryString from 'query-string';
 import {
   EuiBasicTable,
-  EuiButton,
+  EuiSmallButton,
   EuiHorizontalRule,
   EuiIcon,
   EuiToolTip,
@@ -476,19 +476,19 @@ export default class Dashboard extends Component {
     const actions = () => {
       // The acknowledge button is disabled when viewing by per alerts, and no item selected or per trigger view and item selected is not 1.
       const actions = [
-        <EuiButton
+        <EuiSmallButton
           onClick={perAlertView ? this.acknowledgeAlert : this.openModal}
           disabled={perAlertView ? !selectedItems.length : selectedItems.length !== 1}
           data-test-subj={'acknowledgeAlertsButton'}
         >
           Acknowledge
-        </EuiButton>,
+        </EuiSmallButton>,
       ];
 
       if (!perAlertView) {
         const alert = selectedItems[0];
         actions.unshift(
-          <EuiButton
+          <EuiSmallButton
             onClick={() => {
               this.openFlyout({
                 ...alert,
@@ -506,18 +506,18 @@ export default class Dashboard extends Component {
             disabled={selectedItems.length !== 1}
           >
             View alert details
-          </EuiButton>
+          </EuiSmallButton>
         );
       }
 
       if (detectorIds.length) {
         actions.unshift(
-          <EuiButton
+          <EuiSmallButton
             href={`${OPENSEARCH_DASHBOARDS_AD_PLUGIN}#/detectors/${detectorIds[0]}`}
             target="_blank"
           >
             View detector <EuiIcon type="popout" />
-          </EuiButton>
+          </EuiSmallButton>
         );
       }
       return actions;

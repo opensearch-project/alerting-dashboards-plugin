@@ -6,7 +6,7 @@
 import React, { Fragment } from 'react';
 import _ from 'lodash';
 import {
-  EuiButton,
+  EuiSmallButton,
   EuiCallOut,
   EuiFlexGroup,
   EuiFlexItem,
@@ -81,13 +81,13 @@ export const getPerformanceModal = ({ edit, onClose, onSubmit, values }) => {
       </EuiModalBody>
 
       <EuiModalFooter>
-        <EuiButton fill={false} onClick={onSubmit}>
+        <EuiSmallButton fill={false} onClick={onSubmit}>
           {edit ? 'Update' : 'Create'} anyway
-        </EuiButton>
+        </EuiSmallButton>
 
-        <EuiButton fill={true} onClick={onClose}>
+        <EuiSmallButton fill={true} onClick={onClose}>
           Reconfigure
-        </EuiButton>
+        </EuiSmallButton>
       </EuiModalFooter>
     </EuiModal>
   );

@@ -12,7 +12,7 @@ import {
   EuiFlyoutFooter,
   EuiTitle,
   EuiSpacer,
-  EuiButton,
+  EuiSmallButton,
   EuiButtonEmpty,
   EuiFormFieldset,
   EuiCheckableCard,
@@ -228,14 +228,14 @@ function AddAlertingMonitor({
                     <EuiButtonEmpty onClick={closeFlyout}>Cancel</EuiButtonEmpty>
                   </EuiFlexItem>
                   <EuiFlexItem grow={false}>
-                    <EuiButton
+                    <EuiSmallButton
                       onClick={() => onSubmit({ handleSubmit, validateForm })}
                       fill
                       isLoading={isLoading}
                       disabled={!isAssociateAllowed}
                     >
                       {flyoutMode === 'existing' ? 'Associate' : 'Create'} monitor
-                    </EuiButton>
+                    </EuiSmallButton>
                   </EuiFlexItem>
                 </EuiFlexGroup>
               </EuiFlyoutFooter>

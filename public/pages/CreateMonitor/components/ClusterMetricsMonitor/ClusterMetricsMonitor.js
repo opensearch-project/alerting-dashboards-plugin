@@ -6,6 +6,7 @@
 import React, { useState } from 'react';
 import _ from 'lodash';
 import {
+  EuiSmallButton,
   EuiButton,
   EuiButtonEmpty,
   EuiCodeEditor,
@@ -82,7 +83,7 @@ const renderModal = (closeModal, prevApiType, selectedApiType, form) => {
             </EuiFlexItem>
 
             <EuiFlexItem grow={false}>
-              <EuiButton
+              <EuiSmallButton
                 color={'danger'}
                 fill={true}
                 fullWidth={false}
@@ -90,7 +91,7 @@ const renderModal = (closeModal, prevApiType, selectedApiType, form) => {
                 data-test-subj={'clusterMetricsClearTriggersModalClearButton'}
               >
                 Clear
-              </EuiButton>
+              </EuiSmallButton>
             </EuiFlexItem>
           </EuiFlexGroup>
         </EuiModalFooter>

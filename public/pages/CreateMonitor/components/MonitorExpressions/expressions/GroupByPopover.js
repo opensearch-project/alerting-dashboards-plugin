@@ -7,7 +7,7 @@ import React from 'react';
 
 import {
   EuiText,
-  EuiButton,
+  EuiSmallButton,
   EuiButtonEmpty,
   EuiFlexGroup,
   EuiFlexItem,
@@ -77,9 +77,9 @@ export default function GroupByPopover(
               <EuiButtonEmpty onClick={closePopover}>Cancel</EuiButtonEmpty>
             </EuiFlexItem>
             <EuiFlexItem grow={false}>
-              <EuiButton fill onClick={closePopover}>
+              <EuiSmallButton fill onClick={closePopover}>
                 Save
-              </EuiButton>
+              </EuiSmallButton>
             </EuiFlexItem>
           </EuiFlexGroup>
         </>

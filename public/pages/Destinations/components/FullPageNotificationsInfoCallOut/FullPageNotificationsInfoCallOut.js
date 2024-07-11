@@ -4,7 +4,7 @@
  */
 
 import React from 'react';
-import { EuiButton, EuiEmptyPrompt, EuiLink, EuiPanel, EuiText } from '@elastic/eui';
+import { EuiSmallButton, EuiEmptyPrompt, EuiLink, EuiPanel, EuiText } from '@elastic/eui';
 import { NOTIFICATIONS_LEARN_MORE_HREF } from '../../utils/constants';
 import { getManageChannelsUrl } from '../../../../utils/helpers';
 
@@ -16,7 +16,7 @@ const noNotificationsText = (
   </EuiText>
 );
 const noNotificationsButton = (
-  <EuiButton
+  <EuiSmallButton
     external
     fill
     href={NOTIFICATIONS_LEARN_MORE_HREF}
@@ -25,7 +25,7 @@ const noNotificationsButton = (
     iconType={'popout'}
   >
     View install instructions
-  </EuiButton>
+  </EuiSmallButton>
 );
 
 const hasNotificationsTitle = 'Destinations have become channels in Notifications';
@@ -43,9 +43,9 @@ const hasNotificationsText = (
 
 const FullPageNotificationsInfoCallOut = ({ hasNotificationPlugin }) => {
   const hasNotificationsButton = (
-    <EuiButton fill href={getManageChannelsUrl()}>
+    <EuiSmallButton fill href={getManageChannelsUrl()}>
       View in Notifications
-    </EuiButton>
+    </EuiSmallButton>
   );
 
   return (

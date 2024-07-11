@@ -5,7 +5,7 @@
 
 import React from 'react';
 
-import { EuiButton, EuiButtonEmpty, EuiFlexGroup, EuiFlexItem, EuiSpacer } from '@elastic/eui';
+import { EuiSmallButton, EuiButtonEmpty, EuiFlexGroup, EuiFlexItem, EuiSpacer } from '@elastic/eui';
 
 import { AGGREGATION_TYPES, EXPRESSION_STYLE, POPOVER_STYLE } from './utils/constants';
 import { FormikComboBox, FormikSelect } from '../../../../../components/FormControls';
@@ -95,14 +95,14 @@ export default function MetricPopover(
               </EuiButtonEmpty>
             </EuiFlexItem>
             <EuiFlexItem>
-              <EuiButton
+              <EuiSmallButton
                 fill
                 onClick={() => {
                   closePopover();
                 }}
               >
                 Save
-              </EuiButton>
+              </EuiSmallButton>
             </EuiFlexItem>
           </EuiFlexGroup>
         </>

@@ -6,7 +6,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
-import { EuiAccordion, EuiButton, EuiSpacer, EuiText, EuiTitle } from '@elastic/eui';
+import { EuiAccordion, EuiSmallButton, EuiSpacer, EuiText, EuiTitle } from '@elastic/eui';
 import 'brace/mode/plain_text';
 import { FormikFieldText, FormikSelect } from '../../../../components/FormControls';
 import { hasError, isInvalid } from '../../../../utils/validate';
@@ -294,7 +294,7 @@ class DefineBucketLevelTrigger extends Component {
         }
         initialIsOpen={edit ? false : triggerIndex === 0}
         extraAction={
-          <EuiButton
+          <EuiSmallButton
             color={'danger'}
             onClick={() => {
               triggerArrayHelpers.remove(triggerIndex);
@@ -302,7 +302,7 @@ class DefineBucketLevelTrigger extends Component {
             size={'s'}
           >
             Remove trigger
-          </EuiButton>
+          </EuiSmallButton>
         }
         style={{ paddingBottom: '15px', paddingTop: '10px' }}
       >

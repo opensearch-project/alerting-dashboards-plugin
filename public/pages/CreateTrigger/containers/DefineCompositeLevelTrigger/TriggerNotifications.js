@@ -6,7 +6,7 @@
 import React, { Fragment, useState, useEffect } from 'react';
 import {
   EuiSpacer,
-  EuiButton,
+  EuiSmallButton,
   EuiText,
   EuiAccordion,
   EuiHorizontalRule,
@@ -144,7 +144,7 @@ const TriggerNotifications = ({
           ))
         : null}
       {actions.length ? <EuiHorizontalRule margin={'s'} /> : null}
-      <EuiButton onClick={() => onAddNotification()}>Add notification</EuiButton>
+      <EuiSmallButton onClick={() => onAddNotification()}>Add notification</EuiSmallButton>
     </Fragment>
   );
 };

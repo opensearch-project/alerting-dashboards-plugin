@@ -7,7 +7,7 @@ import React from 'react';
 import { Field } from 'formik';
 import _ from 'lodash';
 import {
-  EuiButton,
+  EuiSmallButton,
   EuiCodeEditor,
   EuiFlexGroup,
   EuiFlexItem,
@@ -155,9 +155,9 @@ const TriggerQuery = ({
         </EuiFlexItem>
       </EuiFlexGroup>
 
-      <EuiButton onClick={() => onRun([trigger])} size={'s'} style={{ marginLeft: '10px' }}>
+      <EuiSmallButton onClick={() => onRun([trigger])} size={'s'} style={{ marginLeft: '10px' }}>
         Preview condition response
-      </EuiButton>
+      </EuiSmallButton>
     </div>
   );
 };

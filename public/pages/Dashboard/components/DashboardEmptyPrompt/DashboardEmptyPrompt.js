@@ -5,7 +5,7 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import { EuiButton, EuiButtonEmpty, EuiEmptyPrompt, EuiText } from '@elastic/eui';
+import { EuiSmallButton, EuiButtonEmpty, EuiEmptyPrompt, EuiText } from '@elastic/eui';
 
 import { APP_PATH } from '../../../../utils/constants';
 import { PLUGIN_NAME } from '../../../../../utils/constants';
@@ -18,9 +18,9 @@ const editTriggerConditionsText =
   'There are no existing alerts. Adjust trigger conditions to start alerting. Once an alarm is triggered, the state will show in this table.';
 
 const createMonitorButton = (
-  <EuiButton fill href={`${PLUGIN_NAME}#${APP_PATH.CREATE_MONITOR}`}>
+  <EuiSmallButton fill href={`${PLUGIN_NAME}#${APP_PATH.CREATE_MONITOR}`}>
     Create monitor
-  </EuiButton>
+  </EuiSmallButton>
 );
 const editMonitorButton = (onCreateTrigger) => (
   <EuiButtonEmpty onClick={onCreateTrigger}>Edit monitor</EuiButtonEmpty>

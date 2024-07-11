@@ -5,7 +5,7 @@
 
 import React from 'react';
 import _ from 'lodash';
-import { EuiButton, EuiButtonEmpty, EuiPanel } from '@elastic/eui';
+import { EuiSmallButton, EuiButtonEmpty, EuiPanel } from '@elastic/eui';
 import { getInitialActionValues } from './utils';
 import { MONITOR_TYPE } from '../../../../utils/constants';
 import './styles.scss';

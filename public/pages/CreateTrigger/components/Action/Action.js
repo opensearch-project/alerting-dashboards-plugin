@@ -7,6 +7,7 @@ import React, { useState, useMemo } from 'react';
 import _ from 'lodash';
 import {
   EuiAccordion,
+  EuiSmallButton,
   EuiButton,
   EuiHorizontalRule,
   EuiPanel,
@@ -55,7 +56,7 @@ const Action = ({
 }) => {
   const [backupValues, setBackupValues] = useState();
   const [isConfigureOpen, setIsConfigureOpen] = useState(false);
-  const ManageButton = useMemo(() => (flyoutMode ? EuiButtonEmpty : EuiButton), [flyoutMode]);
+  const ManageButton = useMemo(() => (flyoutMode ? EuiButtonEmpty : EuiSmallButton), [flyoutMode]);
   const Accordion = useMemo(() => (flyoutMode ? MinimalAccordion : EuiAccordion), [flyoutMode]);
   const [loadingDestinations, setLoadingDestinations] = useState(false);
   const selectedDestination = flattenedDestinations.filter(
@@ -286,10 +287,10 @@ const Action = ({
                       />
                     </EuiModalBody>
                     <EuiModalFooter>
-                      <EuiButton onClick={onConfigureCancel}>Cancel</EuiButton>
-                      <EuiButton onClick={onConfigureUpdate} fill>
+                      <EuiSmallButton onClick={onConfigureCancel}>Cancel</EuiSmallButton>
+                      <EuiSmallButton onClick={onConfigureUpdate} fill>
                         Update
-                      </EuiButton>
+                      </EuiSmallButton>
                     </EuiModalFooter>
                   </EuiModal>
                 )}

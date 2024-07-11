@@ -4,7 +4,7 @@
  */
 
 import React from 'react';
-import { EuiAccordion, EuiButton, EuiFlexGroup, EuiFlexItem } from '@elastic/eui';
+import { EuiAccordion, EuiSmallButton, EuiFlexGroup, EuiFlexItem } from '@elastic/eui';
 import {
   FormikFieldText,
   FormikFieldNumber,

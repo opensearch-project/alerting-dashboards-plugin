@@ -9,7 +9,7 @@ import _ from 'lodash';
 import { FieldArray } from 'formik';
 import {
   EuiAccordion,
-  EuiButton,
+  EuiSmallButton,
   EuiButtonEmpty,
   EuiSpacer,
   EuiText,
@@ -266,7 +266,7 @@ class DefineDocumentLevelTrigger extends Component {
         }
         initialIsOpen={edit ? false : triggerIndex === 0}
         extraAction={
-          <EuiButton
+          <EuiSmallButton
             color={'danger'}
             onClick={() => {
               triggerArrayHelpers.remove(triggerIndex);
@@ -274,7 +274,7 @@ class DefineDocumentLevelTrigger extends Component {
             size={'s'}
           >
             Remove trigger
-          </EuiButton>
+          </EuiSmallButton>
         }
         style={{ paddingBottom: '15px', paddingTop: '10px' }}
       >

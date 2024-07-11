@@ -9,7 +9,7 @@ import { connect } from 'formik';
 import {
   EuiBadge,
   EuiButtonEmpty,
-  EuiButton,
+  EuiSmallButton,
   EuiFlexGroup,
   EuiFlexItem,
   EuiPopover,
@@ -82,9 +82,9 @@ class DocumentLevelQueryTag extends Component {
             <EuiButtonEmpty onClick={this.closePopover}>Cancel</EuiButtonEmpty>
           </EuiFlexItem>
           <EuiFlexItem>
-            <EuiButton fill onClick={this.closePopover}>
+            <EuiSmallButton fill onClick={this.closePopover}>
               Save
-            </EuiButton>
+            </EuiSmallButton>
           </EuiFlexItem>
         </EuiFlexGroup>
       </div>
