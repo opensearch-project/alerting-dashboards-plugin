@@ -16,7 +16,7 @@ import {
   EuiFlexItem,
   EuiText,
   EuiSmallButtonIcon,
-  EuiButtonEmpty,
+  EuiSmallButtonEmpty,
   EuiModal,
   EuiModalBody,
   EuiModalFooter,
@@ -56,7 +56,10 @@ const Action = ({
 }) => {
   const [backupValues, setBackupValues] = useState();
   const [isConfigureOpen, setIsConfigureOpen] = useState(false);
-  const ManageButton = useMemo(() => (flyoutMode ? EuiButtonEmpty : EuiSmallButton), [flyoutMode]);
+  const ManageButton = useMemo(
+    () => (flyoutMode ? EuiSmallButtonEmpty : EuiSmallButton),
+    [flyoutMode]
+  );
   const Accordion = useMemo(() => (flyoutMode ? MinimalAccordion : EuiAccordion), [flyoutMode]);
   const [loadingDestinations, setLoadingDestinations] = useState(false);
   const selectedDestination = flattenedDestinations.filter(
@@ -265,9 +268,9 @@ const Action = ({
             )}
             {flyoutMode && !isInitialLoading && (
               <>
-                <EuiButtonEmpty iconType="pencil" iconSide="left" onClick={onConfigureOpen}>
+                <EuiSmallButtonEmpty iconType="pencil" iconSide="left" onClick={onConfigureOpen}>
                   Configure notification
-                </EuiButtonEmpty>
+                </EuiSmallButtonEmpty>
                 {isConfigureOpen && (
                   <EuiModal onClose={onConfigureCancel}>
                     <EuiModalHeader>

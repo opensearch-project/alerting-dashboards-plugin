@@ -5,7 +5,7 @@
 
 import React from 'react';
 import _ from 'lodash';
-import { EuiSmallButton, EuiButtonEmpty, EuiPanel } from '@elastic/eui';
+import { EuiSmallButton, EuiSmallButtonEmpty, EuiPanel } from '@elastic/eui';
 import { getInitialActionValues } from './utils';
 import { MONITOR_TYPE } from '../../../../utils/constants';
 import './styles.scss';
@@ -34,13 +34,13 @@ const AddActionButton = ({
 
   return flyoutMode ? (
     <EuiPanel paddingSize="none">
-      <EuiButtonEmpty
+      <EuiSmallButtonEmpty
         onClick={onClick}
         iconType="plusInCircle"
         className="add-action-button__flyout-button"
       >
         Add notification
-      </EuiButtonEmpty>
+      </EuiSmallButtonEmpty>
     </EuiPanel>
   ) : (
     <EuiButton fill={false} size={'s'} onClick={onClick}>

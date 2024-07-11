@@ -5,7 +5,7 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import { EuiSmallButton, EuiButtonEmpty, EuiEmptyPrompt, EuiText } from '@elastic/eui';
+import { EuiSmallButton, EuiSmallButtonEmpty, EuiEmptyPrompt, EuiText } from '@elastic/eui';
 
 import { APP_PATH } from '../../../../utils/constants';
 import { PLUGIN_NAME } from '../../../../../utils/constants';
@@ -23,7 +23,7 @@ const createMonitorButton = (
   </EuiSmallButton>
 );
 const editMonitorButton = (onCreateTrigger) => (
-  <EuiButtonEmpty onClick={onCreateTrigger}>Edit monitor</EuiButtonEmpty>
+  <EuiSmallButtonEmpty onClick={onCreateTrigger}>Edit monitor</EuiSmallButtonEmpty>
 );
 
 const DashboardEmptyPrompt = ({ onCreateTrigger, isModal = false }) => {

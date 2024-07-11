@@ -10,7 +10,7 @@ import { FieldArray } from 'formik';
 import {
   EuiAccordion,
   EuiSmallButton,
-  EuiButtonEmpty,
+  EuiSmallButtonEmpty,
   EuiSpacer,
   EuiText,
   EuiTitle,
@@ -221,7 +221,7 @@ class DefineDocumentLevelTrigger extends Component {
 
             <EuiSpacer size={'s'} />
 
-            <EuiButtonEmpty
+            <EuiSmallButtonEmpty
               onClick={() =>
                 conditionsArrayHelpers.push(_.cloneDeep(FORMIK_INITIAL_TRIGGER_CONDITION_VALUES))
               }
@@ -230,7 +230,7 @@ class DefineDocumentLevelTrigger extends Component {
               data-test-subj={`addTriggerConditionButton`}
             >
               + Add condition
-            </EuiButtonEmpty>
+            </EuiSmallButtonEmpty>
             {inputLimitText(
               _.get(triggerValues, `${fieldPath}triggerConditions`, []).length,
               MAX_TRIGGER_CONDITIONS,

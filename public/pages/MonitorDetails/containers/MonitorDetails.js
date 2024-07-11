@@ -8,7 +8,7 @@ import _ from 'lodash';
 import queryString from 'query-string';
 import {
   EuiSmallButton,
-  EuiButtonEmpty,
+  EuiSmallButtonEmpty,
   EuiCallOut,
   EuiCodeBlock,
   EuiFlexGroup,
@@ -583,7 +583,7 @@ export default class MonitorDetails extends Component {
               </EuiModalBody>
 
               <EuiModalFooter>
-                <EuiButtonEmpty onClick={this.closeJsonModal}>Close</EuiButtonEmpty>
+                <EuiSmallButtonEmpty onClick={this.closeJsonModal}>Close</EuiSmallButtonEmpty>
               </EuiModalFooter>
             </EuiModal>
           </EuiOverlayMask>

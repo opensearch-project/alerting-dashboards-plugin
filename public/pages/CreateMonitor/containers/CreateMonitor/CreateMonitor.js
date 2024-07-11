@@ -8,7 +8,7 @@ import _ from 'lodash';
 import { FieldArray, Formik } from 'formik';
 import {
   EuiSmallButton,
-  EuiButtonEmpty,
+  EuiSmallButtonEmpty,
   EuiFlexGroup,
   EuiFlexItem,
   EuiSpacer,
@@ -261,7 +261,7 @@ export default class CreateMonitor extends Component {
                     <EuiSpacer />
                     <EuiFlexGroup alignItems="center" justifyContent="flexEnd">
                       <EuiFlexItem grow={false}>
-                        <EuiButtonEmpty onClick={this.onCancel}>Cancel</EuiButtonEmpty>
+                        <EuiSmallButtonEmpty onClick={this.onCancel}>Cancel</EuiSmallButtonEmpty>
                       </EuiFlexItem>
                       <EuiFlexItem grow={false}>
                         <EuiSmallButton fill onClick={handleSubmit} isLoading={isSubmitting}>

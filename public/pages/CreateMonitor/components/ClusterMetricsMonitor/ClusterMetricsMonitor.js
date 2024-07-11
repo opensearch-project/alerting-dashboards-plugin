@@ -8,7 +8,7 @@ import _ from 'lodash';
 import {
   EuiSmallButton,
   EuiButton,
-  EuiButtonEmpty,
+  EuiSmallButtonEmpty,
   EuiCodeEditor,
   EuiFlexGroup,
   EuiFlexItem,
@@ -73,13 +73,13 @@ const renderModal = (closeModal, prevApiType, selectedApiType, form) => {
         <EuiModalFooter>
           <EuiFlexGroup justifyContent={'flexEnd'}>
             <EuiFlexItem grow={false}>
-              <EuiButtonEmpty
+              <EuiSmallButtonEmpty
                 fullWidth={false}
                 onClick={onKeep}
                 data-test-subj={'clusterMetricsClearTriggersModalKeepButton'}
               >
                 Keep
-              </EuiButtonEmpty>
+              </EuiSmallButtonEmpty>
             </EuiFlexItem>
 
             <EuiFlexItem grow={false}>

@@ -7,7 +7,7 @@ import React from 'react';
 import _ from 'lodash';
 import { Formik, FieldArray } from 'formik';
 import {
-  EuiButtonEmpty,
+  EuiSmallButtonEmpty,
   EuiFlexGroup,
   EuiFlexItem,
   EuiHorizontalRule,
@@ -294,7 +294,7 @@ export default class ManageEmailGroups extends React.Component {
                   <EuiModalFooter>
                     <EuiFlexGroup alignItems="center" justifyContent="flexEnd">
                       <EuiFlexItem grow={false}>
-                        <EuiButtonEmpty onClick={onClickCancel}>Close</EuiButtonEmpty>
+                        <EuiSmallButtonEmpty onClick={onClickCancel}>Close</EuiSmallButtonEmpty>
                       </EuiFlexItem>
                     </EuiFlexGroup>
                   </EuiModalFooter>

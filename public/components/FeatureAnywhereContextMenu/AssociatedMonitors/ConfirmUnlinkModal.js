@@ -6,7 +6,7 @@
 import React, { useState } from 'react';
 import {
   EuiSmallButton,
-  EuiButtonEmpty,
+  EuiSmallButtonEmpty,
   EuiModal,
   EuiModalBody,
   EuiModalFooter,
@@ -35,9 +35,9 @@ export const ConfirmUnlinkDetectorModal = (props) => {
         </EuiModalBody>
         <EuiModalFooter>
           {isLoading ? null : (
-            <EuiButtonEmpty data-test-subj="cancelButton" onClick={props.onHide}>
+            <EuiSmallButtonEmpty data-test-subj="cancelButton" onClick={props.onHide}>
               Cancel
-            </EuiButtonEmpty>
+            </EuiSmallButtonEmpty>
           )}
           <EuiSmallButton
             data-test-subj="confirmButton"

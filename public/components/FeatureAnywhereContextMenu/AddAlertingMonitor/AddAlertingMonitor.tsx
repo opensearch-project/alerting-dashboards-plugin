@@ -13,7 +13,7 @@ import {
   EuiTitle,
   EuiSpacer,
   EuiSmallButton,
-  EuiButtonEmpty,
+  EuiSmallButtonEmpty,
   EuiFormFieldset,
   EuiCheckableCard,
   EuiText
@@ -225,7 +225,7 @@ function AddAlertingMonitor({
               <EuiFlyoutFooter>
                 <EuiFlexGroup justifyContent="spaceBetween">
                   <EuiFlexItem grow={false}>
-                    <EuiButtonEmpty onClick={closeFlyout}>Cancel</EuiButtonEmpty>
+                    <EuiSmallButtonEmpty onClick={closeFlyout}>Cancel</EuiSmallButtonEmpty>
                   </EuiFlexItem>
                   <EuiFlexItem grow={false}>
                     <EuiSmallButton

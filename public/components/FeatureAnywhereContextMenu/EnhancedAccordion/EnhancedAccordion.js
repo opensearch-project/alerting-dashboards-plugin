@@ -8,7 +8,7 @@ import {
   EuiTitle,
   EuiSpacer,
   EuiSmallButtonIcon,
-  EuiButtonEmpty,
+  EuiSmallButtonEmpty,
   EuiAccordion,
   EuiPanel,
 } from '@elastic/eui';
@@ -72,13 +72,13 @@ const EnhancedAccordion = ({
         </EuiAccordion>
       )}
       {isButton && (
-        <EuiButtonEmpty
+        <EuiSmallButtonEmpty
           onClick={onToggle}
           iconType={iconType}
           className="enhanced-accordion__button"
         >
           Add trigger
-        </EuiButtonEmpty>
+        </EuiSmallButtonEmpty>
       )}
     </div>
   </div>

@@ -8,7 +8,7 @@ import _ from 'lodash';
 import { connect } from 'formik';
 import {
   EuiBadge,
-  EuiButtonEmpty,
+  EuiSmallButtonEmpty,
   EuiSmallButton,
   EuiFlexGroup,
   EuiFlexItem,
@@ -79,7 +79,7 @@ class DocumentLevelQueryTag extends Component {
         <EuiSpacer size={'l'} />
         <EuiFlexGroup alignItems={'center'} justifyContent={'flexEnd'}>
           <EuiFlexItem>
-            <EuiButtonEmpty onClick={this.closePopover}>Cancel</EuiButtonEmpty>
+            <EuiSmallButtonEmpty onClick={this.closePopover}>Cancel</EuiSmallButtonEmpty>
           </EuiFlexItem>
           <EuiFlexItem>
             <EuiSmallButton fill onClick={this.closePopover}>
