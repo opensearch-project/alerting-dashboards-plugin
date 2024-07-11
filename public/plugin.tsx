@@ -71,7 +71,7 @@ export class AlertingPlugin
     core.application.register({
       id: PLUGIN_NAME,
       title: 'Alerting',
-      // description: 'OpenSearch Dashboards Alerting Plugin',
+      description: 'OpenSearch Dashboards Alerting Plugin',
       category: {
         id: 'opensearch',
         label: 'OpenSearch Plugins',
@@ -90,8 +90,8 @@ export class AlertingPlugin
       assistantDashboards.registerIncontextInsight([
         {
           key: 'alerts',
-          type: 'chatWithSuggestions',
-          suggestions: [`What's this alert?`, `How to address this alert?`],
+          type: 'generate',
+          suggestions: [`Please summarize this alert`],
         },
       ]);
     }

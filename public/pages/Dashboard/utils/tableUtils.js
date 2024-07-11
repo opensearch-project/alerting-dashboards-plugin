@@ -211,9 +211,9 @@ export const alertColumns = (
         // 3. build the context
         return `
         Here is the detail information about alert ${alert.name}
-        ### Monitor definition\n ${monitorDefinitionStr}\n 
-        ### Active Alert\n ${JSON.stringify(alert)}\n 
-        ### Data triggers this alert\n ${alertTriggeredByData}\n 
+        ### Monitor definition\n ${monitorDefinitionStr}\n
+        ### Active Alert\n ${JSON.stringify(alert)}\n
+        ### Data triggers this alert\n ${alertTriggeredByData}\n
         ### Alert query DSL ${dsl} \n`;
       };
 
