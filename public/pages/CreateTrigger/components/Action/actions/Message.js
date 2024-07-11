@@ -14,7 +14,7 @@ import {
   EuiLink,
   EuiSpacer,
   EuiText,
-  EuiTextArea,
+  EuiCompressedTextArea,
 } from '@elastic/eui';
 
 import {
@@ -271,7 +271,7 @@ export default function Message(
 
       {displayPreview ? (
         <EuiCompressedFormRow label="Message preview" style={{ maxWidth: '100%' }}>
-          <EuiTextArea
+          <EuiCompressedTextArea
             placeholder="Preview of mustache template"
             fullWidth
             value={preview}
