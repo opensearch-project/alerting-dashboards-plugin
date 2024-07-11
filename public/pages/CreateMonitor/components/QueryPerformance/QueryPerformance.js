@@ -64,7 +64,9 @@ export const getPerformanceModal = ({ edit, onClose, onSubmit, values }) => {
     <EuiModal onClose={onClose}>
       <EuiModalHeader>
         <EuiModalHeaderTitle>
-          <h1>Monitor is not optimized</h1>
+          <EuiText size="s">
+            <h2>Monitor is not optimized</h2>
+          </EuiText>
         </EuiModalHeaderTitle>
       </EuiModalHeader>
 

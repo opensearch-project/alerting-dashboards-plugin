@@ -16,6 +16,7 @@ import {
   EuiButtonEmpty,
   EuiFormFieldset,
   EuiCheckableCard,
+  EuiText
 } from '@elastic/eui';
 import './styles.scss';
 import CreateNew from './CreateNew';
@@ -146,11 +147,11 @@ function AddAlertingMonitor({
           return (
             <>
               <EuiFlyoutHeader hasBorder>
-                <EuiTitle>
+                <EuiText size="s">
                   <h2 id="add-alerting-monitor__title">
                     {flyoutMode === 'adMonitor' ? 'Set up alerts' : 'Add alerting monitor'}
                   </h2>
-                </EuiTitle>
+                </EuiText>
               </EuiFlyoutHeader>
               <EuiFlyoutBody>
                 {!isAssociateAllowed && (
