@@ -4,7 +4,7 @@
  */
 
 import React, { useEffect, useMemo, useState } from 'react';
-import { EuiCallOut, EuiIcon, EuiSpacer, EuiSwitch, EuiText, EuiTitle } from '@elastic/eui';
+import { EuiCallOut, EuiIcon, EuiSpacer, EuiCompressedSwitch, EuiText, EuiTitle } from '@elastic/eui';
 import _ from 'lodash';
 import { FieldArray } from 'formik';
 import { EmbeddableRenderer, ErrorEmbeddable } from '../../../../../../../src/plugins/embeddable/public';
@@ -123,7 +123,7 @@ function CreateNew({ embeddable, flyoutMode, formikProps, history, setFlyout, de
             {title}
           </h4>
         </EuiTitle>
-        <EuiSwitch
+        <EuiCompressedSwitch
           label="Show visualization"
           checked={isShowVis}
           onChange={() => setIsShowVis(!isShowVis)}
