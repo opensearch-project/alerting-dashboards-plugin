@@ -5,7 +5,13 @@
 
 import React from 'react';
 import _ from 'lodash';
-import { EuiFieldSearch, EuiFlexGroup, EuiSelect, EuiFlexItem, EuiPagination } from '@elastic/eui';
+import {
+  EuiCompressedFieldSearch,
+  EuiFlexGroup,
+  EuiSelect,
+  EuiFlexItem,
+  EuiPagination,
+} from '@elastic/eui';
 import { ALERT_STATE, MONITOR_TYPE } from '../../../../utils/constants';
 
 const severityOptions = [
@@ -51,7 +57,7 @@ const DashboardControls = ({
   return (
     <EuiFlexGroup style={{ padding: '0px 5px' }}>
       <EuiFlexItem>
-        <EuiFieldSearch
+        <EuiCompressedFieldSearch
           fullWidth={true}
           placeholder="Search"
           onChange={onSearchChange}

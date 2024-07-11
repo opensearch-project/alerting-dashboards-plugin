@@ -5,7 +5,7 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import { EuiFieldPassword } from '@elastic/eui';
+import { EuiCompressedFieldPassword } from '@elastic/eui';
 
 import FormikInputWrapper from '../FormikInputWrapper';
 import FormikFormRow from '../FormikFormRow';
@@ -38,7 +38,7 @@ const FieldPassword = ({
   field,
   inputProps: { onChange, isInvalid, onFocus, ...rest },
 }) => (
-  <EuiFieldPassword
+  <EuiCompressedFieldPassword
     {...field}
     {...rest}
     onChange={(e) =>

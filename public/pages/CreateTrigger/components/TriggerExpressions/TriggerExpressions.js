@@ -6,7 +6,7 @@
 import React, { Component } from 'react';
 import { Field } from 'formik';
 import {
-  EuiFieldNumber,
+  EuiCompressedFieldNumber,
   EuiFlexGroup,
   EuiFlexItem,
   EuiCompressedFormRow,
@@ -53,7 +53,7 @@ class TriggerExpressions extends Component {
                   isInvalid={touched.thresholdValue && !!errors.thresholdValue}
                   error={errors.thresholdValue}
                 >
-                  <EuiFieldNumber
+                  <EuiCompressedFieldNumber
                     data-test-subj={`${valueFieldName}_conditionValueField`}
                     {...field}
                   />

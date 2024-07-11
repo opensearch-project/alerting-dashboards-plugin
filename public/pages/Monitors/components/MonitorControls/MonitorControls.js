@@ -4,7 +4,13 @@
  */
 
 import React from 'react';
-import { EuiFieldSearch, EuiFlexGroup, EuiFlexItem, EuiPagination, EuiSelect } from '@elastic/eui';
+import {
+  EuiCompressedFieldSearch,
+  EuiFlexGroup,
+  EuiFlexItem,
+  EuiPagination,
+  EuiSelect,
+} from '@elastic/eui';
 
 const MONITOR_STATES = {
   ALL: 'all',
@@ -29,7 +35,7 @@ const MonitorControls = ({
 }) => (
   <EuiFlexGroup style={{ padding: '0px 5px' }}>
     <EuiFlexItem>
-      <EuiFieldSearch
+      <EuiCompressedFieldSearch
         fullWidth={true}
         value={search}
         placeholder="Search"

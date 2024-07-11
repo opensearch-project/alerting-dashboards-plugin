@@ -5,7 +5,13 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import { EuiFieldSearch, EuiFlexGroup, EuiFlexItem, EuiPagination, EuiSelect } from '@elastic/eui';
+import {
+  EuiCompressedFieldSearch,
+  EuiFlexGroup,
+  EuiFlexItem,
+  EuiPagination,
+  EuiSelect,
+} from '@elastic/eui';
 import { DESTINATION_OPTIONS } from '../../../utils/constants';
 
 const filterTypes = [{ value: 'ALL', text: 'All type' }, ...DESTINATION_OPTIONS];
@@ -41,7 +47,7 @@ const DestinationsControls = ({
   return (
     <EuiFlexGroup style={{ padding: '0px 5px' }}>
       <EuiFlexItem>
-        <EuiFieldSearch
+        <EuiCompressedFieldSearch
           fullWidth={true}
           value={search}
           placeholder="Search"

@@ -7,7 +7,7 @@ import React, { Component } from 'react';
 import { Field } from 'formik';
 import {
   EuiSmallButton,
-  EuiFieldNumber,
+  EuiCompressedFieldNumber,
   EuiFlexGroup,
   EuiFlexItem,
   EuiCompressedFormRow,
@@ -110,7 +110,7 @@ class BucketLevelTriggerExpression extends Component {
                 isInvalid={touched.thresholdValue && !!errors.thresholdValue}
                 error={errors.thresholdValue}
               >
-                <EuiFieldNumber {...field} />
+                <EuiCompressedFieldNumber {...field} />
               </EuiCompressedFormRow>
             )}
           </Field>
