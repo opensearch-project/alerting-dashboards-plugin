@@ -7,7 +7,7 @@ import React, { useState } from 'react';
 import _ from 'lodash';
 import Mustache from 'mustache';
 import {
-  EuiCheckbox,
+  EuiCompressedCheckbox,
   EuiFlexGroup,
   EuiFlexItem,
   EuiCompressedFormRow,
@@ -97,7 +97,7 @@ const renderSendTestMessageButton = (
   return (
     <EuiFlexGroup justifyContent="spaceBetween" alignItems="flexStart">
       <EuiFlexItem>
-        <EuiCheckbox
+        <EuiCompressedCheckbox
           id={`${fieldPath}actions.${index}`}
           label={'Preview message'}
           checked={displayPreview}
