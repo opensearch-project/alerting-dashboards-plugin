@@ -22,6 +22,8 @@ import {
 } from '../../../public/services';
 import { MultiDataSourceContext } from '../../../public/utils/MultiDataSourceContext';
 import { parseQueryStringAndGetDataSource } from '../utils/helpers';
+import * as pluginManifest from "../../../opensearch_dashboards.json";
+import semver from "semver";
 
 class Main extends Component {
   static contextType = CoreContext;
@@ -100,6 +102,15 @@ class Main extends Component {
     }
   };
 
+  dataSourceFilterFn = (dataSource) => {
+    const engineVersion = dataSource?.attributes?.dataSourceVersion || "";
+    const availablePlugins = dataSource?.attributes?.installedPlugins || [];
+    return (
+      semver.satisfies(engineVersion, pluginManifest.supportedOSDataSourceVersions) &&
+      pluginManifest.requiredOSDataSourcePlugins.every((plugin) => availablePlugins.includes(plugin))
+    );
+  };
+
   renderDataSourceComponent(dataSourceType) {
     const { setActionMenu } = this.props;
     const componentConfig = {
@@ -109,6 +120,7 @@ class Main extends Component {
         : [{ id: this.state.selectedDataSourceId }],
       savedObjects: getSavedObjectsClient(),
       notifications: getNotifications(),
+      dataSourceFilter: this.dataSourceFilterFn,
     };
     if (dataSourceType === 'DataSourceSelectable') {
       componentConfig.onSelectedDataSources = this.handleDataSourceChange;
