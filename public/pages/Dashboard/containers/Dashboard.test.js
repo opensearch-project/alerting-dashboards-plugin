@@ -8,6 +8,7 @@ import { mount } from 'enzyme';
 
 import Dashboard from './Dashboard';
 import { historyMock, httpClientMock } from '../../../../test/mocks';
+import { setAssistantDashboards } from '../../../services';
 
 const location = {
   hash: '',
@@ -57,6 +58,8 @@ const sampleQueryAlerts = [
 const runAllPromises = () => new Promise(setImmediate);
 
 describe('Dashboard', () => {
+  setAssistantDashboards({ chatEnabled: () => false });
+
   beforeEach(() => {
     jest.clearAllMocks();
   });
