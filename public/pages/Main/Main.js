@@ -103,11 +103,11 @@ class Main extends Component {
   };
 
   dataSourceFilterFn = (dataSource) => {
-    const engineVersion = dataSource?.attributes?.dataSourceVersion || "";
-    const availablePlugins = dataSource?.attributes?.installedPlugins || [];
+    const dataSourceVersion = dataSource?.attributes?.dataSourceVersion || "";
+    const installedPlugins = dataSource?.attributes?.installedPlugins || [];
     return (
-      semver.satisfies(engineVersion, pluginManifest.supportedOSDataSourceVersions) &&
-      pluginManifest.requiredOSDataSourcePlugins.every((plugin) => availablePlugins.includes(plugin))
+      semver.satisfies(dataSourceVersion, pluginManifest.supportedOSDataSourceVersions) &&
+      pluginManifest.requiredOSDataSourcePlugins.every((plugin) => installedPlugins.includes(plugin))
     );
   };
 
