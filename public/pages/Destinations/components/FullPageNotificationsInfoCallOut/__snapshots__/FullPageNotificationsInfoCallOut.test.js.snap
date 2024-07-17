@@ -22,7 +22,7 @@ exports[`FullPageNotificationsInfoCallOut renders when Notifications plugin is i
         class="euiText euiText--medium"
       >
         <div
-          class="euiText euiText--medium"
+          class="euiText euiText--small"
         >
           <p>
             Your destinations have been migrated as channels in Notifications, a new centralized place to manage your notification channels. Destinations will be deprecated going forward. 

@@ -1459,7 +1459,9 @@ exports[`Dashboard renders in flyout 1`] = `
                                           </EuiButton>
                                         }
                                         body={
-                                          <EuiText>
+                                          <EuiText
+                                            size="s"
+                                          >
                                             <p>
                                               There are no existing alerts. Create a monitor to add triggers and actions. Once an alarm is triggered, the state will show in this table.
                                             </p>
@@ -1489,9 +1491,11 @@ exports[`Dashboard renders in flyout 1`] = `
                                                 <div
                                                   className="euiText euiText--medium"
                                                 >
-                                                  <EuiText>
+                                                  <EuiText
+                                                    size="s"
+                                                  >
                                                     <div
-                                                      className="euiText euiText--medium"
+                                                      className="euiText euiText--small"
                                                     >
                                                       <p>
                                                         There are no existing alerts. Create a monitor to add triggers and actions. Once an alarm is triggered, the state will show in this table.
@@ -3413,7 +3417,9 @@ exports[`Dashboard renders with alert by triggers view 1`] = `
                                           </EuiButton>
                                         }
                                         body={
-                                          <EuiText>
+                                          <EuiText
+                                            size="s"
+                                          >
                                             <p>
                                               There are no existing alerts. Create a monitor to add triggers and actions. Once an alarm is triggered, the state will show in this table.
                                             </p>
@@ -3443,9 +3449,11 @@ exports[`Dashboard renders with alert by triggers view 1`] = `
                                                 <div
                                                   className="euiText euiText--medium"
                                                 >
-                                                  <EuiText>
+                                                  <EuiText
+                                                    size="s"
+                                                  >
                                                     <div
-                                                      className="euiText euiText--medium"
+                                                      className="euiText euiText--small"
                                                     >
                                                       <p>
                                                         There are no existing alerts. Create a monitor to add triggers and actions. Once an alarm is triggered, the state will show in this table.
@@ -5089,7 +5097,9 @@ exports[`Dashboard renders with per alert view 1`] = `
                                           </EuiButton>
                                         }
                                         body={
-                                          <EuiText>
+                                          <EuiText
+                                            size="s"
+                                          >
                                             <p>
                                               There are no existing alerts. Create a monitor to add triggers and actions. Once an alarm is triggered, the state will show in this table.
                                             </p>
@@ -5119,9 +5129,11 @@ exports[`Dashboard renders with per alert view 1`] = `
                                                 <div
                                                   className="euiText euiText--medium"
                                                 >
-                                                  <EuiText>
+                                                  <EuiText
+                                                    size="s"
+                                                  >
                                                     <div
-                                                      className="euiText euiText--medium"
+                                                      className="euiText euiText--small"
                                                     >
                                                       <p>
                                                         There are no existing alerts. Create a monitor to add triggers and actions. Once an alarm is triggered, the state will show in this table.

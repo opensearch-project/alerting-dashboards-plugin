@@ -36,7 +36,7 @@ const triggerCondition = (context) => ({
   ),
   body: (
     <div>
-      <EuiText style={{ fontSize: '14px' }}>
+      <EuiText size="s">
         <p>You have access to a "ctx" variable in your painless scripts</p>
         <p>
           Below shows a quick JSON example of what's available under the "ctx" variable along with

@@ -594,16 +594,13 @@ export default class AlertsDashboardFlyoutComponent extends Component {
       <div>
         <EuiFlexGroup>
           <EuiFlexItem>
-            <EuiText
-              size={'m'}
-              data-test-subj={`alertsDashboardFlyout_triggerName_${trigger_name}`}
-            >
+            <EuiText size="s" data-test-subj={`alertsDashboardFlyout_triggerName_${trigger_name}`}>
               <strong>Trigger name</strong>
               <p>{trigger_name}</p>
             </EuiText>
           </EuiFlexItem>
           <EuiFlexItem>
-            <EuiText size={'m'} data-test-subj={`alertsDashboardFlyout_severity_${trigger_name}`}>
+            <EuiText size="s" data-test-subj={`alertsDashboardFlyout_severity_${trigger_name}`}>
               <strong>Severity</strong>
               <p>{this.getSeverityText(severity) || severity || DEFAULT_EMPTY_DATA}</p>
             </EuiText>
@@ -614,13 +611,13 @@ export default class AlertsDashboardFlyoutComponent extends Component {
 
         <EuiFlexGroup>
           <EuiFlexItem>
-            <EuiText size={'m'}>
+            <EuiText size="s">
               <strong>Trigger start time</strong>
               <p>{getTime(start_time)}</p>
             </EuiText>
           </EuiFlexItem>
           <EuiFlexItem>
-            <EuiText size={'m'}>
+            <EuiText size="s">
               <strong>Trigger last updated</strong>
               <p>{getTime(last_notification_time)}</p>
             </EuiText>
@@ -631,7 +628,7 @@ export default class AlertsDashboardFlyoutComponent extends Component {
 
         <EuiFlexGroup>
           <EuiFlexItem>
-            <EuiText size={'m'} data-test-subj={`alertsDashboardFlyout_monitor_${trigger_name}`}>
+            <EuiText size="s" data-test-subj={`alertsDashboardFlyout_monitor_${trigger_name}`}>
               <strong>Monitor</strong>
               <p>
                 <EuiLink href={monitorUrl}>{monitor_name}</EuiLink>
@@ -639,7 +636,7 @@ export default class AlertsDashboardFlyoutComponent extends Component {
             </EuiText>
           </EuiFlexItem>
           <EuiFlexItem>
-            <EuiText size={'m'}>
+            <EuiText size="s">
               <strong>Monitor data sources</strong>
               <p style={{ whiteSpace: 'pre-wrap' }}>{dataSources}</p>
             </EuiText>
@@ -650,7 +647,7 @@ export default class AlertsDashboardFlyoutComponent extends Component {
 
         <EuiFlexGroup>
           <EuiFlexItem>
-            <EuiText size={'m'} data-test-subj={`alertsDashboardFlyout_conditions_${trigger_name}`}>
+            <EuiText size="s" data-test-subj={`alertsDashboardFlyout_conditions_${trigger_name}`}>
               <strong>{displayMultipleConditions ? 'Conditions' : 'Condition'}</strong>
               <p style={{ whiteSpace: 'pre-wrap' }}>
                 {loadingMonitors || loading ? 'Loading conditions...' : condition}
@@ -660,10 +657,7 @@ export default class AlertsDashboardFlyoutComponent extends Component {
 
           {![MONITOR_TYPE.DOC_LEVEL, MONITOR_TYPE.COMPOSITE_LEVEL].includes(monitorType) && (
             <EuiFlexItem>
-              <EuiText
-                size={'m'}
-                data-test-subj={`alertsDashboardFlyout_timeRange_${trigger_name}`}
-              >
+              <EuiText size="s" data-test-subj={`alertsDashboardFlyout_timeRange_${trigger_name}`}>
                 <strong>Time range for the last</strong>
                 <p>{timeRangeForLast}</p>
               </EuiText>
@@ -677,19 +671,13 @@ export default class AlertsDashboardFlyoutComponent extends Component {
 
             <EuiFlexGroup>
               <EuiFlexItem>
-                <EuiText
-                  size={'m'}
-                  data-test-subj={`alertsDashboardFlyout_filters_${trigger_name}`}
-                >
+                <EuiText size="s" data-test-subj={`alertsDashboardFlyout_filters_${trigger_name}`}>
                   <strong>Filters</strong>
                   <p>{loadingMonitors || loading ? 'Loading filters...' : filters}</p>
                 </EuiText>
               </EuiFlexItem>
               <EuiFlexItem>
-                <EuiText
-                  size={'m'}
-                  data-test-subj={`alertsDashboardFlyout_groupBy_${trigger_name}`}
-                >
+                <EuiText size="s" data-test-subj={`alertsDashboardFlyout_groupBy_${trigger_name}`}>
                   <strong>Group by</strong>
                   <p>
                     {loadingMonitors || loading
