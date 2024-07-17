@@ -9,4 +9,4 @@
  * It will give a type error when dashboards-assistant is not installed so add a ts-ignore to suppress the error.
  */
 // @ts-ignore
-export type { AssistantSetup, IMessage, RenderProps } from '../../dashboards-assistant/public';
+export type { AssistantSetup, IMessage, RenderProps, TAB_ID } from '../../dashboards-assistant/public';
