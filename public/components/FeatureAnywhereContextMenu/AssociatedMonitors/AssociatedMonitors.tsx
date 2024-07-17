@@ -15,7 +15,6 @@ import {
   EuiLoadingSpinner,
   EuiSpacer,
   EuiText,
-  EuiTitle,
 } from '@elastic/eui';
 import './styles.scss';
 import { useColumns } from './helpers';
@@ -109,9 +108,9 @@ const AssociatedMonitors = ({ embeddable, closeFlyout, setFlyoutMode, monitors, 
         />
       ) : null}
       <EuiFlyoutHeader hasBorder>
-        <EuiTitle>
+        <EuiText size="s">
           <h2 id="associated-monitors__title">Associated monitors</h2>
-        </EuiTitle>
+        </EuiText>
       </EuiFlyoutHeader>
       {!isAssociateAllowed && (
         <EuiFlyoutHeader>

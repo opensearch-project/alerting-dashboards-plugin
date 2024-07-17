@@ -12,11 +12,13 @@ exports[`VisualGraph renders 1`] = `
     <div
       class="euiFlexItem"
     >
-      <h3
-        class="euiTitle euiTitle--small"
+      <div
+        class="euiText euiText--small"
       >
-        COUNT of documents
-      </h3>
+        <h2>
+          COUNT of documents
+        </h2>
+      </div>
     </div>
     <div
       class="euiFlexItem euiFlexItem--flexGrowZero"
@@ -551,11 +553,13 @@ exports[`VisualGraph renders with bucket level monitor 1`] = `
     <div
       class="euiFlexItem"
     >
-      <h3
-        class="euiTitle euiTitle--small"
+      <div
+        class="euiText euiText--small"
       >
-        COUNT of documents
-      </h3>
+        <h2>
+          COUNT of documents
+        </h2>
+      </div>
     </div>
     <div
       class="euiFlexItem euiFlexItem--flexGrowZero"

@@ -198,20 +198,15 @@ Object {
     "maxWidth": 500,
     "size": "m",
   },
-  "header": <EuiTitle
-    size="m"
-    style={
-      Object {
-        "fontSize": "25px",
-      }
-    }
+  "header": <EuiText
+    size="s"
   >
     <h2>
       <strong>
         Trigger condition
       </strong>
     </h2>
-  </EuiTitle>,
+  </EuiText>,
   "headerProps": Object {
     "hasBorder": true,
   },

@@ -25,7 +25,7 @@ import {
   EuiSpacer,
   EuiTab,
   EuiTabs,
-  EuiTitle,
+  EuiText,
 } from '@elastic/eui';
 import CreateMonitor from '../../CreateMonitor';
 import MonitorOverview from '../components/MonitorOverview';
@@ -484,18 +484,9 @@ export default class MonitorDetails extends Component {
         {this.renderNoTriggersCallOut()}
         <EuiFlexGroup alignItems="flexEnd">
           <EuiFlexItem grow={false}>
-            <EuiTitle size="l" style={{ whiteSpace: 'nowrap', overflow: 'hidden' }}>
-              <h1
-                style={{
-                  whiteSpace: 'nowrap',
-                  maxWidth: '90%',
-                  textOverflow: 'ellipsis',
-                  overflow: 'hidden',
-                }}
-              >
-                {monitor.name}
-              </h1>
-            </EuiTitle>
+            <EuiText size="s" style={{ whiteSpace: 'nowrap', overflow: 'hidden' }}>
+              <h1>{monitor.name}</h1>
+            </EuiText>
           </EuiFlexItem>
           <EuiFlexItem style={{ paddingBottom: '5px', marginLeft: '0px' }}>
             {monitor.enabled ? (

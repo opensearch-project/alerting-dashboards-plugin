@@ -109,7 +109,7 @@ exports[`Dashboard renders in flyout 1`] = `
       }
     }
     title="Alerts"
-    titleSize="l"
+    titleSize="s"
   >
     <EuiPanel
       style={
@@ -149,15 +149,17 @@ exports[`Dashboard renders in flyout 1`] = `
               <div
                 className="euiFlexItem"
               >
-                <EuiTitle
-                  size="l"
+                <EuiText
+                  size="s"
                 >
-                  <h3
-                    className="euiTitle euiTitle--large"
+                  <div
+                    className="euiText euiText--small"
                   >
-                    Alerts
-                  </h3>
-                </EuiTitle>
+                    <h2>
+                      Alerts
+                    </h2>
+                  </div>
+                </EuiText>
               </div>
             </EuiFlexItem>
             <EuiFlexItem
@@ -1655,7 +1657,7 @@ exports[`Dashboard renders with alert by triggers view 1`] = `
       }
     }
     title="Alerts by triggers"
-    titleSize="l"
+    titleSize="s"
   >
     <EuiPanel
       style={
@@ -1695,15 +1697,17 @@ exports[`Dashboard renders with alert by triggers view 1`] = `
               <div
                 className="euiFlexItem"
               >
-                <EuiTitle
-                  size="l"
+                <EuiText
+                  size="s"
                 >
-                  <h3
-                    className="euiTitle euiTitle--large"
+                  <div
+                    className="euiText euiText--small"
                   >
-                    Alerts by triggers
-                  </h3>
-                </EuiTitle>
+                    <h2>
+                      Alerts by triggers
+                    </h2>
+                  </div>
+                </EuiText>
               </div>
             </EuiFlexItem>
             <EuiFlexItem
@@ -3607,7 +3611,7 @@ exports[`Dashboard renders with per alert view 1`] = `
       }
     }
     title="Alerts"
-    titleSize="l"
+    titleSize="s"
   >
     <EuiPanel
       style={
@@ -3647,15 +3651,17 @@ exports[`Dashboard renders with per alert view 1`] = `
               <div
                 className="euiFlexItem"
               >
-                <EuiTitle
-                  size="l"
+                <EuiText
+                  size="s"
                 >
-                  <h3
-                    className="euiTitle euiTitle--large"
+                  <div
+                    className="euiText euiText--small"
                   >
-                    Alerts
-                  </h3>
-                </EuiTitle>
+                    <h2>
+                      Alerts
+                    </h2>
+                  </div>
+                </EuiText>
               </div>
             </EuiFlexItem>
             <EuiFlexItem
