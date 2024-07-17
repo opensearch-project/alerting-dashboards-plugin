@@ -3,7 +3,7 @@
 exports[`Home renders 1`] = `
 <div>
   <div
-    class="euiTabs"
+    class="euiTabs euiTabs--small"
     role="tablist"
   >
     <button

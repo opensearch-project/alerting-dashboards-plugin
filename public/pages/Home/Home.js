@@ -82,7 +82,7 @@ export default class Home extends Component {
     const { httpClient, notifications, setFlyout, landingDataSourceId } = this.props;
     return (
       <div>
-        <EuiTabs>{this.tabs.map(this.renderTab)}</EuiTabs>
+        <EuiTabs size="s">{this.tabs.map(this.renderTab)}</EuiTabs>
         <div style={{ padding: '25px 25px' }}>
           <Switch>
             <Route
