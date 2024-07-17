@@ -12,7 +12,7 @@ exports[`<EmptyHistory/> renders 1`] = `
       class="euiText euiText--medium"
     >
       <div
-        class="euiText euiText--medium"
+        class="euiText euiText--small"
       >
         <p>
           There are no triggers. Create a trigger to start alerting. Once an alarm is triggered, the state will be displayed in time series.

@@ -69,7 +69,7 @@ export const getPerformanceModal = ({ edit, onClose, onSubmit, values }) => {
       </EuiModalHeader>
 
       <EuiModalBody>
-        <EuiText>
+        <EuiText size="s">
           <p>The following use cases may impact this monitor's performance.</p>
           <ul>
             {hasRemoteClusters && <li>One or more remote indexes may affect monitor accuracy</li>}

@@ -42,7 +42,7 @@ const DashboardEmptyPrompt = ({ onCreateTrigger, isModal = false }) => {
     <EuiEmptyPrompt
       style={{ maxWidth: '45em' }}
       body={
-        <EuiText>
+        <EuiText size="s">
           <p>{displayText}</p>
         </EuiText>
       }

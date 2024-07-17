@@ -33,11 +33,7 @@ exports[`Flyout renders 1`] = `
   </EuiFlyoutHeader>
   <EuiFlyoutBody>
     <EuiText
-      style={
-        Object {
-          "fontSize": "14px",
-        }
-      }
+      size="s"
     >
       <p>
         You have access to a "ctx" variable in your painless scripts and action mustache templates.
