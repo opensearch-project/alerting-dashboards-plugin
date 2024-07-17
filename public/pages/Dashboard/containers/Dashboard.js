@@ -539,7 +539,7 @@ export default class Dashboard extends Component {
         )}
         <ContentPanel
           title={perAlertView ? 'Alerts' : 'Alerts by triggers'}
-          titleSize={monitorIds.length ? 's' : 'l'}
+          titleSize={'s'}
           bodyStyles={{ padding: 'initial' }}
           actions={actions()}
         >

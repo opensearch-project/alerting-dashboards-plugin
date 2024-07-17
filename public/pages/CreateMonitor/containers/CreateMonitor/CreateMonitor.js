@@ -12,7 +12,7 @@ import {
   EuiFlexGroup,
   EuiFlexItem,
   EuiSpacer,
-  EuiTitle,
+  EuiText,
 } from '@elastic/eui';
 import DefineMonitor from '../DefineMonitor';
 import { FORMIK_INITIAL_VALUES } from './utils/constants';
@@ -157,11 +157,11 @@ export default class CreateMonitor extends Component {
       this.setState({
         initialValues: {
           ...this.state.initialValues,
-          dataSourceId: this.props.landingDataSourceId
-        }
+          dataSourceId: this.props.landingDataSourceId,
+        },
       });
     }
-  }  
+  }
 
   render() {
     const {
@@ -187,9 +187,9 @@ export default class CreateMonitor extends Component {
             const isComposite = values.monitor_type === MONITOR_TYPE.COMPOSITE_LEVEL;
             return (
               <Fragment>
-                <EuiTitle size="l">
+                <EuiText size="s">
                   <h1>{edit ? 'Edit' : 'Create'} monitor</h1>
-                </EuiTitle>
+                </EuiText>
                 <EuiSpacer />
 
                 <MonitorDetails

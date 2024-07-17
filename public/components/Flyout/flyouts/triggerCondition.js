@@ -4,7 +4,7 @@
  */
 
 import React from 'react';
-import { EuiCodeBlock, EuiCodeEditor, EuiSpacer, EuiText, EuiTitle } from '@elastic/eui';
+import { EuiCodeBlock, EuiCodeEditor, EuiSpacer, EuiText } from '@elastic/eui';
 
 const CONTEXT_VARIABLES = JSON.stringify(
   {
@@ -28,11 +28,11 @@ const triggerCondition = (context) => ({
   },
   headerProps: { hasBorder: true },
   header: (
-    <EuiTitle size="m" style={{ fontSize: '25px' }}>
+    <EuiText size="s">
       <h2>
         <strong>Trigger condition</strong>
       </h2>
-    </EuiTitle>
+    </EuiText>
   ),
   body: (
     <div>
