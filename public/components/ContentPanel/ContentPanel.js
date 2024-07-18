@@ -5,18 +5,11 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import {
-  EuiFlexGroup,
-  EuiFlexItem,
-  EuiHorizontalRule,
-  EuiPanel,
-  EuiTitle,
-  EuiText,
-} from '@elastic/eui';
+import { EuiFlexGroup, EuiFlexItem, EuiHorizontalRule, EuiPanel, EuiText } from '@elastic/eui';
 
 const ContentPanel = ({
   title = '',
-  titleSize = 'l',
+  titleSize = 's',
   description = '',
   descriptionSize = 'xs',
   bodyStyles = {},
@@ -28,9 +21,9 @@ const ContentPanel = ({
   <EuiPanel style={{ paddingLeft: '0px', paddingRight: '0px', ...panelStyles }}>
     <EuiFlexGroup style={{ padding: '0px 10px' }} justifyContent="spaceBetween" alignItems="center">
       <EuiFlexItem>
-        <EuiTitle size={titleSize}>
-          <h3>{title}</h3>
-        </EuiTitle>
+        <EuiText size={titleSize}>
+          <h2>{title}</h2>
+        </EuiText>
       </EuiFlexItem>
       <EuiFlexItem grow={false}>
         <EuiFlexGroup justifyContent="spaceBetween" alignItems="center">
