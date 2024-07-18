@@ -103,7 +103,7 @@ export default class MonitorActions extends Component {
             panelPaddingSize="none"
             anchorPosition="downLeft"
           >
-            <EuiContextMenuPanel items={this.getActions()} />
+            <EuiContextMenuPanel items={this.getActions()} size="s" />
           </EuiPopover>
         </EuiFlexItem>
         <EuiFlexItem grow={false}>
