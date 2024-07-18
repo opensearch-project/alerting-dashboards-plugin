@@ -698,7 +698,7 @@ export default class AlertsDashboardFlyoutComponent extends Component {
 
         {displayTableTabs ? (
           <div>
-            <EuiTabs>{this.renderTableTabs()}</EuiTabs>
+            <EuiTabs size="s">{this.renderTableTabs()}</EuiTabs>
             {tabContent}
           </div>
         ) : (

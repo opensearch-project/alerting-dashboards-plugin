@@ -563,7 +563,7 @@ export default class MonitorDetails extends Component {
         {displayTableTabs ? (
           <div>
             {monitor.monitor_type !== MONITOR_TYPE.COMPOSITE_LEVEL ? (
-              <EuiTabs>{this.renderTableTabs()}</EuiTabs>
+              <EuiTabs size="s">{this.renderTableTabs()}</EuiTabs>
             ) : null}
             {this.state.tabContent}
           </div>
