@@ -25,7 +25,7 @@ const ActionEmptyPrompt = ({
     <EuiEmptyPrompt
       style={{ maxWidth: '45em' }}
       body={
-        <EuiText>
+        <EuiText size="s">
           <p>{hasDestinations ? actionEmptyText : destinationEmptyText}</p>
         </EuiText>
       }

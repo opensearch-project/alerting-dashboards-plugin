@@ -12,7 +12,7 @@ exports[`MonitorEmptyPrompt renders 1`] = `
       class="euiText euiText--medium"
     >
       <div
-        class="euiText euiText--medium"
+        class="euiText euiText--small"
       >
         <p>
           There are no existing monitors. Create a monitor to add triggers and actions.

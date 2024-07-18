@@ -51,11 +51,7 @@ Object {
 exports[`Flyouts.message generates message JSON 1`] = `
 Object {
   "body": <EuiText
-    style={
-      Object {
-        "fontSize": "14px",
-      }
-    }
+    size="s"
   >
     <p>
       You have access to a "ctx" variable in your painless scripts and action mustache templates.
@@ -103,11 +99,7 @@ Object {
 exports[`Flyouts.messageFrequency generates message JSON 1`] = `
 Object {
   "body": <EuiText
-    style={
-      Object {
-        "fontSize": "14px",
-      }
-    }
+    size="s"
   >
     <p>
       Specify message frequency to limit the number of notifications you receive within a given span of time. This setting is especially useful for low severity trigger conditions.
@@ -159,11 +151,7 @@ exports[`Flyouts.triggerCondition generates message JSON 1`] = `
 Object {
   "body": <div>
     <EuiText
-      style={
-        Object {
-          "fontSize": "14px",
-        }
-      }
+      size="s"
     >
       <p>
         You have access to a "ctx" variable in your painless scripts

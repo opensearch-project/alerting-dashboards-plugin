@@ -247,7 +247,7 @@ export default class FindingsDashboard extends Component {
               <EuiEmptyPrompt
                 style={{ maxWidth: '45em' }}
                 body={
-                  <EuiText>
+                  <EuiText size="s">
                     <p>{NO_FINDINGS_TEXT}</p>
                   </EuiText>
                 }
