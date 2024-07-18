@@ -83,7 +83,7 @@ class DefineCompositeLevelTrigger extends Component {
         }
         initialIsOpen={edit ? false : triggerIndex === 0}
         extraAction={
-          <EuiSmallButton
+          <EuiButton
             color={'danger'}
             onClick={() => {
               triggerArrayHelpers.remove(triggerIndex);
@@ -91,7 +91,7 @@ class DefineCompositeLevelTrigger extends Component {
             size={'s'}
           >
             Remove trigger
-          </EuiSmallButton>
+          </EuiButton>
         }
         style={{ paddingBottom: '15px', paddingTop: '10px' }}
       >

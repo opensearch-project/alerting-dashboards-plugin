@@ -10,7 +10,7 @@ import {
   EuiText,
   EuiAccordion,
   EuiHorizontalRule,
-  EuiSmallButtonIcon,
+  EuiButtonIcon,
   EuiToolTip,
 } from '@elastic/eui';
 import TriggerNotificationsContent from './TriggerNotificationsContent';
@@ -118,7 +118,7 @@ const TriggerNotifications = ({
                 paddingSize={'s'}
                 extraAction={
                   <EuiToolTip content={'Remove notification'}>
-                    <EuiSmallButtonIcon
+                    <EuiButtonIcon
                       color={'danger'}
                       aria-label={'Delete notification'}
                       iconType={'trash'}

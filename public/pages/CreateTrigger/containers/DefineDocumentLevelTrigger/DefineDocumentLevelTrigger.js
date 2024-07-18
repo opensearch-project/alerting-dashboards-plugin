@@ -9,8 +9,8 @@ import _ from 'lodash';
 import { FieldArray } from 'formik';
 import {
   EuiAccordion,
-  EuiSmallButton,
-  EuiSmallButtonEmpty,
+  EuiButton,
+  EuiButtonEmpty,
   EuiSpacer,
   EuiText,
   EuiTitle,
@@ -221,7 +221,7 @@ class DefineDocumentLevelTrigger extends Component {
 
             <EuiSpacer size={'s'} />
 
-            <EuiSmallButtonEmpty
+            <EuiButtonEmpty
               onClick={() =>
                 conditionsArrayHelpers.push(_.cloneDeep(FORMIK_INITIAL_TRIGGER_CONDITION_VALUES))
               }
@@ -230,7 +230,7 @@ class DefineDocumentLevelTrigger extends Component {
               data-test-subj={`addTriggerConditionButton`}
             >
               + Add condition
-            </EuiSmallButtonEmpty>
+            </EuiButtonEmpty>
             {inputLimitText(
               _.get(triggerValues, `${fieldPath}triggerConditions`, []).length,
               MAX_TRIGGER_CONDITIONS,
@@ -266,7 +266,7 @@ class DefineDocumentLevelTrigger extends Component {
         }
         initialIsOpen={edit ? false : triggerIndex === 0}
         extraAction={
-          <EuiSmallButton
+          <EuiButton
             color={'danger'}
             onClick={() => {
               triggerArrayHelpers.remove(triggerIndex);
@@ -274,7 +274,7 @@ class DefineDocumentLevelTrigger extends Component {
             size={'s'}
           >
             Remove trigger
-          </EuiSmallButton>
+          </EuiButton>
         }
         style={{ paddingBottom: '15px', paddingTop: '10px' }}
       >
