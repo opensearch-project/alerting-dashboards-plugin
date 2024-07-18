@@ -8,6 +8,9 @@ import {
   Plugin,
   CoreSetup,
   CoreStart,
+  DEFAULT_NAV_GROUPS,
+  WorkspaceAvailability,
+  AppMountParameters,
 } from '../../../src/core/public';
 import { ACTION_ALERTING } from './actions/alerting_dashboard_action';
 import { CONTEXT_MENU_TRIGGER, EmbeddableStart } from '../../../src/plugins/embeddable/public';
@@ -46,7 +49,15 @@ export interface AlertingStartDeps {
 }
 
 export class AlertingPlugin implements Plugin<AlertingSetup, AlertingStart, AlertingSetupDeps, AlertingStartDeps> {
+
   public setup(core: CoreSetup<AlertingStartDeps, AlertingStart>, { expressions, uiActions, dataSourceManagement, dataSource }: AlertingSetupDeps): AlertingSetup {
+    
+    const mountWrapper = async (params: AppMountParameters, redirect: string) => {
+      const { renderApp } = await import("./app");
+      const [coreStart] = await core.getStartServices();
+      return renderApp(coreStart, params, redirect);
+    };
+
     core.application.register({
       id: PLUGIN_NAME,
       title: 'Alerting',
@@ -56,11 +67,12 @@ export class AlertingPlugin implements Plugin<AlertingSetup, AlertingStart, Aler
         label: 'OpenSearch Plugins',
         order: 2000,
       },
+      workspaceAvailability: WorkspaceAvailability.outsideWorkspace,
       order: 4000,
       mount: async (params) => {
         const { renderApp } = await import('./app');
         const [coreStart] = await core.getStartServices();
-        return renderApp(coreStart, params);
+        return renderApp(coreStart, params, "dashboard");
       },
     });
 
@@ -92,7 +104,58 @@ export class AlertingPlugin implements Plugin<AlertingSetup, AlertingStart, Aler
     uiActions.registerTrigger(alertingTriggerAd);
     uiActions.addTriggerAction(alertingTriggerAd.id, adAction);
 
-    return;
+    if (core.chrome.navGroup.getNavGroupEnabled()) {
+
+      // channels route
+      core.application.register({
+        id: `alerts`,
+        title: 'Alerts',
+        order: 9070,
+        mount: async (params: AppMountParameters) => {
+          return mountWrapper(params, "/dashboard");
+        },
+      });
+
+      core.application.register({
+        id: `monitors`,
+        title: 'Monitors',
+        order: 9070,
+        mount: async (params: AppMountParameters) => {
+          return mountWrapper(params, "/monitors");
+        },
+      });
+
+      core.application.register({
+        id: `destinations`,
+        title: 'Destinations',
+        order: 9070,
+        mount: async (params: AppMountParameters) => {
+          return mountWrapper(params, "/destinations");
+        },
+      });
+
+      core.chrome.navGroup.addNavLinksToGroup(
+        DEFAULT_NAV_GROUPS.observability,
+        [
+          {
+            id: PLUGIN_NAME,
+          },
+          {
+            id: `alerts`,
+            parentNavLinkId: PLUGIN_NAME
+          },
+          {
+            id: `monitors`,
+            parentNavLinkId: PLUGIN_NAME
+          },
+          {
+            id: `destinations`,
+            parentNavLinkId: PLUGIN_NAME
+          },
+
+        ]
+      );
+    }
   }
 
   public start(core: CoreStart, { visAugmenter, embeddable, data }: AlertingStartDeps): AlertingStart {

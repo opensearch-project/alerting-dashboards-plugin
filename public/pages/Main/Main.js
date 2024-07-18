@@ -236,6 +236,7 @@ class Main extends Component {
                                   setFlyout={this.setFlyout}
                                   notifications={core.notifications}
                                   landingDataSourceId={this.state.selectedDataSourceId}
+                                  defaultRoute={core.chrome?.navGroup?.getNavGroupEnabled() ? this.props.defaultRoute : undefined}
                                 />
                               )}
                             />
