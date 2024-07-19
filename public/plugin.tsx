@@ -32,9 +32,9 @@ declare module '../../../src/plugins/ui_actions/public' {
   }
 }
 
-export interface AlertingSetup {}
+export interface AlertingSetup { }
 
-export interface AlertingStart {}
+export interface AlertingStart { }
 
 export interface AlertingSetupDeps {
   expressions: ExpressionsSetup;
@@ -52,7 +52,7 @@ export interface AlertingStartDeps {
 export class AlertingPlugin implements Plugin<void, AlertingStart, AlertingSetupDeps, AlertingStartDeps> {
 
   public setup(core: CoreSetup<AlertingStartDeps, AlertingStart>, { expressions, uiActions, dataSourceManagement, dataSource }: AlertingSetupDeps) {
-    
+
     const mountWrapper = async (params: AppMountParameters, redirect: string) => {
       const { renderApp } = await import("./app");
       const [coreStart] = await core.getStartServices();
@@ -78,17 +78,20 @@ export class AlertingPlugin implements Plugin<void, AlertingStart, AlertingSetup
     });
 
     if (core.chrome.navGroup.getNavGroupEnabled()) {
-      const navLink = {
-        id: PLUGIN_NAME,
-        category: DEFAULT_APP_CATEGORIES.detect,
-        showInAllNavGroup: true
-      };
       // register applications with category and use case information
-      core.chrome.navGroup.addNavLinksToGroup(DEFAULT_NAV_GROUPS.observability,[
-        navLink
+      core.chrome.navGroup.addNavLinksToGroup(DEFAULT_NAV_GROUPS.observability, [
+        {
+          id: PLUGIN_NAME,
+          category: DEFAULT_APP_CATEGORIES.detect,
+          showInAllNavGroup: true
+        }
       ])
-      core.chrome.navGroup.addNavLinksToGroup(DEFAULT_NAV_GROUPS['security-analytics'],[
-        navLink
+      core.chrome.navGroup.addNavLinksToGroup(DEFAULT_NAV_GROUPS['security-analytics'], [
+        {
+          id: PLUGIN_NAME,
+          category: DEFAULT_APP_CATEGORIES.detect,
+          showInAllNavGroup: false
+        }
       ])
 
       // channels route
