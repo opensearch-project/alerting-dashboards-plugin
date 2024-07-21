@@ -99,7 +99,7 @@ export class AlertingPlugin implements Plugin<void, AlertingStart, AlertingSetup
         id: ALERTS_NAV_ID,
         title: 'Alerts',
         order: 9070,
-        category: DEFAULT_APP_CATEGORIES.detect,
+        category: DEFAULT_APP_CATEGORIES.configure,
         workspaceAvailability: WorkspaceAvailability.outsideWorkspace,
         mount: async (params: AppMountParameters) => {
           return mountWrapper(params, "/dashboard");
@@ -110,7 +110,7 @@ export class AlertingPlugin implements Plugin<void, AlertingStart, AlertingSetup
         id: MONITORS_NAV_ID,
         title: 'Monitors',
         order: 9070,
-        category: DEFAULT_APP_CATEGORIES.detect,
+        category: DEFAULT_APP_CATEGORIES.configure,
         workspaceAvailability: WorkspaceAvailability.outsideWorkspace,
         mount: async (params: AppMountParameters) => {
           return mountWrapper(params, "/monitors");
@@ -121,7 +121,7 @@ export class AlertingPlugin implements Plugin<void, AlertingStart, AlertingSetup
         id: DESTINATIONS_NAV_ID,
         title: 'Destinations',
         order: 9070,
-        category: DEFAULT_APP_CATEGORIES.detect,
+        category: DEFAULT_APP_CATEGORIES.configure,
         workspaceAvailability: WorkspaceAvailability.outsideWorkspace,
         mount: async (params: AppMountParameters) => {
           return mountWrapper(params, "/destinations");
