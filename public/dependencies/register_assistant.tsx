@@ -5,7 +5,7 @@
 
 import React from 'react';
 import { AssistantSetup, TAB_ID } from '../types';
-import AlertContainer from './component/AlertContainer';
+import AlertContainer from './component/AlertContainer/AlertContainer';
 import { EuiButton, EuiFlexGroup, EuiFlexItem } from '@elastic/eui';
 
 const override: TAB_ID = 'override' as TAB_ID;

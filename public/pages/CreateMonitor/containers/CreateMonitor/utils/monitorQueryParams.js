@@ -17,8 +17,6 @@ export const initializeFromQueryParams = (queryParams) => {
     // new prototype fields are starting as here
     index: queryParams.index ? [{ label: queryParams.index }] : undefined,
     timeField: queryParams.timeField || undefined,
-    aggregationType: queryParams.aggregationType || undefined,
-    aggregationField: queryParams.aggregationField || undefined,
     bucketValue: queryParams.bucketValue ||  undefined,
     bucketUnitOfTime: queryParams.bucketUnitOfTime || undefined,
     aggregations: queryParams.aggregations ?  JSON.parse(queryParams.aggregations) : undefined,

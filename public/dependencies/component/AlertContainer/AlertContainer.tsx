@@ -16,18 +16,18 @@ import {
   getNotifications,
   getUISettings,
   NotificationService,
-} from '../../services';
+} from '../../../services';
 import {
   getInitialValues,
   getPlugins,
   submit,
-} from '../../pages/CreateMonitor/containers/CreateMonitor/utils/helpers';
-import DefineMonitor from '../../pages/CreateMonitor/containers/DefineMonitor';
-import { formikToMonitor } from '../../pages/CreateMonitor/containers/CreateMonitor/utils/formikToMonitor';
-import MonitorDetails from '../../pages/CreateMonitor/containers/MonitorDetails';
-import ConfigureTriggers from '../../pages/CreateTrigger/containers/ConfigureTriggers';
-import { unitToLabel } from '../../pages/CreateMonitor/components/Schedule/Frequencies/Interval';
-import EnhancedAccordion from '../../components/FeatureAnywhereContextMenu/EnhancedAccordion';
+} from '../../../pages/CreateMonitor/containers/CreateMonitor/utils/helpers';
+import DefineMonitor from '../../../pages/CreateMonitor/containers/DefineMonitor';
+import { formikToMonitor } from '../../../pages/CreateMonitor/containers/CreateMonitor/utils/formikToMonitor';
+import MonitorDetails from '../../../pages/CreateMonitor/containers/MonitorDetails';
+import ConfigureTriggers from '../../../pages/CreateTrigger/containers/ConfigureTriggers';
+import { unitToLabel } from '../../../pages/CreateMonitor/components/Schedule/Frequencies/Interval';
+import EnhancedAccordion from '../../../components/FeatureAnywhereContextMenu/EnhancedAccordion';
 import './styles.scss';
 
 function AlertContainer(props: {content: string}) {

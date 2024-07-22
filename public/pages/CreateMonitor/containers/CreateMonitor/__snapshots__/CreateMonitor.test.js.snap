@@ -64,6 +64,7 @@ exports[`CreateMonitor renders 1`] = `
         "searchType": "graph",
         "timeField": "",
         "timezone": Array [],
+        "triggerDefinitions": undefined,
         "uri": Object {
           "api_type": "",
           "clusters": Array [],
