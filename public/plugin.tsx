@@ -103,7 +103,7 @@ export class AlertingPlugin implements Plugin<void, AlertingStart, AlertingSetup
         id: MONITORS_NAV_ID,
         title: 'Monitors',
         order: 9070,
-        category: DEFAULT_APP_CATEGORIES.configure,
+        category: DEFAULT_APP_CATEGORIES.detect,
         workspaceAvailability: WorkspaceAvailability.outsideWorkspace,
         mount: async (params: AppMountParameters) => {
           return mountWrapper(params, "/monitors");
