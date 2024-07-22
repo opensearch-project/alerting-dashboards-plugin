@@ -58,7 +58,7 @@ const sampleQueryAlerts = [
 const runAllPromises = () => new Promise(setImmediate);
 
 describe('Dashboard', () => {
-  setAssistantDashboards({ chatEnabled: () => false });
+  setAssistantDashboards({ chatEnabled: () => false, nextEnabled: () => false });
 
   beforeEach(() => {
     jest.clearAllMocks();

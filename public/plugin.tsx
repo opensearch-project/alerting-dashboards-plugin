@@ -85,7 +85,7 @@ export class AlertingPlugin
       },
     });
 
-    setAssistantDashboards(assistantDashboards || { chatEnabled: () => false });
+    setAssistantDashboards(assistantDashboards || { chatEnabled: () => false, nextEnabled: () => false });
 
     setUISettings(core.uiSettings);
 

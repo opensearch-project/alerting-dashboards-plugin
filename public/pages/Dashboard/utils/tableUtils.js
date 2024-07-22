@@ -218,7 +218,7 @@ export const alertColumns = (
         ### Alert query DSL ${dsl} \n`;
       };
 
-      if (getAssistantDashboards().chatEnabled) {
+      if (getAssistantDashboards().nextEnabled()) {
         getAssistantDashboards().registerIncontextInsight([
           {
             key: alertId,
