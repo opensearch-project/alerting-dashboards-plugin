@@ -135,10 +135,6 @@ export class AlertingPlugin implements Plugin<void, AlertingStart, AlertingSetup
           parentNavLinkId: PLUGIN_NAME,
         },
       ];
-      core.chrome.navGroup.addNavLinksToGroup(
-        DEFAULT_NAV_GROUPS['security-analytics'],
-        navLinks
-      );
 
       core.chrome.navGroup.addNavLinksToGroup(
         DEFAULT_NAV_GROUPS.observability,
