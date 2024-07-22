@@ -154,7 +154,7 @@ describe('CompositeLevelMonitor', () => {
 
       // Wait for monitor to be created
       cy.wait('@updateMonitorRequest').then(() => {
-        cy.get('.euiTitle--small').contains(`${SAMPLE_VISUAL_EDITOR_MONITOR}_edited`);
+        cy.get('.euiText--small').contains(`${SAMPLE_VISUAL_EDITOR_MONITOR}_edited`);
       });
     });
   });
