@@ -133,9 +133,10 @@ export const alertColumns = (
     sortable: true,
     truncateText: false,
     render: (total, alert) => {
+      const alertId = `alerts_${alert.alerts[0].id}`;
       const component = (
         <EuiLink
-          key="alerts"
+          key={alertId}
           onClick={() => {
             openFlyout({
               ...alert,
@@ -217,9 +218,19 @@ export const alertColumns = (
         ### Alert query DSL ${dsl} \n`;
       };
 
-      return getAssistantDashboards().chatEnabled()
-        ? getAssistantDashboards().renderIncontextInsight({ children: component, contextProvider })
-        : component;
+      if (getAssistantDashboards().chatEnabled) {
+        getAssistantDashboards().registerIncontextInsight([
+          {
+            key: alertId,
+            type: 'generate',
+            suggestions: [`Please summarize this alert`],
+            contextProvider: contextProvider,
+          },
+        ]);
+        return getAssistantDashboards().renderIncontextInsight({ children: component });
+      } else {
+        return component;
+      }
     },
   },
   {

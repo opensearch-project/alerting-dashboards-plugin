@@ -86,15 +86,6 @@ export class AlertingPlugin
     });
 
     setAssistantDashboards(assistantDashboards || { chatEnabled: () => false });
-    if (assistantDashboards && assistantDashboards?.chatEnabled()) {
-      assistantDashboards.registerIncontextInsight([
-        {
-          key: 'alerts',
-          type: 'generate',
-          suggestions: [`Please summarize this alert`],
-        },
-      ]);
-    }
 
     setUISettings(core.uiSettings);
 
