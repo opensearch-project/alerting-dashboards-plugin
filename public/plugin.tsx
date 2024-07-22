@@ -82,7 +82,7 @@ export class AlertingPlugin implements Plugin<void, AlertingStart, AlertingSetup
       core.chrome.navGroup.addNavLinksToGroup(DEFAULT_NAV_GROUPS.observability, [
         {
           id: PLUGIN_NAME,
-          category: DEFAULT_APP_CATEGORIES.configure,
+          category: DEFAULT_APP_CATEGORIES.detect,
           showInAllNavGroup: false
         }
       ])
