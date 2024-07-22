@@ -2,7 +2,7 @@
 
 exports[`FormikCheckbox render 1`] = `
 <div
-  class="euiCheckbox euiCheckbox--noLabel"
+  class="euiCheckbox euiCheckbox--noLabel euiCheckbox--compressed"
 >
   <input
     class="euiCheckbox__input"
@@ -18,14 +18,14 @@ exports[`FormikCheckbox render 1`] = `
 
 exports[`FormikCheckbox render formRow 1`] = `
 <div
-  class="euiFormRow"
+  class="euiFormRow euiFormRow--compressed"
   id="testing-form-row-row"
 >
   <div
     class="euiFormRow__fieldWrapper"
   >
     <div
-      class="euiCheckbox euiCheckbox--noLabel"
+      class="euiCheckbox euiCheckbox--noLabel euiCheckbox--compressed"
     >
       <input
         class="euiCheckbox__input"

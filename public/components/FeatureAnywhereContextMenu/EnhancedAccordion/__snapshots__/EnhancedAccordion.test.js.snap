@@ -7,7 +7,7 @@ exports[`EnhancedAccordion renders 1`] = `
   <div
     className="euiPanel euiPanel--paddingMedium euiPanel--borderRadiusNone euiPanel--subdued euiPanel--noShadow euiPanel--noBorder euiPanel--flexGrowZero euiSplitPanel__inner"
   >
-    <EuiButtonIcon
+    <EuiSmallButtonIcon
       aria-label="Expand"
       className="enhanced-accordion__arrow  "
       color="text"

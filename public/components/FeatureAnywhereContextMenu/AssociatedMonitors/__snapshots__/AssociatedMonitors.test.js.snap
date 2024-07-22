@@ -33,14 +33,14 @@ exports[`AssociatedMonitors renders 1`] = `
       <EuiFlexItem
         grow={false}
       >
-        <EuiButton
+        <EuiSmallButton
           fill={true}
           iconType="link"
           isDisabled={true}
           onClick={[Function]}
         >
           Associate a monitor
-        </EuiButton>
+        </EuiSmallButton>
       </EuiFlexItem>
     </EuiFlexGroup>
     <EuiSpacer

@@ -6,7 +6,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
-import { EuiSpacer, EuiTitle, EuiAccordion, EuiSmallButton } from '@elastic/eui';
+import { EuiSpacer, EuiTitle, EuiAccordion, EuiButton } from '@elastic/eui';
 import { FormikFieldText, FormikSelect } from '../../../../components/FormControls';
 import { hasError, isInvalid, required } from '../../../../utils/validate';
 import { DEFAULT_TRIGGER_NAME, SEVERITY_OPTIONS } from '../../utils/constants';

@@ -58,7 +58,7 @@ exports[`NotificationsInfoCallOut renders when Notifications plugin is installed
           class="euiSpacer euiSpacer--l"
         />
         <a
-          class="euiButton euiButton--primary"
+          class="euiButton euiButton--primary euiButton--small"
           href="/app/notifications-dashboards#/channels"
           rel="noreferrer"
         >
@@ -114,7 +114,7 @@ exports[`NotificationsInfoCallOut renders when Notifications plugin is not insta
           class="euiSpacer euiSpacer--l"
         />
         <a
-          class="euiButton euiButton--primary"
+          class="euiButton euiButton--primary euiButton--small"
           href="https://opensearch.org/docs/monitoring-plugins/alerting/monitors/#questions-about-destinations"
           rel="noopener noreferrer"
           target="_blank"

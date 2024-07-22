@@ -56,7 +56,7 @@ exports[`DestinationsList renders when Notification plugin is installed 1`] = `
       >
         <EuiEmptyPrompt
           actions={
-            <EuiButton
+            <EuiSmallButton
               external={true}
               fill={true}
               href="https://opensearch.org/docs/monitoring-plugins/alerting/monitors/#questions-about-destinations"
@@ -65,7 +65,7 @@ exports[`DestinationsList renders when Notification plugin is installed 1`] = `
               target="_blank"
             >
               View install instructions
-            </EuiButton>
+            </EuiSmallButton>
           }
           body={
             <EuiText>
@@ -125,7 +125,7 @@ exports[`DestinationsList renders when Notification plugin is installed 1`] = `
                 className="euiSpacer euiSpacer--l"
               />
             </EuiSpacer>
-            <EuiButton
+            <EuiSmallButton
               external={true}
               fill={true}
               href="https://opensearch.org/docs/monitoring-plugins/alerting/monitors/#questions-about-destinations"
@@ -133,64 +133,75 @@ exports[`DestinationsList renders when Notification plugin is installed 1`] = `
               iconType="popout"
               target="_blank"
             >
-              <EuiButtonDisplay
-                baseClassName="euiButton"
-                element="a"
+              <EuiButton
                 external={true}
                 fill={true}
                 href="https://opensearch.org/docs/monitoring-plugins/alerting/monitors/#questions-about-destinations"
                 iconSide="right"
                 iconType="popout"
-                isDisabled={false}
-                rel="noopener noreferrer"
+                size="s"
                 target="_blank"
               >
-                <a
-                  className="euiButton euiButton--primary euiButton--fill"
-                  disabled={false}
+                <EuiButtonDisplay
+                  baseClassName="euiButton"
+                  element="a"
                   external={true}
+                  fill={true}
                   href="https://opensearch.org/docs/monitoring-plugins/alerting/monitors/#questions-about-destinations"
+                  iconSide="right"
+                  iconType="popout"
+                  isDisabled={false}
                   rel="noopener noreferrer"
-                  style={
-                    Object {
-                      "minWidth": undefined,
-                    }
-                  }
+                  size="s"
                   target="_blank"
                 >
-                  <EuiButtonContent
-                    className="euiButton__content"
-                    iconSide="right"
-                    iconType="popout"
-                    textProps={
+                  <a
+                    className="euiButton euiButton--primary euiButton--small euiButton--fill"
+                    disabled={false}
+                    external={true}
+                    href="https://opensearch.org/docs/monitoring-plugins/alerting/monitors/#questions-about-destinations"
+                    rel="noopener noreferrer"
+                    style={
                       Object {
-                        "className": "euiButton__text",
+                        "minWidth": undefined,
                       }
                     }
+                    target="_blank"
                   >
-                    <span
-                      className="euiButtonContent euiButtonContent--iconRight euiButton__content"
+                    <EuiButtonContent
+                      className="euiButton__content"
+                      iconSide="right"
+                      iconType="popout"
+                      textProps={
+                        Object {
+                          "className": "euiButton__text",
+                        }
+                      }
                     >
-                      <EuiIcon
-                        className="euiButtonContent__icon"
-                        color="inherit"
-                        size="m"
-                        type="popout"
-                      >
-                        <div>
-                          EuiIconMock
-                        </div>
-                      </EuiIcon>
                       <span
-                        className="euiButton__text"
+                        className="euiButtonContent euiButtonContent--iconRight euiButton__content"
                       >
-                        View install instructions
+                        <EuiIcon
+                          className="euiButtonContent__icon"
+                          color="inherit"
+                          size="m"
+                          type="popout"
+                        >
+                          <div>
+                            EuiIconMock
+                          </div>
+                        </EuiIcon>
+                        <span
+                          className="euiButton__text"
+                        >
+                          View install instructions
+                        </span>
                       </span>
-                    </span>
-                  </EuiButtonContent>
-                </a>
-              </EuiButtonDisplay>
-            </EuiButton>
+                    </EuiButtonContent>
+                  </a>
+                </EuiButtonDisplay>
+              </EuiButton>
+            </EuiSmallButton>
           </div>
         </EuiEmptyPrompt>
       </div>
@@ -255,7 +266,7 @@ exports[`DestinationsList renders when Notification plugin is not installed 1`] 
       >
         <EuiEmptyPrompt
           actions={
-            <EuiButton
+            <EuiSmallButton
               external={true}
               fill={true}
               href="https://opensearch.org/docs/monitoring-plugins/alerting/monitors/#questions-about-destinations"
@@ -264,7 +275,7 @@ exports[`DestinationsList renders when Notification plugin is not installed 1`] 
               target="_blank"
             >
               View install instructions
-            </EuiButton>
+            </EuiSmallButton>
           }
           body={
             <EuiText>
@@ -324,7 +335,7 @@ exports[`DestinationsList renders when Notification plugin is not installed 1`] 
                 className="euiSpacer euiSpacer--l"
               />
             </EuiSpacer>
-            <EuiButton
+            <EuiSmallButton
               external={true}
               fill={true}
               href="https://opensearch.org/docs/monitoring-plugins/alerting/monitors/#questions-about-destinations"
@@ -332,64 +343,75 @@ exports[`DestinationsList renders when Notification plugin is not installed 1`] 
               iconType="popout"
               target="_blank"
             >
-              <EuiButtonDisplay
-                baseClassName="euiButton"
-                element="a"
+              <EuiButton
                 external={true}
                 fill={true}
                 href="https://opensearch.org/docs/monitoring-plugins/alerting/monitors/#questions-about-destinations"
                 iconSide="right"
                 iconType="popout"
-                isDisabled={false}
-                rel="noopener noreferrer"
+                size="s"
                 target="_blank"
               >
-                <a
-                  className="euiButton euiButton--primary euiButton--fill"
-                  disabled={false}
+                <EuiButtonDisplay
+                  baseClassName="euiButton"
+                  element="a"
                   external={true}
+                  fill={true}
                   href="https://opensearch.org/docs/monitoring-plugins/alerting/monitors/#questions-about-destinations"
+                  iconSide="right"
+                  iconType="popout"
+                  isDisabled={false}
                   rel="noopener noreferrer"
-                  style={
-                    Object {
-                      "minWidth": undefined,
-                    }
-                  }
+                  size="s"
                   target="_blank"
                 >
-                  <EuiButtonContent
-                    className="euiButton__content"
-                    iconSide="right"
-                    iconType="popout"
-                    textProps={
+                  <a
+                    className="euiButton euiButton--primary euiButton--small euiButton--fill"
+                    disabled={false}
+                    external={true}
+                    href="https://opensearch.org/docs/monitoring-plugins/alerting/monitors/#questions-about-destinations"
+                    rel="noopener noreferrer"
+                    style={
                       Object {
-                        "className": "euiButton__text",
+                        "minWidth": undefined,
                       }
                     }
+                    target="_blank"
                   >
-                    <span
-                      className="euiButtonContent euiButtonContent--iconRight euiButton__content"
+                    <EuiButtonContent
+                      className="euiButton__content"
+                      iconSide="right"
+                      iconType="popout"
+                      textProps={
+                        Object {
+                          "className": "euiButton__text",
+                        }
+                      }
                     >
-                      <EuiIcon
-                        className="euiButtonContent__icon"
-                        color="inherit"
-                        size="m"
-                        type="popout"
-                      >
-                        <div>
-                          EuiIconMock
-                        </div>
-                      </EuiIcon>
                       <span
-                        className="euiButton__text"
+                        className="euiButtonContent euiButtonContent--iconRight euiButton__content"
                       >
-                        View install instructions
+                        <EuiIcon
+                          className="euiButtonContent__icon"
+                          color="inherit"
+                          size="m"
+                          type="popout"
+                        >
+                          <div>
+                            EuiIconMock
+                          </div>
+                        </EuiIcon>
+                        <span
+                          className="euiButton__text"
+                        >
+                          View install instructions
+                        </span>
                       </span>
-                    </span>
-                  </EuiButtonContent>
-                </a>
-              </EuiButtonDisplay>
-            </EuiButton>
+                    </EuiButtonContent>
+                  </a>
+                </EuiButtonDisplay>
+              </EuiButton>
+            </EuiSmallButton>
           </div>
         </EuiEmptyPrompt>
       </div>
@@ -454,7 +476,7 @@ exports[`DestinationsList renders when email is disallowed 1`] = `
       >
         <EuiEmptyPrompt
           actions={
-            <EuiButton
+            <EuiSmallButton
               external={true}
               fill={true}
               href="https://opensearch.org/docs/monitoring-plugins/alerting/monitors/#questions-about-destinations"
@@ -463,7 +485,7 @@ exports[`DestinationsList renders when email is disallowed 1`] = `
               target="_blank"
             >
               View install instructions
-            </EuiButton>
+            </EuiSmallButton>
           }
           body={
             <EuiText>
@@ -523,7 +545,7 @@ exports[`DestinationsList renders when email is disallowed 1`] = `
                 className="euiSpacer euiSpacer--l"
               />
             </EuiSpacer>
-            <EuiButton
+            <EuiSmallButton
               external={true}
               fill={true}
               href="https://opensearch.org/docs/monitoring-plugins/alerting/monitors/#questions-about-destinations"
@@ -531,64 +553,75 @@ exports[`DestinationsList renders when email is disallowed 1`] = `
               iconType="popout"
               target="_blank"
             >
-              <EuiButtonDisplay
-                baseClassName="euiButton"
-                element="a"
+              <EuiButton
                 external={true}
                 fill={true}
                 href="https://opensearch.org/docs/monitoring-plugins/alerting/monitors/#questions-about-destinations"
                 iconSide="right"
                 iconType="popout"
-                isDisabled={false}
-                rel="noopener noreferrer"
+                size="s"
                 target="_blank"
               >
-                <a
-                  className="euiButton euiButton--primary euiButton--fill"
-                  disabled={false}
+                <EuiButtonDisplay
+                  baseClassName="euiButton"
+                  element="a"
                   external={true}
+                  fill={true}
                   href="https://opensearch.org/docs/monitoring-plugins/alerting/monitors/#questions-about-destinations"
+                  iconSide="right"
+                  iconType="popout"
+                  isDisabled={false}
                   rel="noopener noreferrer"
-                  style={
-                    Object {
-                      "minWidth": undefined,
-                    }
-                  }
+                  size="s"
                   target="_blank"
                 >
-                  <EuiButtonContent
-                    className="euiButton__content"
-                    iconSide="right"
-                    iconType="popout"
-                    textProps={
+                  <a
+                    className="euiButton euiButton--primary euiButton--small euiButton--fill"
+                    disabled={false}
+                    external={true}
+                    href="https://opensearch.org/docs/monitoring-plugins/alerting/monitors/#questions-about-destinations"
+                    rel="noopener noreferrer"
+                    style={
                       Object {
-                        "className": "euiButton__text",
+                        "minWidth": undefined,
                       }
                     }
+                    target="_blank"
                   >
-                    <span
-                      className="euiButtonContent euiButtonContent--iconRight euiButton__content"
+                    <EuiButtonContent
+                      className="euiButton__content"
+                      iconSide="right"
+                      iconType="popout"
+                      textProps={
+                        Object {
+                          "className": "euiButton__text",
+                        }
+                      }
                     >
-                      <EuiIcon
-                        className="euiButtonContent__icon"
-                        color="inherit"
-                        size="m"
-                        type="popout"
-                      >
-                        <div>
-                          EuiIconMock
-                        </div>
-                      </EuiIcon>
                       <span
-                        className="euiButton__text"
+                        className="euiButtonContent euiButtonContent--iconRight euiButton__content"
                       >
-                        View install instructions
+                        <EuiIcon
+                          className="euiButtonContent__icon"
+                          color="inherit"
+                          size="m"
+                          type="popout"
+                        >
+                          <div>
+                            EuiIconMock
+                          </div>
+                        </EuiIcon>
+                        <span
+                          className="euiButton__text"
+                        >
+                          View install instructions
+                        </span>
                       </span>
-                    </span>
-                  </EuiButtonContent>
-                </a>
-              </EuiButtonDisplay>
-            </EuiButton>
+                    </EuiButtonContent>
+                  </a>
+                </EuiButtonDisplay>
+              </EuiButton>
+            </EuiSmallButton>
           </div>
         </EuiEmptyPrompt>
       </div>

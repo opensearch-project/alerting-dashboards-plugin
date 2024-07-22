@@ -2,7 +2,7 @@
 
 exports[`CompositeTriggerCondition renders 1`] = `
 <div
-  class="euiFormRow"
+  class="euiFormRow euiFormRow--compressed"
   id="triggerConditionFieldsContainer_undefined-form-row-row"
   style="max-width:inherit"
 >
@@ -28,7 +28,7 @@ exports[`CompositeTriggerCondition renders 1`] = `
         class="euiFlexItem"
       >
         <div
-          class="euiFormRow euiFormRow--fullWidth"
+          class="euiFormRow euiFormRow--fullWidth euiFormRow--compressed"
           id="pathtriggerCondition_undefined_code-form-row-row"
         >
           <div

@@ -1,9 +1,9 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`TriggerExpressions renders 1`] = `
-<EuiFormRow
+<EuiCompressedFormRow
   describedByIds={Array []}
-  display="row"
+  display="rowCompressed"
   fullWidth={false}
   hasChildLabel={true}
   hasEmptyLabelSpace={false}
@@ -33,5 +33,5 @@ exports[`TriggerExpressions renders 1`] = `
       </Field>
     </EuiFlexItem>
   </EuiFlexGroup>
-</EuiFormRow>
+</EuiCompressedFormRow>
 `;
