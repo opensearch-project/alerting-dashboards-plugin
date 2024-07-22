@@ -3,11 +3,15 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { PLUGIN_NAME } from '../utils/constants';
+import { ALERTS_NAV_ID, DESTINATIONS_NAV_ID, MONITORS_NAV_ID, PLUGIN_NAME } from '../utils/constants';
 import {
   Plugin,
   CoreSetup,
   CoreStart,
+  DEFAULT_NAV_GROUPS,
+  WorkspaceAvailability,
+  AppMountParameters,
+  DEFAULT_APP_CATEGORIES,
 } from '../../../src/core/public';
 import { ACTION_ALERTING } from './actions/alerting_dashboard_action';
 import { CONTEXT_MENU_TRIGGER, EmbeddableStart } from '../../../src/plugins/embeddable/public';
@@ -28,9 +32,9 @@ declare module '../../../src/plugins/ui_actions/public' {
   }
 }
 
-export interface AlertingSetup {}
+export interface AlertingSetup { }
 
-export interface AlertingStart {}
+export interface AlertingStart { }
 
 export interface AlertingSetupDeps {
   expressions: ExpressionsSetup;
@@ -45,8 +49,16 @@ export interface AlertingStartDeps {
   data: DataPublicPluginStart;
 }
 
-export class AlertingPlugin implements Plugin<AlertingSetup, AlertingStart, AlertingSetupDeps, AlertingStartDeps> {
-  public setup(core: CoreSetup<AlertingStartDeps, AlertingStart>, { expressions, uiActions, dataSourceManagement, dataSource }: AlertingSetupDeps): AlertingSetup {
+export class AlertingPlugin implements Plugin<void, AlertingStart, AlertingSetupDeps, AlertingStartDeps> {
+
+  public setup(core: CoreSetup<AlertingStartDeps, AlertingStart>, { expressions, uiActions, dataSourceManagement, dataSource }: AlertingSetupDeps) {
+
+    const mountWrapper = async (params: AppMountParameters, redirect: string) => {
+      const { renderApp } = await import("./app");
+      const [coreStart] = await core.getStartServices();
+      return renderApp(coreStart, params, redirect);
+    };
+
     core.application.register({
       id: PLUGIN_NAME,
       title: 'Alerting',
@@ -56,6 +68,7 @@ export class AlertingPlugin implements Plugin<AlertingSetup, AlertingStart, Aler
         label: 'OpenSearch Plugins',
         order: 2000,
       },
+      workspaceAvailability: WorkspaceAvailability.outsideWorkspace,
       order: 4000,
       mount: async (params) => {
         const { renderApp } = await import('./app');
@@ -63,6 +76,71 @@ export class AlertingPlugin implements Plugin<AlertingSetup, AlertingStart, Aler
         return renderApp(coreStart, params);
       },
     });
+
+    if (core.chrome.navGroup.getNavGroupEnabled()) {
+      // register applications with category and use case information
+      core.chrome.navGroup.addNavLinksToGroup(DEFAULT_NAV_GROUPS.observability, [
+        {
+          id: PLUGIN_NAME,
+          category: DEFAULT_APP_CATEGORIES.detect,
+          showInAllNavGroup: false
+        }
+      ])
+
+      // channels route
+      core.application.register({
+        id: ALERTS_NAV_ID,
+        title: 'Alerts',
+        order: 9070,
+        category: DEFAULT_APP_CATEGORIES.detect,
+        workspaceAvailability: WorkspaceAvailability.outsideWorkspace,
+        mount: async (params: AppMountParameters) => {
+          return mountWrapper(params, "/dashboard");
+        },
+      });
+
+      core.application.register({
+        id: MONITORS_NAV_ID,
+        title: 'Monitors',
+        order: 9070,
+        category: DEFAULT_APP_CATEGORIES.detect,
+        workspaceAvailability: WorkspaceAvailability.outsideWorkspace,
+        mount: async (params: AppMountParameters) => {
+          return mountWrapper(params, "/monitors");
+        },
+      });
+
+      core.application.register({
+        id: DESTINATIONS_NAV_ID,
+        title: 'Destinations',
+        order: 9070,
+        category: DEFAULT_APP_CATEGORIES.detect,
+        workspaceAvailability: WorkspaceAvailability.outsideWorkspace,
+        mount: async (params: AppMountParameters) => {
+          return mountWrapper(params, "/destinations");
+        },
+      });
+
+      const navLinks = [
+        {
+          id: ALERTS_NAV_ID,
+          parentNavLinkId: PLUGIN_NAME,
+        },
+        {
+          id: MONITORS_NAV_ID,
+          parentNavLinkId: PLUGIN_NAME,
+        },
+        {
+          id: DESTINATIONS_NAV_ID,
+          parentNavLinkId: PLUGIN_NAME,
+        },
+      ];
+
+      core.chrome.navGroup.addNavLinksToGroup(
+        DEFAULT_NAV_GROUPS.observability,
+        navLinks
+      );
+    }
 
     setUISettings(core.uiSettings);
 
@@ -91,8 +169,6 @@ export class AlertingPlugin implements Plugin<AlertingSetup, AlertingStart, Aler
     const adAction = getAdAction();
     uiActions.registerTrigger(alertingTriggerAd);
     uiActions.addTriggerAction(alertingTriggerAd.id, adAction);
-
-    return;
   }
 
   public start(core: CoreStart, { visAugmenter, embeddable, data }: AlertingStartDeps): AlertingStart {
@@ -104,6 +180,4 @@ export class AlertingPlugin implements Plugin<AlertingSetup, AlertingStart, Aler
     setSavedObjectsClient(core.savedObjects.client);
     return {};
   }
-
-  public stop() {}
 }
