@@ -31,7 +31,7 @@ const validate = (value) => {
   if (!booleans.some((bool) => bool)) return 'Must select at least one weekday';
 };
 
-const Weekly = () => (
+const Weekly = ({ compressed }) => (
   <Fragment>
     <Field name="weekly" validate={validate}>
       {({ field: { value }, form: { touched, errors, setFieldValue, setFieldTouched } }) => (
@@ -47,7 +47,7 @@ const Weekly = () => (
         </EuiCompressedFormRow>
       )}
     </Field>
-    <Daily />
+    <Daily compressed={compressed} />
   </Fragment>
 );
 
