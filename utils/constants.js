@@ -24,3 +24,6 @@ export const URL = {
 
 export const MAX_THROTTLE_VALUE = 1440;
 export const WRONG_THROTTLE_WARNING = `Throttle value must be greater than 0 and less than ${MAX_THROTTLE_VALUE}.`;
+export const ALERTS_NAV_ID = `alerts`;
+export const DESTINATIONS_NAV_ID = `destinations`;
+export const MONITORS_NAV_ID = `monitors`;
