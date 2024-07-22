@@ -399,14 +399,12 @@ class ConfigureTriggers extends React.Component {
     }
 
     return hasTriggers
-      ? triggerValues.triggerDefinitions.map((trigger, index) => {
-        const triggerId = trigger.id || `trigger${getDigitId()}`;
-        return (
-          <div key={triggerId}>
-            <TriggerContainer
-              {...{
-                id: `configure-trigger__${triggerId}`,
-                isOpen: accordionsOpen[index],
+      ? triggerValues.triggerDefinitions.map((trigger, index) => (
+        <div key={trigger.id}>
+          <TriggerContainer
+            {...{
+              id: `configure-trigger__${trigger.id}`,
+              isOpen: accordionsOpen[index],
                 onToggle: () => this.onAccordionToggle(index),
                 title: (
                   <EuiFlexGroup alignItems="center" justifyContent="flexStart" gutterSize="s">
@@ -431,7 +429,7 @@ class ConfigureTriggers extends React.Component {
             {!flyoutMode && <EuiHorizontalRule margin={'s'} />}
             {flyoutMode && <EuiSpacer size="m" />}
           </div>
-        )})
+        ))
       : !flyoutMode && triggerEmptyPrompt;
   };
 
