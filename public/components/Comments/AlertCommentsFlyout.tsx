@@ -5,17 +5,17 @@
 
 import React, { useCallback, useEffect, useState } from "react";
 import { Comment } from "../../models/Comments";
-import { 
-  EuiFlyout, 
-  EuiFlyoutHeader, 
-  EuiFlyoutBody, 
-  EuiCommentList, 
-  EuiText, 
-  EuiButtonIcon, 
-  EuiContextMenuItem, 
+import {
+  EuiFlyout,
+  EuiFlyoutHeader,
+  EuiFlyoutBody,
+  EuiCommentList,
+  EuiText,
+  EuiButtonIcon,
+  EuiContextMenuItem,
   EuiContextMenuPanel,
-  EuiPopover, 
-  EuiTitle, 
+  EuiPopover,
+  EuiTitle,
   EuiSpacer,
   EuiCallOut,
   EuiLink
@@ -77,7 +77,7 @@ export const AlertCommentsFlyout: React.FC<AlertCommentsFlyoutProps> = ({ alertI
 
   const createComment = async () => {
     setCreatePending(true);
-    await httpClient.post(`../api/alerting/comments/${alertId}`, { body: JSON.stringify({ 
+    await httpClient.post(`../api/alerting/comments/${alertId}`, { body: JSON.stringify({
       content: draftCommentContent
     })});
 
@@ -150,7 +150,7 @@ export const AlertCommentsFlyout: React.FC<AlertCommentsFlyoutProps> = ({ alertI
         onCancel={() => onEditCancel(comment, idx)}
       />
     );
-  
+
     const customActions = comment.state === 'readonly' && (
       <EuiPopover
         button={
@@ -186,7 +186,7 @@ export const AlertCommentsFlyout: React.FC<AlertCommentsFlyoutProps> = ({ alertI
         />
       </EuiPopover>
     );
-  
+
     return {
       username: comment.user || 'Unknown',
       event: `${comment.last_updated_time ? 'edited' : 'added'} comment on`,
@@ -204,12 +204,12 @@ export const AlertCommentsFlyout: React.FC<AlertCommentsFlyoutProps> = ({ alertI
         </EuiTitle>
       </EuiFlyoutHeader>
       <EuiFlyoutBody>
-        <EuiCallOut 
+        <EuiCallOut
           iconType='iInCircle'
           title='Experimental'>
-          <span>The feature is experimental and should not be used in a production environment. 
+          <span>The feature is experimental and should not be used in a production environment.
             The posted comments will be impacted if the feature is deactivated.
-            For more information see <EuiLink href="https://opensearch.org/docs/latest/observing-your-data/alerting/index/" target="_blank">Documentation.</EuiLink> 
+            For more information see <EuiLink href="https://opensearch.org/docs/latest/observing-your-data/alerting/index/" target="_blank">Documentation.</EuiLink>
             To leave feedback, visit <EuiLink href="https://github.com/opensearch-project/OpenSearch-Dashboards/issues/6999" target="_blank">github.com</EuiLink>.
           </span>
         </EuiCallOut>

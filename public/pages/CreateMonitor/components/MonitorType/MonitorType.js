@@ -4,15 +4,7 @@
  */
 
 import React from 'react';
-import {
-  EuiFlexGrid,
-  EuiFlexGroup,
-  EuiFlexItem,
-  EuiFormLabel,
-  EuiFormRow,
-  EuiSpacer,
-  EuiText,
-} from '@elastic/eui';
+import { EuiFlexGrid, EuiFlexItem, EuiFormLabel, EuiSpacer, EuiText } from '@elastic/eui';
 import FormikCheckableCard from '../../../../components/FormControls/FormikCheckableCard';
 import { MONITOR_TYPE, SEARCH_TYPE } from '../../../../utils/constants';
 import { FORMIK_INITIAL_TRIGGER_VALUES } from '../../../CreateTrigger/containers/CreateTrigger/utils/constants';

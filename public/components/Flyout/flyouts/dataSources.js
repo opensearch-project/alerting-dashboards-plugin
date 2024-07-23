@@ -4,7 +4,13 @@
  */
 
 import React from 'react';
-import { EuiBasicTable, EuiFlexGroup, EuiButtonIcon, EuiTitle, EuiFlexItem } from '@elastic/eui';
+import {
+  EuiBasicTable,
+  EuiFlexGroup,
+  EuiSmallButtonIcon,
+  EuiTitle,
+  EuiFlexItem,
+} from '@elastic/eui';
 import { MONITOR_TYPE } from '../../../utils/constants';
 
 export const DATA_SOURCES_FLYOUT_TYPE = 'dataSources';
@@ -76,7 +82,7 @@ const dataSources = ({
           </EuiTitle>
         </EuiFlexItem>
         <EuiFlexItem grow={false}>
-          <EuiButtonIcon
+          <EuiSmallButtonIcon
             data-test-subj={'dataSourcesFlyout_closeButton'}
             iconType={'cross'}
             display={'empty'}

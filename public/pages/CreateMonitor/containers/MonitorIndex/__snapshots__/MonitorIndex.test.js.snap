@@ -328,9 +328,9 @@ exports[`MonitorIndex renders 1`] = `
               }
             }
           >
-            <EuiFormRow
+            <EuiCompressedFormRow
               describedByIds={Array []}
-              display="row"
+              display="rowCompressed"
               fullWidth={false}
               hasChildLabel={true}
               hasEmptyLabelSpace={false}
@@ -346,7 +346,7 @@ exports[`MonitorIndex renders 1`] = `
               }
             >
               <div
-                className="euiFormRow"
+                className="euiFormRow euiFormRow--compressed"
                 id="index-form-row-row"
                 style={
                   Object {
@@ -596,9 +596,9 @@ exports[`MonitorIndex renders 1`] = `
                     onBlur={[Function]}
                     onFocus={[Function]}
                   >
-                    <EuiComboBox
+                    <EuiCompressedComboBox
                       async={true}
-                      compressed={false}
+                      compressed={true}
                       data-test-subj="indicesComboBox"
                       delimiter=","
                       fullWidth={false}
@@ -631,7 +631,7 @@ exports[`MonitorIndex renders 1`] = `
                       <div
                         aria-expanded={false}
                         aria-haspopup="listbox"
-                        className="euiComboBox"
+                        className="euiComboBox euiComboBox--compressed"
                         data-test-subj="indicesComboBox"
                         name="index"
                         onKeyDown={[Function]}
@@ -639,7 +639,7 @@ exports[`MonitorIndex renders 1`] = `
                       >
                         <EuiComboBoxInput
                           autoSizeInputRef={[Function]}
-                          compressed={false}
+                          compressed={true}
                           fullWidth={false}
                           hasSelectedOptions={false}
                           id="index"
@@ -664,7 +664,7 @@ exports[`MonitorIndex renders 1`] = `
                           value=""
                         >
                           <EuiFormControlLayout
-                            compressed={false}
+                            compressed={true}
                             fullWidth={false}
                             icon={
                               Object {
@@ -680,13 +680,13 @@ exports[`MonitorIndex renders 1`] = `
                             isLoading={true}
                           >
                             <div
-                              className="euiFormControlLayout"
+                              className="euiFormControlLayout euiFormControlLayout--compressed"
                             >
                               <div
                                 className="euiFormControlLayout__childrenWrapper"
                               >
                                 <div
-                                  className="euiComboBox__inputWrap euiComboBox__inputWrap-isLoading euiComboBox__inputWrap-isClearable"
+                                  className="euiComboBox__inputWrap euiComboBox__inputWrap--compressed euiComboBox__inputWrap-isLoading euiComboBox__inputWrap-isClearable"
                                   data-test-subj="comboBoxInput"
                                   onClick={[Function]}
                                   tabIndex={-1}
@@ -757,7 +757,7 @@ exports[`MonitorIndex renders 1`] = `
                                   </AutosizeInput>
                                 </div>
                                 <EuiFormControlLayoutIcons
-                                  compressed={false}
+                                  compressed={true}
                                   icon={
                                     Object {
                                       "aria-label": "Open list of options",
@@ -786,7 +786,7 @@ exports[`MonitorIndex renders 1`] = `
                                       data-test-subj="comboBoxToggleListButton"
                                       iconRef={[Function]}
                                       onClick={[Function]}
-                                      size="m"
+                                      size="s"
                                       type="arrowDown"
                                     >
                                       <button
@@ -799,7 +799,7 @@ exports[`MonitorIndex renders 1`] = `
                                         <EuiIcon
                                           aria-hidden="true"
                                           className="euiFormControlLayoutCustomIcon__icon"
-                                          size="m"
+                                          size="s"
                                           type="arrowDown"
                                         >
                                           <div>
@@ -815,7 +815,7 @@ exports[`MonitorIndex renders 1`] = `
                           </EuiFormControlLayout>
                         </EuiComboBoxInput>
                       </div>
-                    </EuiComboBox>
+                    </EuiCompressedComboBox>
                   </ComboBox>
                   <EuiFormHelpText
                     className="euiFormRow__text"
@@ -831,7 +831,7 @@ exports[`MonitorIndex renders 1`] = `
                   </EuiFormHelpText>
                 </div>
               </div>
-            </EuiFormRow>
+            </EuiCompressedFormRow>
           </FormikFormRow>
         </Field>
       </FormikInputWrapper>

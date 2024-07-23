@@ -9,7 +9,7 @@ import _ from 'lodash';
 import PropTypes from 'prop-types';
 import {
   EuiSpacer,
-  EuiButton,
+  EuiSmallButton,
   EuiCallOut,
   EuiAccordion,
   EuiLoadingSpinner,
@@ -541,9 +541,9 @@ class DefineMonitor extends Component {
     }
     return {
       actions: [
-        <EuiButton disabled={runIsDisabled} onClick={this.onRunQuery}>
+        <EuiSmallButton disabled={runIsDisabled} onClick={this.onRunQuery}>
           Run
-        </EuiButton>,
+        </EuiSmallButton>,
       ],
       content: (
         <React.Fragment>

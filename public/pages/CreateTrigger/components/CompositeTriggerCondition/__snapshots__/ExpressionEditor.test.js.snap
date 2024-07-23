@@ -2,7 +2,7 @@
 
 exports[`ExpressionEditor renders 1`] = `
 <div
-  class="euiFormRow euiFormRow--fullWidth"
+  class="euiFormRow euiFormRow--fullWidth euiFormRow--compressed"
   id="pathtriggerCondition_undefined_code-form-row-row"
 >
   <div

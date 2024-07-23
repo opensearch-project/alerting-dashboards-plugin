@@ -36,7 +36,7 @@ Array [
     class="euiSpacer euiSpacer--m"
   />,
   <div
-    class="euiFormRow euiFormRow--fullWidth"
+    class="euiFormRow euiFormRow--fullWidth euiFormRow--compressed"
     id="associatedMonitorsEditor-form-row-row"
   >
     <div

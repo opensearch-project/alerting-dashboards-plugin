@@ -4,7 +4,7 @@
  */
 
 import React from 'react';
-import { EuiFlexGroup, EuiButtonIcon, EuiTitle, EuiFlexItem } from '@elastic/eui';
+import { EuiFlexGroup, EuiSmallButtonIcon, EuiTitle, EuiFlexItem } from '@elastic/eui';
 import AlertsDashboardFlyoutComponent from './components/AlertsDashboardFlyoutComponent';
 
 const alertsDashboard = (payload) => {
@@ -29,7 +29,7 @@ const alertsDashboard = (payload) => {
           </EuiTitle>
         </EuiFlexItem>
         <EuiFlexItem grow={false}>
-          <EuiButtonIcon
+          <EuiSmallButtonIcon
             data-test-subj={`alertsDashboardFlyout_closeButton_${trigger_name}`}
             iconType="cross"
             display="empty"

@@ -323,6 +323,7 @@ class MonitorHistory extends PureComponent {
             initialStartTime={this.initialStartTime}
             initialEndTime={this.initialEndTime}
             onRangeChange={this.handleRangeChange}
+            compressed
           />,
         ]}
       >
