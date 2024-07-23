@@ -15,4 +15,4 @@ Compatible with OpenSearch Dashboards 2.16.0
 * Look & Feel Adjust helper text size across monitor page ([#1012](https://github.com/opensearch-project/alerting-dashboards-plugin/pull/1012))
 
 ### Documentation
-* Added v2.16 release notes. ([#1016](https://github.com/opensearch-project/alerting-dashboards-plugin/pull/1016))
+* Added v2.16 release notes. ([#1019](https://github.com/opensearch-project/alerting-dashboards-plugin/pull/1019))
