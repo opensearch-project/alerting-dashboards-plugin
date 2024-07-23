@@ -3,7 +3,7 @@
 exports[`MonitorDefinition renders 1`] = `
 <div>
   <div
-    class="euiFormRow"
+    class="euiFormRow euiFormRow--compressed"
     id="searchType-form-row-row"
     style="padding-left:10px"
   >
@@ -21,13 +21,13 @@ exports[`MonitorDefinition renders 1`] = `
       class="euiFormRow__fieldWrapper"
     >
       <div
-        class="euiFormControlLayout"
+        class="euiFormControlLayout euiFormControlLayout--compressed"
       >
         <div
           class="euiFormControlLayout__childrenWrapper"
         >
           <select
-            class="euiSelect"
+            class="euiSelect euiSelect--compressed"
             id="searchType"
             name="searchType"
           >

@@ -8,7 +8,7 @@ import {
   EuiTitle,
   EuiFlexGroup,
   EuiFlexItem,
-  EuiButtonIcon,
+  EuiSmallButtonIcon,
   EuiFlyout,
   EuiFlyoutHeader,
   EuiFlyoutBody,
@@ -20,8 +20,8 @@ export const ChainedAlertDetailsFlyout = ({ closeFlyout, alert, httpClient }) =>
   const [associatedAlerts, setAssociatedAlerts] = useState([]);
 
   useEffect(() => {
-    httpClient.get('../api/alerting/workflows/alerts', { 
-      query: { 
+    httpClient.get('../api/alerting/workflows/alerts', {
+      query: {
         workflowIds: alert.workflow_id,
         getAssociatedAlerts: true,
         sortString: 'start_time',
@@ -63,7 +63,7 @@ export const ChainedAlertDetailsFlyout = ({ closeFlyout, alert, httpClient }) =>
             </EuiTitle>
           </EuiFlexItem>
           <EuiFlexItem grow={false}>
-            <EuiButtonIcon
+            <EuiSmallButtonIcon
               iconType="cross"
               display="empty"
               iconSize="m"

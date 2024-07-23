@@ -5,7 +5,7 @@
 
 import React, { Component } from 'react';
 import {
-  EuiButton,
+  EuiSmallButton,
   EuiContextMenuPanel,
   EuiContextMenuItem,
   EuiFlexGroup,
@@ -62,9 +62,9 @@ export default class DestinationsActions extends Component {
             <EuiPopover
               id="destinationActionsPopover"
               button={
-                <EuiButton onClick={this.onClickActions} iconType="arrowDown" iconSide="right">
+                <EuiSmallButton onClick={this.onClickActions} iconType="arrowDown" iconSide="right">
                   Actions
-                </EuiButton>
+                </EuiSmallButton>
               }
               isOpen={isActionsOpen}
               closePopover={this.onCloseActions}

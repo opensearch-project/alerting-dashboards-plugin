@@ -10,7 +10,7 @@ import {
   EuiBadge,
   EuiFlexGroup,
   EuiFlexItem,
-  EuiButtonIcon,
+  EuiSmallButtonIcon,
 } from '@elastic/eui';
 import ContentPanel from '../../../../components/ContentPanel';
 import _ from 'lodash';
@@ -411,7 +411,7 @@ class ConfigureTriggers extends React.Component {
                   </EuiFlexGroup>
                 ),
                 extraAction: (
-                  <EuiButtonIcon
+                  <EuiSmallButtonIcon
                     iconType="trash"
                     color="text"
                     aria-label={`Delete ${trigger.name}`}

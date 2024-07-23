@@ -5,7 +5,7 @@
 
 import React, { Fragment } from 'react';
 import PropTypes from 'prop-types';
-import { EuiFlexGroup, EuiFlexItem, EuiButton } from '@elastic/eui';
+import { EuiFlexGroup, EuiFlexItem, EuiSmallButton } from '@elastic/eui';
 
 import { FormikComboBox } from '../../../../../components/FormControls';
 import { isInvalid, hasError } from '../../../../../utils/validate';
@@ -138,9 +138,9 @@ export default class EmailRecipients extends React.Component {
             />
           </EuiFlexItem>
           <EuiFlexItem grow={false}>
-            <EuiButton style={{ marginTop: 22 }} onClick={this.onClickManageEmailGroups}>
+            <EuiSmallButton style={{ marginTop: 22 }} onClick={this.onClickManageEmailGroups}>
               Manage email groups
-            </EuiButton>
+            </EuiSmallButton>
           </EuiFlexItem>
         </EuiFlexGroup>
 

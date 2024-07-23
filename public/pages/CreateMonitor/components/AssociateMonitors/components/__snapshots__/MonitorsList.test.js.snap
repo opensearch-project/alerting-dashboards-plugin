@@ -2,7 +2,7 @@
 
 exports[`MonitorsList renders 1`] = `
 <div
-  class="euiFormRow"
+  class="euiFormRow euiFormRow--compressed"
   id="associatedMonitorsList-form-row-row"
 >
   <div
@@ -28,19 +28,19 @@ exports[`MonitorsList renders 1`] = `
         <div
           aria-expanded="false"
           aria-haspopup="listbox"
-          class="euiComboBox euiComboBox--fullWidth"
+          class="euiComboBox euiComboBox--compressed euiComboBox--fullWidth"
           data-test-subj="monitors_list_0"
           name="associatedMonitorsList_0"
           role="combobox"
         >
           <div
-            class="euiFormControlLayout euiFormControlLayout--fullWidth"
+            class="euiFormControlLayout euiFormControlLayout--fullWidth euiFormControlLayout--compressed"
           >
             <div
               class="euiFormControlLayout__childrenWrapper"
             >
               <div
-                class="euiComboBox__inputWrap euiComboBox__inputWrap--fullWidth euiComboBox__inputWrap--noWrap euiComboBox__inputWrap-isClearable"
+                class="euiComboBox__inputWrap euiComboBox__inputWrap--compressed euiComboBox__inputWrap--fullWidth euiComboBox__inputWrap--noWrap euiComboBox__inputWrap-isClearable"
                 data-test-subj="comboBoxInput"
                 tabindex="-1"
               >
@@ -95,19 +95,19 @@ exports[`MonitorsList renders 1`] = `
         <div
           aria-expanded="false"
           aria-haspopup="listbox"
-          class="euiComboBox euiComboBox--fullWidth"
+          class="euiComboBox euiComboBox--compressed euiComboBox--fullWidth"
           data-test-subj="monitors_list_1"
           name="associatedMonitorsList_1"
           role="combobox"
         >
           <div
-            class="euiFormControlLayout euiFormControlLayout--fullWidth"
+            class="euiFormControlLayout euiFormControlLayout--fullWidth euiFormControlLayout--compressed"
           >
             <div
               class="euiFormControlLayout__childrenWrapper"
             >
               <div
-                class="euiComboBox__inputWrap euiComboBox__inputWrap--fullWidth euiComboBox__inputWrap--noWrap euiComboBox__inputWrap-isClearable"
+                class="euiComboBox__inputWrap euiComboBox__inputWrap--compressed euiComboBox__inputWrap--fullWidth euiComboBox__inputWrap--noWrap euiComboBox__inputWrap-isClearable"
                 data-test-subj="comboBoxInput"
                 tabindex="-1"
               >
@@ -156,7 +156,7 @@ exports[`MonitorsList renders 1`] = `
       class="euiSpacer euiSpacer--m"
     />
     <button
-      class="euiButton euiButton--primary euiButton-isDisabled"
+      class="euiButton euiButton--primary euiButton--small euiButton-isDisabled"
       disabled=""
       type="button"
     >

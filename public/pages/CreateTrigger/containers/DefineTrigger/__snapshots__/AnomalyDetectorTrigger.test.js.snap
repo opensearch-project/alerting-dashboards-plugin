@@ -64,7 +64,7 @@ exports[`AnomalyDetectorTrigger renders no feature 1`] = `
           class="euiFlexItem euiFlexItem--flexGrowZero"
         >
           <a
-            class="euiButton euiButton--primary"
+            class="euiButton euiButton--primary euiButton--small"
             data-test-subj="createButton"
             href="anomaly-detection-dashboards#/detectors/tempId/features"
             rel="noopener noreferrer"

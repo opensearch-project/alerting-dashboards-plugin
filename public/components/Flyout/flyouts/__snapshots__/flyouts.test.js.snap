@@ -34,7 +34,7 @@ Object {
     <EuiFlexItem
       grow={false}
     >
-      <EuiButtonIcon
+      <EuiSmallButtonIcon
         data-test-subj="alertsDashboardFlyout_closeButton_undefined"
         display="empty"
         iconSize="m"

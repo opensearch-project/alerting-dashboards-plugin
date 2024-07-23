@@ -4,7 +4,7 @@
  */
 
 import React from 'react';
-import { EuiButton, EuiEmptyPrompt, EuiText } from '@elastic/eui';
+import { EuiSmallButton, EuiEmptyPrompt, EuiText } from '@elastic/eui';
 
 import { APP_PATH } from '../../../../utils/constants';
 import { PLUGIN_NAME } from '../../../../../utils/constants';
@@ -15,14 +15,14 @@ const emptyMonitorText =
   'There are no existing monitors. Create a monitor to add triggers and actions.';
 const loadingText = 'Loading monitors...';
 const createMonitorButton = (
-  <EuiButton fill href={`${PLUGIN_NAME}#${APP_PATH.CREATE_MONITOR}`}>
+  <EuiSmallButton fill href={`${PLUGIN_NAME}#${APP_PATH.CREATE_MONITOR}`}>
     Create monitor
-  </EuiButton>
+  </EuiSmallButton>
 );
 const resetFiltersButton = (resetFilters) => (
-  <EuiButton fill onClick={resetFilters}>
+  <EuiSmallButton fill onClick={resetFilters}>
     Reset Filters
-  </EuiButton>
+  </EuiSmallButton>
 );
 
 const getMessagePrompt = ({ filterIsApplied, loading }) => {

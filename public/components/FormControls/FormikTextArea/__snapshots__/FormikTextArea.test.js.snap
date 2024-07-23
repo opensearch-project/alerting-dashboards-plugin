@@ -2,8 +2,8 @@
 
 exports[`FormikTextArea renders 1`] = `
 <textarea
-  class="euiTextArea euiTextArea--resizeVertical"
+  class="euiTextArea euiTextArea--resizeVertical euiTextArea--compressed"
   name="testing"
-  rows="6"
+  rows="3"
 />
 `;

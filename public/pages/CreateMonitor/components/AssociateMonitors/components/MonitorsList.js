@@ -6,8 +6,8 @@
 import React, { Fragment, useState, useEffect, useCallback } from 'react';
 import * as _ from 'lodash';
 import {
-  EuiButton,
-  EuiButtonIcon,
+  EuiSmallButton,
+  EuiSmallButtonIcon,
   EuiFlexGroup,
   EuiFlexItem,
   EuiSpacer,
@@ -246,7 +246,7 @@ const MonitorsList = ({ values, httpClient }) => {
                     }}
                   >
                     <EuiToolTip content={'View monitor'}>
-                      <EuiButtonIcon
+                      <EuiSmallButtonIcon
                         aria-label={'View monitor'}
                         iconType={'inspect'}
                         color="text"
@@ -270,7 +270,7 @@ const MonitorsList = ({ values, httpClient }) => {
                     }}
                   >
                     <EuiToolTip content={'Remove monitor'}>
-                      <EuiButtonIcon
+                      <EuiSmallButtonIcon
                         aria-label={'Delete selection'}
                         iconType={'trash'}
                         color="danger"
@@ -282,12 +282,12 @@ const MonitorsList = ({ values, httpClient }) => {
               </EuiFlexGroup>
             ))}
             <EuiSpacer size={'m'} />
-            <EuiButton
+            <EuiSmallButton
               onClick={() => onAddMonitor()}
               disabled={fields.length >= 10 || fields.length >= options.length}
             >
               Add another monitor
-            </EuiButton>
+            </EuiSmallButton>
             <EuiText color={'subdued'} size={'xs'}>
               You can add up to {10 - fields.length} more monitors.
             </EuiText>

@@ -4,7 +4,7 @@
  */
 
 import React from 'react';
-import { EuiAccordion, EuiButton } from '@elastic/eui';
+import { EuiAccordion, EuiSmallButton } from '@elastic/eui';
 import { FormikComboBox, FormikFieldText } from '../../../../../components/FormControls';
 import { isInvalid, hasError } from '../../../../../utils/validate';
 import { validateEmailGroupEmails, validateEmailGroupName } from './utils/validate';

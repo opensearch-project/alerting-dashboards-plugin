@@ -4,7 +4,7 @@
  */
 
 import React, { Fragment, useState, useEffect } from 'react';
-import { EuiPanel, EuiFlexGroup, EuiFlexItem, EuiButtonEmpty, EuiSpacer } from '@elastic/eui';
+import { EuiPanel, EuiFlexGroup, EuiFlexItem, EuiSmallButtonEmpty, EuiSpacer } from '@elastic/eui';
 import { FormikComboBox } from '../../../../components/FormControls';
 import NotificationConfigDialog from './NotificationConfigDialog';
 import _ from 'lodash';
@@ -94,22 +94,22 @@ const TriggerNotificationsContent = ({
             />
           </EuiFlexItem>
           <EuiFlexItem grow={false} style={{ paddingLeft: 0, marginLeft: 0 }}>
-            <EuiButtonEmpty
+            <EuiSmallButtonEmpty
               iconType={'popout'}
               style={{ marginTop: '22px' }}
               disabled={!hasNotifications}
               onClick={() => window.open(getManageChannelsUrl())}
             >
               Manage channels
-            </EuiButtonEmpty>
+            </EuiSmallButtonEmpty>
           </EuiFlexItem>
         </EuiFlexGroup>
         {selected.length ? (
           <Fragment>
             <EuiSpacer size={'xs'} />
-            <EuiButtonEmpty iconType={'pencil'} onClick={() => showConfig()}>
+            <EuiSmallButtonEmpty iconType={'pencil'} onClick={() => showConfig()}>
               Configure notification
-            </EuiButtonEmpty>
+            </EuiSmallButtonEmpty>
           </Fragment>
         ) : null}
       </EuiPanel>

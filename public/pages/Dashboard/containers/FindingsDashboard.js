@@ -9,7 +9,7 @@ import queryString from 'query-string';
 import {
   EuiBasicTable,
   EuiEmptyPrompt,
-  EuiFieldSearch,
+  EuiCompressedFieldSearch,
   EuiFlexGroup,
   EuiFlexItem,
   EuiHorizontalRule,
@@ -208,7 +208,7 @@ export default class FindingsDashboard extends Component {
         {!isPreview && (
           <EuiFlexGroup style={{ padding: '0px 5px' }}>
             <EuiFlexItem>
-              <EuiFieldSearch
+              <EuiCompressedFieldSearch
                 fullWidth={true}
                 placeholder={'Search for a document ID'}
                 onChange={(selection) => {

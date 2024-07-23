@@ -5,7 +5,7 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import { EuiComboBox } from '@elastic/eui';
+import { EuiCompressedComboBox } from '@elastic/eui';
 
 import FormikInputWrapper from '../FormikInputWrapper';
 import FormikFormRow from '../FormikFormRow';
@@ -38,7 +38,7 @@ const ComboBox = ({
   field,
   inputProps: { onBlur, onChange, onCreateOption, ...rest },
 }) => (
-  <EuiComboBox
+  <EuiCompressedComboBox
     name={name}
     id={name}
     onChange={
