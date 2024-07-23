@@ -4,7 +4,7 @@
  */
 
 import React from 'react';
-import { EuiCodeEditor, EuiFlexGroup, EuiFlexItem, EuiFormRow } from '@elastic/eui';
+import { EuiCodeEditor, EuiFlexGroup, EuiFlexItem, EuiCompressedFormRow } from '@elastic/eui';
 import 'brace/mode/json';
 import 'brace/mode/plain_text';
 import 'brace/snippets/javascript';
@@ -42,7 +42,7 @@ const ExtractionQuery = ({ isDarkMode, response }) => (
       />
     </EuiFlexItem>
     <EuiFlexItem>
-      <EuiFormRow label="Extraction query response" fullWidth>
+      <EuiCompressedFormRow label="Extraction query response" fullWidth>
         <EuiCodeEditor
           mode="json"
           theme={isDarkMode ? 'sense-dark' : 'github'}
@@ -51,7 +51,7 @@ const ExtractionQuery = ({ isDarkMode, response }) => (
           value={response}
           readOnly
         />
-      </EuiFormRow>
+      </EuiCompressedFormRow>
     </EuiFlexItem>
   </EuiFlexGroup>
 );

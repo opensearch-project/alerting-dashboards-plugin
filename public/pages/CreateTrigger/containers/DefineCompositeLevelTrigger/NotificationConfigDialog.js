@@ -5,7 +5,7 @@
 
 import React, { useEffect, useState } from 'react';
 import {
-  EuiButton,
+  EuiSmallButton,
   EuiSpacer,
   EuiModal,
   EuiModalBody,
@@ -132,10 +132,10 @@ const NotificationConfigDialog = ({
         />
       </EuiModalBody>
       <EuiModalFooter>
-        <EuiButton onClick={() => clearConfig()}>Cancel</EuiButton>
-        <EuiButton onClick={() => closeModal()} fill>
+        <EuiSmallButton onClick={() => clearConfig()}>Cancel</EuiSmallButton>
+        <EuiSmallButton onClick={() => closeModal()} fill>
           Update
-        </EuiButton>
+        </EuiSmallButton>
       </EuiModalFooter>
     </EuiModal>
   );

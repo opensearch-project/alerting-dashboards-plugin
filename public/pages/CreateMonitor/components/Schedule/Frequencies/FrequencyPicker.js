@@ -23,7 +23,7 @@ const components = {
 const FrequencyPicker = (props) => {
   const type = props.formik.values.frequency;
   const Component = components[type];
-  return <Component />;
+  return <Component compressed />;
 };
 
 export default connect(FrequencyPicker);

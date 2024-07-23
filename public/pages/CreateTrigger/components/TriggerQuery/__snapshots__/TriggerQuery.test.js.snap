@@ -42,9 +42,9 @@ exports[`TriggerQuery renders 1`] = `
             }
           }
         >
-          <EuiFormRow
+          <EuiCompressedFormRow
             describedByIds={Array []}
-            display="row"
+            display="rowCompressed"
             fullWidth={true}
             hasChildLabel={true}
             hasEmptyLabelSpace={false}
@@ -69,7 +69,7 @@ exports[`TriggerQuery renders 1`] = `
               value="No response"
               width="100%"
             />
-          </EuiFormRow>
+          </EuiCompressedFormRow>
         </EuiFlexItem>
       </EuiFlexGroup>
     </EuiFlexItem>

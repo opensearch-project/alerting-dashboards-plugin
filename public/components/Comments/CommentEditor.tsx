@@ -4,10 +4,10 @@
 */
 
 import React from "react";
-import { 
-  EuiFlexGroup, 
-  EuiFlexItem, 
-  EuiButton 
+import {
+  EuiFlexGroup,
+  EuiFlexItem,
+  EuiSmallButton
 } from "@elastic/eui";
 
 export interface CommentEditorProps {
@@ -19,13 +19,13 @@ export interface CommentEditorProps {
   onContentChange: React.ChangeEventHandler<HTMLTextAreaElement>;
 }
 
-export const CommentEditor: React.FC<CommentEditorProps> = ({ 
-  isLoading, 
+export const CommentEditor: React.FC<CommentEditorProps> = ({
+  isLoading,
   draftCommentContent,
   saveDisabled,
-  onSave, 
+  onSave,
   onCancel,
-  onContentChange, 
+  onContentChange,
 }) => (
   <EuiFlexGroup gutterSize="s" direction="column" >
     <EuiFlexItem>
@@ -35,15 +35,15 @@ export const CommentEditor: React.FC<CommentEditorProps> = ({
       <EuiFlexGroup gutterSize="s">
         {onCancel && (
           <EuiFlexItem grow={false}>
-            <EuiButton onClick={onCancel}>
+            <EuiSmallButton onClick={onCancel}>
               Cancel
-            </EuiButton>
+            </EuiSmallButton>
           </EuiFlexItem>
         )}
         <EuiFlexItem grow={false}>
-          <EuiButton onClick={onSave} color="primary" isLoading={isLoading} disabled={saveDisabled} fill>
+          <EuiSmallButton onClick={onSave} color="primary" isLoading={isLoading} disabled={saveDisabled} fill>
             Save
-          </EuiButton>
+          </EuiSmallButton>
         </EuiFlexItem>
       </EuiFlexGroup>
     </EuiFlexItem>

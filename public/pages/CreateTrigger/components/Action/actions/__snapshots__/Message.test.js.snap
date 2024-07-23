@@ -3,7 +3,7 @@
 exports[`Message renders 1`] = `
 <div>
   <div
-    class="euiFormRow"
+    class="euiFormRow euiFormRow--compressed"
     id="undefinedactions.0.subject_template.source-form-row-row"
     style="max-width:100%"
   >
@@ -22,13 +22,13 @@ exports[`Message renders 1`] = `
       class="euiFormRow__fieldWrapper"
     >
       <div
-        class="euiFormControlLayout euiFormControlLayout--fullWidth"
+        class="euiFormControlLayout euiFormControlLayout--fullWidth euiFormControlLayout--compressed"
       >
         <div
           class="euiFormControlLayout__childrenWrapper"
         >
           <input
-            class="euiFieldText euiFieldText--fullWidth"
+            class="euiFieldText euiFieldText--fullWidth euiFieldText--compressed"
             name="undefinedactions.0.subject_template.source"
             placeholder="Enter a subject"
             type="text"
@@ -38,7 +38,7 @@ exports[`Message renders 1`] = `
     </div>
   </div>
   <div
-    class="euiFormRow"
+    class="euiFormRow euiFormRow--compressed"
     id="undefinedactions.0.message_template.source-form-row-row"
     style="max-width:100%"
   >
@@ -91,15 +91,15 @@ exports[`Message renders 1`] = `
       class="euiFormRow__fieldWrapper"
     >
       <textarea
-        class="euiTextArea euiTextArea--resizeVertical euiTextArea--fullWidth"
+        class="euiTextArea euiTextArea--resizeVertical euiTextArea--fullWidth euiTextArea--compressed"
         name="undefinedactions.0.message_template.source"
         placeholder="Can use mustache templates"
-        rows="6"
+        rows="3"
       />
     </div>
   </div>
   <div
-    class="euiFormRow"
+    class="euiFormRow euiFormRow--compressed"
     id="generated-id-row"
     style="max-width:100%"
   >
@@ -114,7 +114,7 @@ exports[`Message renders 1`] = `
           class="euiFlexItem"
         >
           <div
-            class="euiCheckbox"
+            class="euiCheckbox euiCheckbox--compressed"
           >
             <input
               class="euiCheckbox__input"
@@ -190,7 +190,7 @@ exports[`Message renders 1`] = `
     />
   </div>
   <div
-    class="euiFormRow"
+    class="euiFormRow euiFormRow--compressed"
     id="generated-id-row"
     style="padding-bottom:10px;max-width:100%"
   >
@@ -216,7 +216,7 @@ exports[`Message renders 1`] = `
           style="margin-bottom:0px"
         >
           <div
-            class="euiCheckbox"
+            class="euiCheckbox euiCheckbox--compressed"
           >
             <input
               class="euiCheckbox__input"
@@ -244,7 +244,7 @@ exports[`Message renders 1`] = `
             style="margin-right:0px"
           >
             <div
-              class="euiFormRow"
+              class="euiFormRow euiFormRow--compressed"
               id="generated-id-row"
             >
               <div
@@ -261,20 +261,20 @@ exports[`Message renders 1`] = `
                 class="euiFormRow__fieldWrapper"
               >
                 <div
-                  class="euiFormRow"
+                  class="euiFormRow euiFormRow--compressed"
                   id="undefinedactions.0.throttle.value-form-row-row"
                 >
                   <div
                     class="euiFormRow__fieldWrapper"
                   >
                     <div
-                      class="euiFormControlLayout euiFormControlLayout--group"
+                      class="euiFormControlLayout euiFormControlLayout--compressed euiFormControlLayout--group"
                     >
                       <div
                         class="euiFormControlLayout__childrenWrapper"
                       >
                         <input
-                          class="euiFieldNumber euiFieldText euiFieldNumber--inGroup"
+                          class="euiFieldNumber euiFieldText euiFieldNumber--compressed euiFieldNumber--inGroup"
                           disabled=""
                           max="1440"
                           min="1"

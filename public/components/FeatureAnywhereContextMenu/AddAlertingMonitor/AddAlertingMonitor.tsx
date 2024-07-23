@@ -12,8 +12,8 @@ import {
   EuiFlyoutFooter,
   EuiTitle,
   EuiSpacer,
-  EuiButton,
-  EuiButtonEmpty,
+  EuiSmallButton,
+  EuiSmallButtonEmpty,
   EuiFormFieldset,
   EuiCheckableCard,
   EuiText
@@ -225,17 +225,17 @@ function AddAlertingMonitor({
               <EuiFlyoutFooter>
                 <EuiFlexGroup justifyContent="spaceBetween">
                   <EuiFlexItem grow={false}>
-                    <EuiButtonEmpty onClick={closeFlyout}>Cancel</EuiButtonEmpty>
+                    <EuiSmallButtonEmpty onClick={closeFlyout}>Cancel</EuiSmallButtonEmpty>
                   </EuiFlexItem>
                   <EuiFlexItem grow={false}>
-                    <EuiButton
+                    <EuiSmallButton
                       onClick={() => onSubmit({ handleSubmit, validateForm })}
                       fill
                       isLoading={isLoading}
                       disabled={!isAssociateAllowed}
                     >
                       {flyoutMode === 'existing' ? 'Associate' : 'Create'} monitor
-                    </EuiButton>
+                    </EuiSmallButton>
                   </EuiFlexItem>
                 </EuiFlexGroup>
               </EuiFlyoutFooter>

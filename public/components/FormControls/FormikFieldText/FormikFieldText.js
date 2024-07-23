@@ -5,7 +5,7 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import { EuiFieldText } from '@elastic/eui';
+import { EuiCompressedFieldText } from '@elastic/eui';
 
 import FormikInputWrapper from '../FormikInputWrapper';
 import FormikFormRow from '../FormikFormRow';
@@ -38,7 +38,7 @@ const FieldText = ({
   field,
   inputProps: { onChange, isInvalid, onFocus, ...rest },
 }) => (
-  <EuiFieldText
+  <EuiCompressedFieldText
     {...field}
     {...rest}
     onChange={(e) =>
