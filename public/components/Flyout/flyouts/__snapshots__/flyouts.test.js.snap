@@ -21,15 +21,15 @@ Object {
     <EuiFlexItem
       className="eui-textTruncate"
     >
-      <EuiTitle
+      <EuiText
         className="eui-textTruncate"
         data-test-subj="alertsDashboardFlyout_header_undefined"
-        size="m"
+        size="s"
       >
-        <h3>
+        <h2>
           Alerts by undefined
-        </h3>
-      </EuiTitle>
+        </h2>
+      </EuiText>
     </EuiFlexItem>
     <EuiFlexItem
       grow={false}
