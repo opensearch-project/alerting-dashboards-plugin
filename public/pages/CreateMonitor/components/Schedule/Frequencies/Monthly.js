@@ -10,7 +10,7 @@ import { FormikFieldNumber, FormikSelect } from '../../../../../components/FormC
 import { isInvalid, hasError, validateMonthlyDay } from '../../../../../utils/validate';
 import { monthlyTypes } from './utils/constants';
 
-const Monthly = () => (
+const Monthly = ({ compressed }) => (
   <Fragment>
     <EuiFlexGroup alignItems="flexStart">
       <EuiFlexItem>
@@ -45,7 +45,7 @@ const Monthly = () => (
       </EuiFlexItem>
     </EuiFlexGroup>
     <EuiSpacer size="xs" />
-    <Daily />
+    <Daily compressed={compressed} />
   </Fragment>
 );
 

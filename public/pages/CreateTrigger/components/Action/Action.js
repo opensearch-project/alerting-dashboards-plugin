@@ -7,6 +7,7 @@ import React, { useState, useMemo } from 'react';
 import _ from 'lodash';
 import {
   EuiAccordion,
+  EuiSmallButton,
   EuiButton,
   EuiHorizontalRule,
   EuiPanel,
@@ -14,8 +15,8 @@ import {
   EuiFlexGroup,
   EuiFlexItem,
   EuiText,
-  EuiButtonIcon,
-  EuiButtonEmpty,
+  EuiSmallButtonIcon,
+  EuiSmallButtonEmpty,
   EuiModal,
   EuiModalBody,
   EuiModalFooter,
@@ -55,7 +56,10 @@ const Action = ({
 }) => {
   const [backupValues, setBackupValues] = useState();
   const [isConfigureOpen, setIsConfigureOpen] = useState(false);
-  const ManageButton = useMemo(() => (flyoutMode ? EuiButtonEmpty : EuiButton), [flyoutMode]);
+  const ManageButton = useMemo(
+    () => (flyoutMode ? EuiSmallButtonEmpty : EuiSmallButton),
+    [flyoutMode]
+  );
   const Accordion = useMemo(() => (flyoutMode ? MinimalAccordion : EuiAccordion), [flyoutMode]);
   const [loadingDestinations, setLoadingDestinations] = useState(false);
   const selectedDestination = flattenedDestinations.filter(
@@ -193,7 +197,7 @@ const Action = ({
                 id: name,
                 title: name,
                 extraAction: (
-                  <EuiButtonIcon
+                  <EuiSmallButtonIcon
                     iconType="trash"
                     color="text"
                     aria-label={`Delete Notification`}
@@ -264,9 +268,9 @@ const Action = ({
             )}
             {flyoutMode && !isInitialLoading && (
               <>
-                <EuiButtonEmpty iconType="pencil" iconSide="left" onClick={onConfigureOpen}>
+                <EuiSmallButtonEmpty iconType="pencil" iconSide="left" onClick={onConfigureOpen}>
                   Configure notification
-                </EuiButtonEmpty>
+                </EuiSmallButtonEmpty>
                 {isConfigureOpen && (
                   <EuiModal onClose={onConfigureCancel}>
                     <EuiModalHeader>
@@ -286,10 +290,10 @@ const Action = ({
                       />
                     </EuiModalBody>
                     <EuiModalFooter>
-                      <EuiButton onClick={onConfigureCancel}>Cancel</EuiButton>
-                      <EuiButton onClick={onConfigureUpdate} fill>
+                      <EuiSmallButton onClick={onConfigureCancel}>Cancel</EuiSmallButton>
+                      <EuiSmallButton onClick={onConfigureUpdate} fill>
                         Update
-                      </EuiButton>
+                      </EuiSmallButton>
                     </EuiModalFooter>
                   </EuiModal>
                 )}

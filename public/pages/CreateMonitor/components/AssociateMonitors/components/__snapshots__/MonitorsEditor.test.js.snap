@@ -2,7 +2,7 @@
 
 exports[`MonitorsEditor renders 1`] = `
 <div
-  class="euiFormRow euiFormRow--fullWidth"
+  class="euiFormRow euiFormRow--fullWidth euiFormRow--compressed"
   id="associatedMonitorsEditor-form-row-row"
 >
   <div

@@ -5,7 +5,7 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import { EuiButton, EuiEmptyPrompt, EuiText } from '@elastic/eui';
+import { EuiSmallButton, EuiEmptyPrompt, EuiText } from '@elastic/eui';
 
 const EmptyHistory = ({ onShowTrigger }) => (
   <EuiEmptyPrompt
@@ -19,9 +19,9 @@ const EmptyHistory = ({ onShowTrigger }) => (
       </EuiText>
     }
     actions={
-      <EuiButton fill onClick={onShowTrigger}>
+      <EuiSmallButton fill onClick={onShowTrigger}>
         Edit monitor
-      </EuiButton>
+      </EuiSmallButton>
     }
   />
 );

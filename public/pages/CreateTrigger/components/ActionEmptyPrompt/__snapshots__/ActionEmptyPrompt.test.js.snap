@@ -3,7 +3,7 @@
 exports[`ActionEmptyPrompt renders 1`] = `
 <EuiEmptyPrompt
   actions={
-    <EuiButton
+    <EuiSmallButton
       disabled={true}
       fill={true}
       iconSide="right"
@@ -11,7 +11,7 @@ exports[`ActionEmptyPrompt renders 1`] = `
       onClick={[Function]}
     >
       Manage channels
-    </EuiButton>
+    </EuiSmallButton>
   }
   body={
     <EuiText

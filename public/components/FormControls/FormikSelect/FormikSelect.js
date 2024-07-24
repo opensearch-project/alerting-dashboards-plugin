@@ -5,7 +5,7 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import { EuiSelect } from '@elastic/eui';
+import { EuiCompressedSelect } from '@elastic/eui';
 
 import FormikInputWrapper from '../FormikInputWrapper';
 import FormikFormRow from '../FormikFormRow';
@@ -46,7 +46,7 @@ const FieldSelect = ({
   inputProps: { onChange, isInvalid, ...rest },
   selectedOption,
 }) => (
-  <EuiSelect
+  <EuiCompressedSelect
     name={name}
     id={name}
     {...rest}

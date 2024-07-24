@@ -2,13 +2,13 @@
 
 exports[`FormikFieldText renders 1`] = `
 <div
-  class="euiFormControlLayout"
+  class="euiFormControlLayout euiFormControlLayout--compressed"
 >
   <div
     class="euiFormControlLayout__childrenWrapper"
   >
     <input
-      class="euiFieldText"
+      class="euiFieldText euiFieldText--compressed"
       name="testing"
       type="text"
     />

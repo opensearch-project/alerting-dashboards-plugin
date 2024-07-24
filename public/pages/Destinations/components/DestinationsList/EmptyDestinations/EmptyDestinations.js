@@ -5,7 +5,7 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import { EuiButton, EuiEmptyPrompt, EuiLink, EuiText } from '@elastic/eui';
+import { EuiSmallButton, EuiEmptyPrompt, EuiLink, EuiText } from '@elastic/eui';
 import { getManageChannelsUrl } from '../../../../../utils/helpers';
 
 const filterText = (hasNotificationPlugin) =>
@@ -30,9 +30,9 @@ const filterText = (hasNotificationPlugin) =>
 const emptyText = <p>There are no existing destinations.</p>;
 
 const resetFiltersButton = (resetFilters) => (
-  <EuiButton fill onClick={resetFilters}>
+  <EuiSmallButton fill onClick={resetFilters}>
     Reset filters
-  </EuiButton>
+  </EuiSmallButton>
 );
 
 const propTypes = {

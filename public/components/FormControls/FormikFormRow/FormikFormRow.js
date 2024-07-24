@@ -5,17 +5,17 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import { EuiFormRow } from '@elastic/eui';
+import { EuiCompressedFormRow } from '@elastic/eui';
 
 const FormikFormRow = ({ children, form, name, rowProps: { isInvalid, error, ...rest } }) => (
-  <EuiFormRow
+  <EuiCompressedFormRow
     id={`${name}-form-row`}
     isInvalid={typeof isInvalid === 'function' ? isInvalid(name, form) : isInvalid}
     error={typeof error === 'function' ? error(name, form) : error}
     {...rest}
   >
     {children}
-  </EuiFormRow>
+  </EuiCompressedFormRow>
 );
 
 FormikFormRow.propTypes = {

@@ -2,7 +2,7 @@
 
 exports[`MonitorTimeField renders 1`] = `
 <div
-  class="euiFormRow"
+  class="euiFormRow euiFormRow--compressed"
   id="timeField-form-row-row"
   style="padding-left:10px"
 >
@@ -23,19 +23,19 @@ exports[`MonitorTimeField renders 1`] = `
     <div
       aria-expanded="false"
       aria-haspopup="listbox"
-      class="euiComboBox"
+      class="euiComboBox euiComboBox--compressed"
       data-test-subj="timeFieldComboBox"
       name="timeField"
       role="combobox"
     >
       <div
-        class="euiFormControlLayout"
+        class="euiFormControlLayout euiFormControlLayout--compressed"
       >
         <div
           class="euiFormControlLayout__childrenWrapper"
         >
           <div
-            class="euiComboBox__inputWrap euiComboBox__inputWrap--noWrap"
+            class="euiComboBox__inputWrap euiComboBox__inputWrap--compressed euiComboBox__inputWrap--noWrap"
             data-test-subj="comboBoxInput"
             tabindex="-1"
           >

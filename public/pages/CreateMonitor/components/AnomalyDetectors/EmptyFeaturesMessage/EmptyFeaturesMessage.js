@@ -5,7 +5,7 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import { EuiEmptyPrompt, EuiButton, EuiText, EuiLoadingContent } from '@elastic/eui';
+import { EuiEmptyPrompt, EuiSmallButton, EuiText, EuiLoadingContent } from '@elastic/eui';
 import {
   OPENSEARCH_DASHBOARDS_AD_PLUGIN,
   PREVIEW_ERROR_TYPE,
@@ -35,23 +35,23 @@ const ActionUI = ({ errorType, detectorId }) => {
   switch (errorType) {
     case PREVIEW_ERROR_TYPE.NO_FEATURE:
       return (
-        <EuiButton
+        <EuiSmallButton
           data-test-subj="createButton"
           href={`${OPENSEARCH_DASHBOARDS_AD_PLUGIN}#/detectors/${detectorId}/features`}
           target="_blank"
         >
           Add Feature
-        </EuiButton>
+        </EuiSmallButton>
       );
     case PREVIEW_ERROR_TYPE.NO_ENABLED_FEATURES:
       return (
-        <EuiButton
+        <EuiSmallButton
           data-test-subj="editButton"
           href={`${OPENSEARCH_DASHBOARDS_AD_PLUGIN}#/detectors/${detectorId}/features`}
           target="_blank"
         >
           Enable Feature
-        </EuiButton>
+        </EuiSmallButton>
       );
     default:
       console.log('We only deal with feature related error type in this page: ' + errorType);
