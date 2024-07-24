@@ -36,7 +36,7 @@ exports[`CreateNew renders 1`] = `
         />
       </h4>
     </EuiTitle>
-    <EuiSwitch
+    <EuiCompressedSwitch
       checked={false}
       label="Show visualization"
       onChange={[Function]}

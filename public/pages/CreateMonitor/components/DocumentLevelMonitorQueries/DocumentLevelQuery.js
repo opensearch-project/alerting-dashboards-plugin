@@ -5,7 +5,13 @@
 
 import React, { Component } from 'react';
 import { connect } from 'formik';
-import { EuiButton, EuiFlexGroup, EuiFlexItem, EuiHorizontalRule, EuiSpacer } from '@elastic/eui';
+import {
+  EuiSmallButton,
+  EuiFlexGroup,
+  EuiFlexItem,
+  EuiHorizontalRule,
+  EuiSpacer,
+} from '@elastic/eui';
 import {
   FormikComboBox,
   FormikFieldNumber,
@@ -84,13 +90,13 @@ class DocumentLevelQuery extends Component {
 
           {queryIndex > 0 && (
             <EuiFlexItem grow={false}>
-              <EuiButton
+              <EuiSmallButton
                 color={'danger'}
                 onClick={() => queriesArrayHelpers.remove(queryIndex)}
                 data-test-subj={`documentLevelQuery_removeQueryButton${queryIndex}`}
               >
                 Remove query
-              </EuiButton>
+              </EuiSmallButton>
             </EuiFlexItem>
           )}
         </EuiFlexGroup>

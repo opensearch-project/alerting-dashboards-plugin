@@ -62,7 +62,7 @@ exports[`WorkflowDetails renders 1`] = `
     >
       <div>
         <div
-          class="euiFormRow"
+          class="euiFormRow euiFormRow--compressed"
           id="frequency-form-row-row"
         >
           <div
@@ -80,13 +80,13 @@ exports[`WorkflowDetails renders 1`] = `
             class="euiFormRow__fieldWrapper"
           >
             <div
-              class="euiFormControlLayout"
+              class="euiFormControlLayout euiFormControlLayout--compressed"
             >
               <div
                 class="euiFormControlLayout__childrenWrapper"
               >
                 <select
-                  class="euiSelect"
+                  class="euiSelect euiSelect--compressed"
                   data-test-subj="frequency_field"
                   id="frequency"
                   name="frequency"
@@ -143,7 +143,7 @@ exports[`WorkflowDetails renders 1`] = `
             class="euiFlexItem"
           >
             <div
-              class="euiFormRow"
+              class="euiFormRow euiFormRow--compressed"
               id="period.interval-form-row-row"
             >
               <div
@@ -161,13 +161,13 @@ exports[`WorkflowDetails renders 1`] = `
                 class="euiFormRow__fieldWrapper"
               >
                 <div
-                  class="euiFormControlLayout"
+                  class="euiFormControlLayout euiFormControlLayout--compressed"
                 >
                   <div
                     class="euiFormControlLayout__childrenWrapper"
                   >
                     <input
-                      class="euiFieldNumber euiFieldNumber--withIcon"
+                      class="euiFieldNumber euiFieldNumber--withIcon euiFieldNumber--compressed"
                       data-test-subj="interval_interval_field"
                       min="1"
                       name="period.interval"
@@ -194,20 +194,20 @@ exports[`WorkflowDetails renders 1`] = `
             class="euiFlexItem"
           >
             <div
-              class="euiFormRow euiFormRow--hasEmptyLabelSpace"
+              class="euiFormRow euiFormRow--hasEmptyLabelSpace euiFormRow--compressed"
               id="period.unit-form-row-row"
             >
               <div
                 class="euiFormRow__fieldWrapper"
               >
                 <div
-                  class="euiFormControlLayout"
+                  class="euiFormControlLayout euiFormControlLayout--compressed"
                 >
                   <div
                     class="euiFormControlLayout__childrenWrapper"
                   >
                     <select
-                      class="euiSelect"
+                      class="euiSelect euiSelect--compressed"
                       data-test-subj="interval_unit_field"
                       id="period.unit"
                       name="period.unit"
@@ -285,7 +285,7 @@ exports[`WorkflowDetails renders 1`] = `
       class="euiSpacer euiSpacer--m"
     />
     <div
-      class="euiFormRow euiFormRow--fullWidth"
+      class="euiFormRow euiFormRow--fullWidth euiFormRow--compressed"
       id="associatedMonitorsEditor-form-row-row"
     >
       <div

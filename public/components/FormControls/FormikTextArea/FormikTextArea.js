@@ -5,7 +5,7 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import { EuiTextArea } from '@elastic/eui';
+import { EuiCompressedTextArea } from '@elastic/eui';
 import FormikInputWrapper from '../FormikInputWrapper';
 import FormikFormRow from '../FormikFormRow';
 
@@ -32,7 +32,7 @@ const FormikTextArea = ({
 );
 
 const TextArea = ({ name, form, field, inputProps: { isInvalid, ...rest } }) => (
-  <EuiTextArea
+  <EuiCompressedTextArea
     isInvalid={typeof isInvalid === 'function' ? isInvalid(name, form) : isInvalid}
     {...field}
     {...rest}

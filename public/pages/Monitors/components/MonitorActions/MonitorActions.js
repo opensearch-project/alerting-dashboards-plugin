@@ -5,7 +5,7 @@
 
 import React, { Component } from 'react';
 import {
-  EuiButton,
+  EuiSmallButton,
   EuiContextMenuItem,
   EuiContextMenuPanel,
   EuiFlexGroup,
@@ -89,14 +89,14 @@ export default class MonitorActions extends Component {
           <EuiPopover
             id="actionsPopover"
             button={
-              <EuiButton
+              <EuiSmallButton
                 onClick={this.onClickActions}
                 iconType="arrowDown"
                 iconSide="right"
                 data-test-subj="actionsButton"
               >
                 Actions
-              </EuiButton>
+              </EuiSmallButton>
             }
             isOpen={isActionsOpen}
             closePopover={this.onCloseActions}
@@ -107,18 +107,22 @@ export default class MonitorActions extends Component {
           </EuiPopover>
         </EuiFlexItem>
         <EuiFlexItem grow={false}>
-          <EuiButton disabled={isEditDisabled} onClick={onClickEdit} data-test-subj="editButton">
+          <EuiSmallButton
+            disabled={isEditDisabled}
+            onClick={onClickEdit}
+            data-test-subj="editButton"
+          >
             Edit
-          </EuiButton>
+          </EuiSmallButton>
         </EuiFlexItem>
         <EuiFlexItem grow={false}>
-          <EuiButton
+          <EuiSmallButton
             fill
             href={`${PLUGIN_NAME}#${APP_PATH.CREATE_MONITOR}`}
             data-test-subj="createButton"
           >
             Create monitor
-          </EuiButton>
+          </EuiSmallButton>
         </EuiFlexItem>
       </EuiFlexGroup>
     );

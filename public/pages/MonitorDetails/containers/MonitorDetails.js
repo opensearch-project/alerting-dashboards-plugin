@@ -7,8 +7,8 @@ import React, { Component, Fragment } from 'react';
 import _ from 'lodash';
 import queryString from 'query-string';
 import {
-  EuiButton,
-  EuiButtonEmpty,
+  EuiSmallButton,
+  EuiSmallButtonEmpty,
   EuiCallOut,
   EuiCodeBlock,
   EuiFlexGroup,
@@ -496,23 +496,23 @@ export default class MonitorDetails extends Component {
             )}
           </EuiFlexItem>
           <EuiFlexItem grow={false}>
-            <EuiButton onClick={editMonitor}>Edit</EuiButton>
+            <EuiSmallButton onClick={editMonitor}>Edit</EuiSmallButton>
           </EuiFlexItem>
           <EuiFlexItem grow={false}>
-            <EuiButton
+            <EuiSmallButton
               isLoading={updating}
               onClick={() => this.updateMonitor({ enabled: !monitor.enabled })}
             >
               {monitor.enabled ? 'Disable' : 'Enable'}
-            </EuiButton>
+            </EuiSmallButton>
           </EuiFlexItem>
           <EuiFlexItem grow={false}>
-            <EuiButton onClick={this.showJsonModal}>Export as JSON</EuiButton>
+            <EuiSmallButton onClick={this.showJsonModal}>Export as JSON</EuiSmallButton>
           </EuiFlexItem>
           <EuiFlexItem grow={false}>
-            <EuiButton onClick={this.onDeleteClick} color="danger">
+            <EuiSmallButton onClick={this.onDeleteClick} color="danger">
               Delete
-            </EuiButton>
+            </EuiSmallButton>
           </EuiFlexItem>
         </EuiFlexGroup>
         <EuiSpacer />
@@ -583,7 +583,7 @@ export default class MonitorDetails extends Component {
               </EuiModalBody>
 
               <EuiModalFooter>
-                <EuiButtonEmpty onClick={this.closeJsonModal}>Close</EuiButtonEmpty>
+                <EuiSmallButtonEmpty onClick={this.closeJsonModal}>Close</EuiSmallButtonEmpty>
               </EuiModalFooter>
             </EuiModal>
           </EuiOverlayMask>

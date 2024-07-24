@@ -7,8 +7,8 @@ import React, { Component, Fragment } from 'react';
 import _ from 'lodash';
 import { FieldArray, Formik } from 'formik';
 import {
-  EuiButton,
-  EuiButtonEmpty,
+  EuiSmallButton,
+  EuiSmallButtonEmpty,
   EuiFlexGroup,
   EuiFlexItem,
   EuiSpacer,
@@ -261,12 +261,12 @@ export default class CreateMonitor extends Component {
                     <EuiSpacer />
                     <EuiFlexGroup alignItems="center" justifyContent="flexEnd">
                       <EuiFlexItem grow={false}>
-                        <EuiButtonEmpty onClick={this.onCancel}>Cancel</EuiButtonEmpty>
+                        <EuiSmallButtonEmpty onClick={this.onCancel}>Cancel</EuiSmallButtonEmpty>
                       </EuiFlexItem>
                       <EuiFlexItem grow={false}>
-                        <EuiButton fill onClick={handleSubmit} isLoading={isSubmitting}>
+                        <EuiSmallButton fill onClick={handleSubmit} isLoading={isSubmitting}>
                           {edit ? 'Update' : 'Create'}
-                        </EuiButton>
+                        </EuiSmallButton>
                       </EuiFlexItem>
                     </EuiFlexGroup>
                   </Fragment>

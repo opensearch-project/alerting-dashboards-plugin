@@ -11,7 +11,7 @@ import {
   EuiCodeEditor,
   EuiFlexGroup,
   EuiFlexItem,
-  EuiFormRow,
+  EuiCompressedFormRow,
   EuiLink,
   EuiText,
 } from '@elastic/eui';
@@ -72,7 +72,7 @@ const BucketLevelTriggerQuery = ({
                   field: { value },
                   form: { errors, touched, setFieldValue, setFieldTouched },
                 }) => (
-                  <EuiFormRow
+                  <EuiCompressedFormRow
                     label={
                       <EuiFlexGroup alignItems={'flexEnd'} gutterSize={'s'}>
                         <EuiFlexItem grow={false}>
@@ -109,13 +109,13 @@ const BucketLevelTriggerQuery = ({
                       onBlur={() => setFieldTouched(fieldName, true)}
                       value={value}
                     />
-                  </EuiFormRow>
+                  </EuiCompressedFormRow>
                 )}
               </Field>
             </EuiFlexItem>
 
             <EuiFlexItem grow={1} style={{ paddingTop: '6px' }}>
-              <EuiFormRow
+              <EuiCompressedFormRow
                 fullWidth={true}
                 label={
                   <EuiText size={'xs'}>
@@ -132,7 +132,7 @@ const BucketLevelTriggerQuery = ({
                   value={getExecuteMessage(executeResponse)}
                   readOnly
                 />
-              </EuiFormRow>
+              </EuiCompressedFormRow>
             </EuiFlexItem>
           </EuiFlexGroup>
         </EuiFlexItem>

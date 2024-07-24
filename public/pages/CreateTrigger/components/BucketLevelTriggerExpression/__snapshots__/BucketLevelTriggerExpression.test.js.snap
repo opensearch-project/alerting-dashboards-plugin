@@ -68,12 +68,12 @@ exports[`BucketLevelTriggerExpression renders 1`] = `
   <EuiFlexItem
     grow={false}
   >
-    <EuiButton
+    <EuiSmallButton
       color="danger"
       onClick={[Function]}
     >
       Remove condition
-    </EuiButton>
+    </EuiSmallButton>
   </EuiFlexItem>
 </EuiFlexGroup>
 `;

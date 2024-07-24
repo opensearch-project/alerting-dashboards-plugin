@@ -12,8 +12,8 @@ import {
   EuiTitle,
   EuiFlexGroup,
   EuiFlexItem,
-  EuiButton,
-  EuiButtonEmpty,
+  EuiSmallButton,
+  EuiSmallButtonEmpty,
 } from '@elastic/eui';
 import ContentPanel from '../../../../components/ContentPanel';
 import { hasError, isInvalid, required } from '../../../../utils/validate';
@@ -250,7 +250,7 @@ class CreateDestination extends React.Component {
               <EuiSpacer />
               <EuiFlexGroup alignItems="center" justifyContent="flexEnd">
                 <EuiFlexItem grow={false}>
-                  <EuiButtonEmpty onClick={this.handleCancel}>Close</EuiButtonEmpty>
+                  <EuiSmallButtonEmpty onClick={this.handleCancel}>Close</EuiSmallButtonEmpty>
                 </EuiFlexItem>
               </EuiFlexGroup>
               <SubmitErrorHandler

@@ -23,7 +23,7 @@ Array [
     class="euiSpacer euiSpacer--s"
   />,
   <div
-    class="euiFormRow"
+    class="euiFormRow euiFormRow--compressed"
     id="disabled-form-row-row"
     style="padding-left:10px"
   >
@@ -31,7 +31,7 @@ Array [
       class="euiFormRow__fieldWrapper"
     >
       <div
-        class="euiCheckbox"
+        class="euiCheckbox euiCheckbox--compressed"
       >
         <input
           class="euiCheckbox__input"
