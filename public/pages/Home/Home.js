@@ -10,7 +10,6 @@ import { EuiTab, EuiTabs } from '@elastic/eui';
 import Dashboard from '../Dashboard/containers/Dashboard';
 import Monitors from '../Monitors/containers/Monitors';
 import DestinationsList from '../Destinations/containers/DestinationsList';
-import { getDataSource, setDataSource } from '../../services';
 
 const getSelectedTabId = (pathname) => {
   if (pathname.includes('monitors')) return 'monitors';
@@ -79,10 +78,14 @@ export default class Home extends Component {
   );
 
   render() {
-    const { httpClient, notifications, setFlyout, landingDataSourceId } = this.props;
+    const { httpClient, notifications, setFlyout, landingDataSourceId, defaultRoute } = this.props;
     return (
       <div>
-        <EuiTabs size="s">{this.tabs.map(this.renderTab)}</EuiTabs>
+        {!defaultRoute && (
+          <EuiTabs size="s">
+            {this.tabs.map(this.renderTab)}
+          </EuiTabs>
+        )}
         <div style={{ padding: '25px 25px' }}>
           <Switch>
             <Route
@@ -122,7 +125,7 @@ export default class Home extends Component {
                 />
               )}
             />
-            <Redirect to="/dashboard" />
+            <Redirect to={defaultRoute || "/dashboard"} />
           </Switch>
         </div>
       </div>
