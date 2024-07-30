@@ -68,7 +68,6 @@ export class AlertingPlugin implements Plugin<void, AlertingStart, AlertingSetup
         label: 'OpenSearch Plugins',
         order: 2000,
       },
-      workspaceAvailability: WorkspaceAvailability.outsideWorkspace,
       order: 4000,
       mount: async (params) => {
         const { renderApp } = await import('./app');
@@ -93,7 +92,6 @@ export class AlertingPlugin implements Plugin<void, AlertingStart, AlertingSetup
         title: 'Alerts',
         order: 9070,
         category: DEFAULT_APP_CATEGORIES.detect,
-        workspaceAvailability: WorkspaceAvailability.outsideWorkspace,
         mount: async (params: AppMountParameters) => {
           return mountWrapper(params, "/dashboard");
         },
@@ -104,7 +102,6 @@ export class AlertingPlugin implements Plugin<void, AlertingStart, AlertingSetup
         title: 'Monitors',
         order: 9070,
         category: DEFAULT_APP_CATEGORIES.detect,
-        workspaceAvailability: WorkspaceAvailability.outsideWorkspace,
         mount: async (params: AppMountParameters) => {
           return mountWrapper(params, "/monitors");
         },
@@ -115,7 +112,6 @@ export class AlertingPlugin implements Plugin<void, AlertingStart, AlertingSetup
         title: 'Destinations',
         order: 9070,
         category: DEFAULT_APP_CATEGORIES.detect,
-        workspaceAvailability: WorkspaceAvailability.outsideWorkspace,
         mount: async (params: AppMountParameters) => {
           return mountWrapper(params, "/destinations");
         },
