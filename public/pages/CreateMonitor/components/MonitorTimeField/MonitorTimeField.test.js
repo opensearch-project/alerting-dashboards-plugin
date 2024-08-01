@@ -27,7 +27,7 @@ describe('MonitorTimeField', () => {
       </Formik>
     );
     // Default blank option
-    expect(wrapper.find('EuiComboBox').props().options.length).toBe(0);
+    expect(wrapper.find('EuiCompressedComboBox').props().options.length).toBe(0);
   });
 
   test('displays options', () => {
@@ -37,7 +37,7 @@ describe('MonitorTimeField', () => {
       </Formik>
     );
     // 3 options
-    expect(wrapper.find('EuiComboBox').props().options.length).toBe(3);
+    expect(wrapper.find('EuiCompressedComboBox').props().options.length).toBe(3);
   });
 
   test('displays options includes date_nanos', () => {
@@ -51,8 +51,8 @@ describe('MonitorTimeField', () => {
     expect(wrapper).toMatchSnapshot();
 
     // 4 options
-    expect(wrapper.find('EuiComboBox').props().options.length).toBe(4);
-    expect(wrapper.find('EuiComboBox').props().options).toEqual(
+    expect(wrapper.find('EuiCompressedComboBox').props().options.length).toBe(4);
+    expect(wrapper.find('EuiCompressedComboBox').props().options).toEqual(
       expect.arrayContaining([{ label: 'date_nanos1' }])
     );
   });
