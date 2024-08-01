@@ -11,7 +11,9 @@ import { FormikComboBox } from '../../../../components/FormControls';
 
 const MonitorTimeField = ({ dataTypes }) => {
   // Default empty option + options from index mappings mapped to ui select form
-  const dateFields = Array.from(dataTypes.date || []);
+  const dateFields = Array.from(dataTypes.date || []).concat(
+    Array.from(dataTypes.date_nanos || [])
+  );
   const options = [].concat(dateFields).map((option) => ({ label: option }));
   return (
     <FormikComboBox
