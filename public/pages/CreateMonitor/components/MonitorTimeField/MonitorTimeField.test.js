@@ -20,23 +20,40 @@ describe('MonitorTimeField', () => {
     expect(render(component)).toMatchSnapshot();
   });
 
-  test.skip('displays no options', () => {
+  test('displays no options', () => {
     const wrapper = mount(
       <Formik initialValues={{}} onSubmit={() => {}}>
         <MonitorTimeField dataTypes={{}} />
       </Formik>
     );
     // Default blank option
-    expect(wrapper.find('select').props().children[1].length).toBe(1);
+    expect(wrapper.find('EuiComboBox').props().options.length).toBe(0);
   });
 
-  test.skip('displays options', () => {
+  test('displays options', () => {
     const wrapper = mount(
       <Formik initialValues={{}} onSubmit={() => {}}>
         <MonitorTimeField dataTypes={{ date: ['date1', 'date2', 'date3'] }} />
       </Formik>
     );
-    // 3 options + default blank option
-    expect(wrapper.find('select').props().children[1].length).toBe(4);
+    // 3 options
+    expect(wrapper.find('EuiComboBox').props().options.length).toBe(3);
+  });
+
+  test('displays options includes date_nanos', () => {
+    const wrapper = mount(
+      <Formik initialValues={{}} onSubmit={() => {}}>
+        <MonitorTimeField
+          dataTypes={{ date: ['date1', 'date2', 'date3'], date_nanos: ['date_nanos1'] }}
+        />
+      </Formik>
+    );
+    expect(wrapper).toMatchSnapshot();
+
+    // 4 options
+    expect(wrapper.find('EuiComboBox').props().options.length).toBe(4);
+    expect(wrapper.find('EuiComboBox').props().options).toEqual(
+      expect.arrayContaining([{ label: 'date_nanos1' }])
+    );
   });
 });
