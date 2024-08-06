@@ -12,10 +12,11 @@ import {
   EuiFlyoutFooter,
   EuiTitle,
   EuiSpacer,
-  EuiButton,
-  EuiButtonEmpty,
+  EuiSmallButton,
+  EuiSmallButtonEmpty,
   EuiFormFieldset,
   EuiCheckableCard,
+  EuiText
 } from '@elastic/eui';
 import './styles.scss';
 import CreateNew from './CreateNew';
@@ -146,11 +147,11 @@ function AddAlertingMonitor({
           return (
             <>
               <EuiFlyoutHeader hasBorder>
-                <EuiTitle>
+                <EuiText size="s">
                   <h2 id="add-alerting-monitor__title">
                     {flyoutMode === 'adMonitor' ? 'Set up alerts' : 'Add alerting monitor'}
                   </h2>
-                </EuiTitle>
+                </EuiText>
               </EuiFlyoutHeader>
               <EuiFlyoutBody>
                 {!isAssociateAllowed && (
@@ -224,17 +225,17 @@ function AddAlertingMonitor({
               <EuiFlyoutFooter>
                 <EuiFlexGroup justifyContent="spaceBetween">
                   <EuiFlexItem grow={false}>
-                    <EuiButtonEmpty onClick={closeFlyout}>Cancel</EuiButtonEmpty>
+                    <EuiSmallButtonEmpty onClick={closeFlyout}>Cancel</EuiSmallButtonEmpty>
                   </EuiFlexItem>
                   <EuiFlexItem grow={false}>
-                    <EuiButton
+                    <EuiSmallButton
                       onClick={() => onSubmit({ handleSubmit, validateForm })}
                       fill
                       isLoading={isLoading}
                       disabled={!isAssociateAllowed}
                     >
                       {flyoutMode === 'existing' ? 'Associate' : 'Create'} monitor
-                    </EuiButton>
+                    </EuiSmallButton>
                   </EuiFlexItem>
                 </EuiFlexGroup>
               </EuiFlyoutFooter>

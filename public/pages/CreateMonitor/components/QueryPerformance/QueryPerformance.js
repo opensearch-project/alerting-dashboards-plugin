@@ -6,7 +6,7 @@
 import React, { Fragment } from 'react';
 import _ from 'lodash';
 import {
-  EuiButton,
+  EuiSmallButton,
   EuiCallOut,
   EuiFlexGroup,
   EuiFlexItem,
@@ -64,12 +64,14 @@ export const getPerformanceModal = ({ edit, onClose, onSubmit, values }) => {
     <EuiModal onClose={onClose}>
       <EuiModalHeader>
         <EuiModalHeaderTitle>
-          <h1>Monitor is not optimized</h1>
+          <EuiText size="s">
+            <h2>Monitor is not optimized</h2>
+          </EuiText>
         </EuiModalHeaderTitle>
       </EuiModalHeader>
 
       <EuiModalBody>
-        <EuiText>
+        <EuiText size="s">
           <p>The following use cases may impact this monitor's performance.</p>
           <ul>
             {hasRemoteClusters && <li>One or more remote indexes may affect monitor accuracy</li>}
@@ -79,13 +81,13 @@ export const getPerformanceModal = ({ edit, onClose, onSubmit, values }) => {
       </EuiModalBody>
 
       <EuiModalFooter>
-        <EuiButton fill={false} onClick={onSubmit}>
+        <EuiSmallButton fill={false} onClick={onSubmit}>
           {edit ? 'Update' : 'Create'} anyway
-        </EuiButton>
+        </EuiSmallButton>
 
-        <EuiButton fill={true} onClick={onClose}>
+        <EuiSmallButton fill={true} onClick={onClose}>
           Reconfigure
-        </EuiButton>
+        </EuiSmallButton>
       </EuiModalFooter>
     </EuiModal>
   );

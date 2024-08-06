@@ -15,7 +15,7 @@ import { CoreContext } from './utils/CoreContext';
 import { ServicesContext, NotificationService, getDataSourceEnabled } from './services';
 import { initManageChannelsUrl } from './utils/helpers';
 
-export function renderApp(coreStart, params) {
+export function renderApp(coreStart, params, defaultRoute) {
   const isDarkMode = coreStart.uiSettings.get('theme:darkMode') || false;
   const http = coreStart.http;
   coreStart.chrome.setBreadcrumbs([{ text: 'Alerting' }]); // Set Breadcrumbs for the plugin
@@ -24,6 +24,10 @@ export function renderApp(coreStart, params) {
   const mdsProps = {
     setActionMenu: params.setHeaderActionMenu,
     dataSourceEnabled: getDataSourceEnabled()?.enabled,
+  };
+
+  const navProps = {
+    defaultRoute: defaultRoute,
   };
 
   // Load Chart's dark mode CSS
@@ -45,9 +49,12 @@ export function renderApp(coreStart, params) {
             isDarkMode,
             notifications: coreStart.notifications,
             chrome: coreStart.chrome,
+            defaultRoute: defaultRoute,
           }}
         >
-          <Route render={(props) => <Main title="Alerting" {...mdsProps} {...props} />} />
+          <Route
+            render={(props) => <Main title="Alerting" {...mdsProps} {...navProps} {...props} />}
+          />
         </CoreContext.Provider>
       </ServicesContext.Provider>
     </Router>,

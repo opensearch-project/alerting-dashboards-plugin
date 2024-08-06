@@ -11,7 +11,7 @@ import {
   EuiCodeEditor,
   EuiFlexGroup,
   EuiFlexItem,
-  EuiFormRow,
+  EuiCompressedFormRow,
   EuiLink,
   EuiSpacer,
   EuiText,
@@ -67,7 +67,7 @@ const TriggerQuery = ({
                 {isAd ? (
                   <div>
                     <EuiSpacer size={'s'} />
-                    <EuiFormRow label="Response" fullWidth={true}>
+                    <EuiCompressedFormRow label="Response" fullWidth={true}>
                       <EuiCodeEditor
                         grow={true}
                         mode="json"
@@ -77,7 +77,7 @@ const TriggerQuery = ({
                         value={error || formattedResponse}
                         readOnly
                       />
-                    </EuiFormRow>
+                    </EuiCompressedFormRow>
                     <EuiSpacer size={'l'} />
                   </div>
                 ) : null}
@@ -87,7 +87,7 @@ const TriggerQuery = ({
                     field: { value },
                     form: { errors, touched, setFieldValue, setFieldTouched },
                   }) => (
-                    <EuiFormRow
+                    <EuiCompressedFormRow
                       label={
                         <EuiFlexGroup alignItems={'flexEnd'} gutterSize={'s'}>
                           <EuiFlexItem grow={false}>
@@ -125,14 +125,14 @@ const TriggerQuery = ({
                         value={value}
                         data-test-subj={'triggerQueryCodeEditor'}
                       />
-                    </EuiFormRow>
+                    </EuiCompressedFormRow>
                   )}
                 </Field>
               </div>
             </EuiFlexItem>
 
             <EuiFlexItem grow={1} style={{ marginBottom: '0px', paddingTop: '6px' }}>
-              <EuiFormRow
+              <EuiCompressedFormRow
                 fullWidth={true}
                 label={
                   <EuiText size={'xs'}>
@@ -149,7 +149,7 @@ const TriggerQuery = ({
                   value={getExecuteMessage(executeResponse)}
                   readOnly
                 />
-              </EuiFormRow>
+              </EuiCompressedFormRow>
             </EuiFlexItem>
           </EuiFlexGroup>
         </EuiFlexItem>

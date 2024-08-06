@@ -28,20 +28,20 @@ exports[`ForExpression renders 1`] = `
       style="width:150px"
     >
       <div
-        class="euiFormRow"
+        class="euiFormRow euiFormRow--compressed"
         id="bucketValue-form-row-row"
       >
         <div
           class="euiFormRow__fieldWrapper"
         >
           <div
-            class="euiFormControlLayout"
+            class="euiFormControlLayout euiFormControlLayout--compressed"
           >
             <div
               class="euiFormControlLayout__childrenWrapper"
             >
               <input
-                class="euiFieldNumber"
+                class="euiFieldNumber euiFieldNumber--compressed"
                 min="1"
                 name="bucketValue"
                 type="number"
@@ -57,13 +57,13 @@ exports[`ForExpression renders 1`] = `
       style="width:150px"
     >
       <div
-        class="euiFormControlLayout"
+        class="euiFormControlLayout euiFormControlLayout--compressed"
       >
         <div
           class="euiFormControlLayout__childrenWrapper"
         >
           <select
-            class="euiSelect"
+            class="euiSelect euiSelect--compressed"
             id="bucketUnitOfTime"
             name="bucketUnitOfTime"
           >

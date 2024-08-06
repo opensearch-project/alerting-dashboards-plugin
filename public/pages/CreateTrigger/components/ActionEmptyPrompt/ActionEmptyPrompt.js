@@ -4,7 +4,7 @@
  */
 
 import React from 'react';
-import { EuiButton, EuiEmptyPrompt, EuiText } from '@elastic/eui';
+import { EuiSmallButton, EuiEmptyPrompt, EuiText } from '@elastic/eui';
 import AddActionButton from '../AddActionButton';
 import { getManageChannelsUrl } from '../../../../utils/helpers';
 
@@ -25,7 +25,7 @@ const ActionEmptyPrompt = ({
     <EuiEmptyPrompt
       style={{ maxWidth: '45em' }}
       body={
-        <EuiText>
+        <EuiText size="s">
           <p>{hasDestinations ? actionEmptyText : destinationEmptyText}</p>
         </EuiText>
       }
@@ -33,7 +33,7 @@ const ActionEmptyPrompt = ({
         hasDestinations ? (
           <AddActionButton {...{ arrayHelpers, flyoutMode, onPostAdd, numActions }} />
         ) : (
-          <EuiButton
+          <EuiSmallButton
             fill
             disabled={!hasNotificationPlugin}
             iconType="popout"
@@ -41,7 +41,7 @@ const ActionEmptyPrompt = ({
             onClick={() => window.open(getManageChannelsUrl())}
           >
             Manage channels
-          </EuiButton>
+          </EuiSmallButton>
         )
       }
     />

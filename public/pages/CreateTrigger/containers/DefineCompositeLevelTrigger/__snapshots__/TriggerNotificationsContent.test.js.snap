@@ -12,7 +12,7 @@ exports[`TriggerNotificationsContent renders with notifications 1`] = `
       style="max-width:400px"
     >
       <div
-        class="euiFormRow"
+        class="euiFormRow euiFormRow--compressed"
         id="channel_name_undefined_0-form-row-row"
       >
         <div
@@ -31,18 +31,18 @@ exports[`TriggerNotificationsContent renders with notifications 1`] = `
           <div
             aria-expanded="false"
             aria-haspopup="listbox"
-            class="euiComboBox"
+            class="euiComboBox euiComboBox--compressed"
             name="channel_name_undefined_0"
             role="combobox"
           >
             <div
-              class="euiFormControlLayout"
+              class="euiFormControlLayout euiFormControlLayout--compressed"
             >
               <div
                 class="euiFormControlLayout__childrenWrapper"
               >
                 <div
-                  class="euiComboBox__inputWrap euiComboBox__inputWrap--noWrap euiComboBox__inputWrap-isClearable"
+                  class="euiComboBox__inputWrap euiComboBox__inputWrap--compressed euiComboBox__inputWrap--noWrap euiComboBox__inputWrap-isClearable"
                   data-test-subj="comboBoxInput"
                   tabindex="-1"
                 >
@@ -93,7 +93,7 @@ exports[`TriggerNotificationsContent renders with notifications 1`] = `
       style="padding-left:0;margin-left:0"
     >
       <button
-        class="euiButtonEmpty euiButtonEmpty--primary"
+        class="euiButtonEmpty euiButtonEmpty--primary euiButtonEmpty--small"
         style="margin-top:22px"
         type="button"
       >
@@ -127,7 +127,7 @@ exports[`TriggerNotificationsContent renders without notifications 1`] = `
       style="max-width:400px"
     >
       <div
-        class="euiFormRow"
+        class="euiFormRow euiFormRow--compressed"
         id="channel_name_undefined_0-form-row-row"
       >
         <div
@@ -146,18 +146,18 @@ exports[`TriggerNotificationsContent renders without notifications 1`] = `
           <div
             aria-expanded="false"
             aria-haspopup="listbox"
-            class="euiComboBox"
+            class="euiComboBox euiComboBox--compressed"
             name="channel_name_undefined_0"
             role="combobox"
           >
             <div
-              class="euiFormControlLayout"
+              class="euiFormControlLayout euiFormControlLayout--compressed"
             >
               <div
                 class="euiFormControlLayout__childrenWrapper"
               >
                 <div
-                  class="euiComboBox__inputWrap euiComboBox__inputWrap--noWrap euiComboBox__inputWrap-isClearable"
+                  class="euiComboBox__inputWrap euiComboBox__inputWrap--compressed euiComboBox__inputWrap--noWrap euiComboBox__inputWrap-isClearable"
                   data-test-subj="comboBoxInput"
                   tabindex="-1"
                 >
@@ -208,7 +208,7 @@ exports[`TriggerNotificationsContent renders without notifications 1`] = `
       style="padding-left:0;margin-left:0"
     >
       <button
-        class="euiButtonEmpty euiButtonEmpty--primary euiButtonEmpty-isDisabled"
+        class="euiButtonEmpty euiButtonEmpty--primary euiButtonEmpty--small euiButtonEmpty-isDisabled"
         disabled=""
         style="margin-top:22px"
         type="button"

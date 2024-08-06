@@ -9,13 +9,13 @@ exports[`DashboardControls renders 1`] = `
     class="euiFlexItem"
   >
     <div
-      class="euiFormControlLayout euiFormControlLayout--fullWidth"
+      class="euiFormControlLayout euiFormControlLayout--fullWidth euiFormControlLayout--compressed"
     >
       <div
         class="euiFormControlLayout__childrenWrapper"
       >
         <input
-          class="euiFieldSearch euiFieldSearch--fullWidth"
+          class="euiFieldSearch euiFieldSearch--fullWidth euiFieldSearch--compressed"
           placeholder="Search"
           type="search"
           value=""
@@ -38,13 +38,13 @@ exports[`DashboardControls renders 1`] = `
     class="euiFlexItem euiFlexItem--flexGrowZero"
   >
     <div
-      class="euiFormControlLayout"
+      class="euiFormControlLayout euiFormControlLayout--compressed"
     >
       <div
         class="euiFormControlLayout__childrenWrapper"
       >
         <select
-          class="euiSelect"
+          class="euiSelect euiSelect--compressed"
         >
           <option
             selected=""
@@ -96,13 +96,13 @@ exports[`DashboardControls renders 1`] = `
     class="euiFlexItem euiFlexItem--flexGrowZero"
   >
     <div
-      class="euiFormControlLayout"
+      class="euiFormControlLayout euiFormControlLayout--compressed"
     >
       <div
         class="euiFormControlLayout__childrenWrapper"
       >
         <select
-          class="euiSelect"
+          class="euiSelect euiSelect--compressed"
           data-test-subj="dashboardAlertStateFilter"
         >
           <option

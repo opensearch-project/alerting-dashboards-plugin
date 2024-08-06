@@ -12,7 +12,7 @@ exports[`DashboardEmptyPrompt renders 1`] = `
       class="euiText euiText--medium"
     >
       <div
-        class="euiText euiText--medium"
+        class="euiText euiText--small"
       >
         <p>
           There are no existing alerts. Create a monitor to add triggers and actions. Once an alarm is triggered, the state will show in this table.
@@ -24,7 +24,7 @@ exports[`DashboardEmptyPrompt renders 1`] = `
     class="euiSpacer euiSpacer--l"
   />
   <a
-    class="euiButton euiButton--primary euiButton--fill"
+    class="euiButton euiButton--primary euiButton--small euiButton--fill"
     href="alerting#/create-monitor"
     rel="noreferrer"
   >

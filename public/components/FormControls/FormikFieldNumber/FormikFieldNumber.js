@@ -5,7 +5,7 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import { EuiFieldNumber } from '@elastic/eui';
+import { EuiCompressedFieldNumber } from '@elastic/eui';
 
 import FormikInputWrapper from '../FormikInputWrapper';
 import FormikFormRow from '../FormikFormRow';
@@ -33,7 +33,7 @@ const FormikFieldNumber = ({
 );
 
 const FieldNumber = ({ name, form, field, inputProps: { onChange, isInvalid, ...rest } }) => (
-  <EuiFieldNumber
+  <EuiCompressedFieldNumber
     {...field}
     {...rest}
     onChange={(e) =>

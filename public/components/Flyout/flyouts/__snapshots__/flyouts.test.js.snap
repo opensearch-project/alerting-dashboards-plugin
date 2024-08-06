@@ -21,20 +21,20 @@ Object {
     <EuiFlexItem
       className="eui-textTruncate"
     >
-      <EuiTitle
+      <EuiText
         className="eui-textTruncate"
         data-test-subj="alertsDashboardFlyout_header_undefined"
-        size="m"
+        size="s"
       >
-        <h3>
+        <h2>
           Alerts by undefined
-        </h3>
-      </EuiTitle>
+        </h2>
+      </EuiText>
     </EuiFlexItem>
     <EuiFlexItem
       grow={false}
     >
-      <EuiButtonIcon
+      <EuiSmallButtonIcon
         data-test-subj="alertsDashboardFlyout_closeButton_undefined"
         display="empty"
         iconSize="m"
@@ -51,11 +51,7 @@ Object {
 exports[`Flyouts.message generates message JSON 1`] = `
 Object {
   "body": <EuiText
-    style={
-      Object {
-        "fontSize": "14px",
-      }
-    }
+    size="s"
   >
     <p>
       You have access to a "ctx" variable in your painless scripts and action mustache templates.
@@ -103,11 +99,7 @@ Object {
 exports[`Flyouts.messageFrequency generates message JSON 1`] = `
 Object {
   "body": <EuiText
-    style={
-      Object {
-        "fontSize": "14px",
-      }
-    }
+    size="s"
   >
     <p>
       Specify message frequency to limit the number of notifications you receive within a given span of time. This setting is especially useful for low severity trigger conditions.
@@ -159,11 +151,7 @@ exports[`Flyouts.triggerCondition generates message JSON 1`] = `
 Object {
   "body": <div>
     <EuiText
-      style={
-        Object {
-          "fontSize": "14px",
-        }
-      }
+      size="s"
     >
       <p>
         You have access to a "ctx" variable in your painless scripts
@@ -210,20 +198,15 @@ Object {
     "maxWidth": 500,
     "size": "m",
   },
-  "header": <EuiTitle
-    size="m"
-    style={
-      Object {
-        "fontSize": "25px",
-      }
-    }
+  "header": <EuiText
+    size="s"
   >
     <h2>
       <strong>
         Trigger condition
       </strong>
     </h2>
-  </EuiTitle>,
+  </EuiText>,
   "headerProps": Object {
     "hasBorder": true,
   },

@@ -22,7 +22,7 @@ const message = () => ({
     </EuiTitle>
   ),
   body: (
-    <EuiText style={{ fontSize: '14px' }}>
+    <EuiText size="s">
       <p>
         {`You have access to a "ctx" variable in your painless scripts and action mustache templates.`}
       </p>

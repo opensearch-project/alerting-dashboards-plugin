@@ -2,7 +2,7 @@
 
 exports[`FormikFormRow renders 1`] = `
 <div
-  class="euiFormRow"
+  class="euiFormRow euiFormRow--compressed"
   id="testing-form-row-row"
 >
   <div

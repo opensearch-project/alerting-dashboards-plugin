@@ -385,9 +385,9 @@ exports[`AnomalyDetectors renders 1`] = `
                 }
               }
             >
-              <EuiFormRow
+              <EuiCompressedFormRow
                 describedByIds={Array []}
-                display="row"
+                display="rowCompressed"
                 fullWidth={false}
                 hasChildLabel={true}
                 hasEmptyLabelSpace={false}
@@ -397,7 +397,7 @@ exports[`AnomalyDetectors renders 1`] = `
                 labelType="label"
               >
                 <div
-                  className="euiFormRow"
+                  className="euiFormRow euiFormRow--compressed"
                   id="detectorId-form-row-row"
                 >
                   <div
@@ -628,9 +628,9 @@ exports[`AnomalyDetectors renders 1`] = `
                       onBlur={[Function]}
                       onFocus={[Function]}
                     >
-                      <EuiComboBox
+                      <EuiCompressedComboBox
                         async={false}
-                        compressed={false}
+                        compressed={true}
                         fullWidth={false}
                         id="detectorId"
                         isClearable={false}
@@ -650,14 +650,14 @@ exports[`AnomalyDetectors renders 1`] = `
                         <div
                           aria-expanded={false}
                           aria-haspopup="listbox"
-                          className="euiComboBox"
+                          className="euiComboBox euiComboBox--compressed"
                           name="detectorId"
                           onKeyDown={[Function]}
                           role="combobox"
                         >
                           <EuiComboBoxInput
                             autoSizeInputRef={[Function]}
-                            compressed={false}
+                            compressed={true}
                             fullWidth={false}
                             hasSelectedOptions={false}
                             id="detectorId"
@@ -684,7 +684,7 @@ exports[`AnomalyDetectors renders 1`] = `
                             value=""
                           >
                             <EuiFormControlLayout
-                              compressed={false}
+                              compressed={true}
                               fullWidth={false}
                               icon={
                                 Object {
@@ -699,13 +699,13 @@ exports[`AnomalyDetectors renders 1`] = `
                               }
                             >
                               <div
-                                className="euiFormControlLayout"
+                                className="euiFormControlLayout euiFormControlLayout--compressed"
                               >
                                 <div
                                   className="euiFormControlLayout__childrenWrapper"
                                 >
                                   <div
-                                    className="euiComboBox__inputWrap euiComboBox__inputWrap--noWrap"
+                                    className="euiComboBox__inputWrap euiComboBox__inputWrap--compressed euiComboBox__inputWrap--noWrap"
                                     data-test-subj="comboBoxInput"
                                     onClick={[Function]}
                                     tabIndex={-1}
@@ -776,7 +776,7 @@ exports[`AnomalyDetectors renders 1`] = `
                                     </AutosizeInput>
                                   </div>
                                   <EuiFormControlLayoutIcons
-                                    compressed={false}
+                                    compressed={true}
                                     icon={
                                       Object {
                                         "aria-label": "Open list of options",
@@ -797,7 +797,7 @@ exports[`AnomalyDetectors renders 1`] = `
                                         data-test-subj="comboBoxToggleListButton"
                                         iconRef={[Function]}
                                         onClick={[Function]}
-                                        size="m"
+                                        size="s"
                                         type="arrowDown"
                                       >
                                         <button
@@ -810,7 +810,7 @@ exports[`AnomalyDetectors renders 1`] = `
                                           <EuiIcon
                                             aria-hidden="true"
                                             className="euiFormControlLayoutCustomIcon__icon"
-                                            size="m"
+                                            size="s"
                                             type="arrowDown"
                                           >
                                             <div>
@@ -826,11 +826,11 @@ exports[`AnomalyDetectors renders 1`] = `
                             </EuiFormControlLayout>
                           </EuiComboBoxInput>
                         </div>
-                      </EuiComboBox>
+                      </EuiCompressedComboBox>
                     </ComboBox>
                   </div>
                 </div>
-              </EuiFormRow>
+              </EuiCompressedFormRow>
             </FormikFormRow>
           </Field>
         </FormikInputWrapper>

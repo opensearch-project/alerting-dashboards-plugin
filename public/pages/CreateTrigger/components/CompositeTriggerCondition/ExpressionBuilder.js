@@ -4,7 +4,7 @@ import {
   EuiFlexGroup,
   EuiPopover,
   EuiComboBox,
-  EuiButtonIcon,
+  EuiSmallButtonIcon,
   EuiExpression,
   EuiToolTip,
   EuiSelect,
@@ -241,7 +241,7 @@ const ExpressionBuilder = ({
       {!hideDeleteButton && (
         <EuiFlexItem grow={false}>
           <EuiToolTip content={'Remove monitor'}>
-            <EuiButtonIcon
+            <EuiSmallButtonIcon
               data-test-subj={`selection-exp-field-item-remove-${triggerIndex}-${idx}`}
               onClick={() => onRemoveExpression(form, idx)}
               iconType={'trash'}
@@ -340,7 +340,7 @@ const ExpressionBuilder = ({
             {options.length > usedExpressions.length && (
               <EuiFlexItem grow={false} key={`selection_add`}>
                 <EuiToolTip content={'Add another monitor'}>
-                  <EuiButtonIcon
+                  <EuiSmallButtonIcon
                     onClick={() => {
                       const expressions = _.cloneDeep(usedExpressions);
                       expressions.push({

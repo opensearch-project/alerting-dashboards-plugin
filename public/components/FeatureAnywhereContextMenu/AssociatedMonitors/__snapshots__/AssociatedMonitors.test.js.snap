@@ -7,13 +7,15 @@ exports[`AssociatedMonitors renders 1`] = `
   <EuiFlyoutHeader
     hasBorder={true}
   >
-    <EuiTitle>
+    <EuiText
+      size="s"
+    >
       <h2
         id="associated-monitors__title"
       >
         Associated monitors
       </h2>
-    </EuiTitle>
+    </EuiText>
   </EuiFlyoutHeader>
   <EuiFlyoutHeader />
   <EuiFlyoutBody>
@@ -31,14 +33,14 @@ exports[`AssociatedMonitors renders 1`] = `
       <EuiFlexItem
         grow={false}
       >
-        <EuiButton
+        <EuiSmallButton
           fill={true}
           iconType="link"
           isDisabled={true}
           onClick={[Function]}
         >
           Associate a monitor
-        </EuiButton>
+        </EuiSmallButton>
       </EuiFlexItem>
     </EuiFlexGroup>
     <EuiSpacer

@@ -5,13 +5,13 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import { EuiButton, EuiEmptyPrompt, EuiText } from '@elastic/eui';
+import { EuiSmallButton, EuiEmptyPrompt, EuiText } from '@elastic/eui';
 
 const EmptyHistory = ({ onShowTrigger }) => (
   <EuiEmptyPrompt
     style={{ maxWidth: '45em' }}
     body={
-      <EuiText>
+      <EuiText size="s">
         <p>
           There are no triggers. Create a trigger to start alerting. Once an alarm is triggered, the
           state will be displayed in time series.
@@ -19,9 +19,9 @@ const EmptyHistory = ({ onShowTrigger }) => (
       </EuiText>
     }
     actions={
-      <EuiButton fill onClick={onShowTrigger}>
+      <EuiSmallButton fill onClick={onShowTrigger}>
         Edit monitor
-      </EuiButton>
+      </EuiSmallButton>
     }
   />
 );

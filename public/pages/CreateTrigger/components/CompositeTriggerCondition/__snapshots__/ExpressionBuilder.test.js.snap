@@ -2,7 +2,7 @@
 
 exports[`ExpressionBuilder renders 1`] = `
 <div
-  class="euiFormRow"
+  class="euiFormRow euiFormRow--compressed"
   id="pathtriggerCondition_value-form-row-row"
   style="max-width:inherit"
 >

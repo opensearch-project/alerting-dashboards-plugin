@@ -6,7 +6,7 @@ exports[`ClusterMetricsMonitor renders 1`] = `
     class="euiSpacer euiSpacer--m"
   />
   <div
-    class="euiFormRow"
+    class="euiFormRow euiFormRow--compressed"
     id="uri.api_type-form-row-row"
   >
     <div
@@ -59,19 +59,19 @@ exports[`ClusterMetricsMonitor renders 1`] = `
       <div
         aria-expanded="false"
         aria-haspopup="listbox"
-        class="euiComboBox"
+        class="euiComboBox euiComboBox--compressed"
         data-test-subj="clusterMetricsApiTypeComboBox"
         name="uri.api_type"
         role="combobox"
       >
         <div
-          class="euiFormControlLayout"
+          class="euiFormControlLayout euiFormControlLayout--compressed"
         >
           <div
             class="euiFormControlLayout__childrenWrapper"
           >
             <div
-              class="euiComboBox__inputWrap euiComboBox__inputWrap--noWrap"
+              class="euiComboBox__inputWrap euiComboBox__inputWrap--compressed euiComboBox__inputWrap--noWrap"
               data-test-subj="comboBoxInput"
               tabindex="-1"
             >
@@ -139,7 +139,7 @@ exports[`ClusterMetricsMonitor renders 1`] = `
     class="euiSpacer euiSpacer--l"
   />
   <div
-    class="euiFormRow euiFormRow--fullWidth"
+    class="euiFormRow euiFormRow--fullWidth euiFormRow--compressed"
     id="generated-id-row"
   >
     <div

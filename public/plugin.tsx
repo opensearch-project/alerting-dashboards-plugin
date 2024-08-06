@@ -3,8 +3,16 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { PLUGIN_NAME } from '../utils/constants';
-import { Plugin, CoreSetup, CoreStart } from '../../../src/core/public';
+import { ALERTS_NAV_ID, DESTINATIONS_NAV_ID, MONITORS_NAV_ID, PLUGIN_NAME } from '../utils/constants';
+import {
+  Plugin,
+  CoreSetup,
+  CoreStart,
+  DEFAULT_NAV_GROUPS,
+  WorkspaceAvailability,
+  AppMountParameters,
+  DEFAULT_APP_CATEGORIES,
+} from '../../../src/core/public';
 import { ACTION_ALERTING } from './actions/alerting_dashboard_action';
 import { CONTEXT_MENU_TRIGGER, EmbeddableStart } from '../../../src/plugins/embeddable/public';
 import { getActions, getAdAction } from './utils/contextMenu/actions';
@@ -12,19 +20,7 @@ import { alertingTriggerAd } from './utils/contextMenu/triggers';
 import { ExpressionsSetup } from '../../../src/plugins/expressions/public';
 import { UiActionsSetup } from '../../../src/plugins/ui_actions/public';
 import { overlayAlertsFunction } from './expressions/overlay_alerts';
-import {
-  setClient,
-  setEmbeddable,
-  setNotifications,
-  setOverlays,
-  setSavedAugmentVisLoader,
-  setUISettings,
-  setQueryService,
-  setSavedObjectsClient,
-  setDataSourceEnabled,
-  setDataSourceManagementPlugin,
-  setAssistantDashboards,
-} from './services';
+import { setClient, setEmbeddable, setNotifications, setOverlays, setSavedAugmentVisLoader, setUISettings, setQueryService, setSavedObjectsClient, setDataSourceEnabled, setDataSourceManagementPlugin, setAssistantDashboards } from './services';
 import { VisAugmenterStart } from '../../../src/plugins/vis_augmenter/public';
 import { DataPublicPluginStart } from '../../../src/plugins/data/public';
 import { AssistantSetup } from './types';
@@ -37,17 +33,16 @@ declare module '../../../src/plugins/ui_actions/public' {
   }
 }
 
-// eslint-disable-next-line @typescript-eslint/no-empty-interface
-export interface AlertingSetup {}
-// eslint-disable-next-line @typescript-eslint/no-empty-interface
-export interface AlertingStart {}
+export interface AlertingSetup { }
+
+export interface AlertingStart { }
 
 export interface AlertingSetupDeps {
   expressions: ExpressionsSetup;
   uiActions: UiActionsSetup;
-  assistantDashboards?: AssistantSetup;
   dataSourceManagement: DataSourceManagementPluginSetup;
   dataSource: DataSourcePluginSetup;
+  assistantDashboards?: AssistantSetup;
 }
 
 export interface AlertingStartDeps {
@@ -56,18 +51,15 @@ export interface AlertingStartDeps {
   data: DataPublicPluginStart;
 }
 
-export class AlertingPlugin
-  implements Plugin<AlertingSetup, AlertingStart, AlertingSetupDeps, AlertingStartDeps> {
-  public setup(
-    core: CoreSetup<AlertingStartDeps, AlertingStart>,
-    {
-      expressions,
-      uiActions,
-      assistantDashboards,
-      dataSourceManagement,
-      dataSource,
-    }: AlertingSetupDeps
-  ): AlertingSetup {
+export class AlertingPlugin implements Plugin<void, AlertingStart, AlertingSetupDeps, AlertingStartDeps> {
+
+  public setup(core: CoreSetup<AlertingStartDeps, AlertingStart>, { expressions, uiActions, dataSourceManagement, dataSource, assistantDashboards }: AlertingSetupDeps) {
+
+    const mountWrapper = async (params: AppMountParameters, redirect: string) => {
+      const { renderApp } = await import("./app");
+      const [coreStart] = await core.getStartServices();
+      return renderApp(coreStart, params, redirect);
+    };
     core.application.register({
       id: PLUGIN_NAME,
       title: 'Alerting',
@@ -84,6 +76,68 @@ export class AlertingPlugin
         return renderApp(coreStart, params);
       },
     });
+
+    if (core.chrome.navGroup.getNavGroupEnabled()) {
+      // register applications with category and use case information
+      core.chrome.navGroup.addNavLinksToGroup(DEFAULT_NAV_GROUPS.observability, [
+        {
+          id: PLUGIN_NAME,
+          category: DEFAULT_APP_CATEGORIES.detect,
+          showInAllNavGroup: false
+        }
+      ])
+
+      // channels route
+      core.application.register({
+        id: ALERTS_NAV_ID,
+        title: 'Alerts',
+        order: 9070,
+        category: DEFAULT_APP_CATEGORIES.detect,
+        mount: async (params: AppMountParameters) => {
+          return mountWrapper(params, "/dashboard");
+        },
+      });
+
+      core.application.register({
+        id: MONITORS_NAV_ID,
+        title: 'Monitors',
+        order: 9070,
+        category: DEFAULT_APP_CATEGORIES.detect,
+        mount: async (params: AppMountParameters) => {
+          return mountWrapper(params, "/monitors");
+        },
+      });
+
+      core.application.register({
+        id: DESTINATIONS_NAV_ID,
+        title: 'Destinations',
+        order: 9070,
+        category: DEFAULT_APP_CATEGORIES.detect,
+        mount: async (params: AppMountParameters) => {
+          return mountWrapper(params, "/destinations");
+        },
+      });
+
+      const navLinks = [
+        {
+          id: ALERTS_NAV_ID,
+          parentNavLinkId: PLUGIN_NAME,
+        },
+        {
+          id: MONITORS_NAV_ID,
+          parentNavLinkId: PLUGIN_NAME,
+        },
+        {
+          id: DESTINATIONS_NAV_ID,
+          parentNavLinkId: PLUGIN_NAME,
+        },
+      ];
+
+      core.chrome.navGroup.addNavLinksToGroup(
+        DEFAULT_NAV_GROUPS.observability,
+        navLinks
+      );
+    }
 
     setAssistantDashboards(assistantDashboards || { chatEnabled: () => false, nextEnabled: () => false });
 
@@ -114,14 +168,9 @@ export class AlertingPlugin
     const adAction = getAdAction();
     uiActions.registerTrigger(alertingTriggerAd);
     uiActions.addTriggerAction(alertingTriggerAd.id, adAction);
-
-    return {};
   }
 
-  public start(
-    core: CoreStart,
-    { visAugmenter, embeddable, data }: AlertingStartDeps
-  ): AlertingStart {
+  public start(core: CoreStart, { visAugmenter, embeddable, data }: AlertingStartDeps): AlertingStart {
     setEmbeddable(embeddable);
     setOverlays(core.overlays);
     setQueryService(data.query);
@@ -130,6 +179,4 @@ export class AlertingPlugin
     setSavedObjectsClient(core.savedObjects.client);
     return {};
   }
-
-  public stop() {}
 }

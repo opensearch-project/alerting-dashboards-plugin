@@ -4,7 +4,7 @@
  */
 
 import React from 'react';
-import { EuiCodeBlock, EuiCodeEditor, EuiSpacer, EuiText, EuiTitle } from '@elastic/eui';
+import { EuiCodeBlock, EuiCodeEditor, EuiSpacer, EuiText } from '@elastic/eui';
 
 const CONTEXT_VARIABLES = JSON.stringify(
   {
@@ -28,15 +28,15 @@ const triggerCondition = (context) => ({
   },
   headerProps: { hasBorder: true },
   header: (
-    <EuiTitle size="m" style={{ fontSize: '25px' }}>
+    <EuiText size="s">
       <h2>
         <strong>Trigger condition</strong>
       </h2>
-    </EuiTitle>
+    </EuiText>
   ),
   body: (
     <div>
-      <EuiText style={{ fontSize: '14px' }}>
+      <EuiText size="s">
         <p>You have access to a "ctx" variable in your painless scripts</p>
         <p>
           Below shows a quick JSON example of what's available under the "ctx" variable along with

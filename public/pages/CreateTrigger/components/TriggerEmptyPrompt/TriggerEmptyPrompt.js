@@ -20,7 +20,7 @@ const TriggerEmptyPrompt = ({
   <EuiEmptyPrompt
     style={{ maxWidth: '45em' }}
     body={
-      <EuiText>
+      <EuiText size="s">
         <h4>No triggers</h4>
         <p>Add a trigger to define conditions and actions.</p>
       </EuiText>

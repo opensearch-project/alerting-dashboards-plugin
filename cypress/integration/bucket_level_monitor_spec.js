@@ -355,6 +355,9 @@ describe('Bucket-Level Monitors', () => {
         // Click Edit button
         cy.contains('Edit').click({ force: true });
 
+        // Wait for page to load
+        cy.contains('Select clusters').click({ force: true });
+
         // Click on the Index field and type in multiple index names to replicate the bug
         cy.get('#index')
           .click({ force: true })
@@ -364,12 +367,12 @@ describe('Bucket-Level Monitors', () => {
           .trigger('blur', { force: true });
 
         // Confirm Index field only contains the expected text
-        cy.get('[data-test-subj="indicesComboBox"]').contains('*', { timeout: 20000 });
+        cy.get('[data-test-subj="indicesComboBox"]').contains('*', { timeout: 25000 });
         cy.get('[data-test-subj="indicesComboBox"]').contains(TESTING_INDEX_A, {
-          timeout: 20000,
+          timeout: 25000,
         });
         cy.get('[data-test-subj="indicesComboBox"]').contains(TESTING_INDEX_B, {
-          timeout: 20000,
+          timeout: 25000,
         });
 
         // Click the update button

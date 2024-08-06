@@ -9,7 +9,7 @@ import {
   EuiSpacer,
   EuiIcon,
   EuiText,
-  EuiComboBox,
+  EuiCompressedComboBox,
   EuiLoadingSpinner,
   EuiLink,
   EuiFlexGroup,
@@ -94,7 +94,7 @@ function AssociateExisting({ monitors, selectedMonitorId, setSelectedMonitorId }
       <EuiSpacer size="m" />
       {!monitors && <EuiLoadingSpinner size="l" />}
       {monitors && (
-        <EuiComboBox
+        <EuiCompressedComboBox
           id="associate-existing__select"
           options={options}
           selectedOptions={selectedOptions}

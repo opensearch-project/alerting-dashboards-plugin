@@ -22,6 +22,8 @@ import {
 } from '../../../public/services';
 import { MultiDataSourceContext } from '../../../public/utils/MultiDataSourceContext';
 import { parseQueryStringAndGetDataSource } from '../utils/helpers';
+import * as pluginManifest from '../../../opensearch_dashboards.json';
+import semver from 'semver';
 
 class Main extends Component {
   static contextType = CoreContext;
@@ -51,7 +53,9 @@ class Main extends Component {
   async updateBreadcrumbs() {
     if (this.props.dataSourceEnabled && this.props.location) {
       const search = this.props.location?.search;
-      const dataSourceId = search ? parseQueryStringAndGetDataSource(search) : parseQueryStringAndGetDataSource(this.props.location?.pathname);
+      const dataSourceId = search
+        ? parseQueryStringAndGetDataSource(search)
+        : parseQueryStringAndGetDataSource(this.props.location?.pathname);
       if (dataSourceId) {
         setDataSource({ dataSourceId });
         this.setState({
@@ -100,6 +104,17 @@ class Main extends Component {
     }
   };
 
+  dataSourceFilterFn = (dataSource) => {
+    const dataSourceVersion = dataSource?.attributes?.dataSourceVersion || '';
+    const installedPlugins = dataSource?.attributes?.installedPlugins || [];
+    return (
+      semver.satisfies(dataSourceVersion, pluginManifest.supportedOSDataSourceVersions) &&
+      pluginManifest.requiredOSDataSourcePlugins.every((plugin) =>
+        installedPlugins.includes(plugin)
+      )
+    );
+  };
+
   renderDataSourceComponent(dataSourceType) {
     const { setActionMenu } = this.props;
     const componentConfig = {
@@ -109,6 +124,7 @@ class Main extends Component {
         : [{ id: this.state.selectedDataSourceId }],
       savedObjects: getSavedObjectsClient(),
       notifications: getNotifications(),
+      dataSourceFilter: this.dataSourceFilterFn,
     };
     if (dataSourceType === 'DataSourceSelectable') {
       componentConfig.onSelectedDataSources = this.handleDataSourceChange;
@@ -224,6 +240,11 @@ class Main extends Component {
                                   setFlyout={this.setFlyout}
                                   notifications={core.notifications}
                                   landingDataSourceId={this.state.selectedDataSourceId}
+                                  defaultRoute={
+                                    core.chrome?.navGroup?.getNavGroupEnabled()
+                                      ? this.props.defaultRoute
+                                      : undefined
+                                  }
                                 />
                               )}
                             />

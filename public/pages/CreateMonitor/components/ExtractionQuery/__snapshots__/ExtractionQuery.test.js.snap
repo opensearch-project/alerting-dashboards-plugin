@@ -8,7 +8,7 @@ exports[`ExtractionQuery renders 1`] = `
     class="euiFlexItem"
   >
     <div
-      class="euiFormRow euiFormRow--fullWidth"
+      class="euiFormRow euiFormRow--fullWidth euiFormRow--compressed"
       id="query-form-row-row"
     >
       <div
@@ -58,7 +58,7 @@ exports[`ExtractionQuery renders 1`] = `
     class="euiFlexItem"
   >
     <div
-      class="euiFormRow euiFormRow--fullWidth"
+      class="euiFormRow euiFormRow--fullWidth euiFormRow--compressed"
       id="generated-id-row"
     >
       <div

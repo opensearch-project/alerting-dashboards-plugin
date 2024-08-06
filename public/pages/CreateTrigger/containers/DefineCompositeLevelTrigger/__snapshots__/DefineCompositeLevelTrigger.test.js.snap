@@ -70,7 +70,7 @@ exports[`DefineCompositeLevelTrigger renders 1`] = `
             class="euiSpacer euiSpacer--m"
           />
           <div
-            class="euiFormRow"
+            class="euiFormRow euiFormRow--compressed"
             id="triggerDefinitions[undefined].name-form-row-row"
             style="padding-left:0"
           >
@@ -93,13 +93,13 @@ exports[`DefineCompositeLevelTrigger renders 1`] = `
               class="euiFormRow__fieldWrapper"
             >
               <div
-                class="euiFormControlLayout"
+                class="euiFormControlLayout euiFormControlLayout--compressed"
               >
                 <div
                   class="euiFormControlLayout__childrenWrapper"
                 >
                   <input
-                    class="euiFieldText"
+                    class="euiFieldText euiFieldText--compressed"
                     data-test-subj="composite-trigger-name"
                     name="triggerDefinitions[undefined].name"
                     type="text"
@@ -113,7 +113,7 @@ exports[`DefineCompositeLevelTrigger renders 1`] = `
             class="euiSpacer euiSpacer--l"
           />
           <div
-            class="euiFormRow"
+            class="euiFormRow euiFormRow--compressed"
             id="triggerConditionFieldsContainer_undefined-form-row-row"
             style="max-width:inherit"
           >
@@ -154,7 +154,7 @@ exports[`DefineCompositeLevelTrigger renders 1`] = `
                   class="euiFlexItem"
                 >
                   <div
-                    class="euiFormRow euiFormRow--fullWidth"
+                    class="euiFormRow euiFormRow--fullWidth euiFormRow--compressed"
                     id="triggerDefinitions_undefined__triggerConditions_undefined_code-form-row-row"
                   >
                     <div
@@ -211,7 +211,7 @@ exports[`DefineCompositeLevelTrigger renders 1`] = `
             Alert severity
           </h4>
           <div
-            class="euiFormRow"
+            class="euiFormRow euiFormRow--compressed"
             id="triggerDefinitions[undefined].severity-form-row-row"
             style="padding-left:10px;margin-top:0px"
           >
@@ -230,13 +230,13 @@ exports[`DefineCompositeLevelTrigger renders 1`] = `
               class="euiFormRow__fieldWrapper"
             >
               <div
-                class="euiFormControlLayout"
+                class="euiFormControlLayout euiFormControlLayout--compressed"
               >
                 <div
                   class="euiFormControlLayout__childrenWrapper"
                 >
                   <select
-                    class="euiSelect"
+                    class="euiSelect euiSelect--compressed"
                     id="triggerDefinitions[undefined].severity"
                     name="triggerDefinitions[undefined].severity"
                   >
@@ -293,7 +293,7 @@ exports[`DefineCompositeLevelTrigger renders 1`] = `
             class="euiSpacer euiSpacer--m"
           />
           <button
-            class="euiButton euiButton--primary"
+            class="euiButton euiButton--primary euiButton--small"
             type="button"
           >
             <span

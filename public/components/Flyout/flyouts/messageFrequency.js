@@ -21,7 +21,7 @@ const messageFrequency = () => ({
     </EuiTitle>
   ),
   body: (
-    <EuiText style={{ fontSize: '14px' }}>
+    <EuiText size="s">
       <p>
         Specify message frequency to limit the number of notifications you receive within a given
         span of time. This setting is especially useful for low severity trigger conditions.

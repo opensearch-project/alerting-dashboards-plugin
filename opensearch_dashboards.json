@@ -17,5 +17,7 @@
   ],
   "optionalPlugins": ["assistantDashboards"],
   "server": true,
-  "ui": true
+  "ui": true,
+  "supportedOSDataSourceVersions": ">=2.13.0",
+  "requiredOSDataSourcePlugins": ["opensearch-alerting"]
 }
