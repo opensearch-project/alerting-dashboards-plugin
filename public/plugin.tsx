@@ -16,12 +16,23 @@ import { alertingTriggerAd } from './utils/contextMenu/triggers';
 import { ExpressionsSetup } from '../../../src/plugins/expressions/public';
 import { UiActionsSetup } from '../../../src/plugins/ui_actions/public';
 import { overlayAlertsFunction } from './expressions/overlay_alerts';
-import { setClient, setEmbeddable, setNotifications, setOverlays, setSavedAugmentVisLoader, setUISettings, setQueryService, setSavedObjectsClient, setDataSourceEnabled, setDataSourceManagementPlugin, setAssistantDashboards } from './services';
+import {
+  setClient,
+  setEmbeddable,
+  setNotifications,
+  setOverlays,
+  setSavedAugmentVisLoader,
+  setUISettings,
+  setQueryService,
+  setSavedObjectsClient,
+  setDataSourceEnabled,
+  setDataSourceManagementPlugin,
+  setAssistantDashboards,
+} from './services';
 import { VisAugmenterStart } from '../../../src/plugins/vis_augmenter/public';
 import { DataPublicPluginStart } from '../../../src/plugins/data/public';
 import { DataSourceManagementPluginSetup } from '../../../src/plugins/data_source_management/public';
 import { DataSourcePluginSetup } from '../../../src/plugins/data_source/public';
-import { AssistantPublicPluginSetup } from './../../../plugins/dashboards-assistant/public';
 import { registerAssistantDependencies } from './dependencies/register_assistant';
 
 declare module '../../../src/plugins/ui_actions/public' {
@@ -67,9 +78,67 @@ export class AlertingPlugin implements Plugin<AlertingSetup, AlertingStart, Aler
       },
     });
 
-    setAssistantDashboards(assistantDashboards || { chatEnabled: () => false });
-    if (assistantDashboards && assistantDashboards?.chatEnabled()) {
-      registerAssistantDependencies(assistantDashboards);
+    if (core.chrome.navGroup.getNavGroupEnabled()) {
+
+      // register applications with category and use case information
+      core.chrome.navGroup.addNavLinksToGroup(DEFAULT_NAV_GROUPS.observability, [
+        {
+          id: PLUGIN_NAME,
+          category: DEFAULT_APP_CATEGORIES.detect,
+          showInAllNavGroup: false
+        }
+      ])
+
+      // channels route
+      core.application.register({
+        id: ALERTS_NAV_ID,
+        title: 'Alerts',
+        order: 9070,
+        category: DEFAULT_APP_CATEGORIES.detect,
+        mount: async (params: AppMountParameters) => {
+          return mountWrapper(params, "/dashboard");
+        },
+      });
+
+      core.application.register({
+        id: MONITORS_NAV_ID,
+        title: 'Monitors',
+        order: 9070,
+        category: DEFAULT_APP_CATEGORIES.detect,
+        mount: async (params: AppMountParameters) => {
+          return mountWrapper(params, "/monitors");
+        },
+      });
+
+      core.application.register({
+        id: DESTINATIONS_NAV_ID,
+        title: 'Destinations',
+        order: 9070,
+        category: DEFAULT_APP_CATEGORIES.detect,
+        mount: async (params: AppMountParameters) => {
+          return mountWrapper(params, "/destinations");
+        },
+      });
+
+      const navLinks = [
+        {
+          id: ALERTS_NAV_ID,
+          parentNavLinkId: PLUGIN_NAME,
+        },
+        {
+          id: MONITORS_NAV_ID,
+          parentNavLinkId: PLUGIN_NAME,
+        },
+        {
+          id: DESTINATIONS_NAV_ID,
+          parentNavLinkId: PLUGIN_NAME,
+        },
+      ];
+
+      core.chrome.navGroup.addNavLinksToGroup(
+        DEFAULT_NAV_GROUPS.observability,
+        navLinks
+      );
     }
 
     setUISettings(core.uiSettings);
@@ -83,6 +152,10 @@ export class AlertingPlugin implements Plugin<AlertingSetup, AlertingStart, Aler
     const enabled = !!dataSource;
 
     setDataSourceEnabled({ enabled });
+
+    if (assistantDashboards?.nextEnabled()) {
+      registerAssistantDependencies(assistantDashboards);
+    }
 
     // registers the expression function used to render anomalies on an Augmented Visualization
     expressions.registerFunction(overlayAlertsFunction(enabled));
