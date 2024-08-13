@@ -158,7 +158,7 @@ const Action = ({
                     </EuiText>
                   </React.Fragment>
                 ),
-                rowHeight: 45,
+                rowHeight: 30,
                 isLoading: !flyoutMode && loadingDestinations,
               }}
             />
