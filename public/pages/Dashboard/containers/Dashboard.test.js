@@ -8,6 +8,7 @@ import { mount } from 'enzyme';
 
 import Dashboard from './Dashboard';
 import { historyMock, httpClientMock } from '../../../../test/mocks';
+import { setupCoreStart } from '../../../../test/utils/helpers';
 
 const location = {
   hash: '',
@@ -55,6 +56,10 @@ const sampleQueryAlerts = [
 ];
 
 const runAllPromises = () => new Promise(setImmediate);
+
+beforeAll(() => {
+  setupCoreStart();
+});
 
 describe('Dashboard', () => {
   beforeEach(() => {
