@@ -144,11 +144,11 @@ export default class Monitors extends Component {
   async getMonitors(from, size, search, sortField, sortDirection, state) {
     this.setState({ loadingMonitors: true });
     try {
-      const params = { from, size, search, sortField, sortDirection, state };
+      const dataSourceId = getDataSourceId();
+      const params = { from, size, search, sortField, sortDirection, state, dataSourceId };
       const queryParamsString = queryString.stringify(params);
       const { httpClient, history } = this.props;
       history.replace({ ...this.props.location, search: queryParamsString });
-      const dataSourceId = getDataSourceId();
       const extendedParams = {
         ...(dataSourceId !== undefined && { dataSourceId }), // Only include dataSourceId if it exists
         ...params, // Other parameters

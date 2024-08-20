@@ -131,6 +131,7 @@ export default class Dashboard extends Component {
 
   getAlerts = _.debounce(
     (from, size, search, sortField, sortDirection, severityLevel, alertState, monitorIds) => {
+      const dataSourceId = getDataSourceId();
       const params = {
         from,
         size,
@@ -141,13 +142,12 @@ export default class Dashboard extends Component {
         alertState,
         monitorIds,
         monitorType: this.props.monitorType,
+        dataSourceId,
       };
 
       const queryParamsString = queryString.stringify(params);
-      location.search;
       const { httpClient, history, notifications, perAlertView } = this.props;
       history.replace({ ...this.props.location, search: queryParamsString });
-      const dataSourceId = getDataSourceId();
       const extendedParams = {
         ...(dataSourceId !== undefined && { dataSourceId }), // Only include dataSourceId if it exists
         ...params, // Other parameters

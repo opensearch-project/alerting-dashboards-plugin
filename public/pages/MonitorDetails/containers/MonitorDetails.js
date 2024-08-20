@@ -50,7 +50,7 @@ import FindingsDashboard from '../../Dashboard/containers/FindingsDashboard';
 import { TABLE_TAB_IDS } from '../../Dashboard/components/FindingsDashboard/findingsUtils';
 import { DeleteMonitorModal } from '../../../components/DeleteModal/DeleteMonitorModal';
 import { getLocalClusterName } from '../../CreateMonitor/components/CrossClusterConfigurations/utils/helpers';
-import { getDataSourceQueryObj } from '../../utils/helpers';
+import { getDataSourceQueryObj, parseQueryStringAndGetDataSource } from '../../utils/helpers';
 import { MultiDataSourceContext } from '../../../../public/utils/MultiDataSourceContext';
 import { getUseUpdatedUx, setDataSource } from '../../../services';
 import { PageHeader } from '../../../components/PageHeader/PageHeader';
@@ -72,9 +72,13 @@ export default class MonitorDetails extends Component {
       triggerToEdit: null,
       delegateMonitors: [],
       editMonitor: () => {
+        const dataSourceId = parseQueryStringAndGetDataSource(this.props.location?.search);
+        const monitorType = this.state.monitor.monitor_type;
         this.props.history.push({
           ...this.props.location,
-          search: `?action=${MONITOR_ACTIONS.UPDATE_MONITOR}`,
+          search: `?action=${MONITOR_ACTIONS.UPDATE_MONITOR}&monitorType=${monitorType}${
+            dataSourceId !== undefined ? `&dataSourceId=${dataSourceId}` : ''
+          }`,
         });
       },
       isJsonModalOpen: false,
@@ -273,26 +277,6 @@ export default class MonitorDetails extends Component {
         this.setState({ updating: false });
         return err;
       });
-  };
-
-  onCreateTrigger = () => {
-    this.props.history.push({
-      ...this.props.location,
-      search: `?action=${TRIGGER_ACTIONS.CREATE_TRIGGER}`,
-    });
-  };
-
-  onCloseTrigger = () => {
-    this.props.history.push({ ...this.props.location, search: '' });
-    this.setState({ triggerToEdit: null });
-  };
-
-  onEditTrigger = (trigger) => {
-    this.setState({ triggerToEdit: trigger });
-    this.props.history.push({
-      ...this.props.location,
-      search: `?action=${TRIGGER_ACTIONS.UPDATE_TRIGGER}`,
-    });
   };
 
   renderNoTriggersCallOut = () => {
@@ -577,8 +561,6 @@ export default class MonitorDetails extends Component {
           httpClient={httpClient}
           delegateMonitors={delegateMonitors}
           updateMonitor={this.updateMonitor}
-          onEditTrigger={this.onEditTrigger}
-          onCreateTrigger={this.onCreateTrigger}
         />
         <div className="eui-hideFor--xs eui-hideFor--s eui-hideFor--m">
           <EuiSpacer />

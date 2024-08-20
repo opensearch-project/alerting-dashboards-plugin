@@ -16,8 +16,6 @@ const props = {
   },
   delegateMonitors: [],
   updateMonitor: jest.fn(),
-  onEditTrigger: jest.fn(),
-  onCreateTrigger: jest.fn(),
 };
 
 jest.mock('uuid/v4', () => {
@@ -48,14 +46,6 @@ describe('Triggers', () => {
     wrapper.setProps({ monitor: { ...props.monitor, name: 'New Random Monitor' } });
     const diffTableKey = wrapper.instance().state.tableKey;
     expect(tableKey).not.toBe(diffTableKey);
-  });
-
-  test('onEdit calls onEditTrigger', () => {
-    const onEdit = jest.spyOn(Triggers.prototype, 'onEdit');
-    const wrapper = getShallowWrapper();
-    wrapper.instance().onEdit();
-    expect(onEdit).toHaveBeenCalled();
-    expect(props.onEditTrigger).toHaveBeenCalled();
   });
 
   test('onDelete calls updateMonitor with triggers to keep', () => {
