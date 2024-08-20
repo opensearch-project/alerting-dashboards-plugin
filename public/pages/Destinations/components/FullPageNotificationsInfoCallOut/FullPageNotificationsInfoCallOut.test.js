@@ -7,6 +7,11 @@ import React from 'react';
 import { render } from 'enzyme';
 
 import FullPageNotificationsInfoCallOut from './FullPageNotificationsInfoCallOut';
+import { setupCoreStart } from '../../../../../test/utils/helpers';
+
+beforeAll(() => {
+  setupCoreStart();
+});
 
 describe('FullPageNotificationsInfoCallOut', () => {
   test('renders when Notifications plugin is installed', () => {

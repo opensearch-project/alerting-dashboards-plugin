@@ -8,6 +8,7 @@ export default class CrossClusterService extends MDSEnabledClientService {
   getRemoteIndexes = async (context, req, res) => {
     try {
       const client = this.getClientBasedOnDataSource(context, req);
+      delete req.query['dataSourceId'];
       const response = await client('alerting.getRemoteIndexes', req.query);
 
       return res.ok({

@@ -7,7 +7,6 @@ import React from 'react';
 import { EuiLink } from '@elastic/eui';
 import moment from 'moment';
 import { DEFAULT_EMPTY_DATA, MONITOR_TYPE } from '../../../../../utils/constants';
-import { PLUGIN_NAME } from '../../../../../../utils/constants';
 import { getItemLevelType } from './helpers';
 
 const renderTime = (time) => {
@@ -23,10 +22,7 @@ export const columns = [
     sortable: true,
     textOnly: true,
     render: (name, item) => (
-      <EuiLink
-        data-test-subj={name}
-        href={`${PLUGIN_NAME}#/monitors/${item.id}?type=${item.monitor.type}`}
-      >
+      <EuiLink data-test-subj={name} href={`#/monitors/${item.id}?type=${item.monitor.type}`}>
         {name}
       </EuiLink>
     ),
