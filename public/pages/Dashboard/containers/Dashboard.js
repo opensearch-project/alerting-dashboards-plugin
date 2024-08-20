@@ -44,6 +44,7 @@ import {
   appendCommentsAction,
   getIsCommentsEnabled,
 } from '../../utils/helpers';
+import { getUseUpdatedUx } from '../../../services';
 
 export default class Dashboard extends Component {
   constructor(props) {
@@ -528,6 +529,8 @@ export default class Dashboard extends Component {
       return `${item.triggerID}-${item.version}`;
     };
 
+    const useUpdatedUx = !perAlertView && getUseUpdatedUx();
+
     return (
       <>
         {chainedAlert && (
@@ -538,10 +541,11 @@ export default class Dashboard extends Component {
           />
         )}
         <ContentPanel
-          title={perAlertView ? 'Alerts' : 'Alerts by triggers'}
+          title={perAlertView ? 'Alerts' : useUpdatedUx ? undefined : 'Alerts by triggers'}
           titleSize={'s'}
           bodyStyles={{ padding: 'initial' }}
-          actions={actions()}
+          actions={useUpdatedUx ? undefined : actions()}
+          panelOptions={{ hideTitleBorder: useUpdatedUx }}
         >
           <DashboardControls
             activePage={page}
@@ -555,6 +559,7 @@ export default class Dashboard extends Component {
             onPageChange={this.onPageClick}
             isAlertsFlyout={isAlertsFlyout}
             monitorType={monitorType}
+            alertActions={useUpdatedUx ? actions() : undefined}
           />
 
           <EuiHorizontalRule margin="xs" />

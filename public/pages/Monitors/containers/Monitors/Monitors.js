@@ -24,6 +24,7 @@ import {
   isDataSourceChanged,
   getDataSourceId,
 } from '../../../utils/helpers';
+import { getUseUpdatedUx } from '../../../../services';
 
 const MAX_MONITOR_COUNT = 1000;
 
@@ -446,24 +447,26 @@ export default class Monitors extends Component {
       selectableMessage: (selectable) => (selectable ? undefined : undefined),
     };
 
+    const useUpdatedUx = getUseUpdatedUx();
+    const monitorActions = (
+      <MonitorActions
+        isEditDisabled={selectedItems.length !== 1}
+        isDeleteDisabled={selectedItems.length === 0 || this.isDeleteNotSupported(selectedItems)}
+        onBulkAcknowledge={this.onBulkAcknowledge}
+        onBulkEnable={this.onBulkEnable}
+        onBulkDisable={this.onBulkDisable}
+        onBulkDelete={this.onBulkDelete}
+        onClickEdit={this.onClickEdit}
+      />
+    );
+
     return (
       <>
         <ContentPanel
-          actions={
-            <MonitorActions
-              isEditDisabled={selectedItems.length !== 1}
-              isDeleteDisabled={
-                selectedItems.length === 0 || this.isDeleteNotSupported(selectedItems)
-              }
-              onBulkAcknowledge={this.onBulkAcknowledge}
-              onBulkEnable={this.onBulkEnable}
-              onBulkDisable={this.onBulkDisable}
-              onBulkDelete={this.onBulkDelete}
-              onClickEdit={this.onClickEdit}
-            />
-          }
+          actions={useUpdatedUx ? undefined : monitorActions}
           bodyStyles={{ padding: 'initial' }}
-          title="Monitors"
+          title={useUpdatedUx ? undefined : 'Monitors'}
+          panelOptions={{ hideTitleBorder: useUpdatedUx }}
         >
           <MonitorControls
             activePage={page}
@@ -473,6 +476,7 @@ export default class Monitors extends Component {
             onSearchChange={this.onSearchChange}
             onStateChange={this.onMonitorStateChange}
             onPageClick={this.onPageClick}
+            monitorActions={useUpdatedUx ? monitorActions : null}
           />
 
           <EuiHorizontalRule margin="xs" />

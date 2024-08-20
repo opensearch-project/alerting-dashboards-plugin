@@ -21,7 +21,6 @@ import {
   EuiSmallButtonIcon,
 } from '@elastic/eui';
 import { getTime } from '../../../../pages/MonitorDetails/components/MonitorOverview/utils/getOverviewStats';
-import { PLUGIN_NAME } from '../../../../../utils/constants';
 import {
   ALERT_STATE,
   DEFAULT_EMPTY_DATA,
@@ -585,7 +584,7 @@ export default class AlertsDashboardFlyoutComponent extends Component {
         displayTableTabs = false;
         break;
     }
-    const monitorUrl = `${PLUGIN_NAME}#/monitors/${monitor_id}${
+    const monitorUrl = `#/monitors/${monitor_id}${
       monitorType === MONITOR_TYPE.COMPOSITE_LEVEL ? '?type=workflow' : ''
     }`;
 

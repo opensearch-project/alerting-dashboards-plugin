@@ -8,7 +8,8 @@ import PropTypes from 'prop-types';
 import { EuiSmallButton, EuiSmallButtonEmpty, EuiEmptyPrompt, EuiText } from '@elastic/eui';
 
 import { APP_PATH } from '../../../../utils/constants';
-import { PLUGIN_NAME } from '../../../../../utils/constants';
+import { MONITORS_NAV_ID, PLUGIN_NAME } from '../../../../../utils/constants';
+import { getUseUpdatedUx } from '../../../../services';
 
 const createMonitorText =
   'There are no existing alerts. Create a monitor to add triggers and actions. Once an alarm is triggered, the state will show in this table.';
@@ -18,7 +19,10 @@ const editTriggerConditionsText =
   'There are no existing alerts. Adjust trigger conditions to start alerting. Once an alarm is triggered, the state will show in this table.';
 
 const createMonitorButton = (
-  <EuiSmallButton fill href={`${PLUGIN_NAME}#${APP_PATH.CREATE_MONITOR}`}>
+  <EuiSmallButton
+    fill
+    href={`${getUseUpdatedUx() ? MONITORS_NAV_ID : ''}#${APP_PATH.CREATE_MONITOR}`}
+  >
     Create monitor
   </EuiSmallButton>
 );

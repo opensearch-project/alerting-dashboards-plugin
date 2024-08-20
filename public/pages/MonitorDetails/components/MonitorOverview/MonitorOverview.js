@@ -8,7 +8,6 @@ import { EuiFlexGrid, EuiFlexItem } from '@elastic/eui';
 import ContentPanel from '../../../../components/ContentPanel/index';
 import OverviewStat from '../OverviewStat/index';
 import getOverviewStats from './utils/getOverviewStats';
-import { PLUGIN_NAME } from '../../../../../utils/constants';
 import { RelatedMonitors } from '../RelatedMonitors/RelatedMonitors';
 import { RelatedMonitorsFlyout } from '../RelatedMonitors/RelatedMonitorsFlyout';
 import { getURL } from '../../../utils/helpers';
@@ -32,7 +31,7 @@ const MonitorOverview = ({
   if (monitor.associated_workflows) {
     const links = monitor.associated_workflows.map(({ id, name }) => ({
       name,
-      href: getURL(`${PLUGIN_NAME}#/monitors/${id}?type=workflow`, landingDataSourceId),
+      href: getURL(`#/monitors/${id}?type=workflow`, landingDataSourceId),
     }));
     relatedMonitorsData = {
       header: 'Associations with composite monitors',
@@ -42,7 +41,7 @@ const MonitorOverview = ({
   } else if (delegateMonitors.length) {
     const links = delegateMonitors.map(({ id, name }) => ({
       name,
-      href: getURL(`${PLUGIN_NAME}#/monitors/${id}?type=monitor`, landingDataSourceId),
+      href: getURL(`#/monitors/${id}?type=monitor`, landingDataSourceId),
     }));
 
     relatedMonitorsData = {
