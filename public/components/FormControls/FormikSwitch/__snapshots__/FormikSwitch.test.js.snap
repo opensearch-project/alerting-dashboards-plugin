@@ -2,7 +2,7 @@
 
 exports[`FormikSwitch renders 1`] = `
 <div
-  class="euiSwitch euiSwitch--compressed"
+  class="euiSwitch euiSwitch--primary euiSwitch--compressed"
 >
   <button
     aria-checked="false"

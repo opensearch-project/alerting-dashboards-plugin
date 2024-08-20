@@ -2,7 +2,7 @@
 
 exports[`DashboardControls renders 1`] = `
 <div
-  class="euiFlexGroup euiFlexGroup--gutterLarge euiFlexGroup--directionRow euiFlexGroup--responsive"
+  class="euiFlexGroup euiFlexGroup--gutterSmall euiFlexGroup--directionRow euiFlexGroup--responsive"
   style="padding:0px 5px"
 >
   <div

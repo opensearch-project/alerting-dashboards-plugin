@@ -10,6 +10,7 @@ import DestinationsList from './DestinationsList';
 import { historyMock, httpClientMock } from '../../../../../test/mocks';
 import { DESTINATION_TYPE } from '../../utils/constants';
 import { OS_NOTIFICATION_PLUGIN } from '../../../../utils/constants';
+import { setupCoreStart } from '../../../../../test/utils/helpers';
 
 const location = {
   hash: '',
@@ -18,6 +19,10 @@ const location = {
 };
 
 const runAllPromises = () => new Promise(setImmediate);
+
+beforeAll(() => {
+  setupCoreStart();
+});
 
 describe('DestinationsList', () => {
   beforeEach(() => {

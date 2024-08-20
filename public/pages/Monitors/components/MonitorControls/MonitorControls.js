@@ -32,8 +32,9 @@ const MonitorControls = ({
   onSearchChange,
   onStateChange,
   onPageClick,
+  monitorActions = null,
 }) => (
-  <EuiFlexGroup style={{ padding: '0px 5px' }}>
+  <EuiFlexGroup style={{ padding: '0px 5px' }} gutterSize="s">
     <EuiFlexItem>
       <EuiCompressedFieldSearch
         fullWidth={true}
@@ -45,6 +46,7 @@ const MonitorControls = ({
     <EuiFlexItem grow={false}>
       <EuiCompressedSelect options={states} value={state} onChange={onStateChange} />
     </EuiFlexItem>
+    {monitorActions && <EuiFlexItem grow={false}>{monitorActions}</EuiFlexItem>}
     <EuiFlexItem grow={false} style={{ justifyContent: 'center' }}>
       <EuiPagination pageCount={pageCount} activePage={activePage} onPageClick={onPageClick} />
     </EuiFlexItem>

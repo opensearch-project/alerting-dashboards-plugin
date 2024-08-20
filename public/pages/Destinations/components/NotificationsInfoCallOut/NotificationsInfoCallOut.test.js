@@ -7,6 +7,11 @@ import React from 'react';
 import { render } from 'enzyme';
 
 import NotificationsInfoCallOut from './NotificationsInfoCallOut';
+import { setupCoreStart } from '../../../../../test/utils/helpers';
+
+beforeAll(() => {
+  setupCoreStart();
+});
 
 describe('NotificationsInfoCallOut', () => {
   test('renders when Notifications plugin is installed', () => {

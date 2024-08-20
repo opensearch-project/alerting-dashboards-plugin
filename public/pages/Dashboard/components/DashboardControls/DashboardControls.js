@@ -44,6 +44,7 @@ const DashboardControls = ({
   onPageChange,
   isAlertsFlyout = false,
   monitorType,
+  alertActions = [],
 }) => {
   let supportedStateOptions = stateOptions;
   switch (monitorType) {
@@ -55,7 +56,7 @@ const DashboardControls = ({
       break;
   }
   return (
-    <EuiFlexGroup style={{ padding: '0px 5px' }}>
+    <EuiFlexGroup style={{ padding: '0px 5px' }} gutterSize="s">
       <EuiFlexItem>
         <EuiCompressedFieldSearch
           fullWidth={true}
@@ -67,7 +68,11 @@ const DashboardControls = ({
 
       {isAlertsFlyout ? null : (
         <EuiFlexItem grow={false}>
-          <EuiCompressedSelect options={severityOptions} value={severity} onChange={onSeverityChange} />
+          <EuiCompressedSelect
+            options={severityOptions}
+            value={severity}
+            onChange={onSeverityChange}
+          />
         </EuiFlexItem>
       )}
 
@@ -79,6 +84,9 @@ const DashboardControls = ({
           data-test-subj={'dashboardAlertStateFilter'}
         />
       </EuiFlexItem>
+      {alertActions.map((action, idx) => (
+        <EuiFlexItem grow={false}>{action}</EuiFlexItem>
+      ))}
       <EuiFlexItem grow={false} style={{ justifyContent: 'center' }}>
         <EuiPagination pageCount={pageCount} activePage={activePage} onPageClick={onPageChange} />
       </EuiFlexItem>
