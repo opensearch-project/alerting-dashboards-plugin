@@ -1,6 +1,6 @@
 {
   "name": "opensearch-alerting-dashboards",
-  "version": "2.16.0.0",
+  "version": "2.17.0.0",
   "description": "OpenSearch Dashboards Alerting Plugin",
   "main": "index.js",
   "license": "Apache-2.0",
