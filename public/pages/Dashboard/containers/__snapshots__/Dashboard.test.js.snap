@@ -108,6 +108,11 @@ exports[`Dashboard renders in flyout 1`] = `
         "padding": "initial",
       }
     }
+    panelOptions={
+      Object {
+        "hideTitleBorder": false,
+      }
+    }
     title="Alerts"
     titleSize="s"
   >
@@ -300,6 +305,7 @@ exports[`Dashboard renders in flyout 1`] = `
             state="ALL"
           >
             <EuiFlexGroup
+              gutterSize="s"
               style={
                 Object {
                   "padding": "0px 5px",
@@ -307,7 +313,7 @@ exports[`Dashboard renders in flyout 1`] = `
               }
             >
               <div
-                className="euiFlexGroup euiFlexGroup--gutterLarge euiFlexGroup--directionRow euiFlexGroup--responsive"
+                className="euiFlexGroup euiFlexGroup--gutterSmall euiFlexGroup--directionRow euiFlexGroup--responsive"
                 style={
                   Object {
                     "padding": "0px 5px",
@@ -1498,7 +1504,7 @@ exports[`Dashboard renders in flyout 1`] = `
                                         actions={
                                           <EuiSmallButton
                                             fill={true}
-                                            href="alerting#/create-monitor"
+                                            href="#/create-monitor"
                                           >
                                             Create monitor
                                           </EuiSmallButton>
@@ -1560,18 +1566,18 @@ exports[`Dashboard renders in flyout 1`] = `
                                           </EuiSpacer>
                                           <EuiSmallButton
                                             fill={true}
-                                            href="alerting#/create-monitor"
+                                            href="#/create-monitor"
                                           >
                                             <EuiButton
                                               fill={true}
-                                              href="alerting#/create-monitor"
+                                              href="#/create-monitor"
                                               size="s"
                                             >
                                               <EuiButtonDisplay
                                                 baseClassName="euiButton"
                                                 element="a"
                                                 fill={true}
-                                                href="alerting#/create-monitor"
+                                                href="#/create-monitor"
                                                 isDisabled={false}
                                                 rel="noreferrer"
                                                 size="s"
@@ -1579,7 +1585,7 @@ exports[`Dashboard renders in flyout 1`] = `
                                                 <a
                                                   className="euiButton euiButton--primary euiButton--small euiButton--fill"
                                                   disabled={false}
-                                                  href="alerting#/create-monitor"
+                                                  href="#/create-monitor"
                                                   rel="noreferrer"
                                                   style={
                                                     Object {
@@ -1704,6 +1710,11 @@ exports[`Dashboard renders with alert by triggers view 1`] = `
     bodyStyles={
       Object {
         "padding": "initial",
+      }
+    }
+    panelOptions={
+      Object {
+        "hideTitleBorder": undefined,
       }
     }
     title="Alerts by triggers"
@@ -1958,6 +1969,7 @@ exports[`Dashboard renders with alert by triggers view 1`] = `
             state="ALL"
           >
             <EuiFlexGroup
+              gutterSize="s"
               style={
                 Object {
                   "padding": "0px 5px",
@@ -1965,7 +1977,7 @@ exports[`Dashboard renders with alert by triggers view 1`] = `
               }
             >
               <div
-                className="euiFlexGroup euiFlexGroup--gutterLarge euiFlexGroup--directionRow euiFlexGroup--responsive"
+                className="euiFlexGroup euiFlexGroup--gutterSmall euiFlexGroup--directionRow euiFlexGroup--responsive"
                 style={
                   Object {
                     "padding": "0px 5px",
@@ -3549,7 +3561,7 @@ exports[`Dashboard renders with alert by triggers view 1`] = `
                                         actions={
                                           <EuiSmallButton
                                             fill={true}
-                                            href="alerting#/create-monitor"
+                                            href="#/create-monitor"
                                           >
                                             Create monitor
                                           </EuiSmallButton>
@@ -3611,18 +3623,18 @@ exports[`Dashboard renders with alert by triggers view 1`] = `
                                           </EuiSpacer>
                                           <EuiSmallButton
                                             fill={true}
-                                            href="alerting#/create-monitor"
+                                            href="#/create-monitor"
                                           >
                                             <EuiButton
                                               fill={true}
-                                              href="alerting#/create-monitor"
+                                              href="#/create-monitor"
                                               size="s"
                                             >
                                               <EuiButtonDisplay
                                                 baseClassName="euiButton"
                                                 element="a"
                                                 fill={true}
-                                                href="alerting#/create-monitor"
+                                                href="#/create-monitor"
                                                 isDisabled={false}
                                                 rel="noreferrer"
                                                 size="s"
@@ -3630,7 +3642,7 @@ exports[`Dashboard renders with alert by triggers view 1`] = `
                                                 <a
                                                   className="euiButton euiButton--primary euiButton--small euiButton--fill"
                                                   disabled={false}
-                                                  href="alerting#/create-monitor"
+                                                  href="#/create-monitor"
                                                   rel="noreferrer"
                                                   style={
                                                     Object {
@@ -3749,6 +3761,11 @@ exports[`Dashboard renders with per alert view 1`] = `
     bodyStyles={
       Object {
         "padding": "initial",
+      }
+    }
+    panelOptions={
+      Object {
+        "hideTitleBorder": false,
       }
     }
     title="Alerts"
@@ -3943,6 +3960,7 @@ exports[`Dashboard renders with per alert view 1`] = `
             state="ALL"
           >
             <EuiFlexGroup
+              gutterSize="s"
               style={
                 Object {
                   "padding": "0px 5px",
@@ -3950,7 +3968,7 @@ exports[`Dashboard renders with per alert view 1`] = `
               }
             >
               <div
-                className="euiFlexGroup euiFlexGroup--gutterLarge euiFlexGroup--directionRow euiFlexGroup--responsive"
+                className="euiFlexGroup euiFlexGroup--gutterSmall euiFlexGroup--directionRow euiFlexGroup--responsive"
                 style={
                   Object {
                     "padding": "0px 5px",
@@ -5315,7 +5333,7 @@ exports[`Dashboard renders with per alert view 1`] = `
                                         actions={
                                           <EuiSmallButton
                                             fill={true}
-                                            href="alerting#/create-monitor"
+                                            href="#/create-monitor"
                                           >
                                             Create monitor
                                           </EuiSmallButton>
@@ -5377,18 +5395,18 @@ exports[`Dashboard renders with per alert view 1`] = `
                                           </EuiSpacer>
                                           <EuiSmallButton
                                             fill={true}
-                                            href="alerting#/create-monitor"
+                                            href="#/create-monitor"
                                           >
                                             <EuiButton
                                               fill={true}
-                                              href="alerting#/create-monitor"
+                                              href="#/create-monitor"
                                               size="s"
                                             >
                                               <EuiButtonDisplay
                                                 baseClassName="euiButton"
                                                 element="a"
                                                 fill={true}
-                                                href="alerting#/create-monitor"
+                                                href="#/create-monitor"
                                                 isDisabled={false}
                                                 rel="noreferrer"
                                                 size="s"
@@ -5396,7 +5414,7 @@ exports[`Dashboard renders with per alert view 1`] = `
                                                 <a
                                                   className="euiButton euiButton--primary euiButton--small euiButton--fill"
                                                   disabled={false}
-                                                  href="alerting#/create-monitor"
+                                                  href="#/create-monitor"
                                                   rel="noreferrer"
                                                   style={
                                                     Object {

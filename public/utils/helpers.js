@@ -12,6 +12,7 @@ import {
 } from '../pages/Dashboard/utils/helpers';
 import _ from 'lodash';
 import { getDataSourceQueryObj } from '../pages/utils/helpers';
+import { getUseUpdatedUx } from '../services';
 
 export const makeId = htmlIdGenerator();
 
@@ -142,13 +143,21 @@ export const titleTemplate = (title, subTitle) => (
 );
 
 // This is updated to include the server.basepath during plugin's first render inside app.js using `initManageChannelsUrl` function
-export let MANAGE_CHANNELS_URL = '/app/notifications-dashboards#/channels';
+export let MANAGE_CHANNELS_URL = undefined;
+// export const manageChannelsRelativePath = `/app/notifications-dashboards#/channels`;
 
 export function initManageChannelsUrl(httpClient) {
-  const manageChannelsRelativePath = `/app/notifications-dashboards#/channels`;
-  MANAGE_CHANNELS_URL = httpClient.basePath.prepend(manageChannelsRelativePath);
+  if (!MANAGE_CHANNELS_URL) {
+    const relativePath = `/app/${
+      getUseUpdatedUx() ? 'channels' : 'notifications-dashboards'
+    }#/channels`;
+    MANAGE_CHANNELS_URL = httpClient.basePath.prepend(relativePath);
+  }
 }
 
 export function getManageChannelsUrl() {
-  return MANAGE_CHANNELS_URL;
+  const relativePath = `/app/${
+    getUseUpdatedUx() ? 'channels' : 'notifications-dashboards'
+  }#/channels`;
+  return MANAGE_CHANNELS_URL || relativePath;
 }

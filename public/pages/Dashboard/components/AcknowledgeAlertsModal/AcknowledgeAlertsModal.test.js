@@ -9,9 +9,11 @@ import { historyMock, httpClientMock } from '../../../../../test/mocks';
 import AcknowledgeAlertsModal from './AcknowledgeAlertsModal';
 import { FORMIK_INITIAL_VALUES } from '../../../CreateMonitor/containers/CreateMonitor/utils/constants';
 import coreMock from '../../../../../test/mocks/CoreMock';
+import { setupCoreStart } from '../../../../../test/utils/helpers';
 
 beforeEach(() => {
   jest.clearAllMocks();
+  setupCoreStart();
 });
 
 describe('AcknowledgeAlertsModal', () => {

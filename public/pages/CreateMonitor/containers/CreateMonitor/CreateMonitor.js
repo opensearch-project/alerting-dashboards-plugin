@@ -29,6 +29,7 @@ import {
   RECOMMENDED_DURATION,
 } from '../../components/QueryPerformance/QueryPerformance';
 import { isDataSourceChanged } from '../../../utils/helpers';
+import { PageHeader } from '../../../../components/PageHeader/PageHeader';
 
 export default class CreateMonitor extends Component {
   static defaultProps = {
@@ -187,10 +188,12 @@ export default class CreateMonitor extends Component {
             const isComposite = values.monitor_type === MONITOR_TYPE.COMPOSITE_LEVEL;
             return (
               <Fragment>
-                <EuiText size="s">
-                  <h1>{edit ? 'Edit' : 'Create'} monitor</h1>
-                </EuiText>
-                <EuiSpacer />
+                <PageHeader>
+                  <EuiText size="s">
+                    <h1>{edit ? 'Edit' : 'Create'} monitor</h1>
+                  </EuiText>
+                  <EuiSpacer />
+                </PageHeader>
 
                 <MonitorDetails
                   values={values}

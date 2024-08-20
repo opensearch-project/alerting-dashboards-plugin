@@ -9,7 +9,6 @@ import {
   EuiLink,
   EuiOverlayMask
 } from '@elastic/eui';
-import { PLUGIN_NAME } from '../../../utils/constants';
 import { getDataSourceQueryObj, constructUrlFromDataSource } from '../../pages/utils/helpers';
 
 interface DeleteModalProps {
@@ -55,7 +54,7 @@ export const DeleteMonitorModal = ({
           {`The monitor ${monitorNames[0]} is currently being used as a delegate monitor for composite monitors. Unlink from the following composite monitors before deleting this monitor:`}
           { associatedWorkflows ?
                 <ul>
-                  {associatedWorkflows.map(({ id, name }) => <li><EuiLink target='_blank' href={constructUrlFromDataSource(`${PLUGIN_NAME}#/monitors/${id}?type=workflow`)}>{name}</EuiLink></li>)}
+                  {associatedWorkflows.map(({ id, name }) => <li><EuiLink target='_blank' href={constructUrlFromDataSource(`#/monitors/${id}?type=workflow`)}>{name}</EuiLink></li>)}
                 </ul>
               : null
           }

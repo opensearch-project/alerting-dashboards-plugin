@@ -7,7 +7,6 @@ import React, { useMemo } from 'react';
 import { EuiHealth, EuiLink } from '@elastic/eui';
 import { stateToLabel } from '../../../utils/contextMenu/monitors';
 import { dateOptionsLong } from '../../../utils/contextMenu/helpers';
-import { PLUGIN_NAME } from '../../../../utils/constants';
 import { constructUrlFromDataSource } from '../../../pages/utils/helpers';
 
 export const useColumns = ({ onUnlink, onEdit }) => {
@@ -20,7 +19,7 @@ export const useColumns = ({ onUnlink, onEdit }) => {
         truncateText: true,
         width: '50%',
         render: (name, monitor) => (
-          <EuiLink href={constructUrlFromDataSource(`${PLUGIN_NAME}#/monitors/${monitor.id}`)} target="_blank">
+          <EuiLink href={constructUrlFromDataSource(`#/monitors/${monitor.id}`)} target="_blank">
             {name}
           </EuiLink>
         ),

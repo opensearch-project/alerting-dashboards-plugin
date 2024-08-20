@@ -75,7 +75,7 @@ describe('CompositeLevelMonitor', () => {
         .type('{backspace}')
         .type('Composite trigger');
 
-      cy.intercept('api/alerting/workflows').as('createMonitorRequest');
+      cy.intercept('api/alerting/workflows?*').as('createMonitorRequest');
       cy.intercept(`api/alerting/monitors?*`).as('getMonitorsRequest');
       cy.get('button').contains('Create').click({ force: true });
 
@@ -116,7 +116,7 @@ describe('CompositeLevelMonitor', () => {
             cy.visit(
               `${Cypress.env('opensearch_dashboards')}/app/${PLUGIN_NAME}#/monitors/${
                 createdMonitor._id
-              }?action=update-monitor&type=workflow`
+              }?action=update-monitor&type=workflow&dataSourceId=`
             );
           } else {
             cy.log('Failed to get created monitor ', SAMPLE_VISUAL_EDITOR_MONITOR);

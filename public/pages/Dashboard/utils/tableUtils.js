@@ -8,7 +8,6 @@ import _ from 'lodash';
 import { EuiLink, EuiToolTip } from '@elastic/eui';
 import moment from 'moment';
 import { ALERT_STATE, DEFAULT_EMPTY_DATA } from '../../../utils/constants';
-import { PLUGIN_NAME } from '../../../../utils/constants';
 
 export const renderTime = (time) => {
   const momentTime = moment(time);
@@ -208,9 +207,7 @@ export const alertColumns = (
     truncateText: true,
     textOnly: true,
     render: (name, alert) => (
-      <EuiLink href={`${PLUGIN_NAME}#/monitors/${alert.monitor_id}?type=${alert.alert_source}`}>
-        {name}
-      </EuiLink>
+      <EuiLink href={`#/monitors/${alert.monitor_id}?type=${alert.alert_source}`}>{name}</EuiLink>
     ),
   },
 ];
@@ -238,7 +235,7 @@ export const associatedAlertsTableColumns = [
     render: ({ monitor_id, monitor_name }) => {
       return (
         <EuiToolTip content={monitor_name}>
-          <EuiLink href={`${PLUGIN_NAME}#/monitors/${monitor_id}?type='monitor'`} target="_blank">
+          <EuiLink href={`#/monitors/${monitor_id}?type='monitor'`} target="_blank">
             {monitor_name}
           </EuiLink>
         </EuiToolTip>

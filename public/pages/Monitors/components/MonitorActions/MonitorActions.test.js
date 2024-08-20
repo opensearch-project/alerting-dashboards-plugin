@@ -7,6 +7,7 @@ import React from 'react';
 import { render, shallow, mount } from 'enzyme';
 
 import MonitorActions from './MonitorActions';
+import { setupCoreStart } from '../../../../../test/utils/helpers';
 
 const getProps = () => ({
   onBulkAcknowledge: jest.fn(),
@@ -15,6 +16,10 @@ const getProps = () => ({
   onBulkDelete: jest.fn(),
   isEditDisabled: true,
   onClickEdit: jest.fn(),
+});
+
+beforeAll(() => {
+  setupCoreStart();
 });
 
 describe('MonitorActions', () => {

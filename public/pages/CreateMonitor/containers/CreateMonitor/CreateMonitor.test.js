@@ -10,7 +10,7 @@ import { httpServiceMock } from '../../../../../../../src/core/public/mocks';
 import CreateMonitor from './CreateMonitor';
 import { historyMock, httpClientMock } from '../../../../../test/mocks';
 import { FORMIK_INITIAL_VALUES } from './utils/constants';
-import AlertingFakes from '../../../../../test/utils/helpers';
+import { AlertingFakes, setupCoreStart } from '../../../../../test/utils/helpers';
 import { SEARCH_TYPE } from '../../../../utils/constants';
 import { TRIGGER_TYPE } from '../../../CreateTrigger/containers/CreateTrigger/utils/constants';
 import { setClient, setNotifications } from '../../../../services';
@@ -37,6 +37,11 @@ const location = {
   search: '',
   state: undefined,
 };
+
+beforeAll(() => {
+  setupCoreStart();
+});
+
 beforeEach(() => {
   jest.clearAllMocks();
 });
