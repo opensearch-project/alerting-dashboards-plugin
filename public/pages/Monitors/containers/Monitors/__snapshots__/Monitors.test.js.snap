@@ -19,10 +19,16 @@ exports[`Monitors renders 1`] = `
         "padding": "initial",
       }
     }
+    panelOptions={
+      Object {
+        "hideTitleBorder": undefined,
+      }
+    }
     title="Monitors"
   >
     <MonitorControls
       activePage={0}
+      monitorActions={null}
       onPageClick={[Function]}
       onSearchChange={[Function]}
       onStateChange={[Function]}

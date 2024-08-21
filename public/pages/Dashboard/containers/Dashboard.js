@@ -44,6 +44,7 @@ import {
   appendCommentsAction,
   getIsCommentsEnabled,
 } from '../../utils/helpers';
+import { getUseUpdatedUx } from '../../../services';
 
 export default class Dashboard extends Component {
   constructor(props) {
@@ -130,6 +131,7 @@ export default class Dashboard extends Component {
 
   getAlerts = _.debounce(
     (from, size, search, sortField, sortDirection, severityLevel, alertState, monitorIds) => {
+      const dataSourceId = getDataSourceId();
       const params = {
         from,
         size,
@@ -140,13 +142,12 @@ export default class Dashboard extends Component {
         alertState,
         monitorIds,
         monitorType: this.props.monitorType,
+        dataSourceId,
       };
 
       const queryParamsString = queryString.stringify(params);
-      location.search;
       const { httpClient, history, notifications, perAlertView } = this.props;
       history.replace({ ...this.props.location, search: queryParamsString });
-      const dataSourceId = getDataSourceId();
       const extendedParams = {
         ...(dataSourceId !== undefined && { dataSourceId }), // Only include dataSourceId if it exists
         ...params, // Other parameters
@@ -528,6 +529,8 @@ export default class Dashboard extends Component {
       return `${item.triggerID}-${item.version}`;
     };
 
+    const useUpdatedUx = !perAlertView && getUseUpdatedUx();
+
     return (
       <>
         {chainedAlert && (
@@ -538,10 +541,11 @@ export default class Dashboard extends Component {
           />
         )}
         <ContentPanel
-          title={perAlertView ? 'Alerts' : 'Alerts by triggers'}
+          title={perAlertView ? 'Alerts' : useUpdatedUx ? undefined : 'Alerts by triggers'}
           titleSize={'s'}
           bodyStyles={{ padding: 'initial' }}
-          actions={actions()}
+          actions={useUpdatedUx ? undefined : actions()}
+          panelOptions={{ hideTitleBorder: useUpdatedUx }}
         >
           <DashboardControls
             activePage={page}
@@ -555,6 +559,7 @@ export default class Dashboard extends Component {
             onPageChange={this.onPageClick}
             isAlertsFlyout={isAlertsFlyout}
             monitorType={monitorType}
+            alertActions={useUpdatedUx ? actions() : undefined}
           />
 
           <EuiHorizontalRule margin="xs" />

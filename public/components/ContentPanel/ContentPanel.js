@@ -17,6 +17,7 @@ const ContentPanel = ({
   horizontalRuleClassName = '',
   actions,
   children,
+  panelOptions = {},
 }) => (
   <EuiPanel style={{ paddingLeft: '0px', paddingRight: '0px', ...panelStyles }}>
     <EuiFlexGroup style={{ padding: '0px 10px' }} justifyContent="spaceBetween" alignItems="center">
@@ -38,7 +39,9 @@ const ContentPanel = ({
     <EuiText style={{ padding: '0px 10px' }} size={descriptionSize} color="subdued">
       {description}
     </EuiText>
-    <EuiHorizontalRule margin="xs" className={horizontalRuleClassName} />
+    {!panelOptions.hideTitleBorder && (
+      <EuiHorizontalRule margin="xs" className={horizontalRuleClassName} />
+    )}
 
     <div style={{ padding: '0px 10px', ...bodyStyles }}>{children}</div>
   </EuiPanel>

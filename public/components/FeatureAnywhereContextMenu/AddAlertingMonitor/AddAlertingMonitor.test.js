@@ -8,6 +8,11 @@ import { httpServiceMock, notificationServiceMock } from '../../../../../../src/
 import { shallow } from 'enzyme';
 import AddAlertingMonitor from './AddAlertingMonitor';
 import { setClient, setNotifications } from '../../../services';
+import { setupCoreStart } from '../../../../test/utils/helpers';
+
+beforeAll(() => {
+  setupCoreStart();
+});
 
 describe('AddAlertingMonitor', () => {
   const httpClient = httpServiceMock.createStartContract();

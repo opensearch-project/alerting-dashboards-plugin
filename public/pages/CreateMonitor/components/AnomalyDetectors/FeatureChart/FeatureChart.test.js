@@ -6,7 +6,7 @@
 import React from 'react';
 import { mount, render } from 'enzyme';
 import { FeatureChart } from './FeatureChart';
-import AlertingFakes from '../../../../../../test/utils/helpers';
+import { AlertingFakes } from '../../../../../../test/utils/helpers';
 
 const alertingFakes = new AlertingFakes('random seed');
 

@@ -14,7 +14,7 @@ import {
 } from '@elastic/eui';
 
 import { APP_PATH } from '../../../../utils/constants';
-import { PLUGIN_NAME } from '../../../../../utils/constants';
+import { PageHeader } from '../../../../components/PageHeader/PageHeader';
 
 export default class MonitorActions extends Component {
   state = {
@@ -83,8 +83,14 @@ export default class MonitorActions extends Component {
   render() {
     const { isActionsOpen } = this.state;
     const { isEditDisabled, onClickEdit } = this.props;
+    const createMonitorControl = (
+      <EuiSmallButton fill href={`#${APP_PATH.CREATE_MONITOR}`} data-test-subj="createButton">
+        Create monitor
+      </EuiSmallButton>
+    );
+
     return (
-      <EuiFlexGroup justifyContent="spaceBetween" alignItems="center">
+      <EuiFlexGroup justifyContent="spaceBetween" alignItems="center" gutterSize="s">
         <EuiFlexItem grow={false}>
           <EuiPopover
             id="actionsPopover"
@@ -115,15 +121,15 @@ export default class MonitorActions extends Component {
             Edit
           </EuiSmallButton>
         </EuiFlexItem>
-        <EuiFlexItem grow={false}>
-          <EuiSmallButton
-            fill
-            href={`${PLUGIN_NAME}#${APP_PATH.CREATE_MONITOR}`}
-            data-test-subj="createButton"
-          >
-            Create monitor
-          </EuiSmallButton>
-        </EuiFlexItem>
+        <PageHeader
+          appRightControls={[
+            {
+              renderComponent: createMonitorControl,
+            },
+          ]}
+        >
+          <EuiFlexItem grow={false}>{createMonitorControl}</EuiFlexItem>
+        </PageHeader>
       </EuiFlexGroup>
     );
   }
