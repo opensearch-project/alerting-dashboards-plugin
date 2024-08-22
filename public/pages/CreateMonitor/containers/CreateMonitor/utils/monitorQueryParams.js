@@ -4,7 +4,7 @@
  */
 
 export const initializeFromQueryParams = (queryParams) => {
-  const res = {
+  return {
     searchType: queryParams.searchType || undefined,
     name: queryParams.name ? `${queryParams.name}-Monitor` : undefined,
     detectorId: queryParams.adId || undefined,
@@ -14,7 +14,6 @@ export const initializeFromQueryParams = (queryParams) => {
         : undefined,
     adResultIndex: queryParams.adResultIndex || undefined,
 
-    // new prototype fields are starting as here
     index: queryParams.index ? [{ label: queryParams.index }] : undefined,
     timeField: queryParams.timeField || undefined,
     bucketValue: queryParams.bucketValue ||  undefined,
@@ -23,5 +22,4 @@ export const initializeFromQueryParams = (queryParams) => {
     filters: queryParams.filters ? JSON.parse(queryParams.filters) : undefined,
     triggerDefinitions: queryParams.triggers ? JSON.parse(queryParams.triggers) : undefined,
   };
-  return res;
 };

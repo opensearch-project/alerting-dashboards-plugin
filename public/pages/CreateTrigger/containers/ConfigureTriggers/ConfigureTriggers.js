@@ -23,11 +23,7 @@ import { MONITOR_TYPE, SEARCH_TYPE } from '../../../../utils/constants';
 import { getPathsPerDataType } from '../../../CreateMonitor/containers/DefineMonitor/utils/mappings';
 import monitorToFormik from '../../../CreateMonitor/containers/CreateMonitor/utils/monitorToFormik';
 import { buildRequest } from '../../../CreateMonitor/containers/DefineMonitor/utils/searchRequests';
-import {
-  backendErrorNotification,
-  getDigitId,
-  inputLimitText,
-} from '../../../../utils/helpers';
+import { backendErrorNotification, inputLimitText } from '../../../../utils/helpers';
 import DefineDocumentLevelTrigger from '../DefineDocumentLevelTrigger/DefineDocumentLevelTrigger';
 import {
   buildClusterMetricsRequest,
@@ -400,11 +396,11 @@ class ConfigureTriggers extends React.Component {
 
     return hasTriggers
       ? triggerValues.triggerDefinitions.map((trigger, index) => (
-        <div key={trigger.id}>
-          <TriggerContainer
-            {...{
-              id: `configure-trigger__${trigger.id}`,
-              isOpen: accordionsOpen[index],
+          <div key={trigger.id}>
+            <TriggerContainer
+              {...{
+                id: `configure-trigger__${trigger.id}`,
+                isOpen: accordionsOpen[index],
                 onToggle: () => this.onAccordionToggle(index),
                 title: (
                   <EuiFlexGroup alignItems="center" justifyContent="flexStart" gutterSize="s">

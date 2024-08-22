@@ -6,7 +6,7 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   EuiButton, EuiCallOut,
-  EuiFlexGroup, EuiFlexItem,
+  EuiFlexGroup, EuiFlexItem, EuiSmallButtonEmpty,
   EuiSpacer, EuiText, EuiTitle,
 } from '@elastic/eui';
 import _ from 'lodash';
@@ -30,7 +30,7 @@ import { unitToLabel } from '../../../pages/CreateMonitor/components/Schedule/Fr
 import EnhancedAccordion from '../../../components/FeatureAnywhereContextMenu/EnhancedAccordion';
 import './styles.scss';
 
-function AlertContainer(props: {content: string}) {
+function AlertContainer(props: {content: string, closeFlyout: () => void}) {
   const isDarkMode = getUISettings().get('theme:darkMode') || false;
   const setFlyout = () => null;
   const httpClient = getClient();
@@ -70,6 +70,7 @@ function AlertContainer(props: {content: string}) {
         onSuccess: async ({ monitor }) => {
           setIsDisabled(true)
           setIsLoading(false)
+          props.closeFlyout()
           notifications.toasts.addSuccess(`Monitor "${monitor.name}" successfully created.`);
         },
       });
@@ -211,6 +212,9 @@ function AlertContainer(props: {content: string}) {
               </div>
               <div style={{ position: 'relative' }}>
                 <EuiFlexGroup justifyContent="spaceBetween" >
+                  <EuiFlexItem grow={false}>
+                    <EuiSmallButtonEmpty onClick={props.closeFlyout}>Cancel</EuiSmallButtonEmpty>
+                  </EuiFlexItem>
                   <EuiFlexItem grow={false}>
                     <EuiButton
                       onClick={() => onSubmit({ handleSubmit, validateForm })}

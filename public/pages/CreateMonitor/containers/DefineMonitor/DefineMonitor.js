@@ -700,6 +700,7 @@ class DefineMonitor extends Component {
           </div>
         )}
         {
+          // Display DataSourceFlyout in OLLY mode
           flyoutMode === 'olly' && (
           <div>
             <DataSourceFlyout

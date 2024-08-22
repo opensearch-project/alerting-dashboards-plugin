@@ -97,6 +97,7 @@ class MonitorExpressions extends Component {
       `${metricAgg.aggregationType.toUpperCase()} OF ${metricAgg.fieldName}. You can add up to 1 metric.` :
       'COUNT OF documents. You can add up to 1 metric.';
     const filterFromVis = flyoutMode && flyoutMode !== 'olly';
+    // For olly, we just show the number of filters defined.
     const whereSubTitle = filterFromVis ?
       (isDataFilterActive ?
         `1 filter defined. You can add up to ${MAX_NUM_WHERE_EXPRESSION} filter.` :

@@ -378,7 +378,8 @@ class DefineTrigger extends Component {
             <div>
               <EuiCallOut title="The Notifications plugin is not installed" color="warning">
                 <p>
-                  {flyoutMode === 'olly' ? "Install the notications plugin to create notifications" :
+                  { // From UX, show this message OLLY mode to avoid misleading.
+                    flyoutMode === 'olly' ? "Install the notifications plugin to create notifications" :
                     "Alerts still appear on the dashboard visualization when the trigger condition is met."}
                 </p>
               </EuiCallOut>
