@@ -96,6 +96,13 @@ class MonitorExpressions extends Component {
     const metricSubTitle = metricAgg ?
       `${metricAgg.aggregationType.toUpperCase()} OF ${metricAgg.fieldName}. You can add up to 1 metric.` :
       'COUNT OF documents. You can add up to 1 metric.';
+    const filterFromVis = flyoutMode && flyoutMode !== 'olly';
+    // For olly, we just show the number of filters defined.
+    const whereSubTitle = filterFromVis ?
+      (isDataFilterActive ?
+        `1 filter defined. You can add up to ${MAX_NUM_WHERE_EXPRESSION} filter.` :
+        `No filter defined. You can add up to ${MAX_NUM_WHERE_EXPRESSION} filter.`):
+      `${formik.values.filters.length} filter(s) defined`
 
     if (flyoutMode && formik.submitCount > currentSubmitCount) {
       accordionsOpen.metrics = accordionsOpen?.metrics || 'aggregations' in errors;
@@ -110,6 +117,7 @@ class MonitorExpressions extends Component {
           {...{
             title: 'Metrics',
             subTitle: metricSubTitle,
+            isUsingDivider: flyoutMode === 'olly',
             id: 'metric-expression__metrics',
             isOpen: accordionsOpen.metrics,
             onToggle: () => this.onAccordionToggle('metrics'),
@@ -143,20 +151,17 @@ class MonitorExpressions extends Component {
         <SectionContainer
           {...{
             title: 'Data filter',
-            subTitle: isDataFilterActive
-              ? `1 filter defined. You can add up to ${MAX_NUM_WHERE_EXPRESSION} filter.`
-              : `No filter defined. You can add up to ${MAX_NUM_WHERE_EXPRESSION} filter.`,
+            subTitle: whereSubTitle,
             isUsingDivider: true,
             id: 'metric-expression__data-filter',
             isOpen: accordionsOpen.dataFilter,
             onToggle: () => this.onAccordionToggle('dataFilter'),
           }}
         >
-          {flyoutMode &&
-            <WhereExpressionFlyout {...expressionProps} dataTypes={dataTypes} flyoutMode={flyoutMode} />
-          }
-          {!flyoutMode &&
-          <WhereExpression {...expressionProps} dataTypes={dataTypes} flyoutMode={flyoutMode} />
+          {
+            filterFromVis ?
+            <WhereExpressionFlyout {...expressionProps} dataTypes={dataTypes} flyoutMode={flyoutMode} /> :
+            <WhereExpression {...expressionProps} dataTypes={dataTypes} flyoutMode={flyoutMode} />
           }
         </SectionContainer>
         <EuiSpacer size={flyoutMode ? 'xs' : 'm'} />

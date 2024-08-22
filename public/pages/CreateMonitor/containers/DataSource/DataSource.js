@@ -59,7 +59,7 @@ class DataSource extends Component {
     );
 
     if (isMinimal) {
-      return { monitorIndexDisplay };
+      return monitorIndexDisplay;
     }
     return (
       <ContentPanel

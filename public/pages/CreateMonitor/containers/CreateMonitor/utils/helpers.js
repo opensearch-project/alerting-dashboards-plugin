@@ -71,6 +71,11 @@ export const getInitialValues = ({
     };
   }
 
+  // Convert bucketValue to number
+  if (initialValues.bucketValue) {
+    initialValues.bucketValue = +initialValues.bucketValue;
+  }
+
   return initialValues;
 };
 

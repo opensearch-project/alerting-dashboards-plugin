@@ -16,6 +16,7 @@
     "visAugmenter",
     "opensearchDashboardsUtils"
   ],
+  "optionalPlugins": ["assistantDashboards"],
   "server": true,
   "ui": true,
   "supportedOSDataSourceVersions": ">=2.13.0",

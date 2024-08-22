@@ -20,12 +20,13 @@ import { alertingTriggerAd } from './utils/contextMenu/triggers';
 import { ExpressionsSetup } from '../../../src/plugins/expressions/public';
 import { UiActionsSetup } from '../../../src/plugins/ui_actions/public';
 import { overlayAlertsFunction } from './expressions/overlay_alerts';
-import { setClient, setEmbeddable, setNotifications, setOverlays, setSavedAugmentVisLoader, setUISettings, setQueryService, setSavedObjectsClient, setDataSourceEnabled, setDataSourceManagementPlugin, setNavigationUI, setApplication } from './services';
+import { setClient, setEmbeddable, setNotifications, setOverlays, setSavedAugmentVisLoader, setUISettings, setQueryService, setSavedObjectsClient, setDataSourceEnabled, setDataSourceManagementPlugin, setNavigationUI, setApplication, setAssistantDashboards } from './services';
 import { VisAugmenterStart } from '../../../src/plugins/vis_augmenter/public';
 import { DataPublicPluginStart } from '../../../src/plugins/data/public';
 import { DataSourceManagementPluginSetup } from '../../../src/plugins/data_source_management/public';
 import { DataSourcePluginSetup } from '../../../src/plugins/data_source/public';
 import { NavigationPublicPluginStart } from '../../../src/plugins/navigation/public';
+import { registerAssistantDependencies } from './dependencies/register_assistant';
 
 declare module '../../../src/plugins/ui_actions/public' {
   export interface ActionContextMapping {
@@ -42,6 +43,7 @@ export interface AlertingSetupDeps {
   uiActions: UiActionsSetup;
   dataSourceManagement: DataSourceManagementPluginSetup;
   dataSource: DataSourcePluginSetup;
+  assistantDashboards?: AssistantPublicPluginSetup;
 }
 
 export interface AlertingStartDeps {
@@ -53,14 +55,13 @@ export interface AlertingStartDeps {
 
 export class AlertingPlugin implements Plugin<void, AlertingStart, AlertingSetupDeps, AlertingStartDeps> {
 
-  public setup(core: CoreSetup<AlertingStartDeps, AlertingStart>, { expressions, uiActions, dataSourceManagement, dataSource }: AlertingSetupDeps) {
+  public setup(core: CoreSetup<AlertingStartDeps, AlertingStart>, { expressions, uiActions, dataSourceManagement, dataSource, assistantDashboards }: AlertingSetupDeps) {
 
     const mountWrapper = async (params: AppMountParameters, redirect: string) => {
       const { renderApp } = await import("./app");
       const [coreStart] = await core.getStartServices();
       return renderApp(coreStart, params, redirect);
     };
-
     core.application.register({
       id: PLUGIN_NAME,
       title: 'Alerting',
@@ -164,6 +165,10 @@ export class AlertingPlugin implements Plugin<void, AlertingStart, AlertingSetup
     const enabled = !!dataSource;
 
     setDataSourceEnabled({ enabled });
+
+    if (assistantDashboards?.nextEnabled()) {
+      registerAssistantDependencies(assistantDashboards);
+    }
 
     // registers the expression function used to render anomalies on an Augmented Visualization
     expressions.registerFunction(overlayAlertsFunction(enabled));

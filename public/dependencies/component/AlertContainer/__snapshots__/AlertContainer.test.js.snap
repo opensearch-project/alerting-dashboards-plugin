@@ -1,0 +1,110 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`AlertContainer renders 1`] = `
+<Formik
+  initialValues={
+    Object {
+      "adResultIndex": undefined,
+      "aggregationType": "count",
+      "aggregations": Array [
+        Object {
+          "aggregationType": "sum",
+          "fieldName": "FlightDelayMin",
+        },
+      ],
+      "associatedMonitors": Object {
+        "sequence": Object {
+          "delegates": Array [],
+        },
+      },
+      "associatedMonitorsEditor": "",
+      "associatedMonitorsList": Array [],
+      "bucketUnitOfTime": "h",
+      "bucketValue": 12,
+      "clusterNames": Array [],
+      "cronExpression": "0 */1 * * *",
+      "daily": 0,
+      "description": "",
+      "detectorId": "",
+      "disabled": false,
+      "fieldName": Array [],
+      "filters": Array [
+        Object {
+          "fieldName": Array [
+            Object {
+              "label": "FlightDelayMin",
+              "type": "integer",
+            },
+          ],
+          "fieldValue": 0,
+          "operator": "is_greater",
+        },
+      ],
+      "frequency": "interval",
+      "groupBy": Array [],
+      "groupByField": Array [
+        Object {
+          "label": "",
+        },
+      ],
+      "groupedOverFieldName": "bytes",
+      "groupedOverTop": 5,
+      "index": Array [
+        Object {
+          "label": "opensearch_dashboards_sample_data_flights",
+        },
+      ],
+      "monitor_type": "query_level_monitor",
+      "monthly": Object {
+        "day": 1,
+        "type": "day",
+      },
+      "name": "Flight Delay Alert-Monitor",
+      "overDocuments": "all documents",
+      "period": Object {
+        "interval": 1,
+        "unit": "MINUTES",
+      },
+      "preventVisualEditor": false,
+      "queries": Array [],
+      "query": "{
+    \\"size\\": 0,
+    \\"query\\": {
+        \\"match_all\\": {}
+    }
+}",
+      "searchType": "graph",
+      "timeField": "timestamp",
+      "timezone": Array [],
+      "triggerDefinitions": Array [
+        Object {
+          "name": "Delayed Time Exceeds 1000 Minutes",
+          "severity": 2,
+          "thresholdEnum": "ABOVE",
+          "thresholdValue": 1000,
+        },
+      ],
+      "uri": Object {
+        "api_type": "",
+        "clusters": Array [],
+        "path": "",
+        "path_params": "",
+        "url": "",
+      },
+      "weekly": Object {
+        "fri": false,
+        "mon": false,
+        "sat": false,
+        "sun": false,
+        "thur": false,
+        "tue": false,
+        "wed": false,
+      },
+    }
+  }
+  onSubmit={[Function]}
+  validateOnChange={false}
+>
+  <Component />
+</Formik>
+`;
