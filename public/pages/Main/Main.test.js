@@ -10,6 +10,11 @@ import * as Breadcrumbs from '../../components/Breadcrumbs/Breadcrumbs';
 import { createMemoryHistory } from 'history';
 
 import Main from './Main';
+import { setupCoreStart } from '../../../test/utils/helpers';
+
+beforeAll(() => {
+  setupCoreStart();
+});
 
 describe('Main', () => {
   test('renders', () => {

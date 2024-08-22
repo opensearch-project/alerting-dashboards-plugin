@@ -13,9 +13,6 @@ import {
   EuiPopover,
 } from '@elastic/eui';
 
-import { APP_PATH } from '../../../../../utils/constants';
-import { PLUGIN_NAME } from '../../../../../../utils/constants';
-
 export default class DestinationsActions extends Component {
   state = {
     isActionsOpen: false,

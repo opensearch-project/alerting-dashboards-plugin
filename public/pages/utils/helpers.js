@@ -42,7 +42,7 @@ export function parseQueryStringAndGetDataSource(queryString) {
     const pair = param.split('=');
     params[pair[0]] = pair[1];
   }
-  return params['dataSourceId'];
+  return params.hasOwnProperty('dataSourceId') ? params['dataSourceId'] || '' : undefined;
 }
 
 export function constructUrlFromDataSource(url) {

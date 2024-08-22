@@ -20,12 +20,13 @@ import { alertingTriggerAd } from './utils/contextMenu/triggers';
 import { ExpressionsSetup } from '../../../src/plugins/expressions/public';
 import { UiActionsSetup } from '../../../src/plugins/ui_actions/public';
 import { overlayAlertsFunction } from './expressions/overlay_alerts';
-import { setClient, setEmbeddable, setNotifications, setOverlays, setSavedAugmentVisLoader, setUISettings, setQueryService, setSavedObjectsClient, setDataSourceEnabled, setDataSourceManagementPlugin, setAssistantDashboards } from './services';
+import { setClient, setEmbeddable, setNotifications, setOverlays, setSavedAugmentVisLoader, setUISettings, setQueryService, setSavedObjectsClient, setDataSourceEnabled, setDataSourceManagementPlugin, setNavigationUI, setApplication, setAssistantDashboards } from './services';
 import { VisAugmenterStart } from '../../../src/plugins/vis_augmenter/public';
 import { DataPublicPluginStart } from '../../../src/plugins/data/public';
 import { AssistantSetup } from './types';
 import { DataSourceManagementPluginSetup } from '../../../src/plugins/data_source_management/public';
 import { DataSourcePluginSetup } from '../../../src/plugins/data_source/public';
+import { NavigationPublicPluginStart } from '../../../src/plugins/navigation/public';
 
 declare module '../../../src/plugins/ui_actions/public' {
   export interface ActionContextMapping {
@@ -49,6 +50,7 @@ export interface AlertingStartDeps {
   visAugmenter: VisAugmenterStart;
   embeddable: EmbeddableStart;
   data: DataPublicPluginStart;
+  navigation: NavigationPublicPluginStart;
 }
 
 export class AlertingPlugin implements Plugin<void, AlertingStart, AlertingSetupDeps, AlertingStartDeps> {
@@ -80,6 +82,14 @@ export class AlertingPlugin implements Plugin<void, AlertingStart, AlertingSetup
     if (core.chrome.navGroup.getNavGroupEnabled()) {
       // register applications with category and use case information
       core.chrome.navGroup.addNavLinksToGroup(DEFAULT_NAV_GROUPS.observability, [
+        {
+          id: PLUGIN_NAME,
+          category: DEFAULT_APP_CATEGORIES.detect,
+          showInAllNavGroup: false
+        }
+      ])
+
+      core.chrome.navGroup.addNavLinksToGroup(DEFAULT_NAV_GROUPS['security-analytics'], [
         {
           id: PLUGIN_NAME,
           category: DEFAULT_APP_CATEGORIES.detect,
@@ -137,6 +147,11 @@ export class AlertingPlugin implements Plugin<void, AlertingStart, AlertingSetup
         DEFAULT_NAV_GROUPS.observability,
         navLinks
       );
+
+      core.chrome.navGroup.addNavLinksToGroup(
+        DEFAULT_NAV_GROUPS['security-analytics'],
+        navLinks
+      );
     }
 
     setAssistantDashboards(assistantDashboards || { chatEnabled: () => false, nextEnabled: () => false });
@@ -170,13 +185,15 @@ export class AlertingPlugin implements Plugin<void, AlertingStart, AlertingSetup
     uiActions.addTriggerAction(alertingTriggerAd.id, adAction);
   }
 
-  public start(core: CoreStart, { visAugmenter, embeddable, data }: AlertingStartDeps): AlertingStart {
+  public start(core: CoreStart, { visAugmenter, embeddable, data, navigation }: AlertingStartDeps): AlertingStart {
     setEmbeddable(embeddable);
     setOverlays(core.overlays);
     setQueryService(data.query);
     setSavedAugmentVisLoader(visAugmenter.savedAugmentVisLoader);
     setNotifications(core.notifications);
     setSavedObjectsClient(core.savedObjects.client);
+    setNavigationUI(navigation.ui);
+    setApplication(core.application);
     return {};
   }
 }

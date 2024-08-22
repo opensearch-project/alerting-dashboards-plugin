@@ -53,10 +53,10 @@ class Main extends Component {
   async updateBreadcrumbs() {
     if (this.props.dataSourceEnabled && this.props.location) {
       const search = this.props.location?.search;
-      const dataSourceId = search
-        ? parseQueryStringAndGetDataSource(search)
-        : parseQueryStringAndGetDataSource(this.props.location?.pathname);
-      if (dataSourceId) {
+      const dataSourceId = parseQueryStringAndGetDataSource(
+        search || this.props.location?.pathname
+      );
+      if (dataSourceId !== undefined) {
         setDataSource({ dataSourceId });
         this.setState({
           selectedDataSourceId: dataSourceId,

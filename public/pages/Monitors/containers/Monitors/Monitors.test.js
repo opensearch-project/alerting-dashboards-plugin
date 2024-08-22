@@ -9,7 +9,7 @@ import _ from 'lodash';
 
 import Monitors from './Monitors';
 import { historyMock, httpClientMock } from '../../../../../test/mocks';
-import AlertingFakes from '../../../../../test/utils/helpers';
+import { AlertingFakes, setupCoreStart } from '../../../../../test/utils/helpers';
 
 const alertingFakes = new AlertingFakes('random seed');
 
@@ -40,6 +40,10 @@ function getMountWrapper(customProps = {}) {
     />
   );
 }
+
+beforeAll(() => {
+  setupCoreStart();
+});
 
 describe('Monitors', () => {
   beforeEach(() => {

@@ -8,6 +8,7 @@ import { mount } from 'enzyme';
 
 import Dashboard from './Dashboard';
 import { historyMock, httpClientMock } from '../../../../test/mocks';
+import { setupCoreStart } from '../../../../test/utils/helpers';
 import { setAssistantDashboards } from '../../../services';
 
 const location = {
@@ -56,6 +57,10 @@ const sampleQueryAlerts = [
 ];
 
 const runAllPromises = () => new Promise(setImmediate);
+
+beforeAll(() => {
+  setupCoreStart();
+});
 
 describe('Dashboard', () => {
   setAssistantDashboards({ chatEnabled: () => false, nextEnabled: () => false });
