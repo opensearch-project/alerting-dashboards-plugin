@@ -222,7 +222,7 @@ export const alertColumns = (
           {
             key: alertId,
             type: 'generate',
-            suggestions: [`Please summarize this alert`],
+            suggestions: [`Please summarize this alert, do not use any tool.`],
             contextProvider: contextProvider,
           },
         ]);
