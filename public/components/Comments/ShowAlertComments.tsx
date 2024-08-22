@@ -5,7 +5,7 @@
 
 import React, { useCallback, useEffect, useState } from "react";
 import { Comment } from "../../models/Comments";
-import { EuiButtonIcon, EuiToolTip } from "@elastic/eui";
+import { EuiSmallButtonIcon, EuiToolTip } from "@elastic/eui";
 import { AlertCommentsFlyout } from "./AlertCommentsFlyout";
 
 export interface ShowAlertCommentsProps {
@@ -15,19 +15,19 @@ export interface ShowAlertCommentsProps {
 
 export const ShowAlertComments: React.FC<ShowAlertCommentsProps> = ({ alert, httpClient }) => {
   const [commentsFlyout, setCommentsFlyout] = useState<React.ReactNode | null>(null);
-  
-  const showCommentsFlyout = useCallback(() => { 
+
+  const showCommentsFlyout = useCallback(() => {
     setCommentsFlyout(<AlertCommentsFlyout
       alertId={alert.id}
       httpClient={httpClient}
-      closeFlyout={() => setCommentsFlyout(null)} 
+      closeFlyout={() => setCommentsFlyout(null)}
     />);
   }, [setCommentsFlyout]);
 
   return (
     <>
       <EuiToolTip content={'Show comments'}>
-        <EuiButtonIcon
+        <EuiSmallButtonIcon
           aria-label={'Show comments'}
           data-test-subj={`show-comments-icon`}
           iconType={'editorComment'}

@@ -91,8 +91,11 @@ class DateRangePicker extends React.PureComponent {
       };
     });
   };
+
   render() {
     const { rangeStartDateTime, rangeEndDateTime } = this.state;
+    const { compressed } = this.props;
+
     return (
       <EuiFlexGroup alignItems="center" justifyContent="flexEnd">
         <EuiFlexItem grow={false} style={{ padding: '0 10px' }}>
@@ -109,6 +112,7 @@ class DateRangePicker extends React.PureComponent {
                 showTimeSelect
                 popperClassName="euiRangePicker--popper"
                 shouldCloseOnSelect
+                className={compressed ? 'euiFieldText--compressed' : ''}
                 {...rangeStartDateTime}
               />
             }
@@ -123,6 +127,7 @@ class DateRangePicker extends React.PureComponent {
                 showTimeSelect
                 popperClassName="euiRangePicker--popper"
                 shouldCloseOnSelect
+                className={compressed ? 'euiFieldText--compressed' : ''}
                 {...rangeEndDateTime}
               />
             }

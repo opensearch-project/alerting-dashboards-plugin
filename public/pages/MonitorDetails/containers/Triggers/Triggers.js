@@ -78,7 +78,6 @@ export default class Triggers extends Component {
     };
 
     this.onDelete = this.onDelete.bind(this);
-    this.onEdit = this.onEdit.bind(this);
     this.onSelectionChange = this.onSelectionChange.bind(this);
     this.onTableChange = this.onTableChange.bind(this);
     this.monitorsById = {};
@@ -149,11 +148,6 @@ export default class Triggers extends Component {
     const shouldKeepTrigger = (trigger) => !triggersToDelete[trigger.name];
     const updatedTriggers = getUnwrappedTriggers(monitor).filter(shouldKeepTrigger);
     updateMonitor({ triggers: updatedTriggers });
-  }
-
-  onEdit() {
-    const { monitor } = this.props;
-    this.props.onEditTrigger(monitor.triggers);
   }
 
   onSelectionChange(selectedItems) {
@@ -230,6 +224,4 @@ Triggers.propTypes = {
   monitor: PropTypes.object.isRequired,
   httpClient: PropTypes.object.isRequired,
   updateMonitor: PropTypes.func.isRequired,
-  onEditTrigger: PropTypes.func.isRequired,
-  onCreateTrigger: PropTypes.func.isRequired,
 };

@@ -7,7 +7,7 @@ import React, { Component } from 'react';
 import _ from 'lodash';
 import {
   EuiBasicTable,
-  EuiButton,
+  EuiSmallButton,
   EuiFlexGroup,
   EuiFlexItem,
   EuiHorizontalRule,
@@ -18,10 +18,9 @@ import {
   EuiTabs,
   EuiText,
   EuiToolTip,
-  EuiButtonIcon,
+  EuiSmallButtonIcon,
 } from '@elastic/eui';
 import { getTime } from '../../../../pages/MonitorDetails/components/MonitorOverview/utils/getOverviewStats';
-import { PLUGIN_NAME } from '../../../../../utils/constants';
 import {
   ALERT_STATE,
   DEFAULT_EMPTY_DATA,
@@ -368,7 +367,7 @@ export default class AlertsDashboardFlyoutComponent extends Component {
               {
                 render: (alert) => (
                   <EuiToolTip content={'View details'}>
-                    <EuiButtonIcon
+                    <EuiSmallButtonIcon
                       aria-label={'View details'}
                       data-test-subj={`view-details-icon`}
                       iconType={'inspect'}
@@ -419,22 +418,22 @@ export default class AlertsDashboardFlyoutComponent extends Component {
 
     const actions = () => {
       const actions = [
-        <EuiButton
+        <EuiSmallButton
           onClick={this.acknowledgeAlerts}
           disabled={selectedItems.length <= 0}
           data-test-subj={'flyoutAcknowledgeAlertsButton'}
         >
           Acknowledge
-        </EuiButton>,
+        </EuiSmallButton>,
       ];
       if (!_.isEmpty(detectorId)) {
         actions.unshift(
-          <EuiButton
+          <EuiSmallButton
             href={`${OPENSEARCH_DASHBOARDS_AD_PLUGIN}#/detectors/${detectorId}`}
             target="_blank"
           >
             View detector <EuiIcon type="popout" />
-          </EuiButton>
+          </EuiSmallButton>
         );
       }
       return actions;
@@ -585,7 +584,7 @@ export default class AlertsDashboardFlyoutComponent extends Component {
         displayTableTabs = false;
         break;
     }
-    const monitorUrl = `${PLUGIN_NAME}#/monitors/${monitor_id}${
+    const monitorUrl = `#/monitors/${monitor_id}${
       monitorType === MONITOR_TYPE.COMPOSITE_LEVEL ? '?type=workflow' : ''
     }`;
 

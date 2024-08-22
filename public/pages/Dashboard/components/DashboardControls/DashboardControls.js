@@ -5,7 +5,13 @@
 
 import React from 'react';
 import _ from 'lodash';
-import { EuiFieldSearch, EuiFlexGroup, EuiSelect, EuiFlexItem, EuiPagination } from '@elastic/eui';
+import {
+  EuiCompressedFieldSearch,
+  EuiFlexGroup,
+  EuiCompressedSelect,
+  EuiFlexItem,
+  EuiPagination,
+} from '@elastic/eui';
 import { ALERT_STATE, MONITOR_TYPE } from '../../../../utils/constants';
 
 const severityOptions = [
@@ -38,6 +44,7 @@ const DashboardControls = ({
   onPageChange,
   isAlertsFlyout = false,
   monitorType,
+  alertActions = [],
 }) => {
   let supportedStateOptions = stateOptions;
   switch (monitorType) {
@@ -49,9 +56,9 @@ const DashboardControls = ({
       break;
   }
   return (
-    <EuiFlexGroup style={{ padding: '0px 5px' }}>
+    <EuiFlexGroup style={{ padding: '0px 5px' }} gutterSize="s">
       <EuiFlexItem>
-        <EuiFieldSearch
+        <EuiCompressedFieldSearch
           fullWidth={true}
           placeholder="Search"
           onChange={onSearchChange}
@@ -61,18 +68,25 @@ const DashboardControls = ({
 
       {isAlertsFlyout ? null : (
         <EuiFlexItem grow={false}>
-          <EuiSelect options={severityOptions} value={severity} onChange={onSeverityChange} />
+          <EuiCompressedSelect
+            options={severityOptions}
+            value={severity}
+            onChange={onSeverityChange}
+          />
         </EuiFlexItem>
       )}
 
       <EuiFlexItem grow={false}>
-        <EuiSelect
+        <EuiCompressedSelect
           options={supportedStateOptions}
           value={state}
           onChange={onStateChange}
           data-test-subj={'dashboardAlertStateFilter'}
         />
       </EuiFlexItem>
+      {alertActions.map((action, idx) => (
+        <EuiFlexItem grow={false}>{action}</EuiFlexItem>
+      ))}
       <EuiFlexItem grow={false} style={{ justifyContent: 'center' }}>
         <EuiPagination pageCount={pageCount} activePage={activePage} onPageClick={onPageChange} />
       </EuiFlexItem>

@@ -2,13 +2,13 @@
 
 exports[`FormikSelect renders 1`] = `
 <div
-  class="euiFormControlLayout"
+  class="euiFormControlLayout euiFormControlLayout--compressed"
 >
   <div
     class="euiFormControlLayout__childrenWrapper"
   >
     <select
-      class="euiSelect"
+      class="euiSelect euiSelect--compressed"
       id="testing"
       name="testing"
     >

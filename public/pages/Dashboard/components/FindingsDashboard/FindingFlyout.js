@@ -17,7 +17,7 @@ import {
   EuiText,
   EuiTitle,
   EuiFlexGroup,
-  EuiButtonIcon,
+  EuiSmallButtonIcon,
 } from '@elastic/eui';
 import { getFindings } from './findingsUtils';
 import { DEFAULT_GET_FINDINGS_PARAMS } from '../../../../../server/services/FindingService';
@@ -113,7 +113,7 @@ export default class FindingFlyout extends Component {
               </EuiTitle>
             </EuiFlexItem>
             <EuiFlexItem grow={false}>
-              <EuiButtonIcon
+              <EuiSmallButtonIcon
                 iconType="cross"
                 display="empty"
                 iconSize="m"

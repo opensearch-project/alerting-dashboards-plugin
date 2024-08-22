@@ -7,8 +7,8 @@ import React, { Component, Fragment } from 'react';
 import _ from 'lodash';
 import { FieldArray, Formik } from 'formik';
 import {
-  EuiButton,
-  EuiButtonEmpty,
+  EuiSmallButton,
+  EuiSmallButtonEmpty,
   EuiFlexGroup,
   EuiFlexItem,
   EuiSpacer,
@@ -29,6 +29,7 @@ import {
   RECOMMENDED_DURATION,
 } from '../../components/QueryPerformance/QueryPerformance';
 import { isDataSourceChanged } from '../../../utils/helpers';
+import { PageHeader } from '../../../../components/PageHeader/PageHeader';
 
 export default class CreateMonitor extends Component {
   static defaultProps = {
@@ -187,10 +188,12 @@ export default class CreateMonitor extends Component {
             const isComposite = values.monitor_type === MONITOR_TYPE.COMPOSITE_LEVEL;
             return (
               <Fragment>
-                <EuiText size="s">
-                  <h1>{edit ? 'Edit' : 'Create'} monitor</h1>
-                </EuiText>
-                <EuiSpacer />
+                <PageHeader>
+                  <EuiText size="s">
+                    <h1>{edit ? 'Edit' : 'Create'} monitor</h1>
+                  </EuiText>
+                  <EuiSpacer />
+                </PageHeader>
 
                 <MonitorDetails
                   values={values}
@@ -261,12 +264,12 @@ export default class CreateMonitor extends Component {
                     <EuiSpacer />
                     <EuiFlexGroup alignItems="center" justifyContent="flexEnd">
                       <EuiFlexItem grow={false}>
-                        <EuiButtonEmpty onClick={this.onCancel}>Cancel</EuiButtonEmpty>
+                        <EuiSmallButtonEmpty onClick={this.onCancel}>Cancel</EuiSmallButtonEmpty>
                       </EuiFlexItem>
                       <EuiFlexItem grow={false}>
-                        <EuiButton fill onClick={handleSubmit} isLoading={isSubmitting}>
+                        <EuiSmallButton fill onClick={handleSubmit} isLoading={isSubmitting}>
                           {edit ? 'Update' : 'Create'}
-                        </EuiButton>
+                        </EuiSmallButton>
                       </EuiFlexItem>
                     </EuiFlexGroup>
                   </Fragment>

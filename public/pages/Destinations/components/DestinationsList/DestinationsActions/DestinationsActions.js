@@ -5,16 +5,13 @@
 
 import React, { Component } from 'react';
 import {
-  EuiButton,
+  EuiSmallButton,
   EuiContextMenuPanel,
   EuiContextMenuItem,
   EuiFlexGroup,
   EuiFlexItem,
   EuiPopover,
 } from '@elastic/eui';
-
-import { APP_PATH } from '../../../../../utils/constants';
-import { PLUGIN_NAME } from '../../../../../../utils/constants';
 
 export default class DestinationsActions extends Component {
   state = {
@@ -62,9 +59,9 @@ export default class DestinationsActions extends Component {
             <EuiPopover
               id="destinationActionsPopover"
               button={
-                <EuiButton onClick={this.onClickActions} iconType="arrowDown" iconSide="right">
+                <EuiSmallButton onClick={this.onClickActions} iconType="arrowDown" iconSide="right">
                   Actions
-                </EuiButton>
+                </EuiSmallButton>
               }
               isOpen={isActionsOpen}
               closePopover={this.onCloseActions}

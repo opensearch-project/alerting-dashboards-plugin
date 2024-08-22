@@ -4,7 +4,7 @@
  */
 
 import React from 'react';
-import { EuiFlexGroup, EuiButtonIcon, EuiTitle, EuiFlexItem } from '@elastic/eui';
+import { EuiFlexGroup, EuiSmallButtonIcon, EuiText, EuiFlexItem } from '@elastic/eui';
 import AlertsDashboardFlyoutComponent from './components/AlertsDashboardFlyoutComponent';
 
 const alertsDashboard = (payload) => {
@@ -20,16 +20,16 @@ const alertsDashboard = (payload) => {
     header: (
       <EuiFlexGroup justifyContent="flexStart" alignItems="center">
         <EuiFlexItem className="eui-textTruncate">
-          <EuiTitle
+          <EuiText
             className="eui-textTruncate"
-            size={'m'}
+            size={'s'}
             data-test-subj={`alertsDashboardFlyout_header_${trigger_name}`}
           >
-            <h3>{`Alerts by ${trigger_name}`}</h3>
-          </EuiTitle>
+            <h2>{`Alerts by ${trigger_name}`}</h2>
+          </EuiText>
         </EuiFlexItem>
         <EuiFlexItem grow={false}>
-          <EuiButtonIcon
+          <EuiSmallButtonIcon
             data-test-subj={`alertsDashboardFlyout_closeButton_${trigger_name}`}
             iconType="cross"
             display="empty"

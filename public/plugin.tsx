@@ -3,11 +3,15 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { PLUGIN_NAME } from '../utils/constants';
+import { ALERTS_NAV_ID, DESTINATIONS_NAV_ID, MONITORS_NAV_ID, PLUGIN_NAME } from '../utils/constants';
 import {
   Plugin,
   CoreSetup,
   CoreStart,
+  DEFAULT_NAV_GROUPS,
+  WorkspaceAvailability,
+  AppMountParameters,
+  DEFAULT_APP_CATEGORIES,
 } from '../../../src/core/public';
 import { ACTION_ALERTING } from './actions/alerting_dashboard_action';
 import { CONTEXT_MENU_TRIGGER, EmbeddableStart } from '../../../src/plugins/embeddable/public';
@@ -16,23 +20,12 @@ import { alertingTriggerAd } from './utils/contextMenu/triggers';
 import { ExpressionsSetup } from '../../../src/plugins/expressions/public';
 import { UiActionsSetup } from '../../../src/plugins/ui_actions/public';
 import { overlayAlertsFunction } from './expressions/overlay_alerts';
-import {
-  setClient,
-  setEmbeddable,
-  setNotifications,
-  setOverlays,
-  setSavedAugmentVisLoader,
-  setUISettings,
-  setQueryService,
-  setSavedObjectsClient,
-  setDataSourceEnabled,
-  setDataSourceManagementPlugin,
-  setAssistantDashboards,
-} from './services';
+import { setClient, setEmbeddable, setNotifications, setOverlays, setSavedAugmentVisLoader, setUISettings, setQueryService, setSavedObjectsClient, setDataSourceEnabled, setDataSourceManagementPlugin, setNavigationUI, setApplication, setAssistantDashboards } from './services';
 import { VisAugmenterStart } from '../../../src/plugins/vis_augmenter/public';
 import { DataPublicPluginStart } from '../../../src/plugins/data/public';
 import { DataSourceManagementPluginSetup } from '../../../src/plugins/data_source_management/public';
 import { DataSourcePluginSetup } from '../../../src/plugins/data_source/public';
+import { NavigationPublicPluginStart } from '../../../src/plugins/navigation/public';
 import { registerAssistantDependencies } from './dependencies/register_assistant';
 
 declare module '../../../src/plugins/ui_actions/public' {
@@ -41,9 +34,9 @@ declare module '../../../src/plugins/ui_actions/public' {
   }
 }
 
-export interface AlertingSetup {}
+export interface AlertingSetup { }
 
-export interface AlertingStart {}
+export interface AlertingStart { }
 
 export interface AlertingSetupDeps {
   expressions: ExpressionsSetup;
@@ -57,10 +50,18 @@ export interface AlertingStartDeps {
   visAugmenter: VisAugmenterStart;
   embeddable: EmbeddableStart;
   data: DataPublicPluginStart;
+  navigation: NavigationPublicPluginStart;
 }
 
-export class AlertingPlugin implements Plugin<AlertingSetup, AlertingStart, AlertingSetupDeps, AlertingStartDeps> {
-  public setup(core: CoreSetup<AlertingStartDeps, AlertingStart>, { expressions, uiActions, dataSourceManagement, dataSource, assistantDashboards }: AlertingSetupDeps): AlertingSetup {
+export class AlertingPlugin implements Plugin<void, AlertingStart, AlertingSetupDeps, AlertingStartDeps> {
+
+  public setup(core: CoreSetup<AlertingStartDeps, AlertingStart>, { expressions, uiActions, dataSourceManagement, dataSource, assistantDashboards }: AlertingSetupDeps) {
+
+    const mountWrapper = async (params: AppMountParameters, redirect: string) => {
+      const { renderApp } = await import("./app");
+      const [coreStart] = await core.getStartServices();
+      return renderApp(coreStart, params, redirect);
+    };
     core.application.register({
       id: PLUGIN_NAME,
       title: 'Alerting',
@@ -79,9 +80,16 @@ export class AlertingPlugin implements Plugin<AlertingSetup, AlertingStart, Aler
     });
 
     if (core.chrome.navGroup.getNavGroupEnabled()) {
-
       // register applications with category and use case information
       core.chrome.navGroup.addNavLinksToGroup(DEFAULT_NAV_GROUPS.observability, [
+        {
+          id: PLUGIN_NAME,
+          category: DEFAULT_APP_CATEGORIES.detect,
+          showInAllNavGroup: false
+        }
+      ])
+
+      core.chrome.navGroup.addNavLinksToGroup(DEFAULT_NAV_GROUPS['security-analytics'], [
         {
           id: PLUGIN_NAME,
           category: DEFAULT_APP_CATEGORIES.detect,
@@ -139,6 +147,11 @@ export class AlertingPlugin implements Plugin<AlertingSetup, AlertingStart, Aler
         DEFAULT_NAV_GROUPS.observability,
         navLinks
       );
+
+      core.chrome.navGroup.addNavLinksToGroup(
+        DEFAULT_NAV_GROUPS['security-analytics'],
+        navLinks
+      );
     }
 
     setUISettings(core.uiSettings);
@@ -172,19 +185,17 @@ export class AlertingPlugin implements Plugin<AlertingSetup, AlertingStart, Aler
     const adAction = getAdAction();
     uiActions.registerTrigger(alertingTriggerAd);
     uiActions.addTriggerAction(alertingTriggerAd.id, adAction);
-
-    return;
   }
 
-  public start(core: CoreStart, { visAugmenter, embeddable, data }: AlertingStartDeps): AlertingStart {
+  public start(core: CoreStart, { visAugmenter, embeddable, data, navigation }: AlertingStartDeps): AlertingStart {
     setEmbeddable(embeddable);
     setOverlays(core.overlays);
     setQueryService(data.query);
     setSavedAugmentVisLoader(visAugmenter.savedAugmentVisLoader);
     setNotifications(core.notifications);
     setSavedObjectsClient(core.savedObjects.client);
+    setNavigationUI(navigation.ui);
+    setApplication(core.application);
     return {};
   }
-
-  public stop() {}
 }

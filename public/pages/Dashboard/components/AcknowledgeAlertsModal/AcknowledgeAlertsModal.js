@@ -9,7 +9,7 @@ import queryString from 'query-string';
 import PropTypes from 'prop-types';
 import {
   EuiBasicTable,
-  EuiButton,
+  EuiSmallButton,
   EuiFlexGroup,
   EuiFlexItem,
   EuiHorizontalRule,
@@ -240,22 +240,22 @@ export default class AcknowledgeAlertsModal extends Component {
     const actions = () => {
       const { selectedItems } = this.state;
       const actions = [
-        <EuiButton
+        <EuiSmallButton
           onClick={this.acknowledgeAlerts}
           disabled={!selectedItems.length}
           data-test-subj={'alertsDashboardModal_acknowledgeAlertsButton'}
         >
           Acknowledge
-        </EuiButton>,
+        </EuiSmallButton>,
       ];
       if (!_.isEmpty(detectorId)) {
         actions.unshift(
-          <EuiButton
+          <EuiSmallButton
             href={`${OPENSEARCH_DASHBOARDS_AD_PLUGIN}#/detectors/${detectorId}`}
             target="_blank"
           >
             View detector <EuiIcon type="popout" />
-          </EuiButton>
+          </EuiSmallButton>
         );
       }
       return actions;
@@ -414,13 +414,13 @@ export default class AcknowledgeAlertsModal extends Component {
             </EuiFlexGroup>
           </EuiModalBody>
           <EuiModalFooter>
-            <EuiButton
+            <EuiSmallButton
               onClick={onClose}
               fill
               data-test-subj={`alertsDashboardModal_closeButton_${triggerName}`}
             >
               Close
-            </EuiButton>
+            </EuiSmallButton>
           </EuiModalFooter>
         </EuiModal>
       </EuiOverlayMask>

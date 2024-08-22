@@ -71,7 +71,7 @@ exports[`AlertsDashboardFlyoutComponent renders 1`] = `
         </strong>
         <p>
           <EuiLink
-            href="alerting#/monitors/undefined"
+            href="#/monitors/undefined"
           />
         </p>
       </EuiText>
@@ -177,13 +177,13 @@ exports[`AlertsDashboardFlyoutComponent renders 1`] = `
   <ContentPanel
     actions={
       Array [
-        <EuiButton
+        <EuiSmallButton
           data-test-subj="flyoutAcknowledgeAlertsButton"
           disabled={true}
           onClick={[Function]}
         >
           Acknowledge
-        </EuiButton>,
+        </EuiSmallButton>,
       ]
     }
     bodyStyles={

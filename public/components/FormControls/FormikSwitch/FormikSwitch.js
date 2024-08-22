@@ -5,7 +5,7 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import { EuiSwitch } from '@elastic/eui';
+import { EuiCompressedSwitch } from '@elastic/eui';
 
 import FormikInputWrapper from '../FormikInputWrapper';
 import FormikFormRow from '../FormikFormRow';
@@ -33,7 +33,7 @@ const FormikSwitch = ({
 );
 
 const FieldSwitch = ({ name, field: { value, ...rest }, inputProps }) => (
-  <EuiSwitch name={name} id={name} checked={value} {...inputProps} {...rest} />
+  <EuiCompressedSwitch name={name} id={name} checked={value} {...inputProps} {...rest} />
 );
 
 FormikSwitch.propTypes = {

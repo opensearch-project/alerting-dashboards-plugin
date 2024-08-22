@@ -2,7 +2,7 @@
 
 exports[`FormikSwitch renders 1`] = `
 <div
-  class="euiSwitch"
+  class="euiSwitch euiSwitch--primary euiSwitch--compressed"
 >
   <button
     aria-checked="false"
@@ -21,14 +21,7 @@ exports[`FormikSwitch renders 1`] = `
       />
       <span
         class="euiSwitch__track"
-      >
-        <div>
-          EuiIconMock
-        </div>
-        <div>
-          EuiIconMock
-        </div>
-      </span>
+      />
     </span>
   </button>
   <span

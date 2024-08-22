@@ -4,10 +4,19 @@
  */
 
 import { TRIGGER_TYPE } from '../../public/pages/CreateTrigger/containers/CreateTrigger/utils/constants';
+import { navigationPluginMock } from '../../../../src/plugins/navigation/public/mocks';
+import { applicationServiceMock } from '../../../../src/core/public/application/application_service.mock';
+import { uiSettingsServiceMock } from '../../../../src/core/public/ui_settings/ui_settings_service.mock';
+import { setApplication, setNavigationUI, setUISettings } from '../../public/services';
+import { Chance } from 'chance';
 
-const Chance = require('chance');
+export function setupCoreStart() {
+  setNavigationUI(navigationPluginMock.createStartContract().ui);
+  setApplication(applicationServiceMock.createStartContract());
+  setUISettings(uiSettingsServiceMock.createStartContract());
+}
 
-class AlertingFakes {
+export class AlertingFakes {
   constructor(seed = 'seed') {
     this.chance = new Chance(seed);
 
@@ -188,5 +197,3 @@ class AlertingFakes {
     return this.chance.timestamp();
   }
 }
-
-module.exports = AlertingFakes;

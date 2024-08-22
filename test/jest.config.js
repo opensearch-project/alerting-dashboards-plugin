@@ -16,6 +16,7 @@ module.exports = {
   moduleNameMapper: {
     '\\.(css|less|scss)$': '<rootDir>/test/mocks/styleMock.js',
     '^ui/(.*)': '<rootDir>/../../src/legacy/ui/public/$1/',
+    '^!!raw-loader!.*': 'jest-raw-loader',
   },
   snapshotSerializers: ['../../node_modules/enzyme-to-json/serializer'],
   coverageReporters: ['lcov', 'text', 'cobertura'],
@@ -50,6 +51,6 @@ module.exports = {
   transformIgnorePatterns: [
     // ignore all node_modules except d3-color which requires babel transforms to handle export statement
     // since ESM modules are not natively supported in Jest yet (https://github.com/facebook/jest/issues/4842)
-    '[/\\\\]node_modules(?![\\/\\\\](d3-color))[/\\\\].+\\.js$',
+    '[/\\\\]node_modules(?![\\/\\\\](monaco-editor|weak-lru-cache|ordered-binary|d3-color|axios))[/\\\\].+\\.js$',
   ],
 };

@@ -11,6 +11,7 @@ import { CoreStart, IUiSettingsClient, NotificationsStart, OverlayStart } from '
 import { SavedObjectLoaderAugmentVis } from '../../../../src/plugins/vis_augmenter/public';
 import { DataPublicPluginStart } from '../../../../src/plugins/data/public';
 import { EmbeddableStart } from '../../../../src/plugins/embeddable/public';
+import { NavigationPublicPluginStart } from '../../../../src/plugins/navigation/public';
 import { AssistantSetup } from '../types';
 
 const ServicesContext = createContext<BrowserServices | null>(null);
@@ -57,6 +58,14 @@ export const [getDataSourceReadOnly, setDataSourceReadOnly] =
 
 export const [getNotifications, setNotifications] =
   createGetterSetter<NotificationsStart>('Notifications');
+
+export const [getNavigationUI, setNavigationUI] = createGetterSetter<NavigationPublicPluginStart['ui']>('navigation');
+
+export const [getApplication, setApplication] = createGetterSetter<CoreStart['application']>('application');
+
+export const getUseUpdatedUx = () => {
+  return getUISettings().get('home:useNewHomePage', false);
+};
 
 export const [getAssistantDashboards, setAssistantDashboards] = createGetterSetter<
   AssistantSetup | {}

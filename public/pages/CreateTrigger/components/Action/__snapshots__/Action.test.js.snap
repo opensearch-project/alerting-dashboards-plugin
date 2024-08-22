@@ -71,7 +71,7 @@ exports[`Action renders with Notifications plugin installed 1`] = `
               style="padding-left:20px;padding-right:20px;padding-top:10px"
             >
               <div
-                class="euiFormRow"
+                class="euiFormRow euiFormRow--compressed"
                 id="testPathactions.0.name-form-row-row"
               >
                 <div
@@ -89,13 +89,13 @@ exports[`Action renders with Notifications plugin installed 1`] = `
                   class="euiFormRow__fieldWrapper"
                 >
                   <div
-                    class="euiFormControlLayout"
+                    class="euiFormControlLayout euiFormControlLayout--compressed"
                   >
                     <div
                       class="euiFormControlLayout__childrenWrapper"
                     >
                       <input
-                        class="euiFieldText"
+                        class="euiFieldText euiFieldText--compressed"
                         name="testPathactions.0.name"
                         placeholder="Enter action name"
                         type="text"
@@ -122,7 +122,7 @@ exports[`Action renders with Notifications plugin installed 1`] = `
                     style="max-width:400px"
                   >
                     <div
-                      class="euiFormRow"
+                      class="euiFormRow euiFormRow--compressed"
                       id="testPathactions.0.destination_id-form-row-row"
                     >
                       <div
@@ -142,18 +142,18 @@ exports[`Action renders with Notifications plugin installed 1`] = `
                         <div
                           aria-expanded="false"
                           aria-haspopup="listbox"
-                          class="euiComboBox"
+                          class="euiComboBox euiComboBox--compressed"
                           name="testPathactions.0.destination_id"
                           role="combobox"
                         >
                           <div
-                            class="euiFormControlLayout"
+                            class="euiFormControlLayout euiFormControlLayout--compressed"
                           >
                             <div
                               class="euiFormControlLayout__childrenWrapper"
                             >
                               <div
-                                class="euiComboBox__inputWrap euiComboBox__inputWrap--noWrap"
+                                class="euiComboBox__inputWrap euiComboBox__inputWrap--compressed euiComboBox__inputWrap--noWrap"
                                 data-test-subj="comboBoxInput"
                                 tabindex="-1"
                               >
@@ -206,7 +206,7 @@ exports[`Action renders with Notifications plugin installed 1`] = `
                       class="euiSpacer euiSpacer--l"
                     />
                     <button
-                      class="euiButton euiButton--primary"
+                      class="euiButton euiButton--primary euiButton--small"
                       type="button"
                     >
                       <span
@@ -230,7 +230,7 @@ exports[`Action renders with Notifications plugin installed 1`] = `
               </div>
               <div>
                 <div
-                  class="euiFormRow"
+                  class="euiFormRow euiFormRow--compressed"
                   id="testPathactions.0.subject_template.source-form-row-row"
                   style="max-width:100%"
                 >
@@ -249,13 +249,13 @@ exports[`Action renders with Notifications plugin installed 1`] = `
                     class="euiFormRow__fieldWrapper"
                   >
                     <div
-                      class="euiFormControlLayout euiFormControlLayout--fullWidth"
+                      class="euiFormControlLayout euiFormControlLayout--fullWidth euiFormControlLayout--compressed"
                     >
                       <div
                         class="euiFormControlLayout__childrenWrapper"
                       >
                         <input
-                          class="euiFieldText euiFieldText--fullWidth"
+                          class="euiFieldText euiFieldText--fullWidth euiFieldText--compressed"
                           name="testPathactions.0.subject_template.source"
                           placeholder="Enter a subject"
                           type="text"
@@ -265,7 +265,7 @@ exports[`Action renders with Notifications plugin installed 1`] = `
                   </div>
                 </div>
                 <div
-                  class="euiFormRow"
+                  class="euiFormRow euiFormRow--compressed"
                   id="testPathactions.0.message_template.source-form-row-row"
                   style="max-width:100%"
                 >
@@ -318,15 +318,15 @@ exports[`Action renders with Notifications plugin installed 1`] = `
                     class="euiFormRow__fieldWrapper"
                   >
                     <textarea
-                      class="euiTextArea euiTextArea--resizeVertical euiTextArea--fullWidth"
+                      class="euiTextArea euiTextArea--resizeVertical euiTextArea--fullWidth euiTextArea--compressed"
                       name="testPathactions.0.message_template.source"
                       placeholder="Can use mustache templates"
-                      rows="6"
+                      rows="3"
                     />
                   </div>
                 </div>
                 <div
-                  class="euiFormRow"
+                  class="euiFormRow euiFormRow--compressed"
                   id="generated-id-row"
                   style="max-width:100%"
                 >
@@ -341,7 +341,7 @@ exports[`Action renders with Notifications plugin installed 1`] = `
                         class="euiFlexItem"
                       >
                         <div
-                          class="euiCheckbox"
+                          class="euiCheckbox euiCheckbox--compressed"
                         >
                           <input
                             class="euiCheckbox__input"
@@ -417,7 +417,7 @@ exports[`Action renders with Notifications plugin installed 1`] = `
                   />
                 </div>
                 <div
-                  class="euiFormRow"
+                  class="euiFormRow euiFormRow--compressed"
                   id="generated-id-row"
                   style="padding-bottom:10px;max-width:100%"
                 >
@@ -443,7 +443,7 @@ exports[`Action renders with Notifications plugin installed 1`] = `
                         style="margin-bottom:0px"
                       >
                         <div
-                          class="euiCheckbox"
+                          class="euiCheckbox euiCheckbox--compressed"
                         >
                           <input
                             class="euiCheckbox__input"
@@ -471,7 +471,7 @@ exports[`Action renders with Notifications plugin installed 1`] = `
                           style="margin-right:0px"
                         >
                           <div
-                            class="euiFormRow"
+                            class="euiFormRow euiFormRow--compressed"
                             id="generated-id-row"
                           >
                             <div
@@ -488,20 +488,20 @@ exports[`Action renders with Notifications plugin installed 1`] = `
                               class="euiFormRow__fieldWrapper"
                             >
                               <div
-                                class="euiFormRow"
+                                class="euiFormRow euiFormRow--compressed"
                                 id="testPathactions.0.throttle.value-form-row-row"
                               >
                                 <div
                                   class="euiFormRow__fieldWrapper"
                                 >
                                   <div
-                                    class="euiFormControlLayout euiFormControlLayout--group"
+                                    class="euiFormControlLayout euiFormControlLayout--compressed euiFormControlLayout--group"
                                   >
                                     <div
                                       class="euiFormControlLayout__childrenWrapper"
                                     >
                                       <input
-                                        class="euiFieldNumber euiFieldText euiFieldNumber--inGroup"
+                                        class="euiFieldNumber euiFieldText euiFieldNumber--compressed euiFieldNumber--inGroup"
                                         disabled=""
                                         max="1440"
                                         min="1"
@@ -613,7 +613,7 @@ exports[`Action renders without Notifications plugin installed 1`] = `
               style="padding-left:20px;padding-right:20px;padding-top:10px"
             >
               <div
-                class="euiFormRow"
+                class="euiFormRow euiFormRow--compressed"
                 id="testPathactions.0.name-form-row-row"
               >
                 <div
@@ -631,13 +631,13 @@ exports[`Action renders without Notifications plugin installed 1`] = `
                   class="euiFormRow__fieldWrapper"
                 >
                   <div
-                    class="euiFormControlLayout"
+                    class="euiFormControlLayout euiFormControlLayout--compressed"
                   >
                     <div
                       class="euiFormControlLayout__childrenWrapper"
                     >
                       <input
-                        class="euiFieldText"
+                        class="euiFieldText euiFieldText--compressed"
                         name="testPathactions.0.name"
                         placeholder="Enter action name"
                         type="text"
@@ -664,7 +664,7 @@ exports[`Action renders without Notifications plugin installed 1`] = `
                     style="max-width:400px"
                   >
                     <div
-                      class="euiFormRow"
+                      class="euiFormRow euiFormRow--compressed"
                       id="testPathactions.0.destination_id-form-row-row"
                     >
                       <div
@@ -684,18 +684,18 @@ exports[`Action renders without Notifications plugin installed 1`] = `
                         <div
                           aria-expanded="false"
                           aria-haspopup="listbox"
-                          class="euiComboBox euiComboBox-isDisabled"
+                          class="euiComboBox euiComboBox--compressed euiComboBox-isDisabled"
                           name="testPathactions.0.destination_id"
                           role="combobox"
                         >
                           <div
-                            class="euiFormControlLayout"
+                            class="euiFormControlLayout euiFormControlLayout--compressed"
                           >
                             <div
                               class="euiFormControlLayout__childrenWrapper"
                             >
                               <div
-                                class="euiComboBox__inputWrap euiComboBox__inputWrap--noWrap"
+                                class="euiComboBox__inputWrap euiComboBox__inputWrap--compressed euiComboBox__inputWrap--noWrap"
                                 data-test-subj="comboBoxInput"
                                 tabindex="-1"
                               >
@@ -750,7 +750,7 @@ exports[`Action renders without Notifications plugin installed 1`] = `
                       class="euiSpacer euiSpacer--l"
                     />
                     <button
-                      class="euiButton euiButton--primary euiButton-isDisabled"
+                      class="euiButton euiButton--primary euiButton--small euiButton-isDisabled"
                       disabled=""
                       type="button"
                     >
@@ -825,7 +825,7 @@ exports[`Action renders without Notifications plugin installed 1`] = `
               </div>
               <div>
                 <div
-                  class="euiFormRow"
+                  class="euiFormRow euiFormRow--compressed"
                   id="testPathactions.0.subject_template.source-form-row-row"
                   style="max-width:100%"
                 >
@@ -844,13 +844,13 @@ exports[`Action renders without Notifications plugin installed 1`] = `
                     class="euiFormRow__fieldWrapper"
                   >
                     <div
-                      class="euiFormControlLayout euiFormControlLayout--fullWidth"
+                      class="euiFormControlLayout euiFormControlLayout--fullWidth euiFormControlLayout--compressed"
                     >
                       <div
                         class="euiFormControlLayout__childrenWrapper"
                       >
                         <input
-                          class="euiFieldText euiFieldText--fullWidth"
+                          class="euiFieldText euiFieldText--fullWidth euiFieldText--compressed"
                           name="testPathactions.0.subject_template.source"
                           placeholder="Enter a subject"
                           type="text"
@@ -860,7 +860,7 @@ exports[`Action renders without Notifications plugin installed 1`] = `
                   </div>
                 </div>
                 <div
-                  class="euiFormRow"
+                  class="euiFormRow euiFormRow--compressed"
                   id="testPathactions.0.message_template.source-form-row-row"
                   style="max-width:100%"
                 >
@@ -913,15 +913,15 @@ exports[`Action renders without Notifications plugin installed 1`] = `
                     class="euiFormRow__fieldWrapper"
                   >
                     <textarea
-                      class="euiTextArea euiTextArea--resizeVertical euiTextArea--fullWidth"
+                      class="euiTextArea euiTextArea--resizeVertical euiTextArea--fullWidth euiTextArea--compressed"
                       name="testPathactions.0.message_template.source"
                       placeholder="Can use mustache templates"
-                      rows="6"
+                      rows="3"
                     />
                   </div>
                 </div>
                 <div
-                  class="euiFormRow"
+                  class="euiFormRow euiFormRow--compressed"
                   id="generated-id-row"
                   style="max-width:100%"
                 >
@@ -936,7 +936,7 @@ exports[`Action renders without Notifications plugin installed 1`] = `
                         class="euiFlexItem"
                       >
                         <div
-                          class="euiCheckbox"
+                          class="euiCheckbox euiCheckbox--compressed"
                         >
                           <input
                             class="euiCheckbox__input"
@@ -1012,7 +1012,7 @@ exports[`Action renders without Notifications plugin installed 1`] = `
                   />
                 </div>
                 <div
-                  class="euiFormRow"
+                  class="euiFormRow euiFormRow--compressed"
                   id="generated-id-row"
                   style="padding-bottom:10px;max-width:100%"
                 >
@@ -1038,7 +1038,7 @@ exports[`Action renders without Notifications plugin installed 1`] = `
                         style="margin-bottom:0px"
                       >
                         <div
-                          class="euiCheckbox"
+                          class="euiCheckbox euiCheckbox--compressed"
                         >
                           <input
                             class="euiCheckbox__input"
@@ -1066,7 +1066,7 @@ exports[`Action renders without Notifications plugin installed 1`] = `
                           style="margin-right:0px"
                         >
                           <div
-                            class="euiFormRow"
+                            class="euiFormRow euiFormRow--compressed"
                             id="generated-id-row"
                           >
                             <div
@@ -1083,20 +1083,20 @@ exports[`Action renders without Notifications plugin installed 1`] = `
                               class="euiFormRow__fieldWrapper"
                             >
                               <div
-                                class="euiFormRow"
+                                class="euiFormRow euiFormRow--compressed"
                                 id="testPathactions.0.throttle.value-form-row-row"
                               >
                                 <div
                                   class="euiFormRow__fieldWrapper"
                                 >
                                   <div
-                                    class="euiFormControlLayout euiFormControlLayout--group"
+                                    class="euiFormControlLayout euiFormControlLayout--compressed euiFormControlLayout--group"
                                   >
                                     <div
                                       class="euiFormControlLayout__childrenWrapper"
                                     >
                                       <input
-                                        class="euiFieldNumber euiFieldText euiFieldNumber--inGroup"
+                                        class="euiFieldNumber euiFieldText euiFieldNumber--compressed euiFieldNumber--inGroup"
                                         disabled=""
                                         max="1440"
                                         min="1"

@@ -94,18 +94,23 @@ exports[`Dashboard renders in flyout 1`] = `
   <ContentPanel
     actions={
       Array [
-        <EuiButton
+        <EuiSmallButton
           data-test-subj="acknowledgeAlertsButton"
           disabled={true}
           onClick={[Function]}
         >
           Acknowledge
-        </EuiButton>,
+        </EuiSmallButton>,
       ]
     }
     bodyStyles={
       Object {
         "padding": "initial",
+      }
+    }
+    panelOptions={
+      Object {
+        "hideTitleBorder": false,
       }
     }
     title="Alerts"
@@ -181,54 +186,62 @@ exports[`Dashboard renders in flyout 1`] = `
                       <div
                         className="euiFlexItem"
                       >
-                        <EuiButton
+                        <EuiSmallButton
                           data-test-subj="acknowledgeAlertsButton"
                           disabled={true}
                           onClick={[Function]}
                         >
-                          <EuiButtonDisplay
-                            baseClassName="euiButton"
+                          <EuiButton
                             data-test-subj="acknowledgeAlertsButton"
                             disabled={true}
-                            element="button"
-                            isDisabled={true}
                             onClick={[Function]}
-                            type="button"
+                            size="s"
                           >
-                            <button
-                              className="euiButton euiButton--primary euiButton-isDisabled"
+                            <EuiButtonDisplay
+                              baseClassName="euiButton"
                               data-test-subj="acknowledgeAlertsButton"
                               disabled={true}
+                              element="button"
+                              isDisabled={true}
                               onClick={[Function]}
-                              style={
-                                Object {
-                                  "minWidth": undefined,
-                                }
-                              }
+                              size="s"
                               type="button"
                             >
-                              <EuiButtonContent
-                                className="euiButton__content"
-                                iconSide="left"
-                                textProps={
+                              <button
+                                className="euiButton euiButton--primary euiButton--small euiButton-isDisabled"
+                                data-test-subj="acknowledgeAlertsButton"
+                                disabled={true}
+                                onClick={[Function]}
+                                style={
                                   Object {
-                                    "className": "euiButton__text",
+                                    "minWidth": undefined,
                                   }
                                 }
+                                type="button"
                               >
-                                <span
-                                  className="euiButtonContent euiButton__content"
+                                <EuiButtonContent
+                                  className="euiButton__content"
+                                  iconSide="left"
+                                  textProps={
+                                    Object {
+                                      "className": "euiButton__text",
+                                    }
+                                  }
                                 >
                                   <span
-                                    className="euiButton__text"
+                                    className="euiButtonContent euiButton__content"
                                   >
-                                    Acknowledge
+                                    <span
+                                      className="euiButton__text"
+                                    >
+                                      Acknowledge
+                                    </span>
                                   </span>
-                                </span>
-                              </EuiButtonContent>
-                            </button>
-                          </EuiButtonDisplay>
-                        </EuiButton>
+                                </EuiButtonContent>
+                              </button>
+                            </EuiButtonDisplay>
+                          </EuiButton>
+                        </EuiSmallButton>
                       </div>
                     </EuiFlexItem>
                   </div>
@@ -292,6 +305,7 @@ exports[`Dashboard renders in flyout 1`] = `
             state="ALL"
           >
             <EuiFlexGroup
+              gutterSize="s"
               style={
                 Object {
                   "padding": "0px 5px",
@@ -299,7 +313,7 @@ exports[`Dashboard renders in flyout 1`] = `
               }
             >
               <div
-                className="euiFlexGroup euiFlexGroup--gutterLarge euiFlexGroup--directionRow euiFlexGroup--responsive"
+                className="euiFlexGroup euiFlexGroup--gutterSmall euiFlexGroup--directionRow euiFlexGroup--responsive"
                 style={
                   Object {
                     "padding": "0px 5px",
@@ -310,8 +324,8 @@ exports[`Dashboard renders in flyout 1`] = `
                   <div
                     className="euiFlexItem"
                   >
-                    <EuiFieldSearch
-                      compressed={false}
+                    <EuiCompressedFieldSearch
+                      compressed={true}
                       fullWidth={true}
                       incremental={false}
                       isClearable={true}
@@ -321,20 +335,20 @@ exports[`Dashboard renders in flyout 1`] = `
                       value=""
                     >
                       <EuiFormControlLayout
-                        compressed={false}
+                        compressed={true}
                         fullWidth={true}
                         icon="search"
                         isLoading={false}
                       >
                         <div
-                          className="euiFormControlLayout euiFormControlLayout--fullWidth"
+                          className="euiFormControlLayout euiFormControlLayout--fullWidth euiFormControlLayout--compressed"
                         >
                           <div
                             className="euiFormControlLayout__childrenWrapper"
                           >
                             <EuiValidatableControl>
                               <input
-                                className="euiFieldSearch euiFieldSearch--fullWidth"
+                                className="euiFieldSearch euiFieldSearch--fullWidth euiFieldSearch--compressed"
                                 onChange={[Function]}
                                 onKeyUp={[Function]}
                                 placeholder="Search"
@@ -343,7 +357,7 @@ exports[`Dashboard renders in flyout 1`] = `
                               />
                             </EuiValidatableControl>
                             <EuiFormControlLayoutIcons
-                              compressed={false}
+                              compressed={true}
                               icon="search"
                               isLoading={false}
                             >
@@ -351,7 +365,7 @@ exports[`Dashboard renders in flyout 1`] = `
                                 className="euiFormControlLayoutIcons"
                               >
                                 <EuiFormControlLayoutCustomIcon
-                                  size="m"
+                                  size="s"
                                   type="search"
                                 >
                                   <span
@@ -360,7 +374,7 @@ exports[`Dashboard renders in flyout 1`] = `
                                     <EuiIcon
                                       aria-hidden="true"
                                       className="euiFormControlLayoutCustomIcon__icon"
-                                      size="m"
+                                      size="s"
                                       type="search"
                                     >
                                       <div>
@@ -374,7 +388,7 @@ exports[`Dashboard renders in flyout 1`] = `
                           </div>
                         </div>
                       </EuiFormControlLayout>
-                    </EuiFieldSearch>
+                    </EuiCompressedFieldSearch>
                   </div>
                 </EuiFlexItem>
                 <EuiFlexItem
@@ -383,7 +397,7 @@ exports[`Dashboard renders in flyout 1`] = `
                   <div
                     className="euiFlexItem euiFlexItem--flexGrowZero"
                   >
-                    <EuiSelect
+                    <EuiCompressedSelect
                       data-test-subj="dashboardAlertStateFilter"
                       onChange={[Function]}
                       options={
@@ -416,107 +430,142 @@ exports[`Dashboard renders in flyout 1`] = `
                       }
                       value="ALL"
                     >
-                      <EuiFormControlLayout
-                        compressed={false}
-                        fullWidth={false}
-                        icon={
-                          Object {
-                            "side": "right",
-                            "type": "arrowDown",
-                          }
+                      <EuiSelect
+                        compressed={true}
+                        data-test-subj="dashboardAlertStateFilter"
+                        onChange={[Function]}
+                        options={
+                          Array [
+                            Object {
+                              "text": "All alerts",
+                              "value": "ALL",
+                            },
+                            Object {
+                              "text": "Active",
+                              "value": "ACTIVE",
+                            },
+                            Object {
+                              "text": "Acknowledged",
+                              "value": "ACKNOWLEDGED",
+                            },
+                            Object {
+                              "text": "Completed",
+                              "value": "COMPLETED",
+                            },
+                            Object {
+                              "text": "Error",
+                              "value": "ERROR",
+                            },
+                            Object {
+                              "text": "Deleted",
+                              "value": "DELETED",
+                            },
+                          ]
                         }
-                        isLoading={false}
+                        value="ALL"
                       >
-                        <div
-                          className="euiFormControlLayout"
+                        <EuiFormControlLayout
+                          compressed={true}
+                          fullWidth={false}
+                          icon={
+                            Object {
+                              "side": "right",
+                              "type": "arrowDown",
+                            }
+                          }
+                          isLoading={false}
                         >
                           <div
-                            className="euiFormControlLayout__childrenWrapper"
+                            className="euiFormControlLayout euiFormControlLayout--compressed"
                           >
-                            <EuiValidatableControl>
-                              <select
-                                className="euiSelect"
-                                data-test-subj="dashboardAlertStateFilter"
-                                onChange={[Function]}
-                                onMouseUp={[Function]}
-                                value="ALL"
-                              >
-                                <option
-                                  key="0"
+                            <div
+                              className="euiFormControlLayout__childrenWrapper"
+                            >
+                              <EuiValidatableControl>
+                                <select
+                                  className="euiSelect euiSelect--compressed"
+                                  data-test-subj="dashboardAlertStateFilter"
+                                  onChange={[Function]}
+                                  onMouseUp={[Function]}
                                   value="ALL"
                                 >
-                                  All alerts
-                                </option>
-                                <option
-                                  key="1"
-                                  value="ACTIVE"
-                                >
-                                  Active
-                                </option>
-                                <option
-                                  key="2"
-                                  value="ACKNOWLEDGED"
-                                >
-                                  Acknowledged
-                                </option>
-                                <option
-                                  key="3"
-                                  value="COMPLETED"
-                                >
-                                  Completed
-                                </option>
-                                <option
-                                  key="4"
-                                  value="ERROR"
-                                >
-                                  Error
-                                </option>
-                                <option
-                                  key="5"
-                                  value="DELETED"
-                                >
-                                  Deleted
-                                </option>
-                              </select>
-                            </EuiValidatableControl>
-                            <EuiFormControlLayoutIcons
-                              compressed={false}
-                              icon={
-                                Object {
-                                  "side": "right",
-                                  "type": "arrowDown",
-                                }
-                              }
-                              isLoading={false}
-                            >
-                              <div
-                                className="euiFormControlLayoutIcons euiFormControlLayoutIcons--right"
-                              >
-                                <EuiFormControlLayoutCustomIcon
-                                  size="m"
-                                  type="arrowDown"
-                                >
-                                  <span
-                                    className="euiFormControlLayoutCustomIcon"
+                                  <option
+                                    key="0"
+                                    value="ALL"
                                   >
-                                    <EuiIcon
-                                      aria-hidden="true"
-                                      className="euiFormControlLayoutCustomIcon__icon"
-                                      size="m"
-                                      type="arrowDown"
+                                    All alerts
+                                  </option>
+                                  <option
+                                    key="1"
+                                    value="ACTIVE"
+                                  >
+                                    Active
+                                  </option>
+                                  <option
+                                    key="2"
+                                    value="ACKNOWLEDGED"
+                                  >
+                                    Acknowledged
+                                  </option>
+                                  <option
+                                    key="3"
+                                    value="COMPLETED"
+                                  >
+                                    Completed
+                                  </option>
+                                  <option
+                                    key="4"
+                                    value="ERROR"
+                                  >
+                                    Error
+                                  </option>
+                                  <option
+                                    key="5"
+                                    value="DELETED"
+                                  >
+                                    Deleted
+                                  </option>
+                                </select>
+                              </EuiValidatableControl>
+                              <EuiFormControlLayoutIcons
+                                compressed={true}
+                                icon={
+                                  Object {
+                                    "side": "right",
+                                    "type": "arrowDown",
+                                  }
+                                }
+                                isLoading={false}
+                              >
+                                <div
+                                  className="euiFormControlLayoutIcons euiFormControlLayoutIcons--right"
+                                >
+                                  <EuiFormControlLayoutCustomIcon
+                                    size="s"
+                                    type="arrowDown"
+                                  >
+                                    <span
+                                      className="euiFormControlLayoutCustomIcon"
                                     >
-                                      <div>
-                                        EuiIconMock
-                                      </div>
-                                    </EuiIcon>
-                                  </span>
-                                </EuiFormControlLayoutCustomIcon>
-                              </div>
-                            </EuiFormControlLayoutIcons>
+                                      <EuiIcon
+                                        aria-hidden="true"
+                                        className="euiFormControlLayoutCustomIcon__icon"
+                                        size="s"
+                                        type="arrowDown"
+                                      >
+                                        <div>
+                                          EuiIconMock
+                                        </div>
+                                      </EuiIcon>
+                                    </span>
+                                  </EuiFormControlLayoutCustomIcon>
+                                </div>
+                              </EuiFormControlLayoutIcons>
+                            </div>
                           </div>
-                        </div>
-                      </EuiFormControlLayout>
-                    </EuiSelect>
+                        </EuiFormControlLayout>
+                      </EuiSelect>
+                    </EuiCompressedSelect>
                   </div>
                 </EuiFlexItem>
                 <EuiFlexItem
@@ -1453,12 +1502,12 @@ exports[`Dashboard renders in flyout 1`] = `
                                     <DashboardEmptyPrompt>
                                       <EuiEmptyPrompt
                                         actions={
-                                          <EuiButton
+                                          <EuiSmallButton
                                             fill={true}
-                                            href="alerting#/create-monitor"
+                                            href="#/create-monitor"
                                           >
                                             Create monitor
-                                          </EuiButton>
+                                          </EuiSmallButton>
                                         }
                                         body={
                                           <EuiText
@@ -1515,51 +1564,58 @@ exports[`Dashboard renders in flyout 1`] = `
                                               className="euiSpacer euiSpacer--l"
                                             />
                                           </EuiSpacer>
-                                          <EuiButton
+                                          <EuiSmallButton
                                             fill={true}
-                                            href="alerting#/create-monitor"
+                                            href="#/create-monitor"
                                           >
-                                            <EuiButtonDisplay
-                                              baseClassName="euiButton"
-                                              element="a"
+                                            <EuiButton
                                               fill={true}
-                                              href="alerting#/create-monitor"
-                                              isDisabled={false}
-                                              rel="noreferrer"
+                                              href="#/create-monitor"
+                                              size="s"
                                             >
-                                              <a
-                                                className="euiButton euiButton--primary euiButton--fill"
-                                                disabled={false}
-                                                href="alerting#/create-monitor"
+                                              <EuiButtonDisplay
+                                                baseClassName="euiButton"
+                                                element="a"
+                                                fill={true}
+                                                href="#/create-monitor"
+                                                isDisabled={false}
                                                 rel="noreferrer"
-                                                style={
-                                                  Object {
-                                                    "minWidth": undefined,
-                                                  }
-                                                }
+                                                size="s"
                                               >
-                                                <EuiButtonContent
-                                                  className="euiButton__content"
-                                                  iconSide="left"
-                                                  textProps={
+                                                <a
+                                                  className="euiButton euiButton--primary euiButton--small euiButton--fill"
+                                                  disabled={false}
+                                                  href="#/create-monitor"
+                                                  rel="noreferrer"
+                                                  style={
                                                     Object {
-                                                      "className": "euiButton__text",
+                                                      "minWidth": undefined,
                                                     }
                                                   }
                                                 >
-                                                  <span
-                                                    className="euiButtonContent euiButton__content"
+                                                  <EuiButtonContent
+                                                    className="euiButton__content"
+                                                    iconSide="left"
+                                                    textProps={
+                                                      Object {
+                                                        "className": "euiButton__text",
+                                                      }
+                                                    }
                                                   >
                                                     <span
-                                                      className="euiButton__text"
+                                                      className="euiButtonContent euiButton__content"
                                                     >
-                                                      Create monitor
+                                                      <span
+                                                        className="euiButton__text"
+                                                      >
+                                                        Create monitor
+                                                      </span>
                                                     </span>
-                                                  </span>
-                                                </EuiButtonContent>
-                                              </a>
-                                            </EuiButtonDisplay>
-                                          </EuiButton>
+                                                  </EuiButtonContent>
+                                                </a>
+                                              </EuiButtonDisplay>
+                                            </EuiButton>
+                                          </EuiSmallButton>
                                         </div>
                                       </EuiEmptyPrompt>
                                     </DashboardEmptyPrompt>
@@ -1636,24 +1692,29 @@ exports[`Dashboard renders with alert by triggers view 1`] = `
   <ContentPanel
     actions={
       Array [
-        <EuiButton
+        <EuiSmallButton
           disabled={true}
           onClick={[Function]}
         >
           View alert details
-        </EuiButton>,
-        <EuiButton
+        </EuiSmallButton>,
+        <EuiSmallButton
           data-test-subj="acknowledgeAlertsButton"
           disabled={true}
           onClick={[Function]}
         >
           Acknowledge
-        </EuiButton>,
+        </EuiSmallButton>,
       ]
     }
     bodyStyles={
       Object {
         "padding": "initial",
+      }
+    }
+    panelOptions={
+      Object {
+        "hideTitleBorder": undefined,
       }
     }
     title="Alerts by triggers"
@@ -1729,51 +1790,58 @@ exports[`Dashboard renders with alert by triggers view 1`] = `
                       <div
                         className="euiFlexItem"
                       >
-                        <EuiButton
+                        <EuiSmallButton
                           disabled={true}
                           onClick={[Function]}
                         >
-                          <EuiButtonDisplay
-                            baseClassName="euiButton"
+                          <EuiButton
                             disabled={true}
-                            element="button"
-                            isDisabled={true}
                             onClick={[Function]}
-                            type="button"
+                            size="s"
                           >
-                            <button
-                              className="euiButton euiButton--primary euiButton-isDisabled"
+                            <EuiButtonDisplay
+                              baseClassName="euiButton"
                               disabled={true}
+                              element="button"
+                              isDisabled={true}
                               onClick={[Function]}
-                              style={
-                                Object {
-                                  "minWidth": undefined,
-                                }
-                              }
+                              size="s"
                               type="button"
                             >
-                              <EuiButtonContent
-                                className="euiButton__content"
-                                iconSide="left"
-                                textProps={
+                              <button
+                                className="euiButton euiButton--primary euiButton--small euiButton-isDisabled"
+                                disabled={true}
+                                onClick={[Function]}
+                                style={
                                   Object {
-                                    "className": "euiButton__text",
+                                    "minWidth": undefined,
                                   }
                                 }
+                                type="button"
                               >
-                                <span
-                                  className="euiButtonContent euiButton__content"
+                                <EuiButtonContent
+                                  className="euiButton__content"
+                                  iconSide="left"
+                                  textProps={
+                                    Object {
+                                      "className": "euiButton__text",
+                                    }
+                                  }
                                 >
                                   <span
-                                    className="euiButton__text"
+                                    className="euiButtonContent euiButton__content"
                                   >
-                                    View alert details
+                                    <span
+                                      className="euiButton__text"
+                                    >
+                                      View alert details
+                                    </span>
                                   </span>
-                                </span>
-                              </EuiButtonContent>
-                            </button>
-                          </EuiButtonDisplay>
-                        </EuiButton>
+                                </EuiButtonContent>
+                              </button>
+                            </EuiButtonDisplay>
+                          </EuiButton>
+                        </EuiSmallButton>
                       </div>
                     </EuiFlexItem>
                     <EuiFlexItem
@@ -1782,54 +1850,62 @@ exports[`Dashboard renders with alert by triggers view 1`] = `
                       <div
                         className="euiFlexItem"
                       >
-                        <EuiButton
+                        <EuiSmallButton
                           data-test-subj="acknowledgeAlertsButton"
                           disabled={true}
                           onClick={[Function]}
                         >
-                          <EuiButtonDisplay
-                            baseClassName="euiButton"
+                          <EuiButton
                             data-test-subj="acknowledgeAlertsButton"
                             disabled={true}
-                            element="button"
-                            isDisabled={true}
                             onClick={[Function]}
-                            type="button"
+                            size="s"
                           >
-                            <button
-                              className="euiButton euiButton--primary euiButton-isDisabled"
+                            <EuiButtonDisplay
+                              baseClassName="euiButton"
                               data-test-subj="acknowledgeAlertsButton"
                               disabled={true}
+                              element="button"
+                              isDisabled={true}
                               onClick={[Function]}
-                              style={
-                                Object {
-                                  "minWidth": undefined,
-                                }
-                              }
+                              size="s"
                               type="button"
                             >
-                              <EuiButtonContent
-                                className="euiButton__content"
-                                iconSide="left"
-                                textProps={
+                              <button
+                                className="euiButton euiButton--primary euiButton--small euiButton-isDisabled"
+                                data-test-subj="acknowledgeAlertsButton"
+                                disabled={true}
+                                onClick={[Function]}
+                                style={
                                   Object {
-                                    "className": "euiButton__text",
+                                    "minWidth": undefined,
                                   }
                                 }
+                                type="button"
                               >
-                                <span
-                                  className="euiButtonContent euiButton__content"
+                                <EuiButtonContent
+                                  className="euiButton__content"
+                                  iconSide="left"
+                                  textProps={
+                                    Object {
+                                      "className": "euiButton__text",
+                                    }
+                                  }
                                 >
                                   <span
-                                    className="euiButton__text"
+                                    className="euiButtonContent euiButton__content"
                                   >
-                                    Acknowledge
+                                    <span
+                                      className="euiButton__text"
+                                    >
+                                      Acknowledge
+                                    </span>
                                   </span>
-                                </span>
-                              </EuiButtonContent>
-                            </button>
-                          </EuiButtonDisplay>
-                        </EuiButton>
+                                </EuiButtonContent>
+                              </button>
+                            </EuiButtonDisplay>
+                          </EuiButton>
+                        </EuiSmallButton>
                       </div>
                     </EuiFlexItem>
                   </div>
@@ -1893,6 +1969,7 @@ exports[`Dashboard renders with alert by triggers view 1`] = `
             state="ALL"
           >
             <EuiFlexGroup
+              gutterSize="s"
               style={
                 Object {
                   "padding": "0px 5px",
@@ -1900,7 +1977,7 @@ exports[`Dashboard renders with alert by triggers view 1`] = `
               }
             >
               <div
-                className="euiFlexGroup euiFlexGroup--gutterLarge euiFlexGroup--directionRow euiFlexGroup--responsive"
+                className="euiFlexGroup euiFlexGroup--gutterSmall euiFlexGroup--directionRow euiFlexGroup--responsive"
                 style={
                   Object {
                     "padding": "0px 5px",
@@ -1911,8 +1988,8 @@ exports[`Dashboard renders with alert by triggers view 1`] = `
                   <div
                     className="euiFlexItem"
                   >
-                    <EuiFieldSearch
-                      compressed={false}
+                    <EuiCompressedFieldSearch
+                      compressed={true}
                       fullWidth={true}
                       incremental={false}
                       isClearable={true}
@@ -1922,20 +1999,20 @@ exports[`Dashboard renders with alert by triggers view 1`] = `
                       value=""
                     >
                       <EuiFormControlLayout
-                        compressed={false}
+                        compressed={true}
                         fullWidth={true}
                         icon="search"
                         isLoading={false}
                       >
                         <div
-                          className="euiFormControlLayout euiFormControlLayout--fullWidth"
+                          className="euiFormControlLayout euiFormControlLayout--fullWidth euiFormControlLayout--compressed"
                         >
                           <div
                             className="euiFormControlLayout__childrenWrapper"
                           >
                             <EuiValidatableControl>
                               <input
-                                className="euiFieldSearch euiFieldSearch--fullWidth"
+                                className="euiFieldSearch euiFieldSearch--fullWidth euiFieldSearch--compressed"
                                 onChange={[Function]}
                                 onKeyUp={[Function]}
                                 placeholder="Search"
@@ -1944,7 +2021,7 @@ exports[`Dashboard renders with alert by triggers view 1`] = `
                               />
                             </EuiValidatableControl>
                             <EuiFormControlLayoutIcons
-                              compressed={false}
+                              compressed={true}
                               icon="search"
                               isLoading={false}
                             >
@@ -1952,7 +2029,7 @@ exports[`Dashboard renders with alert by triggers view 1`] = `
                                 className="euiFormControlLayoutIcons"
                               >
                                 <EuiFormControlLayoutCustomIcon
-                                  size="m"
+                                  size="s"
                                   type="search"
                                 >
                                   <span
@@ -1961,7 +2038,7 @@ exports[`Dashboard renders with alert by triggers view 1`] = `
                                     <EuiIcon
                                       aria-hidden="true"
                                       className="euiFormControlLayoutCustomIcon__icon"
-                                      size="m"
+                                      size="s"
                                       type="search"
                                     >
                                       <div>
@@ -1975,7 +2052,7 @@ exports[`Dashboard renders with alert by triggers view 1`] = `
                           </div>
                         </div>
                       </EuiFormControlLayout>
-                    </EuiFieldSearch>
+                    </EuiCompressedFieldSearch>
                   </div>
                 </EuiFlexItem>
                 <EuiFlexItem
@@ -1984,7 +2061,7 @@ exports[`Dashboard renders with alert by triggers view 1`] = `
                   <div
                     className="euiFlexItem euiFlexItem--flexGrowZero"
                   >
-                    <EuiSelect
+                    <EuiCompressedSelect
                       onChange={[Function]}
                       options={
                         Array [
@@ -2016,106 +2093,140 @@ exports[`Dashboard renders with alert by triggers view 1`] = `
                       }
                       value="ALL"
                     >
-                      <EuiFormControlLayout
-                        compressed={false}
-                        fullWidth={false}
-                        icon={
-                          Object {
-                            "side": "right",
-                            "type": "arrowDown",
-                          }
+                      <EuiSelect
+                        compressed={true}
+                        onChange={[Function]}
+                        options={
+                          Array [
+                            Object {
+                              "text": "All severity levels",
+                              "value": "ALL",
+                            },
+                            Object {
+                              "text": "1 (Highest)",
+                              "value": "1",
+                            },
+                            Object {
+                              "text": "2 (High)",
+                              "value": "2",
+                            },
+                            Object {
+                              "text": "3 (Medium)",
+                              "value": "3",
+                            },
+                            Object {
+                              "text": "4 (Low)",
+                              "value": "4",
+                            },
+                            Object {
+                              "text": "5 (Lowest)",
+                              "value": "5",
+                            },
+                          ]
                         }
-                        isLoading={false}
+                        value="ALL"
                       >
-                        <div
-                          className="euiFormControlLayout"
+                        <EuiFormControlLayout
+                          compressed={true}
+                          fullWidth={false}
+                          icon={
+                            Object {
+                              "side": "right",
+                              "type": "arrowDown",
+                            }
+                          }
+                          isLoading={false}
                         >
                           <div
-                            className="euiFormControlLayout__childrenWrapper"
+                            className="euiFormControlLayout euiFormControlLayout--compressed"
                           >
-                            <EuiValidatableControl>
-                              <select
-                                className="euiSelect"
-                                onChange={[Function]}
-                                onMouseUp={[Function]}
-                                value="ALL"
-                              >
-                                <option
-                                  key="0"
+                            <div
+                              className="euiFormControlLayout__childrenWrapper"
+                            >
+                              <EuiValidatableControl>
+                                <select
+                                  className="euiSelect euiSelect--compressed"
+                                  onChange={[Function]}
+                                  onMouseUp={[Function]}
                                   value="ALL"
                                 >
-                                  All severity levels
-                                </option>
-                                <option
-                                  key="1"
-                                  value="1"
-                                >
-                                  1 (Highest)
-                                </option>
-                                <option
-                                  key="2"
-                                  value="2"
-                                >
-                                  2 (High)
-                                </option>
-                                <option
-                                  key="3"
-                                  value="3"
-                                >
-                                  3 (Medium)
-                                </option>
-                                <option
-                                  key="4"
-                                  value="4"
-                                >
-                                  4 (Low)
-                                </option>
-                                <option
-                                  key="5"
-                                  value="5"
-                                >
-                                  5 (Lowest)
-                                </option>
-                              </select>
-                            </EuiValidatableControl>
-                            <EuiFormControlLayoutIcons
-                              compressed={false}
-                              icon={
-                                Object {
-                                  "side": "right",
-                                  "type": "arrowDown",
-                                }
-                              }
-                              isLoading={false}
-                            >
-                              <div
-                                className="euiFormControlLayoutIcons euiFormControlLayoutIcons--right"
-                              >
-                                <EuiFormControlLayoutCustomIcon
-                                  size="m"
-                                  type="arrowDown"
-                                >
-                                  <span
-                                    className="euiFormControlLayoutCustomIcon"
+                                  <option
+                                    key="0"
+                                    value="ALL"
                                   >
-                                    <EuiIcon
-                                      aria-hidden="true"
-                                      className="euiFormControlLayoutCustomIcon__icon"
-                                      size="m"
-                                      type="arrowDown"
+                                    All severity levels
+                                  </option>
+                                  <option
+                                    key="1"
+                                    value="1"
+                                  >
+                                    1 (Highest)
+                                  </option>
+                                  <option
+                                    key="2"
+                                    value="2"
+                                  >
+                                    2 (High)
+                                  </option>
+                                  <option
+                                    key="3"
+                                    value="3"
+                                  >
+                                    3 (Medium)
+                                  </option>
+                                  <option
+                                    key="4"
+                                    value="4"
+                                  >
+                                    4 (Low)
+                                  </option>
+                                  <option
+                                    key="5"
+                                    value="5"
+                                  >
+                                    5 (Lowest)
+                                  </option>
+                                </select>
+                              </EuiValidatableControl>
+                              <EuiFormControlLayoutIcons
+                                compressed={true}
+                                icon={
+                                  Object {
+                                    "side": "right",
+                                    "type": "arrowDown",
+                                  }
+                                }
+                                isLoading={false}
+                              >
+                                <div
+                                  className="euiFormControlLayoutIcons euiFormControlLayoutIcons--right"
+                                >
+                                  <EuiFormControlLayoutCustomIcon
+                                    size="s"
+                                    type="arrowDown"
+                                  >
+                                    <span
+                                      className="euiFormControlLayoutCustomIcon"
                                     >
-                                      <div>
-                                        EuiIconMock
-                                      </div>
-                                    </EuiIcon>
-                                  </span>
-                                </EuiFormControlLayoutCustomIcon>
-                              </div>
-                            </EuiFormControlLayoutIcons>
+                                      <EuiIcon
+                                        aria-hidden="true"
+                                        className="euiFormControlLayoutCustomIcon__icon"
+                                        size="s"
+                                        type="arrowDown"
+                                      >
+                                        <div>
+                                          EuiIconMock
+                                        </div>
+                                      </EuiIcon>
+                                    </span>
+                                  </EuiFormControlLayoutCustomIcon>
+                                </div>
+                              </EuiFormControlLayoutIcons>
+                            </div>
                           </div>
-                        </div>
-                      </EuiFormControlLayout>
-                    </EuiSelect>
+                        </EuiFormControlLayout>
+                      </EuiSelect>
+                    </EuiCompressedSelect>
                   </div>
                 </EuiFlexItem>
                 <EuiFlexItem
@@ -2124,7 +2235,7 @@ exports[`Dashboard renders with alert by triggers view 1`] = `
                   <div
                     className="euiFlexItem euiFlexItem--flexGrowZero"
                   >
-                    <EuiSelect
+                    <EuiCompressedSelect
                       data-test-subj="dashboardAlertStateFilter"
                       onChange={[Function]}
                       options={
@@ -2157,107 +2268,142 @@ exports[`Dashboard renders with alert by triggers view 1`] = `
                       }
                       value="ALL"
                     >
-                      <EuiFormControlLayout
-                        compressed={false}
-                        fullWidth={false}
-                        icon={
-                          Object {
-                            "side": "right",
-                            "type": "arrowDown",
-                          }
+                      <EuiSelect
+                        compressed={true}
+                        data-test-subj="dashboardAlertStateFilter"
+                        onChange={[Function]}
+                        options={
+                          Array [
+                            Object {
+                              "text": "All alerts",
+                              "value": "ALL",
+                            },
+                            Object {
+                              "text": "Active",
+                              "value": "ACTIVE",
+                            },
+                            Object {
+                              "text": "Acknowledged",
+                              "value": "ACKNOWLEDGED",
+                            },
+                            Object {
+                              "text": "Completed",
+                              "value": "COMPLETED",
+                            },
+                            Object {
+                              "text": "Error",
+                              "value": "ERROR",
+                            },
+                            Object {
+                              "text": "Deleted",
+                              "value": "DELETED",
+                            },
+                          ]
                         }
-                        isLoading={false}
+                        value="ALL"
                       >
-                        <div
-                          className="euiFormControlLayout"
+                        <EuiFormControlLayout
+                          compressed={true}
+                          fullWidth={false}
+                          icon={
+                            Object {
+                              "side": "right",
+                              "type": "arrowDown",
+                            }
+                          }
+                          isLoading={false}
                         >
                           <div
-                            className="euiFormControlLayout__childrenWrapper"
+                            className="euiFormControlLayout euiFormControlLayout--compressed"
                           >
-                            <EuiValidatableControl>
-                              <select
-                                className="euiSelect"
-                                data-test-subj="dashboardAlertStateFilter"
-                                onChange={[Function]}
-                                onMouseUp={[Function]}
-                                value="ALL"
-                              >
-                                <option
-                                  key="0"
+                            <div
+                              className="euiFormControlLayout__childrenWrapper"
+                            >
+                              <EuiValidatableControl>
+                                <select
+                                  className="euiSelect euiSelect--compressed"
+                                  data-test-subj="dashboardAlertStateFilter"
+                                  onChange={[Function]}
+                                  onMouseUp={[Function]}
                                   value="ALL"
                                 >
-                                  All alerts
-                                </option>
-                                <option
-                                  key="1"
-                                  value="ACTIVE"
-                                >
-                                  Active
-                                </option>
-                                <option
-                                  key="2"
-                                  value="ACKNOWLEDGED"
-                                >
-                                  Acknowledged
-                                </option>
-                                <option
-                                  key="3"
-                                  value="COMPLETED"
-                                >
-                                  Completed
-                                </option>
-                                <option
-                                  key="4"
-                                  value="ERROR"
-                                >
-                                  Error
-                                </option>
-                                <option
-                                  key="5"
-                                  value="DELETED"
-                                >
-                                  Deleted
-                                </option>
-                              </select>
-                            </EuiValidatableControl>
-                            <EuiFormControlLayoutIcons
-                              compressed={false}
-                              icon={
-                                Object {
-                                  "side": "right",
-                                  "type": "arrowDown",
-                                }
-                              }
-                              isLoading={false}
-                            >
-                              <div
-                                className="euiFormControlLayoutIcons euiFormControlLayoutIcons--right"
-                              >
-                                <EuiFormControlLayoutCustomIcon
-                                  size="m"
-                                  type="arrowDown"
-                                >
-                                  <span
-                                    className="euiFormControlLayoutCustomIcon"
+                                  <option
+                                    key="0"
+                                    value="ALL"
                                   >
-                                    <EuiIcon
-                                      aria-hidden="true"
-                                      className="euiFormControlLayoutCustomIcon__icon"
-                                      size="m"
-                                      type="arrowDown"
+                                    All alerts
+                                  </option>
+                                  <option
+                                    key="1"
+                                    value="ACTIVE"
+                                  >
+                                    Active
+                                  </option>
+                                  <option
+                                    key="2"
+                                    value="ACKNOWLEDGED"
+                                  >
+                                    Acknowledged
+                                  </option>
+                                  <option
+                                    key="3"
+                                    value="COMPLETED"
+                                  >
+                                    Completed
+                                  </option>
+                                  <option
+                                    key="4"
+                                    value="ERROR"
+                                  >
+                                    Error
+                                  </option>
+                                  <option
+                                    key="5"
+                                    value="DELETED"
+                                  >
+                                    Deleted
+                                  </option>
+                                </select>
+                              </EuiValidatableControl>
+                              <EuiFormControlLayoutIcons
+                                compressed={true}
+                                icon={
+                                  Object {
+                                    "side": "right",
+                                    "type": "arrowDown",
+                                  }
+                                }
+                                isLoading={false}
+                              >
+                                <div
+                                  className="euiFormControlLayoutIcons euiFormControlLayoutIcons--right"
+                                >
+                                  <EuiFormControlLayoutCustomIcon
+                                    size="s"
+                                    type="arrowDown"
+                                  >
+                                    <span
+                                      className="euiFormControlLayoutCustomIcon"
                                     >
-                                      <div>
-                                        EuiIconMock
-                                      </div>
-                                    </EuiIcon>
-                                  </span>
-                                </EuiFormControlLayoutCustomIcon>
-                              </div>
-                            </EuiFormControlLayoutIcons>
+                                      <EuiIcon
+                                        aria-hidden="true"
+                                        className="euiFormControlLayoutCustomIcon__icon"
+                                        size="s"
+                                        type="arrowDown"
+                                      >
+                                        <div>
+                                          EuiIconMock
+                                        </div>
+                                      </EuiIcon>
+                                    </span>
+                                  </EuiFormControlLayoutCustomIcon>
+                                </div>
+                              </EuiFormControlLayoutIcons>
+                            </div>
                           </div>
-                        </div>
-                      </EuiFormControlLayout>
-                    </EuiSelect>
+                        </EuiFormControlLayout>
+                      </EuiSelect>
+                    </EuiCompressedSelect>
                   </div>
                 </EuiFlexItem>
                 <EuiFlexItem
@@ -3413,12 +3559,12 @@ exports[`Dashboard renders with alert by triggers view 1`] = `
                                     <DashboardEmptyPrompt>
                                       <EuiEmptyPrompt
                                         actions={
-                                          <EuiButton
+                                          <EuiSmallButton
                                             fill={true}
-                                            href="alerting#/create-monitor"
+                                            href="#/create-monitor"
                                           >
                                             Create monitor
-                                          </EuiButton>
+                                          </EuiSmallButton>
                                         }
                                         body={
                                           <EuiText
@@ -3475,51 +3621,58 @@ exports[`Dashboard renders with alert by triggers view 1`] = `
                                               className="euiSpacer euiSpacer--l"
                                             />
                                           </EuiSpacer>
-                                          <EuiButton
+                                          <EuiSmallButton
                                             fill={true}
-                                            href="alerting#/create-monitor"
+                                            href="#/create-monitor"
                                           >
-                                            <EuiButtonDisplay
-                                              baseClassName="euiButton"
-                                              element="a"
+                                            <EuiButton
                                               fill={true}
-                                              href="alerting#/create-monitor"
-                                              isDisabled={false}
-                                              rel="noreferrer"
+                                              href="#/create-monitor"
+                                              size="s"
                                             >
-                                              <a
-                                                className="euiButton euiButton--primary euiButton--fill"
-                                                disabled={false}
-                                                href="alerting#/create-monitor"
+                                              <EuiButtonDisplay
+                                                baseClassName="euiButton"
+                                                element="a"
+                                                fill={true}
+                                                href="#/create-monitor"
+                                                isDisabled={false}
                                                 rel="noreferrer"
-                                                style={
-                                                  Object {
-                                                    "minWidth": undefined,
-                                                  }
-                                                }
+                                                size="s"
                                               >
-                                                <EuiButtonContent
-                                                  className="euiButton__content"
-                                                  iconSide="left"
-                                                  textProps={
+                                                <a
+                                                  className="euiButton euiButton--primary euiButton--small euiButton--fill"
+                                                  disabled={false}
+                                                  href="#/create-monitor"
+                                                  rel="noreferrer"
+                                                  style={
                                                     Object {
-                                                      "className": "euiButton__text",
+                                                      "minWidth": undefined,
                                                     }
                                                   }
                                                 >
-                                                  <span
-                                                    className="euiButtonContent euiButton__content"
+                                                  <EuiButtonContent
+                                                    className="euiButton__content"
+                                                    iconSide="left"
+                                                    textProps={
+                                                      Object {
+                                                        "className": "euiButton__text",
+                                                      }
+                                                    }
                                                   >
                                                     <span
-                                                      className="euiButton__text"
+                                                      className="euiButtonContent euiButton__content"
                                                     >
-                                                      Create monitor
+                                                      <span
+                                                        className="euiButton__text"
+                                                      >
+                                                        Create monitor
+                                                      </span>
                                                     </span>
-                                                  </span>
-                                                </EuiButtonContent>
-                                              </a>
-                                            </EuiButtonDisplay>
-                                          </EuiButton>
+                                                  </EuiButtonContent>
+                                                </a>
+                                              </EuiButtonDisplay>
+                                            </EuiButton>
+                                          </EuiSmallButton>
                                         </div>
                                       </EuiEmptyPrompt>
                                     </DashboardEmptyPrompt>
@@ -3596,18 +3749,23 @@ exports[`Dashboard renders with per alert view 1`] = `
   <ContentPanel
     actions={
       Array [
-        <EuiButton
+        <EuiSmallButton
           data-test-subj="acknowledgeAlertsButton"
           disabled={true}
           onClick={[Function]}
         >
           Acknowledge
-        </EuiButton>,
+        </EuiSmallButton>,
       ]
     }
     bodyStyles={
       Object {
         "padding": "initial",
+      }
+    }
+    panelOptions={
+      Object {
+        "hideTitleBorder": false,
       }
     }
     title="Alerts"
@@ -3683,54 +3841,62 @@ exports[`Dashboard renders with per alert view 1`] = `
                       <div
                         className="euiFlexItem"
                       >
-                        <EuiButton
+                        <EuiSmallButton
                           data-test-subj="acknowledgeAlertsButton"
                           disabled={true}
                           onClick={[Function]}
                         >
-                          <EuiButtonDisplay
-                            baseClassName="euiButton"
+                          <EuiButton
                             data-test-subj="acknowledgeAlertsButton"
                             disabled={true}
-                            element="button"
-                            isDisabled={true}
                             onClick={[Function]}
-                            type="button"
+                            size="s"
                           >
-                            <button
-                              className="euiButton euiButton--primary euiButton-isDisabled"
+                            <EuiButtonDisplay
+                              baseClassName="euiButton"
                               data-test-subj="acknowledgeAlertsButton"
                               disabled={true}
+                              element="button"
+                              isDisabled={true}
                               onClick={[Function]}
-                              style={
-                                Object {
-                                  "minWidth": undefined,
-                                }
-                              }
+                              size="s"
                               type="button"
                             >
-                              <EuiButtonContent
-                                className="euiButton__content"
-                                iconSide="left"
-                                textProps={
+                              <button
+                                className="euiButton euiButton--primary euiButton--small euiButton-isDisabled"
+                                data-test-subj="acknowledgeAlertsButton"
+                                disabled={true}
+                                onClick={[Function]}
+                                style={
                                   Object {
-                                    "className": "euiButton__text",
+                                    "minWidth": undefined,
                                   }
                                 }
+                                type="button"
                               >
-                                <span
-                                  className="euiButtonContent euiButton__content"
+                                <EuiButtonContent
+                                  className="euiButton__content"
+                                  iconSide="left"
+                                  textProps={
+                                    Object {
+                                      "className": "euiButton__text",
+                                    }
+                                  }
                                 >
                                   <span
-                                    className="euiButton__text"
+                                    className="euiButtonContent euiButton__content"
                                   >
-                                    Acknowledge
+                                    <span
+                                      className="euiButton__text"
+                                    >
+                                      Acknowledge
+                                    </span>
                                   </span>
-                                </span>
-                              </EuiButtonContent>
-                            </button>
-                          </EuiButtonDisplay>
-                        </EuiButton>
+                                </EuiButtonContent>
+                              </button>
+                            </EuiButtonDisplay>
+                          </EuiButton>
+                        </EuiSmallButton>
                       </div>
                     </EuiFlexItem>
                   </div>
@@ -3794,6 +3960,7 @@ exports[`Dashboard renders with per alert view 1`] = `
             state="ALL"
           >
             <EuiFlexGroup
+              gutterSize="s"
               style={
                 Object {
                   "padding": "0px 5px",
@@ -3801,7 +3968,7 @@ exports[`Dashboard renders with per alert view 1`] = `
               }
             >
               <div
-                className="euiFlexGroup euiFlexGroup--gutterLarge euiFlexGroup--directionRow euiFlexGroup--responsive"
+                className="euiFlexGroup euiFlexGroup--gutterSmall euiFlexGroup--directionRow euiFlexGroup--responsive"
                 style={
                   Object {
                     "padding": "0px 5px",
@@ -3812,8 +3979,8 @@ exports[`Dashboard renders with per alert view 1`] = `
                   <div
                     className="euiFlexItem"
                   >
-                    <EuiFieldSearch
-                      compressed={false}
+                    <EuiCompressedFieldSearch
+                      compressed={true}
                       fullWidth={true}
                       incremental={false}
                       isClearable={true}
@@ -3823,20 +3990,20 @@ exports[`Dashboard renders with per alert view 1`] = `
                       value=""
                     >
                       <EuiFormControlLayout
-                        compressed={false}
+                        compressed={true}
                         fullWidth={true}
                         icon="search"
                         isLoading={false}
                       >
                         <div
-                          className="euiFormControlLayout euiFormControlLayout--fullWidth"
+                          className="euiFormControlLayout euiFormControlLayout--fullWidth euiFormControlLayout--compressed"
                         >
                           <div
                             className="euiFormControlLayout__childrenWrapper"
                           >
                             <EuiValidatableControl>
                               <input
-                                className="euiFieldSearch euiFieldSearch--fullWidth"
+                                className="euiFieldSearch euiFieldSearch--fullWidth euiFieldSearch--compressed"
                                 onChange={[Function]}
                                 onKeyUp={[Function]}
                                 placeholder="Search"
@@ -3845,7 +4012,7 @@ exports[`Dashboard renders with per alert view 1`] = `
                               />
                             </EuiValidatableControl>
                             <EuiFormControlLayoutIcons
-                              compressed={false}
+                              compressed={true}
                               icon="search"
                               isLoading={false}
                             >
@@ -3853,7 +4020,7 @@ exports[`Dashboard renders with per alert view 1`] = `
                                 className="euiFormControlLayoutIcons"
                               >
                                 <EuiFormControlLayoutCustomIcon
-                                  size="m"
+                                  size="s"
                                   type="search"
                                 >
                                   <span
@@ -3862,7 +4029,7 @@ exports[`Dashboard renders with per alert view 1`] = `
                                     <EuiIcon
                                       aria-hidden="true"
                                       className="euiFormControlLayoutCustomIcon__icon"
-                                      size="m"
+                                      size="s"
                                       type="search"
                                     >
                                       <div>
@@ -3876,7 +4043,7 @@ exports[`Dashboard renders with per alert view 1`] = `
                           </div>
                         </div>
                       </EuiFormControlLayout>
-                    </EuiFieldSearch>
+                    </EuiCompressedFieldSearch>
                   </div>
                 </EuiFlexItem>
                 <EuiFlexItem
@@ -3885,7 +4052,7 @@ exports[`Dashboard renders with per alert view 1`] = `
                   <div
                     className="euiFlexItem euiFlexItem--flexGrowZero"
                   >
-                    <EuiSelect
+                    <EuiCompressedSelect
                       onChange={[Function]}
                       options={
                         Array [
@@ -3917,106 +4084,140 @@ exports[`Dashboard renders with per alert view 1`] = `
                       }
                       value="ALL"
                     >
-                      <EuiFormControlLayout
-                        compressed={false}
-                        fullWidth={false}
-                        icon={
-                          Object {
-                            "side": "right",
-                            "type": "arrowDown",
-                          }
+                      <EuiSelect
+                        compressed={true}
+                        onChange={[Function]}
+                        options={
+                          Array [
+                            Object {
+                              "text": "All severity levels",
+                              "value": "ALL",
+                            },
+                            Object {
+                              "text": "1 (Highest)",
+                              "value": "1",
+                            },
+                            Object {
+                              "text": "2 (High)",
+                              "value": "2",
+                            },
+                            Object {
+                              "text": "3 (Medium)",
+                              "value": "3",
+                            },
+                            Object {
+                              "text": "4 (Low)",
+                              "value": "4",
+                            },
+                            Object {
+                              "text": "5 (Lowest)",
+                              "value": "5",
+                            },
+                          ]
                         }
-                        isLoading={false}
+                        value="ALL"
                       >
-                        <div
-                          className="euiFormControlLayout"
+                        <EuiFormControlLayout
+                          compressed={true}
+                          fullWidth={false}
+                          icon={
+                            Object {
+                              "side": "right",
+                              "type": "arrowDown",
+                            }
+                          }
+                          isLoading={false}
                         >
                           <div
-                            className="euiFormControlLayout__childrenWrapper"
+                            className="euiFormControlLayout euiFormControlLayout--compressed"
                           >
-                            <EuiValidatableControl>
-                              <select
-                                className="euiSelect"
-                                onChange={[Function]}
-                                onMouseUp={[Function]}
-                                value="ALL"
-                              >
-                                <option
-                                  key="0"
+                            <div
+                              className="euiFormControlLayout__childrenWrapper"
+                            >
+                              <EuiValidatableControl>
+                                <select
+                                  className="euiSelect euiSelect--compressed"
+                                  onChange={[Function]}
+                                  onMouseUp={[Function]}
                                   value="ALL"
                                 >
-                                  All severity levels
-                                </option>
-                                <option
-                                  key="1"
-                                  value="1"
-                                >
-                                  1 (Highest)
-                                </option>
-                                <option
-                                  key="2"
-                                  value="2"
-                                >
-                                  2 (High)
-                                </option>
-                                <option
-                                  key="3"
-                                  value="3"
-                                >
-                                  3 (Medium)
-                                </option>
-                                <option
-                                  key="4"
-                                  value="4"
-                                >
-                                  4 (Low)
-                                </option>
-                                <option
-                                  key="5"
-                                  value="5"
-                                >
-                                  5 (Lowest)
-                                </option>
-                              </select>
-                            </EuiValidatableControl>
-                            <EuiFormControlLayoutIcons
-                              compressed={false}
-                              icon={
-                                Object {
-                                  "side": "right",
-                                  "type": "arrowDown",
-                                }
-                              }
-                              isLoading={false}
-                            >
-                              <div
-                                className="euiFormControlLayoutIcons euiFormControlLayoutIcons--right"
-                              >
-                                <EuiFormControlLayoutCustomIcon
-                                  size="m"
-                                  type="arrowDown"
-                                >
-                                  <span
-                                    className="euiFormControlLayoutCustomIcon"
+                                  <option
+                                    key="0"
+                                    value="ALL"
                                   >
-                                    <EuiIcon
-                                      aria-hidden="true"
-                                      className="euiFormControlLayoutCustomIcon__icon"
-                                      size="m"
-                                      type="arrowDown"
+                                    All severity levels
+                                  </option>
+                                  <option
+                                    key="1"
+                                    value="1"
+                                  >
+                                    1 (Highest)
+                                  </option>
+                                  <option
+                                    key="2"
+                                    value="2"
+                                  >
+                                    2 (High)
+                                  </option>
+                                  <option
+                                    key="3"
+                                    value="3"
+                                  >
+                                    3 (Medium)
+                                  </option>
+                                  <option
+                                    key="4"
+                                    value="4"
+                                  >
+                                    4 (Low)
+                                  </option>
+                                  <option
+                                    key="5"
+                                    value="5"
+                                  >
+                                    5 (Lowest)
+                                  </option>
+                                </select>
+                              </EuiValidatableControl>
+                              <EuiFormControlLayoutIcons
+                                compressed={true}
+                                icon={
+                                  Object {
+                                    "side": "right",
+                                    "type": "arrowDown",
+                                  }
+                                }
+                                isLoading={false}
+                              >
+                                <div
+                                  className="euiFormControlLayoutIcons euiFormControlLayoutIcons--right"
+                                >
+                                  <EuiFormControlLayoutCustomIcon
+                                    size="s"
+                                    type="arrowDown"
+                                  >
+                                    <span
+                                      className="euiFormControlLayoutCustomIcon"
                                     >
-                                      <div>
-                                        EuiIconMock
-                                      </div>
-                                    </EuiIcon>
-                                  </span>
-                                </EuiFormControlLayoutCustomIcon>
-                              </div>
-                            </EuiFormControlLayoutIcons>
+                                      <EuiIcon
+                                        aria-hidden="true"
+                                        className="euiFormControlLayoutCustomIcon__icon"
+                                        size="s"
+                                        type="arrowDown"
+                                      >
+                                        <div>
+                                          EuiIconMock
+                                        </div>
+                                      </EuiIcon>
+                                    </span>
+                                  </EuiFormControlLayoutCustomIcon>
+                                </div>
+                              </EuiFormControlLayoutIcons>
+                            </div>
                           </div>
-                        </div>
-                      </EuiFormControlLayout>
-                    </EuiSelect>
+                        </EuiFormControlLayout>
+                      </EuiSelect>
+                    </EuiCompressedSelect>
                   </div>
                 </EuiFlexItem>
                 <EuiFlexItem
@@ -4025,7 +4226,7 @@ exports[`Dashboard renders with per alert view 1`] = `
                   <div
                     className="euiFlexItem euiFlexItem--flexGrowZero"
                   >
-                    <EuiSelect
+                    <EuiCompressedSelect
                       data-test-subj="dashboardAlertStateFilter"
                       onChange={[Function]}
                       options={
@@ -4058,107 +4259,142 @@ exports[`Dashboard renders with per alert view 1`] = `
                       }
                       value="ALL"
                     >
-                      <EuiFormControlLayout
-                        compressed={false}
-                        fullWidth={false}
-                        icon={
-                          Object {
-                            "side": "right",
-                            "type": "arrowDown",
-                          }
+                      <EuiSelect
+                        compressed={true}
+                        data-test-subj="dashboardAlertStateFilter"
+                        onChange={[Function]}
+                        options={
+                          Array [
+                            Object {
+                              "text": "All alerts",
+                              "value": "ALL",
+                            },
+                            Object {
+                              "text": "Active",
+                              "value": "ACTIVE",
+                            },
+                            Object {
+                              "text": "Acknowledged",
+                              "value": "ACKNOWLEDGED",
+                            },
+                            Object {
+                              "text": "Completed",
+                              "value": "COMPLETED",
+                            },
+                            Object {
+                              "text": "Error",
+                              "value": "ERROR",
+                            },
+                            Object {
+                              "text": "Deleted",
+                              "value": "DELETED",
+                            },
+                          ]
                         }
-                        isLoading={false}
+                        value="ALL"
                       >
-                        <div
-                          className="euiFormControlLayout"
+                        <EuiFormControlLayout
+                          compressed={true}
+                          fullWidth={false}
+                          icon={
+                            Object {
+                              "side": "right",
+                              "type": "arrowDown",
+                            }
+                          }
+                          isLoading={false}
                         >
                           <div
-                            className="euiFormControlLayout__childrenWrapper"
+                            className="euiFormControlLayout euiFormControlLayout--compressed"
                           >
-                            <EuiValidatableControl>
-                              <select
-                                className="euiSelect"
-                                data-test-subj="dashboardAlertStateFilter"
-                                onChange={[Function]}
-                                onMouseUp={[Function]}
-                                value="ALL"
-                              >
-                                <option
-                                  key="0"
+                            <div
+                              className="euiFormControlLayout__childrenWrapper"
+                            >
+                              <EuiValidatableControl>
+                                <select
+                                  className="euiSelect euiSelect--compressed"
+                                  data-test-subj="dashboardAlertStateFilter"
+                                  onChange={[Function]}
+                                  onMouseUp={[Function]}
                                   value="ALL"
                                 >
-                                  All alerts
-                                </option>
-                                <option
-                                  key="1"
-                                  value="ACTIVE"
-                                >
-                                  Active
-                                </option>
-                                <option
-                                  key="2"
-                                  value="ACKNOWLEDGED"
-                                >
-                                  Acknowledged
-                                </option>
-                                <option
-                                  key="3"
-                                  value="COMPLETED"
-                                >
-                                  Completed
-                                </option>
-                                <option
-                                  key="4"
-                                  value="ERROR"
-                                >
-                                  Error
-                                </option>
-                                <option
-                                  key="5"
-                                  value="DELETED"
-                                >
-                                  Deleted
-                                </option>
-                              </select>
-                            </EuiValidatableControl>
-                            <EuiFormControlLayoutIcons
-                              compressed={false}
-                              icon={
-                                Object {
-                                  "side": "right",
-                                  "type": "arrowDown",
-                                }
-                              }
-                              isLoading={false}
-                            >
-                              <div
-                                className="euiFormControlLayoutIcons euiFormControlLayoutIcons--right"
-                              >
-                                <EuiFormControlLayoutCustomIcon
-                                  size="m"
-                                  type="arrowDown"
-                                >
-                                  <span
-                                    className="euiFormControlLayoutCustomIcon"
+                                  <option
+                                    key="0"
+                                    value="ALL"
                                   >
-                                    <EuiIcon
-                                      aria-hidden="true"
-                                      className="euiFormControlLayoutCustomIcon__icon"
-                                      size="m"
-                                      type="arrowDown"
+                                    All alerts
+                                  </option>
+                                  <option
+                                    key="1"
+                                    value="ACTIVE"
+                                  >
+                                    Active
+                                  </option>
+                                  <option
+                                    key="2"
+                                    value="ACKNOWLEDGED"
+                                  >
+                                    Acknowledged
+                                  </option>
+                                  <option
+                                    key="3"
+                                    value="COMPLETED"
+                                  >
+                                    Completed
+                                  </option>
+                                  <option
+                                    key="4"
+                                    value="ERROR"
+                                  >
+                                    Error
+                                  </option>
+                                  <option
+                                    key="5"
+                                    value="DELETED"
+                                  >
+                                    Deleted
+                                  </option>
+                                </select>
+                              </EuiValidatableControl>
+                              <EuiFormControlLayoutIcons
+                                compressed={true}
+                                icon={
+                                  Object {
+                                    "side": "right",
+                                    "type": "arrowDown",
+                                  }
+                                }
+                                isLoading={false}
+                              >
+                                <div
+                                  className="euiFormControlLayoutIcons euiFormControlLayoutIcons--right"
+                                >
+                                  <EuiFormControlLayoutCustomIcon
+                                    size="s"
+                                    type="arrowDown"
+                                  >
+                                    <span
+                                      className="euiFormControlLayoutCustomIcon"
                                     >
-                                      <div>
-                                        EuiIconMock
-                                      </div>
-                                    </EuiIcon>
-                                  </span>
-                                </EuiFormControlLayoutCustomIcon>
-                              </div>
-                            </EuiFormControlLayoutIcons>
+                                      <EuiIcon
+                                        aria-hidden="true"
+                                        className="euiFormControlLayoutCustomIcon__icon"
+                                        size="s"
+                                        type="arrowDown"
+                                      >
+                                        <div>
+                                          EuiIconMock
+                                        </div>
+                                      </EuiIcon>
+                                    </span>
+                                  </EuiFormControlLayoutCustomIcon>
+                                </div>
+                              </EuiFormControlLayoutIcons>
+                            </div>
                           </div>
-                        </div>
-                      </EuiFormControlLayout>
-                    </EuiSelect>
+                        </EuiFormControlLayout>
+                      </EuiSelect>
+                    </EuiCompressedSelect>
                   </div>
                 </EuiFlexItem>
                 <EuiFlexItem
@@ -5095,12 +5331,12 @@ exports[`Dashboard renders with per alert view 1`] = `
                                     <DashboardEmptyPrompt>
                                       <EuiEmptyPrompt
                                         actions={
-                                          <EuiButton
+                                          <EuiSmallButton
                                             fill={true}
-                                            href="alerting#/create-monitor"
+                                            href="#/create-monitor"
                                           >
                                             Create monitor
-                                          </EuiButton>
+                                          </EuiSmallButton>
                                         }
                                         body={
                                           <EuiText
@@ -5157,51 +5393,58 @@ exports[`Dashboard renders with per alert view 1`] = `
                                               className="euiSpacer euiSpacer--l"
                                             />
                                           </EuiSpacer>
-                                          <EuiButton
+                                          <EuiSmallButton
                                             fill={true}
-                                            href="alerting#/create-monitor"
+                                            href="#/create-monitor"
                                           >
-                                            <EuiButtonDisplay
-                                              baseClassName="euiButton"
-                                              element="a"
+                                            <EuiButton
                                               fill={true}
-                                              href="alerting#/create-monitor"
-                                              isDisabled={false}
-                                              rel="noreferrer"
+                                              href="#/create-monitor"
+                                              size="s"
                                             >
-                                              <a
-                                                className="euiButton euiButton--primary euiButton--fill"
-                                                disabled={false}
-                                                href="alerting#/create-monitor"
+                                              <EuiButtonDisplay
+                                                baseClassName="euiButton"
+                                                element="a"
+                                                fill={true}
+                                                href="#/create-monitor"
+                                                isDisabled={false}
                                                 rel="noreferrer"
-                                                style={
-                                                  Object {
-                                                    "minWidth": undefined,
-                                                  }
-                                                }
+                                                size="s"
                                               >
-                                                <EuiButtonContent
-                                                  className="euiButton__content"
-                                                  iconSide="left"
-                                                  textProps={
+                                                <a
+                                                  className="euiButton euiButton--primary euiButton--small euiButton--fill"
+                                                  disabled={false}
+                                                  href="#/create-monitor"
+                                                  rel="noreferrer"
+                                                  style={
                                                     Object {
-                                                      "className": "euiButton__text",
+                                                      "minWidth": undefined,
                                                     }
                                                   }
                                                 >
-                                                  <span
-                                                    className="euiButtonContent euiButton__content"
+                                                  <EuiButtonContent
+                                                    className="euiButton__content"
+                                                    iconSide="left"
+                                                    textProps={
+                                                      Object {
+                                                        "className": "euiButton__text",
+                                                      }
+                                                    }
                                                   >
                                                     <span
-                                                      className="euiButton__text"
+                                                      className="euiButtonContent euiButton__content"
                                                     >
-                                                      Create monitor
+                                                      <span
+                                                        className="euiButton__text"
+                                                      >
+                                                        Create monitor
+                                                      </span>
                                                     </span>
-                                                  </span>
-                                                </EuiButtonContent>
-                                              </a>
-                                            </EuiButtonDisplay>
-                                          </EuiButton>
+                                                  </EuiButtonContent>
+                                                </a>
+                                              </EuiButtonDisplay>
+                                            </EuiButton>
+                                          </EuiSmallButton>
                                         </div>
                                       </EuiEmptyPrompt>
                                     </DashboardEmptyPrompt>

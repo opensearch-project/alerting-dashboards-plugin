@@ -8,11 +8,11 @@ import _ from 'lodash';
 import queryString from 'query-string';
 import {
   EuiBasicTable,
-  EuiButton,
+  EuiSmallButton,
   EuiHorizontalRule,
   EuiIcon,
   EuiToolTip,
-  EuiButtonIcon,
+  EuiSmallButtonIcon,
 } from '@elastic/eui';
 import ContentPanel from '../../../components/ContentPanel';
 import DashboardEmptyPrompt from '../components/DashboardEmptyPrompt';
@@ -44,6 +44,7 @@ import {
   appendCommentsAction,
   getIsCommentsEnabled,
 } from '../../utils/helpers';
+import { getUseUpdatedUx } from '../../../services';
 
 export default class Dashboard extends Component {
   constructor(props) {
@@ -130,6 +131,7 @@ export default class Dashboard extends Component {
 
   getAlerts = _.debounce(
     (from, size, search, sortField, sortDirection, severityLevel, alertState, monitorIds) => {
+      const dataSourceId = getDataSourceId();
       const params = {
         from,
         size,
@@ -140,13 +142,12 @@ export default class Dashboard extends Component {
         alertState,
         monitorIds,
         monitorType: this.props.monitorType,
+        dataSourceId,
       };
 
       const queryParamsString = queryString.stringify(params);
-      location.search;
       const { httpClient, history, notifications, perAlertView } = this.props;
       history.replace({ ...this.props.location, search: queryParamsString });
-      const dataSourceId = getDataSourceId();
       const extendedParams = {
         ...(dataSourceId !== undefined && { dataSourceId }), // Only include dataSourceId if it exists
         ...params, // Other parameters
@@ -411,7 +412,7 @@ export default class Dashboard extends Component {
               {
                 render: (alert) => (
                   <EuiToolTip content={'View details'}>
-                    <EuiButtonIcon
+                    <EuiSmallButtonIcon
                       aria-label={'View details'}
                       data-test-subj={`view-details-icon`}
                       iconType={'inspect'}
@@ -476,19 +477,19 @@ export default class Dashboard extends Component {
     const actions = () => {
       // The acknowledge button is disabled when viewing by per alerts, and no item selected or per trigger view and item selected is not 1.
       const actions = [
-        <EuiButton
+        <EuiSmallButton
           onClick={perAlertView ? this.acknowledgeAlert : this.openModal}
           disabled={perAlertView ? !selectedItems.length : selectedItems.length !== 1}
           data-test-subj={'acknowledgeAlertsButton'}
         >
           Acknowledge
-        </EuiButton>,
+        </EuiSmallButton>,
       ];
 
       if (!perAlertView) {
         const alert = selectedItems[0];
         actions.unshift(
-          <EuiButton
+          <EuiSmallButton
             onClick={() => {
               this.openFlyout({
                 ...alert,
@@ -506,18 +507,18 @@ export default class Dashboard extends Component {
             disabled={selectedItems.length !== 1}
           >
             View alert details
-          </EuiButton>
+          </EuiSmallButton>
         );
       }
 
       if (detectorIds.length) {
         actions.unshift(
-          <EuiButton
+          <EuiSmallButton
             href={`${OPENSEARCH_DASHBOARDS_AD_PLUGIN}#/detectors/${detectorIds[0]}`}
             target="_blank"
           >
             View detector <EuiIcon type="popout" />
-          </EuiButton>
+          </EuiSmallButton>
         );
       }
       return actions;
@@ -527,6 +528,8 @@ export default class Dashboard extends Component {
       if (perAlertView) return isBucketMonitor ? item.id : `${item.id}-${item.version}`;
       return `${item.triggerID}-${item.version}`;
     };
+
+    const useUpdatedUx = !perAlertView && getUseUpdatedUx();
 
     return (
       <>
@@ -538,10 +541,11 @@ export default class Dashboard extends Component {
           />
         )}
         <ContentPanel
-          title={perAlertView ? 'Alerts' : 'Alerts by triggers'}
+          title={perAlertView ? 'Alerts' : useUpdatedUx ? undefined : 'Alerts by triggers'}
           titleSize={'s'}
           bodyStyles={{ padding: 'initial' }}
-          actions={actions()}
+          actions={useUpdatedUx ? undefined : actions()}
+          panelOptions={{ hideTitleBorder: useUpdatedUx }}
         >
           <DashboardControls
             activePage={page}
@@ -555,6 +559,7 @@ export default class Dashboard extends Component {
             onPageChange={this.onPageClick}
             isAlertsFlyout={isAlertsFlyout}
             monitorType={monitorType}
+            alertActions={useUpdatedUx ? actions() : undefined}
           />
 
           <EuiHorizontalRule margin="xs" />

@@ -5,7 +5,7 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import { EuiCheckbox } from '@elastic/eui';
+import { EuiCompressedCheckbox } from '@elastic/eui';
 
 import FormikInputWrapper from '../FormikInputWrapper';
 import FormikFormRow from '../FormikFormRow';
@@ -33,7 +33,7 @@ const FormikCheckbox = ({
 );
 
 const FieldCheckbox = ({ name, field: { value, ...rest }, inputProps }) => (
-  <EuiCheckbox name={name} id={name} checked={value} {...inputProps} {...rest} />
+  <EuiCompressedCheckbox name={name} id={name} checked={value} {...inputProps} {...rest} />
 );
 
 FormikCheckbox.propTypes = {

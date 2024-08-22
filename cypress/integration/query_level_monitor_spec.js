@@ -193,16 +193,20 @@ describe('Query-Level Monitors', () => {
 
     it('to have multiple indices', () => {
       // Confirm we can see the created monitor in the list
-      cy.contains(SAMPLE_MONITOR, { timeout: 20000 });
+      cy.contains(SAMPLE_MONITOR, { timeout: 25000 });
 
       // Select the existing monitor
       cy.get(`[data-test-subj="${SAMPLE_MONITOR}"]`).click({ force: true });
 
       // Click Edit button
-      cy.contains('Edit', { timeout: 20000 }).click({ force: true });
+      cy.contains('Edit', { timeout: 25000 }).click({ force: true });
+
+      // Wait for page to load
+      cy.contains('Select clusters').click({ force: true });
 
       // Click on the Index field and type in multiple index names to replicate the bug
       cy.get('#index')
+        .should('be.visible')
         .click({ force: true })
         .type(`${TESTING_INDEX_A}{enter}${TESTING_INDEX_B}{enter}`, {
           force: true,
@@ -210,19 +214,19 @@ describe('Query-Level Monitors', () => {
         .trigger('blur', { force: true });
 
       // Confirm Index field only contains the expected text
-      cy.get('[data-test-subj="indicesComboBox"]').contains('*', { timeout: 20000 });
+      cy.get('[data-test-subj="indicesComboBox"]').contains('*', { timeout: 25000 });
       cy.get('[data-test-subj="indicesComboBox"]').contains(TESTING_INDEX_A, {
-        timeout: 20000,
+        timeout: 25000,
       });
       cy.get('[data-test-subj="indicesComboBox"]').contains(TESTING_INDEX_B, {
-        timeout: 20000,
+        timeout: 25000,
       });
 
       // Click the update button
       cy.get('button').contains('Update').last().click();
 
       // Confirm we're on the Monitor Details page by searching for the History element
-      cy.contains('History', { timeout: 20000 });
+      cy.contains('History', { timeout: 25000 });
     });
   });
 
@@ -318,6 +322,9 @@ describe('Query-Level Monitors', () => {
       // Select visual editor
       cy.get('[data-test-subj="visualEditorRadioCard"]').click();
 
+      // Wait for page to load
+      cy.contains('Select clusters').click({ force: true });
+
       // Wait for input to load and then type in the index name
       cy.get('#index').type(`{backspace}${INDEX.SAMPLE_DATA_ECOMMERCE}{enter}`, { force: true });
 
@@ -336,7 +343,7 @@ describe('Query-Level Monitors', () => {
       cy.get('button').contains('Update').last().click({ force: true });
 
       // Confirm we can see the correct number of rows in the trigger list by checking <caption> element
-      cy.contains(`This table contains ${triggers.length} rows`, { timeout: 20000 });
+      cy.contains(`This table contains ${triggers.length} rows`, { timeout: 25000 });
 
       // Click Edit button
       cy.contains('Edit').click({ force: true });

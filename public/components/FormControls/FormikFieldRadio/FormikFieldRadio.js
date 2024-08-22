@@ -5,7 +5,7 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import { EuiRadio } from '@elastic/eui';
+import { EuiCompressedRadio } from '@elastic/eui';
 
 import FormikInputWrapper from '../FormikInputWrapper';
 import FormikFormRow from '../FormikFormRow';
@@ -33,7 +33,7 @@ const FormikFieldRadio = ({
 );
 
 const FieldRadio = ({ name, form, field, inputProps: { onChange, ...rest } }) => (
-  <EuiRadio
+  <EuiCompressedRadio
     {...field}
     {...rest}
     onChange={(e) =>

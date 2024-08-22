@@ -7,6 +7,11 @@ import React from 'react';
 import { render } from 'enzyme';
 
 import DashboardEmptyPrompt from './DashboardEmptyPrompt';
+import { setupCoreStart } from '../../../../../test/utils/helpers';
+
+beforeAll(() => {
+  setupCoreStart();
+});
 
 describe('DashboardEmptyPrompt', () => {
   test('renders', () => {

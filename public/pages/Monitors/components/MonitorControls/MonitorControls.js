@@ -4,7 +4,13 @@
  */
 
 import React from 'react';
-import { EuiFieldSearch, EuiFlexGroup, EuiFlexItem, EuiPagination, EuiSelect } from '@elastic/eui';
+import {
+  EuiCompressedFieldSearch,
+  EuiFlexGroup,
+  EuiFlexItem,
+  EuiPagination,
+  EuiCompressedSelect,
+} from '@elastic/eui';
 
 const MONITOR_STATES = {
   ALL: 'all',
@@ -26,10 +32,11 @@ const MonitorControls = ({
   onSearchChange,
   onStateChange,
   onPageClick,
+  monitorActions = null,
 }) => (
-  <EuiFlexGroup style={{ padding: '0px 5px' }}>
+  <EuiFlexGroup style={{ padding: '0px 5px' }} gutterSize="s">
     <EuiFlexItem>
-      <EuiFieldSearch
+      <EuiCompressedFieldSearch
         fullWidth={true}
         value={search}
         placeholder="Search"
@@ -37,8 +44,9 @@ const MonitorControls = ({
       />
     </EuiFlexItem>
     <EuiFlexItem grow={false}>
-      <EuiSelect options={states} value={state} onChange={onStateChange} />
+      <EuiCompressedSelect options={states} value={state} onChange={onStateChange} />
     </EuiFlexItem>
+    {monitorActions && <EuiFlexItem grow={false}>{monitorActions}</EuiFlexItem>}
     <EuiFlexItem grow={false} style={{ justifyContent: 'center' }}>
       <EuiPagination pageCount={pageCount} activePage={activePage} onPageClick={onPageClick} />
     </EuiFlexItem>
