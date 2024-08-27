@@ -209,12 +209,17 @@ export const alertColumns = (
         }
 
         // 3. build the context
-        return `
-        Here is the detail information about alert ${alert.trigger_name}
-        ### Monitor definition\n ${monitorDefinitionStr}\n
-        ### Active Alert\n ${JSON.stringify(alert)}\n
-        ### Data triggers this alert\n ${alertTriggeredByData}\n
-        ### Alert query DSL ${dsl} \n`;
+        return {
+          context: `
+            Here is the detail information about alert ${alert.trigger_name}
+            ### Monitor definition\n ${monitorDefinitionStr}\n
+            ### Active Alert\n ${JSON.stringify(alert)}\n
+            ### Data triggers this alert\n ${alertTriggeredByData}\n
+            ### Alert query DSL ${dsl} \n`,
+          additionalInfo: {
+            monitorType: monitorResp.resp.monitor_type,
+          },
+        };
       };
 
       if (getAssistantDashboards().nextEnabled()) {
