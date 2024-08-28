@@ -222,13 +222,14 @@ export const alertColumns = (
         };
       };
 
-      if (getAssistantDashboards().nextEnabled()) {
+      const assistantFeatureStatus = getAssistantDashboards().getFeatureStatus();
+      if (assistantFeatureStatus.alertInsight) {
         getAssistantDashboards().registerIncontextInsight([
           {
             key: alertId,
             type: 'generate',
             suggestions: [`Please summarize this alert, do not use any tool.`],
-            contextProvider: contextProvider,
+            contextProvider,
           },
         ]);
         return getAssistantDashboards().renderIncontextInsight({ children: component });

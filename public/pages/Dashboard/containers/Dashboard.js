@@ -222,7 +222,7 @@ export default class Dashboard extends Component {
 
     if (!selectedItems.length) return;
 
-    const selectedAlerts = perAlertView ? selectedItems : _.get(selectedItems, '0.alerts', []);
+    let selectedAlerts = perAlertView ? selectedItems : _.get(selectedItems, '0.alerts', []);
     await this.acknowledgeAlerts(selectedAlerts);
 
     this.setState({ selectedItems: [] });
@@ -374,7 +374,7 @@ export default class Dashboard extends Component {
       notifications,
       isAlertsFlyout = false,
     } = this.props;
-    const totalItems = perAlertView ? totalAlerts : totalTriggers;
+    let totalItems = perAlertView ? totalAlerts : totalTriggers;
     const isBucketMonitor = monitorType === MONITOR_TYPE.BUCKET_LEVEL;
 
     let columns;
@@ -467,7 +467,7 @@ export default class Dashboard extends Component {
       onSelectionChange: this.onSelectionChange,
       selectable: perAlertView
         ? (item) => item.state === ALERT_STATE.ACTIVE
-        : (item) => item.ACTIVE >= 0,
+        : (item) => item.ACTIVE > 0,
       selectableMessage: perAlertView
         ? (selectable) => (selectable ? undefined : 'Only active alerts can be acknowledged.')
         : (selectable) =>

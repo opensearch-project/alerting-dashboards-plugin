@@ -154,7 +154,7 @@ export class AlertingPlugin implements Plugin<void, AlertingStart, AlertingSetup
       );
     }
 
-    setAssistantDashboards(assistantDashboards || { chatEnabled: () => false, nextEnabled: () => false });
+    setAssistantDashboards(assistantDashboards || { getFeatureStatus: () => ({ chat: false, alertInsight: false }) });
 
     setUISettings(core.uiSettings);
 

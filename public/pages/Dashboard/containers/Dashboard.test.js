@@ -63,7 +63,7 @@ beforeAll(() => {
 });
 
 describe('Dashboard', () => {
-  setAssistantDashboards({ chatEnabled: () => false, nextEnabled: () => false });
+  setAssistantDashboards({ getFeatureStatus: () => ({ chat: false, alertInsight: false }) });
 
   beforeEach(() => {
     jest.clearAllMocks();
