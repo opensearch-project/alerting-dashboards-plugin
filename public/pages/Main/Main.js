@@ -32,7 +32,6 @@ class Main extends Component {
     flyout: null,
     selectedDataSourceId: undefined,
     dataSourceLoading: this.props.dataSourceEnabled,
-    dataSourceLabel: ""
   }
   async componentDidMount() {
     if (this.context) {
