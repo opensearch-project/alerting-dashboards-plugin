@@ -24,6 +24,7 @@ import { MultiDataSourceContext } from '../../../public/utils/MultiDataSourceCon
 import { parseQueryStringAndGetDataSource } from '../utils/helpers';
 import * as pluginManifest from '../../../opensearch_dashboards.json';
 import semver from 'semver';
+import { dataSourceObservable } from '../../pages/utils/constants';
 
 class Main extends Component {
   static contextType = CoreContext;
@@ -31,7 +32,8 @@ class Main extends Component {
     flyout: null,
     selectedDataSourceId: undefined,
     dataSourceLoading: this.props.dataSourceEnabled,
-  };
+    dataSourceLabel: ""
+  }
   async componentDidMount() {
     if (this.context) {
       this.updateBreadcrumbs();
@@ -89,6 +91,7 @@ class Main extends Component {
 
   handleDataSourceChange = ([dataSource]) => {
     const dataSourceId = dataSource?.id;
+    const dataSourceLabel = dataSource?.label
     if (this.props.dataSourceEnabled && dataSourceId === undefined) {
       getNotifications().toasts.addDanger('Unable to set data source.');
     } else if (this.state.selectedDataSourceId != dataSourceId) {
@@ -97,6 +100,7 @@ class Main extends Component {
       });
       setDataSource({ dataSourceId });
     }
+    dataSourceObservable.next({ id: dataSourceId, label: dataSourceLabel });
     if (this.state.dataSourceLoading) {
       this.setState({
         dataSourceLoading: false,
