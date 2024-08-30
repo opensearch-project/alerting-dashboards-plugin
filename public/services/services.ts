@@ -12,6 +12,7 @@ import { SavedObjectLoaderAugmentVis } from '../../../../src/plugins/vis_augment
 import { DataPublicPluginStart } from '../../../../src/plugins/data/public';
 import { EmbeddableStart } from '../../../../src/plugins/embeddable/public';
 import { NavigationPublicPluginStart } from '../../../../src/plugins/navigation/public';
+import { ContentManagementPluginStart } from '../../../../src/plugins/content_management/public';
 
 const ServicesContext = createContext<BrowserServices | null>(null);
 
@@ -65,3 +66,5 @@ export const [getApplication, setApplication] = createGetterSetter<CoreStart['ap
 export const getUseUpdatedUx = () => {
   return getUISettings().get('home:useNewHomePage', false);
 };
+
+export const [getContentManagementStart, setContentManagementStart] = createGetterSetter<ContentManagementPluginStart>('contentManagementStart');

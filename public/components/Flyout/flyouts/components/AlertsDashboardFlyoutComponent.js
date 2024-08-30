@@ -46,7 +46,6 @@ import { queryColumns } from '../../../../pages/Dashboard/utils/tableUtils';
 import { DEFAULT_PAGE_SIZE_OPTIONS } from '../../../../pages/Monitors/containers/Monitors/utils/constants';
 import queryString from 'query-string';
 import { MAX_ALERT_COUNT } from '../../../../pages/Dashboard/utils/constants';
-import { SEVERITY_OPTIONS } from '../../../../pages/CreateTrigger/utils/constants';
 import {
   getAlertsFindingColumn,
   TABLE_TAB_IDS,
@@ -62,6 +61,7 @@ import {
   getDataSourceId,
   getIsCommentsEnabled,
 } from '../../../../pages/utils/helpers';
+import { getSeverityText } from '../../../../utils/helpers';
 
 export const DEFAULT_NUM_FLYOUT_ROWS = 10;
 
@@ -170,10 +170,6 @@ export default class AlertsDashboardFlyoutComponent extends Component {
     this.setState({
       localClusterName: await getLocalClusterName(this.props.httpClient),
     });
-  };
-
-  getSeverityText = (severity) => {
-    return _.get(_.find(SEVERITY_OPTIONS, { value: severity }), 'text');
   };
 
   getBucketLevelGraphFilter = (trigger) => {
@@ -601,7 +597,7 @@ export default class AlertsDashboardFlyoutComponent extends Component {
           <EuiFlexItem>
             <EuiText size="s" data-test-subj={`alertsDashboardFlyout_severity_${trigger_name}`}>
               <strong>Severity</strong>
-              <p>{this.getSeverityText(severity) || severity || DEFAULT_EMPTY_DATA}</p>
+              <p>{getSeverityText(severity) || severity || DEFAULT_EMPTY_DATA}</p>
             </EuiText>
           </EuiFlexItem>
         </EuiFlexGroup>
