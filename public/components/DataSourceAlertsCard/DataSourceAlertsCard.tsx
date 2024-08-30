@@ -88,12 +88,19 @@ export const DataSourceAlertsCard: React.FC<DataSourceAlertsCardProps> =  ({ get
     )
   }, []);
 
+  const alertsListItems = alerts.map((alert) => {
+    return {
+      title: createAlertDetailsHeader(alert),
+      description: createAlertDetailsDescription(alert)
+    }
+  });
+
   return (
     <EuiPanel hasBorder={false} hasShadow={false}>
       <EuiFlexGroup style={{ height: '100%' }} direction="column" justifyContent="spaceBetween" alignItems="flexStart" gutterSize="xs">
-        <EuiFlexItem grow={false} style={{ width: '100%' }}>
-          <EuiFlexGroup direction="column">
-            <EuiFlexItem>
+        <EuiFlexItem grow={false} style={{ width: '100%', height: '90%' }}>
+          <EuiFlexGroup direction="column" style={{ height: '100%' }}>
+            <EuiFlexItem grow={false}>
               <EuiFlexGroup gutterSize="s" justifyContent="spaceBetween">
                 <EuiFlexItem grow={false}>
                   <EuiTitle size="s">
@@ -117,17 +124,12 @@ export const DataSourceAlertsCard: React.FC<DataSourceAlertsCardProps> =  ({ get
                 </EuiFlexItem>
               </EuiFlexGroup>
             </EuiFlexItem>
-            <EuiFlexItem>
+            <EuiFlexItem style={{ overflow: 'scroll' }}>
               {loading ? (
                 <EuiLoadingContent />
               ) : (
                 <EuiDescriptionList
-                  listItems={alerts.map((alert, idx) => {
-                    return {
-                      title: createAlertDetailsHeader(alert),
-                      description: createAlertDetailsDescription(alert)
-                    }
-                  })}
+                  listItems={alertsListItems}
                 />
               )}
             </EuiFlexItem>

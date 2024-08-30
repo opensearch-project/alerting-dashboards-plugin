@@ -241,26 +241,31 @@ exports[`DefineCompositeLevelTrigger renders 1`] = `
                     name="triggerDefinitions[undefined].severity"
                   >
                     <option
+                      color="[object Object]"
                       value="1"
                     >
                       1 (Highest)
                     </option>
                     <option
+                      color="[object Object]"
                       value="2"
                     >
                       2 (High)
                     </option>
                     <option
+                      color="[object Object]"
                       value="3"
                     >
                       3 (Medium)
                     </option>
                     <option
+                      color="[object Object]"
                       value="4"
                     >
                       4 (Low)
                     </option>
                     <option
+                      color="[object Object]"
                       value="5"
                     >
                       5 (Lowest)
