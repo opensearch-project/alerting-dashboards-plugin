@@ -9,9 +9,10 @@ import { EuiLink, EuiToolTip } from '@elastic/eui';
 import moment from 'moment';
 import { ALERT_STATE, DEFAULT_EMPTY_DATA } from '../../../utils/constants';
 
-export const renderTime = (time) => {
+export const renderTime = (time, options = { showFromNow: false }) => {
   const momentTime = moment(time);
-  if (time && momentTime.isValid()) return momentTime.format('MM/DD/YY h:mm a');
+  if (time && momentTime.isValid())
+    return options.showFromNow ? momentTime.fromNow() : momentTime.format('MM/DD/YY h:mm a');
   return DEFAULT_EMPTY_DATA;
 };
 
