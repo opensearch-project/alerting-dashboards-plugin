@@ -113,9 +113,34 @@ export const PLUGIN_AUGMENTATION_MAX_OBJECTS_SETTING =
 const paletteColors = euiPaletteForStatus(5);
 
 export const SEVERITY_OPTIONS = [
-  { value: '1', text: '1 (Highest)', color: { background: paletteColors[4], text: 'white' } },
-  { value: '2', text: '2 (High)', color: { background: paletteColors[3], text: 'white' } },
-  { value: '3', text: '3 (Medium)', color: { background: paletteColors[2], text: 'black' } },
-  { value: '4', text: '4 (Low)', color: { background: paletteColors[1], text: 'white' } },
-  { value: '5', text: '5 (Lowest)', color: { background: paletteColors[0], text: 'white' } },
+  {
+    value: '1',
+    text: '1 (Highest)',
+    badgeText: 'Highest',
+    color: { background: paletteColors[4], text: 'white' },
+  },
+  {
+    value: '2',
+    text: '2 (High)',
+    badgeText: 'High',
+    color: { background: paletteColors[3], text: 'white' },
+  },
+  {
+    value: '3',
+    text: '3 (Medium)',
+    badgeText: 'Medium',
+    color: { background: paletteColors[2], text: 'black' },
+  },
+  {
+    value: '4',
+    text: '4 (Low)',
+    badgeText: 'Low',
+    color: { background: paletteColors[1], text: 'white' },
+  },
+  {
+    value: '5',
+    text: '5 (Lowest)',
+    badgeText: 'Lowest',
+    color: { background: paletteColors[0], text: 'white' },
+  },
 ];

@@ -7,7 +7,7 @@ import React, { useCallback, useEffect, useState } from "react";
 import { EuiBadge, EuiDescriptionList, EuiFlexGroup, EuiFlexItem, EuiHorizontalRule, EuiLink, EuiLoadingContent, EuiPanel, EuiSmallButtonEmpty, EuiText, EuiTitle } from "@elastic/eui";
 import { DataSourceManagementPluginSetup, DataSourceOption } from "../../../../../src/plugins/data_source_management/public";
 import { getApplication, getClient, getNotifications, getSavedObjectsClient } from "../../services";
-import { dataSourceFilterFn, getSeverityColor, getSeverityText, getTruncatedText } from "../../utils/helpers";
+import { dataSourceFilterFn, getSeverityColor, getSeverityBadgeText, getTruncatedText } from "../../utils/helpers";
 import { renderTime } from "../../pages/Dashboard/utils/tableUtils";
 import { ALERTS_NAV_ID } from "../../../utils/constants";
 import { DEFAULT_EMPTY_DATA } from "../../utils/constants";
@@ -58,7 +58,7 @@ export const DataSourceAlertsCard: React.FC<DataSourceAlertsCardProps> =  ({ get
       <EuiFlexGroup gutterSize="s" justifyContent="spaceBetween" alignItems="center">
         <EuiFlexItem grow={false}>
           <div>
-            <EuiBadge color={severityColor?.background} style={{ padding: '1px 4px', color: severityColor?.text }}>{getSeverityText(alert.severity)}</EuiBadge>
+            <EuiBadge color={severityColor?.background} style={{ padding: '1px 4px', color: severityColor?.text }}>{getSeverityBadgeText(alert.severity)}</EuiBadge>
             &nbsp;&nbsp;
             <span style={{ color: "#006BB4" }} className="eui-textTruncate">{getTruncatedText(triggerName)}</span>
           </div>
