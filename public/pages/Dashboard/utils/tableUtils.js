@@ -8,7 +8,7 @@ import _ from 'lodash';
 import { EuiLink, EuiToolTip } from '@elastic/eui';
 import moment from 'moment';
 import { ALERT_STATE, DEFAULT_EMPTY_DATA, MONITOR_TYPE } from '../../../utils/constants';
-import { getAssistantDashboards } from '../../../services';
+import { getApplication, getAssistantDashboards } from '../../../services';
 import { getDataSourceQueryObj } from '../../../pages/utils/helpers';
 
 export const renderTime = (time) => {
@@ -222,8 +222,10 @@ export const alertColumns = (
         };
       };
 
+      const isSubscriptionActive =
+        getApplication().capabilities?.assistant?.isSubscriptionActive === true;
       const assistantFeatureStatus = getAssistantDashboards().getFeatureStatus();
-      if (assistantFeatureStatus.alertInsight) {
+      if (assistantFeatureStatus.alertInsight && isSubscriptionActive) {
         getAssistantDashboards().registerIncontextInsight([
           {
             key: alertId,
