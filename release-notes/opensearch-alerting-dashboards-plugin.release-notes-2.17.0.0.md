@@ -8,6 +8,7 @@ Compatible with OpenSearch Dashboards 2.17.0
 ### Refactoring
 * support date_nanos type when select time field for creating monitor ([#954](https://github.com/opensearch-project/alerting-dashboards-plugin/pull/954))
 * Updated all pages with new header UI ([#1056](https://github.com/opensearch-project/alerting-dashboards-plugin/pull/1056))
+* Register alerts card with analytics workspace use case ([#1064](https://github.com/opensearch-project/alerting-dashboards-plugin/pull/1064))
 
 ### Bug fixes
 * Fixed cypress tests. ([#1027](https://github.com/opensearch-project/alerting-dashboards-plugin/pull/1027))
