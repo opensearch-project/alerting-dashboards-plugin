@@ -75,7 +75,7 @@ describe('CompositeLevelMonitor', () => {
         .type('{backspace}')
         .type('Composite trigger');
 
-      cy.intercept('api/alerting/workflows?*').as('createMonitorRequest');
+      cy.intercept('api/alerting/workflows*').as('createMonitorRequest');
       cy.intercept(`api/alerting/monitors?*`).as('getMonitorsRequest');
       cy.get('button').contains('Create').click({ force: true });
 

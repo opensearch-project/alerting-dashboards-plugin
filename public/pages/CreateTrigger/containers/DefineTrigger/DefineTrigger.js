@@ -22,7 +22,7 @@ import { isInvalid, hasError } from '../../../../utils/validate';
 import TriggerQuery from '../../components/TriggerQuery';
 import TriggerGraph from '../../components/TriggerGraph';
 import { validateTriggerName } from './utils/validation';
-import { OS_NOTIFICATION_PLUGIN, SEARCH_TYPE } from '../../../../utils/constants';
+import { OS_NOTIFICATION_PLUGIN, SEARCH_TYPE, SEVERITY_OPTIONS } from '../../../../utils/constants';
 import { AnomalyDetectorTrigger } from './AnomalyDetectorTrigger';
 import { TRIGGER_TYPE } from '../CreateTrigger/utils/constants';
 import { FieldArray } from 'formik';
@@ -34,7 +34,7 @@ import {
   buildClusterMetricsRequest,
   canExecuteClusterMetricsMonitor,
 } from '../../../CreateMonitor/components/ClusterMetricsMonitor/utils/clusterMetricsMonitorHelpers';
-import { DEFAULT_TRIGGER_NAME, SEVERITY_OPTIONS } from '../../utils/constants';
+import { DEFAULT_TRIGGER_NAME } from '../../utils/constants';
 import MinimalAccordion from '../../../../components/FeatureAnywhereContextMenu/MinimalAccordion';
 import { getTriggerContext } from '../../utils/helper';
 import { getDataSourceQueryObj } from '../../../utils/helpers';
