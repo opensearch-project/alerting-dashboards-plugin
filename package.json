@@ -62,7 +62,8 @@
     "semver": "^5.7.2",
     "**/d3-color": "^3.1.0",
     "@cypress/request": "^3.0.0",
-    "braces": "^3.0.3"
+    "braces": "^3.0.3",
+    "micromatch": "^4.0.8"
   },
   "engines": {
     "yarn": "^1.21.1"
