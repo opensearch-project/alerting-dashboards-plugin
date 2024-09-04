@@ -8,12 +8,13 @@ import PropTypes from 'prop-types';
 import _ from 'lodash';
 import { EuiSpacer, EuiTitle, EuiAccordion, EuiButton } from '@elastic/eui';
 import { FormikFieldText, FormikSelect } from '../../../../components/FormControls';
-import { hasError, isInvalid, required } from '../../../../utils/validate';
-import { DEFAULT_TRIGGER_NAME, SEVERITY_OPTIONS } from '../../utils/constants';
+import { hasError, isInvalid } from '../../../../utils/validate';
+import { DEFAULT_TRIGGER_NAME } from '../../utils/constants';
 import CompositeTriggerCondition from '../../components/CompositeTriggerCondition/CompositeTriggerCondition';
 import TriggerNotifications from './TriggerNotifications';
 import { FORMIK_COMPOSITE_INITIAL_TRIGGER_VALUES } from '../CreateTrigger/utils/constants';
 import { titleTemplate } from '../../../../utils/helpers';
+import { SEVERITY_OPTIONS } from '../../../../utils/constants';
 
 const defaultRowProps = {
   label: titleTemplate('Trigger name'),
