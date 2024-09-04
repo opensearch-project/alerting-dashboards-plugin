@@ -12,6 +12,7 @@ import { hasError, isInvalid } from '../../../../utils/validate';
 import { DEFAULT_TRIGGER_NAME } from '../../utils/constants';
 import CompositeTriggerCondition from '../../components/CompositeTriggerCondition/CompositeTriggerCondition';
 import TriggerNotifications from './TriggerNotifications';
+import { validateTriggerName } from '../DefineTrigger/utils/validation';
 import { FORMIK_COMPOSITE_INITIAL_TRIGGER_VALUES } from '../CreateTrigger/utils/constants';
 import { titleTemplate } from '../../../../utils/helpers';
 import { SEVERITY_OPTIONS } from '../../../../utils/constants';
@@ -101,7 +102,7 @@ class DefineCompositeLevelTrigger extends Component {
           <FormikFieldText
             name={`${formikFieldPath}name`}
             fieldProps={{
-              validate: required,
+              validate: (val) => validateTriggerName(values?.triggerDefinitions, triggerIndex)(val),
             }}
             formRow
             rowProps={{
