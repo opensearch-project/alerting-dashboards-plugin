@@ -15,6 +15,7 @@ Compatible with OpenSearch Dashboards 2.17.0
 * [navigation]fix: remove the workspaceAvailability field to make alert visible within workspace ([#1028](https://github.com/opensearch-project/alerting-dashboards-plugin/pull/1028))
 * Fix failed UT of AddAlertingMonitor.test.js ([#1040](https://github.com/opensearch-project/alerting-dashboards-plugin/pull/1040))
 * Issue #671 fix trigger name validation ([#794](https://github.com/opensearch-project/alerting-dashboards-plugin/pull/794))
+* Fix alerts card in all-use case overview page ([#1073](https://github.com/opensearch-project/alerting-dashboards-plugin/pull/1073))
 
 ### Documentation
 * Added 2.17 release notes. ([#1065](https://github.com/opensearch-project/alerting-dashboards-plugin/pull/1065))
