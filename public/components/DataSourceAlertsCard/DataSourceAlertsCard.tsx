@@ -13,11 +13,11 @@ import { ALERTS_NAV_ID } from "../../../utils/constants";
 import { DEFAULT_EMPTY_DATA } from "../../utils/constants";
 
 export interface DataSourceAlertsCardProps {
-  getDataSourceMenu: DataSourceManagementPluginSetup['ui']['getDataSourceMenu'];
+  getDataSourceMenu?: DataSourceManagementPluginSetup['ui']['getDataSourceMenu'];
 }
 
 export const DataSourceAlertsCard: React.FC<DataSourceAlertsCardProps> =  ({ getDataSourceMenu }) => {
-  const DataSourceSelector = getDataSourceMenu();
+  const DataSourceSelector = getDataSourceMenu?.();
   const [loading, setLoading] = useState(false);
   const [dataSource, setDataSource] = useState<DataSourceOption>({
     label: 'Local cluster',
@@ -109,19 +109,21 @@ export const DataSourceAlertsCard: React.FC<DataSourceAlertsCardProps> =  ({ get
                     </h3>
                   </EuiTitle>
                 </EuiFlexItem>
-                <EuiFlexItem grow={false}>
-                  <DataSourceSelector
-                    componentType={"DataSourceSelectable"}
-                    componentConfig={{
-                      savedObjects: getSavedObjectsClient(),
-                      notifications: getNotifications(),
-                      onSelectedDataSources: onDataSourceSelected,
-                      fullWidth: false,
-                      dataSourceFilter: dataSourceFilterFn,
-                      activeOption: dataSource ? [{ id: dataSource.id }] : undefined
-                    }}
-                  />
-                </EuiFlexItem>
+                {DataSourceSelector && (
+                  <EuiFlexItem grow={false}>
+                    <DataSourceSelector
+                      componentType={"DataSourceSelectable"}
+                      componentConfig={{
+                        savedObjects: getSavedObjectsClient(),
+                        notifications: getNotifications(),
+                        onSelectedDataSources: onDataSourceSelected,
+                        fullWidth: false,
+                        dataSourceFilter: dataSourceFilterFn,
+                        activeOption: dataSource ? [{ id: dataSource.id }] : undefined
+                      }}
+                    />
+                  </EuiFlexItem>
+                )}
               </EuiFlexGroup>
             </EuiFlexItem>
             <EuiFlexItem style={{ overflow: 'scroll' }}>
