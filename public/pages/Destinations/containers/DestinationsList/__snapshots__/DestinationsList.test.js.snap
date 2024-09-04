@@ -170,6 +170,7 @@ exports[`DestinationsList renders when Notification plugin is installed 1`] = `
                   >
                     <EuiButtonContent
                       className="euiButton__content"
+                      iconGap="m"
                       iconSide="right"
                       iconType="popout"
                       textProps={
@@ -380,6 +381,7 @@ exports[`DestinationsList renders when Notification plugin is not installed 1`] 
                   >
                     <EuiButtonContent
                       className="euiButton__content"
+                      iconGap="m"
                       iconSide="right"
                       iconType="popout"
                       textProps={
@@ -590,6 +592,7 @@ exports[`DestinationsList renders when email is disallowed 1`] = `
                   >
                     <EuiButtonContent
                       className="euiButton__content"
+                      iconGap="m"
                       iconSide="right"
                       iconType="popout"
                       textProps={

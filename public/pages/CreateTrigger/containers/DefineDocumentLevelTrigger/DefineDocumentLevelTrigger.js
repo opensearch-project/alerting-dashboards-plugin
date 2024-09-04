@@ -17,8 +17,8 @@ import {
 } from '@elastic/eui';
 import { FormikFieldText, FormikSelect } from '../../../../components/FormControls';
 import { hasError, isInvalid } from '../../../../utils/validate';
-import { SEARCH_TYPE } from '../../../../utils/constants';
-import { DEFAULT_TRIGGER_NAME, SEVERITY_OPTIONS } from '../../utils/constants';
+import { SEARCH_TYPE, SEVERITY_OPTIONS } from '../../../../utils/constants';
+import { DEFAULT_TRIGGER_NAME } from '../../utils/constants';
 import { validateTriggerName } from '../DefineTrigger/utils/validation';
 import ConfigureActions from '../ConfigureActions';
 import TriggerQuery from '../../components/TriggerQuery';
