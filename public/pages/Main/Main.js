@@ -22,6 +22,9 @@ import {
 } from '../../../public/services';
 import { MultiDataSourceContext } from '../../../public/utils/MultiDataSourceContext';
 import { parseQueryStringAndGetDataSource } from '../utils/helpers';
+import * as pluginManifest from '../../../opensearch_dashboards.json';
+import semver from 'semver';
+import { dataSourceObservable } from '../../pages/utils/constants';
 import { dataSourceFilterFn } from '../../utils/helpers';
 
 class Main extends Component {
@@ -88,6 +91,7 @@ class Main extends Component {
 
   handleDataSourceChange = ([dataSource]) => {
     const dataSourceId = dataSource?.id;
+    const dataSourceLabel = dataSource?.label
     if (this.props.dataSourceEnabled && dataSourceId === undefined) {
       getNotifications().toasts.addDanger('Unable to set data source.');
     } else if (this.state.selectedDataSourceId != dataSourceId) {
@@ -96,6 +100,7 @@ class Main extends Component {
       });
       setDataSource({ dataSourceId });
     }
+    dataSourceObservable.next({ id: dataSourceId, label: dataSourceLabel });
     if (this.state.dataSourceLoading) {
       this.setState({
         dataSourceLoading: false,
