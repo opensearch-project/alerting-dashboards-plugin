@@ -4,13 +4,13 @@
 */
 
 import React, { useCallback, useEffect, useState } from "react";
-import { EuiBadge, EuiDescriptionList, EuiFlexGroup, EuiFlexItem, EuiHorizontalRule, EuiLink, EuiLoadingContent, EuiPanel, EuiSmallButtonEmpty, EuiText, EuiTitle } from "@elastic/eui";
+import { EuiBadge, EuiDescriptionList, EuiEmptyPrompt, EuiFlexGroup, EuiFlexItem, EuiHorizontalRule, EuiLink, EuiLoadingContent, EuiPanel, EuiText, EuiTitle } from "@elastic/eui";
 import { DataSourceManagementPluginSetup, DataSourceOption } from "../../../../../src/plugins/data_source_management/public";
 import { getApplication, getClient, getNotifications, getSavedObjectsClient } from "../../services";
 import { dataSourceFilterFn, getSeverityColor, getSeverityBadgeText, getTruncatedText } from "../../utils/helpers";
 import { renderTime } from "../../pages/Dashboard/utils/tableUtils";
-import { ALERTS_NAV_ID } from "../../../utils/constants";
-import { DEFAULT_EMPTY_DATA } from "../../utils/constants";
+import { ALERTS_NAV_ID, MONITORS_NAV_ID } from "../../../utils/constants";
+import { APP_PATH, DEFAULT_EMPTY_DATA } from "../../utils/constants";
 
 export interface DataSourceAlertsCardProps {
   getDataSourceMenu?: DataSourceManagementPluginSetup['ui']['getDataSourceMenu'];
@@ -129,16 +129,25 @@ export const DataSourceAlertsCard: React.FC<DataSourceAlertsCardProps> =  ({ get
             <EuiFlexItem style={{ overflow: 'scroll' }}>
               {loading ? (
                 <EuiLoadingContent />
-              ) : (
+              ) : alertsListItems.length > 0 ? (
                 <EuiDescriptionList
                   listItems={alertsListItems}
+                />
+              ) : (
+                <EuiEmptyPrompt
+                  body={(
+                    <EuiText>
+                      <div>There are no existing alerts.</div>
+                      <EuiLink target="_blank" href={`${MONITORS_NAV_ID}#${APP_PATH.CREATE_MONITOR}`}>Create</EuiLink> a monitor to add triggers and actions.
+                    </EuiText>
+                  )}
                 />
               )}
             </EuiFlexItem>
           </EuiFlexGroup>
         </EuiFlexItem>
         <EuiFlexItem grow={false}>
-          <EuiLink href={getApplication().getUrlForApp(ALERTS_NAV_ID, { path: '#/dasboard' })} target="_blank"><EuiText size="s" className="eui-displayInline">View all</EuiText></EuiLink>
+          <EuiLink href={getApplication().getUrlForApp(ALERTS_NAV_ID, { path: '#/dashboard' })} target="_blank"><EuiText size="s" className="eui-displayInline">View all</EuiText></EuiLink>
         </EuiFlexItem>
       </EuiFlexGroup>
     </EuiPanel>
