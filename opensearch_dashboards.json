@@ -14,7 +14,8 @@
     "expressions",
     "data",
     "visAugmenter",
-    "opensearchDashboardsUtils"
+    "opensearchDashboardsUtils",
+    "contentManagement"
   ],
   "server": true,
   "ui": true,
