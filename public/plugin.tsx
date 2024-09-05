@@ -12,6 +12,7 @@ import {
   WorkspaceAvailability,
   AppMountParameters,
   DEFAULT_APP_CATEGORIES,
+  AppUpdater,
 } from '../../../src/core/public';
 import { ACTION_ALERTING } from './actions/alerting_dashboard_action';
 import { CONTEXT_MENU_TRIGGER, EmbeddableStart } from '../../../src/plugins/embeddable/public';
@@ -26,6 +27,8 @@ import { DataPublicPluginStart } from '../../../src/plugins/data/public';
 import { DataSourceManagementPluginSetup } from '../../../src/plugins/data_source_management/public';
 import { DataSourcePluginSetup } from '../../../src/plugins/data_source/public';
 import { NavigationPublicPluginStart } from '../../../src/plugins/navigation/public';
+import { BehaviorSubject } from 'rxjs';
+import { dataSourceObservable } from './pages/utils/constants';
 import { ContentManagementPluginStart } from '../../../src/plugins/content_management/public';
 import { registerAlertsCard } from './utils/helpers';
 
@@ -55,6 +58,16 @@ export interface AlertingStartDeps {
 }
 
 export class AlertingPlugin implements Plugin<void, AlertingStart, AlertingSetupDeps, AlertingStartDeps> {
+
+  private updateDefaultRouteOfManagementApplications: AppUpdater = () => {
+    const hash = `#/?dataSourceId=${dataSourceObservable.value?.id || ""}`;
+    return {
+      defaultPath: hash,
+    };
+  };
+
+  private appStateUpdater = new BehaviorSubject<AppUpdater>(this.updateDefaultRouteOfManagementApplications);
+
 
   public setup(core: CoreSetup<AlertingStartDeps, AlertingStart>, { expressions, uiActions, dataSourceManagement, dataSource }: AlertingSetupDeps) {
 
@@ -105,6 +118,7 @@ export class AlertingPlugin implements Plugin<void, AlertingStart, AlertingSetup
         title: 'Alerts',
         order: 9070,
         category: DEFAULT_APP_CATEGORIES.detect,
+        updater$: this.appStateUpdater,
         mount: async (params: AppMountParameters) => {
           return mountWrapper(params, "/dashboard");
         },
@@ -115,6 +129,7 @@ export class AlertingPlugin implements Plugin<void, AlertingStart, AlertingSetup
         title: 'Monitors',
         order: 9070,
         category: DEFAULT_APP_CATEGORIES.detect,
+        updater$: this.appStateUpdater,
         mount: async (params: AppMountParameters) => {
           return mountWrapper(params, "/monitors");
         },
@@ -125,9 +140,16 @@ export class AlertingPlugin implements Plugin<void, AlertingStart, AlertingSetup
         title: 'Destinations',
         order: 9070,
         category: DEFAULT_APP_CATEGORIES.detect,
+        updater$: this.appStateUpdater,
         mount: async (params: AppMountParameters) => {
           return mountWrapper(params, "/destinations");
         },
+      });
+
+      dataSourceObservable.subscribe((dataSourceOption) => {
+        if (dataSourceOption) {
+          this.appStateUpdater.next(this.updateDefaultRouteOfManagementApplications);
+        }
       });
 
       const navLinks = [
