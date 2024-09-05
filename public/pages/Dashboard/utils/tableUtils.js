@@ -171,12 +171,15 @@ export const alertColumns = (
         // 2. get data triggers the alert
         let alertTriggeredByData = '';
         let dsl = '';
+        let index = '';
         if (
           monitorResp.resp.monitor_type === MONITOR_TYPE.QUERY_LEVEL ||
           monitorResp.resp.monitor_type === MONITOR_TYPE.BUCKET_LEVEL
         ) {
           const search = monitorResp.resp.inputs[0].search;
-          const indices = search.indices;
+          const indices = String(search.indices);
+          const splitIndices = indices.split(',');
+          index = splitIndices.length > 0 ? splitIndices[0].trim() : '';
           let query = JSON.stringify(search.query);
           // Only keep the query part
           dsl = JSON.stringify({ query: search.query.query });
@@ -193,19 +196,21 @@ export const alertColumns = (
             // as we changed the format, remove it
             monitorDefinitionStr = monitorDefinitionStr.replaceAll('"format":"epoch_millis",', '');
           }
-          const alertData = await httpClient.post(`/api/console/proxy`, {
-            query: {
-              path: `${indices}/_search`,
-              method: 'GET',
-              dataSourceId: dataSourceQuery ? dataSourceQuery.query.dataSourceId : '',
-            },
-            body: query,
-            prependBasePath: true,
-            asResponse: true,
-            withLongNumeralsSupport: true,
-          });
+          if (index) {
+            const alertData = await httpClient.post(`/api/console/proxy`, {
+              query: {
+                path: `${index}/_search`,
+                method: 'GET',
+                dataSourceId: dataSourceQuery ? dataSourceQuery.query.dataSourceId : '',
+              },
+              body: query,
+              prependBasePath: true,
+              asResponse: true,
+              withLongNumeralsSupport: true,
+            });
 
-          alertTriggeredByData = JSON.stringify(alertData.body);
+            alertTriggeredByData = JSON.stringify(alertData.body);
+          }
         }
 
         // 3. build the context
@@ -218,6 +223,8 @@ export const alertColumns = (
             ### Alert query DSL ${dsl} \n`,
           additionalInfo: {
             monitorType: monitorResp.resp.monitor_type,
+            dsl: dsl,
+            index: index,
           },
         };
       };
