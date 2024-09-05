@@ -206,7 +206,7 @@ export function registerAlertsCard() {
       order: 10,
       render: () => (
         <DataSourceAlertsCard
-          getDataSourceMenu={getDataSourceManagementPlugin().ui.getDataSourceMenu}
+          getDataSourceMenu={getDataSourceManagementPlugin()?.ui.getDataSourceMenu}
         />
       ),
     }),
