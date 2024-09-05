@@ -3,6 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+import { Get, Set } from '../../../../../src/plugins/opensearch_dashboards_utils/common';
 import {
   ChannelItemType,
   // NotificationItem,
@@ -22,6 +23,20 @@ export const configToChannel = (config: any): ChannelItemType => {
 export const configListToChannels = (configs: any[]): ChannelItemType[] => {
   return configs?.map((config) => configToChannel(config)) || [];
 };
+
+export function createNullableGetterSetter<T>(): [Get<T | undefined>, Set<T>] {
+  let value: T;
+
+  const get = () => {
+    return value;
+  };
+
+  const set = (newValue: T) => {
+    value = newValue;
+  };
+
+  return [get, set];
+}
 
 // export const configToSender = (config: any): SenderItemType => {
 //   return {
