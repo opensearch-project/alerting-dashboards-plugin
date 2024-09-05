@@ -13,6 +13,7 @@ import { DataPublicPluginStart } from '../../../../src/plugins/data/public';
 import { EmbeddableStart } from '../../../../src/plugins/embeddable/public';
 import { NavigationPublicPluginStart } from '../../../../src/plugins/navigation/public';
 import { ContentManagementPluginStart } from '../../../../src/plugins/content_management/public';
+import { createNullableGetterSetter } from './utils/helper';
 
 const ServicesContext = createContext<BrowserServices | null>(null);
 
@@ -41,8 +42,7 @@ export const [getQueryService, setQueryService] = createGetterSetter<
 export const [getSavedObjectsClient, setSavedObjectsClient] =
   createGetterSetter<CoreStart['savedObjects']['client']>('SavedObjectsClient');
 
-export const [getDataSourceManagementPlugin, setDataSourceManagementPlugin] =
-  createGetterSetter<DataSourceManagementPluginSetup>('DataSourceManagement');
+export const [getDataSourceManagementPlugin, setDataSourceManagementPlugin] = createNullableGetterSetter<DataSourceManagementPluginSetup>();
 
 export const [getDataSourceEnabled, setDataSourceEnabled] =
   createGetterSetter<DataSourceEnabled>('DataSourceEnabled');
