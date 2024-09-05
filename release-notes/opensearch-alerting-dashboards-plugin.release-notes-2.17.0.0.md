@@ -4,6 +4,7 @@ Compatible with OpenSearch Dashboards 2.17.0
 ### Maintenance
 * Increment version to 2.17.0.0 ([#1054](https://github.com/opensearch-project/alerting-dashboards-plugin/pull/1054))
 * [CVE-2024-4068] Pinned package version for braces ([#1024](https://github.com/opensearch-project/alerting-dashboards-plugin/pull/1024))
+* [CVE-2024-4067] Fix CVE-2024-4067. ([#1074](https://github.com/opensearch-project/alerting-dashboards-plugin/pull/1074))
 
 ### Refactoring
 * support date_nanos type when select time field for creating monitor ([#954](https://github.com/opensearch-project/alerting-dashboards-plugin/pull/954))
