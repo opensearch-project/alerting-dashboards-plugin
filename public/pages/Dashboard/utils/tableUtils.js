@@ -185,7 +185,7 @@ export const alertColumns = (
           dsl = JSON.stringify({ query: search.query.query });
           if (query.indexOf('{{period_end}}') !== -1) {
             query = query.replaceAll('{{period_end}}', alert.start_time);
-            const alertStartTime = moment.utc(alert.start_time).format('YYYY-MM-DD HH:mm:ss');
+            const alertStartTime = moment.utc(alert.start_time).format('YYYY-MM-DDTHH:mm:ss');
             dsl = dsl.replaceAll('{{period_end}}', alertStartTime);
             // as we changed the format, remove it
             dsl = dsl.replaceAll('"format":"epoch_millis",', '');
@@ -213,12 +213,18 @@ export const alertColumns = (
           }
         }
 
+        const filteredAlert = { ...alert };
+        const topN = 10;
+        const activeAlerts = alert.alerts.filter((alert) => alert.state === 'ACTIVE');
+        // Reduce llm input token size by taking topN active alerts
+        filteredAlert.alerts = activeAlerts.slice(0, topN);
+
         // 3. build the context
         return {
           context: `
             Here is the detail information about alert ${alert.trigger_name}
             ### Monitor definition\n ${monitorDefinitionStr}\n
-            ### Active Alert\n ${JSON.stringify(alert)}\n
+            ### Active Alert\n ${JSON.stringify(filteredAlert)}\n
             ### Data triggers this alert\n ${alertTriggeredByData}\n
             ### Alert query DSL ${dsl} \n`,
           additionalInfo: {
