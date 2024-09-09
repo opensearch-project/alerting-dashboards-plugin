@@ -170,6 +170,7 @@ export const alertColumns = (
 
         // 2. get data triggers the alert
         let alertTriggeredByData = '';
+        let alertTriggeredByValue = '';
         let dsl = '';
         let index = '';
         if (
@@ -180,7 +181,10 @@ export const alertColumns = (
           const indices = String(search.indices);
           const splitIndices = indices.split(',');
           index = splitIndices.length > 0 ? splitIndices[0].trim() : '';
-          let query = JSON.stringify(search.query);
+          const searchQuery = search.query;
+          // By default, we take top 20 sample data that triggered the alert
+          searchQuery.size = 20;
+          let query = JSON.stringify(searchQuery);
           // Only keep the query part
           dsl = JSON.stringify({ query: search.query.query });
           if (query.indexOf('{{period_end}}') !== -1) {
@@ -209,7 +213,10 @@ export const alertColumns = (
               withLongNumeralsSupport: true,
             });
 
-            alertTriggeredByData = JSON.stringify(alertData.body);
+            alertTriggeredByData = JSON.stringify(alertData.body.hits.hits);
+            alertTriggeredByValue = JSON.stringify(
+              alertData.body.aggregations?.metric.value || alertData.body.hits.total.value
+            );
           }
         }
 
@@ -225,7 +232,8 @@ export const alertColumns = (
             Here is the detail information about alert ${alert.trigger_name}
             ### Monitor definition\n ${monitorDefinitionStr}\n
             ### Active Alert\n ${JSON.stringify(filteredAlert)}\n
-            ### Data triggers this alert\n ${alertTriggeredByData}\n
+            ### Source data triggers this alert\n ${alertTriggeredByData}\n
+            ### Value triggers this alert\n ${alertTriggeredByValue}\n
             ### Alert query DSL ${dsl} \n`,
           additionalInfo: {
             monitorType: monitorResp.resp.monitor_type,
