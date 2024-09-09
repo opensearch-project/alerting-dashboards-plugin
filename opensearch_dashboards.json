@@ -14,7 +14,8 @@
     "expressions",
     "data",
     "visAugmenter",
-    "opensearchDashboardsUtils"
+    "opensearchDashboardsUtils",
+    "contentManagement"
   ],
   "optionalPlugins": ["assistantDashboards"],
   "server": true,

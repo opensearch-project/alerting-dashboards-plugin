@@ -10,7 +10,7 @@ import { EuiAccordion, EuiButton, EuiSpacer, EuiText, EuiTitle } from '@elastic/
 import 'brace/mode/plain_text';
 import { FormikFieldText, FormikSelect } from '../../../../components/FormControls';
 import { hasError, isInvalid } from '../../../../utils/validate';
-import { SEARCH_TYPE } from '../../../../utils/constants';
+import { SEARCH_TYPE, SEVERITY_OPTIONS } from '../../../../utils/constants';
 import { FORMIK_INITIAL_TRIGGER_CONDITION_VALUES } from '../CreateTrigger/utils/constants';
 import AddTriggerConditionButton from '../../components/AddTriggerConditionButton';
 import BucketLevelTriggerGraph from '../../components/BucketLevelTriggerGraph';
@@ -20,7 +20,7 @@ import WhereExpression from '../../../CreateMonitor/components/MonitorExpression
 import { FieldArray } from 'formik';
 import ConfigureActions from '../ConfigureActions';
 import { inputLimitText } from '../../../../utils/helpers';
-import { DEFAULT_TRIGGER_NAME, SEVERITY_OPTIONS } from '../../utils/constants';
+import { DEFAULT_TRIGGER_NAME } from '../../utils/constants';
 import { getTriggerContext } from '../../utils/helper';
 
 const defaultRowProps = {

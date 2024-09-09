@@ -24,6 +24,8 @@ import { MultiDataSourceContext } from '../../../public/utils/MultiDataSourceCon
 import { parseQueryStringAndGetDataSource } from '../utils/helpers';
 import * as pluginManifest from '../../../opensearch_dashboards.json';
 import semver from 'semver';
+import { dataSourceObservable } from '../../pages/utils/constants';
+import { dataSourceFilterFn } from '../../utils/helpers';
 
 class Main extends Component {
   static contextType = CoreContext;
@@ -89,6 +91,7 @@ class Main extends Component {
 
   handleDataSourceChange = ([dataSource]) => {
     const dataSourceId = dataSource?.id;
+    const dataSourceLabel = dataSource?.label;
     if (this.props.dataSourceEnabled && dataSourceId === undefined) {
       getNotifications().toasts.addDanger('Unable to set data source.');
     } else if (this.state.selectedDataSourceId != dataSourceId) {
@@ -97,22 +100,12 @@ class Main extends Component {
       });
       setDataSource({ dataSourceId });
     }
+    dataSourceObservable.next({ id: dataSourceId, label: dataSourceLabel });
     if (this.state.dataSourceLoading) {
       this.setState({
         dataSourceLoading: false,
       });
     }
-  };
-
-  dataSourceFilterFn = (dataSource) => {
-    const dataSourceVersion = dataSource?.attributes?.dataSourceVersion || '';
-    const installedPlugins = dataSource?.attributes?.installedPlugins || [];
-    return (
-      semver.satisfies(dataSourceVersion, pluginManifest.supportedOSDataSourceVersions) &&
-      pluginManifest.requiredOSDataSourcePlugins.every((plugin) =>
-        installedPlugins.includes(plugin)
-      )
-    );
   };
 
   renderDataSourceComponent(dataSourceType) {
@@ -124,7 +117,7 @@ class Main extends Component {
         : [{ id: this.state.selectedDataSourceId }],
       savedObjects: getSavedObjectsClient(),
       notifications: getNotifications(),
-      dataSourceFilter: this.dataSourceFilterFn,
+      dataSourceFilter: dataSourceFilterFn,
     };
     if (dataSourceType === 'DataSourceSelectable') {
       componentConfig.onSelectedDataSources = this.handleDataSourceChange;

@@ -12,6 +12,7 @@ import {
   WorkspaceAvailability,
   AppMountParameters,
   DEFAULT_APP_CATEGORIES,
+  AppUpdater,
 } from '../../../src/core/public';
 import { ACTION_ALERTING } from './actions/alerting_dashboard_action';
 import { CONTEXT_MENU_TRIGGER, EmbeddableStart } from '../../../src/plugins/embeddable/public';
@@ -20,13 +21,17 @@ import { alertingTriggerAd } from './utils/contextMenu/triggers';
 import { ExpressionsSetup } from '../../../src/plugins/expressions/public';
 import { UiActionsSetup } from '../../../src/plugins/ui_actions/public';
 import { overlayAlertsFunction } from './expressions/overlay_alerts';
-import { setClient, setEmbeddable, setNotifications, setOverlays, setSavedAugmentVisLoader, setUISettings, setQueryService, setSavedObjectsClient, setDataSourceEnabled, setDataSourceManagementPlugin, setNavigationUI, setApplication, setAssistantDashboards } from './services';
+import { setClient, setEmbeddable, setNotifications, setOverlays, setSavedAugmentVisLoader, setUISettings, setQueryService, setSavedObjectsClient, setDataSourceEnabled, setDataSourceManagementPlugin, setNavigationUI, setApplication, setContentManagementStart, setAssistantDashboards } from './services';
 import { VisAugmenterStart } from '../../../src/plugins/vis_augmenter/public';
 import { DataPublicPluginStart } from '../../../src/plugins/data/public';
 import { AssistantSetup } from './types';
 import { DataSourceManagementPluginSetup } from '../../../src/plugins/data_source_management/public';
 import { DataSourcePluginSetup } from '../../../src/plugins/data_source/public';
 import { NavigationPublicPluginStart } from '../../../src/plugins/navigation/public';
+import { BehaviorSubject } from 'rxjs';
+import { dataSourceObservable } from './pages/utils/constants';
+import { ContentManagementPluginStart } from '../../../src/plugins/content_management/public';
+import { registerAlertsCard } from './utils/helpers';
 
 declare module '../../../src/plugins/ui_actions/public' {
   export interface ActionContextMapping {
@@ -51,9 +56,20 @@ export interface AlertingStartDeps {
   embeddable: EmbeddableStart;
   data: DataPublicPluginStart;
   navigation: NavigationPublicPluginStart;
+  contentManagement: ContentManagementPluginStart;
 }
 
 export class AlertingPlugin implements Plugin<void, AlertingStart, AlertingSetupDeps, AlertingStartDeps> {
+
+  private updateDefaultRouteOfManagementApplications: AppUpdater = () => {
+    const hash = `#/?dataSourceId=${dataSourceObservable.value?.id || ""}`;
+    return {
+      defaultPath: hash,
+    };
+  };
+
+  private appStateUpdater = new BehaviorSubject<AppUpdater>(this.updateDefaultRouteOfManagementApplications);
+
 
   public setup(core: CoreSetup<AlertingStartDeps, AlertingStart>, { expressions, uiActions, dataSourceManagement, dataSource, assistantDashboards }: AlertingSetupDeps) {
 
@@ -103,6 +119,7 @@ export class AlertingPlugin implements Plugin<void, AlertingStart, AlertingSetup
         title: 'Alerts',
         order: 9070,
         category: DEFAULT_APP_CATEGORIES.detect,
+        updater$: this.appStateUpdater,
         mount: async (params: AppMountParameters) => {
           return mountWrapper(params, "/dashboard");
         },
@@ -113,6 +130,7 @@ export class AlertingPlugin implements Plugin<void, AlertingStart, AlertingSetup
         title: 'Monitors',
         order: 9070,
         category: DEFAULT_APP_CATEGORIES.detect,
+        updater$: this.appStateUpdater,
         mount: async (params: AppMountParameters) => {
           return mountWrapper(params, "/monitors");
         },
@@ -123,9 +141,16 @@ export class AlertingPlugin implements Plugin<void, AlertingStart, AlertingSetup
         title: 'Destinations',
         order: 9070,
         category: DEFAULT_APP_CATEGORIES.detect,
+        updater$: this.appStateUpdater,
         mount: async (params: AppMountParameters) => {
           return mountWrapper(params, "/destinations");
         },
+      });
+
+      dataSourceObservable.subscribe((dataSourceOption) => {
+        if (dataSourceOption) {
+          this.appStateUpdater.next(this.updateDefaultRouteOfManagementApplications);
+        }
       });
 
       const navLinks = [
@@ -185,7 +210,7 @@ export class AlertingPlugin implements Plugin<void, AlertingStart, AlertingSetup
     uiActions.addTriggerAction(alertingTriggerAd.id, adAction);
   }
 
-  public start(core: CoreStart, { visAugmenter, embeddable, data, navigation }: AlertingStartDeps): AlertingStart {
+  public start(core: CoreStart, { visAugmenter, embeddable, data, navigation, contentManagement }: AlertingStartDeps): AlertingStart {
     setEmbeddable(embeddable);
     setOverlays(core.overlays);
     setQueryService(data.query);
@@ -194,6 +219,8 @@ export class AlertingPlugin implements Plugin<void, AlertingStart, AlertingSetup
     setSavedObjectsClient(core.savedObjects.client);
     setNavigationUI(navigation.ui);
     setApplication(core.application);
+    setContentManagementStart(contentManagement);
+    registerAlertsCard();
     return {};
   }
 }

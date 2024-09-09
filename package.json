@@ -35,7 +35,7 @@
     "@elastic/elastic-eslint-config-kibana": "link:../../packages/opensearch-eslint-config-opensearch-dashboards",
     "@elastic/eslint-import-resolver-kibana": "link:../../packages/osd-eslint-import-resolver-opensearch-dashboards",
     "cypress": "9.5.4",
-    "husky": "^3.0.0",
+    "husky": "^8.0.0",
     "lint-staged": "^10.2.0",
     "@types/react": "^16.14.23"
   },
@@ -62,7 +62,8 @@
     "semver": "^5.7.2",
     "**/d3-color": "^3.1.0",
     "@cypress/request": "^3.0.0",
-    "braces": "^3.0.3"
+    "braces": "^3.0.3",
+    "micromatch": "^4.0.8"
   },
   "engines": {
     "yarn": "^1.21.1"

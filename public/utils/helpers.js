@@ -12,7 +12,16 @@ import {
 } from '../pages/Dashboard/utils/helpers';
 import _ from 'lodash';
 import { getDataSourceQueryObj } from '../pages/utils/helpers';
-import { getUseUpdatedUx } from '../services';
+import {
+  getContentManagementStart,
+  getDataSourceManagementPlugin,
+  getUseUpdatedUx,
+} from '../services';
+import * as pluginManifest from '../../opensearch_dashboards.json';
+import semver from 'semver';
+import { SEVERITY_OPTIONS } from './constants';
+import { ANALYTICS_ALL_OVERVIEW_CONTENT_AREAS } from '../../../../src/plugins/content_management/public';
+import { DataSourceAlertsCard } from '../components/DataSourceAlertsCard/DataSourceAlertsCard';
 
 export const makeId = htmlIdGenerator();
 
@@ -160,4 +169,46 @@ export function getManageChannelsUrl() {
     getUseUpdatedUx() ? 'channels' : 'notifications-dashboards'
   }#/channels`;
   return MANAGE_CHANNELS_URL || relativePath;
+}
+
+export function dataSourceFilterFn(dataSource) {
+  const dataSourceVersion = dataSource?.attributes?.dataSourceVersion || '';
+  const installedPlugins = dataSource?.attributes?.installedPlugins || [];
+  return (
+    semver.satisfies(dataSourceVersion, pluginManifest.supportedOSDataSourceVersions) &&
+    pluginManifest.requiredOSDataSourcePlugins.every((plugin) => installedPlugins.includes(plugin))
+  );
+}
+
+export function getSeverityText(severity) {
+  return _.get(_.find(SEVERITY_OPTIONS, { value: severity }), 'text');
+}
+
+export function getSeverityBadgeText(severity) {
+  return _.get(_.find(SEVERITY_OPTIONS, { value: severity }), 'badgeText');
+}
+
+export function getSeverityColor(severity) {
+  return _.get(_.find(SEVERITY_OPTIONS, { value: severity }), 'color');
+}
+
+export const getTruncatedText = (text, textLength = 14) => {
+  return `${text.slice(0, textLength)}${text.length > textLength ? '...' : ''}`;
+};
+
+export function registerAlertsCard() {
+  getContentManagementStart().registerContentProvider({
+    id: 'analytics_all_recent_alerts_card_content',
+    getTargetArea: () => ANALYTICS_ALL_OVERVIEW_CONTENT_AREAS.SERVICE_CARDS,
+    getContent: () => ({
+      id: 'analytics_all_recent_alerts_card',
+      kind: 'custom',
+      order: 10,
+      render: () => (
+        <DataSourceAlertsCard
+          getDataSourceMenu={getDataSourceManagementPlugin()?.ui.getDataSourceMenu}
+        />
+      ),
+    }),
+  });
 }

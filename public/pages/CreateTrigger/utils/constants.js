@@ -56,14 +56,6 @@ export const FORMIK_INITIAL_ACTION_VALUES = {
   },
 };
 
-export const SEVERITY_OPTIONS = [
-  { value: '1', text: '1 (Highest)' },
-  { value: '2', text: '2 (High)' },
-  { value: '3', text: '3 (Medium)' },
-  { value: '4', text: '4 (Low)' },
-  { value: '5', text: '5 (Lowest)' },
-];
-
 export const THRESHOLD_ENUM_OPTIONS = [
   { value: 'ABOVE', text: 'IS ABOVE' },
   { value: 'BELOW', text: 'IS BELOW' },

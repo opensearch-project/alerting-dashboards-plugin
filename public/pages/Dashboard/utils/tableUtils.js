@@ -11,9 +11,10 @@ import { ALERT_STATE, DEFAULT_EMPTY_DATA, MONITOR_TYPE } from '../../../utils/co
 import { getApplication, getAssistantDashboards } from '../../../services';
 import { getDataSourceQueryObj } from '../../../pages/utils/helpers';
 
-export const renderTime = (time) => {
+export const renderTime = (time, options = { showFromNow: false }) => {
   const momentTime = moment(time);
-  if (time && momentTime.isValid()) return momentTime.format('MM/DD/YY h:mm a');
+  if (time && momentTime.isValid())
+    return options.showFromNow ? momentTime.fromNow() : momentTime.format('MM/DD/YY h:mm a');
   return DEFAULT_EMPTY_DATA;
 };
 

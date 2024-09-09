@@ -12,6 +12,8 @@ import { SavedObjectLoaderAugmentVis } from '../../../../src/plugins/vis_augment
 import { DataPublicPluginStart } from '../../../../src/plugins/data/public';
 import { EmbeddableStart } from '../../../../src/plugins/embeddable/public';
 import { NavigationPublicPluginStart } from '../../../../src/plugins/navigation/public';
+import { ContentManagementPluginStart } from '../../../../src/plugins/content_management/public';
+import { createNullableGetterSetter } from './utils/helper';
 import { AssistantSetup } from '../types';
 
 const ServicesContext = createContext<BrowserServices | null>(null);
@@ -45,8 +47,7 @@ export const [getQueryService, setQueryService] = createGetterSetter<
 export const [getSavedObjectsClient, setSavedObjectsClient] =
   createGetterSetter<CoreStart['savedObjects']['client']>('SavedObjectsClient');
 
-export const [getDataSourceManagementPlugin, setDataSourceManagementPlugin] =
-  createGetterSetter<DataSourceManagementPluginSetup>('DataSourceManagement');
+export const [getDataSourceManagementPlugin, setDataSourceManagementPlugin] = createNullableGetterSetter<DataSourceManagementPluginSetup>();
 
 export const [getDataSourceEnabled, setDataSourceEnabled] =
   createGetterSetter<DataSourceEnabled>('DataSourceEnabled');
@@ -70,3 +71,5 @@ export const [getApplication, setApplication] = createGetterSetter<CoreStart['ap
 export const getUseUpdatedUx = () => {
   return getUISettings().get('home:useNewHomePage', false);
 };
+
+export const [getContentManagementStart, setContentManagementStart] = createGetterSetter<ContentManagementPluginStart>('contentManagementStart');
