@@ -121,7 +121,7 @@ export default class AlertsDashboardFlyoutComponent extends Component {
     });
   }
 
-  componentDidUpdate(prevProps, prevState) {
+  componentDidUpdate(_prevProps, prevState) {
     const prevQuery = getQueryObjectFromState(prevState);
     const currQuery = getQueryObjectFromState(this.state);
     if (!_.isEqual(prevQuery, currQuery)) {
@@ -146,10 +146,11 @@ export default class AlertsDashboardFlyoutComponent extends Component {
         monitorIds
       );
     }
-    const { monitorType } = this.state;
+    const { monitorType, commentsEnabled, tabId } = this.state;
     if (
-      [MONITOR_TYPE.DOC_LEVEL, MONITOR_TYPE.COMPOSITE_LEVEL].includes(monitorType) &&
-      !_.isEqual(prevState.selectedItems, this.state.selectedItems)
+      ([MONITOR_TYPE.DOC_LEVEL, MONITOR_TYPE.COMPOSITE_LEVEL].includes(monitorType) &&
+        !_.isEqual(prevState.selectedItems, this.state.selectedItems)) ||
+      (tabId === TABLE_TAB_IDS.ALERTS.id && commentsEnabled !== prevState.commentsEnabled)
     )
       this.setState({ tabContent: this.renderAlertsTable() });
   }
