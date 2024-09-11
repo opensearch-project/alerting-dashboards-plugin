@@ -244,10 +244,9 @@ export const alertColumns = (
         };
       };
 
-      const isSubscriptionActive =
-        getApplication().capabilities?.assistant?.isSubscriptionActive === true;
+      const assistantEnabled = getApplication().capabilities?.assistant?.enabled === true;
       const assistantFeatureStatus = getAssistantDashboards().getFeatureStatus();
-      if (assistantFeatureStatus.alertInsight && isSubscriptionActive) {
+      if (assistantFeatureStatus.alertInsight && assistantEnabled) {
         getAssistantDashboards().registerIncontextInsight([
           {
             key: alertId,
