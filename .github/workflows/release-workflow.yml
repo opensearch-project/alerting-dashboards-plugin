@@ -89,7 +89,7 @@ jobs:
           asset_path: ${{ steps.build_zip.outputs.zip_path }}
           asset_content_type: application/zip
       - name: Upload Workflow Artifacts
-        uses: actions/upload-artifact@v1
+        uses: actions/upload-artifact@v4
         with:
           name: alerting-plugin
           path: ${{ steps.build_zip.outputs.zip_path }}
