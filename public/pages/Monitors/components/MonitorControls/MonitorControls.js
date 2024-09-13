@@ -34,7 +34,7 @@ const MonitorControls = ({
   onPageClick,
   monitorActions = null,
 }) => (
-  <EuiFlexGroup style={{ padding: '0px 5px' }} gutterSize="s">
+  <EuiFlexGroup style={{ padding: '0px 16px 16px' }}>
     <EuiFlexItem>
       <EuiCompressedFieldSearch
         fullWidth={true}
