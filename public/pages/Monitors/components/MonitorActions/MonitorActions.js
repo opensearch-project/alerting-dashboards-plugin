@@ -37,6 +37,17 @@ export default class MonitorActions extends Component {
         Acknowledge
       </EuiContextMenuItem>,
       <EuiContextMenuItem
+        key="edit"
+        data-test-subj="editItem"
+        onClick={() => {
+          this.onCloseActions();
+          this.props.onClickEdit();
+        }}
+        disabled={isEditDisabled}
+      >
+        Edit
+      </EuiContextMenuItem>,
+      <EuiContextMenuItem
         key="enable"
         data-test-subj="enableItem"
         onClick={() => {
@@ -117,15 +128,6 @@ export default class MonitorActions extends Component {
           >
             <EuiContextMenuPanel items={this.getActions()} size="s" />
           </EuiPopover>
-        </EuiFlexItem>
-        <EuiFlexItem grow={false}>
-          <EuiSmallButton
-            disabled={isEditDisabled}
-            onClick={onClickEdit}
-            data-test-subj="editButton"
-          >
-            Edit
-          </EuiSmallButton>
         </EuiFlexItem>
         <PageHeader
           appRightControls={[
