@@ -86,7 +86,7 @@ export default class Home extends Component {
             {this.tabs.map(this.renderTab)}
           </EuiTabs>
         )}
-        <div style={{ padding: '25px 25px' }}>
+        <div style={{ padding: '16px' }}>
           <Switch>
             <Route
               exact
