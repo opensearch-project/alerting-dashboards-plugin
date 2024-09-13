@@ -10,8 +10,8 @@ import {
   EuiContextMenuPanel,
   EuiFlexGroup,
   EuiFlexItem,
-  EuiPopover,
-} from '@elastic/eui';
+  EuiPopover, EuiButton
+} from "@elastic/eui";
 
 import { APP_PATH } from '../../../../utils/constants';
 import { PageHeader } from '../../../../components/PageHeader/PageHeader';
@@ -84,7 +84,13 @@ export default class MonitorActions extends Component {
     const { isActionsOpen } = this.state;
     const { isEditDisabled, onClickEdit } = this.props;
     const createMonitorControl = (
-      <EuiSmallButton fill href={`#${APP_PATH.CREATE_MONITOR}`} data-test-subj="createButton">
+      <EuiSmallButton
+        fill href={`#${APP_PATH.CREATE_MONITOR}`}
+        data-test-subj="createButton"
+        iconType="plus"
+        iconSide="left"
+        iconGap="s"
+      >
         Create monitor
       </EuiSmallButton>
     );

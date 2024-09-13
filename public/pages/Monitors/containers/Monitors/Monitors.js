@@ -6,7 +6,7 @@
 import React, { Component } from 'react';
 import _ from 'lodash';
 import queryString from 'query-string';
-import { EuiBasicTable, EuiHorizontalRule } from '@elastic/eui';
+import { EuiBasicTable } from '@elastic/eui';
 import AcknowledgeModal from '../../components/AcknowledgeModal';
 import ContentPanel from '../../../../components/ContentPanel';
 import MonitorActions from '../../components/MonitorActions';
@@ -512,7 +512,7 @@ export default class Monitors extends Component {
             pagination={pagination}
             selection={selection}
             sorting={sorting}
-            style={{ padding: '0px 16px 0px' }}
+            style={{ padding: useUpdatedUx ? '0px 16px' : '0px' }}
           />
         </ContentPanel>
         {monitorItemsToDelete && (
