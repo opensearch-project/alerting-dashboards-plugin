@@ -87,9 +87,6 @@ const DashboardControls = ({
       {alertActions.map((action, idx) => (
         <EuiFlexItem grow={false}>{action}</EuiFlexItem>
       ))}
-      <EuiFlexItem grow={false} style={{ justifyContent: 'center' }}>
-        <EuiPagination pageCount={pageCount} activePage={activePage} onPageClick={onPageChange} />
-      </EuiFlexItem>
     </EuiFlexGroup>
   );
 };

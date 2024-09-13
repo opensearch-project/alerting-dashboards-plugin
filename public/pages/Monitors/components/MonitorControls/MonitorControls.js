@@ -47,9 +47,6 @@ const MonitorControls = ({
       <EuiCompressedSelect options={states} value={state} onChange={onStateChange} />
     </EuiFlexItem>
     {monitorActions && <EuiFlexItem grow={false}>{monitorActions}</EuiFlexItem>}
-    <EuiFlexItem grow={false} style={{ justifyContent: 'center' }}>
-      <EuiPagination pageCount={pageCount} activePage={activePage} onPageClick={onPageClick} />
-    </EuiFlexItem>
   </EuiFlexGroup>
 );
 
