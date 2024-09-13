@@ -27,8 +27,8 @@ import {
   EuiTabs,
   EuiText,
   EuiButtonIcon,
-  EuiButton,
-} from '@elastic/eui';
+  EuiButton, EuiToolTip
+} from "@elastic/eui";
 import CreateMonitor from '../../CreateMonitor';
 import MonitorOverview from '../components/MonitorOverview';
 import MonitorHistory from './MonitorHistory';
@@ -492,12 +492,14 @@ export default class MonitorDetails extends Component {
 
     if (useUpdatedUx) {
       monitorActions.unshift(
-        <EuiSmallButton
-          iconType={'trash'}
-          onClick={this.onDeleteClick}
-          color="danger"
-          aria-label="Delete"
-        ></EuiSmallButton>
+        <EuiToolTip content="Delete">
+          <EuiSmallButton
+            iconType={'trash'}
+            onClick={this.onDeleteClick}
+            color="danger"
+            aria-label="Delete"
+          ></EuiSmallButton>
+        </EuiToolTip>
       );
       monitorActions.push(
         <EuiSmallButton onClick={editMonitor} fill>
