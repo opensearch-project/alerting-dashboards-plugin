@@ -521,7 +521,7 @@ export default class MonitorDetails extends Component {
     }
 
     return (
-      <div style={{ padding: '25px 50px' }}>
+      <div style={{ padding: '16px' }}>
         {this.renderNoTriggersCallOut()}
         <PageHeader
           appBadgeControls={[{ renderComponent: badgeControl }]}
@@ -545,7 +545,6 @@ export default class MonitorDetails extends Component {
             ))}
           </EuiFlexGroup>
         </PageHeader>
-        <EuiSpacer />
         <MonitorOverview
           monitor={monitor}
           monitorId={monitorId}
