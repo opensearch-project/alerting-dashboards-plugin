@@ -479,8 +479,6 @@ export default class Monitors extends Component {
             monitorActions={useUpdatedUx ? monitorActions : null}
           />
 
-          <EuiHorizontalRule margin="xs" />
-
           {showAcknowledgeModal && (
             <AcknowledgeModal
               alerts={alerts}

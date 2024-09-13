@@ -562,8 +562,6 @@ export default class Dashboard extends Component {
             alertActions={useUpdatedUx ? actions() : undefined}
           />
 
-          <EuiHorizontalRule margin="xs" />
-
           <EuiBasicTable
             items={perAlertView ? alerts : alertsByTriggers}
             /*
