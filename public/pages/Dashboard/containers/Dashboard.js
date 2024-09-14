@@ -578,7 +578,6 @@ export default class Dashboard extends Component {
             onChange={this.onTableChange}
             noItemsMessage={<DashboardEmptyPrompt onCreateTrigger={onCreateTrigger} />}
             data-test-subj={'alertsDashboard_table'}
-            style={{ padding: '0px 16px 0px' }}
           />
 
           {this.state.showAlertsModal && this.renderModal()}

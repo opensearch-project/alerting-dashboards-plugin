@@ -512,7 +512,6 @@ export default class Monitors extends Component {
             pagination={pagination}
             selection={selection}
             sorting={sorting}
-            style={{ padding: '0px 16px'}}
           />
         </ContentPanel>
         {monitorItemsToDelete && (

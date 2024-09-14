@@ -56,7 +56,7 @@ const DashboardControls = ({
       break;
   }
   return (
-    <EuiFlexGroup style={{ padding: '0px 16px 16px' }} gutterSize="s">
+    <EuiFlexGroup style={{ padding: '0px 0px 16px' }} gutterSize="s">
       <EuiFlexItem>
         <EuiCompressedFieldSearch
           fullWidth={true}

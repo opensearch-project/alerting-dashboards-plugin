@@ -229,8 +229,6 @@ export default class FindingsDashboard extends Component {
           </EuiFlexGroup>
         )}
 
-        <EuiHorizontalRule margin={'xs'} />
-
         <EuiBasicTable
           items={loadingFindings ? [] : paginatedFindings}
           itemId={getItemId}
