@@ -76,7 +76,7 @@ export default class MonitorDetails extends Component {
         const monitorType = this.state.monitor.monitor_type;
         this.props.history.push({
           ...this.props.location,
-          search: `?action=${MONITOR_ACTIONS.UPDATE_MONITOR}&monitorType=${monitorType}${
+          search: `?action=${MONITOR_ACTIONS.EDIT_MONITOR}&monitorType=${monitorType}${
             dataSourceId !== undefined ? `&dataSourceId=${dataSourceId}` : ''
           }`,
         });
@@ -444,7 +444,7 @@ export default class MonitorDetails extends Component {
       setFlyout,
     } = this.props;
     const { action } = queryString.parse(location.search);
-    const updatingMonitor = action === MONITOR_ACTIONS.UPDATE_MONITOR;
+    const updatingMonitor = action === MONITOR_ACTIONS.EDIT_MONITOR;
     const detectorId = _.get(monitor, MONITOR_INPUT_DETECTOR_ID, undefined);
 
     if (loading) {

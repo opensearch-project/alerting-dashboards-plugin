@@ -285,7 +285,7 @@ export default class Monitors extends Component {
     const {
       selectedItems: [{ id }],
     } = this.state;
-    if (id) this.props.history.push(`/monitors/${id}?action=${MONITOR_ACTIONS.UPDATE_MONITOR}`);
+    if (id) this.props.history.push(`/monitors/${id}?action=${MONITOR_ACTIONS.EDIT_MONITOR}`);
   }
 
   onClickEnable(item) {
