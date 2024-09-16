@@ -64,10 +64,10 @@ const MonitorDetails = ({
       title="Monitor details"
       titleSize="s"
       panelStyles={{
-        paddingBottom: '20px',
+        paddingBottom: '16px',
         paddingLeft: '10px',
         paddingRight: '10px',
-        paddingTop: '20px',
+        paddingTop: '16px',
       }}
       actions={anomalyDetectorContent.actions}
     >
