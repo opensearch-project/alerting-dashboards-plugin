@@ -9,7 +9,6 @@ import queryString from 'query-string';
 import {
   EuiBasicTable,
   EuiSmallButton,
-  EuiHorizontalRule,
   EuiIcon,
   EuiToolTip,
   EuiSmallButtonIcon, EuiFlexItem, EuiPagination, EuiFlexGroup

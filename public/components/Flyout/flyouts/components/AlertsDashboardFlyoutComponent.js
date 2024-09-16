@@ -455,8 +455,8 @@ export default class AlertsDashboardFlyoutComponent extends Component {
           onPageChange={this.onPageClick}
           isAlertsFlyout={true}
           monitorType={monitorType}
+          panelStyles={{ padding: '8px 0px 16px' }}
         />
-        <EuiHorizontalRule margin="xs" />
         <EuiBasicTable
           items={loading ? [] : trimmedAlerts}
           /*
