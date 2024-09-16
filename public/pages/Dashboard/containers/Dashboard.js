@@ -11,8 +11,11 @@ import {
   EuiSmallButton,
   EuiIcon,
   EuiToolTip,
-  EuiSmallButtonIcon, EuiFlexItem, EuiPagination, EuiFlexGroup
-} from "@elastic/eui";
+  EuiSmallButtonIcon,
+  EuiFlexItem,
+  EuiPagination,
+  EuiFlexGroup,
+} from '@elastic/eui';
 import ContentPanel from '../../../components/ContentPanel';
 import DashboardEmptyPrompt from '../components/DashboardEmptyPrompt';
 import DashboardControls from '../components/DashboardControls';

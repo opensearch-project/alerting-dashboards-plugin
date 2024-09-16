@@ -10,8 +10,8 @@ import {
   EuiContextMenuPanel,
   EuiFlexGroup,
   EuiFlexItem,
-  EuiPopover, EuiButton
-} from "@elastic/eui";
+  EuiPopover,
+} from '@elastic/eui';
 
 import { APP_PATH } from '../../../../utils/constants';
 import { PageHeader } from '../../../../components/PageHeader/PageHeader';

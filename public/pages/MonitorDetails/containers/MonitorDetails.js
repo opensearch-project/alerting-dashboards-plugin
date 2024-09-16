@@ -26,9 +26,9 @@ import {
   EuiTab,
   EuiTabs,
   EuiText,
-  EuiButtonIcon,
-  EuiButton, EuiToolTip, EuiIcon
-} from "@elastic/eui";
+  EuiToolTip,
+  EuiIcon,
+} from '@elastic/eui';
 import CreateMonitor from '../../CreateMonitor';
 import MonitorOverview from '../components/MonitorOverview';
 import MonitorHistory from './MonitorHistory';
