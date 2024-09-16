@@ -545,6 +545,7 @@ export default class MonitorDetails extends Component {
             ))}
           </EuiFlexGroup>
         </PageHeader>
+        {!useUpdatedUx && <EuiSpacer />}
         <MonitorOverview
           monitor={monitor}
           monitorId={monitorId}
