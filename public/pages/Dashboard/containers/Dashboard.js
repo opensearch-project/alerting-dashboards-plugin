@@ -546,6 +546,7 @@ export default class Dashboard extends Component {
           bodyStyles={{ padding: 'initial' }}
           actions={useUpdatedUx ? undefined : actions()}
           panelOptions={{ hideTitleBorder: useUpdatedUx }}
+          panelStyles={{ padding: useUpdatedUx && totalAlerts < 1 ? '16px 16px 0px' : '16px' }}
         >
           <DashboardControls
             activePage={page}

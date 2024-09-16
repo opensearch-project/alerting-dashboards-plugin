@@ -467,6 +467,7 @@ export default class Monitors extends Component {
           bodyStyles={{ padding: 'initial' }}
           title={useUpdatedUx ? undefined : 'Monitors'}
           panelOptions={{ hideTitleBorder: useUpdatedUx }}
+          panelStyles={{ padding: useUpdatedUx && totalMonitors < 1 ? '16px 16px 0px' : '16px' }}
         >
           <MonitorControls
             activePage={page}
