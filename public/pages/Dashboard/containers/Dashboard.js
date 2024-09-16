@@ -561,6 +561,7 @@ export default class Dashboard extends Component {
             isAlertsFlyout={isAlertsFlyout}
             monitorType={monitorType}
             alertActions={useUpdatedUx ? actions() : undefined}
+            controlsStyle={{ padding: perAlertView ? '8px 0px 16px' : '0px 0px 16px' }}
           />
 
           <EuiBasicTable

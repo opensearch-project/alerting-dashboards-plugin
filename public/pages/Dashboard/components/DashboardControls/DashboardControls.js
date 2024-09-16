@@ -45,6 +45,7 @@ const DashboardControls = ({
   isAlertsFlyout = false,
   monitorType,
   alertActions = [],
+  controlsStyle = {},
 }) => {
   let supportedStateOptions = stateOptions;
   switch (monitorType) {
@@ -56,7 +57,7 @@ const DashboardControls = ({
       break;
   }
   return (
-    <EuiFlexGroup style={{ padding: '0px 0px 16px' }} gutterSize="s">
+    <EuiFlexGroup style={{ padding: '0px 0px 16px', ...controlsStyle }} gutterSize="s">
       <EuiFlexItem>
         <EuiCompressedFieldSearch
           fullWidth={true}
