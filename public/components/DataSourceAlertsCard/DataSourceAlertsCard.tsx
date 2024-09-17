@@ -80,7 +80,7 @@ export const DataSourceAlertsCard: React.FC<DataSourceAlertsCardProps> =  ({ get
             <EuiText size="s" color="subdued">Monitor:</EuiText>
           </EuiFlexItem>
           <EuiFlexItem grow={false} >
-            <EuiText size="m">{getTruncatedText(monitorName)}</EuiText>
+            <EuiText size="m">{monitorName}</EuiText>
           </EuiFlexItem>
         </EuiFlexGroup>
         <EuiHorizontalRule margin="xs" />
