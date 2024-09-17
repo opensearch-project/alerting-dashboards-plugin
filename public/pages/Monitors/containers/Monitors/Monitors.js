@@ -6,7 +6,7 @@
 import React, { Component } from 'react';
 import _ from 'lodash';
 import queryString from 'query-string';
-import { EuiBasicTable, EuiHorizontalRule } from '@elastic/eui';
+import { EuiBasicTable } from '@elastic/eui';
 import AcknowledgeModal from '../../components/AcknowledgeModal';
 import ContentPanel from '../../../../components/ContentPanel';
 import MonitorActions from '../../components/MonitorActions';
@@ -285,7 +285,7 @@ export default class Monitors extends Component {
     const {
       selectedItems: [{ id }],
     } = this.state;
-    if (id) this.props.history.push(`/monitors/${id}?action=${MONITOR_ACTIONS.UPDATE_MONITOR}`);
+    if (id) this.props.history.push(`/monitors/${id}?action=${MONITOR_ACTIONS.EDIT_MONITOR}`);
   }
 
   onClickEnable(item) {
@@ -467,6 +467,7 @@ export default class Monitors extends Component {
           bodyStyles={{ padding: 'initial' }}
           title={useUpdatedUx ? undefined : 'Monitors'}
           panelOptions={{ hideTitleBorder: useUpdatedUx }}
+          panelStyles={{ padding: useUpdatedUx && totalMonitors < 1 ? '16px 16px 0px' : '16px' }}
         >
           <MonitorControls
             activePage={page}
@@ -478,8 +479,6 @@ export default class Monitors extends Component {
             onPageClick={this.onPageClick}
             monitorActions={useUpdatedUx ? monitorActions : null}
           />
-
-          <EuiHorizontalRule margin="xs" />
 
           {showAcknowledgeModal && (
             <AcknowledgeModal
