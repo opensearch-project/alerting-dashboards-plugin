@@ -369,8 +369,8 @@ describe('ClusterMetricsMonitor', () => {
           'ctx.results[0].number_of_pending_tasks >= 0'
         );
 
-        // Click update button to save monitor changes
-        cy.get('button').contains('Update').last().click({ force: true });
+        // Click save button to save monitor changes
+        cy.get('button').contains('Save').last().click({ force: true });
 
         // Confirm we can see only one row in the trigger list by checking <caption> element
         cy.contains('This table contains 1 row');

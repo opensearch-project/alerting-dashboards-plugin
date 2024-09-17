@@ -102,7 +102,7 @@ describe('getBreadcrumb', () => {
       httpClientMock.get.mockResolvedValue({ ok: true, resp: { name: 'random_name' } });
       expect(
         await getBreadcrumb(
-          `${monitorId}?action=${MONITOR_ACTIONS.UPDATE_MONITOR}`,
+          `${monitorId}?action=${MONITOR_ACTIONS.EDIT_MONITOR}`,
           {},
           httpClientMock
         )

@@ -19,7 +19,7 @@ const ContentPanel = ({
   children,
   panelOptions = {},
 }) => (
-  <EuiPanel style={{ paddingLeft: '0px', paddingRight: '0px', ...panelStyles }}>
+  <EuiPanel style={{ padding: '16px', ...panelStyles }}>
     <EuiFlexGroup style={{ padding: '0px 10px' }} justifyContent="spaceBetween" alignItems="center">
       <EuiFlexItem>
         <EuiText size={titleSize}>
