@@ -45,6 +45,7 @@ const DashboardControls = ({
   isAlertsFlyout = false,
   monitorType,
   alertActions = [],
+  panelStyles = {},
 }) => {
   let supportedStateOptions = stateOptions;
   switch (monitorType) {
@@ -56,7 +57,7 @@ const DashboardControls = ({
       break;
   }
   return (
-    <EuiFlexGroup style={{ padding: '0px 5px' }} gutterSize="s">
+    <EuiFlexGroup style={{ padding: '0px 0px 16px', ...panelStyles }} gutterSize="s">
       <EuiFlexItem>
         <EuiCompressedFieldSearch
           fullWidth={true}
@@ -87,9 +88,6 @@ const DashboardControls = ({
       {alertActions.map((action, idx) => (
         <EuiFlexItem grow={false}>{action}</EuiFlexItem>
       ))}
-      <EuiFlexItem grow={false} style={{ justifyContent: 'center' }}>
-        <EuiPagination pageCount={pageCount} activePage={activePage} onPageClick={onPageChange} />
-      </EuiFlexItem>
     </EuiFlexGroup>
   );
 };

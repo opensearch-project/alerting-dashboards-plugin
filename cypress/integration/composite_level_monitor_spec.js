@@ -130,6 +130,7 @@ describe('CompositeLevelMonitor', () => {
 
     it('by visual editor', () => {
       // Verify edit page
+      cy.contains('Edit').click({ force: true });
       cy.contains('Edit monitor', { timeout: 20000 });
       cy.get('input[name="name"]').type('_edited');
 
@@ -150,7 +151,7 @@ describe('CompositeLevelMonitor', () => {
         .type('{enter}');
 
       cy.intercept('api/alerting/workflows/*').as('updateMonitorRequest');
-      cy.get('button').contains('Update').click({ force: true });
+      cy.get('button').contains('Save').click({ force: true });
 
       // Wait for monitor to be created
       cy.wait('@updateMonitorRequest').then(() => {
