@@ -27,13 +27,13 @@ export const DataSourceAlertsCard: React.FC<DataSourceAlertsCardProps> =  ({ get
 
   useEffect(() => {
     setLoading(true);
-    getClient().get('../api/alerting/alerts', { 
+    getClient().get('../api/alerting/alerts', {
       query: {
         size: 25,
         sortField: 'start_time',
         dataSourceId: dataSource?.id || '',
         sortDirection: 'desc'
-      } 
+      }
     }).then(res => {
       if (res.ok) {
         setAlerts(res.alerts);
@@ -53,7 +53,7 @@ export const DataSourceAlertsCard: React.FC<DataSourceAlertsCardProps> =  ({ get
   const createAlertDetailsHeader = useCallback((alert) => {
     const severityColor = getSeverityColor(alert.severity);
     const triggerName = alert.trigger_name ?? DEFAULT_EMPTY_DATA;
-    
+
     return (
       <EuiFlexGroup gutterSize="s" justifyContent="spaceBetween" alignItems="center">
         <EuiFlexItem grow={false}>
@@ -147,7 +147,7 @@ export const DataSourceAlertsCard: React.FC<DataSourceAlertsCardProps> =  ({ get
           </EuiFlexGroup>
         </EuiFlexItem>
         <EuiFlexItem grow={false}>
-          <EuiLink href={getApplication().getUrlForApp(ALERTS_NAV_ID, { path: '#/dashboard' })} target="_blank"><EuiText size="s" className="eui-displayInline">View all</EuiText></EuiLink>
+          <EuiLink href={getApplication().getUrlForApp(ALERTS_NAV_ID, { path: '#/dashboard' })}><EuiText size="s" className="eui-displayInline">View all</EuiText></EuiLink>
         </EuiFlexItem>
       </EuiFlexGroup>
     </EuiPanel>
