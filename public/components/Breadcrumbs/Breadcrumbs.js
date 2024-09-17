@@ -82,8 +82,8 @@ export async function getBreadcrumb(route, routeState, httpClient) {
           console.error(err);
         }
         const breadcrumbs = [{ text: monitorName, href: `/monitors/${base}` }];
-        if (action === MONITOR_ACTIONS.UPDATE_MONITOR)
-          breadcrumbs.push({ text: 'Update monitor', href: '/' });
+        if (action === MONITOR_ACTIONS.EDIT_MONITOR)
+          breadcrumbs.push({ text: 'Edit monitor', href: '/' });
         if (action === TRIGGER_ACTIONS.CREATE_TRIGGER)
           breadcrumbs.push({ text: 'Create trigger', href: '/' });
         if (action === TRIGGER_ACTIONS.UPDATE_TRIGGER)
