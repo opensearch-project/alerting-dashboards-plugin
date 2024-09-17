@@ -26,8 +26,8 @@ import {
   EuiTab,
   EuiTabs,
   EuiText,
-  EuiButtonIcon,
-  EuiButton,
+  EuiToolTip,
+  EuiIcon,
 } from '@elastic/eui';
 import CreateMonitor from '../../CreateMonitor';
 import MonitorOverview from '../components/MonitorOverview';
@@ -76,7 +76,7 @@ export default class MonitorDetails extends Component {
         const monitorType = this.state.monitor.monitor_type;
         this.props.history.push({
           ...this.props.location,
-          search: `?action=${MONITOR_ACTIONS.UPDATE_MONITOR}&monitorType=${monitorType}${
+          search: `?action=${MONITOR_ACTIONS.EDIT_MONITOR}&monitorType=${monitorType}${
             dataSourceId !== undefined ? `&dataSourceId=${dataSourceId}` : ''
           }`,
         });
@@ -444,7 +444,7 @@ export default class MonitorDetails extends Component {
       setFlyout,
     } = this.props;
     const { action } = queryString.parse(location.search);
-    const updatingMonitor = action === MONITOR_ACTIONS.UPDATE_MONITOR;
+    const updatingMonitor = action === MONITOR_ACTIONS.EDIT_MONITOR;
     const detectorId = _.get(monitor, MONITOR_INPUT_DETECTOR_ID, undefined);
 
     if (loading) {
@@ -492,12 +492,15 @@ export default class MonitorDetails extends Component {
 
     if (useUpdatedUx) {
       monitorActions.unshift(
-        <EuiSmallButton
-          iconType={'trash'}
-          onClick={this.onDeleteClick}
-          color="danger"
-          aria-label="Delete"
-        ></EuiSmallButton>
+        <EuiToolTip content="Delete">
+          <EuiSmallButton
+            onClick={this.onDeleteClick}
+            color="danger"
+            aria-label="Delete"
+          >
+            <EuiIcon type="trash" />
+          </EuiSmallButton>
+        </EuiToolTip>
       );
       monitorActions.push(
         <EuiSmallButton onClick={editMonitor} fill>
@@ -518,7 +521,7 @@ export default class MonitorDetails extends Component {
     }
 
     return (
-      <div style={{ padding: '25px 50px' }}>
+      <div style={{ padding: '16px' }}>
         {this.renderNoTriggersCallOut()}
         <PageHeader
           appBadgeControls={[{ renderComponent: badgeControl }]}
@@ -542,7 +545,7 @@ export default class MonitorDetails extends Component {
             ))}
           </EuiFlexGroup>
         </PageHeader>
-        <EuiSpacer />
+        {!useUpdatedUx && <EuiSpacer />}
         <MonitorOverview
           monitor={monitor}
           monitorId={monitorId}

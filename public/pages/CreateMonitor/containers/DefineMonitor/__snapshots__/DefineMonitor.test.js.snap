@@ -91,12 +91,6 @@ exports[`DefineMonitor renders 1`] = `
         "padding": "initial",
       }
     }
-    panelStyles={
-      Object {
-        "paddingLeft": "10px",
-        "paddingRight": "10px",
-      }
-    }
     title="Query"
     titleSize="s"
   >
@@ -142,12 +136,6 @@ exports[`DefineMonitor should show warning in case of Ad monitor and plugin is n
     bodyStyles={
       Object {
         "padding": "initial",
-      }
-    }
-    panelStyles={
-      Object {
-        "paddingLeft": "10px",
-        "paddingRight": "10px",
       }
     }
     title="Query"

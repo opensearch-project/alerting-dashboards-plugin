@@ -453,7 +453,7 @@ class ConfigureTriggers extends React.Component {
             ? 'Triggers define the conditions that determine when a composite monitor should generate its own alert.'
             : undefined
         }
-        panelStyles={{ paddingBottom: '0px', paddingLeft: '20px', paddingRight: '20px' }}
+        panelStyles={{ padding: '16px' }}
         bodyStyles={{ paddingLeft: '0px', padding: '10px' }}
         horizontalRuleClassName={'accordion-horizontal-rule'}
       >
