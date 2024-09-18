@@ -14,6 +14,7 @@ import { EmbeddableStart } from '../../../../src/plugins/embeddable/public';
 import { NavigationPublicPluginStart } from '../../../../src/plugins/navigation/public';
 import { ContentManagementPluginStart } from '../../../../src/plugins/content_management/public';
 import { createNullableGetterSetter } from './utils/helper';
+import { AssistantSetup } from '../types';
 
 const ServicesContext = createContext<BrowserServices | null>(null);
 
@@ -29,6 +30,10 @@ export const [getSavedAugmentVisLoader, setSavedAugmentVisLoader] = createGetter
   >('savedAugmentVisLoader');
 
 export const [getUISettings, setUISettings] = createGetterSetter<IUiSettingsClient>('UISettings');
+
+export const [getAssistantDashboards, setAssistantDashboards] = createGetterSetter<
+  AssistantSetup | {}
+>('assistantDashboards');
 
 export const [getEmbeddable, setEmbeddable] = createGetterSetter<EmbeddableStart>('embeddable');
 

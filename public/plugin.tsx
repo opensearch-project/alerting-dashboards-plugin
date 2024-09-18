@@ -21,9 +21,10 @@ import { alertingTriggerAd } from './utils/contextMenu/triggers';
 import { ExpressionsSetup } from '../../../src/plugins/expressions/public';
 import { UiActionsSetup } from '../../../src/plugins/ui_actions/public';
 import { overlayAlertsFunction } from './expressions/overlay_alerts';
-import { setClient, setEmbeddable, setNotifications, setOverlays, setSavedAugmentVisLoader, setUISettings, setQueryService, setSavedObjectsClient, setDataSourceEnabled, setDataSourceManagementPlugin, setNavigationUI, setApplication, setContentManagementStart } from './services';
+import { setClient, setEmbeddable, setNotifications, setOverlays, setSavedAugmentVisLoader, setUISettings, setQueryService, setSavedObjectsClient, setDataSourceEnabled, setDataSourceManagementPlugin, setNavigationUI, setApplication, setContentManagementStart, setAssistantDashboards } from './services';
 import { VisAugmenterStart } from '../../../src/plugins/vis_augmenter/public';
 import { DataPublicPluginStart } from '../../../src/plugins/data/public';
+import { AssistantSetup } from './types';
 import { DataSourceManagementPluginSetup } from '../../../src/plugins/data_source_management/public';
 import { DataSourcePluginSetup } from '../../../src/plugins/data_source/public';
 import { NavigationPublicPluginStart } from '../../../src/plugins/navigation/public';
@@ -47,6 +48,7 @@ export interface AlertingSetupDeps {
   uiActions: UiActionsSetup;
   dataSourceManagement: DataSourceManagementPluginSetup;
   dataSource: DataSourcePluginSetup;
+  assistantDashboards?: AssistantSetup;
 }
 
 export interface AlertingStartDeps {
@@ -69,14 +71,13 @@ export class AlertingPlugin implements Plugin<void, AlertingStart, AlertingSetup
   private appStateUpdater = new BehaviorSubject<AppUpdater>(this.updateDefaultRouteOfManagementApplications);
 
 
-  public setup(core: CoreSetup<AlertingStartDeps, AlertingStart>, { expressions, uiActions, dataSourceManagement, dataSource }: AlertingSetupDeps) {
+  public setup(core: CoreSetup<AlertingStartDeps, AlertingStart>, { expressions, uiActions, dataSourceManagement, dataSource, assistantDashboards }: AlertingSetupDeps) {
 
     const mountWrapper = async (params: AppMountParameters, redirect: string) => {
       const { renderApp } = await import("./app");
       const [coreStart] = await core.getStartServices();
       return renderApp(coreStart, params, redirect);
     };
-
     core.application.register({
       id: PLUGIN_NAME,
       title: 'Alerting',
@@ -177,6 +178,8 @@ export class AlertingPlugin implements Plugin<void, AlertingStart, AlertingSetup
         navLinks
       );
     }
+
+    setAssistantDashboards(assistantDashboards || { getFeatureStatus: () => ({ chat: false, alertInsight: false }) });
 
     setUISettings(core.uiSettings);
 
