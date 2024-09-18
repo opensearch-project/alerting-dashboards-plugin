@@ -24,6 +24,11 @@ exports[`Monitors renders 1`] = `
         "hideTitleBorder": undefined,
       }
     }
+    panelStyles={
+      Object {
+        "padding": "16px",
+      }
+    }
     title="Monitors"
   >
     <MonitorControls
@@ -35,9 +40,6 @@ exports[`Monitors renders 1`] = `
       pageCount={1}
       search=""
       state="all"
-    />
-    <EuiHorizontalRule
-      margin="xs"
     />
     <EuiBasicTable
       columns={

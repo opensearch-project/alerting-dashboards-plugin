@@ -81,8 +81,12 @@ export default class Home extends Component {
     const { httpClient, notifications, setFlyout, landingDataSourceId, defaultRoute } = this.props;
     return (
       <div>
-        {!defaultRoute && <EuiTabs size="s">{this.tabs.map(this.renderTab)}</EuiTabs>}
-        <div style={{ padding: '25px 25px' }}>
+        {!defaultRoute && (
+          <EuiTabs size="s" style={{ padding: '16px 16px 0px' }}>
+            {this.tabs.map(this.renderTab)}
+          </EuiTabs>
+        )}
+        <div style={{ padding: '16px' }}>
           <Switch>
             <Route
               exact

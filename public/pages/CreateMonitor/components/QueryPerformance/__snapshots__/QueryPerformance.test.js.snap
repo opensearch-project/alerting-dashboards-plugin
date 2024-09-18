@@ -3,7 +3,7 @@
 exports[`QueryPerformance renders 1`] = `
 <div
   class="euiPanel euiPanel--paddingMedium euiPanel--borderRadiusMedium euiPanel--plain euiPanel--hasShadow"
-  style="padding-left:10px;padding-right:10px"
+  style="padding:16px;padding-left:10px;padding-right:10px"
 >
   <div
     class="euiFlexGroup euiFlexGroup--gutterLarge euiFlexGroup--alignItemsCenter euiFlexGroup--justifyContentSpaceBetween euiFlexGroup--directionRow euiFlexGroup--responsive"

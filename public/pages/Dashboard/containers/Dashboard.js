@@ -9,10 +9,12 @@ import queryString from 'query-string';
 import {
   EuiBasicTable,
   EuiSmallButton,
-  EuiHorizontalRule,
   EuiIcon,
   EuiToolTip,
   EuiSmallButtonIcon,
+  EuiFlexItem,
+  EuiPagination,
+  EuiFlexGroup,
 } from '@elastic/eui';
 import ContentPanel from '../../../components/ContentPanel';
 import DashboardEmptyPrompt from '../components/DashboardEmptyPrompt';
@@ -530,6 +532,7 @@ export default class Dashboard extends Component {
     };
 
     const useUpdatedUx = !perAlertView && getUseUpdatedUx();
+    const shouldShowPagination = !perAlertView && totalAlerts > 0;
 
     return (
       <>
@@ -546,6 +549,7 @@ export default class Dashboard extends Component {
           bodyStyles={{ padding: 'initial' }}
           actions={useUpdatedUx ? undefined : actions()}
           panelOptions={{ hideTitleBorder: useUpdatedUx }}
+          panelStyles={{ padding: useUpdatedUx && totalAlerts < 1 ? '16px 16px 0px' : '16px' }}
         >
           <DashboardControls
             activePage={page}
@@ -560,9 +564,8 @@ export default class Dashboard extends Component {
             isAlertsFlyout={isAlertsFlyout}
             monitorType={monitorType}
             alertActions={useUpdatedUx ? actions() : undefined}
+            panelStyles={{ padding: perAlertView ? '8px 0px 16px' : '0px 0px 16px' }}
           />
-
-          <EuiHorizontalRule margin="xs" />
 
           <EuiBasicTable
             items={perAlertView ? alerts : alertsByTriggers}
@@ -581,6 +584,18 @@ export default class Dashboard extends Component {
             noItemsMessage={<DashboardEmptyPrompt onCreateTrigger={onCreateTrigger} />}
             data-test-subj={'alertsDashboard_table'}
           />
+
+          {shouldShowPagination && (
+            <EuiFlexGroup justifyContent="flexEnd" style={{ padding: '8px 0px 0px' }}>
+              <EuiFlexItem grow={false}>
+                <EuiPagination
+                  pageCount={Math.ceil(totalItems / size) || 1}
+                  activePage={page}
+                  onPageClick={this.onPageClick}
+                />
+              </EuiFlexItem>
+            </EuiFlexGroup>
+          )}
 
           {this.state.showAlertsModal && this.renderModal()}
         </ContentPanel>

@@ -40,7 +40,7 @@ export const DESTINATION_ACTIONS = {
 };
 
 export const MONITOR_ACTIONS = {
-  UPDATE_MONITOR: 'update-monitor',
+  EDIT_MONITOR: 'edit-monitor',
 };
 
 export const TRIGGER_ACTIONS = {
