@@ -7,7 +7,9 @@ import React from 'react';
 import _ from 'lodash';
 import { EuiLink, EuiToolTip } from '@elastic/eui';
 import moment from 'moment';
-import { ALERT_STATE, DEFAULT_EMPTY_DATA } from '../../../utils/constants';
+import { ALERT_STATE, DEFAULT_EMPTY_DATA, MONITOR_TYPE } from '../../../utils/constants';
+import { getApplication, getAssistantDashboards } from '../../../services';
+import { getDataSourceQueryObj } from '../../../pages/utils/helpers';
 
 export const renderTime = (time, options = { showFromNow: false }) => {
   const momentTime = moment(time);
@@ -131,8 +133,10 @@ export const alertColumns = (
     sortable: true,
     truncateText: false,
     render: (total, alert) => {
-      return (
+      const alertId = `alerts_${alert.alerts[0].id}`;
+      const component = (
         <EuiLink
+          key={alertId}
           onClick={() => {
             openFlyout({
               ...alert,
@@ -152,6 +156,103 @@ export const alertColumns = (
           {`${total} alerts`}
         </EuiLink>
       );
+      const contextProvider = async () => {
+        // 1. get monitor definition
+        const dataSourceQuery = getDataSourceQueryObj();
+        const monitorResp = await httpClient.get(
+          `../api/alerting/monitors/${alert.monitor_id}`,
+          dataSourceQuery
+        );
+        const monitorDefinition = monitorResp.resp;
+        delete monitorDefinition.ui_metadata;
+        delete monitorDefinition.data_sources;
+
+        let monitorDefinitionStr = JSON.stringify(monitorDefinition);
+
+        // 2. get data triggers the alert
+        let alertTriggeredByValue = '';
+        let dsl = '';
+        let index = '';
+        if (
+          monitorResp.resp.monitor_type === MONITOR_TYPE.QUERY_LEVEL ||
+          monitorResp.resp.monitor_type === MONITOR_TYPE.BUCKET_LEVEL
+        ) {
+          const search = monitorResp.resp.inputs[0].search;
+          const indices = String(search.indices);
+          const splitIndices = indices.split(',');
+          index = splitIndices.length > 0 ? splitIndices[0].trim() : '';
+          let query = JSON.stringify(search.query);
+          // Only keep the query part
+          dsl = JSON.stringify({ query: search.query.query });
+          if (query.indexOf('{{period_end}}') !== -1) {
+            query = query.replaceAll('{{period_end}}', alert.start_time);
+            const alertStartTime = moment.utc(alert.start_time).format('YYYY-MM-DDTHH:mm:ss');
+            dsl = dsl.replaceAll('{{period_end}}', alertStartTime);
+            // as we changed the format, remove it
+            dsl = dsl.replaceAll('"format":"epoch_millis",', '');
+            monitorDefinitionStr = monitorDefinitionStr.replaceAll(
+              '{{period_end}}',
+              alertStartTime
+            );
+            // as we changed the format, remove it
+            monitorDefinitionStr = monitorDefinitionStr.replaceAll('"format":"epoch_millis",', '');
+          }
+          if (index) {
+            const alertData = await httpClient.post(`/api/console/proxy`, {
+              query: {
+                path: `${index}/_search`,
+                method: 'GET',
+                dataSourceId: dataSourceQuery ? dataSourceQuery.query.dataSourceId : '',
+              },
+              body: query,
+              prependBasePath: true,
+              asResponse: true,
+              withLongNumeralsSupport: true,
+            });
+
+            alertTriggeredByValue = JSON.stringify(
+              alertData.body.aggregations?.metric.value || alertData.body.hits.total.value
+            );
+          }
+        }
+
+        const filteredAlert = { ...alert };
+        const topN = 10;
+        const activeAlerts = alert.alerts.filter((alert) => alert.state === 'ACTIVE');
+        // Reduce llm input token size by taking topN active alerts
+        filteredAlert.alerts = activeAlerts.slice(0, topN);
+
+        // 3. build the context
+        return {
+          context: `
+            Here is the detail information about alert ${alert.trigger_name}
+            ### Monitor definition\n ${monitorDefinitionStr}\n
+            ### Active Alert\n ${JSON.stringify(filteredAlert)}\n
+            ### Value triggers this alert\n ${alertTriggeredByValue}\n
+            ### Alert query DSL ${dsl} \n`,
+          additionalInfo: {
+            monitorType: monitorResp.resp.monitor_type,
+            dsl: dsl,
+            index: index,
+          },
+        };
+      };
+
+      const assistantEnabled = getApplication().capabilities?.assistant?.enabled === true;
+      const assistantFeatureStatus = getAssistantDashboards().getFeatureStatus();
+      if (assistantFeatureStatus.alertInsight && assistantEnabled) {
+        getAssistantDashboards().registerIncontextInsight([
+          {
+            key: alertId,
+            type: 'generate',
+            suggestions: [`Please summarize this alert, do not use any tool.`],
+            contextProvider,
+          },
+        ]);
+        return getAssistantDashboards().renderIncontextInsight({ children: component });
+      } else {
+        return component;
+      }
     },
   },
   {

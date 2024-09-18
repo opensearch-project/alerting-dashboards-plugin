@@ -52,7 +52,9 @@ export function renderApp(coreStart, params, defaultRoute) {
             defaultRoute: defaultRoute,
           }}
         >
-          <Route render={(props) => <Main title="Alerting" {...mdsProps} {...navProps} {...props} />} />
+          <Route
+            render={(props) => <Main title="Alerting" {...mdsProps} {...navProps} {...props} />}
+          />
         </CoreContext.Provider>
       </ServicesContext.Provider>
     </Router>,
