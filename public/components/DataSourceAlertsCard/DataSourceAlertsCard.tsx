@@ -31,7 +31,7 @@ export const DataSourceAlertsCard: React.FC<DataSourceAlertsCardProps> =  ({ get
       query: {
         size: 25,
         sortField: 'start_time',
-        dataSourceId: dataSource?.id || '',
+        ...(dataSource?.id && { dataSourceId: dataSource.id }),
         sortDirection: 'desc'
       }
     }).then(res => {
