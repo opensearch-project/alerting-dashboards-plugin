@@ -10,7 +10,8 @@ import { getApplication, getClient, getNotifications, getSavedObjectsClient } fr
 import { dataSourceFilterFn, getSeverityColor, getSeverityBadgeText, getTruncatedText } from "../../utils/helpers";
 import { renderTime } from "../../pages/Dashboard/utils/tableUtils";
 import { ALERTS_NAV_ID, MONITORS_NAV_ID } from "../../../utils/constants";
-import { APP_PATH, DEFAULT_EMPTY_DATA, MONITOR_TYPE } from "../../utils/constants";
+import { APP_PATH, DEFAULT_EMPTY_DATA } from "../../utils/constants";
+import { dataSourceEnabled, getURL } from "../../pages/utils/helpers.js";
 
 export interface DataSourceAlertsCardProps {
   getDataSourceMenu?: DataSourceManagementPluginSetup['ui']['getDataSourceMenu'];
@@ -31,7 +32,7 @@ export const DataSourceAlertsCard: React.FC<DataSourceAlertsCardProps> =  ({ get
       query: {
         size: 25,
         sortField: 'start_time',
-        ...(dataSource?.id && { dataSourceId: dataSource.id }),
+        ...(dataSourceEnabled() && { dataSourceId: dataSource?.id || ''}),
         sortDirection: 'desc'
       }
     }).then(res => {
@@ -55,7 +56,8 @@ export const DataSourceAlertsCard: React.FC<DataSourceAlertsCardProps> =  ({ get
     const triggerName = alert.trigger_name ?? DEFAULT_EMPTY_DATA;
     const monitorUrl = `alerting#/monitors/${
       alert.alert_source === 'workflow' ? alert.workflow_id : alert.monitor_id
-    }?&type=${alert.alert_source}&dataSourceId=${dataSource?.id}`;
+    }?&type=${alert.alert_source}`;
+    const url = getURL(monitorUrl, dataSource?.id);
 
     return (
       <EuiFlexGroup gutterSize="s" justifyContent="spaceBetween" alignItems="center">
@@ -63,7 +65,7 @@ export const DataSourceAlertsCard: React.FC<DataSourceAlertsCardProps> =  ({ get
           <div>
             <EuiBadge color={severityColor?.background} style={{ padding: '1px 4px', color: severityColor?.text }}>{getSeverityBadgeText(alert.severity)}</EuiBadge>
             &nbsp;&nbsp;
-            <EuiLink href={monitorUrl}>
+            <EuiLink href={url}>
               <span style={{ color: '#006BB4' }} className="eui-textTruncate">
                 {getTruncatedText(triggerName)}
               </span>
