@@ -10,7 +10,7 @@ import { getApplication, getClient, getNotifications, getSavedObjectsClient } fr
 import { dataSourceFilterFn, getSeverityColor, getSeverityBadgeText, getTruncatedText } from "../../utils/helpers";
 import { renderTime } from "../../pages/Dashboard/utils/tableUtils";
 import { ALERTS_NAV_ID, MONITORS_NAV_ID } from "../../../utils/constants";
-import { APP_PATH, DEFAULT_EMPTY_DATA } from "../../utils/constants";
+import { APP_PATH, DEFAULT_EMPTY_DATA, MONITOR_TYPE } from "../../utils/constants";
 
 export interface DataSourceAlertsCardProps {
   getDataSourceMenu?: DataSourceManagementPluginSetup['ui']['getDataSourceMenu'];
@@ -53,6 +53,9 @@ export const DataSourceAlertsCard: React.FC<DataSourceAlertsCardProps> =  ({ get
   const createAlertDetailsHeader = useCallback((alert) => {
     const severityColor = getSeverityColor(alert.severity);
     const triggerName = alert.trigger_name ?? DEFAULT_EMPTY_DATA;
+    const monitorUrl = `alerting#/monitors/${alert.monitor_id}${
+      alert.monitorType === MONITOR_TYPE.COMPOSITE_LEVEL ? '?type=workflow' : '?'
+    }&dataSourceId=${dataSource?.id}`;
 
     return (
       <EuiFlexGroup gutterSize="s" justifyContent="spaceBetween" alignItems="center">
@@ -60,7 +63,11 @@ export const DataSourceAlertsCard: React.FC<DataSourceAlertsCardProps> =  ({ get
           <div>
             <EuiBadge color={severityColor?.background} style={{ padding: '1px 4px', color: severityColor?.text }}>{getSeverityBadgeText(alert.severity)}</EuiBadge>
             &nbsp;&nbsp;
-            <span style={{ color: "#006BB4" }} className="eui-textTruncate">{getTruncatedText(triggerName)}</span>
+            <EuiLink href={monitorUrl}>
+              <span style={{ color: '#006BB4' }} className="eui-textTruncate">
+                {getTruncatedText(triggerName)}
+              </span>
+            </EuiLink>
           </div>
         </EuiFlexItem>
         <EuiFlexItem grow={false} >
