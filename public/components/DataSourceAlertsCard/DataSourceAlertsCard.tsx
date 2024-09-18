@@ -53,9 +53,9 @@ export const DataSourceAlertsCard: React.FC<DataSourceAlertsCardProps> =  ({ get
   const createAlertDetailsHeader = useCallback((alert) => {
     const severityColor = getSeverityColor(alert.severity);
     const triggerName = alert.trigger_name ?? DEFAULT_EMPTY_DATA;
-    const monitorUrl = `alerting#/monitors/${alert.monitor_id}${
-      alert.monitorType === MONITOR_TYPE.COMPOSITE_LEVEL ? '?type=workflow' : '?'
-    }&dataSourceId=${dataSource?.id}`;
+    const monitorUrl = `alerting#/monitors/${
+      alert.alert_source === 'workflow' ? alert.workflow_id : alert.monitor_id
+    }?&type=${alert.alert_source}&dataSourceId=${dataSource?.id}`;
 
     return (
       <EuiFlexGroup gutterSize="s" justifyContent="spaceBetween" alignItems="center">
