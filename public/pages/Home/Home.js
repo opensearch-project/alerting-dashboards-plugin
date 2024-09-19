@@ -125,7 +125,7 @@ export default class Home extends Component {
                 />
               )}
             />
-            <Redirect to={defaultRoute || "/dashboard"} />
+            <Redirect to={defaultRoute || '/dashboard'} />
           </Switch>
         </div>
       </div>
