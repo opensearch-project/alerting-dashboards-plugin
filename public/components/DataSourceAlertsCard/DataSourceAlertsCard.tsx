@@ -105,7 +105,7 @@ export const DataSourceAlertsCard: React.FC<DataSourceAlertsCardProps> =  ({ get
   });
 
   return (
-    <EuiPanel hasBorder={false} hasShadow={false}>
+    <EuiPanel hasBorder={false} hasShadow={false} grow={false} style={{ overflow: 'hidden' }}>
       <EuiFlexGroup style={{ height: '100%' }} direction="column" justifyContent="spaceBetween" alignItems="flexStart" gutterSize="xs">
         <EuiFlexItem grow={false} style={{ width: '100%', height: '90%' }}>
           <EuiFlexGroup direction="column" style={{ height: '100%' }}>
