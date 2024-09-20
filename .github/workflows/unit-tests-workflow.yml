@@ -7,7 +7,7 @@ on:
     branches:
       - "**"
 env:
-  OPENSEARCH_DASHBOARDS_VERSION: '2.x'
+  OPENSEARCH_DASHBOARDS_VERSION: '2.17.0'
 jobs:
   Get-CI-Image-Tag:
     uses: opensearch-project/opensearch-build/.github/workflows/get-ci-image-tag.yml@main
