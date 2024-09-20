@@ -88,8 +88,8 @@ export const DataSourceAlertsCard: React.FC<DataSourceAlertsCardProps> =  ({ get
           <EuiFlexItem grow={false}>
             <EuiText size="s" color="subdued">Monitor:</EuiText>
           </EuiFlexItem>
-          <EuiFlexItem grow={false} >
-            <EuiText size="m">{monitorName}</EuiText>
+          <EuiFlexItem grow={false} style={{ overflow: 'hidden', textOverflow: 'ellipsis' }}>
+            <EuiText size="m" style={{ overflow: 'hidden', textOverflow: 'ellipsis' }}>{monitorName}</EuiText>
           </EuiFlexItem>
         </EuiFlexGroup>
         <EuiHorizontalRule margin="xs" />
