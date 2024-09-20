@@ -54,7 +54,7 @@ export const DataSourceAlertsCard: React.FC<DataSourceAlertsCardProps> =  ({ get
   const createAlertDetailsHeader = useCallback((alert) => {
     const severityColor = getSeverityColor(alert.severity);
     const triggerName = alert.trigger_name ?? DEFAULT_EMPTY_DATA;
-    const monitorUrl = `alerting#/monitors/${
+    const monitorUrl = `${MONITORS_NAV_ID}#/monitors/${
       alert.alert_source === 'workflow' ? alert.workflow_id : alert.monitor_id
     }?&type=${alert.alert_source}`;
     const url = getURL(monitorUrl, dataSource?.id);
@@ -105,7 +105,7 @@ export const DataSourceAlertsCard: React.FC<DataSourceAlertsCardProps> =  ({ get
   });
 
   return (
-    <EuiPanel hasBorder={false} hasShadow={false} grow={false} style={{ overflow: 'hidden' }}>
+    <EuiPanel hasBorder={false} hasShadow={false} style={{ overflow: 'hidden' }}>
       <EuiFlexGroup style={{ height: '100%' }} direction="column" justifyContent="spaceBetween" alignItems="flexStart" gutterSize="xs">
         <EuiFlexItem grow={false} style={{ width: '100%', height: '90%' }}>
           <EuiFlexGroup direction="column" style={{ height: '100%' }}>
