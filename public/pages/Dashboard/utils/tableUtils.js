@@ -235,6 +235,7 @@ export const alertColumns = (
             dsl: dsl,
             index: index,
           },
+          dataSourceId: dataSourceQuery?.query?.dataSourceId,
         };
       };
 
