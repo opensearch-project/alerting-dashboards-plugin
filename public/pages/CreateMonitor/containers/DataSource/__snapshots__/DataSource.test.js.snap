@@ -7,6 +7,12 @@ exports[`DataSource renders 1`] = `
       "padding": "initial",
     }
   }
+  panelStyles={
+    Object {
+      "paddingLeft": "10px",
+      "paddingRight": "10px",
+    }
+  }
   title="Select data"
   titleSize="s"
 >

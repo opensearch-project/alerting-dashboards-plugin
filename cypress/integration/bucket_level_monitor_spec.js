@@ -338,8 +338,8 @@ describe('Bucket-Level Monitors', () => {
         // Add a trigger
         addTriggerToVisualEditorMonitor(SAMPLE_TRIGGER, 0, SAMPLE_ACTION, true);
 
-        // Click save to save monitor changes
-        cy.get('button').contains('Save').last().click({ force: true });
+        // Click update button to save monitor changes
+        cy.get('button').contains('Update').last().click({ force: true });
 
         // Confirm we can see only one row in the trigger list by checking <caption> element
         cy.contains('This table contains 1 row');
@@ -375,8 +375,8 @@ describe('Bucket-Level Monitors', () => {
           timeout: 25000,
         });
 
-        // Click the save button
-        cy.get('button').contains('Save').last().click({ force: true });
+        // Click the update button
+        cy.get('button').contains('Update').last().click({ force: true });
 
         // Confirm we're on the Monitor Details page by searching for the History element
         cy.contains('History', { timeout: 20000 });

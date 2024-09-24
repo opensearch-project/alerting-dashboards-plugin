@@ -702,6 +702,10 @@ class DefineMonitor extends Component {
         <PanelComponent
           title="Query"
           titleSize="s"
+          panelStyles={{
+            paddingLeft: '10px',
+            paddingRight: '10px',
+          }}
           bodyStyles={{ padding: 'initial' }}
           actions={monitorContent.actions}
         >

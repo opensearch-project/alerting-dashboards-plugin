@@ -5,7 +5,6 @@ exports[`Home renders 1`] = `
   <div
     class="euiTabs euiTabs--small"
     role="tablist"
-    style="padding:16px 16px 0px"
   >
     <button
       aria-selected="true"
@@ -45,7 +44,7 @@ exports[`Home renders 1`] = `
     </button>
   </div>
   <div
-    style="padding:16px"
+    style="padding:25px 25px"
   />
 </div>
 `;

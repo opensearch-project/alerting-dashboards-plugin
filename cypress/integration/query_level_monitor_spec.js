@@ -178,8 +178,8 @@ describe('Query-Level Monitors', () => {
         .clear()
         .type(UPDATED_MONITOR, { force: true });
 
-      // Click save button
-      cy.get('button').contains('Save').last().click({ force: true });
+      // Click Update button
+      cy.get('button').contains('Update').last().click({ force: true });
 
       // Confirm the update process is done and the page loaded
       cy.contains('Edit monitor');
@@ -222,8 +222,8 @@ describe('Query-Level Monitors', () => {
         timeout: 25000,
       });
 
-      // Click the save button
-      cy.get('button').contains('Save').last().click();
+      // Click the update button
+      cy.get('button').contains('Update').last().click();
 
       // Confirm we're on the Monitor Details page by searching for the History element
       cy.contains('History', { timeout: 25000 });
@@ -339,8 +339,8 @@ describe('Query-Level Monitors', () => {
         addVisualQueryLevelTrigger(trigger.name, i, true, `IS ${trigger.enum}`, `${i}`);
       }
 
-      // Click save button
-      cy.get('button').contains('Save').last().click({ force: true });
+      // Click Update button
+      cy.get('button').contains('Update').last().click({ force: true });
 
       // Confirm we can see the correct number of rows in the trigger list by checking <caption> element
       cy.contains(`This table contains ${triggers.length} rows`, { timeout: 25000 });

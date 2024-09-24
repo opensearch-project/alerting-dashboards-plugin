@@ -63,7 +63,12 @@ const MonitorDetails = ({
     <Container
       title="Monitor details"
       titleSize="s"
-      panelStyles={{ padding: '16px' }}
+      panelStyles={{
+        paddingBottom: '20px',
+        paddingLeft: '10px',
+        paddingRight: '10px',
+        paddingTop: '20px',
+      }}
       actions={anomalyDetectorContent.actions}
     >
       {!flyoutMode && <EuiSpacer size="s" />}
