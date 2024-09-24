@@ -10,4 +10,4 @@ Compatible with OpenSearch Dashboards 2.17.1
 * Fit and Finish UX changes Pt 2 ([#1099](https://github.com/opensearch-project/alerting-dashboards-plugin/pull/1099))
 
 ### Documentation
-* Added 2.17.1 release notes. ([#]())
+* Added 2.17.1 release notes. ([#1109](https://github.com/opensearch-project/alerting-dashboards-plugin/pull/1109))
