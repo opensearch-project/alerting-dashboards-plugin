@@ -11,6 +11,7 @@ import { dataSourceFilterFn, getSeverityColor, getSeverityBadgeText, getTruncate
 import { renderTime } from "../../pages/Dashboard/utils/tableUtils";
 import { ALERTS_NAV_ID, MONITORS_NAV_ID } from "../../../utils/constants";
 import { APP_PATH, DEFAULT_EMPTY_DATA } from "../../utils/constants";
+import { dataSourceEnabled, getURL } from "../../pages/utils/helpers.js";
 
 export interface DataSourceAlertsCardProps {
   getDataSourceMenu?: DataSourceManagementPluginSetup['ui']['getDataSourceMenu'];
@@ -31,7 +32,7 @@ export const DataSourceAlertsCard: React.FC<DataSourceAlertsCardProps> =  ({ get
       query: {
         size: 25,
         sortField: 'start_time',
-        dataSourceId: dataSource?.id || '',
+        ...(dataSourceEnabled() && { dataSourceId: dataSource?.id || ''}),
         sortDirection: 'desc'
       }
     }).then(res => {
@@ -53,6 +54,10 @@ export const DataSourceAlertsCard: React.FC<DataSourceAlertsCardProps> =  ({ get
   const createAlertDetailsHeader = useCallback((alert) => {
     const severityColor = getSeverityColor(alert.severity);
     const triggerName = alert.trigger_name ?? DEFAULT_EMPTY_DATA;
+    const monitorUrl = `${MONITORS_NAV_ID}#/monitors/${
+      alert.alert_source === 'workflow' ? alert.workflow_id : alert.monitor_id
+    }?&type=${alert.alert_source}`;
+    const url = getURL(monitorUrl, dataSource?.id);
 
     return (
       <EuiFlexGroup gutterSize="s" justifyContent="spaceBetween" alignItems="center">
@@ -60,7 +65,11 @@ export const DataSourceAlertsCard: React.FC<DataSourceAlertsCardProps> =  ({ get
           <div>
             <EuiBadge color={severityColor?.background} style={{ padding: '1px 4px', color: severityColor?.text }}>{getSeverityBadgeText(alert.severity)}</EuiBadge>
             &nbsp;&nbsp;
-            <span style={{ color: "#006BB4" }} className="eui-textTruncate">{getTruncatedText(triggerName)}</span>
+            <EuiLink href={url}>
+              <span style={{ color: '#006BB4' }} className="eui-textTruncate">
+                {getTruncatedText(triggerName)}
+              </span>
+            </EuiLink>
           </div>
         </EuiFlexItem>
         <EuiFlexItem grow={false} >
@@ -79,8 +88,8 @@ export const DataSourceAlertsCard: React.FC<DataSourceAlertsCardProps> =  ({ get
           <EuiFlexItem grow={false}>
             <EuiText size="s" color="subdued">Monitor:</EuiText>
           </EuiFlexItem>
-          <EuiFlexItem grow={false} >
-            <EuiText size="m">{getTruncatedText(monitorName)}</EuiText>
+          <EuiFlexItem grow={false} style={{ overflow: 'hidden', textOverflow: 'ellipsis' }}>
+            <EuiText size="m" style={{ overflow: 'hidden', textOverflow: 'ellipsis' }}>{monitorName}</EuiText>
           </EuiFlexItem>
         </EuiFlexGroup>
         <EuiHorizontalRule margin="xs" />
@@ -96,7 +105,7 @@ export const DataSourceAlertsCard: React.FC<DataSourceAlertsCardProps> =  ({ get
   });
 
   return (
-    <EuiPanel hasBorder={false} hasShadow={false}>
+    <EuiPanel hasBorder={false} hasShadow={false} style={{ overflow: 'hidden' }}>
       <EuiFlexGroup style={{ height: '100%' }} direction="column" justifyContent="spaceBetween" alignItems="flexStart" gutterSize="xs">
         <EuiFlexItem grow={false} style={{ width: '100%', height: '90%' }}>
           <EuiFlexGroup direction="column" style={{ height: '100%' }}>
