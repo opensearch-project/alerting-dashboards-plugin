@@ -206,7 +206,7 @@ export default class FindingsDashboard extends Component {
         bodyStyles={{ padding: 'initial' }}
       >
         {!isPreview && (
-          <EuiFlexGroup style={{ padding: '8px 0px 16px' }}>
+          <EuiFlexGroup style={{ padding: '0px 5px' }}>
             <EuiFlexItem>
               <EuiCompressedFieldSearch
                 fullWidth={true}
@@ -228,6 +228,8 @@ export default class FindingsDashboard extends Component {
             </EuiFlexItem>
           </EuiFlexGroup>
         )}
+
+        <EuiHorizontalRule margin={'xs'} />
 
         <EuiBasicTable
           items={loadingFindings ? [] : paginatedFindings}

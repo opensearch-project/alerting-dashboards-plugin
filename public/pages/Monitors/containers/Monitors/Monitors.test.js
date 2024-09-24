@@ -218,7 +218,7 @@ describe('Monitors', () => {
 
     expect(onClickEdit).toHaveBeenCalled();
     expect(historyMock.push).toHaveBeenCalled();
-    expect(historyMock.push).toHaveBeenCalledWith(`/monitors/random_id?action=edit-monitor`);
+    expect(historyMock.push).toHaveBeenCalledWith(`/monitors/random_id?action=update-monitor`);
   });
 
   test('onClickEnable calls updateMonitors with monitor and enable:true update', () => {

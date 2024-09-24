@@ -65,6 +65,7 @@ class DataSource extends Component {
       <ContentPanel
         title="Select data"
         titleSize="s"
+        panelStyles={{ paddingLeft: '10px', paddingRight: '10px' }}
         bodyStyles={{ padding: 'initial' }}
       >
         {monitorIndexDisplay}

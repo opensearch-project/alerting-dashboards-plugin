@@ -177,7 +177,7 @@ export default class CreateMonitor extends Component {
     } = this.props;
     const { createModalOpen, initialValues, plugins } = this.state;
     return (
-      <div style={{ padding: '16px' }}>
+      <div style={{ padding: '25px 50px' }}>
         <Formik
           initialValues={initialValues}
           onSubmit={this.evaluateSubmission}
@@ -268,7 +268,7 @@ export default class CreateMonitor extends Component {
                       </EuiFlexItem>
                       <EuiFlexItem grow={false}>
                         <EuiSmallButton fill onClick={handleSubmit} isLoading={isSubmitting}>
-                          {edit ? 'Save' : 'Create'}
+                          {edit ? 'Update' : 'Create'}
                         </EuiSmallButton>
                       </EuiFlexItem>
                     </EuiFlexGroup>

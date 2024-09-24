@@ -227,7 +227,7 @@ export default class AcknowledgeAlertsModal extends Component {
   onCreateTrigger = () => {
     const { history, monitorId, onClose } = this.props;
     onClose();
-    history.push(`/monitors/${monitorId}?action=${MONITOR_ACTIONS.EDIT_MONITOR}`);
+    history.push(`/monitors/${monitorId}?action=${MONITOR_ACTIONS.UPDATE_MONITOR}`);
   };
 
   render() {
