@@ -113,18 +113,14 @@ exports[`Dashboard renders in flyout 1`] = `
         "hideTitleBorder": false,
       }
     }
-    panelStyles={
-      Object {
-        "padding": "16px",
-      }
-    }
     title="Alerts"
     titleSize="s"
   >
     <EuiPanel
       style={
         Object {
-          "padding": "16px",
+          "paddingLeft": "0px",
+          "paddingRight": "0px",
         }
       }
     >
@@ -132,7 +128,8 @@ exports[`Dashboard renders in flyout 1`] = `
         className="euiPanel euiPanel--paddingMedium euiPanel--borderRadiusMedium euiPanel--plain euiPanel--hasShadow"
         style={
           Object {
-            "padding": "16px",
+            "paddingLeft": "0px",
+            "paddingRight": "0px",
           }
         }
       >
@@ -304,11 +301,6 @@ exports[`Dashboard renders in flyout 1`] = `
             onSeverityChange={[Function]}
             onStateChange={[Function]}
             pageCount={1}
-            panelStyles={
-              Object {
-                "padding": "8px 0px 16px",
-              }
-            }
             search=""
             severity="ALL"
             state="ALL"
@@ -317,7 +309,7 @@ exports[`Dashboard renders in flyout 1`] = `
               gutterSize="s"
               style={
                 Object {
-                  "padding": "8px 0px 16px",
+                  "padding": "0px 5px",
                 }
               }
             >
@@ -325,7 +317,7 @@ exports[`Dashboard renders in flyout 1`] = `
                 className="euiFlexGroup euiFlexGroup--gutterSmall euiFlexGroup--directionRow euiFlexGroup--responsive"
                 style={
                   Object {
-                    "padding": "8px 0px 16px",
+                    "padding": "0px 5px",
                   }
                 }
               >
@@ -577,9 +569,216 @@ exports[`Dashboard renders in flyout 1`] = `
                     </EuiCompressedSelect>
                   </div>
                 </EuiFlexItem>
+                <EuiFlexItem
+                  grow={false}
+                  style={
+                    Object {
+                      "justifyContent": "center",
+                    }
+                  }
+                >
+                  <div
+                    className="euiFlexItem euiFlexItem--flexGrowZero"
+                    style={
+                      Object {
+                        "justifyContent": "center",
+                      }
+                    }
+                  >
+                    <EuiPagination
+                      activePage={0}
+                      onPageClick={[Function]}
+                      pageCount={1}
+                    >
+                      <nav
+                        className="euiPagination"
+                      >
+                        <EuiI18n
+                          default="Previous page, {page}"
+                          token="euiPagination.previousPage"
+                          values={
+                            Object {
+                              "page": 0,
+                            }
+                          }
+                        >
+                          <EuiI18n
+                            default="Previous page"
+                            token="euiPagination.disabledPreviousPage"
+                          >
+                            <EuiButtonIcon
+                              aria-label="Previous page"
+                              color="text"
+                              data-test-subj="pagination-button-previous"
+                              disabled={true}
+                              iconType="arrowLeft"
+                              onClick={[Function]}
+                            >
+                              <button
+                                aria-label="Previous page"
+                                className="euiButtonIcon euiButtonIcon--text euiButtonIcon--empty euiButtonIcon--xSmall"
+                                data-test-subj="pagination-button-previous"
+                                disabled={true}
+                                onClick={[Function]}
+                                type="button"
+                              >
+                                <EuiIcon
+                                  aria-hidden="true"
+                                  className="euiButtonIcon__icon"
+                                  color="inherit"
+                                  size="m"
+                                  type="arrowLeft"
+                                >
+                                  <div>
+                                    EuiIconMock
+                                  </div>
+                                </EuiIcon>
+                              </button>
+                            </EuiButtonIcon>
+                          </EuiI18n>
+                        </EuiI18n>
+                        <ul
+                          className="euiPagination__list"
+                        >
+                          <PaginationButton
+                            key="0"
+                            pageIndex={0}
+                          >
+                            <li
+                              className="euiPagination__item"
+                            >
+                              <EuiPaginationButton
+                                hideOnMobile={true}
+                                isActive={true}
+                                onClick={[Function]}
+                                pageIndex={0}
+                                totalPages={1}
+                              >
+                                <EuiI18n
+                                  default="Page {page} of {totalPages}"
+                                  token="euiPaginationButton.longPageString"
+                                  values={
+                                    Object {
+                                      "page": 1,
+                                      "totalPages": 1,
+                                    }
+                                  }
+                                >
+                                  <EuiI18n
+                                    default="Page {page}"
+                                    token="euiPaginationButton.shortPageString"
+                                    values={
+                                      Object {
+                                        "page": 1,
+                                      }
+                                    }
+                                  >
+                                    <EuiButtonEmpty
+                                      aria-current={true}
+                                      aria-label="Page 1 of 1"
+                                      className="euiPaginationButton euiPaginationButton-isActive euiPaginationButton--hideOnMobile"
+                                      color="text"
+                                      data-test-subj="pagination-button-0"
+                                      isDisabled={true}
+                                      onClick={[Function]}
+                                      size="s"
+                                    >
+                                      <button
+                                        aria-current={true}
+                                        aria-label="Page 1 of 1"
+                                        className="euiButtonEmpty euiButtonEmpty--text euiButtonEmpty--small euiButtonEmpty-isDisabled euiPaginationButton euiPaginationButton-isActive euiPaginationButton--hideOnMobile"
+                                        data-test-subj="pagination-button-0"
+                                        disabled={true}
+                                        onClick={[Function]}
+                                        type="button"
+                                      >
+                                        <EuiButtonContent
+                                          className="euiButtonEmpty__content"
+                                          iconGap="m"
+                                          iconSide="left"
+                                          iconSize="m"
+                                          textProps={
+                                            Object {
+                                              "className": "euiButtonEmpty__text",
+                                            }
+                                          }
+                                        >
+                                          <span
+                                            className="euiButtonContent euiButtonEmpty__content"
+                                          >
+                                            <span
+                                              className="euiButtonEmpty__text"
+                                            >
+                                              1
+                                            </span>
+                                          </span>
+                                        </EuiButtonContent>
+                                      </button>
+                                    </EuiButtonEmpty>
+                                  </EuiI18n>
+                                </EuiI18n>
+                              </EuiPaginationButton>
+                            </li>
+                          </PaginationButton>
+                        </ul>
+                        <EuiI18n
+                          default="Next page, {page}"
+                          token="euiPagination.nextPage"
+                          values={
+                            Object {
+                              "page": 2,
+                            }
+                          }
+                        >
+                          <EuiI18n
+                            default="Next page"
+                            token="euiPagination.disabledNextPage"
+                          >
+                            <EuiButtonIcon
+                              aria-label="Next page"
+                              color="text"
+                              data-test-subj="pagination-button-next"
+                              disabled={true}
+                              iconType="arrowRight"
+                              onClick={[Function]}
+                            >
+                              <button
+                                aria-label="Next page"
+                                className="euiButtonIcon euiButtonIcon--text euiButtonIcon--empty euiButtonIcon--xSmall"
+                                data-test-subj="pagination-button-next"
+                                disabled={true}
+                                onClick={[Function]}
+                                type="button"
+                              >
+                                <EuiIcon
+                                  aria-hidden="true"
+                                  className="euiButtonIcon__icon"
+                                  color="inherit"
+                                  size="m"
+                                  type="arrowRight"
+                                >
+                                  <div>
+                                    EuiIconMock
+                                  </div>
+                                </EuiIcon>
+                              </button>
+                            </EuiButtonIcon>
+                          </EuiI18n>
+                        </EuiI18n>
+                      </nav>
+                    </EuiPagination>
+                  </div>
+                </EuiFlexItem>
               </div>
             </EuiFlexGroup>
           </DashboardControls>
+          <EuiHorizontalRule
+            margin="xs"
+          >
+            <hr
+              className="euiHorizontalRule euiHorizontalRule--full euiHorizontalRule--marginXSmall"
+            />
+          </EuiHorizontalRule>
           <EuiBasicTable
             columns={
               Array [
@@ -1522,18 +1721,14 @@ exports[`Dashboard renders with alert by triggers view 1`] = `
         "hideTitleBorder": undefined,
       }
     }
-    panelStyles={
-      Object {
-        "padding": "16px",
-      }
-    }
     title="Alerts by triggers"
     titleSize="s"
   >
     <EuiPanel
       style={
         Object {
-          "padding": "16px",
+          "paddingLeft": "0px",
+          "paddingRight": "0px",
         }
       }
     >
@@ -1541,7 +1736,8 @@ exports[`Dashboard renders with alert by triggers view 1`] = `
         className="euiPanel euiPanel--paddingMedium euiPanel--borderRadiusMedium euiPanel--plain euiPanel--hasShadow"
         style={
           Object {
-            "padding": "16px",
+            "paddingLeft": "0px",
+            "paddingRight": "0px",
           }
         }
       >
@@ -1774,11 +1970,6 @@ exports[`Dashboard renders with alert by triggers view 1`] = `
             onSeverityChange={[Function]}
             onStateChange={[Function]}
             pageCount={1}
-            panelStyles={
-              Object {
-                "padding": "0px 0px 16px",
-              }
-            }
             search=""
             severity="ALL"
             state="ALL"
@@ -1787,7 +1978,7 @@ exports[`Dashboard renders with alert by triggers view 1`] = `
               gutterSize="s"
               style={
                 Object {
-                  "padding": "0px 0px 16px",
+                  "padding": "0px 5px",
                 }
               }
             >
@@ -1795,7 +1986,7 @@ exports[`Dashboard renders with alert by triggers view 1`] = `
                 className="euiFlexGroup euiFlexGroup--gutterSmall euiFlexGroup--directionRow euiFlexGroup--responsive"
                 style={
                   Object {
-                    "padding": "0px 0px 16px",
+                    "padding": "0px 5px",
                   }
                 }
               >
@@ -2221,9 +2412,216 @@ exports[`Dashboard renders with alert by triggers view 1`] = `
                     </EuiCompressedSelect>
                   </div>
                 </EuiFlexItem>
+                <EuiFlexItem
+                  grow={false}
+                  style={
+                    Object {
+                      "justifyContent": "center",
+                    }
+                  }
+                >
+                  <div
+                    className="euiFlexItem euiFlexItem--flexGrowZero"
+                    style={
+                      Object {
+                        "justifyContent": "center",
+                      }
+                    }
+                  >
+                    <EuiPagination
+                      activePage={0}
+                      onPageClick={[Function]}
+                      pageCount={1}
+                    >
+                      <nav
+                        className="euiPagination"
+                      >
+                        <EuiI18n
+                          default="Previous page, {page}"
+                          token="euiPagination.previousPage"
+                          values={
+                            Object {
+                              "page": 0,
+                            }
+                          }
+                        >
+                          <EuiI18n
+                            default="Previous page"
+                            token="euiPagination.disabledPreviousPage"
+                          >
+                            <EuiButtonIcon
+                              aria-label="Previous page"
+                              color="text"
+                              data-test-subj="pagination-button-previous"
+                              disabled={true}
+                              iconType="arrowLeft"
+                              onClick={[Function]}
+                            >
+                              <button
+                                aria-label="Previous page"
+                                className="euiButtonIcon euiButtonIcon--text euiButtonIcon--empty euiButtonIcon--xSmall"
+                                data-test-subj="pagination-button-previous"
+                                disabled={true}
+                                onClick={[Function]}
+                                type="button"
+                              >
+                                <EuiIcon
+                                  aria-hidden="true"
+                                  className="euiButtonIcon__icon"
+                                  color="inherit"
+                                  size="m"
+                                  type="arrowLeft"
+                                >
+                                  <div>
+                                    EuiIconMock
+                                  </div>
+                                </EuiIcon>
+                              </button>
+                            </EuiButtonIcon>
+                          </EuiI18n>
+                        </EuiI18n>
+                        <ul
+                          className="euiPagination__list"
+                        >
+                          <PaginationButton
+                            key="0"
+                            pageIndex={0}
+                          >
+                            <li
+                              className="euiPagination__item"
+                            >
+                              <EuiPaginationButton
+                                hideOnMobile={true}
+                                isActive={true}
+                                onClick={[Function]}
+                                pageIndex={0}
+                                totalPages={1}
+                              >
+                                <EuiI18n
+                                  default="Page {page} of {totalPages}"
+                                  token="euiPaginationButton.longPageString"
+                                  values={
+                                    Object {
+                                      "page": 1,
+                                      "totalPages": 1,
+                                    }
+                                  }
+                                >
+                                  <EuiI18n
+                                    default="Page {page}"
+                                    token="euiPaginationButton.shortPageString"
+                                    values={
+                                      Object {
+                                        "page": 1,
+                                      }
+                                    }
+                                  >
+                                    <EuiButtonEmpty
+                                      aria-current={true}
+                                      aria-label="Page 1 of 1"
+                                      className="euiPaginationButton euiPaginationButton-isActive euiPaginationButton--hideOnMobile"
+                                      color="text"
+                                      data-test-subj="pagination-button-0"
+                                      isDisabled={true}
+                                      onClick={[Function]}
+                                      size="s"
+                                    >
+                                      <button
+                                        aria-current={true}
+                                        aria-label="Page 1 of 1"
+                                        className="euiButtonEmpty euiButtonEmpty--text euiButtonEmpty--small euiButtonEmpty-isDisabled euiPaginationButton euiPaginationButton-isActive euiPaginationButton--hideOnMobile"
+                                        data-test-subj="pagination-button-0"
+                                        disabled={true}
+                                        onClick={[Function]}
+                                        type="button"
+                                      >
+                                        <EuiButtonContent
+                                          className="euiButtonEmpty__content"
+                                          iconGap="m"
+                                          iconSide="left"
+                                          iconSize="m"
+                                          textProps={
+                                            Object {
+                                              "className": "euiButtonEmpty__text",
+                                            }
+                                          }
+                                        >
+                                          <span
+                                            className="euiButtonContent euiButtonEmpty__content"
+                                          >
+                                            <span
+                                              className="euiButtonEmpty__text"
+                                            >
+                                              1
+                                            </span>
+                                          </span>
+                                        </EuiButtonContent>
+                                      </button>
+                                    </EuiButtonEmpty>
+                                  </EuiI18n>
+                                </EuiI18n>
+                              </EuiPaginationButton>
+                            </li>
+                          </PaginationButton>
+                        </ul>
+                        <EuiI18n
+                          default="Next page, {page}"
+                          token="euiPagination.nextPage"
+                          values={
+                            Object {
+                              "page": 2,
+                            }
+                          }
+                        >
+                          <EuiI18n
+                            default="Next page"
+                            token="euiPagination.disabledNextPage"
+                          >
+                            <EuiButtonIcon
+                              aria-label="Next page"
+                              color="text"
+                              data-test-subj="pagination-button-next"
+                              disabled={true}
+                              iconType="arrowRight"
+                              onClick={[Function]}
+                            >
+                              <button
+                                aria-label="Next page"
+                                className="euiButtonIcon euiButtonIcon--text euiButtonIcon--empty euiButtonIcon--xSmall"
+                                data-test-subj="pagination-button-next"
+                                disabled={true}
+                                onClick={[Function]}
+                                type="button"
+                              >
+                                <EuiIcon
+                                  aria-hidden="true"
+                                  className="euiButtonIcon__icon"
+                                  color="inherit"
+                                  size="m"
+                                  type="arrowRight"
+                                >
+                                  <div>
+                                    EuiIconMock
+                                  </div>
+                                </EuiIcon>
+                              </button>
+                            </EuiButtonIcon>
+                          </EuiI18n>
+                        </EuiI18n>
+                      </nav>
+                    </EuiPagination>
+                  </div>
+                </EuiFlexItem>
               </div>
             </EuiFlexGroup>
           </DashboardControls>
+          <EuiHorizontalRule
+            margin="xs"
+          >
+            <hr
+              className="euiHorizontalRule euiHorizontalRule--full euiHorizontalRule--marginXSmall"
+            />
+          </EuiHorizontalRule>
           <EuiBasicTable
             columns={
               Array [
@@ -3379,18 +3777,14 @@ exports[`Dashboard renders with per alert view 1`] = `
         "hideTitleBorder": false,
       }
     }
-    panelStyles={
-      Object {
-        "padding": "16px",
-      }
-    }
     title="Alerts"
     titleSize="s"
   >
     <EuiPanel
       style={
         Object {
-          "padding": "16px",
+          "paddingLeft": "0px",
+          "paddingRight": "0px",
         }
       }
     >
@@ -3398,7 +3792,8 @@ exports[`Dashboard renders with per alert view 1`] = `
         className="euiPanel euiPanel--paddingMedium euiPanel--borderRadiusMedium euiPanel--plain euiPanel--hasShadow"
         style={
           Object {
-            "padding": "16px",
+            "paddingLeft": "0px",
+            "paddingRight": "0px",
           }
         }
       >
@@ -3570,11 +3965,6 @@ exports[`Dashboard renders with per alert view 1`] = `
             onSeverityChange={[Function]}
             onStateChange={[Function]}
             pageCount={1}
-            panelStyles={
-              Object {
-                "padding": "8px 0px 16px",
-              }
-            }
             search=""
             severity="ALL"
             state="ALL"
@@ -3583,7 +3973,7 @@ exports[`Dashboard renders with per alert view 1`] = `
               gutterSize="s"
               style={
                 Object {
-                  "padding": "8px 0px 16px",
+                  "padding": "0px 5px",
                 }
               }
             >
@@ -3591,7 +3981,7 @@ exports[`Dashboard renders with per alert view 1`] = `
                 className="euiFlexGroup euiFlexGroup--gutterSmall euiFlexGroup--directionRow euiFlexGroup--responsive"
                 style={
                   Object {
-                    "padding": "8px 0px 16px",
+                    "padding": "0px 5px",
                   }
                 }
               >
@@ -4017,9 +4407,216 @@ exports[`Dashboard renders with per alert view 1`] = `
                     </EuiCompressedSelect>
                   </div>
                 </EuiFlexItem>
+                <EuiFlexItem
+                  grow={false}
+                  style={
+                    Object {
+                      "justifyContent": "center",
+                    }
+                  }
+                >
+                  <div
+                    className="euiFlexItem euiFlexItem--flexGrowZero"
+                    style={
+                      Object {
+                        "justifyContent": "center",
+                      }
+                    }
+                  >
+                    <EuiPagination
+                      activePage={0}
+                      onPageClick={[Function]}
+                      pageCount={1}
+                    >
+                      <nav
+                        className="euiPagination"
+                      >
+                        <EuiI18n
+                          default="Previous page, {page}"
+                          token="euiPagination.previousPage"
+                          values={
+                            Object {
+                              "page": 0,
+                            }
+                          }
+                        >
+                          <EuiI18n
+                            default="Previous page"
+                            token="euiPagination.disabledPreviousPage"
+                          >
+                            <EuiButtonIcon
+                              aria-label="Previous page"
+                              color="text"
+                              data-test-subj="pagination-button-previous"
+                              disabled={true}
+                              iconType="arrowLeft"
+                              onClick={[Function]}
+                            >
+                              <button
+                                aria-label="Previous page"
+                                className="euiButtonIcon euiButtonIcon--text euiButtonIcon--empty euiButtonIcon--xSmall"
+                                data-test-subj="pagination-button-previous"
+                                disabled={true}
+                                onClick={[Function]}
+                                type="button"
+                              >
+                                <EuiIcon
+                                  aria-hidden="true"
+                                  className="euiButtonIcon__icon"
+                                  color="inherit"
+                                  size="m"
+                                  type="arrowLeft"
+                                >
+                                  <div>
+                                    EuiIconMock
+                                  </div>
+                                </EuiIcon>
+                              </button>
+                            </EuiButtonIcon>
+                          </EuiI18n>
+                        </EuiI18n>
+                        <ul
+                          className="euiPagination__list"
+                        >
+                          <PaginationButton
+                            key="0"
+                            pageIndex={0}
+                          >
+                            <li
+                              className="euiPagination__item"
+                            >
+                              <EuiPaginationButton
+                                hideOnMobile={true}
+                                isActive={true}
+                                onClick={[Function]}
+                                pageIndex={0}
+                                totalPages={1}
+                              >
+                                <EuiI18n
+                                  default="Page {page} of {totalPages}"
+                                  token="euiPaginationButton.longPageString"
+                                  values={
+                                    Object {
+                                      "page": 1,
+                                      "totalPages": 1,
+                                    }
+                                  }
+                                >
+                                  <EuiI18n
+                                    default="Page {page}"
+                                    token="euiPaginationButton.shortPageString"
+                                    values={
+                                      Object {
+                                        "page": 1,
+                                      }
+                                    }
+                                  >
+                                    <EuiButtonEmpty
+                                      aria-current={true}
+                                      aria-label="Page 1 of 1"
+                                      className="euiPaginationButton euiPaginationButton-isActive euiPaginationButton--hideOnMobile"
+                                      color="text"
+                                      data-test-subj="pagination-button-0"
+                                      isDisabled={true}
+                                      onClick={[Function]}
+                                      size="s"
+                                    >
+                                      <button
+                                        aria-current={true}
+                                        aria-label="Page 1 of 1"
+                                        className="euiButtonEmpty euiButtonEmpty--text euiButtonEmpty--small euiButtonEmpty-isDisabled euiPaginationButton euiPaginationButton-isActive euiPaginationButton--hideOnMobile"
+                                        data-test-subj="pagination-button-0"
+                                        disabled={true}
+                                        onClick={[Function]}
+                                        type="button"
+                                      >
+                                        <EuiButtonContent
+                                          className="euiButtonEmpty__content"
+                                          iconGap="m"
+                                          iconSide="left"
+                                          iconSize="m"
+                                          textProps={
+                                            Object {
+                                              "className": "euiButtonEmpty__text",
+                                            }
+                                          }
+                                        >
+                                          <span
+                                            className="euiButtonContent euiButtonEmpty__content"
+                                          >
+                                            <span
+                                              className="euiButtonEmpty__text"
+                                            >
+                                              1
+                                            </span>
+                                          </span>
+                                        </EuiButtonContent>
+                                      </button>
+                                    </EuiButtonEmpty>
+                                  </EuiI18n>
+                                </EuiI18n>
+                              </EuiPaginationButton>
+                            </li>
+                          </PaginationButton>
+                        </ul>
+                        <EuiI18n
+                          default="Next page, {page}"
+                          token="euiPagination.nextPage"
+                          values={
+                            Object {
+                              "page": 2,
+                            }
+                          }
+                        >
+                          <EuiI18n
+                            default="Next page"
+                            token="euiPagination.disabledNextPage"
+                          >
+                            <EuiButtonIcon
+                              aria-label="Next page"
+                              color="text"
+                              data-test-subj="pagination-button-next"
+                              disabled={true}
+                              iconType="arrowRight"
+                              onClick={[Function]}
+                            >
+                              <button
+                                aria-label="Next page"
+                                className="euiButtonIcon euiButtonIcon--text euiButtonIcon--empty euiButtonIcon--xSmall"
+                                data-test-subj="pagination-button-next"
+                                disabled={true}
+                                onClick={[Function]}
+                                type="button"
+                              >
+                                <EuiIcon
+                                  aria-hidden="true"
+                                  className="euiButtonIcon__icon"
+                                  color="inherit"
+                                  size="m"
+                                  type="arrowRight"
+                                >
+                                  <div>
+                                    EuiIconMock
+                                  </div>
+                                </EuiIcon>
+                              </button>
+                            </EuiButtonIcon>
+                          </EuiI18n>
+                        </EuiI18n>
+                      </nav>
+                    </EuiPagination>
+                  </div>
+                </EuiFlexItem>
               </div>
             </EuiFlexGroup>
           </DashboardControls>
+          <EuiHorizontalRule
+            margin="xs"
+          >
+            <hr
+              className="euiHorizontalRule euiHorizontalRule--full euiHorizontalRule--marginXSmall"
+            />
+          </EuiHorizontalRule>
           <EuiBasicTable
             columns={
               Array [

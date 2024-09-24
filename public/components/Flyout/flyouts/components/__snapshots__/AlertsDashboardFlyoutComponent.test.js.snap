@@ -202,14 +202,12 @@ exports[`AlertsDashboardFlyoutComponent renders 1`] = `
       onSearchChange={[Function]}
       onStateChange={[Function]}
       pageCount={1}
-      panelStyles={
-        Object {
-          "padding": "8px 0px 16px",
-        }
-      }
       search=""
       severity="ALL"
       state="ALL"
+    />
+    <EuiHorizontalRule
+      margin="xs"
     />
     <EuiBasicTable
       columns={

@@ -3,7 +3,7 @@
 exports[`MonitorOverview renders 1`] = `
 <div
   class="euiPanel euiPanel--paddingMedium euiPanel--borderRadiusMedium euiPanel--plain euiPanel--hasShadow"
-  style="padding:16px"
+  style="padding-left:0px;padding-right:0px"
 >
   <div
     class="euiFlexGroup euiFlexGroup--gutterLarge euiFlexGroup--alignItemsCenter euiFlexGroup--justifyContentSpaceBetween euiFlexGroup--directionRow euiFlexGroup--responsive"

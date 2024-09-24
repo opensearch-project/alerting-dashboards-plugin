@@ -160,9 +160,7 @@ export function initManageChannelsUrl(httpClient) {
     const relativePath = `/app/${
       getUseUpdatedUx() ? 'channels' : 'notifications-dashboards'
     }#/channels`;
-    MANAGE_CHANNELS_URL = httpClient.basePath.prepend(relativePath, {
-      withoutClientBasePath: true,
-    });
+    MANAGE_CHANNELS_URL = httpClient.basePath.prepend(relativePath);
   }
 }
 

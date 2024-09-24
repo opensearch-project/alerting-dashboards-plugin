@@ -146,7 +146,7 @@ class Main extends Component {
                   <MultiDataSourceContext.Provider
                     value={{ dataSourceId: this.state.selectedDataSourceId }}
                   >
-                    <div>
+                    <div style={{ padding: '15px 0px' }}>
                       <Flyout
                         flyout={flyout}
                         onClose={() => {

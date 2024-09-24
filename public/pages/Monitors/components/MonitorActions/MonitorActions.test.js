@@ -107,16 +107,14 @@ describe('MonitorActions', () => {
   });
 
   test('does not call onClickEdit when Edit is clicked and edit is disabled', () => {
-    wrapper.find('[data-test-subj="actionsButton"]').hostNodes().simulate('click');
-    wrapper.find('[data-test-subj="editItem"]').hostNodes().simulate('click');
+    wrapper.find('[data-test-subj="editButton"]').hostNodes().simulate('click');
     expect(props.onClickEdit).toHaveBeenCalledTimes(0);
   });
 
   test('calls onClickEdit when Edit is clicked and isEditDisabled=false', () => {
     const props = getProps();
     wrapper.setProps({ ...props, isEditDisabled: false });
-    wrapper.find('[data-test-subj="actionsButton"]').hostNodes().simulate('click');
-    wrapper.find('[data-test-subj="editItem"]').hostNodes().simulate('click');
+    wrapper.find('[data-test-subj="editButton"]').hostNodes().simulate('click');
     expect(props.onClickEdit).toHaveBeenCalledTimes(1);
   });
 });
