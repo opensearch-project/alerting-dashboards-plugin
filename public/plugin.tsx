@@ -113,6 +113,14 @@ export class AlertingPlugin implements Plugin<void, AlertingStart, AlertingSetup
         }
       ])
 
+      core.chrome.navGroup.addNavLinksToGroup(DEFAULT_NAV_GROUPS.all, [
+        {
+          id: PLUGIN_NAME,
+          category: DEFAULT_APP_CATEGORIES.detect,
+          showInAllNavGroup: false
+        }
+      ])
+
       // channels route
       core.application.register({
         id: ALERTS_NAV_ID,
@@ -175,6 +183,11 @@ export class AlertingPlugin implements Plugin<void, AlertingStart, AlertingSetup
 
       core.chrome.navGroup.addNavLinksToGroup(
         DEFAULT_NAV_GROUPS['security-analytics'],
+        navLinks
+      );
+
+      core.chrome.navGroup.addNavLinksToGroup(
+        DEFAULT_NAV_GROUPS.all,
         navLinks
       );
     }
