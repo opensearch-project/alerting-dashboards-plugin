@@ -188,8 +188,8 @@ export const alertColumns = (
             query = query.replaceAll('{{period_end}}', alert.start_time);
             const alertStartTime = moment.utc(alert.start_time).format('YYYY-MM-DDTHH:mm:ss');
             dsl = dsl.replaceAll('{{period_end}}', alertStartTime);
-            // as we changed the format, remove it
-            dsl = dsl.replaceAll('"format":"epoch_millis",', '');
+            // as we changed the format of time value, need to change the format configuration as well.
+            dsl = dsl.replaceAll('"format":"epoch_millis",', '"format":"strict_date_optional_time",');
             monitorDefinitionStr = monitorDefinitionStr.replaceAll(
               '{{period_end}}',
               alertStartTime
