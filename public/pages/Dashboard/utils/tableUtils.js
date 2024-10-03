@@ -22,6 +22,7 @@ import {
   PERIOD_END_PLACEHOLDER,
   PPL_SEARCH_PATH
 } from "./constants";
+import { escape } from 'lodash';
 
 export const renderTime = (time, options = { showFromNow: false }) => {
   const momentTime = moment(time);
@@ -249,7 +250,7 @@ export const alertColumns = (
                   `stats count() as count, take(${patternField}, ${DEFAULT_LOG_PATTERN_SAMPLE_SIZE}) by patterns_field | ` +
                   `sort - count | head ${DEFAULT_LOG_PATTERN_TOP_N}`;
                 const logPatternData = await searchQuery(httpClient, PPL_SEARCH_PATH, 'POST', dataSourceQuery, JSON.stringify({ query: topNLogPatternPPL }));
-                topNLogPatternData = JSON.stringify(logPatternData?.body?.datarows || '');
+                topNLogPatternData = escape(JSON.stringify(logPatternData?.body?.datarows || ''));
               }
             }
           }
