@@ -13,6 +13,7 @@ import { getDataSourceQueryObj } from '../../../pages/utils/helpers';
 import { OPERATORS_PPL_QUERY_MAP } from "../../CreateMonitor/containers/CreateMonitor/utils/whereFilters";
 import { filterActiveAlerts, findLongestStringField, searchQuery } from "./helpers";
 import {
+  BUCKET_UNIT_PPL_UNIT_MAP,
   DEFAULT_ACTIVE_ALERTS_TOP_N,
   DEFAULT_DSL_QUERY_DATE_FORMAT,
   DEFAULT_LOG_PATTERN_SAMPLE_SIZE,
@@ -177,10 +178,14 @@ export const alertColumns = (
         const monitorDefinition = monitorResp.resp;
         // 2. If the monitor is created via visual editor, translate ui_metadata dsl filter to ppl filter
         let formikToPPLFilters = [];
+        let pplBucketValue = 1;
+        let pplBucketUnitOfTime = 'HOUR';
         const isVisualEditorMonitor = monitorDefinition?.ui_metadata?.search?.searchType === SEARCH_TYPE.GRAPH;
         if (isVisualEditorMonitor) {
           const uiFilters = monitorDefinition?.ui_metadata?.search?.filters || []
           formikToPPLFilters = uiFilters.map((filter) => OPERATORS_PPL_QUERY_MAP[filter.operator].query(filter));
+          pplBucketValue = monitorDefinition?.ui_metadata?.search?.bucketValue || 1;
+          pplBucketUnitOfTime = BUCKET_UNIT_PPL_UNIT_MAP[monitorDefinition?.ui_metadata?.search?.bucketUnitOfTime] || 'HOUR';
         }
         delete monitorDefinition.ui_metadata;
         delete monitorDefinition.data_sources;
@@ -218,7 +223,9 @@ export const alertColumns = (
           }
           // 3.3 preprocess ppl query base with concatenated filters
           const pplAlertTriggerTime = moment.utc(alert.last_notification_time).format(DEFAULT_PPL_QUERY_DATE_FORMAT);
-          const basePPL = `source=${index} | where timestamp >= TIMESTAMPADD(HOUR, -1, '${pplAlertTriggerTime}') and timestamp <= TIMESTAMP('${pplAlertTriggerTime}')`
+          const basePPL = `source=${index}
+            | where timestamp >= TIMESTAMPADD(${pplBucketUnitOfTime}, -${pplBucketValue}, '${pplAlertTriggerTime}')
+            and timestamp <= TIMESTAMP('${pplAlertTriggerTime}')`
           const basePPLWithFilters = formikToPPLFilters.reduce((acc, filter) => {
             return `${acc} | where ${filter}`;
           }, basePPL);
@@ -228,7 +235,7 @@ export const alertColumns = (
             // 3.4 dsl query result with aggregation results
             const alertData = await searchQuery(httpClient, `${index}/_search`, 'GET', dataSourceQuery, query);
             alertTriggeredByValue = JSON.stringify(
-              alertData.body.aggregations?.metric.value || alertData.body.hits.total.value
+              alertData.body.aggregations?.metric?.value || alertData.body.hits.total.value
             );
 
             if (isVisualEditorMonitor) {
