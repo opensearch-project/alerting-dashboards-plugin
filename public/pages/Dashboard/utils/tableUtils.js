@@ -223,9 +223,9 @@ export const alertColumns = (
           }
           // 3.3 preprocess ppl query base with concatenated filters
           const pplAlertTriggerTime = moment.utc(alert.last_notification_time).format(DEFAULT_PPL_QUERY_DATE_FORMAT);
-          const basePPL = `source=${index}
-            | where timestamp >= TIMESTAMPADD(${pplBucketUnitOfTime}, -${pplBucketValue}, '${pplAlertTriggerTime}')
-            and timestamp <= TIMESTAMP('${pplAlertTriggerTime}')`
+          const basePPL = `source=${index} | ` +
+            `where timestamp >= TIMESTAMPADD(${pplBucketUnitOfTime}, -${pplBucketValue}, '${pplAlertTriggerTime}') and ` +
+            `timestamp <= TIMESTAMP('${pplAlertTriggerTime}')`;
           const basePPLWithFilters = formikToPPLFilters.reduce((acc, filter) => {
             return `${acc} | where ${filter}`;
           }, basePPL);
@@ -245,9 +245,9 @@ export const alertColumns = (
 
               // 3.6 log pattern query to get top N log patterns
               if (patternField) {
-                const topNLogPatternPPL = `${basePPLWithFilters} | patterns ${patternField}
-                  | stats count() as count, take(${patternField}, ${DEFAULT_LOG_PATTERN_SAMPLE_SIZE}) by patterns_field
-                  | sort - count | head ${DEFAULT_LOG_PATTERN_TOP_N}`;
+                const topNLogPatternPPL = `${basePPLWithFilters} | patterns ${patternField} | ` +
+                  `stats count() as count, take(${patternField}, ${DEFAULT_LOG_PATTERN_SAMPLE_SIZE}) by patterns_field | ` +
+                  `sort - count | head ${DEFAULT_LOG_PATTERN_TOP_N}`;
                 const logPatternData = await searchQuery(httpClient, PPL_SEARCH_PATH, 'POST', dataSourceQuery, JSON.stringify({ query: topNLogPatternPPL }));
                 topNLogPatternData = JSON.stringify(logPatternData?.body?.datarows || '');
               }
