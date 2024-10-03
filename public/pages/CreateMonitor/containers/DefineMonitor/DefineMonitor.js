@@ -381,6 +381,7 @@ class DefineMonitor extends Component {
         // Fill in monitor name in case it's empty (in create workflow)
         // Set triggers to empty array so they are not executed (if in edit workflow)
         // Set input search to query/graph query and then use execute API to fill in period_start/period_end
+        console.log("input values: " + JSON.stringify(values));
         const monitor = formikToMonitor(values);
         _.set(monitor, 'name', 'TEMP_MONITOR');
         _.set(monitor, 'triggers', []);
@@ -397,6 +398,7 @@ class DefineMonitor extends Component {
             console.log(`Unsupported searchType found: ${JSON.stringify(searchType)}`, searchType);
         }
         const dataSourceQuery = getDataSourceQueryObj();
+        console.log("after formik monitor: " + JSON.stringify(monitor));
         return httpClient.post('../api/alerting/monitors/_execute', {
           body: JSON.stringify(monitor),
           query: dataSourceQuery?.query,

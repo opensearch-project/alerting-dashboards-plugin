@@ -155,3 +155,42 @@ export function getURLQueryParams(location) {
     alertState,
   };
 }
+
+export function findLongestStringField(pplRes) {
+  const { schema, datarows } = pplRes.body;
+
+  if (!datarows || datarows.length === 0) return '';
+
+  let longestField = '';
+  let maxLength = 0;
+
+  // Iterate over schema and find the longest length string field name
+  schema.forEach((field, index) => {
+    if (field.type === 'string') {
+      const fieldValue = datarows[0][index];
+      if (fieldValue) {
+        const fieldLength = fieldValue.length;
+        if (fieldLength > maxLength) {
+          maxLength = fieldLength;
+          longestField = field.name;
+        }
+      }
+    }
+  });
+
+  return longestField;
+}
+
+export async function searchQuery(httpClient, path, method, dataSourceQuery, query) {
+  return await httpClient.post(`/api/console/proxy`, {
+    query: {
+      path: path,
+      method: method,
+      dataSourceId: dataSourceQuery ? dataSourceQuery.query.dataSourceId : '',
+    },
+    body: query,
+    prependBasePath: true,
+    asResponse: true,
+    withLongNumeralsSupport: true,
+  });
+}

@@ -33,3 +33,11 @@ export const DEFAULT_GET_ALERTS_QUERY_PARAMS_BY_TRIGGER = {
   sortDirection: 'desc',
   sortField: 'start_time',
 };
+
+export const PPL_SEARCH_PATH = '_plugins/_ppl';
+export const DEFAULT_LOG_PATTERN_TOP_N = 3;
+export const DEFAULT_LOG_PATTERN_SAMPLE_SIZE = 20;
+export const DEFAULT_ACTIVE_ALERTS_TOP_N = 10;
+export const DEFAULT_DSL_QUERY_DATE_FORMAT = 'YYYY-MM-DDTHH:mm:ssZ'
+export const DEFAULT_PPL_QUERY_DATE_FORMAT = 'YYYY-MM-DD HH:mm:ss';
+export const PERIOD_END_PLACEHOLDER = '{{period_end}}';

@@ -103,3 +103,66 @@ export const OPERATORS_QUERY_MAP = {
           },
   },
 };
+
+export const OPERATORS_PPL_QUERY_MAP = {
+  [OPERATORS_MAP.IS.value]: {
+    query: ({fieldName: [{label, type}], fieldValue}) => {
+      const formatFilter = (value) =>
+        (type === DATA_TYPES.TEXT ? `match_phrase(${label}, ${value})` : `${label} = ${value}`);
+      return formatFilter(type === DATA_TYPES.NUMBER ? fieldValue : `'${fieldValue}'`);
+    }
+  },
+  [OPERATORS_MAP.IS_NOT.value]: {
+    query: ({ fieldName: [{ label, type }], fieldValue }) => {
+      const formatFilter = (value) =>
+        (type === DATA_TYPES.TEXT ? `not match_phrase(${label}, ${fieldValue})` : `${label} = ${value}`);
+      return formatFilter(type === DATA_TYPES.NUMBER ? fieldValue : `'${fieldValue}'`);
+    }
+  },
+  [OPERATORS_MAP.IS_NULL.value]: {
+    query: ({ fieldName: [{ label: fieldKey }] }) => `isnull(${fieldKey})`,
+  },
+  [OPERATORS_MAP.IS_NOT_NULL.value]: {
+    query: ({ fieldName: [{ label: fieldKey }] }) => `isnotnull(${fieldKey})`,
+  },
+  [OPERATORS_MAP.IS_GREATER.value]: {
+    query: ({ fieldName: [{ label: fieldKey }], fieldValue }) => `${fieldKey} > ${fieldValue}`,
+  },
+
+  [OPERATORS_MAP.IS_GREATER_EQUAL.value]: {
+    query: ({ fieldName: [{ label: fieldKey }], fieldValue }) => `${fieldKey} >= ${fieldValue}`,
+  },
+  [OPERATORS_MAP.IS_LESS.value]: {
+    query: ({ fieldName: [{ label: fieldKey }], fieldValue }) => `${fieldKey} < ${fieldValue}`,
+  },
+
+  [OPERATORS_MAP.IS_LESS_EQUAL.value]: {
+    query: ({ fieldName: [{ label: fieldKey }], fieldValue }) => `${fieldKey} <= ${fieldValue}`,
+  },
+
+  [OPERATORS_MAP.IN_RANGE.value]: {
+    query: ({ fieldName: [{ label: fieldKey }], fieldRangeStart, fieldRangeEnd }) =>
+      `${fieldKey} >= ${fieldRangeStart} and ${fieldKey} <= ${fieldRangeEnd}`,
+  },
+  [OPERATORS_MAP.NOT_IN_RANGE.value]: {
+    query: ({ fieldName: [{ label: fieldKey }], fieldRangeStart, fieldRangeEnd }) =>
+      `${fieldKey} < ${fieldRangeStart} or ${fieldKey} > ${fieldRangeEnd}`,
+  },
+
+  [OPERATORS_MAP.STARTS_WITH.value]: {
+    query: ({ fieldName: [{ label: fieldKey }], fieldValue }) =>
+      type === DATA_TYPES.TEXT
+        ? `match_phrase_prefix(${fieldKey}, ${fieldValue})`
+        : `match_bool_prefix(${fieldKey}, ${fieldValue})`,
+  },
+
+  [OPERATORS_MAP.ENDS_WITH.value]: {
+    query: ({ fieldName: [{ label: fieldKey }], fieldValue }) => `query_string(['${fieldKey}'], '*${fieldValue}')`,
+  },
+  [OPERATORS_MAP.CONTAINS.value]: {
+    query: ({ fieldName: [{ label, type }], fieldValue }) => `query_string(['${label}'], '*${fieldValue}*')`, // TODO: check how to parse fieldValue containing *
+  },
+  [OPERATORS_MAP.DOES_NOT_CONTAINS.value]: {
+    query: ({ fieldName: [{ label, type }], fieldValue }) => `not query_string(['${label}'], '*${fieldValue}*')`,
+  },
+};
