@@ -897,4 +897,4 @@ describe('searchQuery', () => {
       withLongNumeralsSupport: true,
     });
   });
-})
+});
