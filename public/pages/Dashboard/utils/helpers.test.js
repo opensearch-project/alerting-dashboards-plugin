@@ -16,6 +16,8 @@ import {
   insertGroupByColumn,
   removeColumns,
   renderEmptyValue,
+  findLongestStringField,
+  searchQuery,
 } from './helpers';
 import { ALERT_STATE, DEFAULT_EMPTY_DATA } from '../../../utils/constants';
 import { bucketColumns } from './tableUtils';
@@ -824,5 +826,75 @@ describe('Dashboard/utils/helpers', () => {
       alertState: ALERT_STATE.ACKNOWLEDGED,
     };
     expect(getURLQueryParams(location)).toEqual(expectedOutput);
+  });
+});
+
+describe('findLongestStringField', () => {
+  test('return empty string for empty input', () => {
+    const input = { body: { schema: [], datarows: [] } };
+    expect(findLongestStringField(input)).toBe('');
+    delete input.body.schema;
+    delete input.body.datarows;
+    expect(findLongestStringField(input)).toBe('');
+    delete input.body;
+    expect(findLongestStringField(input)).toBe('');
+    expect(findLongestStringField(undefined)).toBe('');
+    expect(findLongestStringField(null)).toBe('');
+  });
+  test('returns empty string when schema is empty', () => {
+    const input = { body: { schema: [], datarows: [[1, 2]] } };
+    expect(findLongestStringField(input)).toBe('');
+    delete input.body.schema;
+    expect(findLongestStringField(input)).toBe('');
+  });
+  test('returns empty string when datarows is empty', () => {
+    const input = { body: { schema: [{ name: 'name', type: 'string' }], datarows: [] } };
+    expect(findLongestStringField(input)).toBe('');
+    delete input.body.datarows;
+    expect(findLongestStringField(input)).toBe('');
+  });
+  test('returns correct field name for multiple fields with varying lengths', () => {
+    const input = {
+      body: {
+        schema: [
+          { name: 'firstName', type: 'string' },
+          { name: 'lastName', type: 'string' },
+          { name: 'timestamp', type: 'number' }
+        ],
+        datarows: [['Alice', 'Johnson', 3000000000000]]
+      }
+    };
+    expect(findLongestStringField(input)).toBe('lastName');
+  });
+});
+
+describe('searchQuery', () => {
+  let httpClient;
+
+  beforeEach(() => {
+    httpClient = {
+      post: jest.fn()
+    };
+  });
+
+  test('should call httpClient.post with correct parameters', async () => {
+    const path = '/example/path';
+    const method = 'GET';
+    const dataSourceQuery = { query: { dataSourceId: '123' } };
+    const query = { key: 'value' };
+
+    await searchQuery(httpClient, path, method, dataSourceQuery, query);
+
+    expect(httpClient.post).toHaveBeenCalledWith('/api/console/proxy', {
+      query: {
+        path: path,
+        method: method,
+        dataSourceId: '123',
+      },
+      body: query,
+      prependBasePath: true,
+      asResponse: true,
+      withLongNumeralsSupport: true,
+    });
   });
 });
