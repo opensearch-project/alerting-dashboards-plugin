@@ -23,6 +23,7 @@ import {
   PPL_SEARCH_PATH
 } from "./constants";
 import { escape } from 'lodash';
+import { getTime } from "../../MonitorDetails/components/MonitorOverview/utils/getOverviewStats";
 
 export const renderTime = (time, options = { showFromNow: false }) => {
   const momentTime = moment(time);
@@ -181,12 +182,14 @@ export const alertColumns = (
         let formikToPPLFilters = [];
         let pplBucketValue = 1;
         let pplBucketUnitOfTime = 'HOUR';
+        let pplTimeField = '';
         const isVisualEditorMonitor = monitorDefinition?.ui_metadata?.search?.searchType === SEARCH_TYPE.GRAPH;
         if (isVisualEditorMonitor) {
           const uiFilters = monitorDefinition?.ui_metadata?.search?.filters || []
           formikToPPLFilters = uiFilters.map((filter) => OPERATORS_PPL_QUERY_MAP[filter.operator].query(filter));
           pplBucketValue = monitorDefinition?.ui_metadata?.search?.bucketValue || 1;
           pplBucketUnitOfTime = BUCKET_UNIT_PPL_UNIT_MAP[monitorDefinition?.ui_metadata?.search?.bucketUnitOfTime] || 'HOUR';
+          pplTimeField = monitorDefinition?.ui_metadata?.search?.timeField;
         }
         delete monitorDefinition.ui_metadata;
         delete monitorDefinition.data_sources;
@@ -217,7 +220,7 @@ export const alertColumns = (
             dsl = dsl.replaceAll('"format":"epoch_millis",', '');
             monitorDefinitionStr = monitorDefinitionStr.replaceAll(
               PERIOD_END_PLACEHOLDER,
-              latestAlertTriggerTime
+              getTime(alert.last_notification_time) // human-readable time format for summary
             );
             // as we changed the format, remove it
             monitorDefinitionStr = monitorDefinitionStr.replaceAll('"format":"epoch_millis",', '');
@@ -225,8 +228,8 @@ export const alertColumns = (
           // 3.3 preprocess ppl query base with concatenated filters
           const pplAlertTriggerTime = moment.utc(alert.last_notification_time).format(DEFAULT_PPL_QUERY_DATE_FORMAT);
           const basePPL = `source=${index} | ` +
-            `where timestamp >= TIMESTAMPADD(${pplBucketUnitOfTime}, -${pplBucketValue}, '${pplAlertTriggerTime}') and ` +
-            `timestamp <= TIMESTAMP('${pplAlertTriggerTime}')`;
+            `where ${pplTimeField} >= TIMESTAMPADD(${pplBucketUnitOfTime}, -${pplBucketValue}, '${pplAlertTriggerTime}') and ` +
+            `${pplTimeField} <= TIMESTAMP('${pplAlertTriggerTime}')`;
           const basePPLWithFilters = formikToPPLFilters.reduce((acc, filter) => {
             return `${acc} | where ${filter}`;
           }, basePPL);
@@ -256,10 +259,16 @@ export const alertColumns = (
           }
         }
 
-        // 3.6 only keep top N active alerts
-        const activeAlerts = filterActiveAlerts(alert.alerts).slice(0, DEFAULT_ACTIVE_ALERTS_TOP_N);
+        // 3.6 only keep top N active alerts and replace time with human-readable timezone format
+        const activeAlerts = filterActiveAlerts(alert.alerts).slice(0, DEFAULT_ACTIVE_ALERTS_TOP_N)
+          .map(activeAlert => ({
+            ...activeAlert,
+            start_time: getTime(activeAlert.start_time),
+            last_notification_time: getTime(activeAlert.last_notification_time)
+          }));
         // Reduce llm input token size by taking topN active alerts
-        const filteredAlert = { ...alert, alerts: activeAlerts };
+        const filteredAlert = { ...alert, alerts: activeAlerts, start_time: getTime(alert.start_time),
+          last_notification_time: getTime(alert.last_notification_time) };
 
         // 4. build the context
         return {

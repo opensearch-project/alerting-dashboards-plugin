@@ -157,9 +157,13 @@ export function getURLQueryParams(location) {
 }
 
 export function findLongestStringField(pplRes) {
+  if (!pplRes || !pplRes.body || !Array.isArray(pplRes.body.schema) || !Array.isArray(pplRes.body.datarows)) {
+    return '';
+  }
+
   const { schema, datarows } = pplRes.body;
 
-  if (!datarows || datarows.length === 0) return '';
+  if (schema.length === 0 || datarows.length === 0) return '';
 
   let longestField = '';
   let maxLength = 0;

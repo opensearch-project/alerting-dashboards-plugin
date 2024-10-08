@@ -160,7 +160,7 @@ export const OPERATORS_PPL_QUERY_MAP = {
     query: ({ fieldName: [{ label: fieldKey }], fieldValue }) => `query_string(['${fieldKey}'], '*${fieldValue}')`,
   },
   [OPERATORS_MAP.CONTAINS.value]: {
-    query: ({ fieldName: [{ label, type }], fieldValue }) => `query_string(['${label}'], '*${fieldValue}*')`, // TODO: check how to parse fieldValue containing *
+    query: ({ fieldName: [{ label, type }], fieldValue }) => `query_string(['${label}'], '*${fieldValue}*')`,
   },
   [OPERATORS_MAP.DOES_NOT_CONTAINS.value]: {
     query: ({ fieldName: [{ label, type }], fieldValue }) => `not query_string(['${label}'], '*${fieldValue}*')`,
