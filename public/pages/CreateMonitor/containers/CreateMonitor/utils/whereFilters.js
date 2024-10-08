@@ -150,7 +150,7 @@ export const OPERATORS_PPL_QUERY_MAP = {
   },
 
   [OPERATORS_MAP.STARTS_WITH.value]: {
-    query: ({ fieldName: [{ label: fieldKey }], fieldValue }) =>
+    query: ({ fieldName: [{ label: fieldKey, type }], fieldValue }) =>
       type === DATA_TYPES.TEXT
         ? `match_phrase_prefix(${fieldKey}, ${fieldValue})`
         : `match_bool_prefix(${fieldKey}, ${fieldValue})`,
