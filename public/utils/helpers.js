@@ -206,6 +206,7 @@ export function registerAlertsCard() {
       id: 'analytics_all_recent_alerts_card',
       kind: 'custom',
       order: 10,
+      width: 16,
       render: () => (
         <DataSourceAlertsCard
           getDataSourceMenu={getDataSourceManagementPlugin()?.ui.getDataSourceMenu}
