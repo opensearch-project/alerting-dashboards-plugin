@@ -8,6 +8,7 @@ import _ from 'lodash';
 import { INDEX } from '../../utils/constants';
 import { isIndexNotFoundError } from './utils/helpers';
 import { MDSEnabledClientService } from './MDSEnabledClientService';
+import { DEFAULT_HEADERS } from "./utils/constants";
 
 export default class MonitorService extends MDSEnabledClientService {
   createMonitor = async (context, req, res) => {
@@ -103,7 +104,7 @@ export default class MonitorService extends MDSEnabledClientService {
   getMonitor = async (context, req, res) => {
     try {
       const { id } = req.params;
-      const params = { monitorId: id };
+      const params = { monitorId: id, headers: DEFAULT_HEADERS };
       const client = this.getClientBasedOnDataSource(context, req);
       const getResponse = await client('alerting.getMonitor', params);
       let monitor = _.get(getResponse, 'monitor', null);
