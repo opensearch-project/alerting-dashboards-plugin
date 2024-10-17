@@ -91,7 +91,7 @@ class Main extends Component {
 
   handleDataSourceChange = ([dataSource]) => {
     const dataSourceId = dataSource?.id;
-    const dataSourceLabel = dataSource?.label
+    const dataSourceLabel = dataSource?.label;
     if (this.props.dataSourceEnabled && dataSourceId === undefined) {
       getNotifications().toasts.addDanger('Unable to set data source.');
     } else if (this.state.selectedDataSourceId != dataSourceId) {
