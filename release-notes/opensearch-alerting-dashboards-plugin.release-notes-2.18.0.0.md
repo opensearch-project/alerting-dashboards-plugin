@@ -17,4 +17,4 @@ Compatible with OpenSearch Dashboards 2.18.0
 * Fix ui_metadata is not fetched when MDS client is used ([#1124](https://github.com/opensearch-project/alerting-dashboards-plugin/pull/1124))
 
 ### Documentation
-* Added 2.18.0 release notes. ([#]())
+* Added 2.18.0 release notes. ([#1132](https://github.com/opensearch-project/alerting-dashboards-plugin/pull/1132))
