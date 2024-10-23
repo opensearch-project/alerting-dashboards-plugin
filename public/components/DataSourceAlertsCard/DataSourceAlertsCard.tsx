@@ -3,7 +3,7 @@
 * SPDX-License-Identifier: Apache-2.0
 */
 
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { EuiBadge, EuiDescriptionList, EuiEmptyPrompt, EuiFlexGroup, EuiFlexItem, EuiHorizontalRule, EuiLink, EuiLoadingContent, EuiPanel, EuiText, EuiTitle } from "@elastic/eui";
 import { DataSourceManagementPluginSetup, DataSourceOption } from "../../../../../src/plugins/data_source_management/public";
 import { getApplication, getClient, getNotifications, getSavedObjectsClient } from "../../services";
@@ -17,7 +17,13 @@ export interface DataSourceAlertsCardProps {
 }
 
 export const DataSourceAlertsCard: React.FC<DataSourceAlertsCardProps> =  ({ getDataSourceMenu }) => {
-  const DataSourceSelector = getDataSourceMenu?.();
+  const DataSourceSelector = useMemo(() => {
+    if (getDataSourceMenu) {
+      return getDataSourceMenu();
+    }
+
+    return null;
+  }, [getDataSourceMenu]);
   const [loading, setLoading] = useState(false);
   const [dataSource, setDataSource] = useState<DataSourceOption>({
     label: 'Local cluster',
