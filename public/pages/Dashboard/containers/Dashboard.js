@@ -581,7 +581,12 @@ export default class Dashboard extends Component {
             isSelectable={true}
             selection={selection}
             onChange={this.onTableChange}
-            noItemsMessage={<DashboardEmptyPrompt onCreateTrigger={onCreateTrigger} />}
+            noItemsMessage={
+              <DashboardEmptyPrompt
+                onCreateTrigger={onCreateTrigger}
+                landingDataSourceId={this.props.landingDataSourceId}
+              />
+            }
             data-test-subj={'alertsDashboard_table'}
           />
 
