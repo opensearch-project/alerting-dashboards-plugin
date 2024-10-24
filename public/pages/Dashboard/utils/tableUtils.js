@@ -283,6 +283,7 @@ export const alertColumns = (
             dsl: dsl,
             index: index,
             topNLogPatternData: topNLogPatternData,
+            isVisualEditorMonitor: isVisualEditorMonitor,
           },
           dataSourceId: dataSourceQuery?.query?.dataSourceId,
         };
