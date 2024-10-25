@@ -12,7 +12,6 @@ import {
   SUMMARY_AGENT_CONFIG_ID,
   LOG_PATTERN_SUMMARY_AGENT_CONFIG_ID
  } from './constants';
-import {} from '../../'
 
 export function dataSourceEnabled() {
   return getDataSourceEnabled()?.enabled;
