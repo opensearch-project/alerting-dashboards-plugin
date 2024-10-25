@@ -15,4 +15,6 @@ const LocalCluster: DataSourceOption = {
     id: "",
   };
   
-  export const dataSourceObservable = new BehaviorSubject<DataSourceOption>(LocalCluster);
+export const dataSourceObservable = new BehaviorSubject<DataSourceOption>(LocalCluster);
+export const SUMMARY_AGENT_CONFIG_ID = 'os_summary';
+export const LOG_PATTERN_SUMMARY_AGENT_CONFIG_ID = 'os_summary_with_log_pattern';

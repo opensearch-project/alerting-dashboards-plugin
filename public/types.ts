@@ -10,3 +10,4 @@
  */
 // @ts-ignore
 export type { AssistantSetup } from '../../dashboards-assistant/public';
+export type { AssistantPublicPluginStart } from '../../dashboards-assistant/public/';
