@@ -2,8 +2,14 @@
   "id": "alertingDashboards",
   "version": "2.18.0.0",
   "opensearchDashboardsVersion": "2.18.0",
-  "configPath": ["opensearch_alerting"],
-  "optionalPlugins": ["dataSource", "dataSourceManagement", "assistantDashboards"],
+  "configPath": [
+    "opensearch_alerting"
+  ],
+  "optionalPlugins": [
+    "dataSource",
+    "dataSourceManagement",
+    "assistantDashboards"
+  ],
   "requiredPlugins": [
     "uiActions",
     "dashboard",
@@ -20,5 +26,7 @@
   "server": true,
   "ui": true,
   "supportedOSDataSourceVersions": ">=2.13.0",
-  "requiredOSDataSourcePlugins": ["opensearch-alerting"]
+  "requiredOSDataSourcePlugins": [
+    "opensearch-alerting"
+  ]
 }
