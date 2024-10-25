@@ -45,6 +45,7 @@ import {
   getDataSourceId,
   appendCommentsAction,
   getIsCommentsEnabled,
+  getIsAgentConfigured
 } from '../../utils/helpers';
 import { getUseUpdatedUx } from '../../../services';
 
@@ -78,6 +79,7 @@ export default class Dashboard extends Component {
       totalTriggers: 0,
       chainedAlert: undefined,
       commentsEnabled: false,
+      isAgentConfigured: false,
     };
   }
 
@@ -102,17 +104,34 @@ export default class Dashboard extends Component {
     getIsCommentsEnabled(this.props.httpClient).then((commentsEnabled) => {
       this.setState({ commentsEnabled });
     });
+    this.getUpdatedAgentConfig();
   }
 
   componentDidUpdate(prevProps, prevState) {
     const prevQuery = getQueryObjectFromState(prevState);
     const currQuery = getQueryObjectFromState(this.state);
     if (!_.isEqual(prevQuery, currQuery)) {
+      this.getUpdatedAgentConfig();
       this.getUpdatedAlerts();
     }
     if (isDataSourceChanged(prevProps, this.props)) {
       this.dataSourceQuery = getDataSourceQueryObj();
+      this.getUpdatedAgentConfig();
       this.getUpdatedAlerts();
+    }
+  }
+
+  getUpdatedAgentConfig() {
+    const dataSourceId = getDataSourceId();
+    console.log("ds", dataSourceId);
+    if (dataSourceId){
+      getIsAgentConfigured(dataSourceId).then((isAgentConfigured) => {
+        this.setState({ isAgentConfigured });
+        console.log("UpAC", this.state.isAgentConfigured);
+      });
+    }
+    else{
+      this.setState({ isAgentConfigured: false });
     }
   }
 
@@ -361,6 +380,7 @@ export default class Dashboard extends Component {
       totalAlerts,
       totalTriggers,
       commentsEnabled,
+      isAgentConfigured,
     } = this.state;
     const {
       monitorIds,
@@ -444,6 +464,7 @@ export default class Dashboard extends Component {
         location,
         monitors,
         notifications,
+        isAgentConfigured,
         setFlyout,
         this.openFlyout,
         this.closeFlyout,

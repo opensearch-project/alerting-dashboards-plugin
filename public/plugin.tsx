@@ -21,10 +21,10 @@ import { alertingTriggerAd } from './utils/contextMenu/triggers';
 import { ExpressionsSetup } from '../../../src/plugins/expressions/public';
 import { UiActionsSetup } from '../../../src/plugins/ui_actions/public';
 import { overlayAlertsFunction } from './expressions/overlay_alerts';
-import { setClient, setEmbeddable, setNotifications, setOverlays, setSavedAugmentVisLoader, setUISettings, setQueryService, setSavedObjectsClient, setDataSourceEnabled, setDataSourceManagementPlugin, setNavigationUI, setApplication, setContentManagementStart, setAssistantDashboards } from './services';
+import { setClient, setEmbeddable, setNotifications, setOverlays, setSavedAugmentVisLoader, setUISettings, setQueryService, setSavedObjectsClient, setDataSourceEnabled, setDataSourceManagementPlugin, setNavigationUI, setApplication, setContentManagementStart, setAssistantDashboards, setAssistantClient } from './services';
 import { VisAugmenterStart } from '../../../src/plugins/vis_augmenter/public';
 import { DataPublicPluginStart } from '../../../src/plugins/data/public';
-import { AssistantSetup } from './types';
+import { AssistantSetup, AssistantPublicPluginStart  } from './types';
 import { DataSourceManagementPluginSetup } from '../../../src/plugins/data_source_management/public';
 import { DataSourcePluginSetup } from '../../../src/plugins/data_source/public';
 import { NavigationPublicPluginStart } from '../../../src/plugins/navigation/public';
@@ -57,6 +57,7 @@ export interface AlertingStartDeps {
   data: DataPublicPluginStart;
   navigation: NavigationPublicPluginStart;
   contentManagement: ContentManagementPluginStart;
+  assistantDashboards: AssistantPublicPluginStart;
 }
 
 export class AlertingPlugin implements Plugin<void, AlertingStart, AlertingSetupDeps, AlertingStartDeps> {
@@ -200,7 +201,6 @@ export class AlertingPlugin implements Plugin<void, AlertingStart, AlertingSetup
     }
 
     setAssistantDashboards(assistantDashboards || { getFeatureStatus: () => ({ chat: false, alertInsight: false }) });
-
     setUISettings(core.uiSettings);
 
     // Set the HTTP client so it can be pulled into expression fns to make
@@ -230,7 +230,7 @@ export class AlertingPlugin implements Plugin<void, AlertingStart, AlertingSetup
     uiActions.addTriggerAction(alertingTriggerAd.id, adAction);
   }
 
-  public start(core: CoreStart, { visAugmenter, embeddable, data, navigation, contentManagement }: AlertingStartDeps): AlertingStart {
+  public start(core: CoreStart, { visAugmenter, embeddable, data, navigation, contentManagement, assistantDashboards }: AlertingStartDeps): AlertingStart {
     setEmbeddable(embeddable);
     setOverlays(core.overlays);
     setQueryService(data.query);
@@ -241,6 +241,8 @@ export class AlertingPlugin implements Plugin<void, AlertingStart, AlertingSetup
     setApplication(core.application);
     setContentManagementStart(contentManagement);
     registerAlertsCard();
+    if (assistantDashboards)
+      setAssistantClient(assistantDashboards.assistantClient);
     return {};
   }
 }
