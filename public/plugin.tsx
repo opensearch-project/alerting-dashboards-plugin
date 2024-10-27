@@ -62,7 +62,11 @@ export interface AlertingStartDeps {
 export class AlertingPlugin implements Plugin<void, AlertingStart, AlertingSetupDeps, AlertingStartDeps> {
 
   private updateDefaultRouteOfManagementApplications: AppUpdater = () => {
-    const hash = `#/?dataSourceId=${dataSourceObservable.value?.id || ""}`;
+    const dataSourceValue = dataSourceObservable.value?.id;
+    let hash = `#/`;
+    if (dataSourceValue) {
+      hash = `#/?dataSourceId=${dataSourceValue}`;
+    }
     return {
       defaultPath: hash,
     };
