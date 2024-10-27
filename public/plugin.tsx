@@ -64,7 +64,10 @@ export class AlertingPlugin implements Plugin<void, AlertingStart, AlertingSetup
   private updateDefaultRouteOfManagementApplications: AppUpdater = () => {
     const dataSourceValue = dataSourceObservable.value?.id;
     let hash = `#/`;
-    if (dataSourceValue) {
+    // When data source value is undefined,
+    // it means the data source picker has not determine which data source to use(local or default data source)
+    // so we should not append any data source id into hash to impact the component.
+    if (dataSourceValue !== undefined) {
       hash = `#/?dataSourceId=${dataSourceValue}`;
     }
     return {
