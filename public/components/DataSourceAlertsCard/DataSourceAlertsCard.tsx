@@ -49,7 +49,7 @@ export const DataSourceAlertsCard: React.FC<DataSourceAlertsCardProps> =  ({ get
   }, [dataSource]);
 
   const onDataSourceSelected = useCallback((options: any[]) => {
-    if (dataSource?.id !== undefined && dataSource?.id !== options[0]?.id) {
+    if (dataSource?.id === undefined || dataSource?.id !== options[0]?.id) {
       setDataSource(options[0]);
     }
   }, [dataSource]);
