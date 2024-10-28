@@ -73,15 +73,20 @@ export const appendCommentsAction = (columns, httpClient) => {
 };
 
 export async function getIsAgentConfigured(dataSourceId){
-  const assistantClient = getAssistantClient();
-  const res = await assistantClient.agentConfigExists(
-    [
-      SUMMARY_AGENT_CONFIG_ID,
-      LOG_PATTERN_SUMMARY_AGENT_CONFIG_ID,
-    ],
-    { dataSourceId: dataSourceId }
-  );
-  return res.exists;
+  try{
+    const assistantClient = getAssistantClient();
+    const res = await assistantClient.agentConfigExists(
+      [
+        SUMMARY_AGENT_CONFIG_ID,
+        LOG_PATTERN_SUMMARY_AGENT_CONFIG_ID,
+      ],
+      { dataSourceId: dataSourceId }
+    );
+    return res.exists;
+  }
+  catch(e){
+    return false;
+  }
 }
 
 export async function getIsCommentsEnabled(httpClient) {
