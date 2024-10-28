@@ -26,10 +26,7 @@ export const DataSourceAlertsCard: React.FC<DataSourceAlertsCardProps> =  ({ get
     return null;
   }, [getDataSourceMenu]);
   const [loading, setLoading] = useState(false);
-  const [dataSource, setDataSource] = useState<DataSourceOption>({
-    label: 'Local cluster',
-    id: '',
-  });
+  const [dataSource, setDataSource] = useState<DataSourceOption>();
   const [alerts, setAlerts] = useState<any[]>([]);
 
   useEffect(() => {
