@@ -57,7 +57,7 @@ export interface AlertingStartDeps {
   data: DataPublicPluginStart;
   navigation: NavigationPublicPluginStart;
   contentManagement: ContentManagementPluginStart;
-  assistantDashboards: AssistantPublicPluginStart;
+  assistantDashboards?: AssistantPublicPluginStart;
 }
 
 export class AlertingPlugin implements Plugin<void, AlertingStart, AlertingSetupDeps, AlertingStartDeps> {
