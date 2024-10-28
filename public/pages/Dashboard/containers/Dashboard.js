@@ -123,11 +123,9 @@ export default class Dashboard extends Component {
 
   getUpdatedAgentConfig() {
     const dataSourceId = getDataSourceId();
-    console.log("ds", dataSourceId);
     if (dataSourceId){
       getIsAgentConfigured(dataSourceId).then((isAgentConfigured) => {
         this.setState({ isAgentConfigured });
-        console.log("UpAC", this.state.isAgentConfigured);
       });
     }
     else{
