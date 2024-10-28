@@ -73,8 +73,8 @@ export const appendCommentsAction = (columns, httpClient) => {
 };
 
 export async function getIsAgentConfigured(dataSourceId){
+  const assistantClient = getAssistantClient();
   try{
-    const assistantClient = getAssistantClient();
     const res = await assistantClient.agentConfigExists(
       [
         SUMMARY_AGENT_CONFIG_ID,

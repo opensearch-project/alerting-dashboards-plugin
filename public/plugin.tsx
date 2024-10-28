@@ -241,8 +241,7 @@ export class AlertingPlugin implements Plugin<void, AlertingStart, AlertingSetup
     setApplication(core.application);
     setContentManagementStart(contentManagement);
     registerAlertsCard();
-    if (assistantDashboards)
-      setAssistantClient(assistantDashboards.assistantClient);
+    setAssistantClient(assistantDashboards?.assistantClient || {agentConfigExists: (agentConfigName: string | string[], options?: string) => {return Promise.resolve({ exists: false });}})
     return {};
   }
 }

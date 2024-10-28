@@ -36,7 +36,7 @@ export const [getAssistantDashboards, setAssistantDashboards] = createGetterSett
 >('assistantDashboards');
 
 export const [getAssistantClient, setAssistantClient] =
-  createGetterSetter<AssistantPublicPluginStart['assistantClient']>('AssistantClient');
+  createGetterSetter<AssistantPublicPluginStart['assistantClient'] | {}>('AssistantClient');
 
 export const [getEmbeddable, setEmbeddable] = createGetterSetter<EmbeddableStart>('embeddable');
 
