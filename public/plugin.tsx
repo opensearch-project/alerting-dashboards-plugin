@@ -62,7 +62,14 @@ export interface AlertingStartDeps {
 export class AlertingPlugin implements Plugin<void, AlertingStart, AlertingSetupDeps, AlertingStartDeps> {
 
   private updateDefaultRouteOfManagementApplications: AppUpdater = () => {
-    const hash = `#/?dataSourceId=${dataSourceObservable.value?.id || ""}`;
+    const dataSourceValue = dataSourceObservable.value?.id;
+    let hash = `#/`;
+    // When data source value is undefined,
+    // it means the data source picker has not determine which data source to use(local or default data source)
+    // so we should not append any data source id into hash to avoid impacting the data source picker.
+    if (dataSourceValue !== undefined) {
+      hash = `#/?dataSourceId=${dataSourceValue}`;
+    }
     return {
       defaultPath: hash,
     };
