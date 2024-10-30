@@ -80,7 +80,7 @@ export const DataSourceAlertsCard: React.FC<DataSourceAlertsCardProps> =  ({ get
         </EuiFlexItem>
       </EuiFlexGroup>
     )
-  }, []);
+  }, [dataSource]);
 
   const createAlertDetailsDescription = useCallback((alert) => {
     const monitorName = alert.monitor_name ?? DEFAULT_EMPTY_DATA;
