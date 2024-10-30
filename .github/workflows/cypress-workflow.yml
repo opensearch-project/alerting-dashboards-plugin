@@ -24,7 +24,7 @@ jobs:
         uses: actions/setup-java@v1
         with:
           # TODO: Parse this from alerting plugin
-          java-version: 14
+          java-version: 21
       - name: Checkout
         uses: actions/checkout@v2
         with:
