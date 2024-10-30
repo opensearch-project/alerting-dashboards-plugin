@@ -172,12 +172,18 @@ export function getManageChannelsUrl() {
 }
 
 export function dataSourceFilterFn(dataSource) {
-  const dataSourceVersion = dataSource?.attributes?.dataSourceVersion || '';
-  const installedPlugins = dataSource?.attributes?.installedPlugins || [];
-  return (
-    semver.satisfies(dataSourceVersion, pluginManifest.supportedOSDataSourceVersions) &&
-    pluginManifest.requiredOSDataSourcePlugins.every((plugin) => installedPlugins.includes(plugin))
-  );
+  try {
+    const dataSourceVersion = dataSource?.attributes?.dataSourceVersion || '';
+    const installedPlugins = dataSource?.attributes?.installedPlugins || [];
+    return (
+      pluginManifest.requiredOSDataSourcePlugins.every((plugin) =>
+        installedPlugins.includes(plugin)
+      ) && semver.satisfies(dataSourceVersion, pluginManifest.supportedOSDataSourceVersions)
+    );
+  } catch (error) {
+    // Filter out invalid data source
+    return false;
+  }
 }
 
 export function getSeverityText(severity) {
