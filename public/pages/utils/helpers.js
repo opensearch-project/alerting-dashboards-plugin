@@ -85,6 +85,7 @@ export async function getIsAgentConfigured(dataSourceId){
     return res.exists;
   }
   catch(e){
+    console.error('Error while checking if agent is configured:', e);
     return false;
   }
 }
