@@ -5,7 +5,7 @@
 
 import React, { Component, Fragment } from 'react';
 import _ from 'lodash';
-import moment from 'moment';
+import moment from 'moment-timezone';
 import { Formik, FieldArray } from 'formik';
 import {
   EuiButton,
@@ -36,6 +36,7 @@ import DefineBucketLevelTrigger from '../../DefineBucketLevelTrigger';
 import { getPathsPerDataType } from '../../../../CreateMonitor/containers/DefineMonitor/utils/mappings';
 import { MONITOR_TYPE } from '../../../../../utils/constants';
 import { buildClusterMetricsRequest } from '../../../../CreateMonitor/components/ClusterMetricsMonitor/utils/clusterMetricsMonitorHelpers';
+import { getTimeZone } from '../../../utils/helper';
 
 export const DEFAULT_CLOSED_STATES = {
   WHEN: false,
@@ -207,8 +208,8 @@ export default class CreateTrigger extends Component {
   };
 
   getTriggerContext = (executeResponse, monitor, values) => ({
-    periodStart: moment.utc(_.get(executeResponse, 'period_start', Date.now())).format(),
-    periodEnd: moment.utc(_.get(executeResponse, 'period_end', Date.now())).format(),
+    periodStart: moment.utc(_.get(executeResponse, 'period_start', Date.now())).tz(getTimeZone()).format(),
+    periodEnd: moment.utc(_.get(executeResponse, 'period_end', Date.now())).tz(getTimeZone()).format(),
     results: [_.get(executeResponse, 'input_results.results[0]')].filter((result) => !!result),
     trigger: formikToTrigger(values, _.get(this.props.monitor, 'ui_metadata', {})),
     alert: null,
