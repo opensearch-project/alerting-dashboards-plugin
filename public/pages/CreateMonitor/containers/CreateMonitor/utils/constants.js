@@ -76,6 +76,7 @@ export const FORMIK_INITIAL_VALUES = {
   associatedMonitorsList: [],
   associatedMonitorsEditor: '',
   preventVisualEditor: false,
+  roles: [],
 };
 
 export const FORMIK_INITIAL_AGG_VALUES = {

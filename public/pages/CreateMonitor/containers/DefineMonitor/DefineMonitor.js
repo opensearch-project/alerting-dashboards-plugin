@@ -27,6 +27,7 @@ import { buildRequest } from './utils/searchRequests';
 import { SEARCH_TYPE, OS_AD_PLUGIN, MONITOR_TYPE } from '../../../../utils/constants';
 import { backendErrorNotification } from '../../../../utils/helpers';
 import DataSource from '../DataSource';
+import MonitorSecurity from '../MonitorSecurity';
 import {
   buildClusterMetricsRequest,
   getApiType,
@@ -616,6 +617,18 @@ class DefineMonitor extends Component {
             <EuiSpacer />
           </div>
         )}
+        <div>
+          <MonitorSecurity
+            values={values}
+            dataTypes={dataTypes}
+            errors={errors}
+            httpClient={httpClient}
+            detectorId={detectorId}
+            notifications={notifications}
+            isDarkMode={isDarkMode}
+          />
+          <EuiSpacer />
+        </div>
         <PanelComponent
           title="Query"
           titleSize="s"
