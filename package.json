@@ -48,7 +48,8 @@
     "hoek": "npm:@hapi/hoek@9.1.1",
     "@cypress/request": "^3.0.0",
     "ansi-regex": "^5.0.1",
-    "braces": "^3.0.3"
+    "braces": "^3.0.3",
+    "micromatch": "^4.0.8"
   },
   "engines": {
     "yarn": "^1.21.1"
