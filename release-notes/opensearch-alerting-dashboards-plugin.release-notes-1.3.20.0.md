@@ -4,6 +4,7 @@ Compatible with OpenSearch Dashboards 1.3.20
 ### Maintenance
 * [CVE-2024-4068] Fix. ([#1061](https://github.com/opensearch-project/alerting-dashboards-plugin/pull/1061))
 * Remove dco and update artifact action to v4. ([#1166](https://github.com/opensearch-project/alerting-dashboards-plugin/pull/1166))
+* CVE fix CVE-2024-4067 ([#1172](https://github.com/opensearch-project/alerting-dashboards-plugin/pull/1172))
 
 ### Documentation
 * [1.3.20] Added release notes. ([#1171](https://github.com/opensearch-project/alerting-dashboards-plugin/pull/1171))
