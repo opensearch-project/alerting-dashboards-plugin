@@ -178,18 +178,21 @@ export default class DestinationsService extends MDSEnabledClientService {
       // Indices will be created when the monitor is created.
       if (isIndexNotFoundError(err)) {
         return res.ok({
-          body: { 
-            ok: true, 
-            resp: "Indices will be configured when the monitor is created: [.opendistro-alerting-config]" 
+          body: {
+            ok: false,
+            totalMonitors: 0, 
+            monitors: [],
+            message: "Config index will be created automatically when the monitor is created"
+          },
+        });
+      } else {
+        return res.ok({
+          body: {
+            ok: false,
+            err: err.message,
           },
         });
       }
-      return res.ok({
-        body: {
-          ok: false,
-          err: err.message,
-        },
-      });
     }
   };
 
