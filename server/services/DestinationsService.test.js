@@ -151,8 +151,10 @@ describe("Test DestinationsService -- getDestinations", () => {
     
       expect(mockRes.ok).toHaveBeenCalledWith({
         body: {
-          ok: true,
-          resp: "Indices will be configured when the monitor is created: [.opendistro-alerting-config]"
+          ok: false,
+            totalMonitors: 0, 
+            monitors: [],
+            message: "Config index will be created automatically when the monitor is created"
         },
       });
     });
