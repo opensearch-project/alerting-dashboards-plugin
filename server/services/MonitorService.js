@@ -481,18 +481,28 @@ export default class MonitorService extends MDSEnabledClientService {
         },
       });
     } catch (err) {
-      console.error('Alerting - MonitorService - getMonitors', err);
       if (isIndexNotFoundError(err)) {
+        // Config index is not created unitl a monitor is created.
         return res.ok({
-          body: { ok: false, resp: { totalMonitors: 0, monitors: [] } },
+          body: { 
+            ok: false, 
+            resp: { 
+              totalMonitors: 0, 
+              monitors: [],
+              message: "No monitors created"
+            } 
+          },
+        });
+      } else {
+        // If the index is created, some error in retrieving the monitors.
+        console.error('Alerting - MonitorService - getMonitors', err);
+        return res.ok({
+          body: {
+            ok: false,
+            resp: err.message,
+          },
         });
       }
-      return res.ok({
-        body: {
-          ok: false,
-          resp: err.message,
-        },
-      });
     }
   };
 
@@ -594,13 +604,28 @@ export default class MonitorService extends MDSEnabledClientService {
         },
       });
     } catch (err) {
-      console.error('Alerting - MonitorService - searchMonitor:', err);
-      return res.ok({
-        body: {
-          ok: false,
-          resp: err.message,
-        },
-      });
+      if (isIndexNotFoundError(err)) {
+        // Config index is not created unitl a monitor is created.
+        return res.ok({
+          body: { 
+            ok: false, 
+            resp: { 
+              totalMonitors: 0, 
+              monitors: [],
+              message: "No monitors created"
+            } 
+          },
+        });
+      } else {
+        // If the index is created, some error in retrieving the monitors.
+        console.error('Alerting - MonitorService - searchMonitor:', err);
+        return res.ok({
+          body: {
+            ok: false,
+            resp: err.message,
+          },
+        });
+      } 
     }
   };
 }
