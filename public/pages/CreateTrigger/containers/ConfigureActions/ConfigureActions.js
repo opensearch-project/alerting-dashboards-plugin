@@ -182,11 +182,9 @@ class ConfigureActions extends React.Component {
             type: toChannelType(destination.type),
             description: '',
           }));
-      } else {
-        // If the config index is not created, don't show the notification
-        if (response.totalMonitors !== 0) {
+      } else if (response.totalMonitors !== 0) {
+          // If the config index is not created, don't show the notification
           backendErrorNotification(notifications, 'load', 'destinations', response.err);
-        }
       }
 
       let channels = await this.getChannels();
