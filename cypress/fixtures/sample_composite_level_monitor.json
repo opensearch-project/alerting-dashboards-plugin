@@ -48,7 +48,7 @@
               "name": "sample_channel",
               "destination_id": "6dYFw4gB2qeAWe54NgyL",
               "message_template": {
-                "source": "Monitor {{ctx.monitor.name}} just entered alert status. Please investigate the issue.\n  - Trigger: {{ctx.trigger.name}}\n  - Severity: {{ctx.trigger.severity}}\n  - Period start: {{ctx.periodStart}}\n  - Period end: {{ctx.periodEnd}}",
+                "source": "Monitor {{ctx.monitor.name}} just entered alert status. Please investigate the issue.\n  - Trigger: {{ctx.trigger.name}}\n  - Severity: {{ctx.trigger.severity}}\n  - Period start: {{ctx.periodStart}} UTC\n  - Period end: {{ctx.periodEnd}} UTC",
                 "lang": "mustache"
               },
               "throttle_enabled": false,

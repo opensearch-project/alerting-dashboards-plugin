@@ -74,8 +74,10 @@ export const getTriggerContext = (executeResponse, monitor, values, triggerIndex
   if (_.isArray(trigger) && triggerIndex >= 0) trigger = trigger[triggerIndex];
 
   return {
-    periodStart: moment.utc(_.get(executeResponse, 'period_start', Date.now())).tz(getTimeZone()).format(),
-    periodEnd: moment.utc(_.get(executeResponse, 'period_end', Date.now())).tz(getTimeZone()).format(),
+    // Backend only supports, UTC timezone. 
+    // Don't use user's local timezone.
+    periodStart: moment.utc(_.get(executeResponse, 'period_start', Date.now())).format(),
+    periodEnd: moment.utc(_.get(executeResponse, 'period_end', Date.now())).format(),
     results: [_.get(executeResponse, 'input_results.results[0]')].filter((result) => !!result),
     trigger: trigger,
     alert: null,
