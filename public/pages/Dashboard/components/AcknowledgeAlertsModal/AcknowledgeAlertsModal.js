@@ -42,10 +42,10 @@ import { MAX_ALERT_COUNT } from '../../utils/constants';
 import { DEFAULT_PAGE_SIZE_OPTIONS } from '../../../Monitors/containers/Monitors/utils/constants';
 import DashboardControls from '../DashboardControls';
 import ContentPanel from '../../../../components/ContentPanel';
-import { appendCommentsAction, queryColumns } from '../../utils/tableUtils';
+import { queryColumns } from '../../utils/tableUtils';
 import DashboardEmptyPrompt from '../DashboardEmptyPrompt';
 import { getAlertsFindingColumn } from '../FindingsDashboard/findingsUtils';
-import { getDataSourceId, getIsCommentsEnabled } from '../../../utils/helpers';
+import { appendCommentsAction, getDataSourceId, getIsCommentsEnabled } from '../../../utils/helpers';
 
 export const DEFAULT_NUM_MODAL_ROWS = 10;
 
