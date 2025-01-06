@@ -73,8 +73,6 @@ export const getTriggerContext = (executeResponse, monitor, values, triggerIndex
   let trigger = formikToTrigger(values, _.get(monitor, 'ui_metadata', {}));
   if (_.isArray(trigger) && triggerIndex >= 0) trigger = trigger[triggerIndex];
 
-  console.log("Values: ", JSON.stringify(values));
-
   return {
     periodStart: moment.utc(_.get(executeResponse, 'period_start', Date.now())).tz(getTimeZone()).format(),
     periodEnd: moment.utc(_.get(executeResponse, 'period_end', Date.now())).tz(getTimeZone()).format(),
