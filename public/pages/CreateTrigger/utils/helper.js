@@ -73,11 +73,11 @@ export const getTriggerContext = (executeResponse, monitor, values, triggerIndex
   let trigger = formikToTrigger(values, _.get(monitor, 'ui_metadata', {}));
   if (_.isArray(trigger) && triggerIndex >= 0) trigger = trigger[triggerIndex];
 
+  console.log("Values: ", JSON.stringify(values));
+
   return {
-    // Backend only supports, UTC timezone. 
-    // Don't use user's local timezone.
-    periodStart: moment.utc(_.get(executeResponse, 'period_start', Date.now())).format(),
-    periodEnd: moment.utc(_.get(executeResponse, 'period_end', Date.now())).format(),
+    periodStart: moment.utc(_.get(executeResponse, 'period_start', Date.now())).tz(getTimeZone()).format(),
+    periodEnd: moment.utc(_.get(executeResponse, 'period_end', Date.now())).tz(getTimeZone()).format(),
     results: [_.get(executeResponse, 'input_results.results[0]')].filter((result) => !!result),
     trigger: trigger,
     alert: null,
@@ -124,6 +124,8 @@ export const conditionToExpressions = (condition = '', monitors) => {
 };
 
 export function getTimeZone() {
-  const detectedTimeZone = getUISettings().get('dateFormat:tz', 'Browser');
-  return detectedTimeZone === 'Browser' ? (moment.tz.guess() || moment.format('Z')) : detectedTimeZone;
+  // TODO: Include support to configure timezones rather than using the default UTC as requested here - https://github.com/opensearch-project/alerting/issues/1744
+  // const detectedTimeZone = getUISettings().get('dateFormat:tz', 'Browser');
+  // return detectedTimeZone === 'Browser' ? (moment.tz.guess() || moment.format('Z')) : detectedTimeZone;
+  return "UTC";
 }
