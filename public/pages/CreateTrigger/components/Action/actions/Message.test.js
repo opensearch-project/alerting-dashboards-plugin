@@ -19,7 +19,7 @@ function getRenderWrapper(customProps = {}) {
           action={{
             message_template: {
               source:
-                'Monitor {{ctx.monitor.name}} just entered alert status. Please investigate the issue.\n- Trigger: {{ctx.trigger.name}}\n- Severity: {{ctx.trigger.severity}}\n- Period start: {{ctx.periodStart}}\n- Period end: {{ctx.periodEnd}}',
+                'Monitor {{ctx.monitor.name}} just entered alert status. Please investigate the issue.\n- Trigger: {{ctx.trigger.name}}\n- Severity: {{ctx.trigger.severity}}\n- Period start: {{ctx.periodStart}} UTC\n- Period end: {{ctx.periodEnd}} UTC',
               lang: 'mustache',
             },
           }}
