@@ -3,6 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+const { method } = require('lodash');
 const { API, ADMIN_AUTH } = require('./constants');
 
 // ***********************************************
@@ -71,7 +72,12 @@ Cypress.Commands.overwrite('request', (originalFn, ...args) => {
 });
 
 Cypress.Commands.add('createMonitor', (monitorJSON) => {
-  cy.request('POST', `${Cypress.env('opensearch')}${API.MONITOR_BASE}`, monitorJSON);
+  cy.request({
+    method: 'POST',
+    url: `${Cypress.env('opensearch')}${API.MONITOR_BASE}`,
+    body: monitorJSON,
+    timeout: 60000
+  });
 });
 
 Cypress.Commands.add('createAndExecuteMonitor', (monitorJSON) => {

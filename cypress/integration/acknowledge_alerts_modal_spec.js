@@ -46,8 +46,8 @@ describe('AcknowledgeAlertsModal', () => {
     cy.visit(`${Cypress.env('opensearch_dashboards')}/app/${PLUGIN_NAME}#/dashboard`);
 
     // Confirm dashboard is displaying rows for the test monitors.
-    cy.contains(BUCKET_MONITOR, { timeout: TWENTY_SECONDS });
-    cy.contains(QUERY_MONITOR, { timeout: TWENTY_SECONDS });
+    cy.contains(BUCKET_MONITOR, { timeout: SIXTY_SECONDS });
+    cy.contains(QUERY_MONITOR, { timeout: SIXTY_SECONDS });
   });
 
   it('Acknowledge button disabled when more than 1 trigger selected', () => {
