@@ -3,7 +3,6 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-const { method } = require('lodash');
 const { API, ADMIN_AUTH } = require('./constants');
 
 // ***********************************************

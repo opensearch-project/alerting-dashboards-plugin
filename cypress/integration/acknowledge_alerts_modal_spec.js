@@ -29,17 +29,7 @@ describe('AcknowledgeAlertsModal', () => {
     cy.createMonitor(sampleAlertsFlyoutQueryMonitor);
 
     // Visit Alerting OpenSearch Dashboards
-    cy.visit(`${Cypress.env('opensearch_dashboards')}/app/${PLUGIN_NAME}#/monitors`, {
-      timeout: 30000,
-      retryOnStatusCodeFailure: true,
-      retryOnNetworkFailure: true
-    }).then(() => {
-      cy.get('body').then($body => {
-        if ($body.text().includes('OpenSearch Dashboards did not load properly')) {
-          cy.reload();
-        }
-      });
-    });
+    cy.visit(`${Cypress.env('opensearch_dashboards')}/app/${PLUGIN_NAME}#/monitors`, { timeout: 30000 });
 
     // Confirm test monitors were created successfully
     cy.contains(BUCKET_MONITOR, { timeout: TWENTY_SECONDS });
