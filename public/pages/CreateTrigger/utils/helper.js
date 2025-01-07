@@ -106,6 +106,8 @@ export const conditionToExpressions = (condition = '', monitors) => {
 };
 
 export function getTimeZone() {
-  const detectedTimeZone = getUISettings().get('dateFormat:tz', 'Browser');
-  return detectedTimeZone === 'Browser' ? (moment.tz.guess() || moment.format('Z')) : detectedTimeZone;
+  // TODO: Include support to configure timezones rather than using the default UTC as requested here - https://github.com/opensearch-project/alerting/issues/1744
+  // const detectedTimeZone = getUISettings().get('dateFormat:tz', 'Browser');
+  // return detectedTimeZone === 'Browser' ? (moment.tz.guess() || moment.format('Z')) : detectedTimeZone;
+  return "UTC";
 }
