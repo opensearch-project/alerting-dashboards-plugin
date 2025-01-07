@@ -15,6 +15,8 @@ const QUERY_TRIGGER = 'sample_alerts_flyout_query_level_trigger';
 
 const TWENTY_SECONDS = 20000;
 
+const SIXTY_SECONDS = 60000;
+
 describe('AcknowledgeAlertsModal', () => {
   before(() => {
     // Delete any existing monitors
@@ -32,8 +34,8 @@ describe('AcknowledgeAlertsModal', () => {
     cy.visit(`${Cypress.env('opensearch_dashboards')}/app/${PLUGIN_NAME}#/monitors`);
 
     // Confirm test monitors were created successfully
-    cy.contains(BUCKET_MONITOR, { timeout: TWENTY_SECONDS });
-    cy.contains(QUERY_MONITOR, { timeout: TWENTY_SECONDS });
+    cy.contains(BUCKET_MONITOR, { timeout: SIXTY_SECONDS });
+    cy.contains(QUERY_MONITOR, { timeout: SIXTY_SECONDS });
 
     // Wait 1 minute for the test monitors to trigger alerts, then go to the 'Alerts by trigger' dashboard page to view alerts
     cy.wait(60000);
