@@ -71,7 +71,12 @@ Cypress.Commands.overwrite('request', (originalFn, ...args) => {
 });
 
 Cypress.Commands.add('createMonitor', (monitorJSON) => {
-  cy.request('POST', `${Cypress.env('opensearch')}${API.MONITOR_BASE}`, monitorJSON);
+  cy.request({
+    method: 'POST',
+    url: `${Cypress.env('opensearch')}${API.MONITOR_BASE}`,
+    body: monitorJSON,
+    timeout: 60000
+  });
 });
 
 Cypress.Commands.add('createAndExecuteMonitor', (monitorJSON) => {
@@ -182,6 +187,7 @@ Cypress.Commands.add('loadSampleEcommerceData', () => {
     method: 'POST',
     headers: { 'osd-xsrf': 'opensearch-dashboards' },
     url: `${Cypress.env('opensearch_dashboards')}/api/sample_data/ecommerce`,
+    timeout: 60000,
   });
 });
 
