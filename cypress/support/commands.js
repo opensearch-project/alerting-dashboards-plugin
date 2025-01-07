@@ -182,6 +182,7 @@ Cypress.Commands.add('loadSampleEcommerceData', () => {
     method: 'POST',
     headers: { 'osd-xsrf': 'opensearch-dashboards' },
     url: `${Cypress.env('opensearch_dashboards')}/api/sample_data/ecommerce`,
+    timeout: 60000,
   });
 });
 
