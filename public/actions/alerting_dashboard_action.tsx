@@ -58,7 +58,7 @@ export const createAlertingAction = ({
         embeddable.getInput()?.viewMode === 'view' &&
         isDashboard(embeddable.parent) &&
         embeddable.vis &&
-        isEligibleForVisLayers(embeddable.vis, getUISettings())
+        await isEligibleForVisLayers(embeddable.vis, getUISettings())
       );
     },
     execute: async (context: ActionContext) => {
