@@ -175,17 +175,24 @@ export default class DestinationsService extends MDSEnabledClientService {
         },
       });
     } catch (err) {
+      // Indices will be created when the monitor is created.
       if (isIndexNotFoundError(err)) {
         return res.ok({
-          body: { ok: false, resp: {} },
+          body: {
+            ok: false,
+            totalMonitors: 0, 
+            monitors: [],
+            message: "Config index will be created automatically when the monitor is created"
+          },
+        });
+      } else {
+        return res.ok({
+          body: {
+            ok: false,
+            err: err.message,
+          },
         });
       }
-      return res.ok({
-        body: {
-          ok: false,
-          err: err.message,
-        },
-      });
     }
   };
 
