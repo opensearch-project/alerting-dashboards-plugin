@@ -14,7 +14,7 @@ import { EmbeddableStart } from '../../../../src/plugins/embeddable/public';
 import { NavigationPublicPluginStart } from '../../../../src/plugins/navigation/public';
 import { ContentManagementPluginStart } from '../../../../src/plugins/content_management/public';
 import { createNullableGetterSetter } from './utils/helper';
-import { AssistantSetup } from '../types';
+import { AssistantSetup, AssistantPublicPluginStart } from '../types';
 
 const ServicesContext = createContext<BrowserServices | null>(null);
 
@@ -34,6 +34,9 @@ export const [getUISettings, setUISettings] = createGetterSetter<IUiSettingsClie
 export const [getAssistantDashboards, setAssistantDashboards] = createGetterSetter<
   AssistantSetup | {}
 >('assistantDashboards');
+
+export const [getAssistantClient, setAssistantClient] =
+  createGetterSetter<AssistantPublicPluginStart['assistantClient'] | {}>('AssistantClient');
 
 export const [getEmbeddable, setEmbeddable] = createGetterSetter<EmbeddableStart>('embeddable');
 
