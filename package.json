@@ -34,7 +34,7 @@
     "@babel/plugin-transform-modules-commonjs": "^7.22.9",
     "@elastic/elastic-eslint-config-kibana": "link:../../packages/opensearch-eslint-config-opensearch-dashboards",
     "@elastic/eslint-import-resolver-kibana": "link:../../packages/osd-eslint-import-resolver-opensearch-dashboards",
-    "cypress": "9.5.4",
+    "cypress": "12.17.4",
     "husky": "^8.0.0",
     "lint-staged": "^10.2.0",
     "@types/react": "^16.14.23"
