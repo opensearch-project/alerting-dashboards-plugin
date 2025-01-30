@@ -64,7 +64,7 @@
     "@cypress/request": "^3.0.0",
     "braces": "^3.0.3",
     "micromatch": "^4.0.8",
-    "**/eslint/cross-spawn": "7.0.6"
+    "**/cross-spawn": "7.0.6"
   },
   "engines": {
     "yarn": "^1.21.1"
