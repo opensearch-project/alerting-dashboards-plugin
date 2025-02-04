@@ -10,4 +10,4 @@ Compatible with OpenSearch Dashboards 2.19.0
 * fix: error toast message while configuring trigger while creating a monitor ([#1178](https://github.com/opensearch-project/alerting-dashboards-plugin/pull/1178))
 
 ### Documentation
-* Added 2.19.0 release notes. ([#]())
+* Added 2.19.0 release notes. ([#1201](https://github.com/opensearch-project/alerting-dashboards-plugin/pull/1201))
