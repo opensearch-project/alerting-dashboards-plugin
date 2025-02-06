@@ -37,7 +37,11 @@ export default function (services, router, dataSourceEnabled) {
         params: schema.object({
           detectorId: schema.string(),
         }),
-        query: createValidateQuerySchema(dataSourceEnabled),
+        query: createValidateQuerySchema(dataSourceEnabled, {
+          startTime: schema.maybe(schema.number()),
+          endTime: schema.maybe(schema.number()),
+          preview: schema.maybe(schema.boolean()),
+        }),
       },
     },
     anomalyDetectorService.getDetectorResults
