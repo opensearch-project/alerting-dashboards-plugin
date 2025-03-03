@@ -8,7 +8,7 @@ on:
       - "**"
 env:
   OPENSEARCH_DASHBOARDS_VERSION: 'main'
-  OPENSEARCH_VERSION: '3.0.0-SNAPSHOT'
+  OPENSEARCH_VERSION: '3.0.0-alpha1-SNAPSHOT'
   ALERTING_PLUGIN_BRANCH: 'main'
 jobs:
   tests:
