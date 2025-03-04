@@ -12,5 +12,5 @@ build
 coverage
 yarn-error.log
 target
-/cypress/screenshots/
-/cypress/videos/
+/.cypress/screenshots/
+/.cypress/videos/
