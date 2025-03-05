@@ -4,10 +4,14 @@
  */
 
 import React from 'react';
-import { getDataSourceEnabled, getDataSource } from '../../services/services';
+import { getDataSourceEnabled, getDataSource, getAssistantClient } from '../../services/services';
 import _ from 'lodash';
 import { ShowAlertComments } from '../../components/Comments/ShowAlertComments';
-import { COMMENTS_ENABLED_SETTING } from './constants';
+import { 
+  COMMENTS_ENABLED_SETTING,
+  SUMMARY_AGENT_CONFIG_ID,
+  LOG_PATTERN_SUMMARY_AGENT_CONFIG_ID
+ } from './constants';
 
 export function dataSourceEnabled() {
   return getDataSourceEnabled()?.enabled;
@@ -67,6 +71,24 @@ export const appendCommentsAction = (columns, httpClient) => {
 
   return columns;
 };
+
+export async function getIsAgentConfigured(dataSourceId){
+  const assistantClient = getAssistantClient();
+  try{
+    const res = await assistantClient.agentConfigExists(
+      [
+        SUMMARY_AGENT_CONFIG_ID,
+        LOG_PATTERN_SUMMARY_AGENT_CONFIG_ID,
+      ],
+      { dataSourceId: dataSourceId }
+    );
+    return res.exists;
+  }
+  catch(e){
+    console.error('Error while checking if agent is configured:', e);
+    return false;
+  }
+}
 
 export async function getIsCommentsEnabled(httpClient) {
   let commentsEnabled = await getClusterSetting(httpClient, COMMENTS_ENABLED_SETTING, false);

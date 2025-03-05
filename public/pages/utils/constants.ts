@@ -17,3 +17,5 @@ const LocalCluster: DataSourceOption = {
 
 // We should use empty object for default value as local cluster may be disabled
 export const dataSourceObservable = new BehaviorSubject<DataSourceOption>({});
+export const SUMMARY_AGENT_CONFIG_ID = 'os_summary';
+export const LOG_PATTERN_SUMMARY_AGENT_CONFIG_ID = 'os_summary_with_log_pattern';
