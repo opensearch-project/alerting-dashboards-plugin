@@ -136,6 +136,7 @@ export const alertColumns = (
   location,
   monitors,
   notifications,
+  isAgentConfigured,
   setFlyout,
   openFlyout,
   closeFlyout,
@@ -167,7 +168,7 @@ export const alertColumns = (
           }}
           data-test-subj={`euiLink_${alert.trigger_name}`}
         >
-          {`${total} alerts`}
+          {total > 1 ? `${total} alerts`:`${total} alert`}
         </EuiLink>
       );
       const contextProvider = async () => {
@@ -291,7 +292,7 @@ export const alertColumns = (
 
       const assistantEnabled = getApplication().capabilities?.assistant?.enabled === true;
       const assistantFeatureStatus = getAssistantDashboards().getFeatureStatus();
-      if (assistantFeatureStatus.alertInsight && assistantEnabled) {
+      if (assistantFeatureStatus.alertInsight && assistantEnabled && isAgentConfigured) {
         getAssistantDashboards().registerIncontextInsight([
           {
             key: alertId,
