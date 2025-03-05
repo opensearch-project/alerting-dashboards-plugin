@@ -217,8 +217,8 @@ export const alertColumns = (
             query = query.replaceAll(PERIOD_END_PLACEHOLDER, alert.last_notification_time);
             latestAlertTriggerTime = moment.utc(alert.last_notification_time).format(DEFAULT_DSL_QUERY_DATE_FORMAT);
             dsl = dsl.replaceAll(PERIOD_END_PLACEHOLDER, latestAlertTriggerTime);
-            // as we changed the format, remove it
-            dsl = dsl.replaceAll('"format":"epoch_millis",', '');
+            // as we changed the format of time value, need to change the format configuration as well.
+            dsl = dsl.replaceAll('"format":"epoch_millis",', '"format":"strict_date_optional_time",');
             monitorDefinitionStr = monitorDefinitionStr.replaceAll(
               PERIOD_END_PLACEHOLDER,
               getTime(alert.last_notification_time) // human-readable time format for summary
