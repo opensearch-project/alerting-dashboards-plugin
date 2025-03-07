@@ -14,7 +14,7 @@ import { OPERATORS_PPL_QUERY_MAP } from "../../CreateMonitor/containers/CreateMo
 import { filterActiveAlerts, findLongestStringField, searchQuery } from "./helpers";
 import {
   BUCKET_UNIT_PPL_UNIT_MAP,
-  DEFAULT_ACTIVE_ALERTS_TOP_N,
+  DEFAULT_ACTIVE_ALERTS_AI_TOP_N,
   DEFAULT_DSL_QUERY_DATE_FORMAT,
   DEFAULT_LOG_PATTERN_SAMPLE_SIZE,
   DEFAULT_LOG_PATTERN_TOP_N,
@@ -261,7 +261,7 @@ export const alertColumns = (
         }
 
         // 3.6 only keep top N active alerts and replace time with human-readable timezone format
-        const activeAlerts = filterActiveAlerts(alert.alerts).slice(0, DEFAULT_ACTIVE_ALERTS_TOP_N)
+        const activeAlerts = filterActiveAlerts(alert.alerts).slice(0, DEFAULT_ACTIVE_ALERTS_AI_TOP_N)
           .map(activeAlert => ({
             ...activeAlert,
             start_time: getTime(activeAlert.start_time),
