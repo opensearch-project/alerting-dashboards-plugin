@@ -10,7 +10,10 @@ module.exports = {
     '<rootDir>/test/setupTests.js',
     '<rootDir>/test/enzyme.js',
   ],
-  setupFilesAfterEnv: ['<rootDir>/test/setup.jest.js'],
+  setupFilesAfterEnv: [
+    '<rootDir>/test/setup.jest.js',
+    '<rootDir>../../src/dev/jest/setup/monaco_mock.js'
+  ],
   modulePaths: ['node_modules', `../../node_modules`],
   coverageDirectory: './coverage',
   moduleNameMapper: {
