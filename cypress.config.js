@@ -20,4 +20,5 @@ module.exports = defineConfig({
     supportFile: '.cypress/support/index.js',
   },
   numTestsKeptInMemory: 0,
+  experimentalMemoryManagement: true,
 })
