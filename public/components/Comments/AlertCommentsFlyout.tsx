@@ -204,16 +204,6 @@ export const AlertCommentsFlyout: React.FC<AlertCommentsFlyoutProps> = ({ alertI
         </EuiTitle>
       </EuiFlyoutHeader>
       <EuiFlyoutBody>
-        <EuiCallOut
-          iconType='iInCircle'
-          title='Experimental'>
-          <span>The feature is experimental and should not be used in a production environment.
-            The posted comments will be impacted if the feature is deactivated.
-            For more information see <EuiLink href="https://opensearch.org/docs/latest/observing-your-data/alerting/index/" target="_blank">Documentation.</EuiLink>
-            To leave feedback, visit <EuiLink href="https://github.com/opensearch-project/OpenSearch-Dashboards/issues/6999" target="_blank">github.com</EuiLink>.
-          </span>
-        </EuiCallOut>
-        <EuiSpacer />
         <EuiTitle size="xs">
           <h4>Add comment</h4>
         </EuiTitle>
