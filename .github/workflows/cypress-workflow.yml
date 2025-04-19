@@ -2,10 +2,10 @@ name: E2E Cypress tests
 on:
   pull_request:
     branches:
-      - "**"
+      - '**'
   push:
     branches:
-      - "**"
+      - '**'
 env:
   OPENSEARCH_DASHBOARDS_VERSION: 'main'
   OPENSEARCH_VERSION: '3.0.0-beta1-SNAPSHOT'
@@ -74,7 +74,8 @@ jobs:
         uses: cypress-io/github-action@v2
         with:
           working-directory: OpenSearch-Dashboards/plugins/alerting-dashboards-plugin
-          command: yarn run cypress run
+          command: yarn run cypress run --browser firefox
+          browser: firefox
 
       # Screenshots are only captured on failure, will change this once we do visual regression tests
       - uses: actions/upload-artifact@v4
