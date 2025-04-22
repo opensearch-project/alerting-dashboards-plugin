@@ -66,6 +66,7 @@ jobs:
           yarn osd bootstrap --single-version=loose
       - name: Run OpenSearch Dashboards server
         run: |
+          export NODE_OPTIONS=--max_old_space_size=8192
           cd OpenSearch-Dashboards
           yarn start --no-base-path --no-watch --server.host="0.0.0.0" &
           sleep 300
@@ -74,12 +75,7 @@ jobs:
         uses: cypress-io/github-action@v5
         with:
           working-directory: OpenSearch-Dashboards/plugins/alerting-dashboards-plugin
-          command: yarn run cypress run --browser firefox
-          wait-on: 'http://localhost:5601'
-          wait-on-timeout: 300
-          browser: firefox
-        env:
-          CYPRESS_CACHE_FOLDER: ${{ matrix.cypress_cache_folder }}
+          command: yarn run cypress run
 
       # Screenshots are only captured on failure, will change this once we do visual regression tests
       - uses: actions/upload-artifact@v4
