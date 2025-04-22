@@ -71,13 +71,15 @@ jobs:
           sleep 300
         # timeout 300 bash -c 'while [[ "$(curl -s -o /dev/null -w ''%{http_code}'' localhost:5601/api/status)" != "200" ]]; do sleep 5; done'
       - name: Run Cypress tests
-        uses: cypress-io/github-action@v4
+        uses: cypress-io/github-action@v5
         with:
           working-directory: OpenSearch-Dashboards/plugins/alerting-dashboards-plugin
           command: yarn run cypress run --browser firefox
           wait-on: 'http://localhost:5601'
           wait-on-timeout: 300
           browser: firefox
+        env:
+          CYPRESS_CACHE_FOLDER: ${{ matrix.cypress_cache_folder }}
 
       # Screenshots are only captured on failure, will change this once we do visual regression tests
       - uses: actions/upload-artifact@v4
