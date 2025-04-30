@@ -36,6 +36,11 @@ export function getTypeFromMappings(mappings, dataTypes, path = '') {
 
   if (dataTypes[type]) dataTypes[type].add(path);
   else dataTypes[type] = new Set([path]);
+
+  if (mappings.fields && mappings.fields.keyword) {
+    if (dataTypes["keyword"]) dataTypes["keyword"].add(`${path}.keyword`);
+    else dataTypes["keyword"] = new Set([`${path}.keyword`]);
+  }
   return dataTypes;
 }
 
