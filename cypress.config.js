@@ -19,4 +19,6 @@ module.exports = defineConfig({
     specPattern: '.cypress/integration/*.spec.js',
     supportFile: '.cypress/support/index.js',
   },
+  numTestsKeptInMemory: 0,
+  experimentalMemoryManagement: true,
 })
