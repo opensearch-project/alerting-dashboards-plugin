@@ -31,9 +31,9 @@ export const [getSavedAugmentVisLoader, setSavedAugmentVisLoader] = createGetter
 
 export const [getUISettings, setUISettings] = createGetterSetter<IUiSettingsClient>('UISettings');
 
-export const [getAssistantDashboards, setAssistantDashboards] = createGetterSetter<
-  AssistantSetup | {}
->('assistantDashboards');
+export const [getAssistantDashboards, setAssistantDashboards] = createGetterSetter<AssistantSetup>(
+  'assistantDashboards'
+);
 
 export const [getAssistantClient, setAssistantClient] =
   createGetterSetter<AssistantPublicPluginStart['assistantClient'] | {}>('AssistantClient');
