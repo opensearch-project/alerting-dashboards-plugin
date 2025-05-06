@@ -9,7 +9,7 @@ import { mount } from 'enzyme';
 import Dashboard from './Dashboard';
 import { historyMock, httpClientMock } from '../../../../test/mocks';
 import { setupCoreStart } from '../../../../test/utils/helpers';
-import { setAssistantDashboards, setAssistantClient } from '../../../services';
+import { setAssistantDashboards, setAssistantClient, setClient } from '../../../services';
 
 const location = {
   hash: '',
@@ -64,6 +64,7 @@ beforeAll(() => {
 
 describe('Dashboard', () => {
   setAssistantDashboards({ getFeatureStatus: () => ({ chat: false, alertInsight: false }) });
+  setClient(httpClientMock);
   setAssistantClient({agentConfigExists: (agentConfigName, options) => {return Promise.resolve({ exists: false });}})
   beforeEach(() => {
     jest.clearAllMocks();
