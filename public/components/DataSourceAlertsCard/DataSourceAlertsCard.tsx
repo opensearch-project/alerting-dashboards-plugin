@@ -11,7 +11,8 @@ import { dataSourceFilterFn, getSeverityColor, getSeverityBadgeText, getTruncate
 import { renderTime } from "../../pages/Dashboard/utils/tableUtils";
 import { ALERTS_NAV_ID, MONITORS_NAV_ID } from "../../../utils/constants";
 import { APP_PATH, DEFAULT_EMPTY_DATA } from "../../utils/constants";
-import { dataSourceEnabled, getURL } from "../../pages/utils/helpers.js";
+import { dataSourceEnabled, getIsAgentConfigured, getURL } from "../../pages/utils/helpers.js";
+import { AlertInsight } from '../AlertInsight';
 
 export interface DataSourceAlertsCardProps {
   getDataSourceMenu?: DataSourceManagementPluginSetup['ui']['getDataSourceMenu'];
@@ -28,6 +29,7 @@ export const DataSourceAlertsCard: React.FC<DataSourceAlertsCardProps> =  ({ get
   const [loading, setLoading] = useState(false);
   const [dataSource, setDataSource] = useState<DataSourceOption>();
   const [alerts, setAlerts] = useState<any[]>([]);
+  const [agentAvailable, setAgentAvailable] = useState<boolean>(false);
 
   useEffect(() => {
     setLoading(true);
@@ -48,6 +50,15 @@ export const DataSourceAlertsCard: React.FC<DataSourceAlertsCardProps> =  ({ get
     })
   }, [dataSource]);
 
+  useEffect(() => {
+    const checkAgentConfig = async () => {
+      const isConfigured = await getIsAgentConfigured(dataSource?.id);
+      setAgentAvailable(isConfigured);
+    };
+
+    checkAgentConfig();
+  }, [dataSource?.id]);
+
   const onDataSourceSelected = useCallback((options: any[]) => {
     if (dataSource?.id === undefined || dataSource?.id !== options[0]?.id) {
       setDataSource(options[0]);
@@ -61,26 +72,33 @@ export const DataSourceAlertsCard: React.FC<DataSourceAlertsCardProps> =  ({ get
       alert.alert_source === 'workflow' ? alert.workflow_id : alert.monitor_id
     }?&type=${alert.alert_source}`;
     const url = getURL(monitorUrl, dataSource?.id);
-
+    const alertId = `alerts_${alert.id}`;
     return (
       <EuiFlexGroup gutterSize="s" justifyContent="spaceBetween" alignItems="center">
-        <EuiFlexItem grow={false}>
-          <div>
-            <EuiBadge color={severityColor?.background} style={{ padding: '1px 4px', color: severityColor?.text }}>{getSeverityBadgeText(alert.severity)}</EuiBadge>
-            &nbsp;&nbsp;
-            <EuiLink href={url}>
-              <span style={{ color: '#006BB4' }} className="eui-textTruncate">
-                {getTruncatedText(triggerName)}
-              </span>
-            </EuiLink>
-          </div>
-        </EuiFlexItem>
+          <EuiFlexItem grow={false}>
+            <AlertInsight
+              alert={alert}
+              isAgentConfigured={agentAvailable}
+              alertId={alertId}
+              datasourceId={dataSource?.id}
+            >
+              <div key={alertId}>
+                <EuiBadge color={severityColor?.background} style={{ padding: '1px 4px', color: severityColor?.text }}>{getSeverityBadgeText(alert.severity)}</EuiBadge>
+                &nbsp;&nbsp;
+                <EuiLink href={url}>
+                  <span style={{ color: '#006BB4' }} className="eui-textTruncate">
+                    {getTruncatedText(triggerName)}
+                  </span>
+                </EuiLink>
+              </div>
+            </AlertInsight>
+          </EuiFlexItem>
         <EuiFlexItem grow={false} >
           <EuiText color="subdued" size="s">{renderTime(alert.start_time, { showFromNow: true })}</EuiText>
         </EuiFlexItem>
       </EuiFlexGroup>
     )
-  }, []);
+  }, [agentAvailable]);
 
   const createAlertDetailsDescription = useCallback((alert) => {
     const monitorName = alert.monitor_name ?? DEFAULT_EMPTY_DATA;
