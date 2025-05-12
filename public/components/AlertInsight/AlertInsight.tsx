@@ -24,6 +24,7 @@ import {
   searchQuery,
 } from '../../pages/Dashboard/utils/helpers';
 import { getApplication, getAssistantDashboards, getClient } from '../../services';
+import { dataSourceEnabled } from '../../pages/utils/helpers';
 
 export interface AlertInsightProps {
   alert: any;
@@ -36,7 +37,9 @@ export interface AlertInsightProps {
 export const AlertInsight: React.FC<AlertInsightProps> = (props: AlertInsightProps) => {
   const { alert, children, isAgentConfigured, alertId, datasourceId } = props;
   const httpClient = getClient();
-  const dataSourceQuery = { query: { dataSourceId: datasourceId || '' } };
+  const dataSourceQuery = dataSourceEnabled()
+    ? { query: { dataSourceId: datasourceId || '' } }
+    : undefined;
 
   const contextProvider = async () => {
     // 1. get monitor definition
@@ -197,7 +200,7 @@ export const AlertInsight: React.FC<AlertInsightProps> = (props: AlertInsightPro
       {
         key: alertId,
         type: 'generate',
-        suggestions: [`Please summarize this alert, do not use any tool.`],
+        suggestions: [`Please summarize this alert`],
         contextProvider,
       },
     ]);
