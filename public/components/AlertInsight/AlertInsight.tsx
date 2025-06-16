@@ -128,32 +128,36 @@ export const AlertInsight: React.FC<AlertInsightProps> = (props: AlertInsightPro
           alertData.body.aggregations?.metric?.value || alertData.body.hits.total.value
         );
 
-        if (isVisualEditorMonitor) {
-          // 3.5 find the log pattern field by longest length in the first sample data
-          const firstSampleData = await searchQuery(
-            httpClient,
-            PPL_SEARCH_PATH,
-            'POST',
-            dataSourceQuery,
-            JSON.stringify({ query: firstSamplePPL })
-          );
-          const patternField = findLongestStringField(firstSampleData);
-
-          // 3.6 log pattern query to get top N log patterns
-          if (patternField) {
-            const topNLogPatternPPL =
-              `${basePPLWithFilters} | patterns ${patternField} | ` +
-              `stats count() as count, take(${patternField}, ${DEFAULT_LOG_PATTERN_SAMPLE_SIZE}) by patterns_field | ` +
-              `sort - count | head ${DEFAULT_LOG_PATTERN_TOP_N}`;
-            const logPatternData = await searchQuery(
+        try {
+          if (isVisualEditorMonitor) {
+            // 3.5 find the log pattern field by longest length in the first sample data
+            const firstSampleData = await searchQuery(
               httpClient,
               PPL_SEARCH_PATH,
               'POST',
               dataSourceQuery,
-              JSON.stringify({ query: topNLogPatternPPL })
+              JSON.stringify({ query: firstSamplePPL })
             );
-            topNLogPatternData = escape(JSON.stringify(logPatternData?.body?.datarows || ''));
+            const patternField = findLongestStringField(firstSampleData);
+
+            // 3.6 log pattern query to get top N log patterns
+            if (patternField) {
+              const topNLogPatternPPL =
+                `${basePPLWithFilters} | patterns ${patternField} | ` +
+                `stats count() as count, take(${patternField}, ${DEFAULT_LOG_PATTERN_SAMPLE_SIZE}) by patterns_field | ` +
+                `sort - count | head ${DEFAULT_LOG_PATTERN_TOP_N}`;
+              const logPatternData = await searchQuery(
+                httpClient,
+                PPL_SEARCH_PATH,
+                'POST',
+                dataSourceQuery,
+                JSON.stringify({ query: topNLogPatternPPL })
+              );
+              topNLogPatternData = escape(JSON.stringify(logPatternData?.body?.datarows || ''));
+            }
           }
+        } catch (error) {
+          topNLogPatternData = '';
         }
       }
     }
