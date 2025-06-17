@@ -8,6 +8,3 @@ Compatible with OpenSearch Dashboards 3.1.0
 
 ### Features
 * Add alert insight to alerts card on overview page ([#1248](https://github.com/opensearch-project/alerting-dashboards-plugin/pull/1248))
-
-### Documentation
-* Added 3.0.0 release notes. ([#1246](https://github.com/opensearch-project/alerting-dashboards-plugin/pull/1246))
