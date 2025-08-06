@@ -4,7 +4,7 @@ module.exports = defineConfig({
   defaultCommandTimeout: 10000,
   env: {
     opensearch_url: 'localhost:9200',
-    opensearch_dashboards: 'http://localhost:5601',
+    opensearch_dashboards: 'localhost:5601',
     security_enabled: false,
   },
   fixturesFolder: '.cypress/fixtures',
