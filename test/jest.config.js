@@ -19,6 +19,7 @@ module.exports = {
   moduleNameMapper: {
     '\\.(css|less|scss)$': '<rootDir>/test/mocks/styleMock.js',
     '^ui/(.*)': '<rootDir>/../../src/legacy/ui/public/$1/',
+    '^opensearch-dashboards/public$': '<rootDir>/../../src/core/public',
     '^!!raw-loader!.*': 'jest-raw-loader',
   },
   snapshotSerializers: ['../../node_modules/enzyme-to-json/serializer'],
