@@ -4,39 +4,38 @@
  */
 
 import React from 'react';
-import { EuiSpacer } from '@elastic/eui';
-import VisualGraph from '../../CreateMonitor/components/VisualGraph';
-import TriggerExpressions from './TriggerExpressions';
+import PropTypes from 'prop-types';
+import TriggerGraphV1 from './TriggerGraphV1';
+import TriggerGraphV2 from './TriggerGraphV2';
 
-const TriggerGraph = ({
-  monitorValues,
-  response,
-  thresholdValue,
-  thresholdEnum,
-  fieldPath,
-  flyoutMode,
-}) => (
-  <div style={flyoutMode ? {} : { padding: '0px 10px' }}>
-    <TriggerExpressions
-      thresholdValue={thresholdValue}
-      thresholdEnum={thresholdEnum}
-      keyFieldName={`${fieldPath}thresholdEnum`}
-      valueFieldName={`${fieldPath}thresholdValue`}
-      label="Trigger condition"
-      flyoutMode={flyoutMode}
-    />
-    {!flyoutMode && (
-      <>
-        <EuiSpacer size="m" />
-        <VisualGraph
-          annotation
-          values={monitorValues}
-          thresholdValue={thresholdValue}
-          response={response}
-        />
-      </>
-    )}
-  </div>
-);
+/**
+ * TriggerGraph Router Component
+ * Routes to V1 (legacy) or V2 (PPL) trigger graph based on monitor_mode
+ */
+const TriggerGraph = (props) => {
+  const { monitorValues } = props;
+  
+  // Use V2 graph only when explicitly in PPL mode, otherwise use V1 legacy graph
+  const isPPLMode = monitorValues?.monitor_mode === 'ppl';
+  
+  if (isPPLMode) {
+    return <TriggerGraphV2 {...props} />;
+  }
+  
+  return <TriggerGraphV1 {...props} />;
+};
+
+TriggerGraph.propTypes = {
+  monitorValues: PropTypes.object,
+  response: PropTypes.any,
+  thresholdValue: PropTypes.any,
+  thresholdEnum: PropTypes.any,
+  fieldPath: PropTypes.string,
+  flyoutMode: PropTypes.bool,
+  hideThresholdControls: PropTypes.bool,
+  showModeSelector: PropTypes.bool,
+};
 
 export default TriggerGraph;
+
+

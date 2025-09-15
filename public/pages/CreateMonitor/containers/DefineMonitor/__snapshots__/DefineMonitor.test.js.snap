@@ -29,6 +29,10 @@ exports[`DefineMonitor renders 1`] = `
           "description": "",
           "detectorId": "",
           "disabled": false,
+          "expires": Object {
+            "unit": "hours",
+            "value": 24,
+          },
           "fieldName": Array [],
           "filters": Array [],
           "frequency": "interval",
@@ -41,6 +45,7 @@ exports[`DefineMonitor renders 1`] = `
           "groupedOverFieldName": "bytes",
           "groupedOverTop": 5,
           "index": Array [],
+          "monitor_mode": "ppl",
           "monitor_type": "query_level_monitor",
           "monthly": Object {
             "day": 1,
@@ -52,6 +57,9 @@ exports[`DefineMonitor renders 1`] = `
             "interval": 1,
             "unit": "MINUTES",
           },
+          "pplPreviewError": null,
+          "pplPreviewResult": null,
+          "pplQuery": "",
           "preventVisualEditor": false,
           "queries": Array [],
           "query": "{
@@ -61,7 +69,13 @@ exports[`DefineMonitor renders 1`] = `
     }
 }",
           "searchType": "graph",
+          "suppress": Object {
+            "enabled": false,
+            "unit": "hours",
+            "value": 24,
+          },
           "timeField": "",
+          "timestampField": "@timestamp",
           "timezone": Array [],
           "uri": Object {
             "api_type": "",

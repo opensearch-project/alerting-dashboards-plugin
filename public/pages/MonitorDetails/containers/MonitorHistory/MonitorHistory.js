@@ -237,24 +237,59 @@ class MonitorHistory extends PureComponent {
       isLoading: true,
     });
     const { timeSeriesWindow } = this.state;
-    const { httpClient, triggers, monitorId, notifications, monitorType } = this.props;
+    const { httpClient, triggers, monitorId, notifications, monitorType, useV2AlertsApi } = this.props;
     try {
-      const params = {
-        size: HistoryConstants.MAX_DOC_COUNT_FOR_ALERTS,
-        sortField: 'start_time',
-        sortDirection: 'asc',
-        monitorIds: monitorId,
-        monitorType,
-        dataSourceId: getDataSourceId(),
-      };
-      const resp = await httpClient.get('../api/alerting/alerts', { query: params });
-      var alerts;
-      if (resp.ok) {
-        alerts = resp.alerts;
+      let alerts = [];
+      if (useV2AlertsApi) {
+        const params = {
+          monitorIds: monitorId,
+          dataSourceId: getDataSourceId(),
+        };
+
+        const resp = await httpClient.get('/api/alerting/v2/monitors/alerts', { query: params });
+        const payload = resp?.resp || resp;
+        const rawAlerts = Array.isArray(payload?.alerts)
+          ? payload.alerts
+          : Array.isArray(payload?.alerts_v2)
+          ? payload.alerts_v2
+          : [];
+
+        alerts = rawAlerts.map((item) => ({
+          id: item.id,
+          monitor_id: item.monitor_v2_id || item.monitor_id,
+          monitor_name: item.monitor_v2_name || item.monitor_name,
+          monitor_version: item.monitor_v2_version || item.monitor_version,
+          trigger_id: item.trigger_v2_id || item.trigger_id,
+          trigger_name: item.trigger_v2_name || item.trigger_name,
+          severity: item.severity,
+          start_time: item.triggered_time || item.start_time,
+          end_time: item.expiration_time || item.end_time,
+          acknowledged_time: item.acknowledged_time,
+          last_notification_time: item.last_notification_time,
+          state: item.state || 'ACTIVE',
+          error_message: item.error_message || item.message,
+        }));
+
+        if (!resp?.ok) {
+          console.log('error getting alerts:', resp);
+          backendErrorNotification(notifications, 'get', 'alerts', resp?.err || resp);
+        }
       } else {
-        console.log('error getting alerts:', resp);
-        backendErrorNotification(notifications, 'get', 'alerts', resp.err);
-        alerts = [];
+        const params = {
+          size: HistoryConstants.MAX_DOC_COUNT_FOR_ALERTS,
+          sortField: 'start_time',
+          sortDirection: 'asc',
+          monitorIds: monitorId,
+          monitorType,
+          dataSourceId: getDataSourceId(),
+        };
+        const resp = await httpClient.get('../api/alerting/alerts', { query: params });
+        if (resp?.ok) {
+          alerts = resp.alerts || [];
+        } else {
+          console.log('error getting alerts:', resp);
+          backendErrorNotification(notifications, 'get', 'alerts', resp?.err || resp);
+        }
       }
 
       const triggerTemp = {};
@@ -368,6 +403,11 @@ MonitorHistory.propTypes = {
   isDarkMode: PropTypes.bool.isRequired,
   notifications: PropTypes.object.isRequired,
   monitorType: PropTypes.string.isRequired,
+  useV2AlertsApi: PropTypes.bool,
+};
+
+MonitorHistory.defaultProps = {
+  useV2AlertsApi: false,
 };
 
 export default MonitorHistory;

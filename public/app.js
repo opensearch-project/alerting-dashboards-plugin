@@ -5,6 +5,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { HashRouter as Router, Route } from 'react-router-dom';
+import { Provider } from 'react-redux';
 
 import 'react-vis/dist/style.css';
 // TODO: review the CSS style and migrate the necessary style to SASS, as Less is not supported in OpenSearch Dashboards "new platform" anymore
@@ -14,13 +15,16 @@ import Main from './pages/Main';
 import { CoreContext } from './utils/CoreContext';
 import { ServicesContext, NotificationService, getDataSourceEnabled } from './services';
 import { initManageChannelsUrl } from './utils/helpers';
+import { OpenSearchDashboardsContextProvider } from '../../../src/plugins/opensearch_dashboards_react/public';
+import { getAlertingStore } from './redux/store';
+import { DatasetProvider } from './contexts';
 
-export function renderApp(coreStart, params, defaultRoute) {
+export function renderApp(coreStart, depsStart, params, defaultRoute) {
   const isDarkMode = coreStart.uiSettings.get('theme:darkMode') || false;
   const http = coreStart.http;
   coreStart.chrome.setBreadcrumbs([{ text: 'Alerting' }]); // Set Breadcrumbs for the plugin
   const notificationService = new NotificationService(http);
-  const services = { notificationService };
+  const services = { notificationService, data: depsStart?.data };
   const mdsProps = {
     setActionMenu: params.setHeaderActionMenu,
     dataSourceEnabled: getDataSourceEnabled()?.enabled,
@@ -39,25 +43,37 @@ export function renderApp(coreStart, params, defaultRoute) {
 
   initManageChannelsUrl(coreStart.http);
 
-  // render react to DOM
+  // Initialize Redux store
+  const store = getAlertingStore();
+
   ReactDOM.render(
-    <Router>
-      <ServicesContext.Provider value={services}>
-        <CoreContext.Provider
-          value={{
-            http: coreStart.http,
-            isDarkMode,
-            notifications: coreStart.notifications,
-            chrome: coreStart.chrome,
-            defaultRoute: defaultRoute,
-          }}
-        >
-          <Route
-            render={(props) => <Main title="Alerting" {...mdsProps} {...navProps} {...props} />}
-          />
-        </CoreContext.Provider>
-      </ServicesContext.Provider>
-    </Router>,
+    <Provider store={store}>
+      <OpenSearchDashboardsContextProvider services={{ ...coreStart, ...depsStart }}>
+        <OpenSearchDashboardsContextProvider services={{ data: depsStart?.data }}>
+          <DatasetProvider>
+            <Router>
+              <ServicesContext.Provider value={services}>
+                <CoreContext.Provider
+                  value={{
+                    http: coreStart.http,
+                    isDarkMode,
+                    notifications: coreStart.notifications,
+                    chrome: coreStart.chrome,
+                    defaultRoute: defaultRoute,
+                    data: depsStart?.data,
+                    services: { ...coreStart, ...depsStart },
+                  }}
+                >
+                  <Route
+                    render={(props) => <Main title="Alerting" {...mdsProps} {...navProps} {...props} />}
+                  />
+                </CoreContext.Provider>
+              </ServicesContext.Provider>
+            </Router>
+          </DatasetProvider>
+        </OpenSearchDashboardsContextProvider>
+      </OpenSearchDashboardsContextProvider>
+    </Provider>,
     params.element
   );
   return () => ReactDOM.unmountComponentAtNode(params.element);
