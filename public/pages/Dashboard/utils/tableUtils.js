@@ -18,6 +18,12 @@ export const renderTime = (time, options = { showFromNow: false }) => {
   return DEFAULT_EMPTY_DATA;
 };
 
+// UTC renderer for the new Last Triggered Time column
+export const renderUtcTime = (time) => {
+  const m = moment.utc(time);
+  return time && m.isValid() ? m.format('MM/DD/YY HH:mm:ss') : DEFAULT_EMPTY_DATA;
+};
+
 export const queryColumns = [
   {
     field: 'start_time',
@@ -58,14 +64,14 @@ export const queryColumns = [
         typeof state !== 'string' ? DEFAULT_EMPTY_DATA : _.capitalize(state.toLowerCase());
       return state === ALERT_STATE.ERROR ? `${stateText}: ${alert.error_message}` : stateText;
     },
-  },
-  {
-    field: 'acknowledged_time',
-    name: 'Time acknowledged',
-    sortable: true,
-    truncateText: false,
-    render: renderTime,
-    dataType: 'date',
+  // },
+  // {
+  //   field: 'acknowledged_time',
+  //   name: 'Time acknowledged',
+  //   sortable: true,
+  //   truncateText: false,
+  //   render: renderTime,
+  //   dataType: 'date',
   },
 ];
 
@@ -126,108 +132,135 @@ export const alertColumns = (
   setFlyout,
   openFlyout,
   closeFlyout,
-  refreshDashboard
-) => [
-  {
-    field: 'total',
-    name: 'Alerts',
-    sortable: true,
-    truncateText: false,
-    render: (total, alert) => {
-      const alertId = `alerts_${alert.alerts[0].id}`;
-      const component = (
-        <EuiLink
-          key={alertId}
-          onClick={() => {
-            openFlyout({
-              ...alert,
-              history,
-              httpClient,
-              loadingMonitors,
-              location,
-              monitors,
-              notifications,
-              setFlyout,
-              closeFlyout,
-              refreshDashboard,
-            });
-          }}
-          data-test-subj={`euiLink_${alert.trigger_name}`}
-        >
-          {total > 1 ? `${total} alerts` : `${total} alert`}
-        </EuiLink>
-      );
-      const datasourceId = getDataSourceId();
-      return (
-        <AlertInsight
-          alert={alert.alerts[0]}
-          isAgentConfigured={isAgentConfigured}
-          alertId={alertId}
-          datasourceId={datasourceId}
-        >
-          {component}
-        </AlertInsight>
-      );
+  refreshDashboard,
+  viewMode = 'new'  // Add viewMode parameter
+) => {
+  const columns = [
+    {
+      field: 'total',
+      name: 'Alerts',
+      sortable: true,
+      truncateText: false,
+      render: (total, alert) => {
+        const alertId = `alerts_${alert.alerts[0].id}`;
+        const component = (
+          <EuiLink
+            key={alertId}
+            onClick={() => {
+              openFlyout({
+                ...alert,
+                history,
+                httpClient,
+                loadingMonitors,
+                location,
+                monitors,
+                notifications,
+                setFlyout,
+                closeFlyout,
+                refreshDashboard,
+              });
+            }}
+            data-test-subj={`euiLink_${alert.trigger_name}`}
+          >
+            {total > 1 ? `${total} alerts` : `${total} alert`}
+          </EuiLink>
+        );
+        const datasourceId = getDataSourceId();
+        return (
+          <AlertInsight
+            alert={alert.alerts[0]}
+            isAgentConfigured={isAgentConfigured}
+            alertId={alertId}
+            datasourceId={datasourceId}
+          >
+            {component}
+          </AlertInsight>
+        );
+      },
     },
-  },
-  {
-    field: 'ACTIVE',
-    name: 'Active',
-    sortable: true,
-    truncateText: false,
-  },
-  {
-    field: 'ACKNOWLEDGED',
-    name: 'Acknowledged',
-    sortable: true,
-    truncateText: false,
-  },
-  {
-    field: 'ERROR',
-    name: 'Errors',
-    sortable: true,
-    truncateText: false,
-  },
-  {
-    field: 'trigger_name',
-    name: 'Trigger name',
-    sortable: true,
-    truncateText: true,
-    textOnly: true,
-  },
-  {
-    field: 'start_time',
-    name: 'Trigger start time',
-    sortable: true,
-    truncateText: false,
-    render: renderTime,
-    dataType: 'date',
-  },
-  {
-    field: 'last_notification_time',
-    name: 'Trigger last updated',
-    sortable: true,
-    truncateText: true,
-    render: renderTime,
-    dataType: 'date',
-  },
-  {
-    field: 'severity',
-    name: 'Severity',
-    sortable: false,
-    truncateText: false,
-  },
-  {
-    field: 'monitor_name',
-    name: 'Monitor name',
-    sortable: true,
-    truncateText: true,
-    textOnly: true,
-    render: (name, alert) => (
-      <EuiLink href={`#/monitors/${alert.monitor_id}?type=${alert.alert_source}`}>{name}</EuiLink>
-    ),
-  },
-];
+  ];
+
+  // Add Active, Acknowledged, Errors columns only in Classic mode
+  if (viewMode === 'classic') {
+    columns.push(
+      {
+        field: 'ACTIVE',
+        name: 'Active',
+        sortable: true,
+        truncateText: false,
+      },
+      {
+        field: 'ACKNOWLEDGED',
+        name: 'Acknowledged',
+        sortable: true,
+        truncateText: false,
+      },
+      {
+        field: 'ERROR',
+        name: 'Errors',
+        sortable: true,
+        truncateText: false,
+      }
+    );
+  }
+
+  // Common columns for both modes
+  columns.push(
+    {
+      field: 'trigger_name',
+      name: 'Trigger name',
+      sortable: true,
+      truncateText: true,
+      textOnly: true,
+    },
+    {
+      field: viewMode === 'classic' ? 'start_time' : 'lastTriggeredTime',
+      name: viewMode === 'classic' ? 'Trigger start time' : 'Last Triggered Time',
+      sortable: true,
+      truncateText: true,
+      render: (ts, row) => {
+        if (viewMode === 'classic') {
+          return renderTime(ts);
+        }
+        // New mode: compute from row.alerts if needed
+        let value = ts;
+        if (value == null && Array.isArray(row?.alerts) && row.alerts.length) {
+          const newest = _.maxBy(row.alerts, (a) => (a?.triggered_time ?? a?.start_time) || 0);
+          value = newest?.triggered_time ?? newest?.start_time ?? null;
+        }
+        return renderUtcTime(value);
+      },
+      dataType: 'date',
+      'data-test-subj': viewMode === 'classic' ? 'trigger-start-time' : 'last-triggered-time',
+    },
+    {
+      field: viewMode === 'classic' ? 'last_notification_time' : 'lastTriggeredTime',
+      name: 'Trigger last updated',
+      sortable: true,
+      truncateText: true,
+      render: renderTime,
+      dataType: 'date',
+    },
+    {
+      field: 'severity',
+      name: 'Severity',
+      sortable: false,
+      truncateText: false,
+    },
+    {
+      field: 'monitor_name',
+      name: 'Monitor name',
+      sortable: true,
+      truncateText: true,
+      textOnly: true,
+      render: (name, alert) => (
+        <EuiLink href={`#/monitors/${alert.monitor_id}?type=${alert.alert_source}`}>{name}</EuiLink>
+      ),
+    }
+  );
+
+  return columns;
+};
 
 export const associatedAlertsTableColumns = [
   {

@@ -19,18 +19,6 @@ describe('getOverviewStats', () => {
     const activeCount = 17;
     expect(getOverviewStats(monitor, monitorId, monitorVersion, activeCount)).toEqual([
       {
-        header: 'Monitor type',
-        value: 'Per query monitor',
-      },
-      {
-        header: 'Monitor definition type',
-        value: 'Extraction Query',
-      },
-      {
-        header: 'Index',
-        value: DEFAULT_EMPTY_DATA,
-      },
-      {
         header: 'Total active alerts',
         value: activeCount,
       },
@@ -49,6 +37,10 @@ describe('getOverviewStats', () => {
       {
         header: 'Monitor version number',
         value: monitorVersion,
+      },
+      {
+        header: 'Description',
+        value: DEFAULT_EMPTY_DATA,
       },
     ]);
   });

@@ -4,7 +4,7 @@
  */
 
 import React, { useState } from 'react';
-import { EuiFlexGrid, EuiFlexItem } from '@elastic/eui';
+import { EuiFlexGrid, EuiFlexItem, EuiFlexGroup } from '@elastic/eui';
 import ContentPanel from '../../../../components/ContentPanel/index';
 import OverviewStat from '../OverviewStat/index';
 import getOverviewStats from './utils/getOverviewStats';
@@ -78,6 +78,7 @@ const MonitorOverview = ({
     localClusterName,
     setFlyout
   );
+  
   return (
     <>
       {flyoutData && (
@@ -88,12 +89,14 @@ const MonitorOverview = ({
         />
       )}
       <ContentPanel title="Overview" titleSize="s">
-        <EuiFlexGrid columns={4}>
+        <EuiFlexGroup gutterSize="xl" wrap={false} responsive={false} justifyContent="spaceBetween">
           {items.map((props) => (
-            <OverviewStat key={props.header} {...props} />
+            <EuiFlexItem key={props.header} grow={true}>
+              <OverviewStat {...props} />
+            </EuiFlexItem>
           ))}
           {relatedMonitorsStat}
-        </EuiFlexGrid>
+        </EuiFlexGroup>
       </ContentPanel>
     </>
   );

@@ -18,10 +18,18 @@ export function dataSourceEnabled() {
 }
 
 export function getDataSourceQueryObj() {
-  const dataSourceQuery = dataSourceEnabled()
-    ? { dataSourceId: getDataSource()?.dataSourceId }
-    : undefined;
-  return dataSourceQuery ? { query: dataSourceQuery } : undefined;
+  if (!dataSourceEnabled()) {
+    return undefined;
+  }
+  
+  const dataSourceId = getDataSource()?.dataSourceId;
+  
+  // Only include dataSourceId if it has a value (not undefined/null/empty)
+  if (dataSourceId) {
+    return { query: { dataSourceId } };
+  }
+  
+  return undefined;
 }
 
 export function getDataSourceId() {

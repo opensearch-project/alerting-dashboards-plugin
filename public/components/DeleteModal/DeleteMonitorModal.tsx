@@ -80,9 +80,9 @@ export const DeleteMonitorModal = ({
       <EuiConfirmModal
         title={warningHeading}
         onCancel={closeDeleteModal}
-        onConfirm={() => {
+        onConfirm={async () => {
           if (allowDelete) {
-            onClickDelete();
+            await onClickDelete();
           }
           closeDeleteModal();
         }}

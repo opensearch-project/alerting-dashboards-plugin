@@ -69,7 +69,7 @@ describe('AnomalyDetectorTrigger', () => {
       // put it under Formik to render TriggerExpressions that has Formik fields.
       // rendering TriggerExpressions also require adValues to be passed in
       <CoreContext.Provider value={{ http: httpClientMock }}>
-        <Formik>
+        <Formik initialValues={{}} onSubmit={() => {}}>
           <AnomalyDetectorTrigger
             detectorId="tempId"
             adValues={{
@@ -180,7 +180,7 @@ describe('AnomalyDetectorTrigger', () => {
       // put it under Formik to render TriggerExpressions that has Formik fields.
       // rendering TriggerExpressions also require adValues to be passed in
       <CoreContext.Provider value={{ http: httpClientMock }}>
-        <Formik>
+        <Formik initialValues={{}} onSubmit={() => {}}>
           <AnomalyDetectorTrigger
             detectorId="tempId"
             adValues={{

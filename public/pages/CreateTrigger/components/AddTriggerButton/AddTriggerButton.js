@@ -29,7 +29,14 @@ const AddTriggerButton = ({
       : 'Add another trigger';
   const onClick = () => {
     const monitorType = _.get(arrayHelpers, 'form.values.monitor_type', MONITOR_TYPE.QUERY_LEVEL);
-    const values = getInitialTriggerValues({ script, flyoutMode, triggers, monitorType });
+    const monitorMode = _.get(arrayHelpers, 'form.values.monitor_mode');
+    const values = getInitialTriggerValues({
+      script,
+      flyoutMode,
+      triggers,
+      monitorType,
+      monitorMode,
+    });
     arrayHelpers.push(values);
 
     if (flyoutMode && onPostAdd) {

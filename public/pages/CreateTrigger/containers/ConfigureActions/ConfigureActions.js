@@ -23,6 +23,8 @@ import { getChannelOptions, toChannelType } from '../../utils/helper';
 import { getInitialActionValues } from '../../components/AddActionButton/utils';
 import { getDataSourceId } from '../../../utils/helpers';
 
+const AUTO_FETCH_ACTION_TARGETS = false;
+
 const createActionContext = (context, action) => {
   let trigger = context.trigger;
   const triggerType = Object.keys(trigger)[0];
@@ -95,6 +97,38 @@ class ConfigureActions extends React.Component {
     this.loadDestinations();
   }
 
+  // async componentDidMount() {
+  //   const { httpClient, plugins } = this.props;
+
+  //   // If you also want to avoid this call, comment the next two lines.
+  //   const allowList = await getAllowList(httpClient);
+  //   this.setState({ allowList });
+
+  //   if (plugins.indexOf(OS_NOTIFICATION_PLUGIN) !== -1) {
+  //     this.setState({ hasNotificationPlugin: true });
+  //   }
+
+  //   if (AUTO_FETCH_ACTION_TARGETS) {
+  //     this.loadDestinations();
+  //   } else {
+  //     // Ensure no spinner while user types
+  //     this.setState({ loadingDestinations: false });
+  //   }
+  // }
+
+  // componentDidUpdate(prevProps) {
+  //   if (this.props.plugins !== prevProps.plugins) {
+  //     if (this.props.plugins.indexOf(OS_NOTIFICATION_PLUGIN) !== -1) {
+  //       this.setState({ hasNotificationPlugin: true });
+  //     }
+
+  //     if (AUTO_FETCH_ACTION_TARGETS) {
+  //       this.loadDestinations();
+  //     }
+  //   }
+  // }
+
+
   componentDidUpdate(prevProps) {
     if (this.props.plugins !== prevProps.plugins) {
       if (this.props.plugins.indexOf(OS_NOTIFICATION_PLUGIN) !== -1) {
@@ -159,34 +193,14 @@ class ConfigureActions extends React.Component {
   };
 
   loadDestinations = async (searchText = '') => {
-    const { httpClient, values, arrayHelpers, notifications, fieldPath, flyoutMode } = this.props;
+    const { values, arrayHelpers, notifications, fieldPath, flyoutMode } = this.props;
     const { allowList, actionDeleted } = this.state;
 
     this.setState({ loadingDestinations: true });
     try {
-      const response = await httpClient.get('../api/alerting/destinations', {
-        query: {
-          search: searchText,
-          size: MAX_QUERY_RESULT_SIZE,
-          dataSourceId: getDataSourceId(),
-        },
-      });
       let destinations = [];
-      if (response.ok) {
-        // Retrieve legacy Destinations in case there are any
-        destinations = response.destinations
-          .filter((destination) => allowList.includes(destination.type))
-          .map((destination) => ({
-            label: `[Destination] ${destination.name}`,
-            value: destination.id,
-            type: toChannelType(destination.type),
-            description: '',
-          }));
-      } else if (response.totalMonitors !== 0) {
-          // If the config index is not created, don't show the notification
-          backendErrorNotification(notifications, 'load', 'destinations', response.err);
-      }
 
+      // Still load channels from the Notifications plugin (unchanged behavior)
       let channels = await this.getChannels();
 
       const destinationsAndChannels = destinations.concat(channels);
@@ -199,9 +213,16 @@ class ConfigureActions extends React.Component {
 
       const monitorType = _.get(arrayHelpers, 'form.values.monitor_type', MONITOR_TYPE.QUERY_LEVEL);
       const actions = _.get(values, `${fieldPath}actions`, []);
-      const initialActionValues = getInitialActionValues({ monitorType, flyoutMode, actions });
+      const monitorMode = _.get(values, 'monitor_mode');
+      const initialActionValues = getInitialActionValues({
+        monitorType,
+        monitorMode,
+        flyoutMode,
+        actions,
+      });
+      arrayHelpers.push(initialActionValues);
 
-      // If actions is not defined  If user choose to delete actions, it will not override customer's preferences.
+      // Same behavior: auto-insert the first action if we have any channels and the user has none yet
       if (
         destinationsAndChannels.length > 0 &&
         !_.get(values, `${fieldPath}actions`) &&
@@ -216,6 +237,7 @@ class ConfigureActions extends React.Component {
         flattenedDestinations: [],
         loadingDestinations: false,
       });
+      backendErrorNotification(notifications, 'load', 'destinations', err);
     }
 
     this.setState({ isInitialLoading: false });
@@ -272,7 +294,7 @@ class ConfigureActions extends React.Component {
     const testMonitor = { ...monitor, triggers: [{ ...testTrigger }] };
 
     try {
-      const response = await httpClient.post('../api/alerting/monitors/_execute', {
+      const response = await httpClient.post('/api/alerting/monitors/_execute', {
         query: { dryrun: false, dataSourceId: getDataSourceId() },
         body: JSON.stringify(testMonitor),
       });

@@ -1,0 +1,36 @@
+/*
+ * Copyright OpenSearch Contributors
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+// Alerting Visual Graph - matches Discover's exact styling
+.alertingTimechart {
+  display: block;
+  position: relative;
+
+  // SASSTODO: the visualizing component should have an option or a modifier
+  .series > rect {
+    fill-opacity: 0.5;
+    stroke-width: 1;
+  }
+
+  &__nonEnhanced {
+    border-bottom: $euiBorderThin;
+  }
+}
+
+.alertingHistogram {
+  display: flex;
+  height: 160px;
+}
+
+.alertingHistogram__header--partial {
+  font-weight: $euiFontWeightRegular;
+  min-width: $euiSize * 12;
+}
+
+.alertingChart__wrapper {
+  &.alertingChart__wrapper--enhancement {
+    // Match Discover's chart wrapper styling
+  }
+}

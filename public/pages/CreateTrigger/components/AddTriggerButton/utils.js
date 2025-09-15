@@ -17,6 +17,7 @@ export const getInitialTriggerValues = ({
   flyoutMode,
   triggers,
   monitorType,
+  monitorMode,
 }) => {
   const initialValues =
     monitorType === MONITOR_TYPE.COMPOSITE_LEVEL
@@ -28,7 +29,12 @@ export const getInitialTriggerValues = ({
 
     initialValues.id = `trigger${id}`;
     initialValues.name = getUniqueName(triggers, 'Trigger ');
-    const initialAction = getInitialActionValues({ monitorType, flyoutMode, actions: [] });
+    const initialAction = getInitialActionValues({
+      monitorType,
+      monitorMode,
+      flyoutMode,
+      actions: [],
+    });
     initialValues.actions = [initialAction];
   }
 

@@ -32,12 +32,17 @@ import { BehaviorSubject } from 'rxjs';
 import { dataSourceObservable } from './pages/utils/constants';
 import { ContentManagementPluginStart } from '../../../src/plugins/content_management/public';
 import { registerAlertsCard } from './utils/helpers';
+import type { ExplorePluginSetup, ExplorePluginStart } from '../../../src/plugins/explore/public';
+import { ResultStatus } from '../../../src/plugins/data/public';
+import { CreateMonitorFlyout } from './components/CreateMonitorFlyout';
 
 declare module '../../../src/plugins/ui_actions/public' {
   export interface ActionContextMapping {
     [ACTION_ALERTING]: {};
   }
 }
+
+let navigateToAppRef: CoreStart['application']['navigateToApp'] | null = null;
 
 export interface AlertingSetup { }
 
@@ -49,6 +54,7 @@ export interface AlertingSetupDeps {
   dataSourceManagement: DataSourceManagementPluginSetup;
   dataSource: DataSourcePluginSetup;
   assistantDashboards?: AssistantSetup;
+  explore?: ExplorePluginSetup;
 }
 
 export interface AlertingStartDeps {
@@ -58,6 +64,7 @@ export interface AlertingStartDeps {
   navigation: NavigationPublicPluginStart;
   contentManagement: ContentManagementPluginStart;
   assistantDashboards?: AssistantPublicPluginStart;
+  explore?: ExplorePluginStart;
 }
 
 export class AlertingPlugin implements Plugin<void, AlertingStart, AlertingSetupDeps, AlertingStartDeps> {
@@ -79,12 +86,17 @@ export class AlertingPlugin implements Plugin<void, AlertingStart, AlertingSetup
   private appStateUpdater = new BehaviorSubject<AppUpdater>(this.updateDefaultRouteOfManagementApplications);
 
 
-  public setup(core: CoreSetup<AlertingStartDeps, AlertingStart>, { expressions, uiActions, dataSourceManagement, dataSource, assistantDashboards }: AlertingSetupDeps) {
+  public setup(core: CoreSetup<AlertingStartDeps, AlertingStart>, { expressions, uiActions, dataSourceManagement, dataSource, assistantDashboards, explore }: AlertingSetupDeps) {
 
+    // const mountWrapper = async (params: AppMountParameters, redirect: string) => {
+    //   const { renderApp } = await import("./app");
+    //   const [coreStart] = await core.getStartServices();
+    //   return renderApp(coreStart, params, redirect);
+    // };
     const mountWrapper = async (params: AppMountParameters, redirect: string) => {
       const { renderApp } = await import("./app");
-      const [coreStart] = await core.getStartServices();
-      return renderApp(coreStart, params, redirect);
+      const [coreStart, depsStart] = await core.getStartServices();
+      return renderApp(coreStart, depsStart, params, redirect);
     };
     core.application.register({
       id: PLUGIN_NAME,
@@ -96,10 +108,15 @@ export class AlertingPlugin implements Plugin<void, AlertingStart, AlertingSetup
         order: 2000,
       },
       order: 4000,
+      // mount: async (params) => {
+      //   const { renderApp } = await import('./app');
+      //   const [coreStart] = await core.getStartServices();
+      //   return renderApp(coreStart, params);
+      // },
       mount: async (params) => {
         const { renderApp } = await import('./app');
-        const [coreStart] = await core.getStartServices();
-        return renderApp(coreStart, params);
+        const [coreStart, depsStart] = await core.getStartServices();
+        return renderApp(coreStart, depsStart, params);
       },
     });
 
@@ -228,9 +245,37 @@ export class AlertingPlugin implements Plugin<void, AlertingStart, AlertingSetup
     const adAction = getAdAction();
     uiActions.registerTrigger(alertingTriggerAd);
     uiActions.addTriggerAction(alertingTriggerAd.id, adAction);
+
+    /**
+     * Register a flyout action in Explore's Query Panel "Actions" menu
+     * that opens an inline monitor creation flyout with the PPL query pre-filled.
+     * Only register if the explore plugin is available.
+     */
+    const isExploreEnabled = !!explore;
+    if (isExploreEnabled) {
+      explore.queryPanelActionsRegistry.register({
+        id: 'alerting-create-monitor-from-explore',
+        actionType: 'flyout',
+        order: 1,
+        getIsEnabled: (deps) => {
+          // Allow monitor creation for READY, NO_RESULTS, and ERROR statuses
+          const allowedStatuses = [ResultStatus.READY, ResultStatus.NO_RESULTS, ResultStatus.ERROR];
+          const isStatusAllowed = allowedStatuses.includes(deps.resultStatus.status);
+
+          // Check if data source is AOSS collection - if so, disable the button
+          const isAOSSCollection = deps.query?.dataset?.dataSource?.type === 'OpenSearch Serverless';
+
+          return isStatusAllowed && !isAOSSCollection;
+        },
+        getLabel: () => 'Create monitor',
+        getIcon: () => 'bell',
+        component: CreateMonitorFlyout,
+      });
+    }
   }
 
-  public start(core: CoreStart, { visAugmenter, embeddable, data, navigation, contentManagement, assistantDashboards }: AlertingStartDeps): AlertingStart {
+  public start(core: CoreStart, { visAugmenter, embeddable, data, navigation, contentManagement, assistantDashboards, explore }: AlertingStartDeps): AlertingStart {
+    navigateToAppRef = core.application.navigateToApp;
     setEmbeddable(embeddable);
     setOverlays(core.overlays);
     setQueryService(data.query);
@@ -242,6 +287,7 @@ export class AlertingPlugin implements Plugin<void, AlertingStart, AlertingSetup
     setContentManagementStart(contentManagement);
     registerAlertsCard();
     setAssistantClient(assistantDashboards?.assistantClient || {agentConfigExists: (agentConfigName: string | string[], options?: string) => {return Promise.resolve({ exists: false });}})
+
     return {};
   }
 }

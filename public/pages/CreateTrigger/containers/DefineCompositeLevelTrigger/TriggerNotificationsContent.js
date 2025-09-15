@@ -8,7 +8,7 @@ import { EuiPanel, EuiFlexGroup, EuiFlexItem, EuiSmallButtonEmpty, EuiSpacer } f
 import { FormikComboBox } from '../../../../components/FormControls';
 import NotificationConfigDialog from './NotificationConfigDialog';
 import _ from 'lodash';
-import { FORMIK_INITIAL_ACTION_VALUES } from '../../utils/constants';
+import { DEFAULT_MESSAGE_SOURCE, FORMIK_INITIAL_ACTION_VALUES } from '../../utils/constants';
 import { NOTIFY_OPTIONS_VALUES } from '../../components/Action/actions/Message';
 import { required } from '../../../../utils/validate';
 import { getManageChannelsUrl } from '../../../../utils/helpers';
@@ -43,13 +43,21 @@ const TriggerNotificationsContent = ({
     setSelected(selectedOptions);
 
     const initialActionValues = _.cloneDeep(FORMIK_INITIAL_ACTION_VALUES);
+    const monitorMode = _.get(triggerValues, 'monitor_mode');
+    const defaults = monitorMode === 'ppl' ? DEFAULT_MESSAGE_SOURCE.V2 : DEFAULT_MESSAGE_SOURCE.LEGACY;
+
+    _.set(initialActionValues, 'message_template.source', defaults.QUERY_LEVEL_MONITOR);
+
     _.set(triggerValues, `${formikFieldPath}actions[${actionIndex}]`, {
       ...initialActionValues,
       destination_id: selectedOptions[0]?.value,
       name: selectedOptions[0]?.label,
       subject_template: {
         lang: 'mustache',
-        source: 'Monitor {{ctx.monitor.name}} triggered an alert {{ctx.trigger.name}}',
+        source:
+          monitorMode === 'ppl'
+            ? 'Monitor {{ctx.monitorV2.name}} triggered an alert {{ctx.ppl_sql_trigger.name}}'
+            : 'Monitor {{ctx.monitor.name}} triggered an alert {{ctx.trigger.name}}',
       },
       action_execution_policy: {
         action_execution_scope: NOTIFY_OPTIONS_VALUES.PER_ALERT,
