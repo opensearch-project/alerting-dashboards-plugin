@@ -213,14 +213,7 @@ class ConfigureActions extends React.Component {
 
       const monitorType = _.get(arrayHelpers, 'form.values.monitor_type', MONITOR_TYPE.QUERY_LEVEL);
       const actions = _.get(values, `${fieldPath}actions`, []);
-      const monitorMode = _.get(values, 'monitor_mode');
-      const initialActionValues = getInitialActionValues({
-        monitorType,
-        monitorMode,
-        flyoutMode,
-        actions,
-      });
-      arrayHelpers.push(initialActionValues);
+      const initialActionValues = getInitialActionValues({ monitorType, flyoutMode, actions });
 
       // Same behavior: auto-insert the first action if we have any channels and the user has none yet
       if (

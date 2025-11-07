@@ -8,17 +8,15 @@ import { DEFAULT_MESSAGE_SOURCE, FORMIK_INITIAL_ACTION_VALUES } from '../../util
 import { MONITOR_TYPE } from '../../../../utils/constants';
 import { getDigitId, getUniqueName } from '../../../../utils/helpers';
 
-export const getInitialActionValues = ({ monitorType, monitorMode, flyoutMode, actions }) => {
+export const getInitialActionValues = ({ monitorType, flyoutMode, actions }) => {
   const initialActionValues = _.cloneDeep(FORMIK_INITIAL_ACTION_VALUES);
-
-  const defaults = monitorMode === 'ppl' ? DEFAULT_MESSAGE_SOURCE.V2 : DEFAULT_MESSAGE_SOURCE.LEGACY;
 
   switch (monitorType) {
     case MONITOR_TYPE.BUCKET_LEVEL:
       _.set(
         initialActionValues,
         'message_template.source',
-        defaults.BUCKET_LEVEL_MONITOR
+        DEFAULT_MESSAGE_SOURCE.BUCKET_LEVEL_MONITOR
       );
       break;
     case MONITOR_TYPE.QUERY_LEVEL:
@@ -26,7 +24,7 @@ export const getInitialActionValues = ({ monitorType, monitorMode, flyoutMode, a
       _.set(
         initialActionValues,
         'message_template.source',
-        defaults.QUERY_LEVEL_MONITOR
+        DEFAULT_MESSAGE_SOURCE.QUERY_LEVEL_MONITOR
       );
       break;
   }

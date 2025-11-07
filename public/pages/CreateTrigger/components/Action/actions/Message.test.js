@@ -8,7 +8,6 @@ import { render, shallow, mount } from 'enzyme';
 import { Formik } from 'formik';
 import Message from './Message';
 import Mustache from 'mustache';
-import { DEFAULT_MESSAGE_SOURCE } from '../../../utils/constants';
 
 jest.mock('@elastic/eui/lib/components/form/form_row/make_id', () => () => 'testing-id');
 
@@ -19,7 +18,8 @@ function getRenderWrapper(customProps = {}) {
         <Message
           action={{
             message_template: {
-              source: DEFAULT_MESSAGE_SOURCE.V2.QUERY_LEVEL_MONITOR,
+              source:
+                'Monitor {{ctx.monitor.name}} just entered alert status. Please investigate the issue.\n- Trigger: {{ctx.trigger.name}}\n- Severity: {{ctx.trigger.severity}}\n- Period start: {{ctx.periodStart}} UTC\n- Period end: {{ctx.periodEnd}} UTC',
               lang: 'mustache',
             },
           }}
