@@ -21,14 +21,14 @@ import { alertingTriggerAd } from './utils/contextMenu/triggers';
 import { ExpressionsSetup } from '../../../src/plugins/expressions/public';
 import { UiActionsSetup } from '../../../src/plugins/ui_actions/public';
 import { overlayAlertsFunction } from './expressions/overlay_alerts';
-import { setClient, setEmbeddable, setNotifications, setOverlays, setSavedAugmentVisLoader, setUISettings, setQueryService, setSavedObjectsClient, setDataSourceEnabled, setDataSourceManagementPlugin, setNavigationUI, setApplication, setContentManagementStart, setAssistantDashboards, setAssistantClient } from './services';
+import { setClient, setEmbeddable, setNotifications, setOverlays, setSavedAugmentVisLoader, setUISettings, setQueryService, setSavedObjectsClient, setDataSourceEnabled, setDataSourceManagementPlugin, setNavigationUI, setApplication, setContentManagementStart, setAssistantDashboards, setAssistantClient, isPplAlertingEnabled } from './services';
 import { VisAugmenterStart } from '../../../src/plugins/vis_augmenter/public';
 import { DataPublicPluginStart } from '../../../src/plugins/data/public';
 import { AssistantSetup, AssistantPublicPluginStart  } from './types';
 import { DataSourceManagementPluginSetup } from '../../../src/plugins/data_source_management/public';
 import { DataSourcePluginSetup } from '../../../src/plugins/data_source/public';
 import { NavigationPublicPluginStart } from '../../../src/plugins/navigation/public';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 import { dataSourceObservable } from './pages/utils/constants';
 import { ContentManagementPluginStart } from '../../../src/plugins/content_management/public';
 import { registerAlertsCard } from './utils/helpers';
@@ -84,6 +84,7 @@ export class AlertingPlugin implements Plugin<void, AlertingStart, AlertingSetup
   };
 
   private appStateUpdater = new BehaviorSubject<AppUpdater>(this.updateDefaultRouteOfManagementApplications);
+  private appStateUpdater$: Observable<AppUpdater> = this.appStateUpdater.asObservable();
 
 
   public setup(core: CoreSetup<AlertingStartDeps, AlertingStart>, { expressions, uiActions, dataSourceManagement, dataSource, assistantDashboards, explore }: AlertingSetupDeps) {
@@ -152,7 +153,7 @@ export class AlertingPlugin implements Plugin<void, AlertingStart, AlertingSetup
         title: 'Alerts',
         order: 9070,
         category: DEFAULT_APP_CATEGORIES.detect,
-        updater$: this.appStateUpdater,
+        updater$: this.appStateUpdater$ as any,
         mount: async (params: AppMountParameters) => {
           return mountWrapper(params, "/dashboard");
         },
@@ -163,7 +164,7 @@ export class AlertingPlugin implements Plugin<void, AlertingStart, AlertingSetup
         title: 'Monitors',
         order: 9070,
         category: DEFAULT_APP_CATEGORIES.detect,
-        updater$: this.appStateUpdater,
+        updater$: this.appStateUpdater$ as any,
         mount: async (params: AppMountParameters) => {
           return mountWrapper(params, "/monitors");
         },
@@ -174,7 +175,7 @@ export class AlertingPlugin implements Plugin<void, AlertingStart, AlertingSetup
         title: 'Destinations',
         order: 9070,
         category: DEFAULT_APP_CATEGORIES.detect,
-        updater$: this.appStateUpdater,
+        updater$: this.appStateUpdater$ as any,
         mount: async (params: AppMountParameters) => {
           return mountWrapper(params, "/destinations");
         },
@@ -255,9 +256,11 @@ export class AlertingPlugin implements Plugin<void, AlertingStart, AlertingSetup
     if (isExploreEnabled) {
       explore.queryPanelActionsRegistry.register({
         id: 'alerting-create-monitor-from-explore',
-        actionType: 'flyout',
         order: 1,
         getIsEnabled: (deps) => {
+          if (!isPplAlertingEnabled()) {
+            return false;
+          }
           // Allow monitor creation for READY, NO_RESULTS, and ERROR statuses
           const allowedStatuses = [ResultStatus.READY, ResultStatus.NO_RESULTS, ResultStatus.ERROR];
           const isStatusAllowed = allowedStatuses.includes(deps.resultStatus.status);
@@ -270,7 +273,7 @@ export class AlertingPlugin implements Plugin<void, AlertingStart, AlertingSetup
         getLabel: () => 'Create monitor',
         getIcon: () => 'bell',
         component: CreateMonitorFlyout,
-      });
+      } as any);
     }
   }
 

@@ -31,7 +31,7 @@ import {
   isDataSourceChanged,
   getDataSourceId,
 } from '../../../utils/helpers';
-import { getUseUpdatedUx, isPplV2Enabled } from '../../../../services';
+import { getUseUpdatedUx, isPplAlertingEnabled } from '../../../../services';
 
 const MAX_MONITOR_COUNT = 1000;
 
@@ -45,7 +45,7 @@ export default class Monitors extends Component {
     );
 
     // Initialize viewMode from localStorage, default to 'new'
-    const pplEnabled = isPplV2Enabled();
+    const pplEnabled = isPplAlertingEnabled();
     let initialViewMode = pplEnabled ? 'new' : 'classic';
     if (pplEnabled) {
       try {

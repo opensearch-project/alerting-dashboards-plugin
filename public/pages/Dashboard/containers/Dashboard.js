@@ -50,7 +50,7 @@ import {
   getIsCommentsEnabled,
   getIsAgentConfigured,
 } from '../../utils/helpers';
-import { getUseUpdatedUx, isPplV2Enabled } from '../../../services';
+import { getUseUpdatedUx, isPplAlertingEnabled } from '../../../services';
 
 const DASHBOARD_VIEW_MODE_STORAGE_KEY = 'alerting_dashboard_view_mode';
 
@@ -63,7 +63,7 @@ export default class Dashboard extends Component {
     const { alertState, from, search, severityLevel, size, sortDirection, sortField } =
       getURLQueryParams(location);
 
-    const pplEnabled = isPplV2Enabled();
+    const pplEnabled = isPplAlertingEnabled();
     let resolvedViewMode = initialViewMode || 'new';
     if (pplEnabled) {
       if (!initialViewMode) {

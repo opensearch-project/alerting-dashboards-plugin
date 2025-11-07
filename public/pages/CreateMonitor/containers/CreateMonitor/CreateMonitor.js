@@ -67,7 +67,7 @@ import { monaco, loadMonaco } from '@osd/monaco';
 import { CoreContext } from '../../../../utils/CoreContext';
 import { QueryEditor } from '../../../../components/QueryEditor';
 import { AlertingDataTable } from '../../../../components/DataTable';
-import { setDataSource, isPplV2Enabled } from '../../../../services';
+import { setDataSource, isPplAlertingEnabled } from '../../../../services';
 
 class CreateMonitor extends Component {
   static contextType = CoreContext;
@@ -86,7 +86,7 @@ class CreateMonitor extends Component {
 
     const { location, edit, monitorToEdit } = props;
     const baseInitial = getInitialValues({ location, monitorToEdit, edit });
-    const pplEnabled = isPplV2Enabled();
+    const pplEnabled = isPplAlertingEnabled();
     const initialValues = {
       ...baseInitial,
       // Only override monitor_mode if explicitly provided, otherwise use baseInitial or default
