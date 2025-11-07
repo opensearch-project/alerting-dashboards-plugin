@@ -181,9 +181,7 @@ export class CreateMonitorFlyout extends Component<FlyoutComponentProps, CreateM
     // Detect timestamp fields from initial PPL query (with slight delay to ensure Formik is ready)
     // Clean up backticks from the query (Explore plugin adds them)
     const rawQuery = this.props.dependencies.queryInEditor || '';
-    
     if (rawQuery) {
-      console.log('[CreateMonitorFlyout] Raw PPL query:', rawQuery);
       setTimeout(() => {
         this.detectTimestampFields(rawQuery);
       }, 300);
@@ -211,13 +209,9 @@ export class CreateMonitorFlyout extends Component<FlyoutComponentProps, CreateM
     const httpClient = getClient();
     const { dependencies } = this.props;
 
-    console.log('[detectTimestampFields] Called with query:', pplQuery);
-
     const indices = extractIndicesFromPPL(pplQuery);
-    console.log('[detectTimestampFields] Extracted indices:', indices);
 
     if (indices.length === 0) {
-      console.log('[detectTimestampFields] No indices found in query');
       this.setState({
         availableDateFields: [],
         dateFieldsError: 'No indices found in query',
@@ -233,15 +227,11 @@ export class CreateMonitorFlyout extends Component<FlyoutComponentProps, CreateM
 
     try {
       const dataSourceId = dependencies.query.dataset?.dataSource?.id;
-      console.log('[detectTimestampFields] Calling findCommonDateFields with dataSourceId:', dataSourceId);
-      
       const { commonDateFields, error } = await findCommonDateFields(
         httpClient,
         indices,
         dataSourceId
       );
-
-      console.log('[detectTimestampFields] Result - commonDateFields:', commonDateFields, 'error:', error);
 
       if (error || commonDateFields.length === 0) {
         this.setState({
@@ -256,8 +246,6 @@ export class CreateMonitorFlyout extends Component<FlyoutComponentProps, CreateM
       }
 
       const defaultField = commonDateFields[0];
-      console.log('[detectTimestampFields] Setting default field:', defaultField);
-      
       if (this.formikRef.current) {
         this.formikRef.current.setFieldValue('timestampField', defaultField, false);
       }
@@ -282,12 +270,6 @@ export class CreateMonitorFlyout extends Component<FlyoutComponentProps, CreateM
 
   handleSubmit = async (values: any, formikBag: any) => {
     const { services, closeFlyout, dependencies } = this.props;
-    
-    console.log('[CreateMonitorFlyout] handleSubmit called');
-    console.log('[CreateMonitorFlyout] services:', services);
-    console.log('[CreateMonitorFlyout] services.notifications:', services?.notifications);
-    console.log('[CreateMonitorFlyout] services.notifications.toasts:', services?.notifications?.toasts);
-    
     this.setState({ isSubmitting: true, submitError: null });
 
     try {
@@ -296,32 +278,18 @@ export class CreateMonitorFlyout extends Component<FlyoutComponentProps, CreateM
       const body = buildPPLMonitorFromFormik(values);
       const dataSourceId = values.dataSourceId || dependencies.query.dataset?.dataSource?.id;
 
-      console.log('[CreateMonitorFlyout] Calling createMonitor API...');
-      
       // Create the monitor and capture the response to get the monitor ID
       const response = await api.createMonitor(body, { dataSourceId });
-      
-      console.log('[CreateMonitorFlyout] Monitor created successfully');
-      console.log('[CreateMonitorFlyout] Response:', response);
-      
       formikBag.setSubmitting(false);
 
       // Extract monitor ID from response
       const monitorId = response?._id || response?.monitor_id || response?.id;
-      
-      console.log('[CreateMonitorFlyout] Monitor ID:', monitorId);
-
       // Build the monitors list page URL by replacing /app/explore with /app/monitors
       const currentUrl = window.location.href;
       const monitorsListUrl = currentUrl
         .replace(/\/app\/explore.*$/, `/app/monitors#/monitors?dataSourceId=${dataSourceId || ''}&from=0&search=&size=20&sortDirection=desc&sortField=name&state=all`);
 
-      console.log('[CreateMonitorFlyout] Current URL:', currentUrl);
-      console.log('[CreateMonitorFlyout] Monitors list URL:', monitorsListUrl);
-
-      // Show success toast with clickable link to monitors list
-      console.log('[CreateMonitorFlyout] About to show success toast...');
-      
+        // Show success toast with clickable link to monitors list
       services.notifications.toasts.addSuccess({
         title: 'Monitor created successfully',
         text: (
@@ -340,13 +308,9 @@ export class CreateMonitorFlyout extends Component<FlyoutComponentProps, CreateM
         ),
         toastLifeTimeMs: 10000,
       });
-      console.log('[CreateMonitorFlyout] Success toast with link shown');
 
       // IMPORTANT: Wait before closing to ensure toasts are registered in the DOM
-      console.log('[CreateMonitorFlyout] Waiting before closing flyout...');
       await new Promise(resolve => setTimeout(resolve, 300));
-      
-      console.log('[CreateMonitorFlyout] Closing flyout');
       closeFlyout();
     } catch (error: any) {
       console.error('Error creating monitor:', error);
