@@ -163,7 +163,6 @@ export const QueryEditor: React.FC<QueryEditorProps> = ({
             data: { dataViews, query: { queryString } },
           } = currentServices;
           
-          // CRITICAL FIX: PPL provider requires services.appName!
           if (!currentServices.appName) {
             currentServices.appName = 'alerting';
           }

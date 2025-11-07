@@ -38,7 +38,12 @@ import {
 import { Formik, FieldArray } from 'formik';
 import { Provider } from 'react-redux';
 import _ from 'lodash';
-import { FORMIK_INITIAL_VALUES } from '../../pages/CreateMonitor/containers/CreateMonitor/utils/constants';
+import {
+  FORMIK_INITIAL_VALUES,
+  MONITOR_NAME_MAX_LENGTH,
+  MONITOR_DESCRIPTION_MAX_LENGTH,
+  LOOKBACK_WINDOW_MIN_MINUTES,
+} from '../../pages/CreateMonitor/containers/CreateMonitor/utils/constants';
 import { formikToMonitor } from '../../pages/CreateMonitor/containers/CreateMonitor/utils/formikToMonitor';
 import { getClient, setDataSource, NotificationService } from '../../services';
 import { backendErrorNotification } from '../../utils/helpers';
@@ -85,6 +90,7 @@ type CreateMonitorFlyoutState = {
   plugins: any[];
   pluginsLoading: boolean;
 };
+
 
 export class CreateMonitorFlyout extends Component<FlyoutComponentProps, CreateMonitorFlyoutState> {
   static contextType = CoreContext;
@@ -160,6 +166,13 @@ export class CreateMonitorFlyout extends Component<FlyoutComponentProps, CreateM
       }
     } catch (e) {
       console.error('[CreateMonitorFlyout] Error initializing query:', e);
+      const toasts = services?.notifications?.toasts;
+      if (toasts?.addDanger) {
+        toasts.addDanger({
+          title: 'Unable to initialize query editor',
+          text: e?.message || 'The query editor could not be prepared. See console for details.',
+        });
+      }
     }
 
     // Fetch plugins
@@ -308,30 +321,37 @@ export class CreateMonitorFlyout extends Component<FlyoutComponentProps, CreateM
         ),
         toastLifeTimeMs: 10000,
       });
-
-      // IMPORTANT: Wait before closing to ensure toasts are registered in the DOM
-      await new Promise(resolve => setTimeout(resolve, 300));
-      closeFlyout();
+      formikBag.setSubmitting(false);
+        closeFlyout();
     } catch (error: any) {
       console.error('Error creating monitor:', error);
       
       // Parse error message to provide user-friendly feedback
       let userMessage = 'An error occurred while creating the monitor';
-      let errorDetails = error?.message || error?.body?.message || '';
+      const rawErrorMessage = error?.message || error?.body?.message || '';
+      const errorDetails = rawErrorMessage.toLowerCase();
 
       // Check for common error patterns and provide helpful messages
       if (errorDetails.includes('duplicate') || errorDetails.includes('already exists')) {
         userMessage = 'A monitor with this name already exists. Please choose a different name.';
-      } else if (errorDetails.includes('too long') || errorDetails.includes('length')) {
-        userMessage = 'Monitor name or description is too long. Please shorten it.';
+      } else if (
+        errorDetails.includes('name') &&
+        (errorDetails.includes('too long') || errorDetails.includes('length'))
+      ) {
+        userMessage = `Monitor name must be between 1 and ${MONITOR_NAME_MAX_LENGTH} characters.`;
+      } else if (
+        errorDetails.includes('description') &&
+        (errorDetails.includes('too long') || errorDetails.includes('length'))
+      ) {
+        userMessage = `Description must be ${MONITOR_DESCRIPTION_MAX_LENGTH} characters or less.`;
       } else if (errorDetails.includes('invalid query') || errorDetails.includes('query syntax')) {
         userMessage = 'The PPL query syntax is invalid. Please check your query.';
       } else if (errorDetails.includes('index') && errorDetails.includes('not found')) {
         userMessage = 'The specified index does not exist. Please check your query.';
       } else if (errorDetails.includes('permission') || errorDetails.includes('unauthorized')) {
         userMessage = 'You do not have permission to create monitors.';
-      } else if (errorDetails) {
-        userMessage = errorDetails;
+      } else if (rawErrorMessage) {
+        userMessage = rawErrorMessage;
       }
 
       this.setState({ submitError: userMessage });
@@ -353,19 +373,41 @@ export class CreateMonitorFlyout extends Component<FlyoutComponentProps, CreateM
 
     // Validate monitor name
     if (!values.name || values.name.trim() === '') {
-      errors.name = 'Monitor name is required';
-    } else if (values.name.length > 256) {
-      errors.name = 'Monitor name must be 256 characters or less';
+      errors.name = 'Monitor name is required.';
+    } else if (values.name.length > MONITOR_NAME_MAX_LENGTH) {
+      errors.name = `Monitor name must be ${MONITOR_NAME_MAX_LENGTH} characters or less.`;
     }
 
     // Validate PPL query
     if (!values.pplQuery || values.pplQuery.trim() === '') {
-      errors.pplQuery = 'PPL query is required';
+      errors.pplQuery = 'PPL query is required.';
     }
 
     // Validate description length
-    if (values.description && values.description.length > 500) {
-      errors.description = 'Description must be 500 characters or less';
+    if (values.description && values.description.length > MONITOR_DESCRIPTION_MAX_LENGTH) {
+      errors.description = `Description must be ${MONITOR_DESCRIPTION_MAX_LENGTH} characters or less.`;
+    }
+
+    const useLookBackWindow =
+      values.useLookBackWindow !== undefined ? values.useLookBackWindow : true;
+    if (useLookBackWindow) {
+      const rawAmount = values.lookBackAmount === '' ? NaN : Number(values.lookBackAmount);
+      const lookBackUnit = values.lookBackUnit || 'hours';
+      const lookBackMinutes = Number.isNaN(rawAmount)
+        ? NaN
+        : lookBackUnit === 'minutes'
+        ? rawAmount
+        : lookBackUnit === 'hours'
+        ? rawAmount * 60
+        : rawAmount * 1440;
+
+      if (
+        Number.isNaN(rawAmount) ||
+        rawAmount <= 0 ||
+        lookBackMinutes < LOOKBACK_WINDOW_MIN_MINUTES
+      ) {
+        errors.lookBackAmount = `Look back window must be at least ${LOOKBACK_WINDOW_MIN_MINUTES} minute.`;
+      }
     }
 
     // Validate triggers if they exist
@@ -594,19 +636,26 @@ export class CreateMonitorFlyout extends Component<FlyoutComponentProps, CreateM
     </>
   );
 
-  renderPplScheduleBody = (values: any, setFieldValue: any) => {
+  renderPplScheduleBody = (values: any, setFieldValue: any, errors: any) => {
     const useLB = values.useLookBackWindow !== undefined ? values.useLookBackWindow : true;
     const lbAmount = Number(values.lookBackAmount !== undefined ? values.lookBackAmount : 1);
     const lbUnit = values.lookBackUnit || 'hours';
     const { availableDateFields, dateFieldsError, dateFieldsLoading } = this.state;
 
     const LIMITS = {
-      lookback: { min: 1 },
+      lookback: { min: LOOKBACK_WINDOW_MIN_MINUTES },
       interval: { min: 1 },
     };
 
-    const lbMinutes = lbUnit === 'minutes' ? lbAmount : lbUnit === 'hours' ? lbAmount * 60 : lbAmount * 1440;
-    const lbError = lbAmount > 0 && lbMinutes < LIMITS.lookback.min;
+    const lbMinutes =
+      lbUnit === 'minutes' ? lbAmount : lbUnit === 'hours' ? lbAmount * 60 : lbAmount * 1440;
+    const lookBackAmountValidationError = errors?.lookBackAmount as string | undefined;
+    const lbError =
+      useLB &&
+      (Number.isNaN(lbAmount) || lbAmount <= 0 || (lbAmount > 0 && lbMinutes < LIMITS.lookback.min));
+    const lbErrorMessage =
+      lookBackAmountValidationError ||
+      (lbError ? `Look back window must be at least ${LIMITS.lookback.min} minute.` : undefined);
 
     const intervalAmount = Number(values.period?.interval ?? 1);
     const intervalUnit = values.period?.unit || 'MINUTES';
@@ -662,8 +711,8 @@ export class CreateMonitorFlyout extends Component<FlyoutComponentProps, CreateM
               label="look back from"
               fullWidth
               style={{ marginLeft: '-6px', maxWidth: '720px' }}
-              isInvalid={lbError}
-              error={lbError ? `Must be at least 1 minute` : undefined}
+              isInvalid={Boolean(lbErrorMessage)}
+              error={lbErrorMessage}
             >
               <EuiFlexGroup gutterSize="s" alignItems="center" responsive={false}>
                 <EuiFlexItem>
@@ -675,7 +724,7 @@ export class CreateMonitorFlyout extends Component<FlyoutComponentProps, CreateM
                       setFieldValue('lookBackAmount', val);
                     }}
                     fullWidth
-                    isInvalid={lbError}
+                    isInvalid={Boolean(lbErrorMessage)}
                   />
                 </EuiFlexItem>
 
@@ -860,9 +909,19 @@ export class CreateMonitorFlyout extends Component<FlyoutComponentProps, CreateM
             validate={this.validateForm}
             onSubmit={this.handleSubmit}
             validateOnChange={false}
+            validateOnMount
             enableReinitialize={false}
           >
-            {({ values, errors, handleSubmit, isSubmitting: formikSubmitting, touched, setFieldValue }) => {
+            {({
+              values,
+              errors,
+              handleSubmit,
+              isSubmitting: formikSubmitting,
+              touched,
+              isValid,
+              dirty,
+              setFieldValue,
+            }) => {
               const safeMonitor = this.buildMonitorForTriggers(values);
               const safeTriggers = _.get(safeMonitor, 'triggers', []);
 
@@ -890,7 +949,7 @@ export class CreateMonitorFlyout extends Component<FlyoutComponentProps, CreateM
                         },
                         {
                           title: 'Schedule',
-                          children: this.renderPplScheduleBody(values, setFieldValue),
+                          children: this.renderPplScheduleBody(values, setFieldValue, errors),
                         },
                         {
                           title: 'Triggers',
@@ -929,7 +988,12 @@ export class CreateMonitorFlyout extends Component<FlyoutComponentProps, CreateM
                         </EuiButtonEmpty>
                       </EuiFlexItem>
                       <EuiFlexItem grow={false}>
-                        <EuiButton onClick={() => handleSubmit()} fill isLoading={isSubmitting || formikSubmitting}>
+                        <EuiButton
+                          onClick={() => handleSubmit()}
+                          fill
+                          isLoading={isSubmitting || formikSubmitting}
+                          isDisabled={formikSubmitting || isSubmitting || !isValid || !dirty}
+                        >
                           Create
                         </EuiButton>
                       </EuiFlexItem>

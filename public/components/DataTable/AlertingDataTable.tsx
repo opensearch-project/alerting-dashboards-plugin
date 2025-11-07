@@ -91,8 +91,9 @@ const StreamPreviewRow: React.FC<{
   const [isExpanded, setIsExpanded] = useState(false);
 
   // Create a compact preview string like Discover's stream view with highlighted field names
-  const previewText = Object.entries(doc)
-    .filter(([k]) => k !== '_id')
+  const previewEntries = Object.entries(doc).filter(([k]) => k !== '_id');
+
+  const previewText = previewEntries
     .map(([k, v]) => {
       if (v === null || v === undefined) return '';
       const value = typeof v === 'number' ? v.toLocaleString() : String(v);
@@ -106,8 +107,7 @@ const StreamPreviewRow: React.FC<{
 
   const expandedContent = () => {
     // Sort fields to match Discover's order (put _id, _index, _score, _type at the end)
-    const sortedEntries = Object.entries(doc)
-      .filter(([k]) => k !== '_id')
+    const sortedEntries = previewEntries
       .sort(([a], [b]) => {
         const metaFields = ['_id', '_index', '_score', '_type'];
         const aIsMeta = metaFields.includes(a);

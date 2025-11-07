@@ -34,7 +34,11 @@ import {
 import { TRIGGER_TYPE } from '../../../../pages/CreateTrigger/containers/CreateTrigger/utils/constants';
 import { UNITS_OF_TIME } from '../../../../pages/CreateMonitor/components/MonitorExpressions/expressions/utils/constants';
 import { DEFAULT_WHERE_EXPRESSION_TEXT } from '../../../../pages/CreateMonitor/components/MonitorExpressions/expressions/utils/whereHelpers';
-import { acknowledgeAlerts, backendErrorNotification, getSeverityText } from '../../../../utils/helpers';
+import {
+  acknowledgeAlerts,
+  backendErrorNotification,
+  getSeverityText,
+} from '../../../../utils/helpers';
 import {
   getQueryObjectFromState,
   getURLQueryParams,
@@ -61,7 +65,10 @@ import {
   getDataSourceId,
   getIsCommentsEnabled,
 } from '../../../../pages/utils/helpers';
-import { PplPreviewTable, pplRespToDocs } from '../../../../pages/CreateMonitor/components/PplPreviewTable/PplPreviewTable';
+import {
+  PplPreviewTable,
+  pplRespToDocs,
+} from '../../../../pages/CreateMonitor/components/PplPreviewTable/PplPreviewTable';
 
 export const DEFAULT_NUM_FLYOUT_ROWS = 5;
 
@@ -234,40 +241,41 @@ export default class AlertsDashboardFlyoutComponent extends Component {
       ...(dataSourceId !== undefined && { dataSourceId }), // Only include dataSourceId if it exists
       ...params, // Other parameters
     };
-    
+
     // Use viewMode from props to determine which API to call
     const { viewMode = 'new' } = this.props;
-    
+
     if (viewMode === 'new') {
       // For v2/new mode, call the v2 API and filter by trigger_v2_id
-      httpClient.get('/api/alerting/v2/monitors/alerts', { query: extendedParams })?.then((resp) => {
-        if (!this._isMounted) {
-          return;
-        }
-        if (resp.ok) {
-          const payload = resp.resp || resp;
-          let allAlerts = [];
-
-          // v2 API returns: { alerts_v2: [...], total_alerts_v2: N }
-          const alertsArray = payload?.alerts_v2 || payload?.alertV2s;
-          if (Array.isArray(alertsArray)) {
-            allAlerts = alertsArray;
+      httpClient
+        .get('/api/alerting/v2/monitors/alerts', { query: extendedParams })
+        ?.then((resp) => {
+          if (!this._isMounted) {
+            return;
           }
+          if (resp.ok) {
+            const payload = resp.resp || resp;
+            let allAlerts = [];
 
-          // Filter by trigger_v2_id (in v2, triggerID should be trigger_v2_id)
-          const filteredAlerts = allAlerts.filter((a) => a.trigger_v2_id === triggerID);
+            // v2 API returns: { alerts_v2: [...], total_alerts_v2: N }
+            const alertsArray = payload?.alerts_v2 || payload?.alertV2s;
+            if (Array.isArray(alertsArray)) {
+              allAlerts = alertsArray;
+            }
 
-          this.setState({
-            alerts: filteredAlerts,
-            totalAlerts: filteredAlerts.length,
-            openResultPopoverId: null,
-          });
-        } else {
-          console.log('error getting v2 alerts:', resp);
-          backendErrorNotification(notifications, 'get', 'alerts', resp.err);
-        }
-        this.setState({ tabContent: this.renderAlertsTable(), loading: false });
-      });
+            // Filter by trigger_v2_id (in v2, triggerID should be trigger_v2_id)
+            const filteredAlerts = allAlerts.filter((a) => a.trigger_v2_id === triggerID);
+
+            this.setState({
+              alerts: filteredAlerts,
+              totalAlerts: filteredAlerts.length,
+              openResultPopoverId: null,
+            });
+          } else {
+            backendErrorNotification(notifications, 'get', 'alerts', resp.err);
+          }
+          this.setState({ tabContent: this.renderAlertsTable(), loading: false });
+        });
     } else {
       // For v1/classic mode, use the existing v1 API
       httpClient.get('../api/alerting/alerts', { query: extendedParams })?.then((resp) => {
@@ -432,7 +440,7 @@ export default class AlertsDashboardFlyoutComponent extends Component {
     const getColumns = () => {
       // Use viewMode from props to determine column layout
       const { viewMode = 'new' } = this.props;
-      
+
       // For v2/new mode, use simplified columns
       if (viewMode === 'new') {
         const columns = [
@@ -456,9 +464,14 @@ export default class AlertsDashboardFlyoutComponent extends Component {
             align: 'right',
             dataType: 'string',
             render: (_value, item) => {
-              const hasResults = Array.isArray(item?.query_results?.datarows) && item.query_results.datarows.length;
+              const hasResults =
+                Array.isArray(item?.query_results?.datarows) && item.query_results.datarows.length;
               if (!hasResults) {
-                return <EuiText size="s" color="subdued">No results</EuiText>;
+                return (
+                  <EuiText size="s" color="subdued">
+                    No results
+                  </EuiText>
+                );
               }
 
               const itemId = getItemId(item);
@@ -479,15 +492,15 @@ export default class AlertsDashboardFlyoutComponent extends Component {
             },
           },
         ];
-        
+
         // Add comments action if enabled
         if (commentsEnabled) {
           return appendCommentsAction(columns, httpClient);
         }
-        
+
         return columns;
       }
-      
+
       // For v1 alerts, use existing logic
       let columns;
       switch (monitorType) {
@@ -553,13 +566,14 @@ export default class AlertsDashboardFlyoutComponent extends Component {
 
     const { viewMode = 'new' } = this.props;
     const isV2 = viewMode === 'new';
-    
+
     const selection = !isV2
       ? {
           initialSelected: selectedItems,
           onSelectionChange: this.onSelectionChange,
           selectable: (item) => item.state === ALERT_STATE.ACTIVE,
-          selectableMessage: (selectable) => (selectable ? undefined : 'Only active alerts can be acknowledged.'),
+          selectableMessage: (selectable) =>
+            selectable ? undefined : 'Only active alerts can be acknowledged.',
         }
       : undefined;
 
@@ -572,7 +586,7 @@ export default class AlertsDashboardFlyoutComponent extends Component {
 
     const actions = () => {
       const actions = [];
-      
+
       // Acknowledge only in Classic mode
       if (!isV2) {
         actions.push(
@@ -585,7 +599,7 @@ export default class AlertsDashboardFlyoutComponent extends Component {
           </EuiSmallButton>
         );
       }
-      
+
       if (!_.isEmpty(detectorId)) {
         actions.unshift(
           <EuiSmallButton
@@ -604,9 +618,7 @@ export default class AlertsDashboardFlyoutComponent extends Component {
       const itemId = getItemId(alertItem);
       if (openResultPopoverId === itemId) {
         acc[itemId] = (
-          <div style={{ padding: '12px 24px' }}>
-            {this.renderQueryResultsPreview(alertItem)}
-          </div>
+          <div style={{ padding: '12px 24px' }}>{this.renderQueryResultsPreview(alertItem)}</div>
         );
       }
       return acc;
@@ -704,13 +716,13 @@ export default class AlertsDashboardFlyoutComponent extends Component {
       start_time,
       triggerID,
       trigger_name,
-      viewMode = 'new',  // Get viewMode from props
+      viewMode = 'new', // Get viewMode from props
     } = this.props;
     const { alerts, loading, localClusterName, monitor, monitorType, tabContent } = this.state;
-    
+
     // Use viewMode to determine if this is v2
     const isV2 = viewMode === 'new';
-    
+
     const searchType = _.get(monitor, 'ui_metadata.search.searchType', SEARCH_TYPE.GRAPH);
     const triggerType = this.getTriggerType(monitorType);
 
@@ -732,13 +744,14 @@ export default class AlertsDashboardFlyoutComponent extends Component {
       lastUpdatedTime = firstAlert?.expiration_time;
     } else {
       severity = _.get(trigger, 'severity');
-      condition = searchType === SEARCH_TYPE.GRAPH &&
+      condition =
+        searchType === SEARCH_TYPE.GRAPH &&
         (monitorType === MONITOR_TYPE.BUCKET_LEVEL || monitorType === MONITOR_TYPE.DOC_LEVEL)
           ? this.getMultipleGraphConditions(trigger)
           : _.get(trigger, 'condition.script.source', DEFAULT_EMPTY_DATA);
       lastUpdatedTime = last_notification_time;
     }
-    
+
     const groupBy = _.get(monitor, MONITOR_GROUP_BY);
 
     let displayMultipleConditions;
