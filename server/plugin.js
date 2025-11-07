@@ -64,12 +64,10 @@ export class AlertingPlugin {
     const alertService = new AlertService(alertingESClient, dataSourceEnabled);
     const opensearchService = new OpensearchService(alertingESClient, dataSourceEnabled);
     const monitorService = new MonitorService(alertingESClient, dataSourceEnabled);
-    const pplMonitorService = new PplAlertingMonitorService(
-      alertingESClient,
-      dataSourceEnabled,
-      featureFlagService,
-      this.logger
-    );
+    const pplRoutesEnabled = pluginConfig.pplAlertingEnabled === true;
+    const pplMonitorService = pplRoutesEnabled
+      ? new PplAlertingMonitorService(alertingESClient, dataSourceEnabled, this.logger)
+      : undefined;
     const destinationsService = new DestinationsService(alertingESClient, dataSourceEnabled);
     const anomalyDetectorService = new AnomalyDetectorService(adESClient, dataSourceEnabled);
     const findingService = new FindingService(alertingESClient, dataSourceEnabled);
@@ -113,7 +111,9 @@ export class AlertingPlugin {
     destinations(services, router, dataSourceEnabled);
     opensearch(services, router, dataSourceEnabled);
     monitors(services, router, dataSourceEnabled);
-    pplAlertingMonitors(services, router, dataSourceEnabled);
+    if (pplRoutesEnabled) {
+      pplAlertingMonitors(services, router, dataSourceEnabled);
+    }
     detectors(services, router, dataSourceEnabled);
     findings(services, router, dataSourceEnabled);
     crossCluster(services, router, dataSourceEnabled);

@@ -8,7 +8,7 @@ import querystring from 'querystring';
 
 import { MDSEnabledClientService } from './MDSEnabledClientService';
 import { isIndexNotFoundError } from './utils/helpers';
-import { DEFAULT_HEADERS, FEATURE_FLAGS, PPL_MONITOR_BASE_API } from './utils/constants';
+import { DEFAULT_HEADERS, PPL_MONITOR_BASE_API } from './utils/constants';
 
 const ALERTS_BASE_PATH = `${PPL_MONITOR_BASE_API}/alerts`;
 
@@ -20,37 +20,9 @@ const isNoHandlerError = (err) =>
     String(err).includes('no handler found for uri'));
 
 export default class PplAlertingMonitorService extends MDSEnabledClientService {
-  constructor(osDriver, dataSourceEnabled, featureFlagService, logger) {
+  constructor(osDriver, dataSourceEnabled, logger) {
     super(osDriver, dataSourceEnabled);
-    this.featureFlagService = featureFlagService;
     this.logger = logger;
-  }
-
-  async isPplEnabled(request) {
-    if (!this.featureFlagService) {
-      return true;
-    }
-    try {
-      return await this.featureFlagService.isFeatureEnabled(request, FEATURE_FLAGS.PPL_MONITOR);
-    } catch (err) {
-      this.logger?.warn?.(
-        `[Alerting][PPL] Failed to read feature flag state: ${err?.message ?? err}`
-      );
-      return this.featureFlagService.getDefault(FEATURE_FLAGS.PPL_MONITOR);
-    }
-  }
-
-  async guardPplEnabled(request, res) {
-    const enabled = await this.isPplEnabled(request);
-    if (!enabled) {
-      return res.ok({
-        body: {
-          ok: false,
-          resp: 'PPL alerting is disabled for this cluster. Enable opensearch_alerting.pplAlertingEnabled or choose a different data source.',
-        },
-      });
-    }
-    return null;
   }
 
   logWarn(message) {
@@ -158,9 +130,6 @@ export default class PplAlertingMonitorService extends MDSEnabledClientService {
   }
 
   async proxyPPLQuery(context, req, res) {
-    const guard = await this.guardPplEnabled(req, res);
-    if (guard) return guard;
-
     try {
       const client = this.getClientBasedOnDataSource(context, req);
       const params = {
@@ -178,9 +147,6 @@ export default class PplAlertingMonitorService extends MDSEnabledClientService {
   }
 
   async listIndices(context, req, res) {
-    const guard = await this.guardPplEnabled(req, res);
-    if (guard) return guard;
-
     try {
       const client = this.getClientBasedOnDataSource(context, req);
       const resp = await client('transport.request', {
@@ -200,9 +166,6 @@ export default class PplAlertingMonitorService extends MDSEnabledClientService {
   }
 
   async getMonitors(context, req, res) {
-    const guard = await this.guardPplEnabled(req, res);
-    if (guard) return guard;
-
     try {
       const client = this.getClientBasedOnDataSource(context, req);
       const query = this.normalizeMonitorListQuery(req.query);
@@ -220,9 +183,6 @@ export default class PplAlertingMonitorService extends MDSEnabledClientService {
   }
 
   async searchMonitors(context, req, res) {
-    const guard = await this.guardPplEnabled(req, res);
-    if (guard) return guard;
-
     try {
       const client = this.getClientBasedOnDataSource(context, req);
       const resp = await client('transport.request', {
@@ -239,9 +199,6 @@ export default class PplAlertingMonitorService extends MDSEnabledClientService {
   }
 
   async createMonitor(context, req, res) {
-    const guard = await this.guardPplEnabled(req, res);
-    if (guard) return guard;
-
     try {
       const client = this.getClientBasedOnDataSource(context, req);
       const resp = await client('transport.request', {
@@ -258,9 +215,6 @@ export default class PplAlertingMonitorService extends MDSEnabledClientService {
   }
 
   async updateMonitor(context, req, res) {
-    const guard = await this.guardPplEnabled(req, res);
-    if (guard) return guard;
-
     try {
       const client = this.getClientBasedOnDataSource(context, req);
       const id = req.params.id;
@@ -311,9 +265,6 @@ export default class PplAlertingMonitorService extends MDSEnabledClientService {
   }
 
   async getMonitor(context, req, res) {
-    const guard = await this.guardPplEnabled(req, res);
-    if (guard) return guard;
-
     try {
       const id = req.params.id;
       const client = this.getClientBasedOnDataSource(context, req);
@@ -360,9 +311,6 @@ export default class PplAlertingMonitorService extends MDSEnabledClientService {
   }
 
   async deleteMonitor(context, req, res) {
-    const guard = await this.guardPplEnabled(req, res);
-    if (guard) return guard;
-
     try {
       const id = req.params.id;
       const client = this.getClientBasedOnDataSource(context, req);
@@ -379,9 +327,6 @@ export default class PplAlertingMonitorService extends MDSEnabledClientService {
   }
 
   async executeMonitorById(context, req, res) {
-    const guard = await this.guardPplEnabled(req, res);
-    if (guard) return guard;
-
     try {
       const id = req.params.id;
       const client = this.getClientBasedOnDataSource(context, req);
@@ -399,9 +344,6 @@ export default class PplAlertingMonitorService extends MDSEnabledClientService {
   }
 
   async executeMonitor(context, req, res) {
-    const guard = await this.guardPplEnabled(req, res);
-    if (guard) return guard;
-
     try {
       const client = this.getClientBasedOnDataSource(context, req);
       const resp = await client('transport.request', {
@@ -418,9 +360,6 @@ export default class PplAlertingMonitorService extends MDSEnabledClientService {
   }
 
   async alertsForMonitors(context, req, res) {
-    const guard = await this.guardPplEnabled(req, res);
-    if (guard) return guard;
-
     try {
       const client = this.getClientBasedOnDataSource(context, req);
       const backendQuery = this.normalizeAlertsQuery(req.query);
