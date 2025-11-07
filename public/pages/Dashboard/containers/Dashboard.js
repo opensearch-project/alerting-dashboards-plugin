@@ -50,7 +50,9 @@ import {
   getIsCommentsEnabled,
   getIsAgentConfigured,
 } from '../../utils/helpers';
-import { getUseUpdatedUx } from '../../../services';
+import { getUseUpdatedUx, isPplV2Enabled } from '../../../services';
+
+const DASHBOARD_VIEW_MODE_STORAGE_KEY = 'alerting_dashboard_view_mode';
 
 export default class Dashboard extends Component {
   constructor(props) {
@@ -61,6 +63,28 @@ export default class Dashboard extends Component {
     const { alertState, from, search, severityLevel, size, sortDirection, sortField } =
       getURLQueryParams(location);
 
+    const pplEnabled = isPplV2Enabled();
+    let resolvedViewMode = initialViewMode || 'new';
+    if (pplEnabled) {
+      if (!initialViewMode) {
+        try {
+          const stored = localStorage.getItem(DASHBOARD_VIEW_MODE_STORAGE_KEY);
+          if (stored === 'classic' || stored === 'new') {
+            resolvedViewMode = stored;
+          }
+        } catch (e) {
+          // ignore storage errors
+        }
+      }
+    } else {
+      resolvedViewMode = 'classic';
+      try {
+        localStorage.setItem(DASHBOARD_VIEW_MODE_STORAGE_KEY, 'classic');
+      } catch (e) {
+        // ignore storage errors
+      }
+    }
+
     this.dataSourceQuery = getDataSourceQueryObj();
     this.state = {
       alerts: [],
@@ -68,8 +92,8 @@ export default class Dashboard extends Component {
       alertState,
       flyoutIsOpen: false,
       loadingMonitors: true,
-      monitors: [],           // normalized: each hit._source === monitor object
-      monitorsById: {},       // { [monitorId]: monitorObject }
+      monitors: [], // normalized: each hit._source === monitor object
+      monitorsById: {}, // { [monitorId]: monitorObject }
       monitorIds: this.props.monitorIds,
       page: Math.floor(from / size),
       search,
@@ -84,7 +108,8 @@ export default class Dashboard extends Component {
       //chainedAlert: undefined,
       commentsEnabled: false,
       isAgentConfigured: false,
-      viewMode: initialViewMode || 'new', // 'new' or 'classic'
+      viewMode: resolvedViewMode,
+      pplEnabled,
     };
   }
 
@@ -127,6 +152,13 @@ export default class Dashboard extends Component {
     }
     // Refresh alerts when view mode changes
     if (prevState.viewMode !== this.state.viewMode) {
+      if (this.state.pplEnabled) {
+        try {
+          localStorage.setItem(DASHBOARD_VIEW_MODE_STORAGE_KEY, this.state.viewMode || 'new');
+        } catch (e) {
+          // ignore storage errors
+        }
+      }
       this.getUpdatedAlerts();
     }
   }
@@ -172,24 +204,23 @@ export default class Dashboard extends Component {
       const queryParamsString = queryString.stringify(params);
       const { httpClient, history, notifications, perAlertView } = this.props;
       history.replace({ ...this.props.location, search: queryParamsString });
-      
+
       // Call different API based on view mode
-      const { viewMode } = this.state;
-      const apiPath = viewMode === 'classic' 
-        ? '/api/alerting/alerts'        // v1 API for classic view
-        : '/api/alerting/v2/monitors/alerts';  // v2 API for new view
-      
+      const { viewMode, pplEnabled } = this.state;
+      const usePplEndpoints = pplEnabled && viewMode !== 'classic';
+      const apiPath = usePplEndpoints ? '/api/alerting/v2/monitors/alerts' : '/api/alerting/alerts';
+
       const apiParams = { query: { ...params } };
-      
+
       httpClient.get(apiPath, apiParams).then((resp) => {
         if (resp.ok) {
-          if (viewMode === 'classic') {
+          if (!usePplEndpoints) {
             // ========== V1/CLASSIC MODE: Direct server response, no client-side processing ==========
             const { alerts, totalAlerts } = resp;
             this.setState({ alerts, totalAlerts });
 
             if (!perAlertView) {
-              const alertsByTriggers = groupAlertsByTrigger(alerts, false);  // Don't group by monitor for v1
+              const alertsByTriggers = groupAlertsByTrigger(alerts, false); // Don't group by monitor for v1
               this.setState(
                 {
                   totalTriggers: alertsByTriggers.length,
@@ -222,20 +253,20 @@ export default class Dashboard extends Component {
                 // v2 may not include a state; default to ACTIVE so filters/selection work
                 state: a.state || 'ACTIVE',
               }));
-              totalFromServer = payload.total_alerts_v2 ?? payload.totalAlertV2s ?? rawAlerts.length;
+              totalFromServer =
+                payload.total_alerts_v2 ?? payload.totalAlertV2s ?? rawAlerts.length;
             }
 
             // Filter by monitor IDs if specified
             if (Array.isArray(monitorIds) && monitorIds.length) {
-              rawAlerts = rawAlerts.filter((alert) => 
-                monitorIds.includes(alert.monitor_id)
-              );
+              rawAlerts = rawAlerts.filter((alert) => monitorIds.includes(alert.monitor_id));
             }
 
             // ---- Client-side filter/search/sort/paginate ----
-            const q = String(search || '').trim().toLowerCase();
-            const matchesSearch = (a) =>
-              !q || JSON.stringify(a).toLowerCase().includes(q);
+            const q = String(search || '')
+              .trim()
+              .toLowerCase();
+            const matchesSearch = (a) => !q || JSON.stringify(a).toLowerCase().includes(q);
             const matchesSeverity =
               !severityLevel || severityLevel === 'ALL'
                 ? () => true
@@ -274,13 +305,17 @@ export default class Dashboard extends Component {
             this.setState({ alerts: perAlertView ? paged : filtered, totalAlerts });
 
             if (!perAlertView) {
-              const alertsByTriggers = groupAlertsByTrigger(filtered, true).map((row) => {  // Group by monitor for v2
-                const latest = _.maxBy(row.alerts || [], (a) =>
-                  (a && (a.triggered_time ?? a.start_time)) || 0
-                );
-                const ts = latest?.triggered_time ?? latest?.start_time ?? null;
-                return { ...row, lastTriggeredTime: ts };
-              });
+              const alertsByTriggers = groupAlertsByTrigger(filtered, usePplEndpoints).map(
+                (row) => {
+                  // Group by monitor for v2
+                  const latest = _.maxBy(
+                    row.alerts || [],
+                    (a) => (a && (a.triggered_time ?? a.start_time)) || 0
+                  );
+                  const ts = latest?.triggered_time ?? latest?.start_time ?? null;
+                  return { ...row, lastTriggeredTime: ts };
+                }
+              );
               this.setState(
                 {
                   totalTriggers: alertsByTriggers.length,
@@ -302,7 +337,7 @@ export default class Dashboard extends Component {
 
   async getMonitors() {
     const { httpClient } = this.props;
-    const { alertsByTriggers } = this.state;
+    const { alertsByTriggers, viewMode, pplEnabled } = this.state;
     this.setState({ loadingMonitors: true });
 
     const monitorIds = Array.from(
@@ -315,6 +350,50 @@ export default class Dashboard extends Component {
     }
 
     try {
+      const usePplEndpoints = pplEnabled && viewMode !== 'classic';
+
+      if (!usePplEndpoints) {
+        const query = {
+          monitorIds: monitorIds.join(','),
+          size: monitorIds.length || 1000,
+          from: 0,
+          ...(this.dataSourceQuery?.query || {}),
+        };
+        const response = await httpClient.get('../api/alerting/monitors', { query });
+
+        if (!response.ok) {
+          console.log('error getting monitors:', response);
+          this.setState({ loadingMonitors: false });
+          return;
+        }
+
+        const normalizedHits = (response.monitors || []).map((mon) => ({
+          _id: mon.id,
+          _version: mon.version,
+          _seq_no: mon.ifSeqNo,
+          _primary_term: mon.ifPrimaryTerm,
+          _source: mon.monitor || {},
+        }));
+
+        const monitorsById = normalizedHits.reduce((acc, h) => {
+          acc[h._id] = h._source || {};
+          return acc;
+        }, {});
+
+        const enrichedAlertsByTriggers = this.state.alertsByTriggers.map((row) => ({
+          ...row,
+          monitor_name: monitorsById[row.monitor_id]?.name || row.monitor_id,
+        }));
+
+        this.setState({
+          loadingMonitors: false,
+          monitors: normalizedHits,
+          monitorsById,
+          alertsByTriggers: enrichedAlertsByTriggers,
+        });
+        return;
+      }
+
       // Query v2 monitor docs by ID
       const body = {
         query: { ids: { values: monitorIds } },
@@ -429,7 +508,7 @@ export default class Dashboard extends Component {
         type: 'alertsDashboard',
         payload: {
           ...payload,
-          viewMode: this.state.viewMode,  // Pass viewMode to flyout
+          viewMode: this.state.viewMode, // Pass viewMode to flyout
           openChainedAlertsFlyout: this.openChainedAlertsFlyout,
           closeFlyout: this.closeFlyout,
         },
@@ -519,7 +598,8 @@ export default class Dashboard extends Component {
       totalTriggers,
       commentsEnabled,
       isAgentConfigured,
-      viewMode,  // Extract viewMode early
+      viewMode, // Extract viewMode early
+      pplEnabled,
     } = this.state;
     const {
       monitorIds,
@@ -566,26 +646,26 @@ export default class Dashboard extends Component {
           break;
         case MONITOR_TYPE.COMPOSITE_LEVEL:
           columns = _.cloneDeep(queryColumns);
-//           -          columns.push({
-// -            name: 'Actions',
-// -            sortable: false,
-// -            actions: [
-// -              {
-// -                render: (alert) => (
-// -                  <EuiToolTip content={'View details'}>
-// -                    <EuiSmallButtonIcon
-// -                      aria-label={'View details'}
-// -                      data-test-subj={`view-details-icon`}
-// -                      iconType={'inspect'}
-// -                      onClick={() => {
-// -                        this.openChainedAlertsFlyout(alert);
-// -                      }}
-// -                    />
-// -                  </EuiToolTip>
-// -                ),
-// -              },
-// -            ],
-// -          });
+          //           -          columns.push({
+          // -            name: 'Actions',
+          // -            sortable: false,
+          // -            actions: [
+          // -              {
+          // -                render: (alert) => (
+          // -                  <EuiToolTip content={'View details'}>
+          // -                    <EuiSmallButtonIcon
+          // -                      aria-label={'View details'}
+          // -                      data-test-subj={`view-details-icon`}
+          // -                      iconType={'inspect'}
+          // -                      onClick={() => {
+          // -                        this.openChainedAlertsFlyout(alert);
+          // -                      }}
+          // -                    />
+          // -                  </EuiToolTip>
+          // -                ),
+          // -              },
+          // -            ],
+          // -          });
           break;
         default:
           columns = _.cloneDeep(queryColumns);
@@ -610,7 +690,7 @@ export default class Dashboard extends Component {
         this.openFlyout,
         this.closeFlyout,
         this.refreshDashboard,
-        viewMode  // Pass viewMode to control column visibility
+        viewMode // Pass viewMode to control column visibility
       );
     }
 
@@ -627,19 +707,22 @@ export default class Dashboard extends Component {
         field: sortField,
       },
     };
-    
+
     const selection = {
       onSelectionChange: this.onSelectionChange,
-      selectable: viewMode === 'classic' 
-        ? (perAlertView
+      selectable:
+        viewMode === 'classic'
+          ? perAlertView
             ? (item) => item.state === ALERT_STATE.ACTIVE
-            : (item) => item.ACTIVE > 0)
-        : () => false, // Disable selection in New mode
-      selectableMessage: viewMode === 'classic'
-        ? (perAlertView
+            : (item) => item.ACTIVE > 0
+          : () => false, // Disable selection in New mode
+      selectableMessage:
+        viewMode === 'classic'
+          ? perAlertView
             ? (selectable) => (selectable ? undefined : 'Only active alerts can be acknowledged.')
-            : (selectable) => (selectable ? undefined : 'Only triggers with active alerts can be acknowledged.'))
-        : undefined,
+            : (selectable) =>
+                selectable ? undefined : 'Only triggers with active alerts can be acknowledged.'
+          : undefined,
     };
 
     const actions = () => {
@@ -669,7 +752,7 @@ export default class Dashboard extends Component {
           </EuiSmallButton>
         );
       }
-      
+
       // Acknowledge button only in Classic mode
       if (viewMode === 'classic') {
         actions.push(
@@ -704,19 +787,26 @@ export default class Dashboard extends Component {
       return `${item.triggerID}-${item.version}`;
     };
 
-    const useUpdatedUx = !perAlertView && getUseUpdatedUx();
+    const useUpdatedUx = !perAlertView && pplEnabled && getUseUpdatedUx();
     const shouldShowPagination = !perAlertView && totalAlerts > 0;
 
-    const toggleButtons = [
-      {
-        id: 'new',
-        label: 'New',
-      },
-      {
-        id: 'classic',
-        label: 'Classic',
-      },
-    ];
+    const toggleButtons = pplEnabled
+      ? [
+          {
+            id: 'new',
+            label: 'New',
+          },
+          {
+            id: 'classic',
+            label: 'Classic',
+          },
+        ]
+      : [
+          {
+            id: 'classic',
+            label: 'Classic',
+          },
+        ];
 
     return (
       <>
@@ -812,7 +902,10 @@ export default class Dashboard extends Component {
           </div>
 
           {shouldShowPagination && (
-            <EuiFlexGroup justifyContent="flexEnd" style={{ padding: useUpdatedUx ? '8px 16px 0px 16px' : '8px 0px 0px' }}>
+            <EuiFlexGroup
+              justifyContent="flexEnd"
+              style={{ padding: useUpdatedUx ? '8px 16px 0px 16px' : '8px 0px 0px' }}
+            >
               <EuiFlexItem grow={false}>
                 <EuiPagination
                   pageCount={Math.ceil(totalItems / size) || 1}

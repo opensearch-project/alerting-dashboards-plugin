@@ -10,6 +10,7 @@ import {
   DestinationsService,
   OpensearchService,
   MonitorService,
+  PplAlertingMonitorService,
   AnomalyDetectorService,
   FindingService,
   CrossClusterService,
@@ -22,6 +23,7 @@ import {
   destinations,
   opensearch,
   monitors,
+  pplAlertingMonitors,
   detectors,
   findings,
   crossCluster,
@@ -61,7 +63,8 @@ export class AlertingPlugin {
     // Initialize services
     const alertService = new AlertService(alertingESClient, dataSourceEnabled);
     const opensearchService = new OpensearchService(alertingESClient, dataSourceEnabled);
-    const monitorService = new MonitorService(
+    const monitorService = new MonitorService(alertingESClient, dataSourceEnabled);
+    const pplMonitorService = new PplAlertingMonitorService(
       alertingESClient,
       dataSourceEnabled,
       featureFlagService,
@@ -77,6 +80,7 @@ export class AlertingPlugin {
       destinationsService,
       opensearchService,
       monitorService,
+      pplMonitorService,
       anomalyDetectorService,
       findingService,
       crossClusterService,
@@ -109,6 +113,7 @@ export class AlertingPlugin {
     destinations(services, router, dataSourceEnabled);
     opensearch(services, router, dataSourceEnabled);
     monitors(services, router, dataSourceEnabled);
+    pplAlertingMonitors(services, router, dataSourceEnabled);
     detectors(services, router, dataSourceEnabled);
     findings(services, router, dataSourceEnabled);
     crossCluster(services, router, dataSourceEnabled);

@@ -74,18 +74,7 @@ export const [getApplication, setApplication] = createGetterSetter<CoreStart['ap
 export const isPplV2Enabled = () => {
   const application = getApplication();
   const capabilities = application?.capabilities as Record<string, any> | undefined;
-  if (!capabilities) {
-    return true;
-  }
-  const alertingDashboardsCap = capabilities.alertingDashboards;
-  const alertingCap = capabilities.alerting;
-  if (alertingDashboardsCap?.pplV2 === false || alertingCap?.pplV2 === false) {
-    return false;
-  }
-  if (alertingDashboardsCap?.pplV2 === true || alertingCap?.pplV2 === true) {
-    return true;
-  }
-  return true;
+  return !!capabilities?.alertingDashboards?.pplV2;
 };
 
 export const getUseUpdatedUx = () => {
