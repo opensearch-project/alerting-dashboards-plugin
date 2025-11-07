@@ -118,7 +118,53 @@ exports[`AlertsDashboardFlyoutComponent renders 1`] = `
         </p>
       </EuiText>
     </EuiFlexItem>
+    <EuiFlexItem>
+      <EuiText
+        data-test-subj="alertsDashboardFlyout_timeRange_undefined"
+        size="s"
+      >
+        <strong>
+          Time range for the last
+        </strong>
+        <p>
+          -
+        </p>
+      </EuiText>
+    </EuiFlexItem>
   </EuiFlexGroup>
+  <div>
+    <EuiSpacer
+      size="xxl"
+    />
+    <EuiFlexGroup>
+      <EuiFlexItem>
+        <EuiText
+          data-test-subj="alertsDashboardFlyout_filters_undefined"
+          size="s"
+        >
+          <strong>
+            Filters
+          </strong>
+          <p>
+            Loading filters...
+          </p>
+        </EuiText>
+      </EuiFlexItem>
+      <EuiFlexItem>
+        <EuiText
+          data-test-subj="alertsDashboardFlyout_groupBy_undefined"
+          size="s"
+        >
+          <strong>
+            Group by
+          </strong>
+          <p>
+            Loading groups...
+          </p>
+        </EuiText>
+      </EuiFlexItem>
+    </EuiFlexGroup>
+  </div>
   <EuiSpacer
     size="xxl"
   />
@@ -166,12 +212,21 @@ exports[`AlertsDashboardFlyoutComponent renders 1`] = `
             "sortable": true,
             "truncateText": false,
           },
+          Object {
+            "align": "right",
+            "dataType": "string",
+            "field": "query_results",
+            "name": "",
+            "render": [Function],
+          },
         ]
       }
       data-test-subj="alertsDashboardFlyout_table_undefined"
       hasActions={true}
-      isSelectable={true}
+      isExpandable={true}
+      isSelectable={false}
       itemId={[Function]}
+      itemIdToExpandedRowMap={Object {}}
       items={Array []}
       loading={true}
       noItemsMessage="Loading alerts..."
@@ -179,7 +234,7 @@ exports[`AlertsDashboardFlyoutComponent renders 1`] = `
       pagination={
         Object {
           "pageIndex": 0,
-          "pageSize": 10,
+          "pageSize": 5,
           "pageSizeOptions": Array [
             5,
             10,
@@ -190,14 +245,6 @@ exports[`AlertsDashboardFlyoutComponent renders 1`] = `
         }
       }
       responsive={true}
-      selection={
-        Object {
-          "initialSelected": Array [],
-          "onSelectionChange": [Function],
-          "selectable": [Function],
-          "selectableMessage": undefined,
-        }
-      }
       sorting={
         Object {
           "sort": Object {

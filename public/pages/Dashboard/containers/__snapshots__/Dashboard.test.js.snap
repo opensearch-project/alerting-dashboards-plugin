@@ -80,6 +80,7 @@ exports[`Dashboard renders in flyout 1`] = `
     }
   }
   httpClient={[MockFunction]}
+  initialViewMode="new"
   isAlertsFlyout={true}
   location={
     Object {
@@ -1302,6 +1303,7 @@ exports[`Dashboard renders with alert by triggers view 1`] = `
     }
   }
   httpClient={[MockFunction]}
+  initialViewMode="new"
   location={
     Object {
       "hash": "",
@@ -2837,6 +2839,7 @@ exports[`Dashboard renders with per alert view 1`] = `
     }
   }
   httpClient={[MockFunction]}
+  initialViewMode="new"
   location={
     Object {
       "hash": "",
