@@ -15,6 +15,8 @@ import {
   CrossClusterService,
   CommentsService,
 } from './services';
+import { FeatureFlagService } from './services/FeatureFlagService';
+import { FEATURE_FLAGS } from './services/utils/constants';
 import {
   alerts,
   destinations,
@@ -30,13 +32,22 @@ export class AlertingPlugin {
   constructor(initializerContext) {
     this.logger = initializerContext.logger.get();
     this.globalConfig$ = initializerContext.config.legacy.globalConfig$;
+    this.pluginConfig$ = initializerContext.config.create();
   }
 
   async setup(core, { dataSource }) {
     // Get the global configuration settings of the cluster
     const globalConfig = await this.globalConfig$.pipe(first()).toPromise();
+    const pluginConfig = await this.pluginConfig$.pipe(first()).toPromise();
 
     const dataSourceEnabled = !!dataSource;
+
+    const featureFlagService = new FeatureFlagService(core, this.logger, {
+      pluginConfigPath: 'opensearch_alerting',
+      defaults: {
+        [FEATURE_FLAGS.PPL_MONITOR]: pluginConfig.pplAlertingEnabled === true,
+      },
+    });
 
     // Create clusters
     const alertingESClient = createAlertingCluster(
@@ -50,7 +61,12 @@ export class AlertingPlugin {
     // Initialize services
     const alertService = new AlertService(alertingESClient, dataSourceEnabled);
     const opensearchService = new OpensearchService(alertingESClient, dataSourceEnabled);
-    const monitorService = new MonitorService(alertingESClient, dataSourceEnabled);
+    const monitorService = new MonitorService(
+      alertingESClient,
+      dataSourceEnabled,
+      featureFlagService,
+      this.logger
+    );
     const destinationsService = new DestinationsService(alertingESClient, dataSourceEnabled);
     const anomalyDetectorService = new AnomalyDetectorService(adESClient, dataSourceEnabled);
     const findingService = new FindingService(alertingESClient, dataSourceEnabled);
@@ -66,6 +82,25 @@ export class AlertingPlugin {
       crossClusterService,
       commentsService,
     };
+
+    const defaultPplEnabled = featureFlagService.getDefault(FEATURE_FLAGS.PPL_MONITOR);
+    core.capabilities.registerProvider(() => ({
+      alertingDashboards: {
+        pplV2: defaultPplEnabled,
+      },
+    }));
+
+    core.capabilities.registerSwitcher(async (request) => {
+      const pplEnabled = await featureFlagService.isFeatureEnabled(
+        request,
+        FEATURE_FLAGS.PPL_MONITOR
+      );
+      return {
+        alertingDashboards: {
+          pplV2: pplEnabled,
+        },
+      };
+    });
 
     // Create router
     const router = core.http.createRouter();

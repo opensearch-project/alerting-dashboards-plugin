@@ -23,3 +23,7 @@ export const CLUSTER = {
   AD_ALERTING: 'alerting_ad',
   DATA: 'data',
 };
+
+export const FEATURE_FLAGS = Object.freeze({
+  PPL_MONITOR: 'pplAlertingEnabled',
+});

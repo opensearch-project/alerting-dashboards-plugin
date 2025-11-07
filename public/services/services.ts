@@ -71,7 +71,27 @@ export const [getNavigationUI, setNavigationUI] = createGetterSetter<NavigationP
 
 export const [getApplication, setApplication] = createGetterSetter<CoreStart['application']>('application');
 
+export const isPplV2Enabled = () => {
+  const application = getApplication();
+  const capabilities = application?.capabilities as Record<string, any> | undefined;
+  if (!capabilities) {
+    return true;
+  }
+  const alertingDashboardsCap = capabilities.alertingDashboards;
+  const alertingCap = capabilities.alerting;
+  if (alertingDashboardsCap?.pplV2 === false || alertingCap?.pplV2 === false) {
+    return false;
+  }
+  if (alertingDashboardsCap?.pplV2 === true || alertingCap?.pplV2 === true) {
+    return true;
+  }
+  return true;
+};
+
 export const getUseUpdatedUx = () => {
+  if (!isPplV2Enabled()) {
+    return false;
+  }
   return getUISettings().get('home:useNewHomePage', false);
 };
 

@@ -35,7 +35,7 @@ import {
   EuiSwitch,
   EuiFlyout,
   EuiFlyoutHeader,
-  EuiFlyoutBody
+  EuiFlyoutBody,
 } from '@elastic/eui';
 
 import DefineMonitor from '../DefineMonitor';
@@ -67,8 +67,7 @@ import { monaco, loadMonaco } from '@osd/monaco';
 import { CoreContext } from '../../../../utils/CoreContext';
 import { QueryEditor } from '../../../../components/QueryEditor';
 import { AlertingDataTable } from '../../../../components/DataTable';
-import { setDataSource } from '../../../../services';
-
+import { setDataSource, isPplV2Enabled } from '../../../../services';
 
 class CreateMonitor extends Component {
   static contextType = CoreContext;
@@ -87,6 +86,7 @@ class CreateMonitor extends Component {
 
     const { location, edit, monitorToEdit } = props;
     const baseInitial = getInitialValues({ location, monitorToEdit, edit });
+    const pplEnabled = isPplV2Enabled();
     const initialValues = {
       ...baseInitial,
       // Only override monitor_mode if explicitly provided, otherwise use baseInitial or default
@@ -100,17 +100,17 @@ class CreateMonitor extends Component {
       const params = new URLSearchParams(location?.search || '');
       const incoming = params.get('ppl') || params.get('pplQuery');
       const incomingDataSourceId = params.get('dataSourceId');
-      
+
       if (incoming) {
         initialValues.pplQuery = decodeURIComponent(incoming);
         // optional: ensure we're in PPL mode
         initialValues.monitor_mode = 'ppl';
       }
-      
+
       if (incomingDataSourceId) {
         initialValues.dataSourceId = incomingDataSourceId;
       }
-      
+
       // optional: clean the URL so the value doesn't re-apply on back/forward
       if ((incoming || incomingDataSourceId) && props.history?.replace) {
         props.history.replace({ ...location, search: '' });
@@ -120,7 +120,14 @@ class CreateMonitor extends Component {
     }
 
     // Adjust default flow based on viewMode selection from monitors page
-    if (!edit) {
+    if (!pplEnabled) {
+      initialValues.monitor_mode = 'legacy';
+      try {
+        localStorage.setItem('alerting_monitors_view_mode', 'classic');
+      } catch (e) {
+        // ignore storage errors
+      }
+    } else if (!edit) {
       let storedViewMode = 'new';
       try {
         const stored = localStorage.getItem('alerting_monitors_view_mode');
@@ -154,7 +161,7 @@ class CreateMonitor extends Component {
         // Otherwise, use minutes
         return { value: minutes, unit: 'minutes' };
       }
-      
+
       // Handle string durations like "30m", "7d", "12h", "15min"
       if (typeof val === 'string') {
         const m = val.trim().match(/^(\d+)\s*([a-zA-Z]+)$/);
@@ -168,22 +175,29 @@ class CreateMonitor extends Component {
         else if (u.startsWith('s')) unit = 'seconds'; // tolerated, even if UI hides seconds
         return { value: Number.isFinite(amount) ? amount : '', unit };
       }
-      
+
       return { value: '', unit: 'minutes' };
     };
 
     const mapComparator = (sym) => {
       // common names used by threshold UIs
       switch (sym) {
-        case '>': return 'gt';
-        case '>=': return 'gte';
-        case '<': return 'lt';
-        case '<=': return 'lte';
+        case '>':
+          return 'gt';
+        case '>=':
+          return 'gte';
+        case '<':
+          return 'lt';
+        case '<=':
+          return 'lte';
         case '==':
-        case '===': return 'eq';
+        case '===':
+          return 'eq';
         case '!=':
-        case '!==': return 'ne';
-        default: return 'gte';
+        case '!==':
+          return 'ne';
+        default:
+          return 'gte';
       }
     };
 
@@ -201,15 +215,13 @@ class CreateMonitor extends Component {
         mode: t.mode,
         type: t.type, // 'number_of_results' | 'custom'
         thresholdValue,
-        thresholdEnum,     // 'gt' | 'gte' | 'lt' | 'lte' | 'eq' | 'ne'
+        thresholdEnum, // 'gt' | 'gte' | 'lt' | 'lte' | 'eq' | 'ne'
         custom_condition: t.custom_condition,
         suppressEnabled: !!t.suppress,
         suppress: t.suppress
           ? { value: suppressValue, unit: suppressUnit, enabled: true }
           : undefined,
-        expires: t.expires
-          ? { value: expirationValue, unit: expirationUnit }
-          : undefined,
+        expires: t.expires ? { value: expirationValue, unit: expirationUnit } : undefined,
         queryLevelTrigger: {
           expires: t.expires ?? '',
           suppress: t.suppress ?? '',
@@ -224,13 +236,13 @@ class CreateMonitor extends Component {
 
     const getExistingPplTriggers = (src) => {
       const candidates = [
-        src?.ppl_monitor?.triggers,                        // normalized to .ppl_monitor
-        src?.monitor_v2?.ppl_monitor?.triggers,            // raw v2 doc shape (snake_case)
-        src?.monitorV2?.ppl_monitor?.triggers,             // raw v2 doc shape (camelCase)
-        src?.monitor?.ppl_monitor?.triggers,               // sometimes wrapped in .monitor
-        src?.monitor?.monitor_v2?.ppl_monitor?.triggers,   // wrapped + v2 (snake_case)
-        src?.monitor?.monitorV2?.ppl_monitor?.triggers,    // wrapped + v2 (camelCase)
-        src?.triggers,                                     // normalized .triggers on the root
+        src?.ppl_monitor?.triggers, // normalized to .ppl_monitor
+        src?.monitor_v2?.ppl_monitor?.triggers, // raw v2 doc shape (snake_case)
+        src?.monitorV2?.ppl_monitor?.triggers, // raw v2 doc shape (camelCase)
+        src?.monitor?.ppl_monitor?.triggers, // sometimes wrapped in .monitor
+        src?.monitor?.monitor_v2?.ppl_monitor?.triggers, // wrapped + v2 (snake_case)
+        src?.monitor?.monitorV2?.ppl_monitor?.triggers, // wrapped + v2 (camelCase)
+        src?.triggers, // normalized .triggers on the root
       ];
       for (const c of candidates) {
         if (Array.isArray(c)) return c;
@@ -282,8 +294,7 @@ class CreateMonitor extends Component {
     const { httpClient, landingDataSourceId } = this.props;
 
     // Prefer the selected DS in the form if present, else landing
-    const dsId =
-      this.formikRef.current?.values?.dataSourceId || landingDataSourceId;
+    const dsId = this.formikRef.current?.values?.dataSourceId || landingDataSourceId;
 
     // If no dataSourceId, try to fetch indices anyway (for local cluster)
     if (!dsId) {
@@ -314,10 +325,10 @@ class CreateMonitor extends Component {
   // Detect and auto-populate timestamp fields from PPL query
   detectTimestampFields = async (pplQuery) => {
     const { httpClient, landingDataSourceId } = this.props;
-    
+
     // Extract indices from PPL query
     const indices = extractIndicesFromPPL(pplQuery);
-    
+
     if (indices.length === 0) {
       this.setState({
         availableDateFields: [],
@@ -334,9 +345,8 @@ class CreateMonitor extends Component {
     this.setState({ dateFieldsLoading: true, dateFieldsError: null });
 
     try {
-      const dataSourceId =
-        this.formikRef.current?.values?.dataSourceId || landingDataSourceId;
-      
+      const dataSourceId = this.formikRef.current?.values?.dataSourceId || landingDataSourceId;
+
       const { commonDateFields, error } = await findCommonDateFields(
         httpClient,
         indices,
@@ -406,13 +416,13 @@ class CreateMonitor extends Component {
       console.log('[componentDidMount] Initializing query service...');
       const services = (this.context && (this.context.services || this.context)) || undefined;
       console.log('[componentDidMount] services:', services);
-      
+
       const queryString = services?.data?.query?.queryString;
       console.log('[componentDidMount] queryString service:', queryString);
-      
+
       if (queryString) {
         console.log('[componentDidMount] Setting query to empty PPL with dataset...');
-        
+
         // Get or create a default dataset for PPL queries
         const getDefaultDataset = async () => {
           try {
@@ -428,17 +438,17 @@ class CreateMonitor extends Component {
           }
           return undefined;
         };
-        
+
         const dataset = await getDefaultDataset();
         console.log('[componentDidMount] Dataset:', dataset);
-        
+
         queryString.setQuery({
           query: '',
           language: 'PPL',
           dataset: dataset,
         });
         console.log('[componentDidMount] Query set successfully with dataset');
-        
+
         // Verify it was set
         try {
           const currentQuery = queryString.getQuery();
@@ -490,13 +500,13 @@ class CreateMonitor extends Component {
       if (this.props.landingDataSourceId) {
         setDataSource({ dataSourceId: this.props.landingDataSourceId });
       }
-      
+
       this.formikRef.current?.setFieldValue(
         'dataSourceId',
         this.props.landingDataSourceId,
         false /* no validate */
       );
-      
+
       // Refetch plugins with new data source
       const updatePlugins = async () => {
         this.setState({ pluginsLoading: true });
@@ -520,11 +530,11 @@ class CreateMonitor extends Component {
     if (this.context !== prevProps?.context) {
       console.log('[componentDidUpdate] Context changed');
       console.log('[componentDidUpdate] New context:', this.context);
-      
+
       const services = (this.context && (this.context.services || this.context)) || undefined;
       const queryString = services?.data?.query?.queryString;
       console.log('[componentDidUpdate] queryString service available:', !!queryString);
-      
+
       if (queryString) {
         try {
           const currentQuery = queryString.getQuery();
@@ -534,7 +544,7 @@ class CreateMonitor extends Component {
           // If query is not set, try to initialize it with dataset
           try {
             console.log('[componentDidUpdate] Attempting to initialize query service...');
-            
+
             // Get default dataset asynchronously
             (async () => {
               let dataset = undefined;
@@ -549,7 +559,7 @@ class CreateMonitor extends Component {
               } catch (datasetErr) {
                 console.error('[componentDidUpdate] Error getting dataset:', datasetErr);
               }
-              
+
               queryString.setQuery({
                 query: '',
                 language: 'PPL',
@@ -598,10 +608,8 @@ class CreateMonitor extends Component {
     const { initialValues } = this.state;
 
     if (edit) {
-      const schedule =
-        _.get(monitorToEdit, 'ppl_monitor.schedule') ||
-        _.get(monitorToEdit, 'schedule') ||
-        { period: FORMIK_INITIAL_VALUES.period };
+      const schedule = _.get(monitorToEdit, 'ppl_monitor.schedule') ||
+        _.get(monitorToEdit, 'schedule') || { period: FORMIK_INITIAL_VALUES.period };
       const scheduleType = _.keys(schedule)[0];
       switch (scheduleType) {
         case 'cron':
@@ -614,14 +622,12 @@ class CreateMonitor extends Component {
 
       // hydrate look_back_window if present (integer in minutes)
       const lbw =
-        monitorToEdit?.look_back_window ||
-        monitorToEdit?.ppl_monitor?.look_back_window ||
-        null;
+        monitorToEdit?.look_back_window || monitorToEdit?.ppl_monitor?.look_back_window || null;
       if (lbw) {
         const minutes = Number(lbw);
         if (Number.isFinite(minutes) && minutes > 0) {
           _.set(initialValues, 'useLookBackWindow', true);
-          
+
           // Convert minutes to best fitting unit
           if (minutes >= 1440 && minutes % 1440 === 0) {
             // Days
@@ -831,7 +837,6 @@ class CreateMonitor extends Component {
 
   // ---- PPL Schedule (unchanged) ----
 
-
   // Debounced timestamp field detection
   debouncedDetectTimestampFields = _.debounce((pplQuery) => {
     this.detectTimestampFields(pplQuery);
@@ -840,13 +845,16 @@ class CreateMonitor extends Component {
   renderPplQueryBody = (values, setFieldValue) => (
     <>
       {/* Top row with PPL badge and Run preview */}
-      <EuiFlexGroup alignItems="center" justifyContent="spaceBetween" gutterSize="s" responsive={false}>
+      <EuiFlexGroup
+        alignItems="center"
+        justifyContent="spaceBetween"
+        gutterSize="s"
+        responsive={false}
+      >
         <EuiFlexItem grow={false}>
           <EuiFlexGroup alignItems="center" gutterSize="xs" responsive={false}>
             <EuiFlexItem grow={false}>
-              <EuiText>
-                PPL
-              </EuiText>
+              <EuiText>PPL</EuiText>
             </EuiFlexItem>
             <EuiFlexItem grow={false}>
               <EuiIconTip
@@ -869,7 +877,7 @@ class CreateMonitor extends Component {
                 previewError: null,
                 previewResult: null,
                 previewQuery: '',
-                previewOpen: true,       
+                previewOpen: true,
               });
               try {
                 const data = await runPPLPreview(httpClient, {
@@ -899,7 +907,7 @@ class CreateMonitor extends Component {
       </EuiFlexGroup>
 
       <EuiSpacer size="s" />
-      
+
       {/* Query editor */}
       <div data-test-subj="pplEditorMonaco">
         <QueryEditor
@@ -908,10 +916,11 @@ class CreateMonitor extends Component {
             // Enforce 10,000 character limit
             if (text.length <= 10000) {
               setFieldValue('pplQuery', text);
-              
+
               // Also update the queryString service so saved queries can access it
               try {
-                const services = (this.context && (this.context.services || this.context)) || undefined;
+                const services =
+                  (this.context && (this.context.services || this.context)) || undefined;
                 const queryString = services?.data?.query?.queryString;
                 if (queryString) {
                   queryString.setQuery({
@@ -922,7 +931,7 @@ class CreateMonitor extends Component {
               } catch (err) {
                 // Silent fail - not critical
               }
-              
+
               // Trigger debounced timestamp field detection
               this.debouncedDetectTimestampFields(text);
             }
@@ -949,10 +958,16 @@ class CreateMonitor extends Component {
         onToggle={(isOpen) => this.setState({ previewOpen: isOpen })}
       >
         <EuiPanel hasBorder paddingSize="l" data-test-subj="pplResultsPanel">
-          <EuiTitle size="s"><h2>Results</h2></EuiTitle>
+          <EuiTitle size="s">
+            <h2>Results</h2>
+          </EuiTitle>
           <EuiHorizontalRule margin="m" />
           {!this.state.previewResult && !this.state.previewError ? (
-            <EuiEmptyPrompt iconType="editorCodeBlock" title={<h3>Run a query to view results</h3>} layout="vertical" />
+            <EuiEmptyPrompt
+              iconType="editorCodeBlock"
+              title={<h3>Run a query to view results</h3>}
+              layout="vertical"
+            />
           ) : this.state.previewError ? (
             <EuiCodeBlock isCopyable>{this.state.previewError}</EuiCodeBlock>
           ) : (
@@ -983,13 +998,19 @@ class CreateMonitor extends Component {
     };
 
     // Calculate total minutes for validation
-    const lbMinutes = lbUnit === 'minutes' ? lbAmount : lbUnit === 'hours' ? lbAmount * 60 : lbAmount * 1440;
+    const lbMinutes =
+      lbUnit === 'minutes' ? lbAmount : lbUnit === 'hours' ? lbAmount * 60 : lbAmount * 1440;
     const lbError = lbAmount !== '' && lbMinutes < LIMITS.lookback.min;
-    
+
     // Calculate interval validation
     const intervalAmount = Number(values.period?.interval ?? 1);
     const intervalUnit = values.period?.unit || 'MINUTES';
-    const intervalMinutes = intervalUnit === 'MINUTES' ? intervalAmount : intervalUnit === 'HOURS' ? intervalAmount * 60 : intervalAmount * 1440;
+    const intervalMinutes =
+      intervalUnit === 'MINUTES'
+        ? intervalAmount
+        : intervalUnit === 'HOURS'
+        ? intervalAmount * 60
+        : intervalAmount * 1440;
     const intervalError = intervalAmount !== '' && intervalMinutes < LIMITS.interval.min;
 
     const LookBackControls = (
@@ -1024,7 +1045,8 @@ class CreateMonitor extends Component {
           <>
             <EuiSpacer size="s" />
             <EuiText size="xs" color="warning">
-              <EuiIconTip type="alert" color="warning" /> Look back window requires a common timestamp field across all indices
+              <EuiIconTip type="alert" color="warning" /> Look back window requires a common
+              timestamp field across all indices
             </EuiText>
             <EuiSpacer size="s" />
           </>
@@ -1032,9 +1054,9 @@ class CreateMonitor extends Component {
 
         {useLB && !(dateFieldsError && availableDateFields.length === 0) && (
           <>
-            <EuiFormRow 
-              label="Look back from" 
-              fullWidth 
+            <EuiFormRow
+              label="Look back from"
+              fullWidth
               style={{ marginLeft: '-6px', maxWidth: '720px' }}
               isInvalid={lbError}
               error={lbError ? `Must be at least 1 minute` : undefined}
@@ -1088,7 +1110,12 @@ class CreateMonitor extends Component {
                 options={
                   availableDateFields.length > 0
                     ? availableDateFields.map((field) => ({ value: field, text: field }))
-                    : [{ value: values.timestampField || '@timestamp', text: values.timestampField || '@timestamp' }]
+                    : [
+                        {
+                          value: values.timestampField || '@timestamp',
+                          text: values.timestampField || '@timestamp',
+                        },
+                      ]
                 }
                 value={values.timestampField || '@timestamp'}
                 onChange={(e) => setFieldValue('timestampField', e.target.value)}
@@ -1121,9 +1148,9 @@ class CreateMonitor extends Component {
 
         {values.frequency === 'interval' && (
           <>
-            <EuiFormRow 
-              label="Run every" 
-              fullWidth 
+            <EuiFormRow
+              label="Run every"
+              fullWidth
               style={{ marginLeft: '-6px', maxWidth: '720px' }}
               isInvalid={intervalError}
               error={intervalError ? 'Must be at least 1 minute' : undefined}
@@ -1132,7 +1159,7 @@ class CreateMonitor extends Component {
                 <EuiFlexItem>
                   <EuiFieldNumber
                     data-test-subj="pplIntervalValue"
-                    value={values.period?.interval === 0 ? '' : (values.period?.interval ?? 1)}
+                    value={values.period?.interval === 0 ? '' : values.period?.interval ?? 1}
                     onChange={(e) => {
                       const val = e.target.value === '' ? '' : Number(e.target.value);
                       setFieldValue('period.interval', val);
@@ -1156,7 +1183,6 @@ class CreateMonitor extends Component {
                 </EuiFlexItem>
               </EuiFlexGroup>
             </EuiFormRow>
-
           </>
         )}
 
@@ -1181,7 +1207,7 @@ class CreateMonitor extends Component {
         {LookBackControls}
       </>
     );
-  };
+  }
   // ---- END PPL schedule ----
 
   render() {
@@ -1242,7 +1268,9 @@ class CreateMonitor extends Component {
                     </span>
                   }
                   checked={values.monitor_mode === 'legacy'}
-                  onChange={(e) => setFieldValue('monitor_mode', e.target.checked ? 'legacy' : 'ppl')}
+                  onChange={(e) =>
+                    setFieldValue('monitor_mode', e.target.checked ? 'legacy' : 'ppl')
+                  }
                   data-test-subj="useClassicCheckboxInline"
                 />
               </EuiFormRow>
@@ -1250,11 +1278,11 @@ class CreateMonitor extends Component {
 
             return (
               <Fragment>
-              <PageHeader>
-                <EuiText size="s">
-                  <h1>{edit ? 'Edit' : 'Create'} monitor</h1>
-                </EuiText>
-              </PageHeader>
+                <PageHeader>
+                  <EuiText size="s">
+                    <h1>{edit ? 'Edit' : 'Create'} monitor</h1>
+                  </EuiText>
+                </PageHeader>
 
                 {values.monitor_mode === 'ppl' ? (
                   <div data-test-subj="pplBranch">
@@ -1305,7 +1333,11 @@ class CreateMonitor extends Component {
                                   </EuiSmallButtonEmpty>
                                 </EuiFlexItem>
                                 <EuiFlexItem grow={false}>
-                                  <EuiSmallButton fill onClick={handleSubmit} isLoading={isSubmitting}>
+                                  <EuiSmallButton
+                                    fill
+                                    onClick={handleSubmit}
+                                    isLoading={isSubmitting}
+                                  >
                                     {edit ? 'Save' : 'Create'}
                                   </EuiSmallButton>
                                 </EuiFlexItem>
