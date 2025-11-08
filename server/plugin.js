@@ -43,7 +43,7 @@ export class AlertingPlugin {
     const globalConfig = await this.globalConfig$.pipe(first()).toPromise();
     const pluginConfig = await this.pluginConfig$.pipe(first()).toPromise();
     console.log(JSON.stringify(pluginConfig));
-    this.logger.info(JSON.stringify(pluginConfig));
+    this.logger.info(`config: ${JSON.stringify(pluginConfig)}`);
 
     const dataSourceEnabled = !!dataSource;
 
