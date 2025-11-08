@@ -29,16 +29,6 @@ export default function (services, router, dataSourceEnabled) {
     monitorService.getMonitors
   );
 
-  router.get(
-    {
-      path: '/api/alerting/monitors/v1',
-      validate: {
-        query: createValidateQuerySchema(dataSourceEnabled, fieldValidations),
-      },
-    },
-    monitorService.getMonitors
-  );
-
   router.post(
     {
       path: '/api/alerting/monitors/_search',

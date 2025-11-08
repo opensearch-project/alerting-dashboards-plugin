@@ -96,11 +96,6 @@ export class AlertingPlugin implements Plugin<void, AlertingStart, AlertingSetup
 
     this.startServicesPromise = core.getStartServices();
 
-    // const mountWrapper = async (params: AppMountParameters, redirect: string) => {
-    //   const { renderApp } = await import("./app");
-    //   const [coreStart] = await core.getStartServices();
-    //   return renderApp(coreStart, params, redirect);
-    // };
     const mountWrapper = async (params: AppMountParameters, redirect: string) => {
       const { renderApp } = await import("./app");
       const [coreStart, depsStart] = await core.getStartServices();
@@ -116,11 +111,6 @@ export class AlertingPlugin implements Plugin<void, AlertingStart, AlertingSetup
         order: 2000,
       },
       order: 4000,
-      // mount: async (params) => {
-      //   const { renderApp } = await import('./app');
-      //   const [coreStart] = await core.getStartServices();
-      //   return renderApp(coreStart, params);
-      // },
       mount: async (params) => {
         const { renderApp } = await import('./app');
         const [coreStart, depsStart] = await core.getStartServices();
