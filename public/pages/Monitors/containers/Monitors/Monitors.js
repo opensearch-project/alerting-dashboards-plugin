@@ -215,9 +215,7 @@ export default class Monitors extends Component {
       // Call different API based on view mode
       const viewMode = this.getEffectiveViewMode();
       const apiPath =
-        viewMode === 'classic'
-          ? '../api/alerting/monitors/v1' // v1 API for classic view
-          : '../api/alerting/monitors'; // v2 API for new view
+        viewMode === 'classic' ? '../api/alerting/monitors' : '../api/alerting/v2/monitors';
 
       const response = await httpClient.get(apiPath, { query: extendedParams });
       if (response.ok) {
