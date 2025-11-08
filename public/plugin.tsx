@@ -3,6 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+import React from 'react';
 import { ALERTS_NAV_ID, DESTINATIONS_NAV_ID, MONITORS_NAV_ID, PLUGIN_NAME } from '../utils/constants';
 import {
   Plugin,
@@ -13,7 +14,9 @@ import {
   AppMountParameters,
   DEFAULT_APP_CATEGORIES,
   AppUpdater,
+  OverlayRef,
 } from '../../../src/core/public';
+import { toMountPoint } from '../../../src/plugins/opensearch_dashboards_react/public';
 import { ACTION_ALERTING } from './actions/alerting_dashboard_action';
 import { CONTEXT_MENU_TRIGGER, EmbeddableStart } from '../../../src/plugins/embeddable/public';
 import { getActions, getAdAction } from './utils/contextMenu/actions';
@@ -35,6 +38,7 @@ import { registerAlertsCard } from './utils/helpers';
 import type { ExplorePluginSetup, ExplorePluginStart } from '../../../src/plugins/explore/public';
 import { ResultStatus } from '../../../src/plugins/data/public';
 import { CreateMonitorFlyout } from './components/CreateMonitorFlyout';
+import { CoreContext } from './utils/CoreContext';
 
 declare module '../../../src/plugins/ui_actions/public' {
   export interface ActionContextMapping {
@@ -85,9 +89,12 @@ export class AlertingPlugin implements Plugin<void, AlertingStart, AlertingSetup
 
   private appStateUpdater = new BehaviorSubject<AppUpdater>(this.updateDefaultRouteOfManagementApplications);
   private appStateUpdater$: Observable<AppUpdater> = this.appStateUpdater.asObservable();
+  private startServicesPromise!: ReturnType<CoreSetup['getStartServices']>;
 
 
   public setup(core: CoreSetup<AlertingStartDeps, AlertingStart>, { expressions, uiActions, dataSourceManagement, dataSource, assistantDashboards, explore }: AlertingSetupDeps) {
+
+    this.startServicesPromise = core.getStartServices();
 
     // const mountWrapper = async (params: AppMountParameters, redirect: string) => {
     //   const { renderApp } = await import("./app");
@@ -272,8 +279,57 @@ export class AlertingPlugin implements Plugin<void, AlertingStart, AlertingSetup
         },
         getLabel: () => 'Create monitor',
         getIcon: () => 'bell',
-        component: CreateMonitorFlyout,
-      } as any);
+        onClick: async (deps) => {
+          const actionsButton = document.querySelector<HTMLButtonElement>(
+            '[data-test-subj="queryPanelFooterActionsButton"]'
+          );
+          if (actionsButton) {
+            const triggerClose = () => {
+              actionsButton.click();
+            };
+            if (typeof requestAnimationFrame === 'function') {
+              requestAnimationFrame(triggerClose);
+            } else {
+              setTimeout(triggerClose, 0);
+            }
+          }
+          const [coreStart, depsStart] = await this.startServicesPromise;
+          if (!isPplAlertingEnabled()) {
+            return;
+          }
+          const { overlays, http, notifications, chrome, uiSettings, i18n } = coreStart;
+          const services = {
+            ...(coreStart as unknown as Record<string, unknown>),
+            ...(depsStart as unknown as Record<string, unknown>),
+          };
+          const contextValue = {
+            http,
+            isDarkMode: uiSettings.get('theme:darkMode'),
+            notifications,
+            chrome,
+            defaultRoute: '/',
+            data: (depsStart as any)?.data,
+            services,
+          };
+          const queryInEditor =
+            (deps.query as any)?.query ?? (deps.query as any)?.queryString ?? '';
+          let flyoutSession: OverlayRef | undefined;
+          const flyoutContent = (
+            <CoreContext.Provider value={contextValue}>
+              <CreateMonitorFlyout
+                closeFlyout={() => flyoutSession?.close()}
+                dependencies={{
+                  query: deps.query,
+                  resultStatus: deps.resultStatus,
+                  queryInEditor,
+                }}
+                services={services}
+              />
+            </CoreContext.Provider>
+          );
+          flyoutSession = overlays.openFlyout(toMountPoint(flyoutContent));
+        },
+      });
     }
   }
 
