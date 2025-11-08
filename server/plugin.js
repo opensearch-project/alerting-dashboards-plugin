@@ -43,6 +43,7 @@ export class AlertingPlugin {
     const globalConfig = await this.globalConfig$.pipe(first()).toPromise();
     const pluginConfig = await this.pluginConfig$.pipe(first()).toPromise();
     console.log(JSON.stringify(pluginConfig));
+    this.logger.info(JSON.stringify(pluginConfig));
 
     const dataSourceEnabled = !!dataSource;
 
@@ -101,6 +102,7 @@ export class AlertingPlugin {
         request,
         FEATURE_FLAGS.PPL_MONITOR
       );
+      this.logger.info(pplEnabled);
       return {
         alertingDashboards: {
           pplV2: pplEnabled,
