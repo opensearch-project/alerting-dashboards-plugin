@@ -323,7 +323,7 @@ export class AlertingPlugin implements Plugin<void, AlertingStart, AlertingSetup
     }
   }
 
-  public start(core: CoreStart, { visAugmenter, embeddable, data, navigation, contentManagement, assistantDashboards, explore }: AlertingStartDeps): AlertingStart {
+  public start(core: CoreStart, { visAugmenter, embeddable, data, navigation, contentManagement, assistantDashboards}: AlertingStartDeps): AlertingStart {
     navigateToAppRef = core.application.navigateToApp;
     setEmbeddable(embeddable);
     setOverlays(core.overlays);
