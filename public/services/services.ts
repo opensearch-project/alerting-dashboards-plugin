@@ -78,9 +78,6 @@ export const isPplAlertingEnabled = () => {
 };
 
 export const getUseUpdatedUx = () => {
-  if (!isPplAlertingEnabled()) {
-    return false;
-  }
   return getUISettings().get('home:useNewHomePage', false);
 };
 

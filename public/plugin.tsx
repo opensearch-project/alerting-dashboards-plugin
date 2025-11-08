@@ -285,7 +285,7 @@ export class AlertingPlugin implements Plugin<void, AlertingStart, AlertingSetup
           );
           if (actionsButton) {
             const triggerClose = () => {
-              actionsButton.click();
+            actionsButton.click();
             };
             if (typeof requestAnimationFrame === 'function') {
               requestAnimationFrame(triggerClose);

@@ -44,10 +44,11 @@ export default class Monitors extends Component {
       this.props.location
     );
 
+    this.pplEnabled = isPplAlertingEnabled();
+
     // Initialize viewMode from localStorage, default to 'new'
-    const pplEnabled = isPplAlertingEnabled();
-    let initialViewMode = pplEnabled ? 'new' : 'classic';
-    if (pplEnabled) {
+    let initialViewMode = this.pplEnabled ? 'new' : 'classic';
+    if (this.pplEnabled) {
       try {
         const stored = localStorage.getItem('alerting_monitors_view_mode');
         if (stored === 'classic' || stored === 'new') {
@@ -108,9 +109,13 @@ export default class Monitors extends Component {
     this.buildColumns = this.buildColumns.bind(this);
   }
 
+  getEffectiveViewMode() {
+    return this.pplEnabled ? this.state.viewMode : 'classic';
+  }
+
   // Build columns based on view mode
   buildColumns() {
-    const { viewMode } = this.state;
+    const viewMode = this.getEffectiveViewMode();
 
     // In "New" mode, hide certain columns
     // In "Classic" mode, show all columns
@@ -208,7 +213,7 @@ export default class Monitors extends Component {
       };
 
       // Call different API based on view mode
-      const { viewMode } = this.state;
+      const viewMode = this.getEffectiveViewMode();
       const apiPath =
         viewMode === 'classic'
           ? '../api/alerting/monitors/v1' // v1 API for classic view
@@ -644,7 +649,7 @@ export default class Monitors extends Component {
     };
 
     const useUpdatedUx = getUseUpdatedUx();
-    const { viewMode } = this.state;
+    const viewMode = this.getEffectiveViewMode();
 
     const monitorActions = (
       <MonitorActions
@@ -659,16 +664,23 @@ export default class Monitors extends Component {
       />
     );
 
-    const toggleButtons = [
-      {
-        id: 'new',
-        label: 'New',
-      },
-      {
-        id: 'classic',
-        label: 'Classic',
-      },
-    ];
+    const toggleButtons = this.pplEnabled
+      ? [
+          {
+            id: 'new',
+            label: 'New',
+          },
+          {
+            id: 'classic',
+            label: 'Classic',
+          },
+        ]
+      : [
+          {
+            id: 'classic',
+            label: 'Classic',
+          },
+        ];
 
     return (
       <>
@@ -690,25 +702,30 @@ export default class Monitors extends Component {
                           <h1>Monitors</h1>
                         </EuiTitle>
                       </EuiFlexItem>
-                      <EuiFlexItem grow={false}>
-                        <EuiButtonGroup
-                          legend="Monitor view toggle"
-                          options={toggleButtons}
-                          idSelected={viewMode}
-                          onChange={(id) => {
-                            this.setState({ viewMode: id });
-                            // Persist viewMode to localStorage so MonitorDetails can use it
-                            try {
-                              localStorage.setItem('alerting_monitors_view_mode', id);
-                            } catch (e) {
-                              console.error('Error saving viewMode to localStorage:', e);
-                            }
-                          }}
-                          buttonSize="compressed"
-                          color="text"
-                          isFullWidth={false}
-                        />
-                      </EuiFlexItem>
+                      {this.pplEnabled && (
+                        <EuiFlexItem grow={false}>
+                          <EuiButtonGroup
+                            legend="Monitor view toggle"
+                            options={toggleButtons}
+                            idSelected={viewMode}
+                            onChange={(id) => {
+                              if (!this.pplEnabled) {
+                                return;
+                              }
+                              this.setState({ viewMode: id });
+                              // Persist viewMode to localStorage so MonitorDetails can use it
+                              try {
+                                localStorage.setItem('alerting_monitors_view_mode', id);
+                              } catch (e) {
+                                console.error('Error saving viewMode to localStorage:', e);
+                              }
+                            }}
+                            buttonSize="compressed"
+                            color="text"
+                            isFullWidth={false}
+                          />
+                        </EuiFlexItem>
+                      )}
                     </EuiFlexGroup>
                   </EuiFlexItem>
                   <EuiFlexItem grow={false}>{monitorActions}</EuiFlexItem>
