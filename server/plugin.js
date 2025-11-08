@@ -102,7 +102,7 @@ export class AlertingPlugin {
         request,
         FEATURE_FLAGS.PPL_MONITOR
       );
-      this.logger.info(pplEnabled);
+      this.logger.info(`pplEnabled: ${pplEnabled}`);
       return {
         alertingDashboards: {
           pplV2: pplEnabled,
