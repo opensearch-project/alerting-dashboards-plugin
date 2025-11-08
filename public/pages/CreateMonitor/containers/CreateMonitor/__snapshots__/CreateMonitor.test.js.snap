@@ -48,7 +48,7 @@ exports[`CreateMonitor renders 1`] = `
         "index": Array [],
         "lookBackAmount": 1,
         "lookBackUnit": "hours",
-        "monitor_mode": "ppl",
+        "monitor_mode": "legacy",
         "monitor_type": "query_level_monitor",
         "monthly": Object {
           "day": 1,

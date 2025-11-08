@@ -93,7 +93,17 @@ exports[`Dashboard renders in flyout 1`] = `
   perAlertView={true}
 >
   <ContentPanel
-    actions={Array []}
+    actions={
+      Array [
+        <EuiSmallButton
+          data-test-subj="acknowledgeAlertsButton"
+          disabled={true}
+          onClick={[Function]}
+        >
+          Acknowledge
+        </EuiSmallButton>,
+      ]
+    }
     bodyStyles={
       Object {
         "padding": "initial",
@@ -173,7 +183,73 @@ exports[`Dashboard renders in flyout 1`] = `
                 >
                   <div
                     className="euiFlexGroup euiFlexGroup--gutterLarge euiFlexGroup--alignItemsCenter euiFlexGroup--justifyContentSpaceBetween euiFlexGroup--directionRow euiFlexGroup--responsive"
-                  />
+                  >
+                    <EuiFlexItem
+                      key="0"
+                    >
+                      <div
+                        className="euiFlexItem"
+                      >
+                        <EuiSmallButton
+                          data-test-subj="acknowledgeAlertsButton"
+                          disabled={true}
+                          onClick={[Function]}
+                        >
+                          <EuiButton
+                            data-test-subj="acknowledgeAlertsButton"
+                            disabled={true}
+                            onClick={[Function]}
+                            size="s"
+                          >
+                            <EuiButtonDisplay
+                              baseClassName="euiButton"
+                              data-test-subj="acknowledgeAlertsButton"
+                              disabled={true}
+                              element="button"
+                              isDisabled={true}
+                              onClick={[Function]}
+                              size="s"
+                              type="button"
+                            >
+                              <button
+                                className="euiButton euiButton--primary euiButton--small euiButton-isDisabled"
+                                data-test-subj="acknowledgeAlertsButton"
+                                disabled={true}
+                                onClick={[Function]}
+                                style={
+                                  Object {
+                                    "minWidth": undefined,
+                                  }
+                                }
+                                type="button"
+                              >
+                                <EuiButtonContent
+                                  className="euiButton__content"
+                                  iconGap="m"
+                                  iconSide="left"
+                                  textProps={
+                                    Object {
+                                      "className": "euiButton__text",
+                                    }
+                                  }
+                                >
+                                  <span
+                                    className="euiButtonContent euiButton__content"
+                                  >
+                                    <span
+                                      className="euiButton__text"
+                                    >
+                                      Acknowledge
+                                    </span>
+                                  </span>
+                                </EuiButtonContent>
+                              </button>
+                            </EuiButtonDisplay>
+                          </EuiButton>
+                        </EuiSmallButton>
+                      </div>
+                    </EuiFlexItem>
+                  </div>
                 </EuiFlexGroup>
               </div>
             </EuiFlexItem>
@@ -536,7 +612,7 @@ exports[`Dashboard renders in flyout 1`] = `
                 Object {
                   "onSelectionChange": [Function],
                   "selectable": [Function],
-                  "selectableMessage": undefined,
+                  "selectableMessage": [Function],
                 }
               }
               sorting={
@@ -1323,6 +1399,13 @@ exports[`Dashboard renders with alert by triggers view 1`] = `
         >
           View alert details
         </EuiSmallButton>,
+        <EuiSmallButton
+          data-test-subj="acknowledgeAlertsButton"
+          disabled={true}
+          onClick={[Function]}
+        >
+          Acknowledge
+        </EuiSmallButton>,
       ]
     }
     bodyStyles={
@@ -1332,7 +1415,7 @@ exports[`Dashboard renders with alert by triggers view 1`] = `
     }
     panelOptions={
       Object {
-        "hideTitleBorder": undefined,
+        "hideTitleBorder": false,
       }
     }
     panelStyles={
@@ -1457,6 +1540,71 @@ exports[`Dashboard renders with alert by triggers view 1`] = `
                                       className="euiButton__text"
                                     >
                                       View alert details
+                                    </span>
+                                  </span>
+                                </EuiButtonContent>
+                              </button>
+                            </EuiButtonDisplay>
+                          </EuiButton>
+                        </EuiSmallButton>
+                      </div>
+                    </EuiFlexItem>
+                    <EuiFlexItem
+                      key="1"
+                    >
+                      <div
+                        className="euiFlexItem"
+                      >
+                        <EuiSmallButton
+                          data-test-subj="acknowledgeAlertsButton"
+                          disabled={true}
+                          onClick={[Function]}
+                        >
+                          <EuiButton
+                            data-test-subj="acknowledgeAlertsButton"
+                            disabled={true}
+                            onClick={[Function]}
+                            size="s"
+                          >
+                            <EuiButtonDisplay
+                              baseClassName="euiButton"
+                              data-test-subj="acknowledgeAlertsButton"
+                              disabled={true}
+                              element="button"
+                              isDisabled={true}
+                              onClick={[Function]}
+                              size="s"
+                              type="button"
+                            >
+                              <button
+                                className="euiButton euiButton--primary euiButton--small euiButton-isDisabled"
+                                data-test-subj="acknowledgeAlertsButton"
+                                disabled={true}
+                                onClick={[Function]}
+                                style={
+                                  Object {
+                                    "minWidth": undefined,
+                                  }
+                                }
+                                type="button"
+                              >
+                                <EuiButtonContent
+                                  className="euiButton__content"
+                                  iconGap="m"
+                                  iconSide="left"
+                                  textProps={
+                                    Object {
+                                      "className": "euiButton__text",
+                                    }
+                                  }
+                                >
+                                  <span
+                                    className="euiButtonContent euiButton__content"
+                                  >
+                                    <span
+                                      className="euiButton__text"
+                                    >
+                                      Acknowledge
                                     </span>
                                   </span>
                                 </EuiButtonContent>
@@ -1949,6 +2097,24 @@ exports[`Dashboard renders with alert by triggers view 1`] = `
                     "truncateText": false,
                   },
                   Object {
+                    "field": "ACTIVE",
+                    "name": "Active",
+                    "sortable": true,
+                    "truncateText": false,
+                  },
+                  Object {
+                    "field": "ACKNOWLEDGED",
+                    "name": "Acknowledged",
+                    "sortable": true,
+                    "truncateText": false,
+                  },
+                  Object {
+                    "field": "ERROR",
+                    "name": "Errors",
+                    "sortable": true,
+                    "truncateText": false,
+                  },
+                  Object {
                     "field": "trigger_name",
                     "name": "Trigger name",
                     "sortable": true,
@@ -1956,17 +2122,17 @@ exports[`Dashboard renders with alert by triggers view 1`] = `
                     "truncateText": true,
                   },
                   Object {
-                    "data-test-subj": "last-triggered-time",
+                    "data-test-subj": "trigger-start-time",
                     "dataType": "date",
-                    "field": "lastTriggeredTime",
-                    "name": "Last Triggered Time",
+                    "field": "start_time",
+                    "name": "Trigger start time",
                     "render": [Function],
                     "sortable": true,
                     "truncateText": true,
                   },
                   Object {
                     "dataType": "date",
-                    "field": "lastTriggeredTime",
+                    "field": "last_notification_time",
                     "name": "Trigger last updated",
                     "render": [Function],
                     "sortable": true,
@@ -1999,7 +2165,7 @@ exports[`Dashboard renders with alert by triggers view 1`] = `
                 Object {
                   "onSelectionChange": [Function],
                   "selectable": [Function],
-                  "selectableMessage": undefined,
+                  "selectableMessage": [Function],
                 }
               }
               sorting={
@@ -2094,28 +2260,49 @@ exports[`Dashboard renders with alert by triggers view 1`] = `
                                     Object {
                                       "isSortAscending": undefined,
                                       "isSorted": false,
-                                      "key": "_data_s_trigger_name_1",
+                                      "key": "_data_s_ACTIVE_1",
+                                      "name": "Active",
+                                      "onSort": [Function],
+                                    },
+                                    Object {
+                                      "isSortAscending": undefined,
+                                      "isSorted": false,
+                                      "key": "_data_s_ACKNOWLEDGED_2",
+                                      "name": "Acknowledged",
+                                      "onSort": [Function],
+                                    },
+                                    Object {
+                                      "isSortAscending": undefined,
+                                      "isSorted": false,
+                                      "key": "_data_s_ERROR_3",
+                                      "name": "Errors",
+                                      "onSort": [Function],
+                                    },
+                                    Object {
+                                      "isSortAscending": undefined,
+                                      "isSorted": false,
+                                      "key": "_data_s_trigger_name_4",
                                       "name": "Trigger name",
                                       "onSort": [Function],
                                     },
                                     Object {
-                                      "isSortAscending": undefined,
-                                      "isSorted": false,
-                                      "key": "_data_s_lastTriggeredTime_2",
-                                      "name": "Last Triggered Time",
+                                      "isSortAscending": false,
+                                      "isSorted": true,
+                                      "key": "_data_s_start_time_5",
+                                      "name": "Trigger start time",
                                       "onSort": [Function],
                                     },
                                     Object {
                                       "isSortAscending": undefined,
                                       "isSorted": false,
-                                      "key": "_data_s_lastTriggeredTime_3",
+                                      "key": "_data_s_last_notification_time_6",
                                       "name": "Trigger last updated",
                                       "onSort": [Function],
                                     },
                                     Object {
                                       "isSortAscending": undefined,
                                       "isSorted": false,
-                                      "key": "_data_s_monitor_name_5",
+                                      "key": "_data_s_monitor_name_8",
                                       "name": "Monitor name",
                                       "onSort": [Function],
                                     },
@@ -2352,16 +2539,190 @@ exports[`Dashboard renders with alert by triggers view 1`] = `
                             </EuiTableHeaderCell>
                             <EuiTableHeaderCell
                               align="left"
-                              data-test-subj="tableHeaderCell_trigger_name_1"
+                              data-test-subj="tableHeaderCell_ACTIVE_1"
                               isSorted={false}
-                              key="_data_h_trigger_name_1"
+                              key="_data_h_ACTIVE_1"
                               onSort={[Function]}
                             >
                               <th
                                 aria-live="polite"
                                 aria-sort="none"
                                 className="euiTableHeaderCell"
-                                data-test-subj="tableHeaderCell_trigger_name_1"
+                                data-test-subj="tableHeaderCell_ACTIVE_1"
+                                role="columnheader"
+                                scope="col"
+                                style={
+                                  Object {
+                                    "width": undefined,
+                                  }
+                                }
+                              >
+                                <button
+                                  className="euiTableHeaderButton"
+                                  data-test-subj="tableHeaderSortButton"
+                                  onClick={[Function]}
+                                  type="button"
+                                >
+                                  <CellContents
+                                    className="euiTableCellContent"
+                                    isSorted={false}
+                                    showSortMsg={true}
+                                  >
+                                    <span
+                                      className="euiTableCellContent"
+                                    >
+                                      <EuiInnerText>
+                                        <EuiI18n
+                                          default="{innerText}; {description}"
+                                          token="euiTableHeaderCell.titleTextWithDesc"
+                                          values={
+                                            Object {
+                                              "description": undefined,
+                                              "innerText": "Active",
+                                            }
+                                          }
+                                        >
+                                          <span
+                                            className="euiTableCellContent__text"
+                                            title="Active"
+                                          >
+                                            Active
+                                          </span>
+                                        </EuiI18n>
+                                      </EuiInnerText>
+                                    </span>
+                                  </CellContents>
+                                </button>
+                              </th>
+                            </EuiTableHeaderCell>
+                            <EuiTableHeaderCell
+                              align="left"
+                              data-test-subj="tableHeaderCell_ACKNOWLEDGED_2"
+                              isSorted={false}
+                              key="_data_h_ACKNOWLEDGED_2"
+                              onSort={[Function]}
+                            >
+                              <th
+                                aria-live="polite"
+                                aria-sort="none"
+                                className="euiTableHeaderCell"
+                                data-test-subj="tableHeaderCell_ACKNOWLEDGED_2"
+                                role="columnheader"
+                                scope="col"
+                                style={
+                                  Object {
+                                    "width": undefined,
+                                  }
+                                }
+                              >
+                                <button
+                                  className="euiTableHeaderButton"
+                                  data-test-subj="tableHeaderSortButton"
+                                  onClick={[Function]}
+                                  type="button"
+                                >
+                                  <CellContents
+                                    className="euiTableCellContent"
+                                    isSorted={false}
+                                    showSortMsg={true}
+                                  >
+                                    <span
+                                      className="euiTableCellContent"
+                                    >
+                                      <EuiInnerText>
+                                        <EuiI18n
+                                          default="{innerText}; {description}"
+                                          token="euiTableHeaderCell.titleTextWithDesc"
+                                          values={
+                                            Object {
+                                              "description": undefined,
+                                              "innerText": "Acknowledged",
+                                            }
+                                          }
+                                        >
+                                          <span
+                                            className="euiTableCellContent__text"
+                                            title="Acknowledged"
+                                          >
+                                            Acknowledged
+                                          </span>
+                                        </EuiI18n>
+                                      </EuiInnerText>
+                                    </span>
+                                  </CellContents>
+                                </button>
+                              </th>
+                            </EuiTableHeaderCell>
+                            <EuiTableHeaderCell
+                              align="left"
+                              data-test-subj="tableHeaderCell_ERROR_3"
+                              isSorted={false}
+                              key="_data_h_ERROR_3"
+                              onSort={[Function]}
+                            >
+                              <th
+                                aria-live="polite"
+                                aria-sort="none"
+                                className="euiTableHeaderCell"
+                                data-test-subj="tableHeaderCell_ERROR_3"
+                                role="columnheader"
+                                scope="col"
+                                style={
+                                  Object {
+                                    "width": undefined,
+                                  }
+                                }
+                              >
+                                <button
+                                  className="euiTableHeaderButton"
+                                  data-test-subj="tableHeaderSortButton"
+                                  onClick={[Function]}
+                                  type="button"
+                                >
+                                  <CellContents
+                                    className="euiTableCellContent"
+                                    isSorted={false}
+                                    showSortMsg={true}
+                                  >
+                                    <span
+                                      className="euiTableCellContent"
+                                    >
+                                      <EuiInnerText>
+                                        <EuiI18n
+                                          default="{innerText}; {description}"
+                                          token="euiTableHeaderCell.titleTextWithDesc"
+                                          values={
+                                            Object {
+                                              "description": undefined,
+                                              "innerText": "Errors",
+                                            }
+                                          }
+                                        >
+                                          <span
+                                            className="euiTableCellContent__text"
+                                            title="Errors"
+                                          >
+                                            Errors
+                                          </span>
+                                        </EuiI18n>
+                                      </EuiInnerText>
+                                    </span>
+                                  </CellContents>
+                                </button>
+                              </th>
+                            </EuiTableHeaderCell>
+                            <EuiTableHeaderCell
+                              align="left"
+                              data-test-subj="tableHeaderCell_trigger_name_4"
+                              isSorted={false}
+                              key="_data_h_trigger_name_4"
+                              onSort={[Function]}
+                            >
+                              <th
+                                aria-live="polite"
+                                aria-sort="none"
+                                className="euiTableHeaderCell"
+                                data-test-subj="tableHeaderCell_trigger_name_4"
                                 role="columnheader"
                                 scope="col"
                                 style={
@@ -2410,16 +2771,17 @@ exports[`Dashboard renders with alert by triggers view 1`] = `
                             </EuiTableHeaderCell>
                             <EuiTableHeaderCell
                               align="left"
-                              data-test-subj="tableHeaderCell_lastTriggeredTime_2"
-                              isSorted={false}
-                              key="_data_h_lastTriggeredTime_2"
+                              data-test-subj="tableHeaderCell_start_time_5"
+                              isSortAscending={false}
+                              isSorted={true}
+                              key="_data_h_start_time_5"
                               onSort={[Function]}
                             >
                               <th
                                 aria-live="polite"
-                                aria-sort="none"
+                                aria-sort="descending"
                                 className="euiTableHeaderCell"
-                                data-test-subj="tableHeaderCell_lastTriggeredTime_2"
+                                data-test-subj="tableHeaderCell_start_time_5"
                                 role="columnheader"
                                 scope="col"
                                 style={
@@ -2429,14 +2791,15 @@ exports[`Dashboard renders with alert by triggers view 1`] = `
                                 }
                               >
                                 <button
-                                  className="euiTableHeaderButton"
+                                  className="euiTableHeaderButton euiTableHeaderButton-isSorted"
                                   data-test-subj="tableHeaderSortButton"
                                   onClick={[Function]}
                                   type="button"
                                 >
                                   <CellContents
                                     className="euiTableCellContent"
-                                    isSorted={false}
+                                    isSortAscending={false}
+                                    isSorted={true}
                                     showSortMsg={true}
                                   >
                                     <span
@@ -2449,18 +2812,27 @@ exports[`Dashboard renders with alert by triggers view 1`] = `
                                           values={
                                             Object {
                                               "description": undefined,
-                                              "innerText": "Last Triggered Time",
+                                              "innerText": "Trigger start time",
                                             }
                                           }
                                         >
                                           <span
                                             className="euiTableCellContent__text"
-                                            title="Last Triggered Time"
+                                            title="Trigger start time"
                                           >
-                                            Last Triggered Time
+                                            Trigger start time
                                           </span>
                                         </EuiI18n>
                                       </EuiInnerText>
+                                      <EuiIcon
+                                        className="euiTableSortIcon"
+                                        size="m"
+                                        type="sortDown"
+                                      >
+                                        <div>
+                                          EuiIconMock
+                                        </div>
+                                      </EuiIcon>
                                     </span>
                                   </CellContents>
                                 </button>
@@ -2468,16 +2840,16 @@ exports[`Dashboard renders with alert by triggers view 1`] = `
                             </EuiTableHeaderCell>
                             <EuiTableHeaderCell
                               align="left"
-                              data-test-subj="tableHeaderCell_lastTriggeredTime_3"
+                              data-test-subj="tableHeaderCell_last_notification_time_6"
                               isSorted={false}
-                              key="_data_h_lastTriggeredTime_3"
+                              key="_data_h_last_notification_time_6"
                               onSort={[Function]}
                             >
                               <th
                                 aria-live="polite"
                                 aria-sort="none"
                                 className="euiTableHeaderCell"
-                                data-test-subj="tableHeaderCell_lastTriggeredTime_3"
+                                data-test-subj="tableHeaderCell_last_notification_time_6"
                                 role="columnheader"
                                 scope="col"
                                 style={
@@ -2526,12 +2898,12 @@ exports[`Dashboard renders with alert by triggers view 1`] = `
                             </EuiTableHeaderCell>
                             <EuiTableHeaderCell
                               align="left"
-                              data-test-subj="tableHeaderCell_severity_4"
-                              key="_data_h_severity_4"
+                              data-test-subj="tableHeaderCell_severity_7"
+                              key="_data_h_severity_7"
                             >
                               <th
                                 className="euiTableHeaderCell"
-                                data-test-subj="tableHeaderCell_severity_4"
+                                data-test-subj="tableHeaderCell_severity_7"
                                 role="columnheader"
                                 scope="col"
                                 style={
@@ -2572,16 +2944,16 @@ exports[`Dashboard renders with alert by triggers view 1`] = `
                             </EuiTableHeaderCell>
                             <EuiTableHeaderCell
                               align="left"
-                              data-test-subj="tableHeaderCell_monitor_name_5"
+                              data-test-subj="tableHeaderCell_monitor_name_8"
                               isSorted={false}
-                              key="_data_h_monitor_name_5"
+                              key="_data_h_monitor_name_8"
                               onSort={[Function]}
                             >
                               <th
                                 aria-live="polite"
                                 aria-sort="none"
                                 className="euiTableHeaderCell"
-                                data-test-subj="tableHeaderCell_monitor_name_5"
+                                data-test-subj="tableHeaderCell_monitor_name_8"
                                 role="columnheader"
                                 scope="col"
                                 style={
@@ -2639,12 +3011,12 @@ exports[`Dashboard renders with alert by triggers view 1`] = `
                             >
                               <EuiTableRowCell
                                 align="center"
-                                colSpan={7}
+                                colSpan={10}
                                 isMobileFullWidth={true}
                               >
                                 <td
                                   className="euiTableRowCell euiTableRowCell--isMobileFullWidth"
-                                  colSpan={7}
+                                  colSpan={10}
                                   style={
                                     Object {
                                       "width": undefined,
@@ -2851,7 +3223,17 @@ exports[`Dashboard renders with per alert view 1`] = `
   perAlertView={true}
 >
   <ContentPanel
-    actions={Array []}
+    actions={
+      Array [
+        <EuiSmallButton
+          data-test-subj="acknowledgeAlertsButton"
+          disabled={true}
+          onClick={[Function]}
+        >
+          Acknowledge
+        </EuiSmallButton>,
+      ]
+    }
     bodyStyles={
       Object {
         "padding": "initial",
@@ -2931,7 +3313,73 @@ exports[`Dashboard renders with per alert view 1`] = `
                 >
                   <div
                     className="euiFlexGroup euiFlexGroup--gutterLarge euiFlexGroup--alignItemsCenter euiFlexGroup--justifyContentSpaceBetween euiFlexGroup--directionRow euiFlexGroup--responsive"
-                  />
+                  >
+                    <EuiFlexItem
+                      key="0"
+                    >
+                      <div
+                        className="euiFlexItem"
+                      >
+                        <EuiSmallButton
+                          data-test-subj="acknowledgeAlertsButton"
+                          disabled={true}
+                          onClick={[Function]}
+                        >
+                          <EuiButton
+                            data-test-subj="acknowledgeAlertsButton"
+                            disabled={true}
+                            onClick={[Function]}
+                            size="s"
+                          >
+                            <EuiButtonDisplay
+                              baseClassName="euiButton"
+                              data-test-subj="acknowledgeAlertsButton"
+                              disabled={true}
+                              element="button"
+                              isDisabled={true}
+                              onClick={[Function]}
+                              size="s"
+                              type="button"
+                            >
+                              <button
+                                className="euiButton euiButton--primary euiButton--small euiButton-isDisabled"
+                                data-test-subj="acknowledgeAlertsButton"
+                                disabled={true}
+                                onClick={[Function]}
+                                style={
+                                  Object {
+                                    "minWidth": undefined,
+                                  }
+                                }
+                                type="button"
+                              >
+                                <EuiButtonContent
+                                  className="euiButton__content"
+                                  iconGap="m"
+                                  iconSide="left"
+                                  textProps={
+                                    Object {
+                                      "className": "euiButton__text",
+                                    }
+                                  }
+                                >
+                                  <span
+                                    className="euiButtonContent euiButton__content"
+                                  >
+                                    <span
+                                      className="euiButton__text"
+                                    >
+                                      Acknowledge
+                                    </span>
+                                  </span>
+                                </EuiButtonContent>
+                              </button>
+                            </EuiButtonDisplay>
+                          </EuiButton>
+                        </EuiSmallButton>
+                      </div>
+                    </EuiFlexItem>
+                  </div>
                 </EuiFlexGroup>
               </div>
             </EuiFlexItem>
@@ -3468,7 +3916,7 @@ exports[`Dashboard renders with per alert view 1`] = `
                 Object {
                   "onSelectionChange": [Function],
                   "selectable": [Function],
-                  "selectableMessage": undefined,
+                  "selectableMessage": [Function],
                 }
               }
               sorting={
