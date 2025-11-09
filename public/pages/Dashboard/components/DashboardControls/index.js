@@ -4,5 +4,7 @@
  */
 
 import DashboardControls from './DashboardControls';
+import DashboardControlsPpl from './DashboardControlsPpl';
 
 export default DashboardControls;
+export { DashboardControlsPpl };

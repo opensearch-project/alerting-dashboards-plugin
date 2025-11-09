@@ -7,26 +7,39 @@ import React from 'react';
 import { getDataSourceEnabled, getDataSource, getAssistantClient } from '../../services/services';
 import _ from 'lodash';
 import { ShowAlertComments } from '../../components/Comments/ShowAlertComments';
-import { 
+import {
   COMMENTS_ENABLED_SETTING,
   SUMMARY_AGENT_CONFIG_ID,
-  LOG_PATTERN_SUMMARY_AGENT_CONFIG_ID
- } from './constants';
+  LOG_PATTERN_SUMMARY_AGENT_CONFIG_ID,
+} from './constants';
 
 export function dataSourceEnabled() {
   return getDataSourceEnabled()?.enabled;
 }
 
-export function getDataSourceQueryObj() {
-  const dataSourceQuery = dataSourceEnabled()
-    ? { dataSourceId: getDataSource()?.dataSourceId }
-    : undefined;
-  return dataSourceQuery ? { query: dataSourceQuery } : undefined;
+const normalizeDataSourceId = (dataSourceId) => {
+  if (dataSourceId === null || dataSourceId === undefined) {
+    return undefined;
+  }
+  if (typeof dataSourceId === 'string') {
+    const trimmed = dataSourceId.trim();
+    return trimmed.length ? trimmed : undefined;
+  }
+  return dataSourceId;
+};
+
+export function getDataSourceId(fallbackDataSourceId) {
+  if (!dataSourceEnabled()) {
+    return undefined;
+  }
+  const currentId = normalizeDataSourceId(getDataSource()?.dataSourceId);
+  const fallbackId = normalizeDataSourceId(fallbackDataSourceId);
+  return currentId ?? fallbackId;
 }
 
-export function getDataSourceId() {
-  const dataSourceId = dataSourceEnabled() ? getDataSource()?.dataSourceId : undefined;
-  return dataSourceId;
+export function getDataSourceQueryObj(fallbackDataSourceId) {
+  const dataSourceId = getDataSourceId(fallbackDataSourceId);
+  return dataSourceId !== undefined ? { query: { dataSourceId } } : undefined;
 }
 
 export function isDataSourceChanged(prevProps, currProps) {
@@ -72,19 +85,15 @@ export const appendCommentsAction = (columns, httpClient) => {
   return columns;
 };
 
-export async function getIsAgentConfigured(dataSourceId){
+export async function getIsAgentConfigured(dataSourceId) {
   const assistantClient = getAssistantClient();
-  try{
+  try {
     const res = await assistantClient.agentConfigExists(
-      [
-        SUMMARY_AGENT_CONFIG_ID,
-        LOG_PATTERN_SUMMARY_AGENT_CONFIG_ID,
-      ],
+      [SUMMARY_AGENT_CONFIG_ID, LOG_PATTERN_SUMMARY_AGENT_CONFIG_ID],
       { dataSourceId: dataSourceId }
     );
     return res.exists;
-  }
-  catch(e){
+  } catch (e) {
     console.error('Error while checking if agent is configured:', e);
     return false;
   }

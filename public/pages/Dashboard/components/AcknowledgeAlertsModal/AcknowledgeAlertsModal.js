@@ -45,7 +45,11 @@ import ContentPanel from '../../../../components/ContentPanel';
 import { queryColumns } from '../../utils/tableUtils';
 import DashboardEmptyPrompt from '../DashboardEmptyPrompt';
 import { getAlertsFindingColumn } from '../FindingsDashboard/findingsUtils';
-import { appendCommentsAction, getDataSourceId, getIsCommentsEnabled } from '../../../utils/helpers';
+import {
+  appendCommentsAction,
+  getDataSourceId,
+  getIsCommentsEnabled,
+} from '../../../utils/helpers';
 
 export const DEFAULT_NUM_MODAL_ROWS = 10;
 

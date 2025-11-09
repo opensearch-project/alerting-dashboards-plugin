@@ -148,7 +148,7 @@ describe('Query-Level Monitors', () => {
       cy.contains(SAMPLE_TRIGGER);
 
       // Go back to the Monitors list
-      cy.get('a').contains('Monitors').click({ force: true });
+      cy.contains('Monitors').click({ force: true });
 
       // Confirm we can see the created monitor in the list
       cy.contains(SAMPLE_MONITOR);
@@ -185,7 +185,7 @@ describe('Query-Level Monitors', () => {
       cy.contains('Edit monitor');
 
       // Go back to the Monitors list
-      cy.get('a').contains('Monitors').click({ force: true });
+      cy.contains('Monitors').click({ force: true });
 
       // Confirm we can see the updated monitor in the list
       cy.contains(UPDATED_MONITOR);

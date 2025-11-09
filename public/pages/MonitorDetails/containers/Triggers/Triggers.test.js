@@ -28,8 +28,30 @@ function getShallowWrapper(customProps = {}) {
 }
 
 describe('Triggers', () => {
+  let dateNowSpy;
+  let mathRandomSpy;
+
   beforeEach(() => {
-    jest.resetAllMocks();
+    jest.clearAllMocks();
+    const dateReturns = [1700000000000, 1700000001000];
+    dateNowSpy = jest.spyOn(Date, 'now').mockImplementation(() => {
+      if (dateReturns.length > 0) {
+        return dateReturns.shift();
+      }
+      return 1700000001000;
+    });
+    const randomReturns = [0.123456789, 0.987654321];
+    mathRandomSpy = jest.spyOn(Math, 'random').mockImplementation(() => {
+      if (randomReturns.length > 0) {
+        return randomReturns.shift();
+      }
+      return 0.987654321;
+    });
+  });
+
+  afterEach(() => {
+    dateNowSpy.mockRestore();
+    mathRandomSpy.mockRestore();
   });
   test('renders', () => {
     const wrapper = getShallowWrapper();

@@ -1,0 +1,28 @@
+/*
+ * Copyright OpenSearch Contributors
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+.alertingTimechart {
+  display: block;
+  position: relative;
+
+  .series > rect {
+    fill-opacity: 0.5;
+    stroke-width: 1;
+  }
+
+  &__nonEnhanced {
+    border-bottom: $euiBorderThin;
+  }
+}
+
+.alertingHistogram {
+  display: flex;
+  height: 160px;
+}
+
+.alertingHistogram__header--partial {
+  font-weight: $euiFontWeightRegular;
+  min-width: $euiSize * 12;
+}

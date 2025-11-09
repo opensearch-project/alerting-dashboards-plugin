@@ -50,6 +50,7 @@ const MonitorDetails = ({
   plugins,
   detectorId,
   flyoutMode,
+  renderNewToggle,
 }) => {
   const anomalyDetectorContent =
     isAd && renderAnomalyDetector({ httpClient, values, detectorId, flyoutMode });
@@ -121,7 +122,15 @@ const MonitorDetails = ({
       )}
       {!flyoutMode && <EuiSpacer size="l" />}
       {values.monitor_type !== MONITOR_TYPE.COMPOSITE_LEVEL ? (
-        <Schedule isAd={isAd} flyoutMode={flyoutMode} />
+        <>
+          <Schedule isAd={isAd} flyoutMode={flyoutMode} />
+          {renderNewToggle && (
+            <>
+              <EuiSpacer size="m" />
+              {renderNewToggle}
+            </>
+          )}
+        </>
       ) : null}
     </Container>
   );
