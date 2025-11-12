@@ -62,7 +62,9 @@ export default function (services, router, dataSourceEnabled) {
   router.get(
     {
       path: '/api/alerting/_plugins',
-      validate: false,
+      validate: {
+        query: createValidateQuerySchema(dataSourceEnabled),
+      },
     },
     opensearchService.getPlugins
   );
@@ -70,7 +72,9 @@ export default function (services, router, dataSourceEnabled) {
   router.get(
     {
       path: '/api/alerting/_settings',
-      validate: false,
+      validate: {
+        query: createValidateQuerySchema(dataSourceEnabled),
+      },
     },
     opensearchService.getSettings
   );
@@ -78,7 +82,9 @@ export default function (services, router, dataSourceEnabled) {
   router.get(
     {
       path: '/api/alerting/_health',
-      validate: false,
+      validate: {
+        query: createValidateQuerySchema(dataSourceEnabled),
+      },
     },
     opensearchService.getClusterHealth
   );
