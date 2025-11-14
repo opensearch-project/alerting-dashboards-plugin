@@ -117,24 +117,9 @@ exports[`DashboardControls renders 1`] = `
             Active
           </option>
           <option
-            value="ACKNOWLEDGED"
-          >
-            Acknowledged
-          </option>
-          <option
-            value="COMPLETED"
-          >
-            Completed
-          </option>
-          <option
             value="ERROR"
           >
             Error
-          </option>
-          <option
-            value="DELETED"
-          >
-            Deleted
           </option>
         </select>
         <div

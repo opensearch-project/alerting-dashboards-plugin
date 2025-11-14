@@ -177,13 +177,9 @@ describe('CreateMonitor', () => {
 
   describe('onUpdate', () => {
     // Query-level monitor
-    test('calls updateMonitor with monitor', () => {
-      // const monitor = alertingFakes.randomMonitor();
-      // const trigger = alertingFakes.randomTrigger(TRIGGER_TYPE.QUERY_LEVEL);
-      // monitor.triggers = [trigger];
-      //
-      // submitValuesToMonitor(FORMIK_INITIAL_VALUES, )
-      const monitor = formikToMonitor(FORMIK_INITIAL_VALUES);
+    test('calls update API with monitor', () => {
+      // V2/PPL update uses httpClient.put
+      httpClientMock.put.mockResolvedValue({ ok: true, resp: { _id: 'test-id' } });
       const wrapper = shallow(
         <CreateMonitor
           httpClient={httpClientMock}
@@ -191,15 +187,16 @@ describe('CreateMonitor', () => {
           history={historyMock}
           setFlyout={setFlyout}
           updateMonitor={updateMonitor}
-          monitorToEdit={null}
+          monitorToEdit={{ _id: 'test-id', _seq_no: 1, _primary_term: 1 }}
           match={match}
           location={location}
           notifications={coreMock.notifications}
         />
       );
       wrapper.instance().onSubmit(FORMIK_INITIAL_VALUES, formikBag);
-      expect(updateMonitor).toHaveBeenCalledTimes(1);
-      expect(updateMonitor).toHaveBeenCalledWith(monitor);
+      expect(httpClientMock.put).toHaveBeenCalledTimes(1);
+      const callArgs = httpClientMock.put.mock.calls[0];
+      expect(callArgs[0]).toContain('api/alerting/v2/monitors/test-id');
     });
 
     test('logs error when updateMonitor rejects', async () => {
@@ -222,9 +219,9 @@ describe('CreateMonitor', () => {
       expect(error).toHaveBeenCalled();
     });
 
-    test('logs resp when ok:false', async () => {
-      const log = jest.spyOn(global.console, 'log');
-      updateMonitor.mockResolvedValue({ ok: false, resp: 'test' });
+    test('shows error toast when update fails', async () => {
+      // V2/PPL update uses httpClient.put
+      httpClientMock.put.mockResolvedValue({ ok: false, resp: 'test error message' });
       const wrapper = shallow(
         <CreateMonitor
           httpClient={httpClientMock}
@@ -232,7 +229,7 @@ describe('CreateMonitor', () => {
           history={historyMock}
           setFlyout={setFlyout}
           updateMonitor={updateMonitor}
-          monitorToEdit={null}
+          monitorToEdit={{ _id: 'test-id', _seq_no: 1, _primary_term: 1 }}
           match={match}
           location={location}
           notifications={coreMock.notifications}
@@ -240,14 +237,13 @@ describe('CreateMonitor', () => {
       );
       await wrapper.instance().onSubmit(FORMIK_INITIAL_VALUES, formikBag);
       await new Promise((r) => setTimeout(r, 100));
-      expect(log).toHaveBeenCalled();
-      expect(log).toHaveBeenCalledWith('Failed to update:', { ok: false, resp: 'test' });
+      // V2/PPL API uses toast notifications instead of console.log
+      expect(coreMock.notifications.toasts.addDanger).toHaveBeenCalled();
     });
   });
 
   describe('onCreate', () => {
     test('calls post with monitor', () => {
-      const monitor = formikToMonitor(FORMIK_INITIAL_VALUES);
       httpClientMock.post.mockResolvedValue({ ok: true, resp: { _id: 'id' } });
       const wrapper = shallow(
         <CreateMonitor
@@ -261,9 +257,11 @@ describe('CreateMonitor', () => {
       );
       wrapper.instance().onSubmit(FORMIK_INITIAL_VALUES, formikBag);
       expect(httpClientMock.post).toHaveBeenCalledTimes(1);
-      expect(httpClientMock.post).toHaveBeenCalledWith('../api/alerting/monitors', {
-        body: JSON.stringify(monitor),
-      });
+      // Now defaults to v2/PPL API with absolute path
+      const callArgs = httpClientMock.post.mock.calls[0];
+      expect(callArgs[0]).toBe('/api/alerting/v2/monitors');
+      expect(callArgs[1]).toMatchObject({ query: {} });
+      expect(callArgs[1].body).toContain('ppl_monitor');
     });
 
     test('logs error when updateMonitor rejects', async () => {
@@ -283,9 +281,8 @@ describe('CreateMonitor', () => {
       expect(error).toHaveBeenCalled();
     });
 
-    test('logs resp when ok:false', async () => {
-      const log = jest.spyOn(global.console, 'log');
-      httpClientMock.post.mockResolvedValue({ ok: false, resp: 'test' });
+    test('shows error toast when ok:false', async () => {
+      httpClientMock.post.mockResolvedValue({ ok: false, resp: 'test error message' });
       const wrapper = shallow(
         <CreateMonitor
           httpClient={httpClientMock}
@@ -298,8 +295,8 @@ describe('CreateMonitor', () => {
       );
       await wrapper.instance().onSubmit(FORMIK_INITIAL_VALUES, formikBag);
       await new Promise((r) => setTimeout(r, 100));
-      expect(log).toHaveBeenCalled();
-      expect(log).toHaveBeenCalledWith('Failed to create:', { ok: false, resp: 'test' });
+      // V2/PPL API uses toast notifications instead of console.log
+      expect(coreMock.notifications.toasts.addDanger).toHaveBeenCalled();
     });
   });
 });

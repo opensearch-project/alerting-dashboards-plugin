@@ -101,7 +101,7 @@ class DefineDocumentLevelTrigger extends Component {
 
     const dataSourceQuery = getDataSourceQueryObj();
     httpClient
-      .post('../api/alerting/monitors/_execute', {
+      .post('/api/alerting/monitors/_execute', {
         body: JSON.stringify(monitorToExecute),
         query: dataSourceQuery?.query,
       })

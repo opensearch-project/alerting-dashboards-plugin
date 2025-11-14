@@ -5,81 +5,106 @@
 
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import _ from 'lodash';
 import {
   Hint,
   XAxis,
   YAxis,
-  MarkSeries,
-  LineSeries,
   FlexibleXYPlot,
   VerticalRectSeries,
-  DiscreteColorLegend,
+  LineSeries,
 } from 'react-vis';
-import { SIZE_RANGE, ANNOTATION_STYLES, HINT_STYLES, LINE_STYLES } from './utils/constants';
+import { ANNOTATION_STYLES, HINT_STYLES } from './utils/constants';
 import {
   getLeftPadding,
-  getYTitle,
-  getXDomain,
   getYDomain,
   formatYAxisTick,
   getAnnotationData,
-  getDataFromResponse,
-  getMarkData,
-  getMapDataFromResponse,
   getRectData,
   computeBarWidth,
-  getAggregationGraphHint,
   getBufferedXDomain,
-  getGraphDescription,
 } from './utils/helpers';
-import { MONITOR_TYPE } from '../../../../utils/constants';
 import ContentPanel from '../../../../components/ContentPanel';
-import { selectOptionValueToText } from '../MonitorExpressions/expressions/utils/helpers';
-import { UNITS_OF_TIME } from '../MonitorExpressions/expressions/utils/constants';
 
 export default class VisualGraph extends Component {
   static defaultProps = { annotation: false };
 
   state = { hint: null };
 
-  onNearestX = (value) => {
-    this.setState({ hint: value });
+  // ---------- helpers (PPL-only) ----------
+
+  getHistogramBuckets = (response) =>
+    _.get(response, 'aggregations.ppl_histogram.buckets') ||
+    _.get(response, 'aggregations.count_over_time.buckets') ||
+    _.get(response, 'aggregations.date_histogram.buckets') ||
+    _.get(response, 'aggregations.combined_value.buckets') ||
+    [];
+
+  bucketsToSeries = (buckets) => {
+    if (!Array.isArray(buckets)) return [];
+    return buckets
+      .map((b) => {
+        const ts =
+          b.key_as_string ||
+          b.keyAsString ||
+          b.key ||
+          b.span ||
+          b.window ||
+          b.bucket;
+        const y =
+          Number(
+            b.doc_count ??
+              b.count ??
+              b['count()'] ??
+              b.total ??
+              b.value ??
+              0
+          ) || 0;
+
+        // coerce timestamp
+        const x =
+          ts instanceof Date
+            ? ts
+            : typeof ts === 'number'
+            ? new Date(ts)
+            : new Date(String(ts));
+
+        return Number.isFinite(x.getTime()) ? { x, y } : null;
+      })
+      .filter(Boolean)
+      .sort((a, b) => a.x - b.x);
   };
 
-  onValueMouseOver = (data, seriesName) => {
-    this.setState({ hint: { seriesName, data } });
-  };
+  resetHint = () => this.setState({ hint: null });
 
-  resetHint = () => {
-    this.setState({ hint: null });
-  };
+  // ---------- renderers ----------
 
-  renderXYPlot = (data) => {
+  renderBars = (data) => {
     const { annotation, thresholdValue, values } = this.props;
-    const { bucketValue, bucketUnitOfTime, groupBy, aggregations } = values;
-    const aggregationType = aggregations[0]?.aggregationType;
-    const fieldName = aggregations[0]?.fieldName;
     const { hint } = this.state;
 
-    const xDomain = getXDomain(data);
+    const xDomain = getBufferedXDomain(data, values);
     const yDomain = getYDomain(data);
     const annotations = getAnnotationData(xDomain, yDomain, thresholdValue);
-
-    const xTitle = values.timeField;
-    const yTitle = getYTitle(values);
     const leftPadding = getLeftPadding(yDomain);
-    const markData = getMarkData(data);
-    const title = aggregationType
-      ? `${aggregationType?.toUpperCase()} OF ${fieldName}`
-      : 'COUNT of documents';
-    const description = getGraphDescription(bucketValue, bucketUnitOfTime, groupBy);
+
+    // reasonable defaults for PPL-only graph
+    const xTitle = values?.timeField || 'Time';
+    const yTitle = '';
+
+    // width for single-series bars
+    let width = computeBarWidth(xDomain);
+    if (!Number.isFinite(width) || width <= 0) {
+      // fallback: ~1 hour in ms
+      width = 60 * 60 * 1000;
+    }
+    const rectData = getRectData(data, width, 0, 1);
 
     return (
       <ContentPanel
-        title={title}
+        title="Results"
         titleSize="s"
         panelStyles={{ paddingLeft: '10px' }}
-        description={description}
       >
         <FlexibleXYPlot
           height={400}
@@ -91,8 +116,10 @@ export default class VisualGraph extends Component {
         >
           <XAxis title={xTitle} />
           <YAxis title={yTitle} tickFormat={formatYAxisTick} />
-          <LineSeries data={data} style={LINE_STYLES} />
-          <MarkSeries data={markData} sizeRange={SIZE_RANGE} onNearestX={this.onNearestX} />
+          <VerticalRectSeries
+            data={rectData}
+            onValueMouseOver={(d) => this.setState({ hint: d })}
+          />
           {annotation && <LineSeries data={annotations} style={ANNOTATION_STYLES} />}
           {hint && (
             <Hint value={hint}>
@@ -104,72 +131,7 @@ export default class VisualGraph extends Component {
     );
   };
 
-  renderAggregationXYPlot = (data, groupedData) => {
-    const { annotation, thresholdValue, values, fieldName, aggregationType } = this.props;
-    const { hint } = this.state;
-    const xDomain = getBufferedXDomain(data, values);
-    const yDomain = getYDomain(data);
-    const annotations = getAnnotationData(xDomain, yDomain, thresholdValue);
-    const xTitle = values.timeField;
-    const yTitle = fieldName;
-    const leftPadding = getLeftPadding(yDomain);
-    const width = computeBarWidth(xDomain);
-
-    const title = aggregationType
-      ? `${aggregationType?.toUpperCase()} OF ${fieldName}`
-      : 'COUNT of documents';
-    const legends = groupedData.map((dataSeries) => dataSeries.key);
-
-    return (
-      <ContentPanel
-        title={title}
-        titleSize="s"
-        panelStyles={{ paddingLeft: '10px' }}
-        description={
-          <span>
-            FOR THE LAST {values.bucketValue}{' '}
-            {selectOptionValueToText(values.bucketUnitOfTime, UNITS_OF_TIME)}, GROUP BY{' '}
-            {`${values.groupBy}`}, Showing top 3 buckets.
-          </span>
-        }
-      >
-        <FlexibleXYPlot
-          height={400}
-          xType="time"
-          margin={{ top: 20, right: 20, bottom: 70, left: leftPadding }}
-          xDomain={xDomain}
-          yDomain={yDomain}
-          onMouseLeave={this.resetHint}
-        >
-          <XAxis title={xTitle} />
-          <YAxis title={yTitle} tickFormat={formatYAxisTick} />
-          <DiscreteColorLegend
-            style={{ position: 'absolute', right: '50px', top: '10px' }}
-            items={legends}
-          />
-          {groupedData.map((dataSeries, index, arr) => {
-            const rectData = getRectData(dataSeries.data, width, index, arr.length);
-            return (
-              <VerticalRectSeries
-                key={`vertical-rect-${index}`}
-                className={dataSeries.key}
-                data={rectData}
-                onValueMouseOver={(d) => this.onValueMouseOver(d, dataSeries.key)}
-              />
-            );
-          })}
-          {annotation && <LineSeries data={annotations} style={ANNOTATION_STYLES} />}
-          {hint && (
-            <Hint value={hint}>
-              <div style={HINT_STYLES}>{getAggregationGraphHint(hint)}</div>
-            </Hint>
-          )}
-        </FlexibleXYPlot>
-      </ContentPanel>
-    );
-  };
-
-  renderEmptyData = () => (
+  renderEmpty = () => (
     <div
       style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '450px' }}
     >
@@ -177,27 +139,23 @@ export default class VisualGraph extends Component {
     </div>
   );
 
-  render() {
-    const { values, response, fieldName, aggregationType } = this.props;
-    const monitorType = values.monitor_type;
-    const isQueryMonitor = monitorType === MONITOR_TYPE.QUERY_LEVEL;
-    const aggTypeFieldName = `${aggregationType}_${fieldName}`;
-    const data = getDataFromResponse(response, aggTypeFieldName, monitorType);
-    const groupedData = isQueryMonitor
-      ? null
-      : getMapDataFromResponse(response, aggTypeFieldName, values.groupBy);
-    // Show empty graph view when data is empty or aggregation monitor does not have group by defined.
-    const showEmpty = !data.length || (!isQueryMonitor && !values.groupBy.length);
+  // ---------- main ----------
 
-    if (showEmpty) return <>{this.renderEmptyData()}</>;
-    else if (isQueryMonitor) return <>{this.renderXYPlot(data)}</>;
-    else return <>{this.renderAggregationXYPlot(data, groupedData)}</>;
+  render() {
+    const { response } = this.props;
+
+    // PPL-only: read buckets and render bars
+    const buckets = this.getHistogramBuckets(response);
+    const data = this.bucketsToSeries(buckets);
+
+    if (!data.length) return this.renderEmpty();
+    return this.renderBars(data);
   }
 }
 
 VisualGraph.propTypes = {
-  response: PropTypes.object,
+  response: PropTypes.object,       // expects aggregations.*.buckets
   annotation: PropTypes.bool.isRequired,
-  thresholdValue: PropTypes.number,
-  values: PropTypes.object.isRequired,
+  thresholdValue: PropTypes.number,  // draws horizontal annotation line if provided
+  values: PropTypes.object.isRequired, // monitorValues; only lightly used (x-axis title, padding)
 };

@@ -3,6 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+import React from 'react';
 import { ALERTS_NAV_ID, DESTINATIONS_NAV_ID, MONITORS_NAV_ID, PLUGIN_NAME } from '../utils/constants';
 import {
   Plugin,
@@ -13,7 +14,9 @@ import {
   AppMountParameters,
   DEFAULT_APP_CATEGORIES,
   AppUpdater,
+  OverlayRef,
 } from '../../../src/core/public';
+import { toMountPoint } from '../../../src/plugins/opensearch_dashboards_react/public';
 import { ACTION_ALERTING } from './actions/alerting_dashboard_action';
 import { CONTEXT_MENU_TRIGGER, EmbeddableStart } from '../../../src/plugins/embeddable/public';
 import { getActions, getAdAction } from './utils/contextMenu/actions';
@@ -21,23 +24,29 @@ import { alertingTriggerAd } from './utils/contextMenu/triggers';
 import { ExpressionsSetup } from '../../../src/plugins/expressions/public';
 import { UiActionsSetup } from '../../../src/plugins/ui_actions/public';
 import { overlayAlertsFunction } from './expressions/overlay_alerts';
-import { setClient, setEmbeddable, setNotifications, setOverlays, setSavedAugmentVisLoader, setUISettings, setQueryService, setSavedObjectsClient, setDataSourceEnabled, setDataSourceManagementPlugin, setNavigationUI, setApplication, setContentManagementStart, setAssistantDashboards, setAssistantClient } from './services';
+import { setClient, setEmbeddable, setNotifications, setOverlays, setSavedAugmentVisLoader, setUISettings, setQueryService, setSavedObjectsClient, setDataSourceEnabled, setDataSourceManagementPlugin, setNavigationUI, setApplication, setContentManagementStart, setAssistantDashboards, setAssistantClient, isPplAlertingEnabled } from './services';
 import { VisAugmenterStart } from '../../../src/plugins/vis_augmenter/public';
 import { DataPublicPluginStart } from '../../../src/plugins/data/public';
 import { AssistantSetup, AssistantPublicPluginStart  } from './types';
 import { DataSourceManagementPluginSetup } from '../../../src/plugins/data_source_management/public';
 import { DataSourcePluginSetup } from '../../../src/plugins/data_source/public';
 import { NavigationPublicPluginStart } from '../../../src/plugins/navigation/public';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 import { dataSourceObservable } from './pages/utils/constants';
 import { ContentManagementPluginStart } from '../../../src/plugins/content_management/public';
 import { registerAlertsCard } from './utils/helpers';
+import type { ExplorePluginSetup, ExplorePluginStart } from '../../../src/plugins/explore/public';
+import { ResultStatus } from '../../../src/plugins/data/public';
+import { CreateMonitorFlyout } from './components/CreateMonitorFlyout';
+import { CoreContext } from './utils/CoreContext';
 
 declare module '../../../src/plugins/ui_actions/public' {
   export interface ActionContextMapping {
     [ACTION_ALERTING]: {};
   }
 }
+
+let navigateToAppRef: CoreStart['application']['navigateToApp'] | null = null;
 
 export interface AlertingSetup { }
 
@@ -49,6 +58,7 @@ export interface AlertingSetupDeps {
   dataSourceManagement: DataSourceManagementPluginSetup;
   dataSource: DataSourcePluginSetup;
   assistantDashboards?: AssistantSetup;
+  explore?: ExplorePluginSetup;
 }
 
 export interface AlertingStartDeps {
@@ -58,6 +68,7 @@ export interface AlertingStartDeps {
   navigation: NavigationPublicPluginStart;
   contentManagement: ContentManagementPluginStart;
   assistantDashboards?: AssistantPublicPluginStart;
+  explore?: ExplorePluginStart;
 }
 
 export class AlertingPlugin implements Plugin<void, AlertingStart, AlertingSetupDeps, AlertingStartDeps> {
@@ -77,14 +88,18 @@ export class AlertingPlugin implements Plugin<void, AlertingStart, AlertingSetup
   };
 
   private appStateUpdater = new BehaviorSubject<AppUpdater>(this.updateDefaultRouteOfManagementApplications);
+  private appStateUpdater$: Observable<AppUpdater> = this.appStateUpdater.asObservable();
+  private startServicesPromise!: ReturnType<CoreSetup['getStartServices']>;
 
 
-  public setup(core: CoreSetup<AlertingStartDeps, AlertingStart>, { expressions, uiActions, dataSourceManagement, dataSource, assistantDashboards }: AlertingSetupDeps) {
+  public setup(core: CoreSetup<AlertingStartDeps, AlertingStart>, { expressions, uiActions, dataSourceManagement, dataSource, assistantDashboards, explore }: AlertingSetupDeps) {
+
+    this.startServicesPromise = core.getStartServices();
 
     const mountWrapper = async (params: AppMountParameters, redirect: string) => {
       const { renderApp } = await import("./app");
-      const [coreStart] = await core.getStartServices();
-      return renderApp(coreStart, params, redirect);
+      const [coreStart, depsStart] = await core.getStartServices();
+      return renderApp(coreStart, depsStart, params, redirect);
     };
     core.application.register({
       id: PLUGIN_NAME,
@@ -98,8 +113,8 @@ export class AlertingPlugin implements Plugin<void, AlertingStart, AlertingSetup
       order: 4000,
       mount: async (params) => {
         const { renderApp } = await import('./app');
-        const [coreStart] = await core.getStartServices();
-        return renderApp(coreStart, params);
+        const [coreStart, depsStart] = await core.getStartServices();
+        return renderApp(coreStart, depsStart, params);
       },
     });
 
@@ -135,7 +150,7 @@ export class AlertingPlugin implements Plugin<void, AlertingStart, AlertingSetup
         title: 'Alerts',
         order: 9070,
         category: DEFAULT_APP_CATEGORIES.detect,
-        updater$: this.appStateUpdater,
+        updater$: this.appStateUpdater$ as any,
         mount: async (params: AppMountParameters) => {
           return mountWrapper(params, "/dashboard");
         },
@@ -146,7 +161,7 @@ export class AlertingPlugin implements Plugin<void, AlertingStart, AlertingSetup
         title: 'Monitors',
         order: 9070,
         category: DEFAULT_APP_CATEGORIES.detect,
-        updater$: this.appStateUpdater,
+        updater$: this.appStateUpdater$ as any,
         mount: async (params: AppMountParameters) => {
           return mountWrapper(params, "/monitors");
         },
@@ -157,7 +172,7 @@ export class AlertingPlugin implements Plugin<void, AlertingStart, AlertingSetup
         title: 'Destinations',
         order: 9070,
         category: DEFAULT_APP_CATEGORIES.detect,
-        updater$: this.appStateUpdater,
+        updater$: this.appStateUpdater$ as any,
         mount: async (params: AppMountParameters) => {
           return mountWrapper(params, "/destinations");
         },
@@ -228,9 +243,88 @@ export class AlertingPlugin implements Plugin<void, AlertingStart, AlertingSetup
     const adAction = getAdAction();
     uiActions.registerTrigger(alertingTriggerAd);
     uiActions.addTriggerAction(alertingTriggerAd.id, adAction);
+
+    /**
+     * Register a flyout action in Explore's Query Panel "Actions" menu
+     * that opens an inline monitor creation flyout with the PPL query pre-filled.
+     * Only register if the explore plugin is available.
+     */
+    const isExploreEnabled = !!explore;
+    if (isExploreEnabled) {
+      explore.queryPanelActionsRegistry.register({
+        id: 'alerting-create-monitor-from-explore',
+        order: 1,
+        getIsEnabled: (deps) => {
+          if (!isPplAlertingEnabled()) {
+            return false;
+          }
+          // Allow monitor creation for READY, NO_RESULTS, and ERROR statuses
+          const allowedStatuses = [ResultStatus.READY, ResultStatus.NO_RESULTS, ResultStatus.ERROR];
+          const isStatusAllowed = allowedStatuses.includes(deps.resultStatus.status);
+
+          // Check if data source is AOSS collection - if so, disable the button
+          const isAOSSCollection = deps.query?.dataset?.dataSource?.type === 'OpenSearch Serverless';
+
+          return isStatusAllowed && !isAOSSCollection;
+        },
+        getLabel: () => 'Create monitor',
+        getIcon: () => 'bell',
+        onClick: async (deps) => {
+          const actionsButton = document.querySelector<HTMLButtonElement>(
+            '[data-test-subj="queryPanelFooterActionsButton"]'
+          );
+          if (actionsButton) {
+            const triggerClose = () => {
+            actionsButton.click();
+            };
+            if (typeof requestAnimationFrame === 'function') {
+              requestAnimationFrame(triggerClose);
+            } else {
+              setTimeout(triggerClose, 0);
+            }
+          }
+          const [coreStart, depsStart] = await this.startServicesPromise;
+          if (!isPplAlertingEnabled()) {
+            return;
+          }
+          const { overlays, http, notifications, chrome, uiSettings, i18n } = coreStart;
+          const services = {
+            ...(coreStart as unknown as Record<string, unknown>),
+            ...(depsStart as unknown as Record<string, unknown>),
+          };
+          const contextValue = {
+            http,
+            isDarkMode: uiSettings.get('theme:darkMode'),
+            notifications,
+            chrome,
+            defaultRoute: '/',
+            data: (depsStart as any)?.data,
+            services,
+          };
+          const queryInEditor =
+            (deps.query as any)?.query ?? (deps.query as any)?.queryString ?? '';
+          let flyoutSession: OverlayRef | undefined;
+          const flyoutContent = (
+            <CoreContext.Provider value={contextValue}>
+              <CreateMonitorFlyout
+                closeFlyout={() => flyoutSession?.close()}
+                dependencies={{
+                  query: deps.query,
+                  resultStatus: deps.resultStatus,
+                  queryInEditor,
+                }}
+                services={services}
+              />
+            </CoreContext.Provider>
+          );
+          flyoutSession = overlays.openFlyout(toMountPoint(flyoutContent));
+        },
+      });
+    }
   }
 
-  public start(core: CoreStart, { visAugmenter, embeddable, data, navigation, contentManagement, assistantDashboards }: AlertingStartDeps): AlertingStart {
+  public start(core: CoreStart, { visAugmenter, embeddable, data, navigation, contentManagement, assistantDashboards}: AlertingStartDeps): AlertingStart {
+    navigateToAppRef = core.application.navigateToApp;
     setEmbeddable(embeddable);
     setOverlays(core.overlays);
     setQueryService(data.query);
@@ -242,6 +336,7 @@ export class AlertingPlugin implements Plugin<void, AlertingStart, AlertingSetup
     setContentManagementStart(contentManagement);
     registerAlertsCard();
     setAssistantClient(assistantDashboards?.assistantClient || {agentConfigExists: (agentConfigName: string | string[], options?: string) => {return Promise.resolve({ exists: false });}})
+
     return {};
   }
 }

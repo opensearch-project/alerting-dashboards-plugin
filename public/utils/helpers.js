@@ -34,9 +34,21 @@ export const ignoreEscape = (eventHandler) => (event) => {
 
 // A helper function that shows toast messages for backend errors.
 export const backendErrorNotification = (notifications, actionName, objectName, errorMessage) => {
+  // Ensure errorMessage is a string, not an Error object
+  let messageText = errorMessage;
+  if (errorMessage instanceof Error) {
+    messageText = errorMessage.message || String(errorMessage);
+  } else if (typeof errorMessage === 'object') {
+    messageText = errorMessage?.message || errorMessage?.body?.message || JSON.stringify(errorMessage);
+  } else if (errorMessage) {
+    messageText = String(errorMessage);
+  } else {
+    messageText = 'An unknown error occurred';
+  }
+
   notifications.toasts.addDanger({
     title: `Failed to ${actionName} the ${objectName}`,
-    text: errorMessage,
+    text: messageText,
     toastLifeTimeMs: 20000, // the default lifetime for toasts is 10 sec
   });
 };

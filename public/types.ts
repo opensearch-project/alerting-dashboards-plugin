@@ -11,3 +11,13 @@
 // @ts-ignore
 export type { AssistantSetup } from '../../dashboards-assistant/public';
 export type { AssistantPublicPluginStart } from '../../dashboards-assistant/public/';
+
+/**
+ * Introduce a compile dependency on explore
+ * as alerting needs query transformation utilities from the plugin.
+ * It will give a type error when explore is not installed so add a ts-ignore to suppress the error.
+ */
+// @ts-ignore
+export type { ExplorePluginSetup, ExplorePluginStart } from '../../../src/plugins/explore/public';
+// @ts-ignore
+export type { QueryWithQueryAsString } from '../../../src/plugins/explore/public';

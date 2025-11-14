@@ -51,7 +51,7 @@ exports[`Triggers renders 1`] = `
         },
       ]
     }
-    key="0"
+    key="table-1234567890000-0.5"
     noItemsMessage="There are no triggers."
     onTableChange={[Function]}
     responsive={true}

@@ -8,7 +8,7 @@ import _ from 'lodash';
 import { INDEX } from '../../utils/constants';
 import { isIndexNotFoundError } from './utils/helpers';
 import { MDSEnabledClientService } from './MDSEnabledClientService';
-import { DEFAULT_HEADERS } from "./utils/constants";
+import { DEFAULT_HEADERS } from './utils/constants';
 
 export default class MonitorService extends MDSEnabledClientService {
   createMonitor = async (context, req, res) => {
@@ -484,13 +484,13 @@ export default class MonitorService extends MDSEnabledClientService {
       if (isIndexNotFoundError(err)) {
         // Config index is not created unitl a monitor is created.
         return res.ok({
-          body: { 
-            ok: false, 
-            resp: { 
-              totalMonitors: 0, 
+          body: {
+            ok: false,
+            resp: {
+              totalMonitors: 0,
               monitors: [],
-              message: "No monitors created"
-            } 
+              message: 'No monitors created',
+            },
           },
         });
       } else {
@@ -607,13 +607,13 @@ export default class MonitorService extends MDSEnabledClientService {
       if (isIndexNotFoundError(err)) {
         // Config index is not created unitl a monitor is created.
         return res.ok({
-          body: { 
-            ok: false, 
-            resp: { 
-              totalMonitors: 0, 
+          body: {
+            ok: false,
+            resp: {
+              totalMonitors: 0,
               monitors: [],
-              message: "No monitors created"
-            } 
+              message: 'No monitors created',
+            },
           },
         });
       } else {
@@ -625,7 +625,7 @@ export default class MonitorService extends MDSEnabledClientService {
             resp: err.message,
           },
         });
-      } 
+      }
     }
   };
 }

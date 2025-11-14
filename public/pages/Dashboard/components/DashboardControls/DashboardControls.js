@@ -26,10 +26,7 @@ const severityOptions = [
 const stateOptions = [
   { value: 'ALL', text: 'All alerts' },
   { value: ALERT_STATE.ACTIVE, text: 'Active' },
-  { value: ALERT_STATE.ACKNOWLEDGED, text: 'Acknowledged' },
-  { value: ALERT_STATE.COMPLETED, text: 'Completed' },
   { value: ALERT_STATE.ERROR, text: 'Error' },
-  { value: ALERT_STATE.DELETED, text: 'Deleted' },
 ];
 
 const DashboardControls = ({
@@ -85,8 +82,8 @@ const DashboardControls = ({
           data-test-subj={'dashboardAlertStateFilter'}
         />
       </EuiFlexItem>
-      {alertActions.map((action, idx) => (
-        <EuiFlexItem grow={false}>{action}</EuiFlexItem>
+      {alertActions && alertActions.map((action, idx) => (
+        <EuiFlexItem key={idx} grow={false}>{action}</EuiFlexItem>
       ))}
     </EuiFlexGroup>
   );

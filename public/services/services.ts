@@ -71,6 +71,12 @@ export const [getNavigationUI, setNavigationUI] = createGetterSetter<NavigationP
 
 export const [getApplication, setApplication] = createGetterSetter<CoreStart['application']>('application');
 
+export const isPplAlertingEnabled = () => {
+  const application = getApplication();
+  const capabilities = application?.capabilities as Record<string, any> | undefined;
+  return !!capabilities?.alertingDashboards?.pplV2;
+};
+
 export const getUseUpdatedUx = () => {
   return getUISettings().get('home:useNewHomePage', false);
 };

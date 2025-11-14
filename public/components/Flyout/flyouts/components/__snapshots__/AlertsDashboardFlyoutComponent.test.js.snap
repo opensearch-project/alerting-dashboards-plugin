@@ -114,7 +114,7 @@ exports[`AlertsDashboardFlyoutComponent renders 1`] = `
             }
           }
         >
-          -
+          Loading conditions...
         </p>
       </EuiText>
     </EuiFlexItem>
@@ -146,7 +146,7 @@ exports[`AlertsDashboardFlyoutComponent renders 1`] = `
             Filters
           </strong>
           <p>
-            -
+            Loading filters...
           </p>
         </EuiText>
       </EuiFlexItem>
@@ -159,7 +159,7 @@ exports[`AlertsDashboardFlyoutComponent renders 1`] = `
             Group by
           </strong>
           <p>
-            -
+            Loading groups...
           </p>
         </EuiText>
       </EuiFlexItem>
@@ -175,17 +175,7 @@ exports[`AlertsDashboardFlyoutComponent renders 1`] = `
     size="xxl"
   />
   <ContentPanel
-    actions={
-      Array [
-        <EuiSmallButton
-          data-test-subj="flyoutAcknowledgeAlertsButton"
-          disabled={true}
-          onClick={[Function]}
-        >
-          Acknowledge
-        </EuiSmallButton>,
-      ]
-    }
+    actions={Array []}
     bodyStyles={
       Object {
         "padding": "initial",
@@ -216,49 +206,35 @@ exports[`AlertsDashboardFlyoutComponent renders 1`] = `
         Array [
           Object {
             "dataType": "date",
-            "field": "start_time",
-            "name": "Alert start time",
+            "field": "triggered_time",
+            "name": "Alert triggered time",
             "render": [Function],
             "sortable": true,
             "truncateText": false,
           },
           Object {
-            "dataType": "date",
-            "field": "end_time",
-            "name": "Alert end time",
+            "align": "right",
+            "dataType": "string",
+            "field": "query_results",
+            "name": "",
             "render": [Function],
-            "sortable": true,
-            "truncateText": false,
-          },
-          Object {
-            "field": "state",
-            "name": "State",
-            "render": [Function],
-            "sortable": false,
-            "truncateText": false,
-          },
-          Object {
-            "dataType": "date",
-            "field": "acknowledged_time",
-            "name": "Time acknowledged",
-            "render": [Function],
-            "sortable": true,
-            "truncateText": false,
           },
         ]
       }
       data-test-subj="alertsDashboardFlyout_table_undefined"
       hasActions={true}
-      isSelectable={true}
+      isExpandable={true}
+      isSelectable={false}
       itemId={[Function]}
+      itemIdToExpandedRowMap={Object {}}
       items={Array []}
-      loading={false}
-      noItemsMessage="No alerts."
+      loading={true}
+      noItemsMessage="Loading alerts..."
       onChange={[Function]}
       pagination={
         Object {
           "pageIndex": 0,
-          "pageSize": 10,
+          "pageSize": 5,
           "pageSizeOptions": Array [
             5,
             10,
@@ -269,14 +245,6 @@ exports[`AlertsDashboardFlyoutComponent renders 1`] = `
         }
       }
       responsive={true}
-      selection={
-        Object {
-          "initialSelected": Array [],
-          "onSelectionChange": [Function],
-          "selectable": [Function],
-          "selectableMessage": [Function],
-        }
-      }
       sorting={
         Object {
           "sort": Object {
