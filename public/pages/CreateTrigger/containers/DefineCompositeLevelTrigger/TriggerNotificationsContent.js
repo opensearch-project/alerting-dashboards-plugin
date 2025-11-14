@@ -49,7 +49,7 @@ const TriggerNotificationsContent = ({
       name: selectedOptions[0]?.label,
       subject_template: {
         lang: 'mustache',
-        source: 'Monitor {{ctx.monitor.name}} triggered an alert {{ctx.trigger.name}}',
+        source: 'Monitor {{ctx.monitorV2.name}} triggered an alert {{ctx.trigger.name}}',
       },
       action_execution_policy: {
         action_execution_scope: NOTIFY_OPTIONS_VALUES.PER_ALERT,

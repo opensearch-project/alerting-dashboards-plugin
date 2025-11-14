@@ -50,6 +50,11 @@ export const FORMIK_INITIAL_VALUES = {
   /* DEFINE MONITOR */
   monitor_type: MONITOR_TYPE.QUERY_LEVEL,
   searchType: 'graph',
+  pplQuery: '',              // <-- new editor value for PPL mode
+  pplPreviewResult: null,    // <-- optional, for Preview panel state
+  pplPreviewError: null,     // <-- optional, for Preview error state
+  suppress: { enabled: false, value: 24, unit: 'hours' },
+  expires:  { value: 24, unit: 'hours' },
   clusterNames: [],
   uri: {
     api_type: '',
@@ -60,6 +65,7 @@ export const FORMIK_INITIAL_VALUES = {
   },
   index: [],
   timeField: '',
+  timestampField: '@timestamp', // <-- timestamp field for PPL look back window
   query: MATCH_ALL_QUERY,
   queries: [],
   description: '',
@@ -79,6 +85,9 @@ export const FORMIK_INITIAL_VALUES = {
   associatedMonitorsList: [],
   associatedMonitorsEditor: '',
   preventVisualEditor: false,
+
+  /* MODE TOGGLE */
+  monitor_mode: 'ppl', // 'legacy' | 'ppl' - default to v2/PPL mode
 };
 
 if (dataSourceEnabled()) {

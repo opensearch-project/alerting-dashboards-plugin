@@ -14,16 +14,55 @@ import {
 import { conditionToExpressions } from '../../../../CreateTrigger/utils/helper';
 
 // Convert Monitor JSON to Formik values used in UI forms
-export default function monitorToFormik(monitor) {
+export default function monitorToFormik(monitorIn) {
   const formikValues = _.cloneDeep(FORMIK_INITIAL_VALUES);
-  if (!monitor) return formikValues;
+  if (!monitorIn) return formikValues;
+  
+  // Accept v2 wrappers transparently (try both camelCase and snake_case)
+  const monitor =
+    monitorIn?.monitor_v2?.ppl_monitor ||
+    monitorIn?.monitorV2?.ppl_monitor ||
+    monitorIn?.ppl_monitor ||
+    monitorIn ||
+    {};
+  if (!monitor || Object.keys(monitor).length === 0) return formikValues;
+  
+  // Parse schedule - handle both cron and period schedules
+  let cronExpression = formikValues.cronExpression;
+  let timezone;
+  let scheduleFromMetadata = {};
+  
+  // Try to extract schedule data
+  const scheduleObj = monitor.schedule || {};
+  const uiMetadata = monitor.ui_metadata || {};
+  
+  if (scheduleObj.cron) {
+    cronExpression = scheduleObj.cron.expression || formikValues.cronExpression;
+    timezone = scheduleObj.cron.timezone;
+    scheduleFromMetadata = uiMetadata.schedule || {};
+  } else if (scheduleObj.period) {
+    // Handle period-based schedule
+    const interval = scheduleObj.period.interval || 1;
+    const unit = (scheduleObj.period.unit || 'MINUTES').toUpperCase();
+    
+    scheduleFromMetadata = {
+      frequency: 'interval',
+      period: {
+        interval: interval,
+        unit: unit,
+      },
+    };
+  } else {
+    // Fallback to ui_metadata schedule
+    scheduleFromMetadata = uiMetadata.schedule || {};
+  }
+  
   const {
     name,
     monitor_type,
     enabled,
-    schedule: { cron: { expression: cronExpression = formikValues.cronExpression, timezone } = {} },
-    inputs,
-    ui_metadata: { schedule = {}, search = {} } = {},
+    inputs = [],
+    ui_metadata: { search = {} } = {},
     monitorOptions = [],
   } = monitor;
   // Default searchType to query, because if there is no ui_metadata or search then it was created through API or overwritten by API
@@ -58,12 +97,40 @@ export default function monitorToFormik(monitor) {
           searchType: preventVisualEditor ? 'query' : 'graph',
         };
       default:
-        return {
-          index: indicesToFormik(inputs[0].search.indices),
-          query: JSON.stringify(inputs[0].search.query, null, 4),
-        };
+      const idx = inputs?.[0]?.search?.indices || [];
+      const q = inputs?.[0]?.search?.query ?? {};
+      return {
+        index: indicesToFormik(idx),
+        query: JSON.stringify(q, null, 4),
+      };
     }
   };
+
+  // Extract PPL-specific fields if present
+  const pplQuery = monitor.query || '';
+  const timestampField = monitor.timestamp_field || '@timestamp';
+  const description = monitor.description || '';
+  
+  // Parse look_back_window (in minutes) back to formik format
+  // Support both old and new field names
+  let lookBackFormik = {};
+  const lookBackMinutes = monitor.look_back_window_minutes ?? monitor.look_back_window;
+  if (lookBackMinutes) {
+    const minutes = lookBackMinutes;
+    lookBackFormik.useLookBackWindow = true;
+    
+    // Convert back to friendly units
+    if (minutes >= 1440 && minutes % 1440 === 0) {
+      lookBackFormik.lookBackAmount = minutes / 1440;
+      lookBackFormik.lookBackUnit = 'days';
+    } else if (minutes >= 60 && minutes % 60 === 0) {
+      lookBackFormik.lookBackAmount = minutes / 60;
+      lookBackFormik.lookBackUnit = 'hours';
+    } else {
+      lookBackFormik.lookBackAmount = minutes;
+      lookBackFormik.lookBackUnit = 'minutes';
+    }
+  }
 
   return {
     /* INITIALIZE WITH DEFAULTS */
@@ -71,10 +138,11 @@ export default function monitorToFormik(monitor) {
 
     /* CONFIGURE MONITOR */
     name,
+    description,
     disabled: !enabled,
 
     /* This will overwrite the fields in use by Monitor from ui_metadata */
-    ...schedule,
+    ...scheduleFromMetadata,
     cronExpression,
 
     /* DEFINE MONITOR */
@@ -86,6 +154,11 @@ export default function monitorToFormik(monitor) {
     timezone: timezone ? [{ label: timezone }] : [],
     detectorId: isAD ? _.get(inputs, INPUTS_DETECTOR_ID) : undefined,
     adResultIndex: isAD ? _.get(inputs, '0.search.indices.0') : undefined,
+
+    /* PPL-specific fields */
+    ...(pplQuery ? { pplQuery } : {}),
+    ...(monitor.timestamp_field ? { timestampField } : {}),
+    ...lookBackFormik,
   };
 }
 

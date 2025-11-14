@@ -21,8 +21,18 @@ import {
   DOC_LEVEL_INPUT_FIELD,
   DOC_LEVEL_QUERY_MAP,
 } from '../../../components/DocumentLevelMonitorQueries/utils/constants';
+import { buildPPLMonitorFromFormik } from './helpers';
+
+// NOTE: All PPL monitor/trigger building logic has been consolidated into helpers.js
+// This file now only handles legacy monitor conversion
 
 export function formikToMonitor(values) {
+  // PPL Monitor V2 - use consolidated helper from helpers.js
+  if (values.monitor_mode === 'ppl') {
+    return buildPPLMonitorFromFormik(values);
+  }
+  
+  // Legacy Monitor V1 
   const uiSchedule = formikToUiSchedule(values);
   const schedule = buildSchedule(values.frequency, uiSchedule);
 
@@ -53,13 +63,13 @@ export function formikToMonitor(values) {
       enabled: !values.disabled,
       monitor_type: MONITOR_TYPE.COMPOSITE_LEVEL,
       workflow_type: MONITOR_TYPE.COMPOSITE_LEVEL,
-      schema_version: 0,
+      //schema_version: 0,
       name: values.name,
       schedule,
       inputs: [formikToInputs(values)],
       triggers: [],
       ui_metadata: {
-        schedule: uiSchedule,
+        schedule: formikToUiSchedule(values),
         monitor_type: values.monitor_type,
         ...monitorUiMetadata(),
       },
@@ -75,7 +85,7 @@ export function formikToMonitor(values) {
     inputs: [formikToInputs(values)],
     triggers: [],
     ui_metadata: {
-      schedule: uiSchedule,
+      schedule: formikToUiSchedule(values),
       monitor_type: values.monitor_type,
       ...monitorUiMetadata(),
     },
@@ -221,10 +231,7 @@ export function formikToQuery(values) {
 export function formikToExtractionQuery(values) {
   let query = _.get(values, 'query', FORMIK_INITIAL_VALUES.query);
   try {
-    // JSON.parse() throws an exception when the argument is a malformed JSON string.
-    // This caused exceptions when tinkering with the JSON in the code editor.
-    // This try/catch block will only parse the JSON string if it is not malformed.
-    // It will otherwise store the JSON as a string for continued editing.
+    // Parse if valid; otherwise keep as string for editor
     query = JSON.parse(query);
   } catch (err) {}
   return query;
@@ -267,46 +274,35 @@ export function formikToGraphQuery(values) {
 }
 
 export function formikToDocLevelInput(values) {
-  let description = FORMIK_INITIAL_VALUES.description;
-  let indices = formikToIndices(values);
-  let queries = _.get(values, 'queries', FORMIK_INITIAL_VALUES.queries);
-  switch (values.searchType) {
-    case SEARCH_TYPE.GRAPH:
-      description = values.description;
-      queries = queries.map((query) => {
-        const formikToQuery = DOC_LEVEL_QUERY_MAP[query.operator].query(query);
-        return {
-          id: query.id,
-          name: query.queryName,
-          query: formikToQuery,
-          tags: query.tags,
-        };
-      });
-      break;
-    case SEARCH_TYPE.QUERY:
-      let query = _.get(values, 'query', '');
-      try {
-        query = JSON.parse(query);
-        description = _.get(query, 'description', description);
-        queries = _.get(query, 'queries', queries);
-      } catch (e) {
-        /* Ignore JSON parsing errors as users may just be configuring the query */
-      }
-      break;
-    default:
-      console.log(
-        `Unsupported searchType found for ${MONITOR_TYPE.DOC_LEVEL}: ${JSON.stringify(
-          values.searchType
-        )}`,
-        values.searchType
-      );
-  }
-
   return {
     [DOC_LEVEL_INPUT_FIELD]: {
-      description: description,
-      indices: indices,
-      queries: queries,
+      description: FORMIK_INITIAL_VALUES.description,
+      indices: formikToIndices(values),
+      queries: (() => {
+        switch (values.searchType) {
+          case SEARCH_TYPE.GRAPH:
+            return _.get(values, 'queries', FORMIK_INITIAL_VALUES.queries).map((query) => {
+              const formikToQuery = DOC_LEVEL_QUERY_MAP[query.operator].query(query);
+              return {
+                id: query.id,
+                name: query.queryName,
+                query: formikToQuery,
+                tags: query.tags,
+              };
+            });
+          case SEARCH_TYPE.QUERY: {
+            let query = _.get(values, 'query', '');
+            try {
+              query = JSON.parse(query);
+              return _.get(query, 'queries', FORMIK_INITIAL_VALUES.queries);
+            } catch (e) {
+              return _.get(values, 'queries', FORMIK_INITIAL_VALUES.queries);
+            }
+          }
+          default:
+            return _.get(values, 'queries', FORMIK_INITIAL_VALUES.queries);
+        }
+      })(),
     },
   };
 }
@@ -327,9 +323,7 @@ export function formikToCompositeAggregation(values) {
 
   let aggs = {};
   aggregations.map((aggItem) => {
-    // TODO: Changing any occurrence of '.' in the fieldName to '_' since the
-    //  bucketSelector uses the '.' syntax to resolve aggregation paths.
-    //  Should revisit this as replacing with `_` could cause collisions with fields named like that.
+    // Replace '.' with '_' to avoid bucket path issues
     const name = `${aggItem.aggregationType}_${aggItem.fieldName.replace(/\./g, '_')}`;
     const type = aggItem.aggregationType === 'count' ? 'value_count' : aggItem.aggregationType;
     aggs[name] = {
@@ -465,9 +459,6 @@ export function formikToUiCompositeAggregation(values) {
 
   let aggs = {};
   aggregations.map((aggItem) => {
-    // TODO: Changing any occurrence of '.' in the fieldName to '_' since the
-    //  bucketSelector uses the '.' syntax to resolve aggregation paths.
-    //  Should revisit this as replacing with `_` could cause collisions with fields named like that.
     const name = `${aggItem.aggregationType}_${aggItem.fieldName.replace(/\./g, '_')}`;
     const type = aggItem.aggregationType === 'count' ? 'value_count' : aggItem.aggregationType;
     aggs[name] = {
@@ -522,7 +513,7 @@ export function buildSchedule(scheduleType, values) {
     period,
     daily,
     weekly,
-    monthly: { type, day },
+    monthly: { type, day } = {},
     cronExpression,
     timezone,
   } = values;
@@ -534,9 +525,9 @@ export function buildSchedule(scheduleType, values) {
       return { cron: { expression: `0 ${daily} * * *`, timezone } };
     }
     case 'weekly': {
-      const daysOfWeek = Object.entries(weekly)
-        .filter(([day, checked]) => checked)
-        .map(([day]) => day.toUpperCase())
+      const daysOfWeek = Object.entries(weekly || {})
+        .filter(([_, checked]) => checked)
+        .map(([dayName]) => dayName.toUpperCase())
         .join(',');
       return { cron: { expression: `0 ${daily} * * ${daysOfWeek}`, timezone } };
     }
@@ -549,5 +540,7 @@ export function buildSchedule(scheduleType, values) {
     }
     case 'cronExpression':
       return { cron: { expression: cronExpression, timezone } };
+    default:
+      return { period: FORMIK_INITIAL_VALUES.period };
   }
 }

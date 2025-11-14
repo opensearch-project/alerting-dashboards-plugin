@@ -151,19 +151,43 @@ describe('Dashboard', () => {
       action_execution_results: [],
     };
 
-    const resp = {
+    const v1Resp = {
       ok: true,
       alerts: [mockAlert],
       totalAlerts: 1,
     };
+    
+    const v2Resp = {
+      ok: true,
+      resp: {
+        alertV2s: [],
+        totalAlertV2s: 0,
+      },
+    };
 
-    // Mock return in getAlerts function
-    httpClientMock.get = jest.fn().mockImplementation(() => Promise.resolve(resp));
+    // Mock return in getAlerts function - handle both v1 and v2 API calls
+    httpClientMock.get = jest.fn().mockImplementation((url) => {
+      if (url.includes('/v2/monitors/alerts')) {
+        return Promise.resolve(v2Resp); // v2 API (initial call)
+      } else {
+        return Promise.resolve(v1Resp); // v1 API (after setting classic mode)
+      }
+    });
 
     const wrapper = mount(
       <Dashboard httpClient={httpClientMock} history={historyMock} location={location} />
     );
-
+    
+    await runAllPromises();
+    
+    // Set to classic mode to use v1 API that the mock expects
+    wrapper.instance().setState({ viewMode: 'classic' });
+    await runAllPromises();
+    
+    // Now trigger the alerts fetch manually
+    // getAlerts is debounced, so we need to flush it
+    wrapper.instance().getUpdatedAlerts();
+    wrapper.instance().getAlerts.flush(); // Flush the debounced function
     await runAllPromises();
 
     expect(wrapper.instance().state.totalAlerts).toBe(1);

@@ -388,49 +388,13 @@ exports[`Action renders with Notifications plugin installed 1`] = `
                   class="euiSpacer euiSpacer--m"
                 />
                 <div
-                  class="euiText euiText--medium"
-                >
-                  <h4>
-                    Action configuration
-                  </h4>
-                </div>
-                <div
                   class="euiSpacer euiSpacer--m"
                 />
-                <div>
-                  <div
-                    class="euiFlexItem"
-                  >
-                    <div
-                      class="euiText euiText--extraSmall"
-                    >
-                      <strong>
-                        Perform action
-                      </strong>
-                      <div>
-                        Per monitor execution
-                      </div>
-                    </div>
-                  </div>
-                  <div
-                    class="euiSpacer euiSpacer--s"
-                  />
-                </div>
+                <div />
                 <div
                   class="euiFormRow euiFormRow--compressed"
                   id="generated-id-row"
-                  style="padding-bottom:10px;max-width:100%"
                 >
-                  <div
-                    class="euiFormRow__labelWrapper"
-                  >
-                    <label
-                      class="euiFormLabel euiFormRow__label"
-                      for="generated-id"
-                    >
-                      Throttling
-                    </label>
-                  </div>
                   <div
                     class="euiFormRow__fieldWrapper"
                   >
@@ -438,30 +402,6 @@ exports[`Action renders with Notifications plugin installed 1`] = `
                       class="euiFlexGroup euiFlexGroup--gutterLarge euiFlexGroup--directionColumn euiFlexGroup--responsive"
                       id="generated-id"
                     >
-                      <div
-                        class="euiFlexItem euiFlexItem--flexGrowZero"
-                        style="margin-bottom:0px"
-                      >
-                        <div
-                          class="euiCheckbox euiCheckbox--compressed"
-                        >
-                          <input
-                            class="euiCheckbox__input"
-                            id="testPathactions.0.throttle_enabled"
-                            name="testPathactions.0.throttle_enabled"
-                            type="checkbox"
-                          />
-                          <div
-                            class="euiCheckbox__square"
-                          />
-                          <label
-                            class="euiCheckbox__label"
-                            for="testPathactions.0.throttle_enabled"
-                          >
-                            Enable action throttling
-                          </label>
-                        </div>
-                      </div>
                       <div
                         class="euiFlexGroup euiFlexGroup--gutterLarge euiFlexGroup--alignItemsCenter euiFlexGroup--directionRow euiFlexGroup--responsive"
                         style="margin:0px;display:none"
@@ -983,49 +923,13 @@ exports[`Action renders without Notifications plugin installed 1`] = `
                   class="euiSpacer euiSpacer--m"
                 />
                 <div
-                  class="euiText euiText--medium"
-                >
-                  <h4>
-                    Action configuration
-                  </h4>
-                </div>
-                <div
                   class="euiSpacer euiSpacer--m"
                 />
-                <div>
-                  <div
-                    class="euiFlexItem"
-                  >
-                    <div
-                      class="euiText euiText--extraSmall"
-                    >
-                      <strong>
-                        Perform action
-                      </strong>
-                      <div>
-                        Per monitor execution
-                      </div>
-                    </div>
-                  </div>
-                  <div
-                    class="euiSpacer euiSpacer--s"
-                  />
-                </div>
+                <div />
                 <div
                   class="euiFormRow euiFormRow--compressed"
                   id="generated-id-row"
-                  style="padding-bottom:10px;max-width:100%"
                 >
-                  <div
-                    class="euiFormRow__labelWrapper"
-                  >
-                    <label
-                      class="euiFormLabel euiFormRow__label"
-                      for="generated-id"
-                    >
-                      Throttling
-                    </label>
-                  </div>
                   <div
                     class="euiFormRow__fieldWrapper"
                   >
@@ -1033,30 +937,6 @@ exports[`Action renders without Notifications plugin installed 1`] = `
                       class="euiFlexGroup euiFlexGroup--gutterLarge euiFlexGroup--directionColumn euiFlexGroup--responsive"
                       id="generated-id"
                     >
-                      <div
-                        class="euiFlexItem euiFlexItem--flexGrowZero"
-                        style="margin-bottom:0px"
-                      >
-                        <div
-                          class="euiCheckbox euiCheckbox--compressed"
-                        >
-                          <input
-                            class="euiCheckbox__input"
-                            id="testPathactions.0.throttle_enabled"
-                            name="testPathactions.0.throttle_enabled"
-                            type="checkbox"
-                          />
-                          <div
-                            class="euiCheckbox__square"
-                          />
-                          <label
-                            class="euiCheckbox__label"
-                            for="testPathactions.0.throttle_enabled"
-                          >
-                            Enable action throttling
-                          </label>
-                        </div>
-                      </div>
                       <div
                         class="euiFlexGroup euiFlexGroup--gutterLarge euiFlexGroup--alignItemsCenter euiFlexGroup--directionRow euiFlexGroup--responsive"
                         style="margin:0px;display:none"

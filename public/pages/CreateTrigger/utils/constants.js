@@ -8,33 +8,20 @@ import Message from '../components/Action/actions';
 
 export const DEFAULT_MESSAGE_SOURCE = {
   BUCKET_LEVEL_MONITOR: `
-  Monitor {{ctx.monitor.name}} just entered alert status. Please investigate the issue.
-  - Trigger: {{ctx.trigger.name}}
-  - Severity: {{ctx.trigger.severity}}
-  - Period start: {{ctx.periodStart}} UTC
-  - Period end: {{ctx.periodEnd}} UTC
-
-  - Deduped Alerts:
-  {{#ctx.dedupedAlerts}}
-    * {{id}} : {{bucket_keys}}
-  {{/ctx.dedupedAlerts}}
-
-  - New Alerts:
-  {{#ctx.newAlerts}}
-    * {{id}} : {{bucket_keys}}
-  {{/ctx.newAlerts}}
-
-  - Completed Alerts:
-  {{#ctx.completedAlerts}}
-    * {{id}} : {{bucket_keys}}
-  {{/ctx.completedAlerts}}
+    Monitor {{ctx.monitorV2.name}} just entered alert status. Please investigate the issue.
+      - Trigger: {{ctx.trigger.name}}
+      - Severity: {{ctx.trigger.severity}}
+      - Period start: {{ctx.periodStart}} UTC
+      - Period end: {{ctx.periodEnd}} UTC
+      - Query result: {{ctx.ppl_query_results}}
   `.trim(),
   QUERY_LEVEL_MONITOR: `
-  Monitor {{ctx.monitor.name}} just entered alert status. Please investigate the issue.
-  - Trigger: {{ctx.trigger.name}}
-  - Severity: {{ctx.trigger.severity}}
-  - Period start: {{ctx.periodStart}} UTC
-  - Period end: {{ctx.periodEnd}} UTC
+    Monitor {{ctx.monitorV2.name}} just entered alert status. Please investigate the issue.
+    - Trigger: {{ctx.trigger.name}}
+    - Severity: {{ctx.trigger.severity}}
+    - Period start: {{ctx.periodStart}} UTC
+    - Period end: {{ctx.periodEnd}} UTC
+    - Query result: {{ctx.ppl_query_results}}
   `.trim(),
 };
 

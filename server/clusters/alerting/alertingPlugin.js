@@ -21,9 +21,7 @@ export default function alertingPlugin(Client, config, components) {
   const alerting = Client.prototype.alerting.prototype;
 
   alerting.getFindings = ca({
-    url: {
-      fmt: `${API_ROUTE_PREFIX}/findings/_search`,
-    },
+    url: { fmt: `${API_ROUTE_PREFIX}/findings/_search` },
     needBody: true,
     method: 'GET',
   });
@@ -31,54 +29,111 @@ export default function alertingPlugin(Client, config, components) {
   alerting.getWorkflow = ca({
     url: {
       fmt: `${API_ROUTE_PREFIX}/workflows/<%=monitorId%>`,
-      req: {
-        monitorId: {
-          type: 'string',
-          required: true,
-        },
-      },
+      req: { monitorId: { type: 'string', required: true } },
     },
     method: 'GET',
   });
 
+  // Legacy monitor (keep defined; service guards usage)
   alerting.getMonitor = ca({
     url: {
       fmt: `${MONITOR_BASE_API}/<%=monitorId%>`,
-      req: {
-        monitorId: {
-          type: 'string',
-          required: true,
-        },
-      },
+      req: { monitorId: { type: 'string', required: true } },
     },
     method: 'GET',
   });
 
   alerting.createMonitor = ca({
+    url: { fmt: `${MONITOR_BASE_API}?refresh=wait_for` },
+    needBody: true,
+    method: 'POST',
+  });
+
+  // -------- V2 PPL Monitors --------
+  alerting.createPPLMonitor = ca({
+    url: { fmt: `/_plugins/_alerting/v2/monitors` },
+    needBody: true,
+    method: 'POST',
+  });
+
+  alerting.updatePPLMonitor = ca({
     url: {
-      fmt: `${MONITOR_BASE_API}?refresh=wait_for`,
+      fmt: `/_plugins/_alerting/v2/monitors/<%=id%>`,
+      req: { id: { type: 'string', required: true } },
+    },
+    needBody: true,
+    method: 'PUT',
+  });
+
+  alerting.getPPLMonitor = ca({
+    url: {
+      fmt: `/_plugins/_alerting/v2/monitors/<%=id%>`,
+      req: { id: { type: 'string', required: true } },
+    },
+    method: 'GET',
+  });
+
+  alerting.deletePPLMonitor = ca({
+    url: {
+      fmt: `/_plugins/_alerting/v2/monitors/<%=id%>`,
+      req: { id: { type: 'string', required: true } },
+    },
+    method: 'DELETE',
+  });
+
+  // v2 search
+  alerting.searchMonitorsV2 = ca({
+    url: { fmt: `/_plugins/_alerting/v2/monitors/_search` },
+    needBody: true,
+    method: 'POST',
+  });
+
+  // generic ES search (used for alerts aggs, etc.)
+  alerting.esSearch = ca({
+    url: {
+      fmt: '/<%=index%>/_search',
+      req: { index: { type: 'string', required: true } },
     },
     needBody: true,
     method: 'POST',
   });
 
-  alerting.createWorkflow = ca({
+ alerting.alertsForMonitorsV2 = ca({
+   url: { fmt: `/_plugins/_alerting/v2/monitors/alerts` },
+   method: 'GET',
+ });
+
+  alerting.executePPLMonitorById = ca({
     url: {
-      fmt: `${API_ROUTE_PREFIX}/workflows?refresh=wait_for`,
+      fmt: `/_plugins/_alerting/v2/monitors/<%=id%>/_execute`,
+      req: { id: { type: 'string', required: true } },
     },
     needBody: true,
     method: 'POST',
   });
 
+  alerting.executePPLMonitor = ca({
+    url: { fmt: `/_plugins/_alerting/v2/monitors/_execute` },
+    needBody: true,
+    method: 'POST',
+  });
+  // ---------------------------------
+
+  alerting.alertsPPLMonitor = ca({
+    url: { fmt: `/_plugins/_alerting/v2/alerts` },
+    method: 'GET',
+  });
+
+  alerting.listIndices = ca({
+    url: { fmt: `/api/alerting/indices` },
+    method: 'GET',
+  });
+
+  // Legacy/other endpoints
   alerting.deleteMonitor = ca({
     url: {
       fmt: `${MONITOR_BASE_API}/<%=monitorId%>`,
-      req: {
-        monitorId: {
-          type: 'string',
-          required: true,
-        },
-      },
+      req: { monitorId: { type: 'string', required: true } },
     },
     method: 'DELETE',
   });
@@ -86,63 +141,33 @@ export default function alertingPlugin(Client, config, components) {
   alerting.deleteWorkflow = ca({
     url: {
       fmt: `${WORKFLOW_BASE_API}/<%=workflowId%>`,
-      req: {
-        workflowId: {
-          type: 'string',
-          required: true,
-        },
-      },
+      req: { workflowId: { type: 'string', required: true } },
     },
     method: 'DELETE',
   });
 
-  // TODO DRAFT: May need to add 'refresh' assignment here again.
   alerting.updateMonitor = ca({
     url: {
       fmt: `${MONITOR_BASE_API}/<%=monitorId%>`,
-      req: {
-        monitorId: {
-          type: 'string',
-          required: true,
-        },
-      },
+      req: { monitorId: { type: 'string', required: true } },
     },
     needBody: true,
     method: 'PUT',
   });
 
-  // TODO DRAFT: May need to add 'refresh' assignment here again.
   alerting.updateWorkflow = ca({
     url: {
       fmt: `${API_ROUTE_PREFIX}/workflows/<%=monitorId%>`,
-      req: {
-        monitorId: {
-          type: 'string',
-          required: true,
-        },
-      },
+      req: { monitorId: { type: 'string', required: true } },
     },
     needBody: true,
     method: 'PUT',
-  });
-
-  alerting.getMonitors = ca({
-    url: {
-      fmt: `${MONITOR_BASE_API}/_search`,
-    },
-    needBody: true,
-    method: 'POST',
   });
 
   alerting.acknowledgeAlerts = ca({
     url: {
       fmt: `${MONITOR_BASE_API}/<%=monitorId%>/_acknowledge/alerts`,
-      req: {
-        monitorId: {
-          type: 'string',
-          required: true,
-        },
-      },
+      req: { monitorId: { type: 'string', required: true } },
     },
     needBody: true,
     method: 'POST',
@@ -151,33 +176,22 @@ export default function alertingPlugin(Client, config, components) {
   alerting.acknowledgeChainedAlerts = ca({
     url: {
       fmt: `${WORKFLOW_BASE_API}/<%=workflowId%>/_acknowledge/alerts`,
-      req: {
-        workflowId: {
-          type: 'string',
-          required: true,
-        },
-      },
+      req: { workflowId: { type: 'string', required: true } },
     },
     needBody: true,
     method: 'POST',
   });
 
   alerting.getAlerts = ca({
-    url: {
-      fmt: `${MONITOR_BASE_API}/alerts`,
-    },
+    url: { fmt: `${MONITOR_BASE_API}/alerts` },
     method: 'GET',
   });
 
+  // legacy execute (service auto-routes when payload is v2)
   alerting.executeMonitor = ca({
     url: {
       fmt: `${MONITOR_BASE_API}/_execute?dryrun=<%=dryrun%>`,
-      req: {
-        dryrun: {
-          type: 'string',
-          required: true,
-        },
-      },
+      req: { dryrun: { type: 'string', required: true } },
     },
     needBody: true,
     method: 'POST',
@@ -186,27 +200,18 @@ export default function alertingPlugin(Client, config, components) {
   alerting.getDestination = ca({
     url: {
       fmt: `${DESTINATION_BASE_API}/<%=destinationId%>`,
-      req: {
-        destinationId: {
-          type: 'string',
-          required: true,
-        },
-      },
+      req: { destinationId: { type: 'string', required: true } },
     },
     method: 'GET',
   });
 
   alerting.searchDestinations = ca({
-    url: {
-      fmt: `${DESTINATION_BASE_API}`,
-    },
+    url: { fmt: `${DESTINATION_BASE_API}` },
     method: 'GET',
   });
 
   alerting.createDestination = ca({
-    url: {
-      fmt: `${DESTINATION_BASE_API}?refresh=wait_for`,
-    },
+    url: { fmt: `${DESTINATION_BASE_API}?refresh=wait_for` },
     needBody: true,
     method: 'POST',
   });
@@ -215,18 +220,9 @@ export default function alertingPlugin(Client, config, components) {
     url: {
       fmt: `${DESTINATION_BASE_API}/<%=destinationId%>?if_seq_no=<%=ifSeqNo%>&if_primary_term=<%=ifPrimaryTerm%>&refresh=wait_for`,
       req: {
-        destinationId: {
-          type: 'string',
-          required: true,
-        },
-        ifSeqNo: {
-          type: 'string',
-          required: true,
-        },
-        ifPrimaryTerm: {
-          type: 'string',
-          required: true,
-        },
+        destinationId: { type: 'string', required: true },
+        ifSeqNo: { type: 'string', required: true },
+        ifPrimaryTerm: { type: 'string', required: true },
       },
     },
     needBody: true,
@@ -236,12 +232,7 @@ export default function alertingPlugin(Client, config, components) {
   alerting.deleteDestination = ca({
     url: {
       fmt: `${DESTINATION_BASE_API}/<%=destinationId%>`,
-      req: {
-        destinationId: {
-          type: 'string',
-          required: true,
-        },
-      },
+      req: { destinationId: { type: 'string', required: true } },
     },
     method: 'DELETE',
   });
@@ -249,28 +240,19 @@ export default function alertingPlugin(Client, config, components) {
   alerting.getEmailAccount = ca({
     url: {
       fmt: `${EMAIL_ACCOUNT_BASE_API}/<%=emailAccountId%>`,
-      req: {
-        emailAccountId: {
-          type: 'string',
-          required: true,
-        },
-      },
+      req: { emailAccountId: { type: 'string', required: true } },
     },
     method: 'GET',
   });
 
   alerting.getEmailAccounts = ca({
-    url: {
-      fmt: `${EMAIL_ACCOUNT_BASE_API}/_search`,
-    },
+    url: { fmt: `${EMAIL_ACCOUNT_BASE_API}/_search` },
     needBody: true,
     method: 'POST',
   });
 
   alerting.createEmailAccount = ca({
-    url: {
-      fmt: `${EMAIL_ACCOUNT_BASE_API}?refresh=wait_for`,
-    },
+    url: { fmt: `${EMAIL_ACCOUNT_BASE_API}?refresh=wait_for` },
     needBody: true,
     method: 'POST',
   });
@@ -279,18 +261,9 @@ export default function alertingPlugin(Client, config, components) {
     url: {
       fmt: `${EMAIL_ACCOUNT_BASE_API}/<%=emailAccountId%>?if_seq_no=<%=ifSeqNo%>&if_primary_term=<%=ifPrimaryTerm%>&refresh=wait_for`,
       req: {
-        emailAccountId: {
-          type: 'string',
-          required: true,
-        },
-        ifSeqNo: {
-          type: 'string',
-          required: true,
-        },
-        ifPrimaryTerm: {
-          type: 'string',
-          required: true,
-        },
+        emailAccountId: { type: 'string', required: true },
+        ifSeqNo: { type: 'string', required: true },
+        ifPrimaryTerm: { type: 'string', required: true },
       },
     },
     needBody: true,
@@ -299,13 +272,8 @@ export default function alertingPlugin(Client, config, components) {
 
   alerting.deleteEmailAccount = ca({
     url: {
-      fmt: `${EMAIL_ACCOUNT_BASE_API}/<%=emailAccountId%>`,
-      req: {
-        emailAccountId: {
-          type: 'string',
-          required: true,
-        },
-      },
+      fmt: `${EMAIL_GROUP_BASE_API}/<%=emailAccountId%>`,
+      req: { emailAccountId: { type: 'string', required: true } },
     },
     method: 'DELETE',
   });
@@ -313,28 +281,19 @@ export default function alertingPlugin(Client, config, components) {
   alerting.getEmailGroup = ca({
     url: {
       fmt: `${EMAIL_GROUP_BASE_API}/<%=emailGroupId%>`,
-      req: {
-        emailGroupId: {
-          type: 'string',
-          required: true,
-        },
-      },
+      req: { emailGroupId: { type: 'string', required: true } },
     },
     method: 'GET',
   });
 
   alerting.getEmailGroups = ca({
-    url: {
-      fmt: `${EMAIL_GROUP_BASE_API}/_search`,
-    },
+    url: { fmt: `${EMAIL_GROUP_BASE_API}/_search` },
     needBody: true,
     method: 'POST',
   });
 
   alerting.createEmailGroup = ca({
-    url: {
-      fmt: `${EMAIL_GROUP_BASE_API}?refresh=wait_for`,
-    },
+    url: { fmt: `${EMAIL_GROUP_BASE_API}?refresh=wait_for` },
     needBody: true,
     method: 'POST',
   });
@@ -343,18 +302,9 @@ export default function alertingPlugin(Client, config, components) {
     url: {
       fmt: `${EMAIL_GROUP_BASE_API}/<%=emailGroupId%>?if_seq_no=<%=ifSeqNo%>&if_primary_term=<%=ifPrimaryTerm%>&refresh=wait_for`,
       req: {
-        emailGroupId: {
-          type: 'string',
-          required: true,
-        },
-        ifSeqNo: {
-          type: 'string',
-          required: true,
-        },
-        ifPrimaryTerm: {
-          type: 'string',
-          required: true,
-        },
+        emailGroupId: { type: 'string', required: true },
+        ifSeqNo: { type: 'string', required: true },
+        ifPrimaryTerm: { type: 'string', required: true },
       },
     },
     needBody: true,
@@ -364,12 +314,7 @@ export default function alertingPlugin(Client, config, components) {
   alerting.deleteEmailGroup = ca({
     url: {
       fmt: `${EMAIL_GROUP_BASE_API}/<%=emailGroupId%>`,
-      req: {
-        emailGroupId: {
-          type: 'string',
-          required: true,
-        },
-      },
+      req: { emailGroupId: { type: 'string', required: true } },
     },
     method: 'DELETE',
   });
@@ -378,46 +323,16 @@ export default function alertingPlugin(Client, config, components) {
     url: {
       fmt: `${WORKFLOW_BASE_API}/alerts?workflowIds=<%=workflowIds%>&getAssociatedAlerts=<%=getAssociatedAlerts%>&sortString=<%=sortString%>&sortOrder=<%=sortOrder%>&startIndex=<%=startIndex%>&size=<%=size%>&severityLevel=<%=severityLevel%>&alertState=<%=alertState%>&searchString=<%=searchString%>&alertIds=<%=alertIds%>`,
       req: {
-        workflowIds: {
-          type: 'string',
-          required: true,
-        },
-        alertIds: {
-          type: 'string',
-          required: true,
-        },
-        getAssociatedAlerts: {
-          type: 'boolean',
-          required: true,
-        },
-        sortString: {
-          type: 'string',
-          required: true,
-        },
-        sortOrder: {
-          type: 'string',
-          required: true,
-        },
-        startIndex: {
-          type: 'number',
-          required: true,
-        },
-        size: {
-          type: 'number',
-          required: true,
-        },
-        severityLevel: {
-          type: 'string',
-          required: false,
-        },
-        alertState: {
-          type: 'string',
-          required: false,
-        },
-        searchString: {
-          type: 'string',
-          required: false,
-        },
+        workflowIds: { type: 'string', required: true },
+        alertIds: { type: 'string', required: true },
+        getAssociatedAlerts: { type: 'boolean', required: true },
+        sortString: { type: 'string', required: true },
+        sortOrder: { type: 'string', required: true },
+        startIndex: { type: 'number', required: true },
+        size: { type: 'number', required: true },
+        severityLevel: { type: 'string', required: false },
+        alertState: { type: 'string', required: false },
+        searchString: { type: 'string', required: false },
       },
     },
     method: 'GET',
@@ -427,30 +342,18 @@ export default function alertingPlugin(Client, config, components) {
     url: {
       fmt: `${CROSS_CLUSTER_BASE_API}/indexes?indexes=<%=indexes%>&include_mappings=<%=include_mappings%>`,
       req: {
-        indexes: {
-          type: 'string',
-          required: true,
-        },
-        include_mappings: {
-          type: 'boolean',
-          required: false,
-        },
+        indexes: { type: 'string', required: true },
+        include_mappings: { type: 'boolean', required: false },
       },
     },
     needBody: true,
     method: 'GET',
   });
 
-  // Comments
   alerting.createComment = ca({
     url: {
       fmt: `${COMMENTS_BASE_API}/<%=alertId%>`,
-      req: {
-        alertId: {
-          type: 'string',
-          required: true,
-        },
-      },
+      req: { alertId: { type: 'string', required: true } },
     },
     needBody: true,
     method: 'POST',
@@ -459,21 +362,14 @@ export default function alertingPlugin(Client, config, components) {
   alerting.updateComment = ca({
     url: {
       fmt: `${COMMENTS_BASE_API}/<%=commentId%>`,
-      req: {
-        commentId: {
-          type: 'string',
-          required: true,
-        },
-      },
+      req: { commentId: { type: 'string', required: true } },
     },
     needBody: true,
     method: 'PUT',
   });
 
   alerting.searchComments = ca({
-    url: {
-      fmt: `${COMMENTS_BASE_API}/_search`,
-    },
+    url: { fmt: `${COMMENTS_BASE_API}/_search` },
     needBody: true,
     method: 'POST',
   });
@@ -481,12 +377,7 @@ export default function alertingPlugin(Client, config, components) {
   alerting.deleteComment = ca({
     url: {
       fmt: `${COMMENTS_BASE_API}/<%=commentId%>`,
-      req: {
-        commentId: {
-          type: 'string',
-          required: true,
-        },
-      },
+      req: { commentId: { type: 'string', required: true } },
     },
     needBody: false,
     method: 'DELETE',

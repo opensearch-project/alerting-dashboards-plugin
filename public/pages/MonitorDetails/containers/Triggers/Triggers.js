@@ -5,12 +5,11 @@
 
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import uuidv4 from 'uuid/v4';
 import { EuiInMemoryTable } from '@elastic/eui';
 import _ from 'lodash';
 
 import ContentPanel from '../../../../components/ContentPanel';
-import { MONITOR_TYPE } from '../../../../utils/constants';
+import { DEFAULT_EMPTY_DATA, MONITOR_TYPE } from '../../../../utils/constants';
 import { TRIGGER_TYPE } from '../../../CreateTrigger/containers/CreateTrigger/utils/constants';
 import { conditionToExpressions } from '../../../CreateTrigger/utils/helper';
 
@@ -21,6 +20,17 @@ export const MAX_TRIGGERS = 10;
 export function getUnwrappedTriggers(monitor) {
   return monitor.triggers.map((trigger) => {
     let unwrappedTrigger = trigger;
+    
+    // PPL monitors have flat triggers (already unwrapped)
+    // Check if this is a PPL trigger by looking for PPL-specific fields
+    const isPPLTrigger = trigger && (trigger.mode || trigger.type) && !trigger.query_level_trigger;
+    
+    if (isPPLTrigger) {
+      // PPL trigger is already flat, return as-is
+      return trigger;
+    }
+    
+    // Legacy monitors have wrapped triggers
     if (Object.keys(trigger).length === 1) {
       switch (monitor.monitor_type) {
         case MONITOR_TYPE.BUCKET_LEVEL:
@@ -70,7 +80,7 @@ export default class Triggers extends Component {
 
     this.state = {
       field: 'name',
-      tableKey: uuidv4(),
+      tableKey: `table-${Date.now()}-${Math.random()}`,
       direction: 'asc',
       selectedItems: [],
       items: [],
@@ -110,7 +120,7 @@ export default class Triggers extends Component {
       // which EuiInMemoryTable uses which causes items to not be updated correctly.
       // Whenever the monitor is updated we'll generate a new key for the table
       // which will cause the table component to remount
-      this.setState({ tableKey: uuidv4() });
+      this.setState({ tableKey: `table-${Date.now()}-${Math.random()}` });
     }
   }
 
@@ -160,9 +170,43 @@ export default class Triggers extends Component {
 
   render() {
     const { direction, field, tableKey, items } = this.state;
-    const { monitor } = this.props;
+    const { monitor, showPplColumns } = this.props;
     const numOfTriggers = _.get(monitor, 'triggers', []).length;
 
+    const formatTriggerMode = (mode) => {
+      if (!mode) return DEFAULT_EMPTY_DATA;
+      switch (mode) {
+        case 'result_set':
+          return 'Per result';
+        case 'per_execution':
+        case 'execution':
+        case 'once':
+          return 'Once';
+        default:
+          return mode;
+      }
+    };
+
+    const formatTriggerType = (type) => {
+      if (!type) return DEFAULT_EMPTY_DATA;
+      switch (type) {
+        case 'number_of_results':
+          return 'Number of results';
+        case 'custom_script':
+        case 'script':
+          return 'Custom';
+        default:
+          return type;
+      }
+    };
+
+    const formatMinutes = (value) =>
+      value === 0
+        ? '0 minutes'
+        : value
+        ? `${value} minute${value === 1 ? '' : 's'}`
+        : DEFAULT_EMPTY_DATA;
+ 
     const columns = [
       {
         field: 'name',
@@ -171,6 +215,26 @@ export default class Triggers extends Component {
         truncateText: true,
         width: '15%',
       },
+      ...(showPplColumns
+        ? [
+            {
+              field: 'mode',
+              name: 'Trigger mode',
+              sortable: false,
+              truncateText: false,
+              width: '12%',
+              render: (mode) => formatTriggerMode(mode),
+            },
+            {
+              field: 'type',
+              name: 'Trigger type',
+              sortable: false,
+              truncateText: false,
+              width: '12%',
+              render: (type) => formatTriggerType(type),
+            },
+          ]
+        : []),
       {
         field: 'actions',
         name: 'Number of actions',
@@ -186,8 +250,58 @@ export default class Triggers extends Component {
         truncateText: false,
         width: '10%',
       },
+      ...(showPplColumns
+        ? [
+            {
+              field: 'num_results_condition',
+              name: 'Num results condition',
+              sortable: false,
+              truncateText: false,
+              width: '12%',
+              render: (value, item) =>
+                item.type === 'number_of_results' ? value || DEFAULT_EMPTY_DATA : DEFAULT_EMPTY_DATA,
+            },
+            {
+              field: 'num_results_value',
+              name: 'Num results value',
+              sortable: false,
+              truncateText: false,
+              width: '12%',
+              render: (value, item) =>
+                item.type === 'number_of_results'
+                  ? value ?? DEFAULT_EMPTY_DATA
+                  : DEFAULT_EMPTY_DATA,
+            },
+            {
+              name: 'Custom condition',
+              sortable: false,
+              truncateText: false,
+              width: '20%',
+              render: (item) =>
+                item.type !== 'number_of_results'
+                  ? _.get(item, 'condition.script.source') || DEFAULT_EMPTY_DATA
+                  : DEFAULT_EMPTY_DATA,
+            },
+            {
+              field: 'expires_minutes',
+              name: 'Expire duration',
+              sortable: false,
+              truncateText: false,
+              width: '12%',
+              render: (value) => formatMinutes(value),
+            },
+            {
+              field: 'throttle_minutes',
+              name: 'Throttle duration',
+              sortable: false,
+              truncateText: false,
+              width: '12%',
+              render: (value) => formatMinutes(value),
+            },
+          ]
+        : []),
     ];
-
+ 
     if (monitor.monitor_type === MONITOR_TYPE.COMPOSITE_LEVEL) {
       columns.splice(1, 0, {
         name: 'Condition',
@@ -224,4 +338,9 @@ Triggers.propTypes = {
   monitor: PropTypes.object.isRequired,
   httpClient: PropTypes.object.isRequired,
   updateMonitor: PropTypes.func.isRequired,
+  showPplColumns: PropTypes.bool,
+};
+
+Triggers.defaultProps = {
+  showPplColumns: false,
 };

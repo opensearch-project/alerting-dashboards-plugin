@@ -142,6 +142,32 @@ describe('Monitors', () => {
       .fn()
       .mockResolvedValueOnce({ ok: true })
       .mockRejectedValueOnce(new Error('random error'));
+
+    httpClientMock.get.mockReset();
+    const monitorDetailResponse = {
+      ok: true,
+      resp: {
+        name: 'existing monitor',
+        triggers: [{ id: 'trigger-1', foo: 'bar' }],
+        schedule: { period: { interval: 1, unit: 'MINUTES' } },
+        inputs: [{ search: { indices: ['index'] } }],
+        monitor_type: 'query_level_monitor',
+        monitor_mode: 'legacy',
+        id: 'random_id',
+        _id: 'random_id',
+        version: 5,
+        _version: 5,
+        ifSeqNo: 17,
+        ifPrimaryTerm: 20,
+      },
+      ifSeqNo: 17,
+      ifPrimaryTerm: 20,
+    };
+
+    httpClientMock.get
+      .mockResolvedValueOnce({ ok: true, monitors: [], totalMonitors: 0 })
+      .mockResolvedValueOnce(monitorDetailResponse)
+      .mockResolvedValueOnce(monitorDetailResponse);
     const mountWrapper = getMountWrapper();
     const monitor = alertingFakes.randomMonitor();
     const response = await mountWrapper
@@ -154,9 +180,17 @@ describe('Monitors', () => {
 
     expect(updateMonitor).toHaveBeenCalled();
     expect(httpClientMock.put).toHaveBeenCalled();
+    const expectedPayload = _.omit(
+      {
+        ...monitorDetailResponse.resp,
+        name: 'UNIQUE_NAME',
+      },
+      ['id', '_id', 'item_type', 'currentTime', 'version', '_version', 'ifSeqNo', 'ifPrimaryTerm']
+    );
+
     expect(httpClientMock.put).toHaveBeenCalledWith(`../api/alerting/monitors/random_id`, {
       query: { ifSeqNo: 17, ifPrimaryTerm: 20 },
-      body: JSON.stringify({ ...monitor, name: 'UNIQUE_NAME' }),
+      body: JSON.stringify(expectedPayload),
     });
 
     expect(response).toEqual({ ok: true });

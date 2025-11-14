@@ -15,6 +15,9 @@ import {
   EuiFlexItem,
   EuiPagination,
   EuiFlexGroup,
+  EuiButtonGroup,
+  EuiSpacer,
+  EuiTitle,
 } from '@elastic/eui';
 import ContentPanel from '../../../components/ContentPanel';
 import DashboardEmptyPrompt from '../components/DashboardEmptyPrompt';
@@ -45,7 +48,7 @@ import {
   getDataSourceId,
   appendCommentsAction,
   getIsCommentsEnabled,
-  getIsAgentConfigured
+  getIsAgentConfigured,
 } from '../../utils/helpers';
 import { getUseUpdatedUx } from '../../../services';
 
@@ -53,7 +56,7 @@ export default class Dashboard extends Component {
   constructor(props) {
     super(props);
 
-    const { location, perAlertView } = props;
+    const { location, perAlertView, initialViewMode } = props;
 
     const { alertState, from, search, severityLevel, size, sortDirection, sortField } =
       getURLQueryParams(location);
@@ -65,7 +68,8 @@ export default class Dashboard extends Component {
       alertState,
       flyoutIsOpen: false,
       loadingMonitors: true,
-      monitors: [],
+      monitors: [],           // normalized: each hit._source === monitor object
+      monitorsById: {},       // { [monitorId]: monitorObject }
       monitorIds: this.props.monitorIds,
       page: Math.floor(from / size),
       search,
@@ -77,15 +81,17 @@ export default class Dashboard extends Component {
       sortField,
       totalAlerts: 0,
       totalTriggers: 0,
-      chainedAlert: undefined,
+      //chainedAlert: undefined,
       commentsEnabled: false,
       isAgentConfigured: false,
+      viewMode: initialViewMode || 'new', // 'new' or 'classic'
     };
   }
 
   static defaultProps = {
     monitorIds: [],
     detectorIds: [],
+    initialViewMode: 'new',
   };
 
   componentDidMount() {
@@ -117,6 +123,10 @@ export default class Dashboard extends Component {
     if (isDataSourceChanged(prevProps, this.props)) {
       this.dataSourceQuery = getDataSourceQueryObj();
       this.getUpdatedAgentConfig();
+      this.getUpdatedAlerts();
+    }
+    // Refresh alerts when view mode changes
+    if (prevState.viewMode !== this.state.viewMode) {
       this.getUpdatedAlerts();
     }
   }
@@ -162,22 +172,123 @@ export default class Dashboard extends Component {
       const queryParamsString = queryString.stringify(params);
       const { httpClient, history, notifications, perAlertView } = this.props;
       history.replace({ ...this.props.location, search: queryParamsString });
-      const extendedParams = {
-        ...(dataSourceId !== undefined && { dataSourceId }), // Only include dataSourceId if it exists
-        ...params, // Other parameters
-      };
-      httpClient.get('../api/alerting/alerts', { query: extendedParams }).then((resp) => {
+      
+      // Call different API based on view mode
+      const { viewMode } = this.state;
+      const apiPath = viewMode === 'classic' 
+        ? '/api/alerting/alerts'        // v1 API for classic view
+        : '/api/alerting/v2/monitors/alerts';  // v2 API for new view
+      
+      const apiParams = { query: { ...params } };
+      
+      httpClient.get(apiPath, apiParams).then((resp) => {
         if (resp.ok) {
-          const { alerts, totalAlerts } = resp;
-          this.setState({ alerts, totalAlerts });
+          if (viewMode === 'classic') {
+            // ========== V1/CLASSIC MODE: Direct server response, no client-side processing ==========
+            const { alerts, totalAlerts } = resp;
+            this.setState({ alerts, totalAlerts });
 
-          if (!perAlertView) {
-            const alertsByTriggers = groupAlertsByTrigger(alerts);
-            this.setState({
-              totalTriggers: alertsByTriggers.length,
-              alertsByTriggers,
+            if (!perAlertView) {
+              const alertsByTriggers = groupAlertsByTrigger(alerts, false);  // Don't group by monitor for v1
+              this.setState(
+                {
+                  totalTriggers: alertsByTriggers.length,
+                  alertsByTriggers,
+                },
+                () => this.getMonitors() // fetch monitor docs after grouping
+              );
+            }
+          } else {
+            // ========== V2/NEW MODE: Client-side filtering/sorting/pagination ==========
+            const payload = resp.resp || resp;
+            let rawAlerts = [];
+            let totalFromServer;
+
+            // v2 API returns: { alerts_v2: [...], total_alerts_v2: N }
+            const alertsArray = payload?.alerts_v2 || payload?.alertV2s;
+            if (Array.isArray(alertsArray)) {
+              rawAlerts = alertsArray.map((a) => ({
+                ...a,
+                monitor_id: a.monitor_v2_id,
+                monitor_name: a.monitor_v2_name,
+                trigger_id: a.trigger_v2_id,
+                // v2 provides monitor_version; keep a stable "version" key for itemId
+                version: a.monitor_v2_version ?? a.version,
+                monitorVersion: a.monitor_v2_version,
+                // Map v2 fields to expected column fields
+                start_time: a.triggered_time,
+                trigger_name: a.trigger_v2_name,
+                end_time: a.expiration_time,
+                // v2 may not include a state; default to ACTIVE so filters/selection work
+                state: a.state || 'ACTIVE',
+              }));
+              totalFromServer = payload.total_alerts_v2 ?? payload.totalAlertV2s ?? rawAlerts.length;
+            }
+
+            // Filter by monitor IDs if specified
+            if (Array.isArray(monitorIds) && monitorIds.length) {
+              rawAlerts = rawAlerts.filter((alert) => 
+                monitorIds.includes(alert.monitor_id)
+              );
+            }
+
+            // ---- Client-side filter/search/sort/paginate ----
+            const q = String(search || '').trim().toLowerCase();
+            const matchesSearch = (a) =>
+              !q || JSON.stringify(a).toLowerCase().includes(q);
+            const matchesSeverity =
+              !severityLevel || severityLevel === 'ALL'
+                ? () => true
+                : (a) =>
+                    String(a.severity).toLowerCase() === String(severityLevel).toLowerCase() ||
+                    Number(a.severity) === Number(severityLevel);
+            const matchesState =
+              !alertState || alertState === 'ALL'
+                ? () => true
+                : (a) => String(a.state).toLowerCase() === String(alertState).toLowerCase();
+
+            let filtered = rawAlerts.filter(
+              (a) => matchesSearch(a) && matchesSeverity(a) && matchesState(a)
+            );
+
+            const dir = sortDirection === 'asc' ? 1 : -1;
+            const sortFieldEffective = sortField === 'start_time' ? 'triggered_time' : sortField;
+            const val = (obj) => _.get(obj, sortFieldEffective);
+            filtered = filtered.sort((a, b) => {
+              const av = val(a);
+              const bv = val(b);
+              if (av == null && bv == null) return 0;
+              if (av == null) return -dir;
+              if (bv == null) return dir;
+              if (typeof av === 'number' && typeof bv === 'number') return (av - bv) * dir;
+              // try date
+              const ad = Date.parse(av);
+              const bd = Date.parse(bv);
+              if (Number.isFinite(ad) && Number.isFinite(bd)) return (ad - bd) * dir;
+              return String(av).localeCompare(String(bv)) * dir;
             });
-            this.getMonitors();
+
+            const totalAlerts = totalFromServer ?? filtered.length;
+            const paged = filtered.slice(from, from + size);
+
+            this.setState({ alerts: perAlertView ? paged : filtered, totalAlerts });
+
+            if (!perAlertView) {
+              const alertsByTriggers = groupAlertsByTrigger(filtered, true).map((row) => {  // Group by monitor for v2
+                const latest = _.maxBy(row.alerts || [], (a) =>
+                  (a && (a.triggered_time ?? a.start_time)) || 0
+                );
+                const ts = latest?.triggered_time ?? latest?.start_time ?? null;
+                return { ...row, lastTriggeredTime: ts };
+              });
+              this.setState(
+                {
+                  totalTriggers: alertsByTriggers.length,
+                  alertsByTriggers,
+                },
+                () => this.getMonitors() // fetch monitor docs after grouping
+              );
+            }
           }
         } else {
           console.log('error getting alerts:', resp);
@@ -192,36 +303,66 @@ export default class Dashboard extends Component {
   async getMonitors() {
     const { httpClient } = this.props;
     const { alertsByTriggers } = this.state;
-    this.setState({ ...this.state, loadingMonitors: true });
+    this.setState({ loadingMonitors: true });
+
     const monitorIds = Array.from(
-      new Set(alertsByTriggers.map((alert) => alert.monitor_id).filter((monitorId) => !!monitorId))
+      new Set(alertsByTriggers.map((a) => a.monitor_id).filter(Boolean))
     );
-    let monitors;
+
+    if (!monitorIds.length) {
+      this.setState({ loadingMonitors: false, monitors: [], monitorsById: {} });
+      return;
+    }
+
     try {
-      const params = {
-        query: {
-          query: {
-            ids: {
-              values: monitorIds,
-            },
-          },
-        },
+      // Query v2 monitor docs by ID
+      const body = {
+        query: { ids: { values: monitorIds } },
+        version: true,
+        seq_no_primary_term: true,
+        size: monitorIds.length || 1000,
       };
 
-      const response = await httpClient.post('../api/alerting/monitors/_search', {
-        body: JSON.stringify(params),
+      const response = await httpClient.post('../api/alerting/v2/monitors/_search', {
+        body: JSON.stringify(body),
         query: this.dataSourceQuery?.query,
       });
 
-      if (response.ok) {
-        monitors = _.get(response, 'resp.hits.hits', []);
-      } else {
+      if (!response.ok) {
         console.log('error getting monitors:', response);
+        this.setState({ loadingMonitors: false });
+        return;
       }
+
+      // Normalize hits so each hit._source is the monitor object itself
+      // (v2 returns { _source: { monitor: {...} } })
+      const normalizedHits = _.get(response, 'resp.hits.hits', []).map((hit) => {
+        const monitorObj = hit._source?.monitor ? hit._source.monitor : hit._source || {};
+        return { ...hit, _source: monitorObj };
+      });
+
+      // Build lookup map: { id -> monitorObject }
+      const monitorsById = normalizedHits.reduce((acc, h) => {
+        acc[h._id] = h._source || {};
+        return acc;
+      }, {});
+
+      // Optionally enrich existing grouped rows with monitor_name for immediate rendering
+      const enrichedAlertsByTriggers = this.state.alertsByTriggers.map((row) => ({
+        ...row,
+        monitor_name: monitorsById[row.monitor_id]?.name || row.monitor_id,
+      }));
+
+      this.setState({
+        loadingMonitors: false,
+        monitors: normalizedHits,
+        monitorsById,
+        alertsByTriggers: enrichedAlertsByTriggers,
+      });
     } catch (err) {
       console.error(err);
+      this.setState({ loadingMonitors: false });
     }
-    this.setState({ ...this.state, loadingMonitors: false, monitors: monitors });
   }
 
   acknowledgeAlerts = async (alerts) => {
@@ -288,6 +429,7 @@ export default class Dashboard extends Component {
         type: 'alertsDashboard',
         payload: {
           ...payload,
+          viewMode: this.state.viewMode,  // Pass viewMode to flyout
           openChainedAlertsFlyout: this.openChainedAlertsFlyout,
           closeFlyout: this.closeFlyout,
         },
@@ -295,13 +437,13 @@ export default class Dashboard extends Component {
     }
   };
 
-  openChainedAlertsFlyout = (chainedAlert) => {
-    this.setState({ chainedAlert });
-  };
+  // openChainedAlertsFlyout = (chainedAlert) => {
+  //   this.setState({ chainedAlert });
+  // };
 
-  closeChainedAlertsFlyout = () => {
-    this.setState({ chainedAlert: undefined });
-  };
+  // closeChainedAlertsFlyout = () => {
+  //   this.setState({ chainedAlert: undefined });
+  // };
 
   closeFlyout = () => {
     const { setFlyout } = this.props;
@@ -337,7 +479,10 @@ export default class Dashboard extends Component {
     const { history, httpClient, location, notifications } = this.props;
     const { monitors, selectedItems } = this.state;
     const { monitor_id, triggerID, trigger_name } = selectedItems[0];
+
+    // After normalization, hit._source is the monitor object itself
     const monitor = _.get(_.find(monitors, { _id: monitor_id }), '_source');
+
     return (
       <AcknowledgeAlertsModal
         history={history}
@@ -359,7 +504,7 @@ export default class Dashboard extends Component {
       alerts,
       alertsByTriggers,
       alertState,
-      chainedAlert,
+      //chainedAlert,
       flyoutIsOpen,
       loadingMonitors,
       monitors,
@@ -374,6 +519,7 @@ export default class Dashboard extends Component {
       totalTriggers,
       commentsEnabled,
       isAgentConfigured,
+      viewMode,  // Extract viewMode early
     } = this.state;
     const {
       monitorIds,
@@ -420,26 +566,26 @@ export default class Dashboard extends Component {
           break;
         case MONITOR_TYPE.COMPOSITE_LEVEL:
           columns = _.cloneDeep(queryColumns);
-          columns.push({
-            name: 'Actions',
-            sortable: false,
-            actions: [
-              {
-                render: (alert) => (
-                  <EuiToolTip content={'View details'}>
-                    <EuiSmallButtonIcon
-                      aria-label={'View details'}
-                      data-test-subj={`view-details-icon`}
-                      iconType={'inspect'}
-                      onClick={() => {
-                        this.openChainedAlertsFlyout(alert);
-                      }}
-                    />
-                  </EuiToolTip>
-                ),
-              },
-            ],
-          });
+//           -          columns.push({
+// -            name: 'Actions',
+// -            sortable: false,
+// -            actions: [
+// -              {
+// -                render: (alert) => (
+// -                  <EuiToolTip content={'View details'}>
+// -                    <EuiSmallButtonIcon
+// -                      aria-label={'View details'}
+// -                      data-test-subj={`view-details-icon`}
+// -                      iconType={'inspect'}
+// -                      onClick={() => {
+// -                        this.openChainedAlertsFlyout(alert);
+// -                      }}
+// -                    />
+// -                  </EuiToolTip>
+// -                ),
+// -              },
+// -            ],
+// -          });
           break;
         default:
           columns = _.cloneDeep(queryColumns);
@@ -450,6 +596,8 @@ export default class Dashboard extends Component {
         columns = appendCommentsAction(columns, httpClient);
       }
     } else {
+      // alertColumns consumes `monitors` to show monitor **names**.
+      // We pass the normalized list so names resolve for v2 docs.
       columns = alertColumns(
         history,
         httpClient,
@@ -461,7 +609,8 @@ export default class Dashboard extends Component {
         setFlyout,
         this.openFlyout,
         this.closeFlyout,
-        this.refreshDashboard
+        this.refreshDashboard,
+        viewMode  // Pass viewMode to control column visibility
       );
     }
 
@@ -478,29 +627,23 @@ export default class Dashboard extends Component {
         field: sortField,
       },
     };
-
+    
     const selection = {
       onSelectionChange: this.onSelectionChange,
-      selectable: perAlertView
-        ? (item) => item.state === ALERT_STATE.ACTIVE
-        : (item) => item.ACTIVE > 0,
-      selectableMessage: perAlertView
-        ? (selectable) => (selectable ? undefined : 'Only active alerts can be acknowledged.')
-        : (selectable) =>
-            selectable ? undefined : 'Only triggers with active alerts can be acknowledged.',
+      selectable: viewMode === 'classic' 
+        ? (perAlertView
+            ? (item) => item.state === ALERT_STATE.ACTIVE
+            : (item) => item.ACTIVE > 0)
+        : () => false, // Disable selection in New mode
+      selectableMessage: viewMode === 'classic'
+        ? (perAlertView
+            ? (selectable) => (selectable ? undefined : 'Only active alerts can be acknowledged.')
+            : (selectable) => (selectable ? undefined : 'Only triggers with active alerts can be acknowledged.'))
+        : undefined,
     };
 
     const actions = () => {
-      // The acknowledge button is disabled when viewing by per alerts, and no item selected or per trigger view and item selected is not 1.
-      const actions = [
-        <EuiSmallButton
-          onClick={perAlertView ? this.acknowledgeAlert : this.openModal}
-          disabled={perAlertView ? !selectedItems.length : selectedItems.length !== 1}
-          data-test-subj={'acknowledgeAlertsButton'}
-        >
-          Acknowledge
-        </EuiSmallButton>,
-      ];
+      const actions = [];
 
       if (!perAlertView) {
         const alert = selectedItems[0];
@@ -526,6 +669,19 @@ export default class Dashboard extends Component {
           </EuiSmallButton>
         );
       }
+      
+      // Acknowledge button only in Classic mode
+      if (viewMode === 'classic') {
+        actions.push(
+          <EuiSmallButton
+            onClick={perAlertView ? this.acknowledgeAlert : this.openModal}
+            disabled={perAlertView ? !selectedItems.length : selectedItems.length !== 1}
+            data-test-subj={'acknowledgeAlertsButton'}
+          >
+            Acknowledge
+          </EuiSmallButton>
+        );
+      }
 
       if (detectorIds.length) {
         actions.unshift(
@@ -541,30 +697,82 @@ export default class Dashboard extends Component {
     };
 
     const getItemId = (item) => {
-      if (perAlertView) return isBucketMonitor ? item.id : `${item.id}-${item.version}`;
+      if (perAlertView) {
+        const v = item.version ?? item.monitorVersion ?? '';
+        return isBucketMonitor ? item.id : `${item.id}-${v}`;
+      }
       return `${item.triggerID}-${item.version}`;
     };
 
     const useUpdatedUx = !perAlertView && getUseUpdatedUx();
     const shouldShowPagination = !perAlertView && totalAlerts > 0;
 
+    const toggleButtons = [
+      {
+        id: 'new',
+        label: 'New',
+      },
+      {
+        id: 'classic',
+        label: 'Classic',
+      },
+    ];
+
     return (
       <>
-        {chainedAlert && (
+        {/* {chainedAlert && (
           <ChainedAlertDetailsFlyout
             httpClient={httpClient}
             closeFlyout={this.closeChainedAlertsFlyout}
             alert={chainedAlert}
           />
-        )}
+        )} */}
         <ContentPanel
           title={perAlertView ? 'Alerts' : useUpdatedUx ? undefined : 'Alerts by triggers'}
           titleSize={'s'}
           bodyStyles={{ padding: 'initial' }}
           actions={useUpdatedUx ? undefined : actions()}
           panelOptions={{ hideTitleBorder: useUpdatedUx }}
-          panelStyles={{ padding: useUpdatedUx && totalAlerts < 1 ? '16px 16px 0px' : '16px' }}
+          panelStyles={{ padding: useUpdatedUx ? '0px' : '16px' }}
         >
+          {useUpdatedUx && (
+            <>
+              <div style={{ padding: '16px 16px 0px 16px' }}>
+                <EuiFlexGroup alignItems="center" justifyContent="spaceBetween" responsive={false}>
+                  <EuiFlexItem grow={false}>
+                    <EuiFlexGroup alignItems="center" gutterSize="m" responsive={false}>
+                      <EuiFlexItem grow={false}>
+                        <EuiTitle size="l">
+                          <h1>Alerts by triggers</h1>
+                        </EuiTitle>
+                      </EuiFlexItem>
+                      <EuiFlexItem grow={false}>
+                        <EuiButtonGroup
+                          legend="Alert view toggle"
+                          options={toggleButtons}
+                          idSelected={viewMode}
+                          onChange={(id) => this.setState({ viewMode: id })}
+                          buttonSize="compressed"
+                          color="text"
+                          isFullWidth={false}
+                        />
+                      </EuiFlexItem>
+                    </EuiFlexGroup>
+                  </EuiFlexItem>
+                  <EuiFlexItem grow={false}>
+                    <EuiFlexGroup gutterSize="s" responsive={false}>
+                      {actions().map((action, idx) => (
+                        <EuiFlexItem key={idx} grow={false}>
+                          {action}
+                        </EuiFlexItem>
+                      ))}
+                    </EuiFlexGroup>
+                  </EuiFlexItem>
+                </EuiFlexGroup>
+              </div>
+              <EuiSpacer size="m" />
+            </>
+          )}
           <DashboardControls
             activePage={page}
             pageCount={Math.ceil(totalItems / size) || 1}
@@ -577,35 +785,34 @@ export default class Dashboard extends Component {
             onPageChange={this.onPageClick}
             isAlertsFlyout={isAlertsFlyout}
             monitorType={monitorType}
-            alertActions={useUpdatedUx ? actions() : undefined}
-            panelStyles={{ padding: perAlertView ? '8px 0px 16px' : '0px 0px 16px' }}
+            alertActions={null}
+            panelStyles={{ padding: perAlertView ? '8px 16px 16px' : '0px 16px 16px' }}
           />
 
-          <EuiBasicTable
-            items={perAlertView ? alerts : alertsByTriggers}
-            /*
-             * If using just ID, doesn't update selectedItems when doing acknowledge
-             * because the next getAlerts have the same id
-             * $id-$version will correctly remove selected items
-             * */
-            itemId={getItemId}
-            columns={columns}
-            pagination={perAlertView ? pagination : undefined}
-            sorting={sorting}
-            isSelectable={true}
-            selection={selection}
-            onChange={this.onTableChange}
-            noItemsMessage={
-              <DashboardEmptyPrompt
-                onCreateTrigger={onCreateTrigger}
-                landingDataSourceId={this.props.landingDataSourceId}
-              />
-            }
-            data-test-subj={'alertsDashboard_table'}
-          />
+          {this.state.showAlertsModal && this.renderModal()}
+
+          <div style={{ padding: useUpdatedUx ? '0px 16px 16px 16px' : '0px' }}>
+            <EuiBasicTable
+              items={perAlertView ? alerts : alertsByTriggers}
+              itemId={getItemId}
+              columns={columns}
+              pagination={perAlertView ? pagination : undefined}
+              sorting={sorting}
+              isSelectable={true}
+              selection={selection}
+              onChange={this.onTableChange}
+              noItemsMessage={
+                <DashboardEmptyPrompt
+                  onCreateTrigger={onCreateTrigger}
+                  landingDataSourceId={this.props.landingDataSourceId}
+                />
+              }
+              data-test-subj={'alertsDashboard_table'}
+            />
+          </div>
 
           {shouldShowPagination && (
-            <EuiFlexGroup justifyContent="flexEnd" style={{ padding: '8px 0px 0px' }}>
+            <EuiFlexGroup justifyContent="flexEnd" style={{ padding: useUpdatedUx ? '8px 16px 0px 16px' : '8px 0px 0px' }}>
               <EuiFlexItem grow={false}>
                 <EuiPagination
                   pageCount={Math.ceil(totalItems / size) || 1}
