@@ -135,7 +135,7 @@ export async function acknowledgeAlerts(httpClient, notifications, alerts) {
         .catch((error) => error)
   );
 
-  return acknowledgePromises;
+  return Promise.all(acknowledgePromises);
 }
 
 export const titleTemplate = (title, subTitle) => (
