@@ -147,6 +147,11 @@ exports[`Monitors renders 1`] = `
                   "onClick": [Function],
                 },
                 Object {
+                  "description": "Edit this Monitor",
+                  "name": "Edit",
+                  "onClick": [Function],
+                },
+                Object {
                   "available": [Function],
                   "description": "Enable this Monitor",
                   "name": "Enable",

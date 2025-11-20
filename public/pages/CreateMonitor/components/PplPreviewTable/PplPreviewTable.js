@@ -198,7 +198,6 @@ export const PplPreviewTable = ({ docs, isLoading = false }) => {
     if (pageIndex !== safePageIndex) {
       setPageIndex(safePageIndex);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pageCount]);
 
   const start = safePageIndex * PAGE_SIZE;
