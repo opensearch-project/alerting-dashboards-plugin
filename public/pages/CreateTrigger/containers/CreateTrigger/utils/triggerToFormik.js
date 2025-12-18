@@ -29,6 +29,17 @@ export function triggerDefinitionsToFormik(triggers, monitor) {
 }
 
 export function triggerDefinitionToFormik(trigger, monitor) {
+  // Check if this is a PPL monitor (v2 monitor) - they have flat trigger structure
+  const isPPLMonitor = trigger && !trigger.query_level_trigger && 
+                       !trigger.bucket_level_trigger && 
+                       !trigger[TRIGGER_TYPE.DOC_LEVEL] &&
+                       !trigger[TRIGGER_TYPE.COMPOSITE_LEVEL] &&
+                       (trigger.mode || trigger.type);
+  
+  if (isPPLMonitor) {
+    return pplTriggerToFormik(trigger, monitor);
+  }
+  
   const monitorType = _.get(monitor, 'monitor_type', MONITOR_TYPE.QUERY_LEVEL);
   switch (monitorType) {
     case MONITOR_TYPE.BUCKET_LEVEL:
@@ -40,6 +51,73 @@ export function triggerDefinitionToFormik(trigger, monitor) {
     default:
       return queryLevelTriggerToFormik(trigger, monitor);
   }
+}
+
+/**
+ * Convert minutes to a user-friendly unit (days, hours, or minutes)
+ * Returns { value, unit } where unit is 'days', 'hours', or 'minutes'
+ */
+function minutesToFormikDuration(minutes, defaultMinutes = 0) {
+  const totalMinutes = minutes || defaultMinutes;
+  
+  // Convert to days if evenly divisible by 1440 (24 * 60)
+  if (totalMinutes >= 1440 && totalMinutes % 1440 === 0) {
+    return { value: totalMinutes / 1440, unit: 'days' };
+  }
+  
+  // Convert to hours if evenly divisible by 60
+  if (totalMinutes >= 60 && totalMinutes % 60 === 0) {
+    return { value: totalMinutes / 60, unit: 'hours' };
+  }
+  
+  // Otherwise, use minutes
+  return { value: totalMinutes, unit: 'minutes' };
+}
+
+export function pplTriggerToFormik(trigger, monitor) {
+  // PPL triggers have a flat structure, not wrapped in query_level_trigger
+  const {
+    id,
+    name,
+    severity,
+    actions = [],
+    mode,
+    type,
+    num_results_condition,
+    num_results_value,
+    custom_condition,
+    throttle, // in minutes (legacy)
+    throttle_minutes, // in minutes (new API format)
+    expires, // in minutes (legacy)
+    expires_minutes, // in minutes (new API format)
+  } = trigger;
+
+  // Convert throttle (minutes) to Formik format {value, unit}
+  // Support both old and new field names
+  const throttleFormik = minutesToFormikDuration(throttle_minutes ?? throttle, 10);
+
+  // Convert expires (minutes) to Formik format {value, unit}
+  // Support both old and new field names
+  const expiresFormik = minutesToFormikDuration(expires_minutes ?? expires, 10080); // default 7 days
+
+  return {
+    ..._.cloneDeep(FORMIK_INITIAL_TRIGGER_VALUES),
+    id: id || undefined,
+    name: name || '',
+    severity: severity || 'info',
+    actions: actions || [],
+    // PPL-specific fields (use non-prefixed names to match formikPplTriggerToWire expectations)
+    mode: mode || 'result_set',
+    type: type || 'number_of_results',
+    uiConditionType: type || 'number_of_results', // Also set uiConditionType for compatibility
+    num_results_condition: num_results_condition || '>=',
+    num_results_value: num_results_value !== undefined ? num_results_value : 1,
+    custom_condition: custom_condition || null,
+    customCondition: custom_condition || null, // Also set camelCase version
+    suppress: throttleFormik, // Use 'suppress' field name
+    throttle: throttleFormik, // Keep both for compatibility
+    expires: expiresFormik,
+  };
 }
 
 export function queryLevelTriggerToFormik(trigger, monitor) {

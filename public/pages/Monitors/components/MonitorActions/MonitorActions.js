@@ -14,7 +14,6 @@ import {
 } from '@elastic/eui';
 
 import { APP_PATH } from '../../../../utils/constants';
-import { PageHeader } from '../../../../components/PageHeader/PageHeader';
 
 export default class MonitorActions extends Component {
   state = {
@@ -22,20 +21,26 @@ export default class MonitorActions extends Component {
   };
 
   getActions = () => {
-    // TODO: Support bulk acknowledge alerts across multiple monitors after figuring out the correct parameter for getAlerts API.
-    // Disabling the acknowledge button for now when more than 1 monitors selected.
-    const { isEditDisabled, isDeleteDisabled } = this.props;
-    const actions = [
-      <EuiContextMenuItem
-        key="acknowledge"
-        data-test-subj="acknowledgeItem"
-        onClick={() => {
-          this.onCloseActions();
-          this.props.onBulkAcknowledge();
-        }}
-      >
-        Acknowledge
-      </EuiContextMenuItem>,
+    const { isEditDisabled, isDeleteDisabled, viewMode } = this.props;
+    const actions = [];
+    
+    // Acknowledge is only shown in Classic mode
+    if (viewMode === 'classic') {
+      actions.push(
+        <EuiContextMenuItem
+          key="acknowledge"
+          data-test-subj="acknowledgeItem"
+          onClick={() => {
+            this.onCloseActions();
+            this.props.onBulkAcknowledge();
+          }}
+        >
+          Acknowledge
+        </EuiContextMenuItem>
+      );
+    }
+    
+    actions.push(
       <EuiContextMenuItem
         key="edit"
         data-test-subj="editItem"
@@ -77,9 +82,9 @@ export default class MonitorActions extends Component {
         disabled={isDeleteDisabled}
       >
         Delete
-      </EuiContextMenuItem>,
-    ];
-    if (isEditDisabled) actions.splice(0, 1);
+      </EuiContextMenuItem>
+    );
+    
     return actions;
   };
 
@@ -107,7 +112,7 @@ export default class MonitorActions extends Component {
     );
 
     return (
-      <EuiFlexGroup justifyContent="spaceBetween" alignItems="center" gutterSize="s">
+      <EuiFlexGroup alignItems="center" gutterSize="s" responsive={false}>
         <EuiFlexItem grow={false}>
           <EuiPopover
             id="actionsPopover"
@@ -129,15 +134,9 @@ export default class MonitorActions extends Component {
             <EuiContextMenuPanel items={this.getActions()} size="s" />
           </EuiPopover>
         </EuiFlexItem>
-        <PageHeader
-          appRightControls={[
-            {
-              renderComponent: createMonitorControl,
-            },
-          ]}
-        >
-          <EuiFlexItem grow={false}>{createMonitorControl}</EuiFlexItem>
-        </PageHeader>
+        <EuiFlexItem grow={false}>
+          {createMonitorControl}
+        </EuiFlexItem>
       </EuiFlexGroup>
     );
   }

@@ -1,0 +1,270 @@
+/*
+ * Copyright OpenSearch Contributors
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+$osdDocTableCellPadding: calc($euiSizeM / 2);
+
+.explore-table-container {
+  @include euiScrollBar;
+
+  overflow: auto;
+  flex: 1 1 100%;
+  flex-direction: column;
+  height: 100%;
+  mask-image: none;
+
+  doc-table {
+    @include euiScrollBar;
+
+    overflow: auto;
+    flex: 1 1 100%;
+    flex-direction: column;
+
+    th {
+      text-align: left;
+      font-weight: bold;
+    }
+  }
+
+  .explore-table,
+  .osdDocTable {
+    @include ouiCodeFont;
+
+    & > tbody > tr > td {
+      line-height: inherit;
+    }
+
+    dl.source {
+      margin-bottom: 0;
+      line-height: 2em;
+      word-break: break-word;
+
+      dt,
+      dd {
+        display: inline;
+      }
+
+      dt {
+        background-color: transparentize(shade($euiColorPrimary, 20%), 0.9);
+        color: $euiTextColor;
+        padding: calc($euiSizeXS / 2) $euiSizeXS;
+        margin-right: $euiSizeXS;
+        word-break: normal;
+        border-radius: $euiBorderRadius;
+      }
+    }
+  }
+
+  .exploreDocTable__row {
+    td {
+      position: relative;
+    }
+  }
+
+  .exploreDocTable__row--highlight {
+    td {
+      background-color: tintOrShade($euiColorPrimary, 90%, 70%);
+    }
+  }
+
+  .truncate-by-height {
+    overflow: hidden;
+  }
+
+  .table {
+    .table {
+      background-color: $euiColorEmptyShade;
+    }
+  }
+
+  .explore-table {
+    border-collapse: separate;
+
+    tr:first-child td {
+      border-top: none;
+    }
+
+    thead {
+      position: sticky;
+      top: 0;
+      background-color: $euiColorEmptyShade;
+      z-index: 1;
+    }
+
+    .table .table {
+      margin-bottom: 0;
+
+      tr:first-child > td {
+        border-top: none;
+      }
+
+      td.field-name {
+        font-weight: $euiFontWeightBold;
+      }
+    }
+  }
+}
+
+// Table Header
+.exploreDocTableHeader {
+  text-align: left;
+
+  .exploreDocTableHeaderField {
+    padding: $euiSizeS;
+
+    .header-text {
+      display: inline-block;
+      vertical-align: top;
+    }
+  }
+}
+
+.exploreDocTableHeader button {
+  margin-left: $euiSizeXS;
+}
+
+.exploreDocTableHeaderField {
+  &__actionButton {
+    opacity: 0;
+    height: 10px;
+    width: 10px;
+    transition: opacity $euiAnimSpeedFast;
+
+    @include ouiBreakpoint("xs", "s", "m") {
+      opacity: 1;
+    }
+  }
+
+  &:hover &__actionButton,
+  &:focus &__actionButton {
+    opacity: 1;
+  }
+}
+
+// Table Cell
+.exploreDocTable__detailsParent {
+  border-top: none !important;
+}
+
+.euiFlexItem.exploreDocTable__detailsIconContainer {
+  margin-right: 0;
+}
+
+.explore-table td.exploreDocTableCell__toggleDetails {
+  padding: 4px 0 0 4px;
+  z-index: 3;
+}
+
+.exploreDocTableCell {
+  position: relative;
+
+  &__filter {
+    position: absolute;
+    display: flex;
+    flex-grow: 0;
+    top: calc(2em / 2 + $osdDocTableCellPadding);
+    transform: translateY(-50%);
+    right: 0;
+    padding: $euiSizeS - 1px, $euiSizeS;
+    margin-top: 1px;
+
+    &::before {
+      content: "";
+      position: absolute;
+      display: block;
+      right: 0;
+      top: 0;
+      height: 100%;
+      width: 100%;
+      background-image: linear-gradient(to right, transparent 0, $euiColorEmptyShade 16px);
+      z-index: 1;
+    }
+
+    & > * {
+      z-index: 2;
+    }
+  }
+
+  &__filterButton,
+  &__filter {
+    opacity: 0;
+    transition: opacity $euiAnimSpeedFast;
+
+    @include ouiBreakpoint("xs", "s", "m") {
+      opacity: 1;
+    }
+  }
+
+  &:hover &__filterButton,
+  &:focus &__filterButton,
+  &:hover &__filter,
+  &:focus &__filter {
+    opacity: 1;
+  }
+
+  &.eui-textNoWrap {
+    width: 1%;
+  }
+}
+
+.explore-table {
+  .exploreDocTableCell {
+    padding: $euiSizeS;
+  }
+}
+
+.exploreDocTableCell__dataField {
+  white-space: pre-wrap;
+  font-family: monospace;
+  font-size: 12px;
+  line-height: 1.4;
+
+  .eui-textNoWrap & {
+    white-space: nowrap;
+  }
+}
+
+// Field name highlighting in log stream (exact match to Discover)
+.field-name-highlight {
+  background-color: transparentize(shade($euiColorPrimary, 20%), 0.9);
+  color: $euiTextColor;
+  padding: calc($euiSizeXS / 2) $euiSizeXS;
+  margin-right: $euiSizeXS;
+  word-break: normal;
+  border-radius: $euiBorderRadius;
+}
+
+// Expanded document table styling to match Discover
+.expanded-document-table {
+  .table {
+    font-family: monospace;
+    font-size: 12px;
+    border-collapse: collapse;
+    width: 100%;
+    
+    .field-name {
+      font-weight: normal;
+      color: #333;
+      background-color: transparent;
+      border-right: none;
+    }
+    
+    td {
+      padding: 4px 8px;
+      border-bottom: 1px solid #e0e0e0;
+      vertical-align: top;
+    }
+  }
+}
+
+// Pagination
+.exploreDocTable_pagination {
+  width: 100%;
+  padding: $euiSizeS 0;
+
+  & ~ table {
+    margin-bottom: 0;
+  }
+}
+

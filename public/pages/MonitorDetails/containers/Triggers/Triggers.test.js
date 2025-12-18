@@ -18,19 +18,31 @@ const props = {
   updateMonitor: jest.fn(),
 };
 
-jest.mock('uuid/v4', () => {
-  let value = 0;
-  return () => value++;
-});
-
 function getShallowWrapper(customProps = {}) {
   return shallow(<Triggers {...props} {...customProps} />);
 }
 
 describe('Triggers', () => {
+  let mockDateNow;
+  let mockRandom;
+  let dateCounter = 0;
+  
   beforeEach(() => {
     jest.resetAllMocks();
+    dateCounter = 0;
+    
+    // Mock Date.now() to increment each call for unique tableKeys
+    mockDateNow = jest.spyOn(Date, 'now').mockImplementation(() => {
+      return 1234567890000 + (dateCounter++);
+    });
+    mockRandom = jest.spyOn(Math, 'random').mockReturnValue(0.5);
   });
+  
+  afterEach(() => {
+    mockDateNow.mockRestore();
+    mockRandom.mockRestore();
+  });
+  
   test('renders', () => {
     const wrapper = getShallowWrapper();
 

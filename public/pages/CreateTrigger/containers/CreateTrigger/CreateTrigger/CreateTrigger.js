@@ -39,6 +39,18 @@ import { buildClusterMetricsRequest } from '../../../../CreateMonitor/components
 import { getTimeZone } from '../../../utils/helper';
 import { getDataSourceQueryObj } from '../../../../utils/helpers';
 
+/** Normalize PPL preview -> 1h shape that TriggerGraph/TriggerQuery expect */
+const build1hSeriesFromTotal = (pplResp, now = Date.now()) => {
+  const HOUR = 60 * 60 * 1000;
+  const total = Number(pplResp?.total ?? pplResp?.datarows?.length ?? 0) || 0;
+  const buckets = [{ key: now - HOUR, doc_count: total }];
+  return {
+    hits: { total: { value: total } },
+    aggregations: { ppl_histogram: { buckets } },
+    ppl_raw: pplResp,
+  };
+};
+
 export const DEFAULT_CLOSED_STATES = {
   WHEN: false,
   OF_FIELD: false,
@@ -68,7 +80,7 @@ export default class CreateTrigger extends Component {
   }
 
   componentDidMount() {
-    this.onRunExecute();
+    this.onRunExecute(monitorToFormik(this.props.monitor));
     this.onQueryMappings();
   }
 
@@ -95,112 +107,135 @@ export default class CreateTrigger extends Component {
       .catch((err) => {
         console.error(err);
         setSubmitting(false);
-        // TODO: setErrors
       });
   };
 
-  onEdit = (trigger, triggerMetadata, { setSubmitting, setErrors }) => {
+  onEdit = (trigger, triggerMetadata, { setSubmitting }) => {
     const { monitor, updateMonitor, onCloseTrigger, triggerToEdit } = this.props;
     const { ui_metadata: uiMetadata = {}, triggers, monitor_type } = monitor;
     const triggerType =
-      monitor_type === MONITOR_TYPE.BUCKET_LEVEL
-        ? TRIGGER_TYPE.BUCKET_LEVEL
-        : TRIGGER_TYPE.QUERY_LEVEL;
+      monitor_type === MONITOR_TYPE.BUCKET_LEVEL ? TRIGGER_TYPE.BUCKET_LEVEL : TRIGGER_TYPE.QUERY_LEVEL;
     const { name } = triggerToEdit[triggerType];
     const updatedTriggersMetadata = _.cloneDeep(uiMetadata.triggers || {});
     delete updatedTriggersMetadata[name];
-    const updatedUiMetadata = {
-      ...uiMetadata,
-      triggers: { ...updatedTriggersMetadata, ...triggerMetadata },
-    };
+    const updatedUiMetadata = { ...uiMetadata, triggers: { ...updatedTriggersMetadata, ...triggerMetadata } };
 
     const findTriggerName = (element) => element[triggerType].name;
-
     const indexToUpdate = _.findIndex(triggers, findTriggerName);
     const updatedTriggers = triggers.slice();
     updatedTriggers.splice(indexToUpdate, 1, trigger);
+
     const actionKeywords = ['update', 'trigger'];
     updateMonitor({ triggers: updatedTriggers, ui_metadata: updatedUiMetadata }, actionKeywords)
       .then((res) => {
         setSubmitting(false);
-        if (res.ok) {
-          onCloseTrigger();
-        }
+        if (res.ok) onCloseTrigger();
       })
       .catch((err) => {
         console.error(err);
         setSubmitting(false);
-        // TODO: setErrors
       });
   };
 
-  onRunExecute = (triggers = []) => {
+  onRunExecute = (formikValuesArg, triggers = []) => {
     const { httpClient, monitor, notifications } = this.props;
-    const formikValues = monitorToFormik(monitor);
+    const formikValues = formikValuesArg || monitorToFormik(monitor);
     const searchType = formikValues.searchType;
+
+    const isPPL =
+      monitor?.query_language === 'ppl' ||
+      formikValues?.monitor_mode === 'ppl' ||
+      !!monitor?.ppl_monitor ||
+      !!formikValues?.pplQuery;
+
+    // PPL PREVIEW: POST /_plugins/_ppl with { query }
+    if (isPPL) {
+      const pplQuery =
+        formikValues?.pplQuery ||
+        monitor?.ppl_monitor?.query ||
+        monitor?.query ||
+        '';
+
+      const dataSourceQuery = getDataSourceQueryObj();
+      httpClient
+        .post('/_plugins/_ppl', {
+          body: JSON.stringify({ query: pplQuery }),
+          query: dataSourceQuery?.query,
+        })
+        .then((resp) => {
+          if (resp.ok) {
+            const now = Date.now();
+            const normalized = build1hSeriesFromTotal(resp.resp, now);
+            const wrapped = {
+              ok: true,
+              period_start: now - 60 * 60 * 1000, // last 1h
+              period_end: now,                    // now
+              input_results: { results: [normalized] },
+              error: null,
+            };
+            this.setState({ executeResponse: wrapped });
+          } else {
+            backendErrorNotification(notifications, 'preview', 'query', resp.resp);
+          }
+        })
+        .catch((err) => console.log('err:', err));
+      return;
+    }
+
+    // Non-PPL fallback execute
     const monitorToExecute = _.cloneDeep(monitor);
     _.set(monitorToExecute, 'triggers', triggers);
 
     switch (searchType) {
       case SEARCH_TYPE.QUERY:
-      case SEARCH_TYPE.GRAPH:
+      case SEARCH_TYPE.GRAPH: {
         const searchRequest = buildRequest(formikValues);
         _.set(monitorToExecute, 'inputs[0].search', searchRequest);
         break;
-      case SEARCH_TYPE.CLUSTER_METRICS:
+      }
+      case SEARCH_TYPE.CLUSTER_METRICS: {
         const clusterMetricsRequest = buildClusterMetricsRequest(formikValues);
         _.set(monitorToExecute, 'inputs[0].uri', clusterMetricsRequest);
         break;
+      }
       default:
-        console.log(`Unsupported searchType found: ${JSON.stringify(searchType)}`, searchType);
+        break;
     }
     const dataSourceQuery = getDataSourceQueryObj();
     httpClient
-      .post('../api/alerting/monitors/_execute', {
+      .post('/api/alerting/monitors/_execute', {
         body: JSON.stringify(monitorToExecute),
         query: dataSourceQuery?.query,
       })
       .then((resp) => {
-        if (resp.ok) {
-          this.setState({ executeResponse: resp.resp });
-        } else {
-          // TODO: need a notification system to show errors or banners at top
-          console.error('err:', resp);
-          backendErrorNotification(notifications, 'run', 'trigger', resp.resp);
-        }
+        if (resp.ok) this.setState({ executeResponse: resp.resp });
+        else backendErrorNotification(notifications, 'run', 'trigger', resp.resp);
       })
-      .catch((err) => {
-        console.log('err:', err);
-      });
+      .catch((err) => console.log('err:', err));
   };
 
   renderSuccessCallOut = () => {
     const { monitor, showSuccessCallOut, onCloseTrigger } = this.props;
-    if (showSuccessCallOut) {
-      return (
-        <Fragment>
-          <EuiCallOut
-            title={
-              <span>
-                Monitor <strong>{monitor.name}</strong> has been created. Add a trigger to this
-                monitor or{' '}
-                {
-                  <EuiLink style={{ textDecoration: 'underline' }} onClick={onCloseTrigger}>
-                    cancel
-                  </EuiLink>
-                }{' '}
-                to view monitor.
-              </span>
-            }
-            color="success"
-            iconType="alert"
-            size="s"
-          />
-          <EuiSpacer size="s" />
-        </Fragment>
-      );
-    }
-    return null;
+    if (!showSuccessCallOut) return null;
+    return (
+      <Fragment>
+        <EuiCallOut
+          title={
+            <span>
+              Monitor <strong>{monitor.name}</strong> has been created. Add a trigger to this monitor or{' '}
+              <EuiLink style={{ textDecoration: 'underline' }} onClick={onCloseTrigger}>
+                cancel
+              </EuiLink>{' '}
+              to view monitor.
+            </span>
+          }
+          color="success"
+          iconType="alert"
+          size="s"
+        />
+        <EuiSpacer size="s" />
+      </Fragment>
+    );
   };
 
   onSubmit = (values, formikBag) => {
@@ -220,62 +255,22 @@ export default class CreateTrigger extends Component {
       .utc(_.get(executeResponse, 'period_end', Date.now()))
       .tz(getTimeZone())
       .format(),
-    results: [_.get(executeResponse, 'input_results.results[0]')].filter((result) => !!result),
+    results: [_.get(executeResponse, 'input_results.results[0]')].filter(Boolean),
     trigger: formikToTrigger(values, _.get(this.props.monitor, 'ui_metadata', {})),
     alert: null,
     error: null,
-    monitor: monitor,
-  });
-
-  openExpression = (expression) => {
-    this.setState({
-      openedStates: {
-        ...DEFAULT_CLOSED_STATES,
-        [expression]: true,
-      },
-    });
-  };
-
-  closeExpression = (expression) => {
-    const { madeChanges, openedStates } = this.state;
-    if (madeChanges && openedStates[expression]) {
-      // if made changes and close expression that was currently open => run query
-
-      // TODO: Re-enable once we have implementation to support
-      //  rendering visual graphs for bucket-level triggers.
-      // this.props.onRunQuery();
-
-      this.setState({ madeChanges: false });
-    }
-    this.setState({ openedStates: { ...openedStates, [expression]: false } });
-  };
-
-  onMadeChanges = () => {
-    this.setState({ madeChanges: true });
-  };
-
-  getExpressionProps = () => ({
-    openedStates: this.state.openedStates,
-    closeExpression: this.closeExpression,
-    openExpression: this.openExpression,
-    onMadeChanges: this.onMadeChanges,
+    monitor,
   });
 
   async queryMappings(index) {
-    if (!index.length) {
-      return {};
-    }
-
+    if (!index.length) return {};
     try {
       const dataSourceQuery = getDataSourceQueryObj();
-      const response = await this.props.httpClient.post('../api/alerting/_mappings', {
+      const response = await this.props.httpClient.post('/api/alerting/_mappings', {
         body: JSON.stringify({ index }),
         query: dataSourceQuery?.query,
       });
-      if (response.ok) {
-        return response.resp;
-      }
-      return {};
+      return response.ok ? response.resp : {};
     } catch (err) {
       throw err;
     }
@@ -304,7 +299,6 @@ export default class CreateTrigger extends Component {
       plugins,
     } = this.props;
     const { dataTypes, initialValues, executeResponse } = this.state;
-    const isBucketLevelMonitor = _.get(monitor, 'monitor_type') === MONITOR_TYPE.BUCKET_LEVEL;
 
     return (
       <div style={{ padding: '25px 50px' }}>
@@ -316,46 +310,25 @@ export default class CreateTrigger extends Component {
                 <h1>{edit ? 'Edit' : 'Create'} trigger</h1>
               </EuiTitle>
               <EuiSpacer />
-              {isBucketLevelMonitor ? (
-                <FieldArray name={'triggerConditions'} validateOnChange={true}>
-                  {(arrayHelpers) => (
-                    <DefineBucketLevelTrigger
-                      arrayHelpers={arrayHelpers}
-                      context={this.getTriggerContext(executeResponse, monitor, values)}
-                      executeResponse={executeResponse}
-                      monitor={monitor}
-                      monitorValues={monitorToFormik(monitor)}
-                      onRun={this.onRunExecute}
-                      setFlyout={setFlyout}
-                      triggers={monitor.triggers}
-                      triggerValues={values}
-                      isDarkMode={this.props.isDarkMode}
-                      openedStates={this.state.openedStates}
-                      closeExpression={this.closeExpression}
-                      openExpression={this.openExpression}
-                      onMadeChanges={this.onMadeChanges}
-                      dataTypes={dataTypes}
-                      notificationService={notificationService}
-                      plugins={plugins}
-                    />
-                  )}
-                </FieldArray>
-              ) : (
-                <DefineTrigger
-                  context={this.getTriggerContext(executeResponse, monitor, values)}
-                  executeResponse={executeResponse}
-                  monitorValues={monitorToFormik(monitor)}
-                  onRun={this.onRunExecute}
-                  setFlyout={setFlyout}
-                  triggers={monitor.triggers}
-                  triggerValues={values}
-                  isDarkMode={this.props.isDarkMode}
-                  notificationService={notificationService}
-                  plugins={plugins}
-                />
-              )}
+
+              <DefineTrigger
+                context={this.getTriggerContext(executeResponse, monitor, values)}
+                executeResponse={executeResponse}
+                monitor={monitor}
+                monitorValues={values}
+                onRun={(fv) => this.onRunExecute(fv || values)}
+                setFlyout={setFlyout}
+                triggers={monitor.triggers}
+                triggerValues={values}
+                isDarkMode={this.props.isDarkMode}
+                httpClient={httpClient}
+                notifications={notifications}
+                notificationService={notificationService}
+                plugins={plugins}
+              />
+
               <EuiSpacer />
-              <FieldArray name="actions" validateOnChange={true}>
+              <FieldArray name="actions" validateOnChange>
                 {(arrayHelpers) => (
                   <ConfigureActions
                     arrayHelpers={arrayHelpers}

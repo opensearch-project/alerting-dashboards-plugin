@@ -51,6 +51,7 @@ export class AlertingPlugin {
     const alertService = new AlertService(alertingESClient, dataSourceEnabled);
     const opensearchService = new OpensearchService(alertingESClient, dataSourceEnabled);
     const monitorService = new MonitorService(alertingESClient, dataSourceEnabled);
+    monitorService.logger = this.logger;
     const destinationsService = new DestinationsService(alertingESClient, dataSourceEnabled);
     const anomalyDetectorService = new AnomalyDetectorService(adESClient, dataSourceEnabled);
     const findingService = new FindingService(alertingESClient, dataSourceEnabled);
