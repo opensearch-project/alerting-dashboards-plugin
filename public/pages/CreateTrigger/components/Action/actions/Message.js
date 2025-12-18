@@ -283,16 +283,16 @@ export default function Message(
 
       <EuiSpacer size="m" />
 
-      <EuiText>
+      {/* <EuiText>
         <h4>Action configuration</h4>
-      </EuiText>
+      </EuiText> */}
 
       <EuiSpacer size="m" />
 
       {editableActionExecutionPolicy ? (
         <EuiCompressedFormRow
-          label={<span style={{ color: '#343741' }}>Perform action</span>}
-          style={{ maxWidth: '100%' }}
+          // label={<span style={{ color: '#343741' }}>Perform action</span>}
+          // style={{ maxWidth: '100%' }}
         >
           <EuiFlexGroup direction={'column'} gutterSize={'xs'}>
             <EuiFlexItem>
@@ -364,23 +364,23 @@ export default function Message(
         </EuiCompressedFormRow>
       ) : (
         <div>
-          <OverviewStat header={'Perform action'} value={'Per monitor execution'} />
-          <EuiSpacer size={'s'} />
+          {/* <OverviewStat header={'Perform action'} value={'Per monitor execution'} />
+          <EuiSpacer size={'s'} /> */}
         </div>
       )}
 
       {displayThrottlingSettings ? (
         <EuiCompressedFormRow
-          label={'Throttling'}
-          style={{ paddingBottom: '10px', maxWidth: '100%' }}
+          // label={'Throttling'}
+          // style={{ paddingBottom: '10px', maxWidth: '100%' }}
         >
           <EuiFlexGroup direction="column">
-            <EuiFlexItem grow={false} style={{ marginBottom: '0px' }}>
+            {/* <EuiFlexItem grow={false} style={{ marginBottom: '0px' }}>
               <FormikCheckbox
                 name={`${fieldPath}actions.${index}.throttle_enabled`}
                 inputProps={{ label: 'Enable action throttling' }}
               />
-            </EuiFlexItem>
+            </EuiFlexItem> */}
             <EuiFlexGroup
               alignItems="center"
               style={{ margin: '0px', display: _.get(action, `throttle_enabled`) ? '' : 'none' }}

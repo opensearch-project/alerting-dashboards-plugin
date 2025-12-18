@@ -50,6 +50,11 @@ export const FORMIK_INITIAL_VALUES = {
   /* DEFINE MONITOR */
   monitor_type: MONITOR_TYPE.QUERY_LEVEL,
   searchType: 'graph',
+  pplQuery: '', // <-- new editor value for PPL mode
+  pplPreviewResult: null, // <-- optional, for Preview panel state
+  pplPreviewError: null, // <-- optional, for Preview error state
+  suppress: { enabled: false, value: 24, unit: 'hours' },
+  expires: { value: 24, unit: 'hours' },
   clusterNames: [],
   uri: {
     api_type: '',
@@ -60,6 +65,7 @@ export const FORMIK_INITIAL_VALUES = {
   },
   index: [],
   timeField: '',
+  timestampField: '@timestamp', // <-- timestamp field for PPL look back window
   query: MATCH_ALL_QUERY,
   queries: [],
   description: '',
@@ -79,10 +85,13 @@ export const FORMIK_INITIAL_VALUES = {
   associatedMonitorsList: [],
   associatedMonitorsEditor: '',
   preventVisualEditor: false,
+
+  /* MODE TOGGLE */
+  monitor_mode: 'ppl', // 'legacy' | 'ppl' - default to v2/PPL mode
 };
 
 if (dataSourceEnabled()) {
-  FORMIK_INITIAL_VALUES["dataSourceId"] = "random-dataSourceId";
+  FORMIK_INITIAL_VALUES['dataSourceId'] = 'random-dataSourceId';
 }
 
 export const FORMIK_INITIAL_AGG_VALUES = {
@@ -116,6 +125,10 @@ export const DEFAULT_DOCUMENT_LEVEL_QUERY = JSON.stringify(
 );
 
 export const DEFAULT_COMPOSITE_AGG_SIZE = 50;
+
+export const MONITOR_NAME_MAX_LENGTH = 256;
+export const MONITOR_DESCRIPTION_MAX_LENGTH = 500;
+export const LOOKBACK_WINDOW_MIN_MINUTES = 1;
 
 export const METRIC_TOOLTIP_TEXT = 'Extracted statistics such as simple calculations of data.';
 export const TIME_RANGE_TOOLTIP_TEXT = 'The time frame of data the plugin should monitor.';

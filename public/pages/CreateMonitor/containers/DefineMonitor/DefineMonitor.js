@@ -17,7 +17,7 @@ import {
   EuiPanel,
 } from '@elastic/eui';
 import ContentPanel from '../../../../components/ContentPanel';
-import VisualGraph from '../../components/VisualGraph';
+import { AlertingVisualGraph } from '../../components/VisualGraph/AlertingVisualGraph';
 import ExtractionQuery from '../../components/ExtractionQuery';
 import MonitorExpressions from '../../components/MonitorExpressions';
 import QueryPerformance from '../../components/QueryPerformance';
@@ -251,7 +251,11 @@ class DefineMonitor extends Component {
     // Default `count of documents` graph when using Bucket-level monitor
     let graphs = [
       <Fragment key={`multi-visual-graph-0`}>
-        <VisualGraph values={formikSnapshot} fieldName="doc_count" response={response} />
+        <AlertingVisualGraph 
+          values={formikSnapshot} 
+          response={response} 
+          services={this.context?.services || this.context}
+        />
       </Fragment>,
     ];
 
@@ -259,11 +263,10 @@ class DefineMonitor extends Component {
       graphs.push(
         <Fragment key={`multi-visual-graph-${index + 1}`}>
           <EuiSpacer size="m" />
-          <VisualGraph
+          <AlertingVisualGraph
             values={formikSnapshot}
-            fieldName={field.fieldName}
-            aggregationType={field.aggregationType}
             response={response}
+            services={this.context?.services || this.context}
           />
         </Fragment>
       );
@@ -310,7 +313,11 @@ class DefineMonitor extends Component {
             />
           );
         default:
-          return <VisualGraph values={formikSnapshot} response={response} />;
+          return <AlertingVisualGraph 
+            values={formikSnapshot} 
+            response={response} 
+            services={this.context?.services || this.context}
+          />;
       }
     };
 

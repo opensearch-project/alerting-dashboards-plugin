@@ -12,6 +12,7 @@ exports[`Monitors renders 1`] = `
         onBulkDisable={[Function]}
         onBulkEnable={[Function]}
         onClickEdit={[Function]}
+        viewMode="classic"
       />
     }
     bodyStyles={
@@ -41,151 +42,159 @@ exports[`Monitors renders 1`] = `
       search=""
       state="all"
     />
-    <EuiBasicTable
-      columns={
-        Array [
+    <div
+      style={
+        Object {
+          "padding": "0px",
+        }
+      }
+    >
+      <EuiBasicTable
+        columns={
+          Array [
+            Object {
+              "field": "name",
+              "name": "Monitor name",
+              "render": [Function],
+              "sortable": true,
+              "textOnly": true,
+            },
+            Object {
+              "field": "enabled",
+              "name": "State",
+              "render": [Function],
+              "sortable": false,
+              "truncateText": false,
+            },
+            Object {
+              "field": "item_type",
+              "name": "Type",
+              "render": [Function],
+              "sortable": false,
+              "truncateText": false,
+            },
+            Object {
+              "field": "latestAlert",
+              "name": "Latest alert",
+              "sortable": false,
+              "textOnly": true,
+              "truncateText": true,
+            },
+            Object {
+              "dataType": "date",
+              "field": "lastNotificationTime",
+              "name": "Last notification time",
+              "render": [Function],
+              "sortable": true,
+              "truncateText": false,
+            },
+            Object {
+              "field": "active",
+              "name": "Active",
+              "render": [Function],
+              "sortable": true,
+              "truncateText": false,
+            },
+            Object {
+              "field": "acknowledged",
+              "name": "Acknowledged",
+              "render": [Function],
+              "sortable": true,
+              "truncateText": false,
+            },
+            Object {
+              "field": "errors",
+              "name": "Errors",
+              "render": [Function],
+              "sortable": true,
+              "truncateText": false,
+            },
+            Object {
+              "field": "ignored",
+              "name": "Ignored",
+              "render": [Function],
+              "sortable": true,
+              "truncateText": false,
+            },
+            Object {
+              "field": "associatedCompositeMonitorCnt",
+              "name": "Associations with composite monitors",
+              "render": [Function],
+              "truncateText": false,
+            },
+            Object {
+              "actions": Array [
+                Object {
+                  "description": "Acknowledge this Monitor",
+                  "name": "Acknowledge",
+                  "onClick": [Function],
+                },
+                Object {
+                  "available": [Function],
+                  "description": "Enable this Monitor",
+                  "name": "Enable",
+                  "onClick": [Function],
+                },
+                Object {
+                  "available": [Function],
+                  "description": "Disable this Monitor",
+                  "name": "Disable",
+                  "onClick": [Function],
+                },
+                Object {
+                  "description": "Delete this Monitor",
+                  "name": "Delete",
+                  "onClick": [Function],
+                },
+              ],
+              "name": "Actions",
+              "width": "60px",
+            },
+          ]
+        }
+        hasActions={true}
+        isSelectable={true}
+        itemId={[Function]}
+        items={Array []}
+        noItemsMessage={
+          <MonitorEmptyPrompt
+            filterIsApplied={false}
+            loading={true}
+            resetFilters={[Function]}
+          />
+        }
+        onChange={[Function]}
+        pagination={
           Object {
-            "field": "name",
-            "name": "Monitor name",
-            "render": [Function],
-            "sortable": true,
-            "textOnly": true,
-          },
-          Object {
-            "field": "enabled",
-            "name": "State",
-            "render": [Function],
-            "sortable": false,
-            "truncateText": false,
-          },
-          Object {
-            "field": "item_type",
-            "name": "Type",
-            "render": [Function],
-            "sortable": false,
-            "truncateText": false,
-          },
-          Object {
-            "field": "latestAlert",
-            "name": "Latest alert",
-            "sortable": false,
-            "textOnly": true,
-            "truncateText": true,
-          },
-          Object {
-            "dataType": "date",
-            "field": "lastNotificationTime",
-            "name": "Last notification time",
-            "render": [Function],
-            "sortable": true,
-            "truncateText": false,
-          },
-          Object {
-            "field": "active",
-            "name": "Active",
-            "render": [Function],
-            "sortable": true,
-            "truncateText": false,
-          },
-          Object {
-            "field": "acknowledged",
-            "name": "Acknowledged",
-            "render": [Function],
-            "sortable": true,
-            "truncateText": false,
-          },
-          Object {
-            "field": "errors",
-            "name": "Errors",
-            "render": [Function],
-            "sortable": true,
-            "truncateText": false,
-          },
-          Object {
-            "field": "ignored",
-            "name": "Ignored",
-            "render": [Function],
-            "sortable": true,
-            "truncateText": false,
-          },
-          Object {
-            "field": "associatedCompositeMonitorCnt",
-            "name": "Associations with composite monitors",
-            "render": [Function],
-            "truncateText": false,
-          },
-          Object {
-            "actions": Array [
-              Object {
-                "description": "Acknowledge this Monitor",
-                "name": "Acknowledge",
-                "onClick": [Function],
-              },
-              Object {
-                "available": [Function],
-                "description": "Enable this Monitor",
-                "name": "Enable",
-                "onClick": [Function],
-              },
-              Object {
-                "available": [Function],
-                "description": "Disable this Monitor",
-                "name": "Disable",
-                "onClick": [Function],
-              },
-              Object {
-                "description": "Delete this Monitor",
-                "name": "Delete",
-                "onClick": [Function],
-              },
+            "pageIndex": 0,
+            "pageSize": 20,
+            "pageSizeOptions": Array [
+              5,
+              10,
+              20,
+              50,
             ],
-            "name": "Actions",
-            "width": "60px",
-          },
-        ]
-      }
-      hasActions={true}
-      isSelectable={true}
-      itemId={[Function]}
-      items={Array []}
-      noItemsMessage={
-        <MonitorEmptyPrompt
-          filterIsApplied={false}
-          loading={true}
-          resetFilters={[Function]}
-        />
-      }
-      onChange={[Function]}
-      pagination={
-        Object {
-          "pageIndex": 0,
-          "pageSize": 20,
-          "pageSizeOptions": Array [
-            5,
-            10,
-            20,
-            50,
-          ],
-          "totalItemCount": 0,
+            "totalItemCount": 0,
+          }
         }
-      }
-      responsive={true}
-      selection={
-        Object {
-          "onSelectionChange": [Function],
-          "selectableMessage": [Function],
+        responsive={true}
+        selection={
+          Object {
+            "onSelectionChange": [Function],
+            "selectableMessage": [Function],
+          }
         }
-      }
-      sorting={
-        Object {
-          "sort": Object {
-            "direction": "desc",
-            "field": "name",
-          },
+        sorting={
+          Object {
+            "sort": Object {
+              "direction": "desc",
+              "field": "name",
+            },
+          }
         }
-      }
-      tableLayout="fixed"
-    />
+        tableLayout="fixed"
+      />
+    </div>
   </ContentPanel>
 </Fragment>
 `;

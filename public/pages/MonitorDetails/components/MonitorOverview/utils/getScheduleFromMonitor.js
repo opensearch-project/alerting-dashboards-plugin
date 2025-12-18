@@ -20,23 +20,27 @@ export default function getScheduleFromMonitor(monitor) {
   try {
     const uiMetadata = _.get(monitor, 'ui_metadata');
     if (uiMetadata) {
+      const scheduleMetadata = _.get(uiMetadata, 'schedule', {});
       const {
         frequency,
-        period: { interval, unit },
+        period = {},
         daily,
         weekly,
-        monthly: { day },
+        monthly = {},
         cronExpression,
         timezone,
-      } = _.get(uiMetadata, 'schedule', {});
+      } = scheduleMetadata;
+      
+      const { interval, unit } = period;
+      const { day } = monthly;
 
-      if (frequency === 'interval') {
+      if (frequency === 'interval' && interval && unit) {
         return `Every ${interval} ${unit.toLowerCase()}`;
       }
-      if (frequency === 'daily') {
+      if (frequency === 'daily' && typeof daily === 'number' && timezone) {
         return `Every day around ${moment.tz(timezone).hours(daily).minutes(0).format('h:mm a z')}`;
       }
-      if (frequency === 'weekly') {
+      if (frequency === 'weekly' && weekly && typeof daily === 'number' && timezone) {
         const daysOfWeek = Object.entries(weekly)
           .filter(([day, checked]) => checked)
           .map(([day]) => day);
@@ -53,14 +57,14 @@ export default function getScheduleFromMonitor(monitor) {
           .minutes(0)
           .format('h:mm a z')}`;
       }
-      if (frequency === 'monthly') {
+      if (frequency === 'monthly' && day && typeof daily === 'number' && timezone) {
         return `Every month on the ${moment(day, 'DD').format('Do')} around ${moment
           .tz(timezone)
           .hours(daily)
           .minutes(0)
           .format('h:mm a z')}`;
       }
-      if (frequency === 'cronExpression') {
+      if (frequency === 'cronExpression' && cronExpression) {
         return cronExpression;
       }
     }

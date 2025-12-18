@@ -1,0 +1,26 @@
+// Custom styling for CreateMonitor step panels
+.create-monitor-step-panel {
+  .euiAccordion__button {
+    padding-top: 8px !important;
+    padding-bottom: 4px !important;
+    padding-left: 12px !important;
+  }
+  
+  .euiAccordion__iconWrapper {
+    margin-top: 0px !important;
+  }
+  
+  .euiAccordion__icon {
+    margin-top: 0px !important;
+  }
+  
+  .euiAccordion__arrow {
+    margin-top: 0px !important;
+  }
+  
+  .euiAccordion__children {
+    padding-left: 56px !important; // Indent content more to the right
+    padding-right: 16px !important;
+    padding-bottom: 16px !important;
+  }
+}
