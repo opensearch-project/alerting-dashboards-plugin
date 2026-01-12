@@ -40,6 +40,7 @@ export const DEFAULT_LOG_PATTERN_SAMPLE_SIZE = 20;
 export const DEFAULT_ACTIVE_ALERTS_AI_TOP_N = 1;
 export const DEFAULT_DSL_QUERY_DATE_FORMAT = 'YYYY-MM-DDTHH:mm:ssZ';
 export const DEFAULT_PPL_QUERY_DATE_FORMAT = 'YYYY-MM-DD HH:mm:ss';
+export const PERIOD_START_PLACEHOLDER = '{{period_start}}';
 export const PERIOD_END_PLACEHOLDER = '{{period_end}}';
 export const BUCKET_UNIT_PPL_UNIT_MAP = {
   'd': 'DAY',

@@ -13,6 +13,7 @@ import {
   DEFAULT_LOG_PATTERN_SAMPLE_SIZE,
   DEFAULT_LOG_PATTERN_TOP_N,
   DEFAULT_PPL_QUERY_DATE_FORMAT,
+  PERIOD_START_PLACEHOLDER,
   PERIOD_END_PLACEHOLDER,
   PPL_SEARCH_PATH,
 } from '../../pages/Dashboard/utils/constants';
@@ -87,19 +88,36 @@ export const AlertInsight: React.FC<AlertInsightProps> = (props: AlertInsightPro
       // Only keep the query part
       dsl = JSON.stringify({ query: search.query.query });
       let latestAlertTriggerTime = '';
+      let latestAlertExecuteStartTime = '';
+      let hasTimeReplaced = false;
+      if (query.indexOf(PERIOD_START_PLACEHOLDER) !== -1) {
+        const START_TIME = moment.utc(alert.last_notification_time).subtract(monitorDefinition.schedule.period.interval, monitorDefinition.schedule.period.unit).valueOf();
+        query = query.replaceAll(PERIOD_START_PLACEHOLDER, START_TIME);
+        latestAlertExecuteStartTime = moment
+          .utc(START_TIME)
+          .format(DEFAULT_DSL_QUERY_DATE_FORMAT);
+        dsl = dsl.replaceAll(PERIOD_START_PLACEHOLDER, latestAlertExecuteStartTime);
+        monitorDefinitionStr = monitorDefinitionStr.replaceAll(
+          PERIOD_START_PLACEHOLDER,
+          getTime(START_TIME) // human-readable time format for summary
+        );
+        hasTimeReplaced = true;
+      }
       if (query.indexOf(PERIOD_END_PLACEHOLDER) !== -1) {
         query = query.replaceAll(PERIOD_END_PLACEHOLDER, alert.last_notification_time);
         latestAlertTriggerTime = moment
           .utc(alert.last_notification_time)
           .format(DEFAULT_DSL_QUERY_DATE_FORMAT);
         dsl = dsl.replaceAll(PERIOD_END_PLACEHOLDER, latestAlertTriggerTime);
-        // as we changed the format, remove it
-        dsl = dsl.replaceAll('"format":"epoch_millis",', '');
         monitorDefinitionStr = monitorDefinitionStr.replaceAll(
           PERIOD_END_PLACEHOLDER,
           getTime(alert.last_notification_time) // human-readable time format for summary
         );
-        // as we changed the format, remove it
+        hasTimeReplaced = true;
+      }
+      // as we changed the format, remove it
+      if (hasTimeReplaced) {
+        dsl = dsl.replaceAll('"format":"epoch_millis",', '');
         monitorDefinitionStr = monitorDefinitionStr.replaceAll('"format":"epoch_millis",', '');
       }
       // 3.3 preprocess ppl query base with concatenated filters
