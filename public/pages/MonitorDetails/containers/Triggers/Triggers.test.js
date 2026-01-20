@@ -18,9 +18,11 @@ const props = {
   updateMonitor: jest.fn(),
 };
 
-jest.mock('uuid/v4', () => {
+jest.mock('uuid', () => {
   let value = 0;
-  return () => value++;
+  return {
+    v4: () => value++,
+  };
 });
 
 function getShallowWrapper(customProps = {}) {
