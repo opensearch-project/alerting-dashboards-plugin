@@ -52,6 +52,7 @@
     "json-schema": "^0.4.0",
     "loader-utils": "1.4.2",
     "minimist": "^1.2.6",
+    "min-document": "^2.19.1",
     "moment": "^2.29.4",
     "terser": "^4.8.1",
     "tough-cookie": "^4.1.3",
