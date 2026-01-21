@@ -19,14 +19,30 @@ import moment from 'moment-timezone';
 import { formikToTrigger } from '../containers/CreateTrigger/utils/formikToTrigger';
 import { getUISettings } from '../../../services';
 
-export const getChannelOptions = (channels) =>
-  channels.map((channel) => ({
-    key: channel.type,
-    label: channel.type,
-    options: channels
-      .filter((local_channel) => local_channel.type === channel.type)
-      .map((option) => ({ key: option.value, ...option })),
-  }));
+export const getChannelOptions = (channels) => {
+  const channelMap = {};
+
+  // Iterate over channels to group options by channel type
+  channels.forEach(channel => {
+    if (!channelMap[channel.type]) {
+      channelMap[channel.type] = {
+        key: channel.type,
+        label: channel.type,
+        options: []
+      };
+    }
+    // Add the option to the corresponding channel type
+    channelMap[channel.type].options.push({
+      key: channel.value,
+      ...channel
+    });
+  });
+
+  // Convert the channelMap object to an array of values
+  const channelOptions = Object.values(channelMap);
+  
+  return channelOptions;
+};
 
 // Custom Webhooks for Destinations used `custom_webhook` for the type whereas Notification Channels use 'webhook'
 // This conversion ensures Notifications' nomenclature is used for the labeling for consistency
