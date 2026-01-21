@@ -23,4 +23,6 @@ module.exports = defineConfig({
     numTestsKeptInMemory: 0,
     experimentalMemoryManagement: true,
   },
+  numTestsKeptInMemory: 0,
+  experimentalMemoryManagement: true,
 })
