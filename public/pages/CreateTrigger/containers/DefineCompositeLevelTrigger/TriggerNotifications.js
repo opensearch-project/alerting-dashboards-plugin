@@ -13,6 +13,7 @@ import {
   EuiButtonIcon,
   EuiToolTip,
 } from '@elastic/eui';
+import _ from 'lodash';
 import TriggerNotificationsContent from './TriggerNotificationsContent';
 import { MAX_CHANNELS_RESULT_SIZE, OS_NOTIFICATION_PLUGIN } from '../../../../utils/constants';
 import { titleTemplate } from '../../../../utils/helpers';
