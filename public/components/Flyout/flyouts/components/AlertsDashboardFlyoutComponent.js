@@ -239,7 +239,8 @@ export default class AlertsDashboardFlyoutComponent extends Component {
     if (!selectedItems.length) return;
 
     const { httpClient, notifications } = this.props;
-    acknowledgeAlerts(httpClient, notifications, selectedItems);
+    // Wait for acknowledgment to complete before refetching alerts
+    await acknowledgeAlerts(httpClient, notifications, selectedItems);
 
     const { page, size, search, sortField, sortDirection, severityLevel, alertState, monitorIds } =
       this.state;
