@@ -4,5 +4,6 @@
  */
 
 import VisualGraph from './VisualGraph';
+export { PplAlertingVisualGraph } from './PplAlertingVisualGraph';
 
 export default VisualGraph;

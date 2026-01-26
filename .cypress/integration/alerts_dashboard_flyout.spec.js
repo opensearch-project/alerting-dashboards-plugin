@@ -47,7 +47,9 @@ describe('Alerts by trigger flyout', () => {
   beforeEach(() => {
     // Reloading the page to close any flyouts that were not closed by other tests that had failures.
     cy.visit(`${Cypress.env('opensearch_dashboards')}/app/${PLUGIN_NAME}#/dashboard`);
-    cy.contains('Alerts by triggers', { timeout: TWENTY_SECONDS });
+    cy.get('[data-test-subj="alertsDashboard_table"]', {
+      timeout: TWENTY_SECONDS,
+    }).should('exist');
 
     // Waiting 5 seconds for alerts to finish loading.
     // This short wait period alleviates flakiness observed during these tests.

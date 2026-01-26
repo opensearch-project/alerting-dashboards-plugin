@@ -39,3 +39,20 @@ export const getInitialActionValues = ({ monitorType, flyoutMode, actions }) => 
 
   return initialActionValues;
 };
+
+export const getInitialPplActionValues = ({ flyoutMode, actions }) => {
+  const initialActionValues = _.cloneDeep(FORMIK_INITIAL_ACTION_VALUES);
+
+  // Set PPL-specific message template
+  _.set(initialActionValues, 'message_template.source', DEFAULT_MESSAGE_SOURCE.PPL_MONITOR);
+
+  const id = getDigitId();
+  initialActionValues.id = `notification${id}`;
+
+  // Add name based on previous name;
+  if (flyoutMode) {
+    initialActionValues.name = getUniqueName(actions, 'Notification ');
+  }
+
+  return initialActionValues;
+};

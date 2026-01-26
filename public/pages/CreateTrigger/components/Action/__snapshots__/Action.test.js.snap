@@ -407,7 +407,9 @@ exports[`Action renders with Notifications plugin installed 1`] = `
                       <strong>
                         Perform action
                       </strong>
-                      <div>
+                      <div
+                        style="word-wrap:break-word;overflow-wrap:break-word"
+                      >
                         Per monitor execution
                       </div>
                     </div>
@@ -1002,7 +1004,9 @@ exports[`Action renders without Notifications plugin installed 1`] = `
                       <strong>
                         Perform action
                       </strong>
-                      <div>
+                      <div
+                        style="word-wrap:break-word;overflow-wrap:break-word"
+                      >
                         Per monitor execution
                       </div>
                     </div>

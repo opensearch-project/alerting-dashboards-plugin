@@ -1,0 +1,14 @@
+/*
+ * Copyright OpenSearch Contributors
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+// Disable pointer events on form row labels in Define Trigger PPL
+.define-trigger-ppl {
+  .euiFormRow__labelWrapper {
+    pointer-events: none !important;
+    cursor: default !important;
+    user-select: none !important;
+  }
+}
+

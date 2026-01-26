@@ -4,12 +4,32 @@
  */
 
 import React from 'react';
-import { mount } from 'enzyme';
+import { mount, shallow } from 'enzyme';
+
+jest.mock('../../../services', () => {
+  const services = jest.requireActual('../../../services/services');
+  return {
+    ...services,
+    NotificationService: function NotificationServiceMock() {},
+    isPplAlertingEnabled: jest.fn(),
+    getUseUpdatedUx: jest.fn(() => false),
+  };
+});
+
+jest.mock('../../utils/helpers', () => {
+  const helpers = jest.requireActual('../../utils/helpers');
+  return {
+    ...helpers,
+    getIsAgentConfigured: jest.fn().mockResolvedValue(false),
+  };
+});
 
 import Dashboard from './Dashboard';
+import DashboardClassic from './DashboardClassic';
+import DashboardRouter from './DashboardRouter';
 import { historyMock, httpClientMock } from '../../../../test/mocks';
 import { setupCoreStart } from '../../../../test/utils/helpers';
-import { setAssistantDashboards, setAssistantClient, setClient } from '../../../services';
+import { isPplAlertingEnabled } from '../../../services';
 
 const location = {
   hash: '',
@@ -17,194 +37,61 @@ const location = {
   state: undefined,
 };
 
-const sampleQueryAlerts = [
-  {
-    id: 'Ciw2DH0B3-v9t8HD4m3Q',
-    monitor_id: '7SwkDH0B3-v9t8HDk2zN',
-    schema_version: 3,
-    monitor_version: 2,
-    monitor_name: 'test-query-monitor',
-    trigger_id: '7CwkDH0B3-v9t8HDk2w_',
-    trigger_name: 'test-query-trigger',
-    state: 'ACTIVE',
-    error_message: null,
-    alert_history: [],
-    severity: '1',
-    action_execution_results: [],
-    start_time: 1636587463371,
-    last_notification_time: 1636587523369,
-    end_time: null,
-    acknowledged_time: null,
-  },
-  {
-    id: 'Cyw2DH0B3-v9t8HD4m3Q',
-    monitor_id: '7SwkDH0B3-v9t8HDk2zN',
-    schema_version: 3,
-    monitor_version: 2,
-    monitor_name: 'test-query-monitor',
-    trigger_id: '_iw2DH0B3-v9t8HDNWwE',
-    trigger_name: 'test-query-trigger2',
-    state: 'ACTIVE',
-    error_message: null,
-    alert_history: [],
-    severity: '1',
-    action_execution_results: [],
-    start_time: 1636587463371,
-    last_notification_time: 1636587523370,
-    end_time: null,
-    acknowledged_time: null,
-  },
-];
-
-const runAllPromises = () => new Promise(setImmediate);
-
 beforeAll(() => {
   setupCoreStart();
 });
 
 describe('Dashboard', () => {
-  setAssistantDashboards({ getFeatureStatus: () => ({ chat: false, alertInsight: false }) });
-  setClient(httpClientMock);
-  setAssistantClient({agentConfigExists: (agentConfigName, options) => {return Promise.resolve({ exists: false });}})
   beforeEach(() => {
     jest.clearAllMocks();
-  });
-
-  test('renders with per alert view', () => {
-    const resp = {
+    httpClientMock.get.mockResolvedValue({
       ok: true,
       alerts: [],
       totalAlerts: 0,
-    };
+      resp: { total_alerts_v2: 0, alerts: [] },
+    });
+  });
 
-    httpClientMock.get = jest.fn().mockImplementation(() => Promise.resolve(resp));
+  const render = (props = {}) =>
+    mount(
+      <Dashboard httpClient={httpClientMock} history={historyMock} location={location} {...props} />
+    );
 
-    const wrapper = mount(
+  test('renders DashboardClassic when PPL alerting is disabled', () => {
+    isPplAlertingEnabled.mockReturnValue(false);
+
+    const wrapper = render({ perAlertView: true });
+
+    expect(wrapper.find(DashboardClassic).exists()).toBe(true);
+    expect(wrapper.find(DashboardRouter).exists()).toBe(false);
+  });
+
+  test('renders DashboardRouter when PPL alerting is enabled', () => {
+    isPplAlertingEnabled.mockReturnValue(true);
+
+    const wrapper = render({ perAlertView: true });
+
+    expect(wrapper.find(DashboardRouter).exists()).toBe(true);
+    expect(wrapper.find(DashboardClassic).exists()).toBe(false);
+  });
+
+  test('forwards props to the rendered dashboard', () => {
+    isPplAlertingEnabled.mockReturnValue(false);
+    const perAlertView = false;
+
+    const wrapper = shallow(
       <Dashboard
         httpClient={httpClientMock}
         history={historyMock}
         location={location}
-        perAlertView={true}
+        perAlertView={perAlertView}
+        monitorIds={['monitor-1']}
       />
     );
 
-    expect(wrapper).toMatchSnapshot();
-  });
-
-  test('renders with alert by triggers view', () => {
-    const resp = {
-      ok: true,
-      alerts: [],
-      totalAlerts: 0,
-    };
-
-    httpClientMock.get = jest.fn().mockImplementation(() => Promise.resolve(resp));
-
-    const wrapper = mount(
-      <Dashboard
-        httpClient={httpClientMock}
-        history={historyMock}
-        location={location}
-        perAlertView={false}
-      />
-    );
-
-    expect(wrapper).toMatchSnapshot();
-  });
-
-  test('renders in flyout', () => {
-    const resp = {
-      ok: true,
-      alerts: [],
-      totalAlerts: 0,
-    };
-
-    httpClientMock.get = jest.fn().mockImplementation(() => Promise.resolve(resp));
-
-    const wrapper = mount(
-      <Dashboard
-        httpClient={httpClientMock}
-        history={historyMock}
-        location={location}
-        isAlertsFlyout={true}
-        flyoutAlerts={sampleQueryAlerts}
-        perAlertView={true}
-      />
-    );
-
-    expect(wrapper).toMatchSnapshot();
-  });
-
-  test('getAlerts', async () => {
-    const mockAlert = {
-      id: 'id',
-      version: 'version',
-      monitor_id: 'monitor_id',
-      monitor_name: 'monitor_name',
-      monitor_version: 1,
-      trigger_id: 'trigger_id',
-      trigger_name: 'trigger_name',
-      state: 'state',
-      error_message: '',
-      alert_history: [],
-      severity: '1',
-      action_execution_results: [],
-    };
-
-    const resp = {
-      ok: true,
-      alerts: [mockAlert],
-      totalAlerts: 1,
-    };
-
-    // Mock return in getAlerts function
-    httpClientMock.get = jest.fn().mockImplementation(() => Promise.resolve(resp));
-
-    const wrapper = mount(
-      <Dashboard httpClient={httpClientMock} history={historyMock} location={location} />
-    );
-
-    await runAllPromises();
-
-    expect(wrapper.instance().state.totalAlerts).toBe(1);
-    expect(wrapper.instance().state.alerts.length).toBe(1);
-    expect(wrapper.instance().state.alerts[0].id).toBe('id');
-    expect(wrapper.instance().state.alerts[0].version).toBe('version');
-    expect(wrapper.instance().state.alerts[0].monitor_id).toBe('monitor_id');
-    expect(wrapper.instance().state.alerts[0].monitor_name).toBe('monitor_name');
-    expect(wrapper.instance().state.alerts[0].monitor_version).toBe(1);
-    expect(wrapper.instance().state.alerts[0].trigger_id).toBe('trigger_id');
-    expect(wrapper.instance().state.alerts[0].trigger_name).toBe('trigger_name');
-    expect(wrapper.instance().state.alerts[0].severity).toBe('1');
-    expect(wrapper.instance().state.alerts[0].action_execution_results).toStrictEqual([]);
-    expect(wrapper.instance().state.alerts[0].alert_history).toStrictEqual([]);
-    expect(wrapper.instance().state.alerts[0].error_message).toBe('');
-  });
-
-  test.skip('able to select single alert in flyout', () => {
-    const resp = {
-      ok: true,
-      alerts: [],
-      totalAlerts: 0,
-    };
-
-    httpClientMock.get = jest.fn().mockImplementation(() => Promise.resolve(resp));
-
-    const wrapper = mount(
-      <Dashboard
-        httpClient={httpClientMock}
-        history={historyMock}
-        location={location}
-        isAlertsFlyout={true}
-        flyoutAlerts={sampleQueryAlerts}
-      />
-    );
-    //TODO: Figure out how to find the 1 acknowledge button out of 3 nodes
-    expect(wrapper.find('[data-test-subj="acknowledgeButton"]').is('[disabled]')).toBe(true);
-    wrapper
-      .find('[data-test-subj="checkboxSelectRow-Ciw2DH0B3-v9t8HD4m3Q-3"]')
-      .hostNodes()
-      .simulate('change');
-    expect(wrapper.find('[data-test-subj="acknowledgeButton"]').is('[disabled]')).toBe(false);
+    const renderedDashboard = wrapper.find(DashboardClassic);
+    expect(renderedDashboard.exists()).toBe(true);
+    expect(renderedDashboard.prop('perAlertView')).toBe(perAlertView);
+    expect(renderedDashboard.prop('monitorIds')).toEqual(['monitor-1']);
   });
 });

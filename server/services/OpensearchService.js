@@ -130,11 +130,14 @@ export default class OpensearchService extends MDSEnabledClientService {
         },
       });
     } catch (err) {
-      console.error('Alerting - OpensearchService - getMappings:', err);
+      const isIndexMissing = err?.body?.error?.type === 'index_not_found_exception';
+      if (!isIndexMissing) {
+        console.error('Alerting - OpensearchService - getMappings:', err);
+      }
       return res.ok({
         body: {
           ok: false,
-          resp: err.message,
+          resp: isIndexMissing ? 'Incorrect data source or invalid index' : err.message,
         },
       });
     }

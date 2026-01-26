@@ -33,7 +33,11 @@ import {
 import { TRIGGER_TYPE } from '../../../../pages/CreateTrigger/containers/CreateTrigger/utils/constants';
 import { UNITS_OF_TIME } from '../../../../pages/CreateMonitor/components/MonitorExpressions/expressions/utils/constants';
 import { DEFAULT_WHERE_EXPRESSION_TEXT } from '../../../../pages/CreateMonitor/components/MonitorExpressions/expressions/utils/whereHelpers';
-import { acknowledgeAlerts, backendErrorNotification } from '../../../../utils/helpers';
+import {
+  acknowledgeAlerts,
+  backendErrorNotification,
+  getSeverityText,
+} from '../../../../utils/helpers';
 import {
   getQueryObjectFromState,
   getURLQueryParams,
@@ -61,7 +65,6 @@ import {
   getDataSourceId,
   getIsCommentsEnabled,
 } from '../../../../pages/utils/helpers';
-import { getSeverityText } from '../../../../utils/helpers';
 
 export const DEFAULT_NUM_FLYOUT_ROWS = 10;
 
@@ -146,6 +149,7 @@ export default class AlertsDashboardFlyoutComponent extends Component {
         monitorIds
       );
     }
+
     const { monitorType, commentsEnabled, tabId } = this.state;
     if (
       ([MONITOR_TYPE.DOC_LEVEL, MONITOR_TYPE.COMPOSITE_LEVEL].includes(monitorType) &&
@@ -184,6 +188,7 @@ export default class AlertsDashboardFlyoutComponent extends Component {
 
   getAlerts = async () => {
     this.setState({ loading: true, tabContent: undefined });
+
     const {
       from,
       search,
@@ -194,7 +199,6 @@ export default class AlertsDashboardFlyoutComponent extends Component {
       monitorIds,
       monitorType,
     } = this.state;
-
     const { httpClient, history, notifications, triggerID } = this.props;
 
     const params = {
@@ -211,11 +215,13 @@ export default class AlertsDashboardFlyoutComponent extends Component {
 
     const queryParamsString = queryString.stringify(params);
     history.replace({ ...this.props.location, search: queryParamsString });
+
     const dataSourceId = getDataSourceId();
     const extendedParams = {
-      ...(dataSourceId !== undefined && { dataSourceId }), // Only include dataSourceId if it exists
-      ...params, // Other parameters
+      ...(dataSourceId !== undefined && { dataSourceId }),
+      ...params,
     };
+
     httpClient.get('../api/alerting/alerts', { query: extendedParams })?.then((resp) => {
       if (resp.ok) {
         const { alerts } = resp;
@@ -231,6 +237,7 @@ export default class AlertsDashboardFlyoutComponent extends Component {
       }
       this.setState({ tabContent: this.renderAlertsTable() });
     });
+
     this.setState({ loading: false });
   };
 
@@ -275,7 +282,6 @@ export default class AlertsDashboardFlyoutComponent extends Component {
 
   onTableChange = ({ page: tablePage = {}, sort = {} }) => {
     const { index: page, size } = tablePage;
-
     const { field: sortField, direction: sortDirection } = sort;
     this.setState({
       page,
@@ -382,6 +388,7 @@ export default class AlertsDashboardFlyoutComponent extends Component {
           columns = queryColumns;
           break;
       }
+
       columns = removeColumns(['severity', 'trigger_name'], columns);
 
       if (commentsEnabled) {
@@ -423,6 +430,7 @@ export default class AlertsDashboardFlyoutComponent extends Component {
           Acknowledge
         </EuiSmallButton>,
       ];
+
       if (!_.isEmpty(detectorId)) {
         actions.unshift(
           <EuiSmallButton
@@ -433,10 +441,12 @@ export default class AlertsDashboardFlyoutComponent extends Component {
           </EuiSmallButton>
         );
       }
+
       return actions;
     };
 
     const trimmedAlerts = alerts.slice(page * size, page * size + size);
+
     return (
       <ContentPanel
         title={'Alerts'}
@@ -457,6 +467,7 @@ export default class AlertsDashboardFlyoutComponent extends Component {
           monitorType={monitorType}
           panelStyles={{ padding: '8px 0px 16px' }}
         />
+
         <EuiBasicTable
           items={loading ? [] : trimmedAlerts}
           /*
@@ -502,7 +513,6 @@ export default class AlertsDashboardFlyoutComponent extends Component {
       { ...TABLE_TAB_IDS.ALERTS, content: this.renderAlertsTable() },
       { ...TABLE_TAB_IDS.FINDINGS, content: this.renderFindingsTable() },
     ];
-
     return tabs.map((tab, index) => (
       <EuiTab
         key={`${tab.id}${index}`}
@@ -530,9 +540,9 @@ export default class AlertsDashboardFlyoutComponent extends Component {
       trigger_name,
     } = this.props;
     const { loading, localClusterName, monitor, monitorType, tabContent } = this.state;
+
     const searchType = _.get(monitor, 'ui_metadata.search.searchType', SEARCH_TYPE.GRAPH);
     const triggerType = this.getTriggerType(monitorType);
-
     let trigger = _.get(monitor, 'triggers', []).find(
       (trigger) => trigger[triggerType].id === triggerID
     );
@@ -540,7 +550,6 @@ export default class AlertsDashboardFlyoutComponent extends Component {
 
     const severity = _.get(trigger, 'severity');
     const groupBy = _.get(monitor, MONITOR_GROUP_BY);
-
     const condition =
       searchType === SEARCH_TYPE.GRAPH &&
       (monitorType === MONITOR_TYPE.BUCKET_LEVEL || monitorType === MONITOR_TYPE.DOC_LEVEL)
@@ -567,6 +576,7 @@ export default class AlertsDashboardFlyoutComponent extends Component {
     UNITS_OF_TIME.map((entry) => {
       if (entry.value === bucketUnitOfTime) bucketUnitOfTime = entry.text;
     });
+
     const timeRangeForLast =
       bucketValue !== undefined && !_.isEmpty(bucketUnitOfTime)
         ? `${bucketValue} ${bucketUnitOfTime}`
@@ -581,11 +591,13 @@ export default class AlertsDashboardFlyoutComponent extends Component {
         displayTableTabs = false;
         break;
     }
+
     const monitorUrl = `#/monitors/${monitor_id}${
       monitorType === MONITOR_TYPE.COMPOSITE_LEVEL ? '?type=workflow' : ''
     }`;
 
     const dataSources = getDataSources(monitor, localClusterName).join('\n');
+
     return (
       <div>
         <EuiFlexGroup>
@@ -602,9 +614,7 @@ export default class AlertsDashboardFlyoutComponent extends Component {
             </EuiText>
           </EuiFlexItem>
         </EuiFlexGroup>
-
         <EuiSpacer size={'xxl'} />
-
         <EuiFlexGroup>
           <EuiFlexItem>
             <EuiText size="s">
@@ -619,9 +629,7 @@ export default class AlertsDashboardFlyoutComponent extends Component {
             </EuiText>
           </EuiFlexItem>
         </EuiFlexGroup>
-
         <EuiSpacer size={'xxl'} />
-
         <EuiFlexGroup>
           <EuiFlexItem>
             <EuiText size="s" data-test-subj={`alertsDashboardFlyout_monitor_${trigger_name}`}>
@@ -638,9 +646,7 @@ export default class AlertsDashboardFlyoutComponent extends Component {
             </EuiText>
           </EuiFlexItem>
         </EuiFlexGroup>
-
         <EuiHorizontalRule margin={'xxl'} />
-
         <EuiFlexGroup>
           <EuiFlexItem>
             <EuiText size="s" data-test-subj={`alertsDashboardFlyout_conditions_${trigger_name}`}>
@@ -650,7 +656,6 @@ export default class AlertsDashboardFlyoutComponent extends Component {
               </p>
             </EuiText>
           </EuiFlexItem>
-
           {![MONITOR_TYPE.DOC_LEVEL, MONITOR_TYPE.COMPOSITE_LEVEL].includes(monitorType) && (
             <EuiFlexItem>
               <EuiText size="s" data-test-subj={`alertsDashboardFlyout_timeRange_${trigger_name}`}>
@@ -660,11 +665,9 @@ export default class AlertsDashboardFlyoutComponent extends Component {
             </EuiFlexItem>
           )}
         </EuiFlexGroup>
-
         {![MONITOR_TYPE.DOC_LEVEL, MONITOR_TYPE.COMPOSITE_LEVEL].includes(monitorType) && (
           <div>
             <EuiSpacer size={'xxl'} />
-
             <EuiFlexGroup>
               <EuiFlexItem>
                 <EuiText size="s" data-test-subj={`alertsDashboardFlyout_filters_${trigger_name}`}>
@@ -687,11 +690,9 @@ export default class AlertsDashboardFlyoutComponent extends Component {
             </EuiFlexGroup>
           </div>
         )}
-
         <EuiSpacer size={'xxl'} />
         <EuiHorizontalRule margin={'none'} />
         <EuiSpacer size={displayTableTabs ? 'l' : 'xxl'} />
-
         {displayTableTabs ? (
           <div>
             <EuiTabs size="s">{this.renderTableTabs()}</EuiTabs>

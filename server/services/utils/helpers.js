@@ -20,11 +20,17 @@ export const toSnake = (value, key) => snakeCase(key);
 export const toCamel = (value, key) => camelCase(key);
 
 export const isIndexNotFoundError = (err) => {
-  return (
-    err.statusCode === 404 &&
-    get(err, 'body.error.reason', '') ===
-      'Configured indices are not found: [.opendistro-alerting-config]'
-  );
+  if (err.statusCode === 404) {
+    const errorType = get(err, 'body.error.type', '');
+    const errorReason = get(err, 'body.error.reason', '');
+
+    return (
+      errorType === 'index_not_found_exception' ||
+      errorReason === 'Configured indices are not found: [.opendistro-alerting-config]' ||
+      errorReason.includes?.('no such index')
+    );
+  }
+  return false;
 };
 
 export function createValidateQuerySchema(dataSourceEnabled, fields = {}) {
@@ -32,7 +38,8 @@ export function createValidateQuerySchema(dataSourceEnabled, fields = {}) {
   const schemaObj = { ...fields };
 
   if (dataSourceEnabled) {
-    schemaObj['dataSourceId'] = schema.string();
+    // Make dataSourceId optional to support APIs that can operate on the local cluster
+    schemaObj['dataSourceId'] = schema.maybe(schema.string());
   }
   return schema.object(schemaObj);
 }

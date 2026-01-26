@@ -180,7 +180,7 @@ describe('DocumentLevelMonitor', () => {
       cy.contains(sampleDocumentLevelMonitor.triggers[0].document_level_trigger.name);
 
       // Go back to the Monitors list
-      cy.get('a').contains('Monitors').click({ force: true });
+      cy.contains('Monitors').click({ force: true });
 
       // Confirm we can see the created monitor in the list
       cy.contains(SAMPLE_EXTRACTION_QUERY_MONITOR);
@@ -314,7 +314,7 @@ describe('DocumentLevelMonitor', () => {
       ).contains(sampleDocumentLevelMonitor.inputs[0].doc_level_input.queries[0].name);
 
       // Go back to the Monitors list
-      cy.get('a').contains('Monitors').click({ force: true });
+      cy.contains('Monitors').click({ force: true });
 
       // Confirm we can see the created monitor in the list
       cy.contains(SAMPLE_VISUAL_EDITOR_MONITOR);

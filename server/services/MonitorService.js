@@ -8,7 +8,7 @@ import _ from 'lodash';
 import { INDEX } from '../../utils/constants';
 import { isIndexNotFoundError } from './utils/helpers';
 import { MDSEnabledClientService } from './MDSEnabledClientService';
-import { DEFAULT_HEADERS } from "./utils/constants";
+import { DEFAULT_HEADERS } from './utils/constants';
 
 export default class MonitorService extends MDSEnabledClientService {
   createMonitor = async (context, req, res) => {
@@ -484,13 +484,13 @@ export default class MonitorService extends MDSEnabledClientService {
       if (isIndexNotFoundError(err)) {
         // Config index is not created unitl a monitor is created.
         return res.ok({
-          body: { 
-            ok: false, 
-            resp: { 
-              totalMonitors: 0, 
+          body: {
+            ok: false,
+            resp: {
+              totalMonitors: 0,
               monitors: [],
-              message: "No monitors created"
-            } 
+              message: 'No monitors created',
+            },
           },
         });
       } else {
@@ -592,8 +592,12 @@ export default class MonitorService extends MDSEnabledClientService {
   //TODO: This is temporarily a pass through call which needs to be deprecated
   searchMonitors = async (context, req, res) => {
     try {
-      const { query, index, size } = req.body;
-      const params = { index, size, body: query };
+      const { query: queryBody, index, size, ...rest } = req.body || {};
+      const body = { ...(queryBody ?? {}), ...rest };
+      if (size !== undefined) {
+        body.size = size;
+      }
+      const params = { index, body };
 
       const client = this.getClientBasedOnDataSource(context, req);
       const results = await client('alerting.getMonitors', params);
@@ -607,13 +611,13 @@ export default class MonitorService extends MDSEnabledClientService {
       if (isIndexNotFoundError(err)) {
         // Config index is not created unitl a monitor is created.
         return res.ok({
-          body: { 
-            ok: false, 
-            resp: { 
-              totalMonitors: 0, 
+          body: {
+            ok: false,
+            resp: {
+              totalMonitors: 0,
               monitors: [],
-              message: "No monitors created"
-            } 
+              message: 'No monitors created',
+            },
           },
         });
       } else {
@@ -625,7 +629,7 @@ export default class MonitorService extends MDSEnabledClientService {
             resp: err.message,
           },
         });
-      } 
+      }
     }
   };
 }

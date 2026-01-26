@@ -32,10 +32,32 @@ export interface AlertInsightProps {
   isAgentConfigured: boolean;
   children: React.ReactElement;
   datasourceId?: string;
+  viewMode?: 'classic' | 'new';
 }
 
 export const AlertInsight: React.FC<AlertInsightProps> = (props: AlertInsightProps) => {
-  const { alert, children, isAgentConfigured, alertId, datasourceId } = props;
+  const {
+    alert,
+    children,
+    isAgentConfigured,
+    alertId,
+    datasourceId,
+    viewMode = 'classic',
+  } = props;
+
+  const isPplMonitorAlert =
+    viewMode === 'new' ||
+    Boolean(alert?.monitor_v2_id || alert?.trigger_v2_id || alert?.monitor_v2_name);
+
+  if (isPplMonitorAlert) {
+    console.log('[AlertInsight] skipping v1 monitor fetch for PPL alert', {
+      viewMode,
+      alertId,
+      hasV2Fields: Boolean(alert?.monitor_v2_id || alert?.trigger_v2_id || alert?.monitor_v2_name),
+    });
+    return children;
+  }
+
   const httpClient = getClient();
   const dataSourceQuery = dataSourceEnabled()
     ? { query: { dataSourceId: datasourceId || '' } }
@@ -43,6 +65,11 @@ export const AlertInsight: React.FC<AlertInsightProps> = (props: AlertInsightPro
 
   const contextProvider = async () => {
     // 1. get monitor definition
+    console.log('[AlertInsight] fetching legacy monitor for alert', {
+      alertId,
+      monitorId: alert.monitor_id,
+      dataSourceQuery,
+    });
     const monitorResp = await httpClient.get(
       `../api/alerting/monitors/${alert.monitor_id}`,
       dataSourceQuery

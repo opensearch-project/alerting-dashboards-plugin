@@ -53,6 +53,8 @@ const Action = ({
   flyoutMode,
   accordionProps = {},
   isInitialLoading,
+  MessageComponent,
+  WebhookMessageComponent,
 }) => {
   const [backupValues, setBackupValues] = useState();
   const [isConfigureOpen, setIsConfigureOpen] = useState(false);
@@ -70,9 +72,9 @@ const Action = ({
   let ActionComponent;
   const actionLabel = 'Notification';
   if (type === 'webhook') {
-    ActionComponent = webhookNotificationActionMessageComponent;
+    ActionComponent = WebhookMessageComponent || webhookNotificationActionMessageComponent;
   } else {
-    ActionComponent = defaultNotificationActionMessageComponent;
+    ActionComponent = MessageComponent || defaultNotificationActionMessageComponent;
   }
 
   const isFirstAction = index !== undefined && index === 0;

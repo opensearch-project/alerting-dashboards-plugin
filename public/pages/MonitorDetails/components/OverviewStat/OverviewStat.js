@@ -11,13 +11,13 @@ const OverviewStat = ({ header, value }) => (
   <EuiFlexItem key={header}>
     <EuiText size="xs">
       <strong>{header}</strong>
-      <div>{value}</div>
+      <div style={{ wordWrap: 'break-word', overflowWrap: 'break-word' }}>{value}</div>
     </EuiText>
   </EuiFlexItem>
 );
 
 OverviewStat.propTypes = {
-  header: PropTypes.string.isRequired,
+  header: PropTypes.oneOfType([PropTypes.string, PropTypes.element]).isRequired,
   value: PropTypes.oneOfType([PropTypes.string, PropTypes.number, PropTypes.element]).isRequired,
 };
 

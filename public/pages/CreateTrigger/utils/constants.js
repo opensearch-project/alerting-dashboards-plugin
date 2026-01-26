@@ -36,6 +36,11 @@ export const DEFAULT_MESSAGE_SOURCE = {
   - Period start: {{ctx.periodStart}} UTC
   - Period end: {{ctx.periodEnd}} UTC
   `.trim(),
+  PPL_MONITOR: `
+Monitor {{ctx.monitorV2.name}} just entered alert status. Please investigate the issue.
+  - Trigger: {{ctx.ppl_trigger.name}}
+  - Severity: {{ctx.ppl_trigger.severity}}
+  `.trim(),
 };
 
 export const FORMIK_INITIAL_ACTION_VALUES = {

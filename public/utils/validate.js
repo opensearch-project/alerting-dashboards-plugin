@@ -38,6 +38,10 @@ export const validateActionName = (monitor, trigger) => (value) => {
       actions = _.get(trigger, `${TRIGGER_TYPE.DOC_LEVEL}.actions`, []);
       break;
   }
+  if (!actions && trigger?.actions) {
+    actions = trigger.actions;
+  }
+  actions = Array.isArray(actions) ? actions : [];
   const matches = actions.filter((action) => action.name === value);
   if (matches.length > 1) return 'Action name is already used.';
 };

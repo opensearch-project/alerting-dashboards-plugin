@@ -10,7 +10,9 @@ exports[`OverviewStat renders 1`] = `
     <strong>
       Test Header
     </strong>
-    <div>
+    <div
+      style="word-wrap:break-word;overflow-wrap:break-word"
+    >
       Test Value
     </div>
   </div>

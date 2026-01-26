@@ -6,6 +6,14 @@
 import React from 'react';
 import { mount, shallow } from 'enzyme';
 
+jest.mock('../../services', () => {
+  const actual = jest.requireActual('../../services');
+  return {
+    ...actual,
+    isPplAlertingEnabled: jest.fn(() => false),
+  };
+});
+
 import Breadcrumbs, {
   createEuiBreadcrumb,
   parseLocationHash,

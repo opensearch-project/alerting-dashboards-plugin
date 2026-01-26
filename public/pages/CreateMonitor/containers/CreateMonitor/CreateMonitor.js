@@ -13,6 +13,9 @@ import {
   EuiFlexItem,
   EuiSpacer,
   EuiText,
+  EuiCheckbox,
+  EuiToolTip,
+  EuiIconTip,
 } from '@elastic/eui';
 import DefineMonitor from '../DefineMonitor';
 import { FORMIK_INITIAL_VALUES } from './utils/constants';
@@ -30,6 +33,7 @@ import {
 } from '../../components/QueryPerformance/QueryPerformance';
 import { isDataSourceChanged } from '../../../utils/helpers';
 import { PageHeader } from '../../../../components/PageHeader/PageHeader';
+import { isPplAlertingEnabled } from '../../../../services';
 
 export default class CreateMonitor extends Component {
   static defaultProps = {
@@ -164,6 +168,19 @@ export default class CreateMonitor extends Component {
     }
   }
 
+  redirectToNew = () => {
+    const { history, location } = this.props;
+    const params = new URLSearchParams(location.search);
+    if (params.get('mode') !== 'new') {
+      params.set('mode', 'new');
+      history.replace({ ...location, search: params.toString() });
+    }
+  };
+
+  handleNewToggle = () => {
+    this.redirectToNew();
+  };
+
   render() {
     const {
       edit,
@@ -176,6 +193,14 @@ export default class CreateMonitor extends Component {
       notificationService,
     } = this.props;
     const { createModalOpen, initialValues, plugins } = this.state;
+    const pplEnabled = isPplAlertingEnabled();
+    const search = typeof location?.search === 'string' ? location.search : '';
+    const params = new URLSearchParams(search);
+    const mode = params.get('mode');
+    // Show checkbox if PPL is enabled and we're in classic mode (or no mode specified, which defaults to classic)
+    // Hide checkbox when editing monitors
+    const showNewToggle = pplEnabled && (mode === 'classic' || !mode) && !edit;
+
     return (
       <div style={{ padding: '16px' }}>
         <Formik
@@ -186,6 +211,7 @@ export default class CreateMonitor extends Component {
         >
           {({ values, errors, handleSubmit, isSubmitting, isValid, touched }) => {
             const isComposite = values.monitor_type === MONITOR_TYPE.COMPOSITE_LEVEL;
+
             return (
               <Fragment>
                 <PageHeader>
@@ -205,6 +231,28 @@ export default class CreateMonitor extends Component {
                   isAd={values.searchType === SEARCH_TYPE.AD}
                   detectorId={this.props.detectorId}
                   setFlyout={this.props.setFlyout}
+                  renderNewToggle={
+                    showNewToggle ? (
+                      <EuiCheckbox
+                        id="useClassicMonitorsHeader"
+                        label={
+                          <span>
+                            Use classic monitor{' '}
+                            <EuiToolTip content="Use pre-existing monitor types available in classic alerts.">
+                              <EuiIconTip type="iInCircle" data-test-subj="classicInfoHeader" />
+                            </EuiToolTip>
+                          </span>
+                        }
+                        checked={true}
+                        onChange={(e) => {
+                          if (!e.target.checked) {
+                            this.handleNewToggle();
+                          }
+                        }}
+                        data-test-subj="useClassicCheckboxHeader"
+                      />
+                    ) : null
+                  }
                 />
 
                 {values.preventVisualEditor ? null : (
