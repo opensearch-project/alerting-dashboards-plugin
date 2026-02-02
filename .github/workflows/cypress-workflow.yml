@@ -31,6 +31,11 @@ jobs:
           path: alerting
           repository: opensearch-project/alerting
           ref: ${{ env.ALERTING_PLUGIN_BRANCH }}
+      - name: Setup Gradle
+        run: |
+          cd alerting
+          # Pin to Gradle 8.x to avoid compatibility issues with Gradle 9.x
+          ./gradlew wrapper --gradle-version 8.10.2 --distribution-type all
       - name: Run Opensearch with plugin
         run: |
           cd alerting
