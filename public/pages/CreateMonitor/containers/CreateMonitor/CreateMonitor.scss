@@ -1,0 +1,36 @@
+.create-monitor-step-panel {
+  .euiAccordion__button {
+    padding-top: 8px !important;
+    padding-bottom: 4px !important;
+    padding-left: 12px !important;
+  }
+
+  .euiAccordion__iconWrapper {
+    margin-top: 0 !important;
+  }
+
+  .euiAccordion__icon {
+    margin-top: 0 !important;
+  }
+
+  .euiAccordion__arrow {
+    margin-top: 0 !important;
+  }
+
+  .euiAccordion__children {
+    padding-left: 56px !important;
+    padding-right: 16px !important;
+    padding-bottom: 16px !important;
+  }
+}
+
+// Disable pointer events on form row labels in PPL Alerting Create Monitor
+.ppl-alerting-create-monitor {
+  .euiFormRow__labelWrapper {
+    pointer-events: none !important;
+    cursor: default !important;
+    user-select: none !important;
+  }
+}
+
+

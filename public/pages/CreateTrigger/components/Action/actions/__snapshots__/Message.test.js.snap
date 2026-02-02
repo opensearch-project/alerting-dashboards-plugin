@@ -180,7 +180,9 @@ exports[`Message renders 1`] = `
         <strong>
           Perform action
         </strong>
-        <div>
+        <div
+          style="word-wrap:break-word;overflow-wrap:break-word"
+        >
           Per monitor execution
         </div>
       </div>

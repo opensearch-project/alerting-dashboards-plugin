@@ -3,6 +3,4 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import MonitorOverview from './MonitorOverview';
-
-export default MonitorOverview;
+export { default, MonitorOverviewV1, MonitorOverviewV2 } from './MonitorOverview';

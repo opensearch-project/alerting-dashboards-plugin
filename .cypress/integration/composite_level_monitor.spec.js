@@ -85,7 +85,7 @@ describe('CompositeLevelMonitor', () => {
         cy.contains(SAMPLE_VISUAL_EDITOR_MONITOR);
 
         // Go back to the Monitors list
-        cy.get('a').contains('Monitors').click({ force: true });
+        cy.contains('Monitors').click({ force: true });
 
         cy.contains(SAMPLE_VISUAL_EDITOR_MONITOR);
       });

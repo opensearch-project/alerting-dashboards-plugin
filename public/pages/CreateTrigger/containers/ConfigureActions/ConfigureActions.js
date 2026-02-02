@@ -182,9 +182,8 @@ class ConfigureActions extends React.Component {
             type: toChannelType(destination.type),
             description: '',
           }));
-      } else if (response.totalMonitors !== 0) {
-          // If the config index is not created, don't show the notification
-          backendErrorNotification(notifications, 'load', 'destinations', response.err);
+      } else if (response.err) {
+        backendErrorNotification(notifications, 'load', 'destinations', response.err);
       }
 
       let channels = await this.getChannels();
@@ -272,7 +271,7 @@ class ConfigureActions extends React.Component {
     const testMonitor = { ...monitor, triggers: [{ ...testTrigger }] };
 
     try {
-      const response = await httpClient.post('../api/alerting/monitors/_execute', {
+      const response = await httpClient.post('/api/alerting/monitors/_execute', {
         query: { dryrun: false, dataSourceId: getDataSourceId() },
         body: JSON.stringify(testMonitor),
       });
@@ -342,7 +341,22 @@ class ConfigureActions extends React.Component {
             index={index}
             onDelete={() => {
               this.setState({ actionDeleted: true });
+              const actionsList = _.get(values, `${fieldPath}actions`, []);
               arrayHelpers.remove(index);
+              const form = arrayHelpers.form;
+              const updatedErrors = _.cloneDeep(form.errors);
+              _.unset(updatedErrors, `${fieldPath}actions[${index}]`);
+              if ((actionsList.length || 0) <= 1) {
+                _.unset(updatedErrors, `${fieldPath}actions`);
+              }
+              form.setErrors(updatedErrors);
+
+              const updatedTouched = _.cloneDeep(form.touched);
+              _.unset(updatedTouched, `${fieldPath}actions[${index}]`);
+              if ((actionsList.length || 0) <= 1) {
+                _.unset(updatedTouched, `${fieldPath}actions`);
+              }
+              form.setTouched(updatedTouched, false);
             }}
             sendTestMessage={this.sendTestMessage}
             setFlyout={setFlyout}

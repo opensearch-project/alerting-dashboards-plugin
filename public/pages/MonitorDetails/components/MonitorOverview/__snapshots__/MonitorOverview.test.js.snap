@@ -58,7 +58,9 @@ exports[`MonitorOverview renders 1`] = `
           <strong>
             Monitor type
           </strong>
-          <div>
+          <div
+            style="word-wrap:break-word;overflow-wrap:break-word"
+          >
             Per query monitor
           </div>
         </div>
@@ -72,7 +74,9 @@ exports[`MonitorOverview renders 1`] = `
           <strong>
             Monitor definition type
           </strong>
-          <div>
+          <div
+            style="word-wrap:break-word;overflow-wrap:break-word"
+          >
             Extraction Query
           </div>
         </div>
@@ -86,7 +90,9 @@ exports[`MonitorOverview renders 1`] = `
           <strong>
             Index
           </strong>
-          <div>
+          <div
+            style="word-wrap:break-word;overflow-wrap:break-word"
+          >
             -
           </div>
         </div>
@@ -100,7 +106,9 @@ exports[`MonitorOverview renders 1`] = `
           <strong>
             Total active alerts
           </strong>
-          <div>
+          <div
+            style="word-wrap:break-word;overflow-wrap:break-word"
+          >
             17
           </div>
         </div>
@@ -114,7 +122,9 @@ exports[`MonitorOverview renders 1`] = `
           <strong>
             Schedule
           </strong>
-          <div>
+          <div
+            style="word-wrap:break-word;overflow-wrap:break-word"
+          >
             -
           </div>
         </div>
@@ -128,7 +138,9 @@ exports[`MonitorOverview renders 1`] = `
           <strong>
             Last updated
           </strong>
-          <div>
+          <div
+            style="word-wrap:break-word;overflow-wrap:break-word"
+          >
             -
           </div>
         </div>
@@ -142,7 +154,9 @@ exports[`MonitorOverview renders 1`] = `
           <strong>
             Monitor ID
           </strong>
-          <div />
+          <div
+            style="word-wrap:break-word;overflow-wrap:break-word"
+          />
         </div>
       </div>
       <div
@@ -154,7 +168,9 @@ exports[`MonitorOverview renders 1`] = `
           <strong>
             Monitor version number
           </strong>
-          <div>
+          <div
+            style="word-wrap:break-word;overflow-wrap:break-word"
+          >
             3
           </div>
         </div>

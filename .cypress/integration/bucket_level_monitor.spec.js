@@ -192,7 +192,7 @@ describe('Bucket-Level Monitors', () => {
       cy.contains(SAMPLE_TRIGGER);
 
       // Go back to the Monitors list
-      cy.get('a').contains('Monitors').click({ force: true });
+      cy.contains('Monitors').click({ force: true });
 
       // Confirm we can see the created monitor in the list
       cy.contains(SAMPLE_EXTRACTION_QUERY_MONITOR);
@@ -298,7 +298,7 @@ describe('Bucket-Level Monitors', () => {
       cy.contains(SAMPLE_TRIGGER);
 
       // Go back to the Monitors list
-      cy.get('a').contains('Monitors').click({ force: true });
+      cy.contains('Monitors').click({ force: true });
 
       // Confirm we can see the created monitor in the list
       cy.contains(SAMPLE_VISUAL_EDITOR_MONITOR);

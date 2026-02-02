@@ -9,7 +9,7 @@ import {
   FORMIK_COMPOSITE_INITIAL_TRIGGER_VALUES,
   FORMIK_INITIAL_TRIGGER_VALUES,
 } from '../../containers/CreateTrigger/utils/constants';
-import { getInitialActionValues } from '../AddActionButton/utils';
+import { getInitialActionValues, getInitialPplActionValues } from '../AddActionButton/utils';
 import { MONITOR_TYPE } from '../../../../utils/constants';
 
 export const getInitialTriggerValues = ({
@@ -29,6 +29,25 @@ export const getInitialTriggerValues = ({
     initialValues.id = `trigger${id}`;
     initialValues.name = getUniqueName(triggers, 'Trigger ');
     const initialAction = getInitialActionValues({ monitorType, flyoutMode, actions: [] });
+    initialValues.actions = [initialAction];
+  }
+
+  return initialValues;
+};
+
+export const getInitialPplTriggerValues = ({
+  script = FORMIK_INITIAL_TRIGGER_VALUES.script,
+  flyoutMode,
+  triggers,
+}) => {
+  const initialValues = _.cloneDeep({ ...FORMIK_INITIAL_TRIGGER_VALUES, script });
+
+  if (flyoutMode) {
+    const id = getDigitId();
+
+    initialValues.id = `trigger${id}`;
+    initialValues.name = getUniqueName(triggers, 'Trigger ');
+    const initialAction = getInitialPplActionValues({ flyoutMode, actions: [] });
     initialValues.actions = [initialAction];
   }
 

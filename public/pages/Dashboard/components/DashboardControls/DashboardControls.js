@@ -85,9 +85,13 @@ const DashboardControls = ({
           data-test-subj={'dashboardAlertStateFilter'}
         />
       </EuiFlexItem>
-      {alertActions.map((action, idx) => (
-        <EuiFlexItem grow={false}>{action}</EuiFlexItem>
-      ))}
+      {Array.isArray(alertActions) &&
+        alertActions.length > 0 &&
+        alertActions.map((action, idx) => (
+          <EuiFlexItem grow={false} key={idx}>
+            {action}
+          </EuiFlexItem>
+        ))}
     </EuiFlexGroup>
   );
 };
