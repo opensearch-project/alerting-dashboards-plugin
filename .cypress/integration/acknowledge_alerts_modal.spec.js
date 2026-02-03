@@ -15,7 +15,7 @@ const QUERY_TRIGGER = 'sample_alerts_flyout_query_level_trigger';
 
 const TWENTY_SECONDS = 20000;
 const SIXTY_SECONDS = 60000;
-const TWO_MINUTES = 120000;
+const TWO_MINUTES = 120000; //test
 
 describe('AcknowledgeAlertsModal', () => {
   before(() => {
