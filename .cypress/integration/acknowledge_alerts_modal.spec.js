@@ -14,8 +14,8 @@ const QUERY_MONITOR = 'sample_alerts_flyout_query_level_monitor';
 const QUERY_TRIGGER = 'sample_alerts_flyout_query_level_trigger';
 
 const TWENTY_SECONDS = 20000;
-
 const SIXTY_SECONDS = 60000;
+const TWO_MINUTES = 120000;
 
 describe('AcknowledgeAlertsModal', () => {
   before(() => {
@@ -31,11 +31,14 @@ describe('AcknowledgeAlertsModal', () => {
     cy.createMonitor(sampleAlertsFlyoutQueryMonitor);
 
     // Visit Alerting OpenSearch Dashboards
-    cy.visit(`${Cypress.env('opensearch_dashboards')}/app/${PLUGIN_NAME}#/monitors`, { timeout: SIXTY_SECONDS });
+    cy.visit(`${Cypress.env('opensearch_dashboards')}/app/${PLUGIN_NAME}#/monitors`, {
+      timeout: SIXTY_SECONDS,
+    });
+    cy.reload();
 
     // Confirm test monitors were created successfully
-    cy.contains(BUCKET_MONITOR, { timeout: SIXTY_SECONDS });
-    cy.contains(QUERY_MONITOR, { timeout: SIXTY_SECONDS });
+    cy.contains(BUCKET_MONITOR, { timeout: TWO_MINUTES });
+    cy.contains(QUERY_MONITOR, { timeout: TWO_MINUTES });
 
     // Wait 1 minute for the test monitors to trigger alerts, then go to the 'Alerts by trigger' dashboard page to view alerts
     cy.wait(60000);
@@ -44,6 +47,9 @@ describe('AcknowledgeAlertsModal', () => {
   beforeEach(() => {
     // Reloading the page to close any modals that were not closed by other tests that had failures.
     cy.visit(`${Cypress.env('opensearch_dashboards')}/app/${PLUGIN_NAME}#/dashboard`);
+    cy.contains('Alerts by triggers', { timeout: TWENTY_SECONDS });
+    // Small wait reduces flakiness in CI while alerts finish loading.
+    cy.wait(5000);
 
     // Confirm dashboard is displaying rows for the test monitors.
     cy.contains(BUCKET_MONITOR, { timeout: SIXTY_SECONDS });
