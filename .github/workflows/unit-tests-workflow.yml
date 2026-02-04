@@ -32,6 +32,20 @@ jobs:
           repository: opensearch-project/OpenSearch-Dashboards
           ref: ${{ env.OPENSEARCH_DASHBOARDS_VERSION }}
           path: OpenSearch-Dashboards
+      - name: Setup Node
+        uses: actions/setup-node@v3
+        with:
+          node-version-file: './OpenSearch-Dashboards/.nvmrc'
+          registry-url: 'https://registry.npmjs.org'
+      - name: Install Yarn
+        # Need to use bash to avoid having a windows/linux specific step
+        shell: bash
+        run: |
+          YARN_VERSION=$(node -p "require('./OpenSearch-Dashboards/package.json').engines.yarn")
+          echo "Installing yarn@$YARN_VERSION"
+          npm i -g yarn@$YARN_VERSION
+      - run: node -v
+      - run: yarn -v
       - name: Checkout Alerting OpenSearch Dashboards plugin
         uses: actions/checkout@v2
         with:
