@@ -4,7 +4,7 @@
  */
 
 import React from 'react';
-import { mount, shallow } from 'enzyme';
+import { shallow } from 'enzyme';
 
 jest.mock('../../../services', () => {
   const services = jest.requireActual('../../../services/services');
@@ -53,7 +53,7 @@ describe('Dashboard', () => {
   });
 
   const render = (props = {}) =>
-    mount(
+    shallow(
       <Dashboard httpClient={httpClientMock} history={historyMock} location={location} {...props} />
     );
 

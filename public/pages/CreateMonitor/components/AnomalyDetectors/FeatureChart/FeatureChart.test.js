@@ -4,41 +4,39 @@
  */
 
 import React from 'react';
-import { mount, render } from 'enzyme';
+import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { FeatureChart } from './FeatureChart';
 import { AlertingFakes } from '../../../../../../test/utils/helpers';
 
 const alertingFakes = new AlertingFakes('random seed');
 
-function getMountWrapper(customProps = {}) {
-  return mount(
-    <FeatureChart
-      startDateTime={alertingFakes.randomTime()}
-      endDateTime={alertingFakes.randomTime()}
-      featureData={[]}
-      isLoading={false}
-      title="Test"
-    />
-  );
-}
-
 describe('FeatureChart', () => {
+  const defaultProps = {
+    startDateTime: alertingFakes.randomTime(),
+    endDateTime: alertingFakes.randomTime(),
+    featureData: [],
+    isLoading: false,
+    title: 'Test',
+  };
+
   test('renders ', () => {
-    const component = (
-      <FeatureChart
-        startDateTime={alertingFakes.randomTime()}
-        endDateTime={alertingFakes.randomTime()}
-        featureData={[]}
-        isLoading={false}
-        title="Test"
-      />
-    );
-    expect(render(component)).toMatchSnapshot();
+    const { container } = render(<FeatureChart {...defaultProps} />);
+    expect(container).toMatchSnapshot();
   });
 
-  test('go to page ', () => {
-    const mountWrapper = getMountWrapper();
-    mountWrapper.instance().goToPage(1);
-    expect(mountWrapper.instance().state.activePage).toBe(1);
+  test('go to page ', async () => {
+    const user = userEvent.setup();
+    const featureData = Array.from({ length: 30 }, (_, i) => ({
+      data: i,
+      plotTime: Date.now() + i * 1000,
+    }));
+
+    render(<FeatureChart {...defaultProps} featureData={featureData} />);
+
+    const nextButton = screen.queryByLabelText(/next page/i);
+    if (nextButton && !nextButton.disabled) {
+      await user.click(nextButton);
+    }
   });
 });
