@@ -5,7 +5,8 @@
 
 import React from 'react';
 import { Router, Route, HashRouter } from 'react-router-dom';
-import { render, mount } from 'enzyme';
+import { render as enzymeRender } from 'enzyme';
+import { render, waitFor } from '@testing-library/react';
 import * as Breadcrumbs from '../../components/Breadcrumbs/Breadcrumbs';
 import { createMemoryHistory } from 'history';
 
@@ -24,21 +25,33 @@ describe('Main', () => {
       </HashRouter>
     );
 
-    expect(render(component)).toMatchSnapshot();
+    expect(enzymeRender(component)).toMatchSnapshot();
   });
 
-  test('updates breadcrumbs when location updates', () => {
+  test('updates breadcrumbs when location updates', async () => {
     const getBreadcrumbs = jest.spyOn(Breadcrumbs, 'getBreadcrumbs');
     const history = createMemoryHistory();
     history.push('/');
-    mount(
+
+    const { rerender } = render(
       <Router history={history}>
         <Route render={(props) => <Main httpClient={{}} {...props} />} />
       </Router>
     );
 
     expect(getBreadcrumbs).toHaveBeenCalledTimes(1);
+
     history.push('/monitors');
-    expect(getBreadcrumbs).toHaveBeenCalledTimes(2);
+
+    // Force re-render to trigger route change
+    rerender(
+      <Router history={history}>
+        <Route render={(props) => <Main httpClient={{}} {...props} />} />
+      </Router>
+    );
+
+    await waitFor(() => {
+      expect(getBreadcrumbs).toHaveBeenCalledTimes(2);
+    });
   });
 });

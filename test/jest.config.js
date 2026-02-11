@@ -55,6 +55,6 @@ module.exports = {
   transformIgnorePatterns: [
     // ignore all node_modules except d3-color which requires babel transforms to handle export statement
     // since ESM modules are not natively supported in Jest yet (https://github.com/facebook/jest/issues/4842)
-    '[/\\\\]node_modules(?![\\/\\\\](monaco-editor|react-monaco-editor|weak-lru-cache|ordered-binary|d3-color|axios))[/\\\\].+\\.js$',
+    '[/\\\\]node_modules(?![\\/\\\\](monaco-editor|react-monaco-editor|weak-lru-cache|ordered-binary|d3-color|axios|uuid))[/\\\\].+\\.js$',
   ],
 };

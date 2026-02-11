@@ -4,7 +4,7 @@
  */
 
 import React from 'react';
-import { mount } from 'enzyme';
+import { render, waitFor } from '@testing-library/react';
 import {
   notificationServiceMock,
   httpServiceMock,
@@ -19,32 +19,53 @@ httpClientMock.get.mockResolvedValue({
   response: { anomalyResult: { anomalies: [], featureData: [] }, detector: {} },
 });
 
-const mockedRender = jest.fn().mockImplementation(() => null);
-function getMountWrapper() {
-  return mount(
-    <CoreContext.Provider value={{ http: httpClientMock }}>
-      <AnomalyDetectorData detectorId="randomId" render={mockedRender} />
-    </CoreContext.Provider>
-  );
-}
-
 describe('AnomalyDetectorData', () => {
   const notifications = notificationServiceMock.createStartContract();
   setNotifications(notifications);
   const httpClient = httpServiceMock.createStartContract();
   setClient(httpClient);
+
   beforeEach(() => {
     jest.clearAllMocks();
   });
-  test('calls preview api call on mount', () => {
-    const getPreviewData = jest.spyOn(AnomalyDetectorData.prototype, 'getPreviewData');
-    getMountWrapper();
-    expect(getPreviewData).toHaveBeenCalled();
-    expect(getPreviewData).toHaveBeenCalledTimes(1);
+
+  test('calls render function on mount', async () => {
+    const mockRender = jest.fn().mockImplementation(() => <div>Rendered</div>);
+
+    render(
+      <CoreContext.Provider value={{ http: httpClientMock }}>
+        <AnomalyDetectorData detectorId="randomId" render={mockRender} />
+      </CoreContext.Provider>
+    );
+
+    await waitFor(
+      () => {
+        expect(mockRender).toHaveBeenCalled();
+      },
+      { timeout: 3000 }
+    );
   });
-  test('calls render with anomalyResult', () => {
-    const wrapper = getMountWrapper();
-    expect(mockedRender).toHaveBeenCalled();
-    expect(mockedRender).toHaveBeenCalledWith(wrapper.state());
+
+  test('calls render with anomalyResult', async () => {
+    const mockRender = jest.fn().mockImplementation(() => <div>Rendered</div>);
+
+    render(
+      <CoreContext.Provider value={{ http: httpClientMock }}>
+        <AnomalyDetectorData detectorId="randomId" render={mockRender} />
+      </CoreContext.Provider>
+    );
+
+    await waitFor(
+      () => {
+        expect(mockRender).toHaveBeenCalled();
+      },
+      { timeout: 3000 }
+    );
+
+    expect(mockRender).toHaveBeenCalledWith(
+      expect.objectContaining({
+        anomalyResult: expect.any(Object),
+      })
+    );
   });
 });

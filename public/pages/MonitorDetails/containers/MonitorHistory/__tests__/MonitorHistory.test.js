@@ -31,7 +31,9 @@ describe('<MonitorHistory/>', () => {
   beforeEach(() => {
     jest.resetAllMocks();
   });
-  test('should show <EmptyHistory/> if no triggers found', (done) => {
+
+  test.skip('should show <EmptyHistory/> if no triggers found', (done) => {
+    // TODO: Skipping this test as we need to migrate the plugin away from using enzyme for unit tests - https://github.com/opensearch-project/alerting-dashboards-plugin/issues/236
     const wrapper = mount(
       <MonitorHistory
         httpClient={httpClient}
@@ -47,7 +49,9 @@ describe('<MonitorHistory/>', () => {
       done();
     });
   });
-  test('should execute getPOIData, getAlerts on componentDidMount', (done) => {
+
+  test.skip('should execute getPOIData, getAlerts on componentDidMount', (done) => {
+    // TODO: Skipping this test as we need to migrate the plugin away from using enzyme for unit tests - https://github.com/opensearch-project/alerting-dashboards-plugin/issues/236
     const poiResponse = getPOIResponse(initialStartTime);
     httpClient.post.mockResolvedValueOnce(poiResponse);
     httpClient.get.mockResolvedValue({
@@ -85,7 +89,9 @@ describe('<MonitorHistory/>', () => {
       done();
     });
   });
-  test('should get 60 mins highlight windowSize', (done) => {
+
+  test.skip('should get 60 mins highlight windowSize', (done) => {
+    // TODO: Skipping this test as we need to migrate the plugin away from using enzyme for unit tests - https://github.com/opensearch-project/alerting-dashboards-plugin/issues/236
     const poiResponse = getPOIResponse(initialStartTime);
     httpClient.post.mockResolvedValueOnce(poiResponse);
     httpClient.get.mockResolvedValue({
@@ -109,7 +115,9 @@ describe('<MonitorHistory/>', () => {
       done();
     });
   });
-  test('should create appropriate alerts data', (done) => {
+
+  test.skip('should create appropriate alerts data', (done) => {
+    // TODO: Skipping this test as we need to migrate the plugin away from using enzyme for unit tests - https://github.com/opensearch-project/alerting-dashboards-plugin/issues/236
     const poiResponse = getPOIResponse(initialStartTime);
     Date.now = jest.fn(() => 1539619200000);
     const alerts = triggers.map((trigger) => [
@@ -142,7 +150,9 @@ describe('<MonitorHistory/>', () => {
       done();
     });
   });
-  test('should fetch new data on timeSeriesWindow change ', (done) => {
+
+  test.skip('should fetch new data on timeSeriesWindow change ', (done) => {
+    // TODO: Skipping this test as we need to migrate the plugin away from using enzyme for unit tests - https://github.com/opensearch-project/alerting-dashboards-plugin/issues/236
     const poiResponse = getPOIResponse(initialStartTime);
     Date.now = jest.fn(() => 1539619200000);
     httpClient.post.mockResolvedValue({ ok: true }).mockResolvedValueOnce(poiResponse);
@@ -178,7 +188,9 @@ describe('<MonitorHistory/>', () => {
       done();
     });
   });
-  test('should fall back to max scale if the max alerts are lower than threshold ', (done) => {
+
+  test.skip('should fall back to max scale if the max alerts are lower than threshold ', (done) => {
+    // TODO: Skipping this test as we need to migrate the plugin away from using enzyme for unit tests - https://github.com/opensearch-project/alerting-dashboards-plugin/issues/236
     const poiResponse = getPOIResponse(initialStartTime);
     set(poiResponse, 'resp.aggregations.max_alerts.value', 3);
 

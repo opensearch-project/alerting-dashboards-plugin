@@ -23,7 +23,7 @@ const DatasetContext = createContext<DatasetContextValue>({
 export const useDatasetContext = () => useContext(DatasetContext);
 
 interface DatasetProviderProps {
-  children: ReactNode;
+  children?: React.ReactNode;
 }
 
 export const DatasetProvider: React.FC<DatasetProviderProps> = ({ children }) => {

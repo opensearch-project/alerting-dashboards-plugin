@@ -30,7 +30,7 @@ export interface AlertInsightProps {
   alert: any;
   alertId: string;
   isAgentConfigured: boolean;
-  children: React.ReactElement;
+  children?: React.ReactNode;
   datasourceId?: string;
   viewMode?: 'classic' | 'new';
 }
