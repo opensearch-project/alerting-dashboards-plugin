@@ -6,6 +6,7 @@ import { get } from 'lodash';
 import { mapKeysDeep, toCamel } from './utils/helpers';
 import { anomalyResultMapper } from './utils/adHelpers';
 import { MDSEnabledClientService } from './MDSEnabledClientService';
+import { DEFAULT_HEADERS } from './utils/constants';
 
 const MAX_DETECTOR_COUNT = 1000;
 export default class DestinationsService extends MDSEnabledClientService {
@@ -13,7 +14,7 @@ export default class DestinationsService extends MDSEnabledClientService {
     const { detectorId } = req.params;
     const client = this.getClientBasedOnDataSource(context, req);
     try {
-      const resp = await client('alertingAD.getDetector', { detectorId });
+      const resp = await client('alertingAD.getDetector', { detectorId, headers: DEFAULT_HEADERS });
       const {
         anomaly_detector,
         _seq_no: seqNo,
@@ -49,6 +50,7 @@ export default class DestinationsService extends MDSEnabledClientService {
     try {
       const resp = await client('alertingAD.searchDetectors', {
         body: searchRequest,
+        headers: DEFAULT_HEADERS,
       });
 
       const totalDetectors = resp.hits.total.value;
@@ -93,6 +95,7 @@ export default class DestinationsService extends MDSEnabledClientService {
         const previewResponse = await client('alertingAD.previewDetector', {
           detectorId,
           body: requestBody,
+          headers: DEFAULT_HEADERS,
         });
         const transformedKeys = mapKeysDeep(previewResponse, toCamel);
         return res.ok({
@@ -133,9 +136,11 @@ export default class DestinationsService extends MDSEnabledClientService {
         };
         const detectorResponse = await client('alertingAD.getDetector', {
           detectorId,
+          headers: DEFAULT_HEADERS,
         });
         const anomaliesResponse = await client('alertingAD.searchResults', {
           body: requestBody,
+          headers: DEFAULT_HEADERS,
         });
         const transformedKeys = get(anomaliesResponse, 'hits.hits', []).map((result) =>
           mapKeysDeep(result._source, toCamel)
