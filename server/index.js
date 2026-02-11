@@ -8,12 +8,14 @@ import { AlertingPlugin } from './plugin';
 
 export const configSchema = schema.object({
   enabled: schema.boolean({ defaultValue: true }),
+  pplAlertingEnabled: schema.boolean({ defaultValue: false }),
 });
 
 export const config = {
   exposeToBrowser: {
     // following configs are visible to browser side plugin
     enabled: true,
+    pplAlertingEnabled: true,
   },
   schema: configSchema,
 };

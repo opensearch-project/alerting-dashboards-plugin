@@ -1,0 +1,50 @@
+// Custom Steps Component Styling
+.custom-steps-container {
+  .custom-step-wrapper {
+    display: flex;
+    margin-bottom: 8px; // Gap between each card
+  }
+
+  .custom-step-number-column {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-right: 6px; // Padding gap between number and card
+    min-width: 24px; // Width for the step circle
+    padding-top: 12px; // Align number with title
+  }
+
+  .custom-step-circle {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background-color: #0066cc;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: bold;
+    flex-shrink: 0;
+    z-index: 1; // Ensure circle is above line
+  }
+
+  .custom-connecting-line {
+    width: 2px;
+    background-color: #d3dae6;
+    z-index: 0; // Ensure line is behind circle
+  }
+
+  .custom-step-content-column {
+    flex: 1;
+
+    .euiPanel {
+      border: 1px solid #d3dae6;
+      border-radius: 6px;
+      background-color: #fff;
+      padding: 0;
+    }
+  }
+}
+
+

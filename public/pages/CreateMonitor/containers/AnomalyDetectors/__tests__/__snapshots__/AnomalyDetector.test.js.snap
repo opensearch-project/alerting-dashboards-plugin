@@ -33,6 +33,9 @@ exports[`AnomalyDetectors renders 1`] = `
       "groupedOverFieldName": "bytes",
       "groupedOverTop": 5,
       "index": Array [],
+      "lookBackAmount": 1,
+      "lookBackUnit": "hours",
+      "monitor_mode": "ppl",
       "monitor_type": "query_level_monitor",
       "monthly": Object {
         "day": 1,
@@ -44,6 +47,9 @@ exports[`AnomalyDetectors renders 1`] = `
         "interval": 1,
         "unit": "MINUTES",
       },
+      "pplPreviewError": null,
+      "pplPreviewResult": null,
+      "pplQuery": "",
       "preventVisualEditor": false,
       "queries": Array [],
       "query": "{
@@ -54,6 +60,7 @@ exports[`AnomalyDetectors renders 1`] = `
 }",
       "searchType": "graph",
       "timeField": "",
+      "timestampField": "@timestamp",
       "timezone": Array [],
       "uri": Object {
         "api_type": "",
@@ -62,6 +69,7 @@ exports[`AnomalyDetectors renders 1`] = `
         "path_params": "",
         "url": "",
       },
+      "useLookBackWindow": true,
       "weekly": Object {
         "fri": false,
         "mon": false,
@@ -107,6 +115,9 @@ exports[`AnomalyDetectors renders 1`] = `
         "groupedOverFieldName": "bytes",
         "groupedOverTop": 5,
         "index": Array [],
+        "lookBackAmount": 1,
+        "lookBackUnit": "hours",
+        "monitor_mode": "ppl",
         "monitor_type": "query_level_monitor",
         "monthly": Object {
           "day": 1,
@@ -118,6 +129,9 @@ exports[`AnomalyDetectors renders 1`] = `
           "interval": 1,
           "unit": "MINUTES",
         },
+        "pplPreviewError": null,
+        "pplPreviewResult": null,
+        "pplQuery": "",
         "preventVisualEditor": false,
         "queries": Array [],
         "query": "{
@@ -128,6 +142,7 @@ exports[`AnomalyDetectors renders 1`] = `
 }",
         "searchType": "graph",
         "timeField": "",
+        "timestampField": "@timestamp",
         "timezone": Array [],
         "uri": Object {
           "api_type": "",
@@ -136,6 +151,7 @@ exports[`AnomalyDetectors renders 1`] = `
           "path_params": "",
           "url": "",
         },
+        "useLookBackWindow": true,
         "weekly": Object {
           "fri": false,
           "mon": false,
@@ -242,6 +258,9 @@ exports[`AnomalyDetectors renders 1`] = `
                     "groupedOverFieldName": "bytes",
                     "groupedOverTop": 5,
                     "index": Array [],
+                    "lookBackAmount": 1,
+                    "lookBackUnit": "hours",
+                    "monitor_mode": "ppl",
                     "monitor_type": "query_level_monitor",
                     "monthly": Object {
                       "day": 1,
@@ -253,6 +272,9 @@ exports[`AnomalyDetectors renders 1`] = `
                       "interval": 1,
                       "unit": "MINUTES",
                     },
+                    "pplPreviewError": null,
+                    "pplPreviewResult": null,
+                    "pplQuery": "",
                     "preventVisualEditor": false,
                     "queries": Array [],
                     "query": "{
@@ -263,6 +285,7 @@ exports[`AnomalyDetectors renders 1`] = `
 }",
                     "searchType": "graph",
                     "timeField": "",
+                    "timestampField": "@timestamp",
                     "timezone": Array [],
                     "uri": Object {
                       "api_type": "",
@@ -271,6 +294,7 @@ exports[`AnomalyDetectors renders 1`] = `
                       "path_params": "",
                       "url": "",
                     },
+                    "useLookBackWindow": true,
                     "weekly": Object {
                       "fri": false,
                       "mon": false,
@@ -335,6 +359,9 @@ exports[`AnomalyDetectors renders 1`] = `
                     "groupedOverFieldName": "bytes",
                     "groupedOverTop": 5,
                     "index": Array [],
+                    "lookBackAmount": 1,
+                    "lookBackUnit": "hours",
+                    "monitor_mode": "ppl",
                     "monitor_type": "query_level_monitor",
                     "monthly": Object {
                       "day": 1,
@@ -346,6 +373,9 @@ exports[`AnomalyDetectors renders 1`] = `
                       "interval": 1,
                       "unit": "MINUTES",
                     },
+                    "pplPreviewError": null,
+                    "pplPreviewResult": null,
+                    "pplQuery": "",
                     "preventVisualEditor": false,
                     "queries": Array [],
                     "query": "{
@@ -356,6 +386,7 @@ exports[`AnomalyDetectors renders 1`] = `
 }",
                     "searchType": "graph",
                     "timeField": "",
+                    "timestampField": "@timestamp",
                     "timezone": Array [],
                     "uri": Object {
                       "api_type": "",
@@ -364,6 +395,7 @@ exports[`AnomalyDetectors renders 1`] = `
                       "path_params": "",
                       "url": "",
                     },
+                    "useLookBackWindow": true,
                     "weekly": Object {
                       "fri": false,
                       "mon": false,
@@ -476,6 +508,9 @@ exports[`AnomalyDetectors renders 1`] = `
                             "groupedOverFieldName": "bytes",
                             "groupedOverTop": 5,
                             "index": Array [],
+                            "lookBackAmount": 1,
+                            "lookBackUnit": "hours",
+                            "monitor_mode": "ppl",
                             "monitor_type": "query_level_monitor",
                             "monthly": Object {
                               "day": 1,
@@ -487,6 +522,9 @@ exports[`AnomalyDetectors renders 1`] = `
                               "interval": 1,
                               "unit": "MINUTES",
                             },
+                            "pplPreviewError": null,
+                            "pplPreviewResult": null,
+                            "pplQuery": "",
                             "preventVisualEditor": false,
                             "queries": Array [],
                             "query": "{
@@ -497,6 +535,7 @@ exports[`AnomalyDetectors renders 1`] = `
 }",
                             "searchType": "graph",
                             "timeField": "",
+                            "timestampField": "@timestamp",
                             "timezone": Array [],
                             "uri": Object {
                               "api_type": "",
@@ -505,6 +544,7 @@ exports[`AnomalyDetectors renders 1`] = `
                               "path_params": "",
                               "url": "",
                             },
+                            "useLookBackWindow": true,
                             "weekly": Object {
                               "fri": false,
                               "mon": false,
@@ -569,6 +609,9 @@ exports[`AnomalyDetectors renders 1`] = `
                             "groupedOverFieldName": "bytes",
                             "groupedOverTop": 5,
                             "index": Array [],
+                            "lookBackAmount": 1,
+                            "lookBackUnit": "hours",
+                            "monitor_mode": "ppl",
                             "monitor_type": "query_level_monitor",
                             "monthly": Object {
                               "day": 1,
@@ -580,6 +623,9 @@ exports[`AnomalyDetectors renders 1`] = `
                               "interval": 1,
                               "unit": "MINUTES",
                             },
+                            "pplPreviewError": null,
+                            "pplPreviewResult": null,
+                            "pplQuery": "",
                             "preventVisualEditor": false,
                             "queries": Array [],
                             "query": "{
@@ -590,6 +636,7 @@ exports[`AnomalyDetectors renders 1`] = `
 }",
                             "searchType": "graph",
                             "timeField": "",
+                            "timestampField": "@timestamp",
                             "timezone": Array [],
                             "uri": Object {
                               "api_type": "",
@@ -598,6 +645,7 @@ exports[`AnomalyDetectors renders 1`] = `
                               "path_params": "",
                               "url": "",
                             },
+                            "useLookBackWindow": true,
                             "weekly": Object {
                               "fri": false,
                               "mon": false,

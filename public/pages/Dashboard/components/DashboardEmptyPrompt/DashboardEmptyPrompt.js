@@ -19,14 +19,15 @@ const createTriggerText =
 const editTriggerConditionsText =
   'There are no existing alerts. Adjust trigger conditions to start alerting. Once an alarm is triggered, the state will show in this table.';
 
-const getCreateMonitorButton = (landingDataSourceId) => (
-  <EuiSmallButton
-    fill
-    href={getURL(
-      `${getUseUpdatedUx() ? MONITORS_NAV_ID : ''}#${APP_PATH.CREATE_MONITOR}`,
-      landingDataSourceId
-    )}
-  >
+const getCreateMonitorHref = (viewMode = 'classic') => {
+  const mode = viewMode === 'new' ? 'new' : 'classic';
+  const hasQuery = APP_PATH.CREATE_MONITOR.includes('?');
+  const separator = hasQuery ? (APP_PATH.CREATE_MONITOR.endsWith('?') ? '' : '&') : '?';
+  return `#${APP_PATH.CREATE_MONITOR}${separator}mode=${mode}`;
+};
+
+const getCreateMonitorButton = (landingDataSourceId, viewMode) => (
+  <EuiSmallButton fill href={getCreateMonitorHref(viewMode)}>
     Create monitor
   </EuiSmallButton>
 );
@@ -34,7 +35,12 @@ const editMonitorButton = (onCreateTrigger) => (
   <EuiSmallButtonEmpty onClick={onCreateTrigger}>Edit monitor</EuiSmallButtonEmpty>
 );
 
-const DashboardEmptyPrompt = ({ onCreateTrigger, landingDataSourceId, isModal = false }) => {
+const DashboardEmptyPrompt = ({
+  onCreateTrigger,
+  landingDataSourceId,
+  isModal = false,
+  viewMode = 'ppl',
+}) => {
   const inMonitorDetails = typeof onCreateTrigger === 'function';
   const displayText = isModal
     ? editTriggerConditionsText
@@ -45,7 +51,7 @@ const DashboardEmptyPrompt = ({ onCreateTrigger, landingDataSourceId, isModal = 
     ? undefined
     : isModal
     ? editMonitorButton(onCreateTrigger)
-    : getCreateMonitorButton(landingDataSourceId);
+    : getCreateMonitorButton(landingDataSourceId, viewMode);
   return (
     <EuiEmptyPrompt
       style={{ maxWidth: '45em' }}
@@ -61,7 +67,7 @@ const DashboardEmptyPrompt = ({ onCreateTrigger, landingDataSourceId, isModal = 
 
 DashboardEmptyPrompt.propTypes = {
   onCreateTrigger: PropTypes.func,
-  landingDataSourceId: PropTypes.string
+  landingDataSourceId: PropTypes.string,
 };
 
 export default DashboardEmptyPrompt;

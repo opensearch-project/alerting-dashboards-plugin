@@ -156,7 +156,7 @@ describe('Monitors', () => {
     expect(httpClientMock.put).toHaveBeenCalled();
     expect(httpClientMock.put).toHaveBeenCalledWith(`../api/alerting/monitors/random_id`, {
       query: { ifSeqNo: 17, ifPrimaryTerm: 20 },
-      body: JSON.stringify({ ...monitor, name: 'UNIQUE_NAME' }),
+      body: JSON.stringify({ name: 'UNIQUE_NAME' }),
     });
 
     expect(response).toEqual({ ok: true });
@@ -218,7 +218,9 @@ describe('Monitors', () => {
 
     expect(onClickEdit).toHaveBeenCalled();
     expect(historyMock.push).toHaveBeenCalled();
-    expect(historyMock.push).toHaveBeenCalledWith(`/monitors/random_id?action=edit-monitor`);
+    expect(historyMock.push).toHaveBeenCalledWith(
+      `/monitors/random_id?action=edit-monitor&viewMode=classic&mode=classic`
+    );
   });
 
   test('onClickEnable calls updateMonitors with monitor and enable:true update', () => {
