@@ -253,6 +253,7 @@ export default class CreateMonitor extends Component {
                       />
                     ) : null
                   }
+                  landingDataSourceId={this.props.landingDataSourceId}
                 />
 
                 {values.preventVisualEditor ? null : (
