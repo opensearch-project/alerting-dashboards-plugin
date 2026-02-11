@@ -47,6 +47,38 @@ describe('AnomalyDetectors', () => {
     expect(wrapper).toMatchSnapshot();
   });
 
+  test('refetches detectors when landingDataSourceId changes', async () => {
+    httpClient.post.mockResolvedValue({ ok: true, detectors: [] });
+    const TestHarness = ({ landingDataSourceId }) => (
+      <CoreContext.Provider value={{ http: httpClientMock }}>
+        <Formik initialValues={FORMIK_INITIAL_VALUES}>
+          {({ values }) => (
+            <AnomalyDetectors
+              values={values}
+              renderEmptyMessage={renderEmptyMessage}
+              landingDataSourceId={landingDataSourceId}
+            />
+          )}
+        </Formik>
+      </CoreContext.Provider>
+    );
+
+    const wrapper = mount(<TestHarness landingDataSourceId={undefined} />);
+
+    await runAllPromises();
+    wrapper.update();
+
+    // Change the data source id and ensure we re-fetch with the new query param.
+    wrapper.setProps({ landingDataSourceId: 'demo' });
+
+    await runAllPromises();
+    wrapper.update();
+
+    const lastCallArgs = httpClient.post.mock.calls[httpClient.post.mock.calls.length - 1];
+    expect(lastCallArgs[0]).toEqual('../api/alerting/detectors/_search');
+    expect(lastCallArgs[1]).toMatchObject({ query: { dataSourceId: 'demo' } });
+  });
+
   test('should be able to select the detector', async () => {
     httpClientMock.post.mockResolvedValueOnce({
       ok: true,

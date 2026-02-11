@@ -205,6 +205,7 @@ export default class CreateMonitor extends Component {
                   isAd={values.searchType === SEARCH_TYPE.AD}
                   detectorId={this.props.detectorId}
                   setFlyout={this.props.setFlyout}
+                  landingDataSourceId={this.props.landingDataSourceId}
                 />
 
                 {values.preventVisualEditor ? null : (

@@ -20,6 +20,7 @@ class AnomalyDetectors extends React.Component {
     this.state = {
       detectorOptions: [],
       isLoading: false,
+      lastFetchedDataSourceId: undefined,
     };
     this.searchDetectors = this.searchDetectors.bind(this);
   }
@@ -27,10 +28,30 @@ class AnomalyDetectors extends React.Component {
     await this.searchDetectors();
   }
 
+  async componentDidUpdate(prevProps) {
+    if (prevProps.landingDataSourceId !== this.props.landingDataSourceId) {
+      await this.searchDetectors();
+    }
+  }
+
   async searchDetectors() {
     const httpClient = getClient();
     try {
-      const dataSourceQuery = getDataSourceQueryObj();
+      // Prefer the landing dataSourceId when available.
+      // Fallback to the global helper
+      const dataSourceQuery = this.props.landingDataSourceId
+        ? { query: { dataSourceId: this.props.landingDataSourceId } }
+        : getDataSourceQueryObj();
+
+      // Avoid refetching if we're already fetched for this dataSourceId
+      const currentDataSourceId = dataSourceQuery?.query?.dataSourceId;
+      if (
+        this.state.lastFetchedDataSourceId === currentDataSourceId &&
+        this.state.detectorOptions.length
+      ) {
+        return;
+      }
+
       const response = await httpClient.post('../api/alerting/detectors/_search', {
         query: dataSourceQuery?.query,
       });
@@ -44,7 +65,7 @@ class AnomalyDetectors extends React.Component {
             interval: detector.detectionInterval,
             resultIndex: detector.resultIndex,
           }));
-        this.setState({ detectorOptions });
+        this.setState({ detectorOptions, lastFetchedDataSourceId: currentDataSourceId });
       } else {
         // TODO: 'response.ok' is 'false' when there is no anomaly-detection config index in the cluster, and notification should not be shown to new Anomaly-Detection users
         // backendErrorNotification(notifications, 'get', 'detectors', response.resp);
@@ -129,6 +150,7 @@ class AnomalyDetectors extends React.Component {
 AnomalyDetectors.propTypes = {
   values: PropTypes.object.isRequired,
   renderEmptyMessage: PropTypes.func.isRequired,
+  landingDataSourceId: PropTypes.string,
 };
 
 export default AnomalyDetectors;

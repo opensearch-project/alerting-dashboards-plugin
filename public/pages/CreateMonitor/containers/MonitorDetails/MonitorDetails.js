@@ -14,7 +14,13 @@ import AnomalyDetectors from '../AnomalyDetectors/AnomalyDetectors';
 import { MONITOR_TYPE } from '../../../../utils/constants';
 import Schedule from '../../components/Schedule';
 
-const renderAnomalyDetector = ({ httpClient, values, detectorId, flyoutMode }) => ({
+const renderAnomalyDetector = ({
+  httpClient,
+  values,
+  detectorId,
+  flyoutMode,
+  landingDataSourceId,
+}) => ({
   actions: [],
   content: (
     <React.Fragment>
@@ -24,6 +30,7 @@ const renderAnomalyDetector = ({ httpClient, values, detectorId, flyoutMode }) =
         renderEmptyMessage={renderEmptyMessage}
         detectorId={detectorId}
         flyoutMode={flyoutMode}
+        landingDataSourceId={landingDataSourceId}
       />
     </React.Fragment>
   ),
@@ -50,9 +57,11 @@ const MonitorDetails = ({
   plugins,
   detectorId,
   flyoutMode,
+  landingDataSourceId,
 }) => {
   const anomalyDetectorContent =
-    isAd && renderAnomalyDetector({ httpClient, values, detectorId, flyoutMode });
+    isAd &&
+    renderAnomalyDetector({ httpClient, values, detectorId, flyoutMode, landingDataSourceId });
   const displayMonitorDefinitionCards = values.monitor_type !== MONITOR_TYPE.CLUSTER_METRICS;
   const Container = useMemo(
     () => (flyoutMode ? ({ children }) => <>{children}</> : ContentPanel),
