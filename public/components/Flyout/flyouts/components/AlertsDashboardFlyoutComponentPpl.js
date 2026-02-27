@@ -135,8 +135,8 @@ export default class AlertsDashboardFlyoutComponentPpl extends Component {
       }
 
       const payload = resp.resp || resp;
-      const alertsArray = Array.isArray(payload?.alerts_v2) ? payload.alerts_v2 : [];
-      const totalCountRaw = payload?.total_alerts_v2;
+      const alertsArray = Array.isArray(payload?.alerts) ? payload.alerts : [];
+      const totalCountRaw = payload?.totalAlerts;
       const totalCount = Number.isFinite(Number(totalCountRaw))
         ? Number(totalCountRaw)
         : alertsArray.length;
@@ -145,7 +145,7 @@ export default class AlertsDashboardFlyoutComponentPpl extends Component {
         alertState && alertState !== 'ALL' ? String(alertState).toUpperCase() : undefined;
 
       const filteredAlerts = alertsArray
-        .filter((alert) => alert.trigger_v2_id === triggerID)
+        .filter((alert) => alert.trigger_id === triggerID)
         .filter((alert) => {
           if (!stateFilter) return true;
           const stateValue = String(alert?.state || '').toUpperCase();
@@ -156,7 +156,7 @@ export default class AlertsDashboardFlyoutComponentPpl extends Component {
         const direction = sortDirection === 'asc' ? 1 : -1;
 
         if (sortField === 'start_time') {
-          return (Number(a?.triggered_time) - Number(b?.triggered_time)) * direction;
+          return (Number(a?.start_time) - Number(b?.start_time)) * direction;
         }
 
         const valueA = _.get(a, sortField);
@@ -217,7 +217,7 @@ export default class AlertsDashboardFlyoutComponentPpl extends Component {
   };
 
   renderQueryResultsPreview = (alert) => {
-    const results = alert?.query_results;
+    const results = alert?.ppl_query_results;
     const schema = Array.isArray(results?.schema) ? results.schema : [];
     const dataRows = Array.isArray(results?.datarows) ? results.datarows : [];
 
@@ -234,7 +234,7 @@ export default class AlertsDashboardFlyoutComponentPpl extends Component {
   };
 
   getItemId = (alert) => {
-    const version = alert?.monitor_v2_version ?? alert?.version ?? '';
+    const version = alert?.version ?? '';
     return `${alert.id}-${version}`;
   };
 
@@ -251,7 +251,7 @@ export default class AlertsDashboardFlyoutComponentPpl extends Component {
       totalAlerts,
     } = this.state;
 
-    const { monitor = {}, monitor_id, monitor_name, trigger_name, start_time } = this.props;
+    const { monitor_id, monitor_name, trigger_name, start_time } = this.props;
 
     const pageSizeToUse = size > 0 ? size : DEFAULT_PAGE_SIZE;
     const displayedAlerts = alerts.slice(
@@ -260,12 +260,9 @@ export default class AlertsDashboardFlyoutComponentPpl extends Component {
     );
     const firstAlert = alerts[0] || {};
 
-    const severity =
-      normalizePPLSeverity(firstAlert?.severity) ||
-      normalizePPLSeverity(_.get(monitor, 'triggers[0].severity')) ||
-      firstAlert?.severity;
+    const severity = normalizePPLSeverity(firstAlert?.severity) || firstAlert?.severity;
 
-    const condition = firstAlert?.query || monitor?.query || DEFAULT_EMPTY_DATA;
+    const condition = firstAlert?.ppl_query || DEFAULT_EMPTY_DATA;
 
     const monitorUrl = monitor_id ? `#/monitors/${monitor_id}` : '#/monitors';
 
@@ -273,7 +270,7 @@ export default class AlertsDashboardFlyoutComponentPpl extends Component {
 
     const columns = [
       {
-        field: 'triggered_time',
+        field: 'start_time',
         name: 'Alert triggered time',
         sortable: true,
         dataType: 'date',
@@ -286,12 +283,13 @@ export default class AlertsDashboardFlyoutComponentPpl extends Component {
         },
       },
       {
-        field: 'query_results',
+        field: 'ppl_query_results',
         name: '',
         align: 'right',
         render: (_value, item) => {
           const hasResults =
-            Array.isArray(item?.query_results?.datarows) && item.query_results.datarows.length;
+            Array.isArray(item?.ppl_query_results?.datarows) &&
+            item.ppl_query_results.datarows.length;
           if (!hasResults) {
             return (
               <EuiText size="s" color="subdued">

@@ -18,12 +18,7 @@ export default function pplAlertingMonitorToFormik(monitorIn) {
   const formikValues = _.cloneDeep(FORMIK_INITIAL_VALUES);
   if (!monitorIn) return formikValues;
 
-  const monitor =
-    monitorIn?.monitor_v2?.ppl_monitor ||
-    monitorIn?.monitorV2?.ppl_monitor ||
-    monitorIn?.ppl_monitor ||
-    monitorIn ||
-    {};
+  const monitor = monitorIn?.ppl_monitor || monitorIn || {};
   if (!monitor || Object.keys(monitor).length === 0) return formikValues;
 
   let cronExpression = formikValues.cronExpression;

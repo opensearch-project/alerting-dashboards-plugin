@@ -13,12 +13,62 @@ import { DEFAULT_HEADERS, PPL_MONITOR_BASE_API } from './utils/constants';
 
 const ALERTS_BASE_PATH = `${PPL_MONITOR_BASE_API}/alerts`;
 
-const isNoHandlerError = (err) =>
-  err &&
-  (err.response?.includes?.('no handler found for uri') ||
-    err.body?.error?.includes?.('no handler found for uri') ||
-    err.message?.includes?.('no handler found for uri') ||
-    String(err).includes('no handler found for uri'));
+/**
+ * Transforms the frontend body format ({ ppl_monitor: { name, query, triggers, ... } })
+ * into the v1 backend format ({ name, monitor_type, inputs, triggers, ... }).
+ */
+const toV1MonitorBody = (body) => {
+  const pplMon = body?.ppl_monitor || body;
+  const query = pplMon.query || '';
+  const rawTriggers = Array.isArray(pplMon.triggers) ? pplMon.triggers : [];
+  const triggers = rawTriggers.map((t) => {
+    if (t.ppl_trigger) return t;
+    return { ppl_trigger: t };
+  });
+
+  const v1 = {
+    name: pplMon.name,
+    monitor_type: 'ppl_monitor',
+    enabled: pplMon.enabled !== false,
+    schedule: pplMon.schedule,
+    inputs: [{ ppl_input: { query, query_language: 'ppl' } }],
+    triggers,
+  };
+
+  if (pplMon.description !== undefined) v1.description = pplMon.description;
+  if (pplMon.ui_metadata !== undefined) v1.ui_metadata = pplMon.ui_metadata;
+  if (pplMon.look_back_window_minutes !== undefined)
+    v1.look_back_window_minutes = pplMon.look_back_window_minutes;
+  if (pplMon.timestamp_field !== undefined) v1.timestamp_field = pplMon.timestamp_field;
+  if (body?.look_back_window_minutes !== undefined && v1.look_back_window_minutes === undefined)
+    v1.look_back_window_minutes = body.look_back_window_minutes;
+  if (body?.timestamp_field !== undefined && v1.timestamp_field === undefined)
+    v1.timestamp_field = body.timestamp_field;
+
+  return v1;
+};
+
+/**
+ * Flattens a v1 monitor object (with wrapped inputs/triggers) into the
+ * flat format the frontend expects (query at top level, unwrapped triggers).
+ */
+const flattenV1Monitor = (monitor) => {
+  if (!monitor) return {};
+
+  const pplInput = monitor.inputs?.[0]?.ppl_input;
+  const query = pplInput?.query || '';
+  const queryLanguage = pplInput?.query_language || 'ppl';
+
+  const rawTriggers = Array.isArray(monitor.triggers) ? monitor.triggers : [];
+  const triggers = rawTriggers.map((t) => t.ppl_trigger || t.query_level_trigger || t);
+
+  return {
+    ...monitor,
+    query,
+    query_language: queryLanguage,
+    triggers,
+  };
+};
 
 export default class PplAlertingMonitorService extends MDSEnabledClientService {
   constructor(osDriver, dataSourceEnabled, logger) {
@@ -80,12 +130,7 @@ export default class PplAlertingMonitorService extends MDSEnabledClientService {
     }
 
     if (sortField) {
-      const sortFieldString = String(sortField);
-      const sortFieldMap = {
-        start_time: 'triggered_time',
-        startTime: 'triggered_time',
-      };
-      normalized.sortString = sortFieldMap[sortFieldString] || sortFieldString;
+      normalized.sortString = String(sortField);
     }
     if (sortDirection) normalized.sortOrder = String(sortDirection).toLowerCase();
     if (search) normalized.searchString = String(search);
@@ -199,12 +244,7 @@ export default class PplAlertingMonitorService extends MDSEnabledClientService {
       if (searchText) {
         mustClause = {
           query_string: {
-            fields: [
-              'monitor.name',
-              'ppl_monitor.name',
-              'monitor_v2.ppl_monitor.name',
-              'workflow.name',
-            ],
+            fields: ['monitor.name', 'workflow.name'],
             default_operator: 'AND',
             query: `*${searchText.split(' ').join('* *')}*`,
           },
@@ -236,8 +276,6 @@ export default class PplAlertingMonitorService extends MDSEnabledClientService {
         const enabled = state === 'enabled';
         should.push({ term: { 'monitor.enabled': enabled } });
         should.push({ term: { 'workflow.enabled': enabled } });
-        should.push({ term: { 'monitor.monitor_v2.ppl_monitor.enabled': enabled } });
-        should.push({ term: { 'ppl_monitor.enabled': enabled } });
       }
 
       const monitorSorts = { name: 'monitor.name.keyword' };
@@ -304,14 +342,7 @@ export default class PplAlertingMonitorService extends MDSEnabledClientService {
         } = result;
 
         let monitor = _source?.monitor ? _source.monitor : _source || {};
-        const pplMonitor = monitor?.monitor_v2?.ppl_monitor || monitor?.ppl_monitor;
-        if (pplMonitor) {
-          monitor = {
-            ...monitor,
-            ...pplMonitor,
-            monitor_v2: monitor.monitor_v2,
-          };
-        }
+        monitor = flattenV1Monitor(monitor);
 
         if (!monitor.monitor_type) {
           monitor.monitor_type = 'query_level';
@@ -506,10 +537,11 @@ export default class PplAlertingMonitorService extends MDSEnabledClientService {
   async createMonitor(context, req, res) {
     try {
       const client = this.getClientBasedOnDataSource(context, req);
+      const v1Body = toV1MonitorBody(req.body);
       const resp = await client('transport.request', {
         method: 'POST',
         path: PPL_MONITOR_BASE_API,
-        body: req.body,
+        body: v1Body,
         headers: DEFAULT_HEADERS,
       });
       return res.ok({ body: { ok: true, resp } });
@@ -531,35 +563,33 @@ export default class PplAlertingMonitorService extends MDSEnabledClientService {
       if (Number.isFinite(Number(ifPrimaryTerm)))
         qs.append('if_primary_term', String(ifPrimaryTerm));
 
-      let cleanedBody = req.body;
-      if (req.body?.ppl_monitor) {
-        const {
-          enabled_time,
-          schema_version,
-          last_update_time,
-          user,
-          id: monitorId,
-          last_update_time_ms,
-          monitor_version,
-          version,
-          ...cleanMonitor
-        } = req.body.ppl_monitor;
+      const pplMon = req.body?.ppl_monitor || req.body;
+      const {
+        enabled_time,
+        schema_version,
+        last_update_time,
+        user,
+        id: monitorId,
+        last_update_time_ms,
+        monitor_version,
+        version,
+        ...cleanMonitor
+      } = pplMon;
 
-        if (Array.isArray(cleanMonitor.triggers)) {
-          cleanMonitor.triggers = cleanMonitor.triggers.map(
-            ({ id: triggerId, last_triggered_time, last_execution_time, ...trigger }) => trigger
-          );
-        }
-
-        cleanedBody = { ppl_monitor: cleanMonitor };
+      if (Array.isArray(cleanMonitor.triggers)) {
+        cleanMonitor.triggers = cleanMonitor.triggers.map(
+          ({ id: triggerId, last_triggered_time, last_execution_time, ...trigger }) => trigger
+        );
       }
+
+      const v1Body = toV1MonitorBody({ ppl_monitor: cleanMonitor });
 
       const resp = await client('transport.request', {
         method: 'PUT',
         path: `${PPL_MONITOR_BASE_API}/${encodeURIComponent(id)}${
           qs.toString() ? `?${qs.toString()}` : ''
         }`,
-        body: cleanedBody,
+        body: v1Body,
         headers: DEFAULT_HEADERS,
       });
       return res.ok({ body: { ok: true, resp } });
@@ -580,13 +610,8 @@ export default class PplAlertingMonitorService extends MDSEnabledClientService {
         headers: DEFAULT_HEADERS,
       });
 
-      const monitor =
-        _.get(raw, 'monitor_v2.ppl_monitor') ||
-        _.get(raw, 'monitorV2.ppl_monitor') ||
-        _.get(raw, 'ppl_monitor') ||
-        _.get(raw, 'monitor') ||
-        _.get(raw, '_source') ||
-        {};
+      const rawMonitor = _.get(raw, 'monitor') || _.get(raw, '_source') || {};
+      const monitor = flattenV1Monitor(rawMonitor);
 
       const normalized = {
         ...monitor,
@@ -664,17 +689,50 @@ export default class PplAlertingMonitorService extends MDSEnabledClientService {
     }
   }
 
+  // TODO: remove later once we combine ppl monitors and regular monitors
+  async _getPplMonitorIds(client) {
+    try {
+      const resp = await client('transport.request', {
+        method: 'POST',
+        path: `${PPL_MONITOR_BASE_API}/_search`,
+        body: {
+          size: 1000,
+          _source: false,
+          query: { term: { 'monitor.monitor_type': 'ppl_monitor' } },
+        },
+        headers: DEFAULT_HEADERS,
+      });
+      const hits = _.get(resp, 'hits.hits', []);
+      return new Set(hits.map((h) => h._id));
+    } catch (e) {
+      return new Set();
+    }
+  }
+
   async alertsForMonitors(context, req, res) {
     try {
       const client = this.getClientBasedOnDataSource(context, req);
       const backendQuery = this.normalizeAlertsQuery(req.query);
       const path = this.buildAlertsPath(backendQuery, { omitDataSourceId: true });
 
-      const resp = await client('transport.request', {
-        method: 'GET',
-        path,
-        headers: DEFAULT_HEADERS,
-      });
+      const [resp, pplMonitorIds] = await Promise.all([
+        client('transport.request', {
+          method: 'GET',
+          path,
+          headers: DEFAULT_HEADERS,
+        }),
+        this._getPplMonitorIds(client),
+      ]);
+
+      const allAlerts = Array.isArray(resp?.alerts) ? resp.alerts : [];
+      if (pplMonitorIds.size > 0) {
+        const filtered = allAlerts.filter((a) => pplMonitorIds.has(a.monitor_id));
+        const removed = allAlerts.length - filtered.length;
+        resp.alerts = filtered;
+        if (typeof resp.totalAlerts === 'number') {
+          resp.totalAlerts = Math.max(resp.totalAlerts - removed, filtered.length);
+        }
+      }
 
       return res.ok({ body: { ok: true, resp } });
     } catch (err) {
@@ -685,17 +743,7 @@ export default class PplAlertingMonitorService extends MDSEnabledClientService {
         return res.ok({
           body: {
             ok: true,
-            resp: { alerts_v2: [], total_alerts_v2: 0 },
-          },
-        });
-      }
-
-      if (isNoHandlerError(err)) {
-        this.logWarn('[Alerting][PPL] v2 alerts endpoint not available on target cluster');
-        return res.ok({
-          body: {
-            ok: false,
-            resp: 'alerts v2 endpoint not available on the selected data source',
+            resp: { alerts: [], totalAlerts: 0 },
           },
         });
       }

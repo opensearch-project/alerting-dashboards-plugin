@@ -219,21 +219,15 @@ export default class DashboardPpl extends Component {
         let rawAlerts = [];
         let totalFromServer;
 
-        const alertsArray = payload?.alerts_v2 || payload?.alertV2s;
+        const alertsArray = payload?.alerts;
         if (Array.isArray(alertsArray)) {
           rawAlerts = alertsArray.map((a) => ({
             ...a,
-            monitor_id: a.monitor_v2_id,
-            monitor_name: a.monitor_v2_name,
-            trigger_id: a.trigger_v2_id,
-            version: a.monitor_v2_version ?? a.version,
-            monitorVersion: a.monitor_v2_version,
-            start_time: a.triggered_time,
-            trigger_name: a.trigger_v2_name,
-            end_time: a.expiration_time,
+            start_time: a.start_time || a.triggered_time,
+            end_time: a.end_time || a.expiration_time,
             state: a.state || 'ACTIVE',
           }));
-          totalFromServer = payload.total_alerts_v2 ?? payload.totalAlertV2s ?? rawAlerts.length;
+          totalFromServer = payload.totalAlerts ?? rawAlerts.length;
         }
 
         if (Array.isArray(monitorIds) && monitorIds.length) {
@@ -245,7 +239,7 @@ export default class DashboardPpl extends Component {
           .toLowerCase();
         const matchesSearch = (a) => {
           if (!q) return true;
-          const triggerName = a.trigger_name || a.trigger_v2_name || a.triggerName || '';
+          const triggerName = a.trigger_name || a.triggerName || '';
           const normalizedTrigger = String(triggerName).trim().toLowerCase();
           return normalizedTrigger.startsWith(q);
         };
@@ -279,7 +273,7 @@ export default class DashboardPpl extends Component {
         );
 
         const dir = sortDirection === 'asc' ? 1 : -1;
-        const sortFieldEffective = sortField === 'start_time' ? 'triggered_time' : sortField;
+        const sortFieldEffective = sortField;
         const val = (obj) => _.get(obj, sortFieldEffective);
         filtered = filtered.sort((a, b) => {
           const av = val(a);
@@ -304,9 +298,9 @@ export default class DashboardPpl extends Component {
           const alertsByTriggers = groupAlertsByTrigger(filtered, true).map((row) => {
             const latest = _.maxBy(
               row.alerts || [],
-              (a) => (a && (a.triggered_time ?? a.start_time)) || 0
+              (a) => (a && (a.start_time ?? a.triggered_time)) || 0
             );
-            const ts = latest?.triggered_time ?? latest?.start_time ?? null;
+            const ts = latest?.start_time ?? latest?.triggered_time ?? null;
             return { ...row, lastTriggeredTime: ts };
           });
           this.setState(
