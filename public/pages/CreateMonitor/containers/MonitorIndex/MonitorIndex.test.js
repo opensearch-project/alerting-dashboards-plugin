@@ -159,8 +159,6 @@ describe('MonitorIndex', () => {
       .simulate('keyDown', { key: 'Enter' });
 
     // Validate the specific index is in the input field
-    expect(wrapper.find('[data-test-subj="comboBoxInput"]').text()).toEqual(
-      'logstash-0EuiIconMock'
-    );
+    expect(wrapper.find('[data-test-subj="comboBoxInput"]').text()).toEqual('logstashEuiIconMock');
   });
 });
