@@ -82,6 +82,32 @@ export default class DestinationsService extends MDSEnabledClientService {
     }
   };
 
+  createDetector = async (context, req, res) => {
+    const client = this.getClientBasedOnDataSource(context, req);
+    try {
+      const resp = await client('alertingAD.createDetector', {
+        body: req.body,
+        headers: DEFAULT_HEADERS,
+      });
+      const detectorId = resp?._id || resp?.id || null;
+      return res.ok({
+        body: {
+          ok: true,
+          detectorId,
+          response: resp,
+        },
+      });
+    } catch (err) {
+      console.error('Alerting - AnomalyDetectorService - createDetector:', err);
+      return res.ok({
+        body: {
+          ok: false,
+          error: err.message,
+        },
+      });
+    }
+  };
+
   getDetectorResults = async (context, req, res) => {
     try {
       const { startTime = 0, endTime = 20, preview = 'false' } = req.query;

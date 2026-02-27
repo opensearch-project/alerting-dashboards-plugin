@@ -47,6 +47,24 @@ declare module '../../../src/plugins/ui_actions/public' {
 }
 
 let navigateToAppRef: CoreStart['application']['navigateToApp'] | null = null;
+const PROMETHEUS_QUERY_LANGUAGE = 'PROMQL';
+const PROMETHEUS_SOURCE_TYPE = 'PROMETHEUS';
+const DEFAULT_PROMETHEUS_INTERVAL_MINUTES = 1;
+
+const isPrometheusExploreQuery = (deps: any): boolean => {
+  const language = (deps?.query?.language || '').toUpperCase();
+  const datasetType = (deps?.query?.dataset?.type || '').toUpperCase();
+  return language === PROMETHEUS_QUERY_LANGUAGE && datasetType === PROMETHEUS_SOURCE_TYPE;
+};
+
+const buildPrometheusDetectorName = (queryText: string): string => {
+  const compactQuery = (queryText || '')
+    .trim()
+    .slice(0, 40)
+    .replace(/[^a-zA-Z0-9_-]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+  return `metrics-${compactQuery || 'promql'}-${Date.now()}`;
+};
 
 export interface AlertingSetup { }
 
@@ -255,7 +273,8 @@ export class AlertingPlugin implements Plugin<void, AlertingStart, AlertingSetup
         id: 'alerting-create-monitor-from-explore',
         order: 1,
         getIsEnabled: (deps) => {
-          if (!isPplAlertingEnabled()) {
+          const isPrometheusQuery = isPrometheusExploreQuery(deps);
+          if (!isPrometheusQuery && !isPplAlertingEnabled()) {
             return false;
           }
           // Allow monitor creation for READY, NO_RESULTS, and ERROR statuses
@@ -284,10 +303,84 @@ export class AlertingPlugin implements Plugin<void, AlertingStart, AlertingSetup
             }
           }
           const [coreStart, depsStart] = await this.startServicesPromise;
+          const { overlays, http, notifications, chrome, uiSettings } = coreStart;
+
+          if (isPrometheusExploreQuery(deps)) {
+            const promqlQuery = ((deps.query as any)?.query ?? '').trim();
+            const dataConnectionId = (deps.query as any)?.dataset?.id;
+            if (!promqlQuery || !dataConnectionId) {
+              notifications.toasts.addDanger({
+                title: 'Unable to create monitor',
+                text: 'Prometheus connection ID and query are required.',
+              });
+              return;
+            }
+
+            const detectorName = buildPrometheusDetectorName(promqlQuery);
+            try {
+              const createDetectorResponse: any = await http.post('/api/alerting/detectors', {
+                body: JSON.stringify({
+                  name: detectorName,
+                  description: 'Auto-created from Explore Metrics alerts flow.',
+                  source_type: PROMETHEUS_SOURCE_TYPE,
+                  prometheus_source: {
+                    query_language: PROMETHEUS_QUERY_LANGUAGE,
+                    query: promqlQuery,
+                    data_connection_id: dataConnectionId,
+                  },
+                  feature_attributes: [
+                    {
+                      feature_name: 'prometheus_value',
+                      feature_enabled: true,
+                    },
+                  ],
+                  detection_interval: {
+                    period: {
+                      interval: DEFAULT_PROMETHEUS_INTERVAL_MINUTES,
+                      unit: 'Minutes',
+                    },
+                  },
+                  window_delay: {
+                    period: {
+                      interval: 1,
+                      unit: 'Minutes',
+                    },
+                  },
+                }),
+              });
+
+              const detectorId =
+                createDetectorResponse?.detectorId || createDetectorResponse?.id || createDetectorResponse?._id;
+              if (!createDetectorResponse?.ok || !detectorId) {
+                throw new Error(createDetectorResponse?.error || 'Detector creation failed.');
+              }
+
+              const queryString = new URLSearchParams({
+                mode: 'classic',
+                searchType: 'ad',
+                adId: detectorId,
+                name: detectorName,
+                interval: String(DEFAULT_PROMETHEUS_INTERVAL_MINUTES),
+                unit: 'MINUTES',
+              });
+              const createMonitorUrl = window.location.href.replace(
+                /\/app\/explore.*$/,
+                `/app/${MONITORS_NAV_ID}#/create-monitor?${queryString.toString()}`
+              );
+              window.location.href = createMonitorUrl;
+            } catch (error: any) {
+              notifications.toasts.addDanger({
+                title: 'Failed to create anomaly detector',
+                text: error?.body?.message || error?.message || 'Unexpected error while creating detector.',
+              });
+            }
+            return;
+          }
+
           if (!isPplAlertingEnabled()) {
             return;
           }
-          const { overlays, http, notifications, chrome, uiSettings, i18n } = coreStart;
+
           const services = {
             ...(coreStart as unknown as Record<string, unknown>),
             ...(depsStart as unknown as Record<string, unknown>),

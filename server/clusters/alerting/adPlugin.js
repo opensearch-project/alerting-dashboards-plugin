@@ -31,6 +31,13 @@ export default function alertingADPlugin(Client, config, components) {
     needBody: true,
     method: 'POST',
   });
+  alertingAD.createDetector = ca({
+    url: {
+      fmt: `${AD_BASE_API}`,
+    },
+    needBody: true,
+    method: 'POST',
+  });
   alertingAD.previewDetector = ca({
     url: {
       fmt: `${AD_BASE_API}/<%=detectorId%>/_preview`,

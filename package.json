@@ -32,13 +32,13 @@
     "@elastic/eslint-import-resolver-kibana": "link:../../packages/osd-eslint-import-resolver-opensearch-dashboards",
     "cypress": "^13.6.0",
     "husky": "^8.0.0",
-    "lint-staged": "^10.2.0",
+    "lint-staged": "^9.2.0",
     "@types/react": "^18.2.0"
   },
   "dependencies": {
     "@reduxjs/toolkit": "^1.6.1",
     "brace": "0.11.1",
-    "formik": "^2.2.6",
+    "formik": "^2.2.5",
     "lodash": "^4.17.21",
     "query-string": "^6.13.2",
     "react-redux": "^8.1.0",

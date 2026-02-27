@@ -24,6 +24,14 @@ export default function (services, router, dataSourceEnabled) {
 
   router.post(
     {
+      path: '/api/alerting/detectors',
+      validate: false,
+    },
+    anomalyDetectorService.createDetector
+  );
+
+  router.post(
+    {
       path: '/api/alerting/detectors/_search',
       validate: false,
     },
