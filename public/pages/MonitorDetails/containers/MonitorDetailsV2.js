@@ -99,11 +99,20 @@ export default class MonitorDetailsV2 extends Component {
     const { monitor } = this.state;
     const v2 = this.getV2Ppl(monitor);
     if (!v2) return monitor || {};
+
+    const lookbackMeta = v2?.ui_metadata?.lookback || monitor?.ui_metadata?.lookback;
     const lookBackWindowMinutes =
       v2.look_back_window_minutes ??
       v2.look_back_window ??
       monitor?.look_back_window_minutes ??
-      monitor?.look_back_window;
+      monitor?.look_back_window ??
+      (lookbackMeta?.enabled ? lookbackMeta.minutes : undefined);
+
+    const mergedUiMetadata = {
+      ...(monitor?.ui_metadata || {}),
+      ...(v2?.ui_metadata || {}),
+    };
+
     return {
       ...monitor,
       name: v2.name ?? monitor?.name,
@@ -116,7 +125,9 @@ export default class MonitorDetailsV2 extends Component {
       query: v2.query ?? monitor?.query,
       description: v2.description ?? monitor?.description,
       last_update_time: v2.last_update_time ?? monitor?.last_update_time,
-      timestamp_field: v2.timestamp_field ?? monitor?.timestamp_field,
+      timestamp_field:
+        v2.timestamp_field ?? monitor?.timestamp_field ?? lookbackMeta?.timestamp_field,
+      ui_metadata: mergedUiMetadata,
     };
   };
 
@@ -366,7 +377,6 @@ export default class MonitorDetailsV2 extends Component {
         'ifPrimaryTerm',
         '_seq_no',
         '_primary_term',
-        'ui_metadata',
         'last_update_time',
         'enabled_time',
       ]);

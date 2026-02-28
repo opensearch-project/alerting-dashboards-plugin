@@ -248,8 +248,7 @@ export default class Monitors extends Component {
             const now = Date.now();
             monitors = hits.map((hit) => {
               const sourceMonitor = hit?._source?.monitor || hit?._source || {};
-              const name =
-                (typeof sourceMonitor.name === 'string' && sourceMonitor.name) || hit._id || '';
+              const name = sourceMonitor.name || hit._id || '';
               const enabled = Boolean(sourceMonitor.enabled);
               return {
                 id: hit._id,
@@ -277,11 +276,7 @@ export default class Monitors extends Component {
             const now = Date.now();
             monitors = response.monitors.map((monitor = {}) => {
               const sourceMonitor = monitor?.monitor || {};
-              const name =
-                (typeof sourceMonitor.name === 'string' && sourceMonitor.name) ||
-                (typeof monitor.name === 'string' && monitor.name) ||
-                monitor.id ||
-                '';
+              const name = sourceMonitor.name || monitor.name || monitor.id || '';
               const enabled = Boolean(monitor.enabled);
               return {
                 id: monitor.id,

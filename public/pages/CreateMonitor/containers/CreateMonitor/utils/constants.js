@@ -128,6 +128,7 @@ export const DEFAULT_COMPOSITE_AGG_SIZE = 50;
 export const MONITOR_NAME_MAX_LENGTH = 256;
 export const MONITOR_DESCRIPTION_MAX_LENGTH = 500;
 export const LOOKBACK_WINDOW_MIN_MINUTES = 1;
+export const LOOKBACK_WINDOW_MAX_MINUTES = 10080; // 7 days
 
 export const METRIC_TOOLTIP_TEXT = 'Extracted statistics such as simple calculations of data.';
 export const TIME_RANGE_TOOLTIP_TEXT = 'The time frame of data the plugin should monitor.';

@@ -28,7 +28,6 @@
   },
   "devDependencies": {
     "@babel/plugin-transform-modules-commonjs": "^7.22.9",
-    "@cfaester/enzyme-adapter-react-18": "^0.8.0",
     "@elastic/elastic-eslint-config-kibana": "link:../../packages/opensearch-eslint-config-opensearch-dashboards",
     "@elastic/eslint-import-resolver-kibana": "link:../../packages/osd-eslint-import-resolver-opensearch-dashboards",
     "@types/react": "^18.2.0",

@@ -23,6 +23,10 @@ import { SubmitErrorHandler } from '../../../../../utils/SubmitErrorHandler';
 import { backendErrorNotification } from '../../../../../utils/helpers';
 import { getTimeZone } from '../../../utils/helper';
 import { getDataSourceQueryObj } from '../../../../utils/helpers';
+import {
+  addTimeFilterToQuery,
+  computeLookBackMinutes,
+} from '../../../../CreateMonitor/containers/CreateMonitor/utils/pplAlertingHelpers';
 
 const DEFAULT_TRIGGER = {
   id: undefined,
@@ -58,7 +62,14 @@ export default class CreateTriggerPpl extends Component {
     const { httpClient, monitor, notifications } = this.props;
     const formikValues = formikValuesArg || this.props.monitorValues;
 
-    const pplQuery = formikValues?.pplQuery || monitor?.ppl_monitor?.query || monitor?.query || '';
+    let pplQuery = formikValues?.pplQuery || monitor?.ppl_monitor?.query || monitor?.query || '';
+
+    // Inject lookback window time filter if enabled
+    const lbSource = formikValues || this.props.monitorValues || {};
+    const lbMinutes = computeLookBackMinutes(lbSource);
+    if (lbMinutes > 0 && lbSource.timestampField) {
+      pplQuery = addTimeFilterToQuery(pplQuery, lbMinutes, lbSource.timestampField);
+    }
 
     const dataSourceQuery = getDataSourceQueryObj();
     httpClient

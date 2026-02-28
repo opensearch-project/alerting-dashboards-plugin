@@ -33,7 +33,11 @@ import {
   EuiLink,
 } from '@elastic/eui';
 import CustomSteps from '../../components/CustomSteps';
-import { FORMIK_INITIAL_VALUES, RECOMMENDED_DURATION } from './utils/constants';
+import {
+  FORMIK_INITIAL_VALUES,
+  RECOMMENDED_DURATION,
+  LOOKBACK_WINDOW_MAX_MINUTES,
+} from './utils/constants';
 import {
   getInitialValues,
   getPlugins,
@@ -41,6 +45,8 @@ import {
   submitPPL,
   extractIndicesFromPPL,
   findCommonDateFields,
+  addTimeFilterToQuery,
+  computeLookBackMinutes,
 } from './utils/pplAlertingHelpers';
 import { SubmitErrorHandler } from '../../../../utils/SubmitErrorHandler';
 import ConfigureTriggersPpl from '../../../CreateTrigger/containers/ConfigureTriggers/ConfigureTriggersPpl';
@@ -310,8 +316,16 @@ class PplAlertingCreateMonitor extends Component {
     });
 
     try {
+      let queryText = values.pplQuery || '';
+
+      // Inject lookback window time filter into preview query
+      const lbMinutes = computeLookBackMinutes(values);
+      if (lbMinutes > 0 && values.timestampField) {
+        queryText = addTimeFilterToQuery(queryText, lbMinutes, values.timestampField);
+      }
+
       const data = await runPPLPreview(httpClient, {
-        queryText: values.pplQuery || '',
+        queryText,
         dataSourceId: values.dataSourceId || landingDataSourceId,
       });
       if (data?.ok === false) {
@@ -606,7 +620,9 @@ class PplAlertingCreateMonitor extends Component {
 
     const lbMinutes =
       lbUnit === 'minutes' ? lbAmount : lbUnit === 'hours' ? lbAmount * 60 : lbAmount * 1440;
-    const lbError = lbAmount !== '' && lbMinutes < 1;
+    const lbTooSmall = lbAmount !== '' && lbMinutes < 1;
+    const lbTooLarge = lbAmount !== '' && lbMinutes > LOOKBACK_WINDOW_MAX_MINUTES;
+    const lbError = lbTooSmall || lbTooLarge;
 
     const intervalAmount = Number(values.period?.interval ?? 1);
     const intervalUnit = values.period?.unit || 'MINUTES';
@@ -673,7 +689,13 @@ class PplAlertingCreateMonitor extends Component {
               fullWidth
               style={{ marginLeft: '-6px', maxWidth: '720px' }}
               isInvalid={lbError}
-              error={lbError ? `Must be at least 1 minute` : undefined}
+              error={
+                lbTooSmall
+                  ? 'Must be at least 1 minute'
+                  : lbTooLarge
+                  ? 'Must be at most 7 days (10,080 minutes)'
+                  : undefined
+              }
             >
               <EuiFlexGroup gutterSize="s" alignItems="center" responsive={false}>
                 <EuiFlexItem>
