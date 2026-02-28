@@ -248,16 +248,9 @@ export default class Monitors extends Component {
             const now = Date.now();
             monitors = hits.map((hit) => {
               const sourceMonitor = hit?._source?.monitor || hit?._source || {};
-              const pplMonitor = sourceMonitor?.ppl_monitor || {};
               const name =
-                (typeof pplMonitor.name === 'string' && pplMonitor.name) ||
-                (typeof sourceMonitor.name === 'string' && sourceMonitor.name) ||
-                hit._id ||
-                '';
-              const enabled =
-                typeof pplMonitor.enabled === 'boolean'
-                  ? pplMonitor.enabled
-                  : Boolean(sourceMonitor.enabled);
+                (typeof sourceMonitor.name === 'string' && sourceMonitor.name) || hit._id || '';
+              const enabled = Boolean(sourceMonitor.enabled);
               return {
                 id: hit._id,
                 name,
@@ -284,16 +277,12 @@ export default class Monitors extends Component {
             const now = Date.now();
             monitors = response.monitors.map((monitor = {}) => {
               const sourceMonitor = monitor?.monitor || {};
-              const pplMonitor = sourceMonitor?.ppl_monitor || {};
               const name =
-                (typeof pplMonitor.name === 'string' && pplMonitor.name) ||
+                (typeof sourceMonitor.name === 'string' && sourceMonitor.name) ||
                 (typeof monitor.name === 'string' && monitor.name) ||
                 monitor.id ||
                 '';
-              const enabled =
-                typeof pplMonitor.enabled === 'boolean'
-                  ? pplMonitor.enabled
-                  : Boolean(monitor.enabled);
+              const enabled = Boolean(monitor.enabled);
               return {
                 id: monitor.id,
                 name,
@@ -369,13 +358,7 @@ export default class Monitors extends Component {
       const ifPrimaryTerm = detailResp.ifPrimaryTerm ?? item.ifPrimaryTerm;
 
       if (useV2) {
-        const basePplMonitor = _.cloneDeep(
-          monitorDetail?.monitor_v2?.ppl_monitor ||
-            monitorDetail?.monitorV2?.ppl_monitor ||
-            monitorDetail?.ppl_monitor ||
-            monitorDetail ||
-            {}
-        );
+        const basePplMonitor = _.cloneDeep(monitorDetail || {});
 
         const cleanedPplMonitor = _.omit({ ...basePplMonitor, ...update }, [
           'id',
@@ -737,20 +720,22 @@ export default class Monitors extends Component {
           },
         ];
 
+    const showCustomHeader = useUpdatedUx || this.pplEnabled;
+
     return (
       <>
         <ContentPanel
-          actions={useUpdatedUx ? undefined : monitorActions}
+          actions={showCustomHeader ? undefined : monitorActions}
           bodyStyles={{ padding: 'initial' }}
-          title={useUpdatedUx ? undefined : 'Monitors'}
+          title={showCustomHeader ? undefined : 'Monitors'}
           panelOptions={{ hideTitleBorder: useUpdatedUx }}
           panelStyles={{
             padding: useUpdatedUx ? '0px' : totalMonitors < 1 ? '16px 16px 0px' : '16px',
           }}
         >
-          {useUpdatedUx && (
+          {showCustomHeader && (
             <>
-              <div style={{ padding: '16px 16px 0px 16px' }}>
+              <div style={{ padding: useUpdatedUx ? '16px 16px 0px 16px' : '0px 0px 16px' }}>
                 <EuiFlexGroup alignItems="center" justifyContent="spaceBetween" responsive={false}>
                   <EuiFlexItem grow={false}>
                     <EuiFlexGroup alignItems="center" gutterSize="m" responsive={false}>

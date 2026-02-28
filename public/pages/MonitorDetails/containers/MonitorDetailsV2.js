@@ -89,10 +89,10 @@ export default class MonitorDetailsV2 extends Component {
     };
   }
 
-  /** Retrieve ppl_monitor from V2 payloads when present */
+  /** Retrieve nested ppl_monitor if present, otherwise null (v1 returns flat) */
   getV2Ppl = (mon) => {
     if (!mon) return null;
-    return mon?.monitor_v2?.ppl_monitor ?? mon?.monitorV2?.ppl_monitor ?? mon?.ppl_monitor ?? null;
+    return mon?.ppl_monitor ?? null;
   };
 
   getDisplayMonitor = () => {
@@ -405,39 +405,7 @@ export default class MonitorDetailsV2 extends Component {
 
       // Optimistically update monitor state with the changes
       if (monitor) {
-        const updatedMonitor = { ...monitor };
-        const v2Ppl = this.getV2Ppl(monitor);
-
-        if (v2Ppl) {
-          // Update the nested ppl_monitor object
-          if (updatedMonitor.monitor_v2) {
-            updatedMonitor.monitor_v2 = {
-              ...updatedMonitor.monitor_v2,
-              ppl_monitor: {
-                ...updatedMonitor.monitor_v2.ppl_monitor,
-                ...update,
-              },
-            };
-          } else if (updatedMonitor.monitorV2) {
-            updatedMonitor.monitorV2 = {
-              ...updatedMonitor.monitorV2,
-              ppl_monitor: {
-                ...updatedMonitor.monitorV2.ppl_monitor,
-                ...update,
-              },
-            };
-          } else if (updatedMonitor.ppl_monitor) {
-            updatedMonitor.ppl_monitor = {
-              ...updatedMonitor.ppl_monitor,
-              ...update,
-            };
-          }
-        }
-        // Also update root level enabled for immediate UI update
-        if (update.enabled !== undefined) {
-          updatedMonitor.enabled = update.enabled;
-        }
-
+        const updatedMonitor = { ...monitor, ...update };
         nextState.monitor = updatedMonitor;
       }
 

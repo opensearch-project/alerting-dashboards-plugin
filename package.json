@@ -28,22 +28,23 @@
   },
   "devDependencies": {
     "@babel/plugin-transform-modules-commonjs": "^7.22.9",
+    "@cfaester/enzyme-adapter-react-18": "^0.8.0",
     "@elastic/elastic-eslint-config-kibana": "link:../../packages/opensearch-eslint-config-opensearch-dashboards",
     "@elastic/eslint-import-resolver-kibana": "link:../../packages/osd-eslint-import-resolver-opensearch-dashboards",
+    "@types/react": "^18.2.0",
     "cypress": "^13.6.0",
     "husky": "^8.0.0",
-    "lint-staged": "^10.2.0",
-    "@types/react": "^18.2.0"
+    "lint-staged": "^10.2.0"
   },
   "dependencies": {
     "@reduxjs/toolkit": "^1.6.1",
     "brace": "0.11.1",
     "formik": "^2.2.6",
     "lodash": "^4.17.21",
+    "prettier": "^2.1.1",
     "query-string": "^6.13.2",
     "react-redux": "^8.1.0",
-    "react-vis": "^1.8.1",
-    "prettier": "^2.1.1"
+    "react-vis": "^1.8.1"
   },
   "resolutions": {
     "ansi-regex": "^5.0.1",

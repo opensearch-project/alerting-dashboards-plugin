@@ -45,16 +45,9 @@ export const AlertInsight: React.FC<AlertInsightProps> = (props: AlertInsightPro
     viewMode = 'classic',
   } = props;
 
-  const isPplMonitorAlert =
-    viewMode === 'new' ||
-    Boolean(alert?.monitor_v2_id || alert?.trigger_v2_id || alert?.monitor_v2_name);
+  const isPplMonitorAlert = viewMode === 'new';
 
   if (isPplMonitorAlert) {
-    console.log('[AlertInsight] skipping v1 monitor fetch for PPL alert', {
-      viewMode,
-      alertId,
-      hasV2Fields: Boolean(alert?.monitor_v2_id || alert?.trigger_v2_id || alert?.monitor_v2_name),
-    });
     return children;
   }
 

@@ -15,6 +15,27 @@ export const GET_ALERTS_SORT_FILTERS = {
 };
 
 export default class AlertService extends MDSEnabledClientService {
+  // TODO: remove later once we combine ppl monitors and regular monitors
+  /**
+   * Returns a Set of monitor IDs whose monitor_type is 'ppl_monitor'.
+   * Used to exclude PPL alerts from the classic dashboard.
+   */
+  _getPplMonitorIds = async (client) => {
+    try {
+      const resp = await client('alerting.getMonitors', {
+        body: {
+          size: 1000,
+          _source: false,
+          query: { term: { 'monitor.monitor_type': 'ppl_monitor' } },
+        },
+      });
+      const hits = _.get(resp, 'hits.hits', []);
+      return new Set(hits.map((h) => h._id));
+    } catch (e) {
+      return new Set();
+    }
+  };
+
   getAlerts = async (context, req, res) => {
     const {
       from = 0,
@@ -77,8 +98,12 @@ export default class AlertService extends MDSEnabledClientService {
 
     const client = this.getClientBasedOnDataSource(context, req);
     try {
-      const resp = await client('alerting.getAlerts', params);
-      const alerts = resp.alerts.map((hit) => {
+      const [resp, pplMonitorIds] = await Promise.all([
+        client('alerting.getAlerts', params),
+        this._getPplMonitorIds(client),
+      ]);
+
+      const allAlerts = resp.alerts.map((hit) => {
         const alert = hit;
         const id = hit.alert_id;
         const version = hit.alert_version;
@@ -89,7 +114,12 @@ export default class AlertService extends MDSEnabledClientService {
           alert_source: !!alert.workflow_id ? 'workflow' : 'monitor',
         };
       });
-      const totalAlerts = resp.totalAlerts;
+
+      const alerts =
+        pplMonitorIds.size > 0
+          ? allAlerts.filter((a) => !pplMonitorIds.has(a.monitor_id))
+          : allAlerts;
+      const totalAlerts = resp.totalAlerts - (allAlerts.length - alerts.length);
 
       return res.ok({
         body: {

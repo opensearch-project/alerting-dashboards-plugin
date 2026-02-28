@@ -142,13 +142,7 @@ const fetchMonitorName = async (id, legacyResource, dataSourceQueryObj, httpClie
 };
 
 const extractMonitorNameFromV2 = (payload = {}) => {
-  const pplMonitor =
-    payload?.monitor_v2?.ppl_monitor ??
-    payload?.monitor?.ppl_monitor ??
-    payload?.ppl_monitor ??
-    null;
-
-  const name = pplMonitor?.name ?? payload?.monitor?.name ?? payload?.name ?? null;
+  const name = payload?.name ?? payload?.monitor?.name ?? null;
   return { name };
 };
 

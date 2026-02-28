@@ -19,7 +19,7 @@ export const isPplMonitor = (monitor) => {
     return true;
   }
 
-  if (monitor.monitor_v2?.ppl_monitor || monitor.ppl_monitor) {
+  if (monitor.ppl_monitor || monitor.monitor_type === 'ppl_monitor') {
     return true;
   }
 

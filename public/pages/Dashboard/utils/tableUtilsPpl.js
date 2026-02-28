@@ -215,8 +215,8 @@ export const alertColumnsPpl = (
         }
         let value = timestamp;
         if (value == null && Array.isArray(row?.alerts) && row.alerts.length) {
-          const newest = _.maxBy(row.alerts, (a) => (a?.triggered_time ?? a?.start_time) || 0);
-          value = newest?.triggered_time ?? newest?.start_time ?? null;
+          const newest = _.maxBy(row.alerts, (a) => (a?.start_time ?? a?.triggered_time) || 0);
+          value = newest?.start_time ?? newest?.triggered_time ?? null;
         }
         return renderUtcTime(value);
       },

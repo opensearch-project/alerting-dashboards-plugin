@@ -13,8 +13,8 @@ describe('isPplMonitor', () => {
     expect(isPplMonitor({ monitorMode: 'PPL' })).toBe(true);
   });
 
-  test('returns true for monitors with ppl monitor_v2 wrapper', () => {
-    expect(isPplMonitor({ monitor_v2: { ppl_monitor: {} } })).toBe(true);
+  test('returns true for monitors with ppl_monitor or monitor_type', () => {
+    expect(isPplMonitor({ monitor_type: 'ppl_monitor' })).toBe(true);
     expect(isPplMonitor({ ppl_monitor: {} })).toBe(true);
   });
 

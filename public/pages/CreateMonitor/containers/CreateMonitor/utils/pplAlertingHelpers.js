@@ -124,8 +124,8 @@ export const getInitialValues = ({
     const isPpl =
       initialValues?.query_language === 'ppl' ||
       monitorToEdit?.query_language === 'ppl' ||
-      !!monitorToEdit?.ppl_monitor ||
-      !!monitorToEdit?.monitor_v2?.ppl_monitor;
+      monitorToEdit?.monitor_type === 'ppl_monitor' ||
+      !!monitorToEdit?.ppl_monitor;
     initialValues.monitor_mode = isPpl ? 'ppl' : 'legacy';
     if (isPpl) {
       initialValues.searchType = 'query';

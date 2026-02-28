@@ -48,7 +48,7 @@ describe('Dashboard', () => {
       ok: true,
       alerts: [],
       totalAlerts: 0,
-      resp: { total_alerts_v2: 0, alerts: [] },
+      resp: { totalAlerts: 0, alerts: [] },
     });
   });
 
