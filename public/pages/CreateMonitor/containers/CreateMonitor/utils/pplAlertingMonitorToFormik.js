@@ -97,12 +97,26 @@ export default function pplAlertingMonitorToFormik(monitorIn) {
   };
 
   const pplQuery = monitor.query || '';
-  const timestampField = monitor.timestamp_field || '@timestamp';
   const description = monitor.description || '';
 
+  const lookbackMeta = uiMetadata?.lookback;
+  const lookBackMinutes =
+    monitor.look_back_window_minutes ??
+    monitor.look_back_window ??
+    (lookbackMeta?.enabled ? lookbackMeta.minutes : undefined);
+
+  const timestampField = monitor.timestamp_field || lookbackMeta?.timestamp_field || '@timestamp';
+
   let lookBackFormik = {};
-  const lookBackMinutes = monitor.look_back_window_minutes ?? monitor.look_back_window;
-  if (lookBackMinutes != null) {
+  if (lookbackMeta && typeof lookbackMeta.enabled === 'boolean') {
+    if (lookbackMeta.enabled && lookbackMeta.minutes > 0) {
+      lookBackFormik.useLookBackWindow = true;
+      lookBackFormik.lookBackAmount = lookbackMeta.amount || lookbackMeta.minutes;
+      lookBackFormik.lookBackUnit = lookbackMeta.unit || 'minutes';
+    } else {
+      lookBackFormik.useLookBackWindow = false;
+    }
+  } else if (lookBackMinutes != null && lookBackMinutes > 0) {
     const minutes = lookBackMinutes;
     lookBackFormik.useLookBackWindow = true;
 
@@ -117,8 +131,6 @@ export default function pplAlertingMonitorToFormik(monitorIn) {
       lookBackFormik.lookBackUnit = 'minutes';
     }
   } else {
-    // Explicitly set useLookBackWindow to false when look_back_window_minutes is null or undefined
-    // Don't include lookBackAmount and lookBackUnit to prevent old values from persisting
     lookBackFormik.useLookBackWindow = false;
   }
 
@@ -138,8 +150,9 @@ export default function pplAlertingMonitorToFormik(monitorIn) {
     detectorId: isAD ? _.get(inputs, INPUTS_DETECTOR_ID) : undefined,
     adResultIndex: isAD ? _.get(inputs, '0.search.indices.0') : undefined,
     ...(pplQuery ? { pplQuery } : {}),
-    ...(monitor.timestamp_field ? { timestampField } : {}),
+    timestampField,
     ...lookBackFormik,
+    ui_metadata: uiMetadata,
   };
 
   // When useLookBackWindow is false, explicitly clear lookBackAmount and lookBackUnit

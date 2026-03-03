@@ -15,6 +15,10 @@ import { backendErrorNotification, inputLimitText } from '../../../../utils/help
 import EnhancedAccordion from '../../../../components/FeatureAnywhereContextMenu/EnhancedAccordion';
 import { getDataSourceQueryObj } from '../../../../../public/pages/utils/helpers';
 import DefineTriggerPpl from '../DefineTrigger/DefineTriggerPpl';
+import {
+  addTimeFilterToQuery,
+  computeLookBackMinutes,
+} from '../../../CreateMonitor/containers/CreateMonitor/utils/pplAlertingHelpers';
 
 const build1hSeriesFromTotal = (pplResp, now = Date.now()) => {
   const HOUR_MS = 60 * 60 * 1000;
@@ -172,11 +176,20 @@ class ConfigureTriggersPpl extends React.Component {
         : '';
 
     let pplQuery = baseQuery;
+
+    // Inject lookback window time filter if enabled
+    const { monitorValues } = this.props;
+    const lbSource = formikValues || monitorValues || {};
+    const lbMinutes = computeLookBackMinutes(lbSource);
+    if (lbMinutes > 0 && lbSource.timestampField) {
+      pplQuery = addTimeFilterToQuery(pplQuery, lbMinutes, lbSource.timestampField);
+    }
+
     if (customCondition) {
       const conditionFragment = customCondition.startsWith('|')
         ? customCondition
         : `| ${customCondition}`;
-      pplQuery = `${baseQuery} ${conditionFragment}`.trim();
+      pplQuery = `${pplQuery} ${conditionFragment}`.trim();
     }
 
     let dataSourceQuery = {};

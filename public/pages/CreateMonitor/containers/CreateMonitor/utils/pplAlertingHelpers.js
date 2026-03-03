@@ -5,7 +5,7 @@
 
 import _ from 'lodash';
 import queryString from 'query-string';
-import { FORMIK_INITIAL_VALUES } from './constants';
+import { FORMIK_INITIAL_VALUES, LOOKBACK_WINDOW_MAX_MINUTES } from './constants';
 import pplAlertingMonitorToFormik from './pplAlertingMonitorToFormik';
 import { buildPPLMonitorFromFormik, pplToV2Schedule } from './pplFormikToMonitor';
 import { MONITOR_TYPE, DEFAULT_EMPTY_DATA } from '../../../../../utils/constants';
@@ -499,6 +499,17 @@ export const submitPPL = async ({
   const { setSubmitting, setFieldError } = formikBag;
   const api = makeAlertingV2Service(httpClient);
 
+  // Validate lookback window bounds
+  const lbMinutes = computeLookBackMinutes(values);
+  if (lbMinutes > LOOKBACK_WINDOW_MAX_MINUTES) {
+    setSubmitting(false);
+    notifications.toasts.addDanger({
+      title: `Failed to ${edit ? 'update' : 'create'} the monitor`,
+      text: `Look back window must be at most 7 days (${LOOKBACK_WINDOW_MAX_MINUTES} minutes) but was ${lbMinutes} minutes.`,
+    });
+    return;
+  }
+
   // Validate that all triggers have names
   const triggerDefinitions = _.get(values, 'triggerDefinitions', []);
   if (Array.isArray(triggerDefinitions) && triggerDefinitions.length > 0) {
@@ -599,6 +610,54 @@ export const submitPPL = async ({
       );
     }
   }
+};
+
+//Computes the total lookback window in minutes from formik values.
+export const computeLookBackMinutes = (values) => {
+  if (!values?.useLookBackWindow) return 0;
+  const amount = Number(values.lookBackAmount);
+  if (!Number.isFinite(amount) || amount <= 0) return 0;
+  const unit = String(values.lookBackUnit || 'hours').toLowerCase();
+  if (unit.startsWith('minute')) return Math.floor(amount);
+  if (unit.startsWith('hour')) return Math.floor(amount * 60);
+  if (unit.startsWith('day')) return Math.floor(amount * 1440);
+  return Math.floor(amount);
+};
+
+//Formats date 'yyyy-MM-dd HH:mm:ss' in UTC
+const formatPplTimestamp = (date) => {
+  const pad = (n) => String(n).padStart(2, '0');
+  return (
+    `${date.getUTCFullYear()}-${pad(date.getUTCMonth() + 1)}-${pad(date.getUTCDate())} ` +
+    `${pad(date.getUTCHours())}:${pad(date.getUTCMinutes())}:${pad(date.getUTCSeconds())}`
+  );
+};
+
+//Injects a time-range filter into a PPL query based on the lookback window.
+export const addTimeFilterToQuery = (
+  query,
+  lookBackMinutes,
+  timestampField,
+  endTime = new Date()
+) => {
+  if (!query || !timestampField || !lookBackMinutes || lookBackMinutes <= 0) return query;
+
+  const periodEnd = endTime;
+  const periodStart = new Date(periodEnd.getTime() - lookBackMinutes * 60 * 1000);
+
+  const startTs = formatPplTimestamp(periodStart);
+  const endTs = formatPplTimestamp(periodEnd);
+
+  const timeFilterClause =
+    `| where ${timestampField} > TIMESTAMP('${startTs}') ` +
+    `and ${timestampField} < TIMESTAMP('${endTs}')`;
+
+  if (query.includes('|')) {
+    // Inject time filter before the first pipe so it runs before aggregations
+    return query.replace('|', `${timeFilterClause} |`);
+  }
+  // No pipes — append at the end
+  return `${query} ${timeFilterClause}`;
 };
 
 /**

@@ -29,9 +29,11 @@ const getLastUpdatedHeader = () => {
 };
 
 export default function getOverviewStatsV2(monitor, monitorId, activeCount = 0) {
-  // Get look back window in minutes - check multiple possible locations
+  const lookbackMeta = monitor?.ui_metadata?.lookback;
   const lookBackWindowMinutes =
-    monitor?.look_back_window_minutes ?? monitor?.look_back_window ?? undefined;
+    monitor?.look_back_window_minutes ??
+    monitor?.look_back_window ??
+    (lookbackMeta?.enabled ? lookbackMeta.minutes : undefined);
 
   const firstRow = [
     {

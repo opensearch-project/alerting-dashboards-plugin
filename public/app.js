@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 import React from 'react';
-import { createRoot } from 'react-dom/client';
+import ReactDOM from 'react-dom';
 import { HashRouter as Router, Route } from 'react-router-dom';
 import { Provider } from 'react-redux';
 
@@ -46,8 +46,7 @@ export function renderApp(coreStart, depsStart, params, defaultRoute) {
   // Initialize Redux store
   const store = getAlertingStore();
 
-  const root = createRoot(params.element);
-  root.render(
+  ReactDOM.render(
     <Provider store={store}>
       <OpenSearchDashboardsContextProvider services={{ ...coreStart, ...depsStart }}>
         <OpenSearchDashboardsContextProvider services={{ data: depsStart?.data }}>
@@ -76,7 +75,8 @@ export function renderApp(coreStart, depsStart, params, defaultRoute) {
           </DatasetProvider>
         </OpenSearchDashboardsContextProvider>
       </OpenSearchDashboardsContextProvider>
-    </Provider>
+    </Provider>,
+    params.element
   );
-  return () => root.unmount();
+  return () => ReactDOM.unmountComponentAtNode(params.element);
 }

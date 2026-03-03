@@ -230,6 +230,19 @@ export const buildPPLMonitorFromFormik = (values) => {
         },
       ];
 
+  const useLookBackWindow = values?.useLookBackWindow ?? true;
+
+  const lookbackMeta =
+    useLookBackWindow && lookBack && values.timestampField
+      ? {
+          enabled: true,
+          minutes: lookBack,
+          timestamp_field: values.timestampField,
+          amount: Number(values.lookBackAmount) || 1,
+          unit: String(values.lookBackUnit || 'hours'),
+        }
+      : { enabled: false };
+
   const monitor = {
     name: values.name || 'Untitled monitor',
     description: values.description || '',
@@ -237,26 +250,24 @@ export const buildPPLMonitorFromFormik = (values) => {
     schedule,
     query: values.pplQuery || '',
     triggers,
+    ui_metadata: {
+      ...(values.ui_metadata || {}),
+      lookback: lookbackMeta,
+    },
   };
 
-  // Explicitly handle look back window: set to null if disabled, or set value if enabled
-  const useLookBackWindow = values?.useLookBackWindow ?? true;
-  if (!useLookBackWindow) {
-    // useLookBackWindow is false - explicitly set to null to clear the value
-    monitor.look_back_window_minutes = null;
-    monitor.timestamp_field = null;
-  } else if (lookBack && values.timestampField) {
-    // useLookBackWindow is true - set the calculated minutes and timestamp field
+  if (lookbackMeta.enabled) {
     monitor.look_back_window_minutes = lookBack;
     monitor.timestamp_field = values.timestampField;
+  } else {
+    monitor.look_back_window_minutes = null;
+    monitor.timestamp_field = null;
   }
 
   const result = {
     ppl_monitor: monitor,
   };
 
-  // Also set look_back_window_minutes at root level since API returns it there
-  // This ensures the backend properly updates the value
   if (monitor.look_back_window_minutes !== undefined) {
     result.look_back_window_minutes = monitor.look_back_window_minutes;
   }
