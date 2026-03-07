@@ -5,8 +5,8 @@
 
 import _ from 'lodash';
 import { INDEX, PLUGIN_NAME } from '../support/constants';
-import sampleQueryLevelMonitor from '../fixtures/sample_query_level_monitor';
-import sampleQueryLevelMonitorWithAlwaysTrueTrigger from '../fixtures/sample_query_level_monitor_with_always_true_trigger';
+import sampleQueryLevelMonitor from '../fixtures/sample_query_level_monitor.json';
+import sampleQueryLevelMonitorWithAlwaysTrueTrigger from '../fixtures/sample_query_level_monitor_with_always_true_trigger.json';
 import sampleDaysIntervalQueryLevelMonitor from '../fixtures/sample_days_interval_query_level_monitor.json';
 import sampleCronExpressionQueryLevelMonitor from '../fixtures/sample_cron_expression_query_level_monitor.json';
 

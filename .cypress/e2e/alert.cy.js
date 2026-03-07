@@ -4,8 +4,8 @@
  */
 
 import { PLUGIN_NAME } from '../support/constants';
-import sampleQueryLevelMonitorWithAlwaysTrueTrigger from '../fixtures/sample_query_level_monitor_with_always_true_trigger';
-import sampleQueryLevelMonitorWorkflow from '../fixtures/sample_query_level_monitor_workflow';
+import sampleQueryLevelMonitorWithAlwaysTrueTrigger from '../fixtures/sample_query_level_monitor_with_always_true_trigger.json';
+import sampleQueryLevelMonitorWorkflow from '../fixtures/sample_query_level_monitor_workflow.json';
 
 const TESTING_INDEX = 'alerting_test';
 

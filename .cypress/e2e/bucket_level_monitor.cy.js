@@ -4,9 +4,9 @@
  */
 
 import { INDEX, PLUGIN_NAME } from '../support/constants';
-import sampleAggregationQuery from '../fixtures/sample_aggregation_query';
-import sampleExtractionQueryMonitor from '../fixtures/sample_extraction_query_bucket_level_monitor';
-import sampleVisualEditorMonitor from '../fixtures/sample_visual_editor_bucket_level_monitor';
+import sampleAggregationQuery from '../fixtures/sample_aggregation_query.json';
+import sampleExtractionQueryMonitor from '../fixtures/sample_extraction_query_bucket_level_monitor.json';
+import sampleVisualEditorMonitor from '../fixtures/sample_visual_editor_bucket_level_monitor.json';
 
 const SAMPLE_EXTRACTION_QUERY_MONITOR = 'sample_extraction_query_bucket_level_monitor';
 const SAMPLE_VISUAL_EDITOR_MONITOR = 'sample_visual_editor_bucket_level_monitor';
