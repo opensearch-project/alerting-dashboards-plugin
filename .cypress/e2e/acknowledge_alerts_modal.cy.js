@@ -14,14 +14,52 @@ const QUERY_MONITOR = 'sample_alerts_flyout_query_level_monitor';
 const QUERY_TRIGGER = 'sample_alerts_flyout_query_level_trigger';
 
 const TWENTY_SECONDS = 20000;
-
 const SIXTY_SECONDS = 60000;
+
+function waitForPageLoad({
+                           url = '',
+                           pageText = '',
+                           timeout = TWENTY_SECONDS,
+                           retryAttempts = 3,
+                           retryDelay = 10000
+                         }) {
+  cy.get('body', { timeout }).then(($body) => {
+    if (!$body.text().includes(pageText)) {
+      if (retryAttempts <= 0) throw new Error('Page failed to load after retries.');
+      cy.visit(url);
+      cy.wait(retryDelay);
+      waitForPageLoad({
+        url,
+        pageText,
+        timeout,
+        retryAttempts: retryAttempts - 1,
+        retryDelay,
+      });
+    }
+  });
+}
 
 describe('AcknowledgeAlertsModal', () => {
   before(() => {
+    // Set welcome screen tracking to false
+    localStorage.setItem('home:welcome:show', 'false');
+
+    // Visit Alerting OpenSearch Dashboards
+    const dashboardUrl = `${Cypress.env('opensearch_dashboards')}/app/${PLUGIN_NAME}#/dashboard`;
+    cy.visit(dashboardUrl);
+    waitForPageLoad({
+      url: dashboardUrl,
+      pageText: 'Alerts by triggers',
+      timeout: SIXTY_SECONDS,
+      retryAttempts: 10, // Long timeout and many retry attempts due to frontend bundling for the first time
+    });
+
     // Delete any existing monitors
     cy.deleteAllAlerts();
     cy.deleteAllMonitors();
+
+    // Short wait to reduce flakiness
+    cy.wait(10000);
 
     // Load sample data
     cy.loadSampleEcommerceData();
