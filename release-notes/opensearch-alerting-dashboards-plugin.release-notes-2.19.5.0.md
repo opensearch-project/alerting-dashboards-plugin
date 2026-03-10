@@ -2,7 +2,7 @@
 
 Compatible with OpenSearch and OpenSearch Dashboards version 2.19.5
 
-### Features
+### Bug fixes
 
 * Onboarded opensearch apis to use MDS client when MDS is enabled ([#1313](https://github.com/opensearch-project/alerting-dashboards-plugin/pull/1313))
 
