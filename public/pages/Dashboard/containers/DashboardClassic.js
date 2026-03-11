@@ -302,7 +302,8 @@ export default class DashboardClassic extends Component {
 
   acknowledgeAlerts = async (alerts) => {
     const { httpClient, notifications } = this.props;
-    await Promise.all(acknowledgeAlerts(httpClient, notifications, alerts));
+    const acknowledgePromises = await acknowledgeAlerts(httpClient, notifications, alerts);
+    await Promise.all(acknowledgePromises);
   };
 
   acknowledgeAlert = async () => {
