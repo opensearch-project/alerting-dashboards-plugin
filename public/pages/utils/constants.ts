@@ -8,6 +8,7 @@ import { BehaviorSubject } from 'rxjs';
 import { DataSourceOption } from "../../../../../src/plugins/data_source_management/public";
 
 export const COMMENTS_ENABLED_SETTING = "plugins.alerting.comments_enabled";
+export const MAX_TRIGGERS_SETTING = "plugins.alerting.monitor.max_triggers";
 const LocalCluster: DataSourceOption = {
   label: i18n.translate("dataSource.localCluster", {
     defaultMessage: "Local cluster",
