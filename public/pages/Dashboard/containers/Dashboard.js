@@ -45,7 +45,7 @@ import {
   getDataSourceId,
   appendCommentsAction,
   getIsCommentsEnabled,
-  getIsAgentConfigured
+  getIsAgentConfigured,
 } from '../../utils/helpers';
 import { getUseUpdatedUx } from '../../../services';
 
@@ -226,7 +226,8 @@ export default class Dashboard extends Component {
 
   acknowledgeAlerts = async (alerts) => {
     const { httpClient, notifications } = this.props;
-    await Promise.all(acknowledgeAlerts(httpClient, notifications, alerts));
+    const acknowledgePromises = await acknowledgeAlerts(httpClient, notifications, alerts);
+    await Promise.all(acknowledgePromises);
   };
 
   // TODO: exists in both Dashboard and Monitors, should be moved to redux when implemented
