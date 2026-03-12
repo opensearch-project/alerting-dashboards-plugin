@@ -20,6 +20,11 @@
     }
   ],
   "ui_metadata": {
-    "schedule": {}
+    "schedule": {
+      "period": {
+        "unit": "DAYS",
+        "interval": 7
+      }
+    }
   }
 }

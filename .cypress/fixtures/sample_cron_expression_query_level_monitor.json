@@ -20,6 +20,9 @@
     }
   ],
   "ui_metadata": {
-    "schedule": {}
+    "schedule": {
+      "cronExpression": "30 11 * * 1-5",
+      "frequency": "cronExpression"
+    }
   }
 }
