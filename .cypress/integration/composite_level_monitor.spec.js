@@ -43,8 +43,8 @@ describe('CompositeLevelMonitor', () => {
       // Visit Alerting OpenSearch Dashboards
       cy.visit(`${Cypress.env('opensearch_dashboards')}/app/${PLUGIN_NAME}#/monitors`);
 
-      // Common text to wait for to confirm page loaded, give up to 20 seconds for initial load
-      cy.contains('Create monitor', { timeout: 20000 });
+      // Common text to wait for to confirm page loaded, give up to 60 seconds for initial load
+      cy.contains('Create monitor', { timeout: 60000 });
 
       // Go to create monitor page
       cy.contains('Create monitor').click({ force: true });

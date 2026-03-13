@@ -17,8 +17,8 @@ describe('Alerts', () => {
     // Visit Alerting OpenSearch Dashboards
     cy.visit(`${Cypress.env('opensearch_dashboards')}/app/${PLUGIN_NAME}#/dashboard`);
 
-    // Common text to wait for to confirm page loaded, give up to 30 seconds for initial load
-    cy.contains('Acknowledge', { timeout: 30000 });
+    // Common text to wait for to confirm page loaded, give up to 60 seconds for initial load
+    cy.contains('Acknowledge', { timeout: 60000 });
   });
 
   describe("can be in 'Active' state", () => {

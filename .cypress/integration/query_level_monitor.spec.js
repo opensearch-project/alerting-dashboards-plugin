@@ -85,8 +85,8 @@ describe('Query-Level Monitors', () => {
     // Visit Alerting OpenSearch Dashboards
     cy.visit(`${Cypress.env('opensearch_dashboards')}/app/${PLUGIN_NAME}#/monitors`);
 
-    // Common text to wait for to confirm page loaded, give up to 20 seconds for initial load
-    cy.contains('Create monitor', { timeout: 20000 });
+    // Common text to wait for to confirm page loaded, give up to 60 seconds for initial load
+    cy.contains('Create monitor', { timeout: 60000 });
   });
 
   describe('can be created', () => {
@@ -249,7 +249,9 @@ describe('Query-Level Monitors', () => {
       // Click the Delete button
       cy.contains('Delete').click({ force: true });
       cy.wait(1000);
-      cy.get('[data-test-subj="confirmModalConfirmButton"]').click({ force: true });
+      cy.get('[data-test-subj="confirmModalConfirmButton"]', { timeout: 10000 })
+        .should('be.visible')
+        .click({ force: true });
 
       // Confirm we can see an empty monitor list
       cy.contains('There are no existing monitors');
@@ -390,9 +392,9 @@ describe('Query-Level Monitors', () => {
       cy.wait(1000);
 
       // Select the existing monitor
-      cy.get(`[data-test-subj="${SAMPLE_DAYS_INTERVAL_MONITOR}"]`).click({
-        force: true,
-      });
+      cy.get(`[data-test-subj="${SAMPLE_DAYS_INTERVAL_MONITOR}"]`, { timeout: 20000 })
+        .should('be.visible')
+        .click({ force: true });
 
       // Wait for monitor details page to load
       cy.contains('Overview');

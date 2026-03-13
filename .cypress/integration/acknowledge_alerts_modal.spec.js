@@ -31,7 +31,9 @@ describe('AcknowledgeAlertsModal', () => {
     cy.createMonitor(sampleAlertsFlyoutQueryMonitor);
 
     // Visit Alerting OpenSearch Dashboards
-    cy.visit(`${Cypress.env('opensearch_dashboards')}/app/${PLUGIN_NAME}#/monitors`, { timeout: SIXTY_SECONDS });
+    cy.visit(`${Cypress.env('opensearch_dashboards')}/app/${PLUGIN_NAME}#/monitors`, {
+      timeout: SIXTY_SECONDS,
+    });
 
     // Confirm test monitors were created successfully
     cy.contains(BUCKET_MONITOR, { timeout: SIXTY_SECONDS });
