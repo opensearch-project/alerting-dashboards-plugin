@@ -63,12 +63,17 @@ jobs:
         run: |
           cd OpenSearch-Dashboards/plugins/alerting-dashboards-plugin
           yarn osd bootstrap --single-version=loose
+      - name: Build plugin bundles
+        run: |
+          cd OpenSearch-Dashboards
+          node scripts/build_opensearch_dashboards_platform_plugins --no-examples --workers 2
       - name: Run OpenSearch Dashboards server
         run: |
           cd OpenSearch-Dashboards
           yarn start --no-base-path --no-watch --server.host="0.0.0.0" &
-          sleep 300
-        # timeout 300 bash -c 'while [[ "$(curl -s -o /dev/null -w ''%{http_code}'' localhost:5601/api/status)" != "200" ]]; do sleep 5; done'
+          echo "Waiting for OpenSearch Dashboards to be ready..."
+          timeout 600 bash -c 'while [[ "$(curl -s -o /dev/null -w ''%{http_code}'' localhost:5601/api/status)" != "200" ]]; do sleep 5; done'
+          echo "Server is up. OpenSearch Dashboards is ready"
       - name: Run Cypress tests
         uses: cypress-io/github-action@v2
         with:
