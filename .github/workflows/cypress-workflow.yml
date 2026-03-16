@@ -87,11 +87,18 @@ jobs:
           echo "Waiting for OpenSearch Dashboards to be ready..."
           timeout 600 bash -c 'while [[ "$(curl -s -o /dev/null -w ''%{http_code}'' localhost:5601/api/status)" != "200" ]]; do sleep 5; done'
           echo "Server is up. OpenSearch Dashboards is ready"
+      - name: Install Chrome
+        uses: browser-actions/setup-chrome@v1
+        with:
+          chrome-version: stable
       - name: Run Cypress tests
         uses: cypress-io/github-action@v2
         with:
           working-directory: OpenSearch-Dashboards/plugins/alerting-dashboards-plugin
-          command: yarn run cypress run --spec '.cypress/integration/${{ matrix.spec }}.spec.js'
+          command: yarn run cypress run --browser chrome --spec '.cypress/integration/${{ matrix.spec }}.spec.js'
+          browser: chrome
+        env:
+          NODE_OPTIONS: '--max-old-space-size=4096'
 
       # Screenshots are only captured on failure, will change this once we do visual regression tests
       - uses: actions/upload-artifact@v4
