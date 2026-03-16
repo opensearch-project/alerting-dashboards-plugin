@@ -11,8 +11,21 @@ env:
   ALERTING_PLUGIN_BRANCH: 'main'
 jobs:
   tests:
-    name: Run Cypress E2E tests
+    name: Run Cypress E2E tests (${{ matrix.spec }})
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        spec:
+          - acknowledge_alerts_modal
+          - alert
+          - alerts_dashboard_flyout
+          - bucket_level_monitor
+          - cluster_metrics_monitor
+          - composite_level_monitor
+          - document_level_monitor
+          - monitors_dashboard
+          - query_level_monitor
     env:
       # prevents extra Cypress installation progress messages
       CI: 1
@@ -78,17 +91,17 @@ jobs:
         uses: cypress-io/github-action@v2
         with:
           working-directory: OpenSearch-Dashboards/plugins/alerting-dashboards-plugin
-          command: yarn run cypress run
+          command: yarn run cypress run --spec '.cypress/integration/${{ matrix.spec }}.spec.js'
 
       # Screenshots are only captured on failure, will change this once we do visual regression tests
       - uses: actions/upload-artifact@v4
         if: failure()
         with:
-          name: cypress-screenshots
+          name: cypress-screenshots-${{ matrix.spec }}
           path: OpenSearch-Dashboards/plugins/alerting-dashboards-plugin/.cypress/screenshots
       # Test run video was always captured, so this action uses "always()" condition
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: cypress-videos
+          name: cypress-videos-${{ matrix.spec }}
           path: OpenSearch-Dashboards/plugins/alerting-dashboards-plugin/.cypress/videos
