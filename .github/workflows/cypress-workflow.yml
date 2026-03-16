@@ -98,7 +98,7 @@ jobs:
           command: yarn run cypress run --browser chrome --spec '.cypress/integration/${{ matrix.spec }}.spec.js'
           browser: chrome
         env:
-          NODE_OPTIONS: '--max-old-space-size=4096'
+          NODE_OPTIONS: '--max-old-space-size=8192'
 
       # Screenshots are only captured on failure, will change this once we do visual regression tests
       - uses: actions/upload-artifact@v4

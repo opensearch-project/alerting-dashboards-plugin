@@ -1,4 +1,4 @@
-const { defineConfig } = require('cypress')
+const { defineConfig } = require('cypress');
 
 module.exports = defineConfig({
   defaultCommandTimeout: 10000,
@@ -14,7 +14,7 @@ module.exports = defineConfig({
     // We've imported your old cypress plugins here.
     // You may want to clean this up later by importing these.
     setupNodeEvents(on, config) {
-      config.env.NODE_OPTIONS = '—max-old-space-size=8192';
+      config.env.NODE_OPTIONS = '-—max-old-space-size=8192';
       return require('./.cypress/plugins/index.js')(on, config);
     },
     specPattern: '.cypress/integration/*.spec.js',
@@ -23,4 +23,4 @@ module.exports = defineConfig({
     numTestsKeptInMemory: 0,
     experimentalMemoryManagement: true,
   },
-})
+});
