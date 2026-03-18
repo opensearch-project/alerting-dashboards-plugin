@@ -119,12 +119,15 @@ export class AlertingPlugin implements Plugin<void, AlertingStart, AlertingSetup
     });
 
     if (core.chrome.navGroup.getNavGroupEnabled()) {
+      const enableIconSideNav = core.uiSettings.get('home:enableIconSideNav', false);
+
       // register applications with category and use case information
       core.chrome.navGroup.addNavLinksToGroup(DEFAULT_NAV_GROUPS.observability, [
         {
           id: PLUGIN_NAME,
-          category: DEFAULT_APP_CATEGORIES.detect,
-          showInAllNavGroup: false
+          category: enableIconSideNav ? undefined : DEFAULT_APP_CATEGORIES.detect,
+          showInAllNavGroup: false,
+          ...(enableIconSideNav ? { order: 200, title: 'Alerts', euiIconType: 'navAlerting' } : {}),
         }
       ])
 
