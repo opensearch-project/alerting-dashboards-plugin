@@ -15,7 +15,6 @@ exports[`Monitors renders 1`] = `
         onBulkDisable={[Function]}
         onBulkEnable={[Function]}
         onClickEdit={[Function]}
-        viewMode="classic"
       />
     }
     bodyStyles={
@@ -49,7 +48,6 @@ exports[`Monitors renders 1`] = `
           onBulkDisable={[Function]}
           onBulkEnable={[Function]}
           onClickEdit={[Function]}
-          viewMode="classic"
         />
       }
       onPageClick={[Function]}
@@ -183,7 +181,6 @@ exports[`Monitors renders 1`] = `
             filterIsApplied={false}
             loading={true}
             resetFilters={[Function]}
-            viewMode="classic"
           />
         }
         onChange={[Function]}

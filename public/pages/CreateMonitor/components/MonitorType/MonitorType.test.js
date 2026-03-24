@@ -10,6 +10,11 @@ import MonitorType from './MonitorType';
 import { Formik } from 'formik';
 import { FORMIK_INITIAL_VALUES } from '../../containers/CreateMonitor/utils/constants';
 
+jest.mock('../../../../services/services', () => ({
+  ...jest.requireActual('../../../../services/services'),
+  isPplAlertingEnabled: jest.fn(() => false),
+}));
+
 describe('MonitorType', () => {
   test('renders', () => {
     const component = (
