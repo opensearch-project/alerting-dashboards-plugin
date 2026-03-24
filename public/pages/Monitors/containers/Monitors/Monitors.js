@@ -6,14 +6,7 @@
 import React, { Component } from 'react';
 import _ from 'lodash';
 import queryString from 'query-string';
-import {
-  EuiBasicTable,
-  EuiButtonGroup,
-  EuiSpacer,
-  EuiFlexGroup,
-  EuiFlexItem,
-  EuiTitle,
-} from '@elastic/eui';
+import { EuiBasicTable, EuiSpacer, EuiFlexGroup, EuiFlexItem, EuiTitle } from '@elastic/eui';
 import AcknowledgeModal from '../../components/AcknowledgeModal';
 import ContentPanel from '../../../../components/ContentPanel';
 import MonitorActions from '../../components/MonitorActions';
@@ -32,10 +25,9 @@ import {
   isDataSourceChanged,
   getDataSourceId,
 } from '../../../utils/helpers';
-import { getUseUpdatedUx, isPplAlertingEnabled } from '../../../../services';
+import { getUseUpdatedUx } from '../../../../services';
 
 const MAX_MONITOR_COUNT = 1000;
-const VIEW_MODE_STORAGE_KEY = 'alerting_monitors_view_mode';
 
 // TODO: Abstract out a Table component to be used in both Dashboard and Monitors
 
@@ -45,26 +37,6 @@ export default class Monitors extends Component {
     const { from, size, search, sortField, sortDirection, state } = getURLQueryParams(
       this.props.location
     );
-
-    this.pplEnabled = isPplAlertingEnabled();
-    let initialViewMode = this.pplEnabled ? 'new' : 'classic';
-    if (this.pplEnabled) {
-      try {
-        const storedViewMode = localStorage.getItem(VIEW_MODE_STORAGE_KEY);
-        if (storedViewMode === 'classic' || storedViewMode === 'new') {
-          initialViewMode = storedViewMode;
-        }
-      } catch (e) {
-        // ignore storage errors
-        console.error('Error reading viewMode from localStorage:', e);
-      }
-    } else {
-      try {
-        localStorage.setItem(VIEW_MODE_STORAGE_KEY, 'classic');
-      } catch (e) {
-        // ignore storage errors
-      }
-    }
 
     this.state = {
       alerts: [],
@@ -81,7 +53,6 @@ export default class Monitors extends Component {
       monitorState: state,
       loadingMonitors: true,
       monitorItemsToDelete: undefined,
-      viewMode: initialViewMode,
     };
     this.getMonitors = _.debounce(this.getMonitors.bind(this), 500, { leading: true });
     this.onTableChange = this.onTableChange.bind(this);
@@ -113,33 +84,14 @@ export default class Monitors extends Component {
     this.getMonitors(page * size, size, search, sortField, sortDirection, monitorState);
   }
 
-  getEffectiveViewMode() {
-    return this.pplEnabled ? this.state.viewMode : 'classic';
-  }
-
   buildColumns() {
-    const viewMode = this.getEffectiveViewMode();
-    const hiddenColumns =
-      viewMode === 'new'
-        ? new Set([
-            'Active',
-            'Acknowledged',
-            'Errors',
-            'Ignored',
-            'Associations with composite monitors',
-          ])
-        : new Set();
-
-    const actions = [];
-
-    // Ack is not valid action for PPL monitor
-    if (viewMode === 'classic') {
-      actions.push({
+    const actions = [
+      {
         name: 'Acknowledge',
         description: 'Acknowledge this Monitor',
         onClick: this.onClickAcknowledge,
-      });
-    }
+      },
+    ];
 
     actions.push(
       {
@@ -171,7 +123,7 @@ export default class Monitors extends Component {
     );
 
     return [
-      ...staticColumns.filter((column) => !hiddenColumns.has(column.name)),
+      ...staticColumns,
       {
         name: 'Actions',
         width: '60px',
@@ -187,11 +139,6 @@ export default class Monitors extends Component {
       this.updateMonitorList();
     }
     if (isDataSourceChanged(prevProps, this.props)) {
-      this.updateMonitorList();
-    }
-    if (prevState.viewMode !== this.state.viewMode) {
-      // Clear monitors immediately to prevent flash of old view's monitors
-      this.setState({ monitors: [], totalMonitors: 0, selectedItems: [] });
       this.updateMonitorList();
     }
   }
@@ -221,89 +168,20 @@ export default class Monitors extends Component {
       const { httpClient, history } = this.props;
       history.replace({ ...this.props.location, search: queryParamsString });
       const extendedParams = {
-        ...(dataSourceId !== undefined && { dataSourceId }), // Only include dataSourceId if it exists
-        ...params, // Other parameters
+        ...(dataSourceId !== undefined && { dataSourceId }),
+        ...params,
       };
-      const viewMode = this.getEffectiveViewMode();
-      const apiPath =
-        viewMode === 'classic' ? '../api/alerting/monitors' : '../api/alerting/v2/monitors';
 
-      const response = await httpClient.get(apiPath, { query: extendedParams });
+      const response = await httpClient.get('../api/alerting/monitors', { query: extendedParams });
       if (response?.ok === false) {
         if (dataSourceId !== undefined) {
           this.setState({ monitors: [], totalMonitors: 0 });
         }
         console.log('error getting monitors:', response);
       } else {
-        let monitors = [];
-        let totalMonitors = 0;
-
-        if (viewMode === 'classic') {
-          const legacyMonitors = Array.isArray(response?.monitors) ? response.monitors : [];
-          monitors = legacyMonitors;
-          totalMonitors = Number(response?.totalMonitors ?? legacyMonitors.length) || 0;
-        } else {
-          const hits = Array.isArray(response?.hits?.hits) ? response.hits.hits : [];
-          if (hits.length > 0) {
-            const now = Date.now();
-            monitors = hits.map((hit) => {
-              const sourceMonitor = hit?._source?.monitor || hit?._source || {};
-              const name = sourceMonitor.name || hit._id || '';
-              const enabled = Boolean(sourceMonitor.enabled);
-              return {
-                id: hit._id,
-                name,
-                enabled,
-                monitor: sourceMonitor,
-                ifSeqNo: hit._seq_no,
-                ifPrimaryTerm: hit._primary_term,
-                item_type:
-                  sourceMonitor.workflow_type ||
-                  sourceMonitor.monitor_type ||
-                  MONITOR_TYPE.QUERY_LEVEL,
-                associatedCompositeMonitorCnt: 0,
-                currentTime: now,
-                lastNotificationTime: null,
-                ignored: 0,
-                acknowledged: 0,
-                active: 0,
-                errors: 0,
-                latestAlert: '',
-              };
-            });
-            totalMonitors = Number(response?.hits?.total?.value ?? monitors.length) || 0;
-          } else if (Array.isArray(response?.monitors)) {
-            const now = Date.now();
-            monitors = response.monitors.map((monitor = {}) => {
-              const sourceMonitor = monitor?.monitor || {};
-              const name = sourceMonitor.name || monitor.name || monitor.id || '';
-              const enabled = Boolean(monitor.enabled);
-              return {
-                id: monitor.id,
-                name,
-                enabled,
-                monitor: sourceMonitor,
-                ifSeqNo: monitor.ifSeqNo,
-                ifPrimaryTerm: monitor.ifPrimaryTerm,
-                item_type:
-                  sourceMonitor.monitor_type || monitor.item_type || MONITOR_TYPE.QUERY_LEVEL,
-                associatedCompositeMonitorCnt: monitor.associatedCompositeMonitorCnt || 0,
-                currentTime: now,
-                lastNotificationTime: null,
-                ignored: 0,
-                acknowledged: 0,
-                active: 0,
-                errors: 0,
-                latestAlert: '',
-              };
-            });
-            totalMonitors = Number(response?.totalMonitors ?? monitors.length) || 0;
-          } else {
-            monitors = [];
-            totalMonitors = 0;
-          }
-        }
-
+        const legacyMonitors = Array.isArray(response?.monitors) ? response.monitors : [];
+        const monitors = legacyMonitors;
+        const totalMonitors = Number(response?.totalMonitors ?? legacyMonitors.length) || 0;
         this.setState({ monitors, totalMonitors, selectedItems: [] });
       }
     } catch (err) {
@@ -334,14 +212,12 @@ export default class Monitors extends Component {
     const { httpClient, notifications } = this.props;
     const dataSourceQuery = getDataSourceQueryObj();
     const dataSourceId = dataSourceQuery?.query?.dataSourceId;
-    const viewMode = this.getEffectiveViewMode();
-    const useV2 = viewMode === 'new';
 
     try {
-      const detailEndpoint = useV2
-        ? `../api/alerting/v2/monitors/${item.id}`
-        : `../api/alerting/monitors/${item.id}`;
-      const detailResp = await httpClient.get(detailEndpoint, dataSourceQuery);
+      const detailResp = await httpClient.get(
+        `../api/alerting/monitors/${item.id}`,
+        dataSourceQuery
+      );
 
       if (!detailResp?.ok) {
         backendErrorNotification(notifications, 'get', 'monitor', detailResp?.resp);
@@ -351,48 +227,6 @@ export default class Monitors extends Component {
       const monitorDetail = detailResp.resp || {};
       const ifSeqNo = detailResp.ifSeqNo ?? item.ifSeqNo;
       const ifPrimaryTerm = detailResp.ifPrimaryTerm ?? item.ifPrimaryTerm;
-
-      if (useV2) {
-        const basePplMonitor = _.cloneDeep(monitorDetail || {});
-
-        const cleanedPplMonitor = _.omit({ ...basePplMonitor, ...update }, [
-          'id',
-          '_id',
-          'item_type',
-          'monitor_type',
-          'version',
-          '_version',
-          'ifSeqNo',
-          'ifPrimaryTerm',
-          'ui_metadata',
-          'last_update_time',
-          'enabled_time',
-        ]);
-
-        if (Array.isArray(cleanedPplMonitor.triggers)) {
-          cleanedPplMonitor.triggers = cleanedPplMonitor.triggers.map((trigger) =>
-            _.omit(trigger, ['id', 'last_triggered_time', 'last_execution_time'])
-          );
-        }
-
-        const query = {};
-        if (dataSourceId !== undefined) query.dataSourceId = dataSourceId;
-        if (ifSeqNo !== undefined) query.if_seq_no = ifSeqNo;
-        if (ifPrimaryTerm !== undefined) query.if_primary_term = ifPrimaryTerm;
-
-        return httpClient
-          .put(`../api/alerting/v2/monitors/${item.id}`, {
-            query,
-            body: JSON.stringify({ ppl_monitor: cleanedPplMonitor }),
-          })
-          .then((resp) => {
-            if (!resp.ok) {
-              backendErrorNotification(notifications, 'update', 'monitor', resp.resp);
-            }
-            return resp;
-          })
-          .catch((err) => err);
-      }
 
       const query = {};
       if (ifSeqNo !== undefined) query.ifSeqNo = ifSeqNo;
@@ -503,14 +337,9 @@ export default class Monitors extends Component {
       selectedItems: [{ id }],
     } = this.state;
     if (id) {
-      const viewMode = this.getEffectiveViewMode();
       const dataSourceId = getDataSourceId();
       const params = new URLSearchParams();
       params.append('action', MONITOR_ACTIONS.EDIT_MONITOR);
-      if (viewMode) {
-        params.append('viewMode', viewMode);
-        params.append('mode', viewMode === 'classic' ? 'classic' : 'new');
-      }
       if (dataSourceId) {
         params.append('dataSourceId', dataSourceId);
       }
@@ -678,7 +507,6 @@ export default class Monitors extends Component {
     };
 
     const useUpdatedUx = getUseUpdatedUx();
-    const viewMode = this.getEffectiveViewMode();
     const monitorActions = (
       <MonitorActions
         isEditDisabled={selectedItems.length !== 1}
@@ -688,7 +516,6 @@ export default class Monitors extends Component {
         onBulkDisable={this.onBulkDisable}
         onBulkDelete={this.onBulkDelete}
         onClickEdit={this.onClickEdit}
-        viewMode={viewMode}
         hasMonitors={monitors.length > 0}
         isEnableDisabled={selectedItems.length === 0 || selectedItems.every((item) => item.enabled)}
         isDisableDisabled={
@@ -697,72 +524,25 @@ export default class Monitors extends Component {
       />
     );
 
-    const toggleButtons = this.pplEnabled
-      ? [
-          {
-            id: 'new',
-            label: 'New',
-          },
-          {
-            id: 'classic',
-            label: 'Classic',
-          },
-        ]
-      : [
-          {
-            id: 'classic',
-            label: 'Classic',
-          },
-        ];
-
-    const showCustomHeader = useUpdatedUx || this.pplEnabled;
-
     return (
       <>
         <ContentPanel
-          actions={showCustomHeader ? undefined : monitorActions}
+          actions={useUpdatedUx ? undefined : monitorActions}
           bodyStyles={{ padding: 'initial' }}
-          title={showCustomHeader ? undefined : 'Monitors'}
+          title={useUpdatedUx ? undefined : 'Monitors'}
           panelOptions={{ hideTitleBorder: useUpdatedUx }}
           panelStyles={{
             padding: useUpdatedUx ? '0px' : totalMonitors < 1 ? '16px 16px 0px' : '16px',
           }}
         >
-          {showCustomHeader && (
+          {useUpdatedUx && (
             <>
-              <div style={{ padding: useUpdatedUx ? '16px 16px 0px 16px' : '0px 0px 16px' }}>
+              <div style={{ padding: '16px 16px 0px 16px' }}>
                 <EuiFlexGroup alignItems="center" justifyContent="spaceBetween" responsive={false}>
                   <EuiFlexItem grow={false}>
-                    <EuiFlexGroup alignItems="center" gutterSize="m" responsive={false}>
-                      <EuiFlexItem grow={false}>
-                        <EuiTitle size="l">
-                          <h1>Monitors</h1>
-                        </EuiTitle>
-                      </EuiFlexItem>
-                      {this.pplEnabled && (
-                        <EuiFlexItem grow={false}>
-                          <EuiButtonGroup
-                            legend="Monitor view toggle"
-                            options={toggleButtons}
-                            idSelected={viewMode}
-                            onChange={(id) => {
-                              if (!this.pplEnabled) {
-                                return;
-                              }
-                              this.setState({ viewMode: id });
-                              try {
-                                localStorage.setItem(VIEW_MODE_STORAGE_KEY, id);
-                              } catch (e) {
-                                console.error('Error saving viewMode to localStorage:', e);
-                              }
-                            }}
-                            buttonSize="compressed"
-                            color="text"
-                            isFullWidth={false}
-                          />
-                        </EuiFlexItem>
-                      )}
-                    </EuiFlexGroup>
+                    <EuiTitle size="l">
+                      <h1>Monitors</h1>
+                    </EuiTitle>
                   </EuiFlexItem>
                   <EuiFlexItem grow={false}>{monitorActions}</EuiFlexItem>
                 </EuiFlexGroup>
@@ -809,7 +589,6 @@ export default class Monitors extends Component {
                   filterIsApplied={filterIsApplied}
                   loading={loadingMonitors}
                   resetFilters={this.resetFilters}
-                  viewMode={viewMode}
                 />
               }
               onChange={this.onTableChange}

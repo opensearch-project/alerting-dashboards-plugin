@@ -26,25 +26,20 @@ export default class MonitorActions extends Component {
       isDeleteDisabled,
       isEnableDisabled,
       isDisableDisabled,
-      viewMode = 'classic',
       hasMonitors = true,
     } = this.props;
-    const actions = [];
-
-    if (viewMode === 'classic' && hasMonitors) {
-      actions.push(
-        <EuiContextMenuItem
-          key="acknowledge"
-          data-test-subj="acknowledgeItem"
-          onClick={() => {
-            this.onCloseActions();
-            this.props.onBulkAcknowledge();
-          }}
-        >
-          Acknowledge
-        </EuiContextMenuItem>
-      );
-    }
+    const actions = [
+      <EuiContextMenuItem
+        key="acknowledge"
+        data-test-subj="acknowledgeItem"
+        onClick={() => {
+          this.onCloseActions();
+          this.props.onBulkAcknowledge();
+        }}
+      >
+        Acknowledge
+      </EuiContextMenuItem>,
+    ];
 
     actions.push(
       <EuiContextMenuItem
@@ -106,13 +101,10 @@ export default class MonitorActions extends Component {
 
   render() {
     const { isActionsOpen } = this.state;
-    const { isEditDisabled, onClickEdit, viewMode = 'classic' } = this.props;
-    const modeParam =
-      viewMode === 'classic' ? '?mode=classic' : viewMode === 'new' ? '?mode=new' : '';
     const createMonitorControl = (
       <EuiSmallButton
         fill
-        href={`#${APP_PATH.CREATE_MONITOR}${modeParam}`}
+        href={`#${APP_PATH.CREATE_MONITOR}`}
         data-test-subj="createButton"
         iconType="plus"
         iconSide="left"

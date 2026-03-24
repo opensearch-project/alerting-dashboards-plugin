@@ -77,7 +77,7 @@ export default class MonitorDetailsV1 extends Component {
           ...this.props.location,
           search: `?action=${MONITOR_ACTIONS.EDIT_MONITOR}&monitorType=${monitorType}${
             dataSourceId !== undefined ? `&dataSourceId=${dataSourceId}` : ''
-          }&mode=classic`,
+          }`,
         });
       },
       isJsonModalOpen: false,

@@ -7,20 +7,19 @@ import React from 'react';
 import { EuiFlexGrid, EuiFlexItem, EuiFormLabel, EuiSpacer, EuiText } from '@elastic/eui';
 import FormikCheckableCard from '../../../../components/FormControls/FormikCheckableCard';
 import { MONITOR_TYPE, SEARCH_TYPE } from '../../../../utils/constants';
+import { isPplAlertingEnabled } from '../../../../services';
 import { FORMIK_INITIAL_TRIGGER_VALUES } from '../../../CreateTrigger/containers/CreateTrigger/utils/constants';
 import {
   DEFAULT_DOCUMENT_LEVEL_QUERY,
   FORMIK_INITIAL_VALUES,
 } from '../../containers/CreateMonitor/utils/constants';
 
-export const MONITOR_TYPE_CARD_WIDTH = 400; // TODO DRAFT: Determine width
+export const MONITOR_TYPE_CARD_WIDTH = 400;
 
 const onChangeDefinition = (e, form) => {
   const type = e.target.value;
   form.setFieldValue('monitor_type', type);
 
-  // Clearing various form fields when changing monitor types.
-  // TODO: Implement modal that confirms the change before clearing.
   form.setFieldValue('index', FORMIK_INITIAL_VALUES.index);
   form.setFieldValue('searchType', FORMIK_INITIAL_VALUES.searchType);
   form.setFieldValue('triggerDefinitions', FORMIK_INITIAL_TRIGGER_VALUES.triggerConditions);
@@ -33,6 +32,14 @@ const onChangeDefinition = (e, form) => {
       break;
     case MONITOR_TYPE.DOC_LEVEL:
       form.setFieldValue('query', DEFAULT_DOCUMENT_LEVEL_QUERY);
+      break;
+    case MONITOR_TYPE.PPL:
+      form.setFieldValue('searchType', SEARCH_TYPE.PPL);
+      form.setFieldValue('pplQuery', FORMIK_INITIAL_VALUES.pplQuery || '');
+      form.setFieldValue('useLookBackWindow', FORMIK_INITIAL_VALUES.useLookBackWindow);
+      form.setFieldValue('lookBackAmount', FORMIK_INITIAL_VALUES.lookBackAmount);
+      form.setFieldValue('lookBackUnit', FORMIK_INITIAL_VALUES.lookBackUnit);
+      form.setFieldValue('timestampField', FORMIK_INITIAL_VALUES.timestampField);
       break;
     default:
       form.setFieldValue('query', FORMIK_INITIAL_VALUES.query);
@@ -71,6 +78,13 @@ const compositeLevelDescription = (
   <EuiText color={'subdued'} size={'xs'} style={{ paddingBottom: '10px', paddingTop: '0px' }}>
     Composite monitors chain the outputs of different monitor types and focus trigger conditions to
     reduce alert noise and generate finer results.
+  </EuiText>
+);
+
+const pplDescription = (
+  <EuiText color={'subdued'} size={'xs'} style={{ paddingBottom: '10px', paddingTop: '0px' }}>
+    PPL monitors use Piped Processing Language queries to monitor data and generate alerts based on
+    query results.
   </EuiText>
 );
 
@@ -149,6 +163,22 @@ const MonitorType = ({ values }) => (
           }}
         />
       </EuiFlexItem>
+      {isPplAlertingEnabled() && (
+        <EuiFlexItem grow={false} style={{ width: 350 }}>
+          <FormikCheckableCard
+            name="monitorTypePpl"
+            inputProps={{
+              id: 'pplMonitorRadioCard',
+              label: 'PPL monitor',
+              checked: values.monitor_type === MONITOR_TYPE.PPL,
+              value: MONITOR_TYPE.PPL,
+              onChange: (e, field, form) => onChangeDefinition(e, form),
+              children: pplDescription,
+              'data-test-subj': 'pplMonitorRadioCard',
+            }}
+          />
+        </EuiFlexItem>
+      )}
     </EuiFlexGrid>
   </>
 );

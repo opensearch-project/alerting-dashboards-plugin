@@ -22,6 +22,10 @@ export function getUnwrappedTriggers(monitor) {
   return monitor.triggers.map((trigger) => {
     let unwrappedTrigger = trigger;
 
+    if (trigger[TRIGGER_TYPE.PPL]) {
+      return trigger[TRIGGER_TYPE.PPL];
+    }
+
     const isPPLTrigger = trigger && (trigger.mode || trigger.type) && !trigger.query_level_trigger;
     if (isPPLTrigger) {
       return trigger;

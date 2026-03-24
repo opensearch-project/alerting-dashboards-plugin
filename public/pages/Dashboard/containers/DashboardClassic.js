@@ -15,7 +15,6 @@ import {
   EuiFlexItem,
   EuiPagination,
   EuiFlexGroup,
-  EuiButtonGroup,
   EuiTitle,
   EuiSpacer,
 } from '@elastic/eui';
@@ -369,7 +368,6 @@ export default class DashboardClassic extends Component {
         payload: {
           ...payload,
           dataSourceId,
-          viewMode: 'classic',
           openChainedAlertsFlyout: this.openChainedAlertsFlyout,
           closeFlyout: this.closeFlyout,
         },
@@ -470,10 +468,6 @@ export default class DashboardClassic extends Component {
       history,
       notifications,
       isAlertsFlyout = false,
-      viewMode = 'classic',
-      showToggle = false,
-      toggleOptions = [],
-      onViewModeChange,
     } = this.props;
     let totalItems = perAlertView ? totalAlerts : totalTriggers;
     const isBucketMonitor = monitorType === MONITOR_TYPE.BUCKET_LEVEL;
@@ -667,26 +661,9 @@ export default class DashboardClassic extends Component {
                   responsive={false}
                 >
                   <EuiFlexItem grow={false}>
-                    <EuiFlexGroup alignItems="center" gutterSize="s" responsive={false}>
-                      <EuiFlexItem grow={false}>
-                        <EuiTitle size="l">
-                          <h1>Alerts by triggers</h1>
-                        </EuiTitle>
-                      </EuiFlexItem>
-                      {showToggle && (
-                        <EuiFlexItem grow={false}>
-                          <EuiButtonGroup
-                            legend="Alert dashboard view"
-                            options={toggleOptions}
-                            idSelected={viewMode}
-                            onChange={onViewModeChange}
-                            buttonSize="compressed"
-                            color="text"
-                            isFullWidth={false}
-                          />
-                        </EuiFlexItem>
-                      )}
-                    </EuiFlexGroup>
+                    <EuiTitle size="l">
+                      <h1>Alerts by triggers</h1>
+                    </EuiTitle>
                   </EuiFlexItem>
                   {showInlineActions && (
                     <EuiFlexItem grow={false}>
@@ -739,7 +716,6 @@ export default class DashboardClassic extends Component {
               <DashboardEmptyPrompt
                 onCreateTrigger={onCreateTrigger}
                 landingDataSourceId={this.props.landingDataSourceId}
-                viewMode={viewMode}
               />
             }
             data-test-subj={'alertsDashboard_table'}

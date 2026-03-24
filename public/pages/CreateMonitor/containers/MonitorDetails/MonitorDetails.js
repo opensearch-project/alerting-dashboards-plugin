@@ -57,13 +57,14 @@ const MonitorDetails = ({
   plugins,
   detectorId,
   flyoutMode,
-  renderNewToggle,
   landingDataSourceId,
 }) => {
   const anomalyDetectorContent =
     isAd &&
     renderAnomalyDetector({ httpClient, values, detectorId, flyoutMode, landingDataSourceId });
-  const displayMonitorDefinitionCards = values.monitor_type !== MONITOR_TYPE.CLUSTER_METRICS;
+  const isPpl = values.monitor_type === MONITOR_TYPE.PPL;
+  const displayMonitorDefinitionCards =
+    values.monitor_type !== MONITOR_TYPE.CLUSTER_METRICS && !isPpl;
   const Container = useMemo(
     () => (flyoutMode ? ({ children }) => <>{children}</> : ContentPanel),
     [flyoutMode]
@@ -130,16 +131,8 @@ const MonitorDetails = ({
         </Fragment>
       )}
       {!flyoutMode && <EuiSpacer size="l" />}
-      {values.monitor_type !== MONITOR_TYPE.COMPOSITE_LEVEL ? (
-        <>
-          <Schedule isAd={isAd} flyoutMode={flyoutMode} />
-          {renderNewToggle && (
-            <>
-              <EuiSpacer size="m" />
-              {renderNewToggle}
-            </>
-          )}
-        </>
+      {values.monitor_type !== MONITOR_TYPE.COMPOSITE_LEVEL && !isPpl ? (
+        <Schedule isAd={isAd} flyoutMode={flyoutMode} />
       ) : null}
     </Container>
   );

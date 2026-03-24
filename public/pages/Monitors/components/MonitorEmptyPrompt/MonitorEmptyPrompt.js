@@ -14,15 +14,8 @@ const emptyMonitorText =
   'There are no existing monitors. Create a monitor to add triggers and actions.';
 const loadingText = 'Loading monitors...';
 
-const getCreateMonitorHref = (viewMode = 'classic') => {
-  const mode = viewMode === 'new' ? 'new' : 'classic';
-  const hasQuery = APP_PATH.CREATE_MONITOR.includes('?');
-  const separator = hasQuery ? (APP_PATH.CREATE_MONITOR.endsWith('?') ? '' : '&') : '?';
-  return `#${APP_PATH.CREATE_MONITOR}${separator}mode=${mode}`;
-};
-
-const createMonitorButton = (viewMode) => (
-  <EuiSmallButton fill href={getCreateMonitorHref(viewMode)}>
+const createMonitorButton = () => (
+  <EuiSmallButton fill href={`#${APP_PATH.CREATE_MONITOR}`}>
     Create monitor
   </EuiSmallButton>
 );
@@ -39,10 +32,10 @@ const getMessagePrompt = ({ filterIsApplied, loading }) => {
   return emptyMonitorText;
 };
 
-const getActions = ({ filterIsApplied, loading, resetFilters, viewMode }) => {
+const getActions = ({ filterIsApplied, loading, resetFilters }) => {
   if (loading) return null;
   if (filterIsApplied) return resetFiltersButton(resetFilters);
-  return createMonitorButton(viewMode);
+  return createMonitorButton();
 };
 
 const MonitorEmptyPrompt = (props) => (

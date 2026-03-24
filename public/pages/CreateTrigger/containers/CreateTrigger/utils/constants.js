@@ -10,6 +10,7 @@ export const TRIGGER_TYPE = {
   QUERY_LEVEL: 'query_level_trigger',
   DOC_LEVEL: 'document_level_trigger',
   COMPOSITE_LEVEL: 'chained_alert_trigger',
+  PPL: 'ppl_trigger',
 };
 
 export const FORMIK_INITIAL_BUCKET_SELECTOR_VALUES = {
