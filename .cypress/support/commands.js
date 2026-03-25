@@ -75,8 +75,18 @@ Cypress.Commands.add('createMonitor', (monitorJSON) => {
     method: 'POST',
     url: `${Cypress.env('opensearch')}${API.MONITOR_BASE}`,
     body: monitorJSON,
-    timeout: 60000
+    timeout: 60000,
   });
+});
+
+Cypress.Commands.add('createMonitors', (monitorJSONList = []) => {
+  const monitorIDs = [];
+  monitorJSONList.forEach((monitorJSON) => {
+    cy.createMonitor(monitorJSON).then((response) => {
+      monitorIDs.push(response.body._id);
+    });
+  });
+  return cy.then(() => cy.wrap(monitorIDs));
 });
 
 Cypress.Commands.add('createAndExecuteMonitor', (monitorJSON) => {
@@ -92,6 +102,27 @@ Cypress.Commands.add('createAndExecuteMonitor', (monitorJSON) => {
 
 Cypress.Commands.add('executeMonitor', (monitorID) => {
   cy.request('POST', `${Cypress.env('opensearch')}${API.MONITOR_BASE}/${monitorID}/_execute`);
+});
+
+Cypress.Commands.add('executeMonitors', (monitorIDs = []) => {
+  monitorIDs.forEach((monitorID) => {
+    cy.executeMonitor(monitorID);
+  });
+});
+
+Cypress.Commands.add('createMonitorsAndExecute', (monitorJSONList = []) => {
+  const monitorIDs = [];
+  monitorJSONList.forEach((monitorJSON) => {
+    cy.createMonitor(monitorJSON).then((response) => {
+      monitorIDs.push(response.body._id);
+    });
+  });
+
+  return cy
+    .then(() => {
+      cy.executeMonitors(monitorIDs);
+    })
+    .then(() => cy.wrap(monitorIDs));
 });
 
 Cypress.Commands.add('executeCompositeMonitor', (monitorID) => {

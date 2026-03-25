@@ -19,15 +19,8 @@ const createTriggerText =
 const editTriggerConditionsText =
   'There are no existing alerts. Adjust trigger conditions to start alerting. Once an alarm is triggered, the state will show in this table.';
 
-const getCreateMonitorHref = (viewMode = 'classic') => {
-  const mode = viewMode === 'new' ? 'new' : 'classic';
-  const hasQuery = APP_PATH.CREATE_MONITOR.includes('?');
-  const separator = hasQuery ? (APP_PATH.CREATE_MONITOR.endsWith('?') ? '' : '&') : '?';
-  return `#${APP_PATH.CREATE_MONITOR}${separator}mode=${mode}`;
-};
-
-const getCreateMonitorButton = (landingDataSourceId, viewMode) => (
-  <EuiSmallButton fill href={getCreateMonitorHref(viewMode)}>
+const getCreateMonitorButton = () => (
+  <EuiSmallButton fill href={`#${APP_PATH.CREATE_MONITOR}`}>
     Create monitor
   </EuiSmallButton>
 );
@@ -35,12 +28,7 @@ const editMonitorButton = (onCreateTrigger) => (
   <EuiSmallButtonEmpty onClick={onCreateTrigger}>Edit monitor</EuiSmallButtonEmpty>
 );
 
-const DashboardEmptyPrompt = ({
-  onCreateTrigger,
-  landingDataSourceId,
-  isModal = false,
-  viewMode = 'ppl',
-}) => {
+const DashboardEmptyPrompt = ({ onCreateTrigger, landingDataSourceId, isModal = false }) => {
   const inMonitorDetails = typeof onCreateTrigger === 'function';
   const displayText = isModal
     ? editTriggerConditionsText
@@ -51,7 +39,7 @@ const DashboardEmptyPrompt = ({
     ? undefined
     : isModal
     ? editMonitorButton(onCreateTrigger)
-    : getCreateMonitorButton(landingDataSourceId, viewMode);
+    : getCreateMonitorButton();
   return (
     <EuiEmptyPrompt
       style={{ maxWidth: '45em' }}

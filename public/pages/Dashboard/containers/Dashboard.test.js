@@ -11,7 +11,6 @@ jest.mock('../../../services', () => {
   return {
     ...services,
     NotificationService: function NotificationServiceMock() {},
-    isPplAlertingEnabled: jest.fn(),
     getUseUpdatedUx: jest.fn(() => false),
   };
 });
@@ -26,10 +25,8 @@ jest.mock('../../utils/helpers', () => {
 
 import Dashboard from './Dashboard';
 import DashboardClassic from './DashboardClassic';
-import DashboardRouter from './DashboardRouter';
 import { historyMock, httpClientMock } from '../../../../test/mocks';
 import { setupCoreStart } from '../../../../test/utils/helpers';
-import { isPplAlertingEnabled } from '../../../services';
 
 const location = {
   hash: '',
@@ -57,26 +54,13 @@ describe('Dashboard', () => {
       <Dashboard httpClient={httpClientMock} history={historyMock} location={location} {...props} />
     );
 
-  test('renders DashboardClassic when PPL alerting is disabled', () => {
-    isPplAlertingEnabled.mockReturnValue(false);
-
+  test('renders DashboardClassic', () => {
     const wrapper = render({ perAlertView: true });
 
     expect(wrapper.find(DashboardClassic).exists()).toBe(true);
-    expect(wrapper.find(DashboardRouter).exists()).toBe(false);
-  });
-
-  test('renders DashboardRouter when PPL alerting is enabled', () => {
-    isPplAlertingEnabled.mockReturnValue(true);
-
-    const wrapper = render({ perAlertView: true });
-
-    expect(wrapper.find(DashboardRouter).exists()).toBe(true);
-    expect(wrapper.find(DashboardClassic).exists()).toBe(false);
   });
 
   test('forwards props to the rendered dashboard', () => {
-    isPplAlertingEnabled.mockReturnValue(false);
     const perAlertView = false;
 
     const wrapper = shallow(

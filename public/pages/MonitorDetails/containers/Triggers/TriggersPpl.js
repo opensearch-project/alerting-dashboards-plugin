@@ -99,7 +99,11 @@ class TriggersPpl extends Component {
   updateMonitorState() {
     const { monitor } = this.props;
 
-    const triggers = Array.isArray(monitor?.triggers) ? monitor.triggers.map(normalizeTrigger) : [];
+    const rawTriggers = Array.isArray(monitor?.triggers) ? monitor.triggers : [];
+    const triggers = rawTriggers.map((trigger) => {
+      const unwrapped = trigger.ppl_trigger ? trigger.ppl_trigger : trigger;
+      return normalizeTrigger(unwrapped);
+    });
 
     this.setState({ items: triggers });
   }

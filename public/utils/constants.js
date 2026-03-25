@@ -25,6 +25,7 @@ export const SEARCH_TYPE = {
   QUERY: 'query',
   AD: 'ad',
   CLUSTER_METRICS: 'clusterMetrics',
+  PPL: 'ppl',
 };
 
 export const MONITOR_TYPE = {
@@ -33,6 +34,7 @@ export const MONITOR_TYPE = {
   CLUSTER_METRICS: 'cluster_metrics_monitor',
   DOC_LEVEL: 'doc_level_monitor',
   COMPOSITE_LEVEL: 'composite',
+  PPL: 'ppl_monitor',
 };
 
 export const DESTINATION_ACTIONS = {

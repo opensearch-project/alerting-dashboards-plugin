@@ -318,8 +318,6 @@ export default class MonitorService extends MDSEnabledClientService {
               should,
               minimum_should_match: state !== 'all' ? 1 : 0,
               must: mustList,
-              // TODO: remove later once we combine ppl monitors and regular monitors
-              must_not: [{ term: { 'monitor.monitor_type': 'ppl_monitor' } }],
             },
           },
           aggregations: {

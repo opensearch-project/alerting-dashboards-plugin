@@ -15,6 +15,8 @@ const QUERY_TRIGGER = 'sample_alerts_flyout_query_level_trigger';
 const TWENTY_SECONDS = 20000;
 
 describe('Alerts by trigger flyout', () => {
+  let monitorIds = [];
+
   before(() => {
     // Delete any existing monitors
     cy.deleteAllMonitors();
@@ -28,9 +30,13 @@ describe('Alerts by trigger flyout', () => {
       timeout: TWENTY_SECONDS,
     });
 
-    // Create the test monitors
-    cy.createMonitor(sampleAlertsFlyoutBucketMonitor);
-    cy.createMonitor(sampleAlertsFlyoutQueryMonitor);
+    // Create monitors and execute once so initial alerts exist.
+    cy.createMonitorsAndExecute([
+      sampleAlertsFlyoutBucketMonitor,
+      sampleAlertsFlyoutQueryMonitor,
+    ]).then((ids) => {
+      monitorIds = ids;
+    });
 
     // Visit Alerting OpenSearch Dashboards
     cy.visit(`${Cypress.env('opensearch_dashboards')}/app/${PLUGIN_NAME}#/monitors`);
@@ -39,12 +45,12 @@ describe('Alerts by trigger flyout', () => {
     // Confirm test monitors were created successfully
     cy.contains(BUCKET_MONITOR, { timeout: TWENTY_SECONDS });
     cy.contains(QUERY_MONITOR, { timeout: TWENTY_SECONDS });
-
-    // Wait 1 minutes for the test monitors to trigger alerts, then go to the 'Alerts by trigger' dashboard page to view alerts
-    cy.wait(60000);
   });
 
   beforeEach(() => {
+    // Re-execute monitors so each test gets fresh alert rows.
+    cy.executeMonitors(monitorIds);
+
     // Reloading the page to close any flyouts that were not closed by other tests that had failures.
     cy.visit(`${Cypress.env('opensearch_dashboards')}/app/${PLUGIN_NAME}#/dashboard`);
     cy.get('[data-test-subj="alertsDashboard_table"]', {

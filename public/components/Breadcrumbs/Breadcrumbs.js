@@ -12,7 +12,6 @@ import {
   TRIGGER_ACTIONS,
 } from '../../utils/constants';
 import { getDataSourceQueryObj } from '../../pages/utils/helpers';
-import { isPplAlertingEnabled } from '../../services';
 
 export async function getBreadcrumbs(httpClient, history, location) {
   const { state: routeState } = location;
@@ -112,23 +111,6 @@ export async function getBreadcrumb(route, routeState, httpClient) {
 }
 
 const fetchMonitorName = async (id, legacyResource, dataSourceQueryObj, httpClient) => {
-  const pplEnabled = isPplAlertingEnabled();
-  const shouldTryV2 = pplEnabled && shouldPreferV2ViewMode();
-
-  if (shouldTryV2 && legacyResource !== 'workflows') {
-    try {
-      const v2Resp = await httpClient.get(
-        `../api/alerting/v2/monitors/${encodeURIComponent(id)}`,
-        dataSourceQueryObj
-      );
-      if (v2Resp?.ok) {
-        return extractMonitorNameFromV2(v2Resp?.resp ?? v2Resp);
-      }
-    } catch (err) {
-      // Ignore and fall back to legacy fetch below
-    }
-  }
-
   const legacyResp = await httpClient.get(
     `../api/alerting/${legacyResource}/${encodeURIComponent(id)}`,
     dataSourceQueryObj
@@ -139,26 +121,4 @@ const fetchMonitorName = async (id, legacyResource, dataSourceQueryObj, httpClie
   }
 
   return null;
-};
-
-const extractMonitorNameFromV2 = (payload = {}) => {
-  const name = payload?.name ?? payload?.monitor?.name ?? null;
-  return { name };
-};
-
-const shouldPreferV2ViewMode = () => {
-  try {
-    const searchParams = new URLSearchParams(window.location?.search || '');
-    const requestedMode = searchParams.get('mode');
-    if (requestedMode === 'classic') {
-      return false;
-    }
-    if (requestedMode === 'new') {
-      return true;
-    }
-    const stored = localStorage.getItem('alerting_monitors_view_mode');
-    return stored === 'new';
-  } catch (e) {
-    return false;
-  }
 };

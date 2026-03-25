@@ -321,7 +321,7 @@ describe('Bucket-Level Monitors', () => {
 
     describe('when defined by visual editor', () => {
       beforeEach(() => {
-        cy.createMonitor(sampleVisualEditorMonitor);
+        cy.createMonitors([sampleVisualEditorMonitor]);
         cy.reload();
       });
 
