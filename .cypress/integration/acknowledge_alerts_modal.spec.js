@@ -18,6 +18,9 @@ const TWENTY_SECONDS = 20000;
 const SIXTY_SECONDS = 60000;
 
 describe('AcknowledgeAlertsModal', () => {
+  let bucketMonitorId;
+  let queryMonitorId;
+
   before(() => {
     // Delete any existing monitors
     cy.deleteAllAlerts();
@@ -26,28 +29,45 @@ describe('AcknowledgeAlertsModal', () => {
     // Load sample data
     cy.loadSampleEcommerceData();
 
-    // Create the test monitors
-    cy.createMonitor(sampleAlertsFlyoutBucketMonitor);
-    cy.createMonitor(sampleAlertsFlyoutQueryMonitor);
+    // Create the test monitors and retain IDs so we can force executions in each test.
+    cy.createMonitor(sampleAlertsFlyoutBucketMonitor).then((response) => {
+      bucketMonitorId = response.body._id;
+    });
+    cy.createMonitor(sampleAlertsFlyoutQueryMonitor).then((response) => {
+      queryMonitorId = response.body._id;
+    });
 
     // Visit Alerting OpenSearch Dashboards
-    cy.visit(`${Cypress.env('opensearch_dashboards')}/app/${PLUGIN_NAME}#/monitors`, { timeout: SIXTY_SECONDS });
+    cy.visit(`${Cypress.env('opensearch_dashboards')}/app/${PLUGIN_NAME}#/monitors`, {
+      timeout: SIXTY_SECONDS,
+    });
 
     // Confirm test monitors were created successfully
     cy.contains(BUCKET_MONITOR, { timeout: SIXTY_SECONDS });
     cy.contains(QUERY_MONITOR, { timeout: SIXTY_SECONDS });
 
-    // Wait 1 minute for the test monitors to trigger alerts, then go to the 'Alerts by trigger' dashboard page to view alerts
-    cy.wait(60000);
+    // Create initial alerts for both monitors before tests begin.
+    cy.then(() => {
+      cy.executeMonitor(bucketMonitorId);
+      cy.executeMonitor(queryMonitorId);
+    });
   });
 
   beforeEach(() => {
+    // Execute monitors before each test so dashboard rows are deterministic.
+    cy.then(() => {
+      cy.executeMonitor(bucketMonitorId);
+      cy.executeMonitor(queryMonitorId);
+    });
+
     // Reloading the page to close any modals that were not closed by other tests that had failures.
     cy.visit(`${Cypress.env('opensearch_dashboards')}/app/${PLUGIN_NAME}#/dashboard`);
+    cy.get('[data-test-subj="alertsDashboard_table"]', { timeout: TWENTY_SECONDS }).should('exist');
+    cy.wait(5000);
 
-    // Confirm dashboard is displaying rows for the test monitors.
-    cy.contains(BUCKET_MONITOR, { timeout: SIXTY_SECONDS });
-    cy.contains(QUERY_MONITOR, { timeout: SIXTY_SECONDS });
+    // Confirm dashboard is displaying rows for the test triggers.
+    cy.contains(BUCKET_TRIGGER, { timeout: SIXTY_SECONDS });
+    cy.contains(QUERY_TRIGGER, { timeout: SIXTY_SECONDS });
   });
 
   it('Acknowledge button disabled when more than 1 trigger selected', () => {
