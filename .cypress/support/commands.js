@@ -79,6 +79,16 @@ Cypress.Commands.add('createMonitor', (monitorJSON) => {
   });
 });
 
+Cypress.Commands.add('createMonitors', (monitorJSONList = []) => {
+  const monitorIDs = [];
+  monitorJSONList.forEach((monitorJSON) => {
+    cy.createMonitor(monitorJSON).then((response) => {
+      monitorIDs.push(response.body._id);
+    });
+  });
+  return cy.then(() => cy.wrap(monitorIDs));
+});
+
 Cypress.Commands.add('createAndExecuteMonitor', (monitorJSON) => {
   cy.request('POST', `${Cypress.env('opensearch')}${API.MONITOR_BASE}`, monitorJSON).then(
     (response) => {
