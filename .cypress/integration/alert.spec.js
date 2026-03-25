@@ -8,6 +8,7 @@ import sampleQueryLevelMonitorWithAlwaysTrueTrigger from '../fixtures/sample_que
 import sampleQueryLevelMonitorWorkflow from '../fixtures/sample_query_level_monitor_workflow';
 
 const TESTING_INDEX = 'alerting_test';
+const cloneFixture = (fixture) => JSON.parse(JSON.stringify(fixture));
 
 describe('Alerts', () => {
   beforeEach(() => {
@@ -22,26 +23,30 @@ describe('Alerts', () => {
   });
 
   describe("can be in 'Active' state", () => {
+    let uniqueNumber;
+    let monitorId;
+
     before(() => {
       cy.deleteAllMonitors();
       // Generate a unique number in every test by getting a unix timestamp in milliseconds
-      Cypress.config('unique_number', `${Date.now()}`);
-      // Modify the monitor name to be unique
-      sampleQueryLevelMonitorWithAlwaysTrueTrigger.name += `-${Cypress.config('unique_number')}`;
-      cy.createMonitor(sampleQueryLevelMonitorWithAlwaysTrueTrigger);
+      uniqueNumber = `${Date.now()}`;
+      const monitor = cloneFixture(sampleQueryLevelMonitorWithAlwaysTrueTrigger);
+      monitor.name = `${monitor.name}-${uniqueNumber}`;
+      cy.createMonitor(monitor).then((response) => {
+        monitorId = response.body._id;
+      });
     });
 
     it('after the monitor starts running', () => {
-      // Wait for 1 minute
-      cy.wait(60000);
+      cy.then(() => {
+        cy.executeMonitor(monitorId);
+      });
 
       // Reload the page
       cy.reload();
 
       // Type in monitor name in search box to filter out the alert
-      cy.get(`input[type="search"]`)
-        .focus()
-        .type(`${Cypress.config('unique_number')}`);
+      cy.get(`input[type="search"]`).focus().type(uniqueNumber);
 
       // Confirm we can see one and only alert in Active state
       cy.get('tbody > tr').should(($tr) => {
@@ -52,19 +57,19 @@ describe('Alerts', () => {
   });
 
   describe("can be in 'Acknowledged' state", () => {
+    let uniqueNumber;
+
     before(() => {
       cy.deleteAllMonitors();
-      Cypress.config('unique_number', `${Date.now()}`);
-      // Modify the monitor name to be unique
-      sampleQueryLevelMonitorWithAlwaysTrueTrigger.name += `-${Cypress.config('unique_number')}`;
-      cy.createAndExecuteMonitor(sampleQueryLevelMonitorWithAlwaysTrueTrigger);
+      uniqueNumber = `${Date.now()}`;
+      const monitor = cloneFixture(sampleQueryLevelMonitorWithAlwaysTrueTrigger);
+      monitor.name = `${monitor.name}-${uniqueNumber}`;
+      cy.createAndExecuteMonitor(monitor);
     });
 
     it('by clicking the button in Dashboard', () => {
       // Type in monitor name in search box to filter out the alert
-      cy.get(`input[type="search"]`)
-        .focus()
-        .type(`${Cypress.config('unique_number')}`);
+      cy.get(`input[type="search"]`).focus().type(uniqueNumber);
 
       //Confirm there is an active alert
       cy.contains('Active');
@@ -82,21 +87,27 @@ describe('Alerts', () => {
   });
 
   describe("can be in 'Completed' state", () => {
+    let uniqueNumber;
+    let monitorId;
+
     before(() => {
       cy.deleteAllMonitors();
       // Delete the target indices defined in 'sample_monitor_workflow.json'
       cy.deleteIndexByName('alerting*');
-      Cypress.config('unique_number', `${Date.now()}`);
-      // Modify the monitor name to be unique
-      sampleQueryLevelMonitorWorkflow.name += `-${Cypress.config('unique_number')}`;
-      cy.createAndExecuteMonitor(sampleQueryLevelMonitorWorkflow);
+      uniqueNumber = `${Date.now()}`;
+      const monitor = cloneFixture(sampleQueryLevelMonitorWorkflow);
+      monitor.name = `${monitor.name}-${uniqueNumber}`;
+      cy.createMonitor(monitor).then((response) => {
+        monitorId = response.body._id;
+      });
+      cy.then(() => {
+        cy.executeMonitor(monitorId);
+      });
     });
 
     it('when the trigger condition is not met after met once', () => {
       // Type in monitor name in search box to filter out the alert
-      cy.get(`input[type="search"]`)
-        .focus()
-        .type(`${Cypress.config('unique_number')}`);
+      cy.get(`input[type="search"]`).focus().type(uniqueNumber);
 
       // Confirm there is an active alert
       cy.contains('Active');
@@ -109,16 +120,16 @@ describe('Alerts', () => {
       // Insert a document
       cy.insertDocumentToIndex('test', 1, {});
 
-      // Wait for 1 minute
-      cy.wait(60000);
+      // Execute monitor again after document insertion so the alert transitions to Completed.
+      cy.then(() => {
+        cy.executeMonitor(monitorId);
+      });
 
       // Reload the page
       cy.reload();
 
       // Type in monitor name in search box to filter out the alert
-      cy.get(`input[type="search"]`)
-        .focus()
-        .type(`${Cypress.config('unique_number')}`);
+      cy.get(`input[type="search"]`).focus().type(uniqueNumber);
 
       // Confirm we can see the alert is in 'Completed' state
       cy.contains('Completed');
@@ -131,23 +142,23 @@ describe('Alerts', () => {
   });
 
   describe("can be in 'Error' state", () => {
+    let uniqueNumber;
+
     before(() => {
       cy.deleteAllMonitors();
+      const monitor = cloneFixture(sampleQueryLevelMonitorWithAlwaysTrueTrigger);
       // modify the JSON object to make an error alert when executing the monitor
-      sampleQueryLevelMonitorWithAlwaysTrueTrigger.triggers[0].actions = [
+      monitor.triggers[0].actions = [
         { name: '', destination_id: '', message_template: { source: '' } },
       ];
-      Cypress.config('unique_number', `${Date.now()}`);
-      // Modify the monitor name to be unique
-      sampleQueryLevelMonitorWithAlwaysTrueTrigger.name += `-${Cypress.config('unique_number')}`;
-      cy.createAndExecuteMonitor(sampleQueryLevelMonitorWithAlwaysTrueTrigger);
+      uniqueNumber = `${Date.now()}`;
+      monitor.name = `${monitor.name}-${uniqueNumber}`;
+      cy.createAndExecuteMonitor(monitor);
     });
 
     it('by using a wrong destination', () => {
       // Type in monitor name in search box to filter out the alert
-      cy.get(`input[type="search"]`)
-        .focus()
-        .type(`${Cypress.config('unique_number')}`);
+      cy.get(`input[type="search"]`).focus().type(uniqueNumber);
 
       // Confirm we can see the alert is in 'Error' state
       cy.contains('Error');
@@ -155,19 +166,19 @@ describe('Alerts', () => {
   });
 
   describe("can be in 'Deleted' state", () => {
+    let uniqueNumber;
+
     before(() => {
       cy.deleteAllMonitors();
-      Cypress.config('unique_number', `${Date.now()}`);
-      // Modify the monitor name to be unique
-      sampleQueryLevelMonitorWithAlwaysTrueTrigger.name += `-${Cypress.config('unique_number')}`;
-      cy.createAndExecuteMonitor(sampleQueryLevelMonitorWithAlwaysTrueTrigger);
+      uniqueNumber = `${Date.now()}`;
+      const monitor = cloneFixture(sampleQueryLevelMonitorWithAlwaysTrueTrigger);
+      monitor.name = `${monitor.name}-${uniqueNumber}`;
+      cy.createAndExecuteMonitor(monitor);
     });
 
     it('by deleting the monitor', () => {
       // Type in monitor name in search box to filter out the alert
-      cy.get(`input[type="search"]`)
-        .focus()
-        .type(`${Cypress.config('unique_number')}`);
+      cy.get(`input[type="search"]`).focus().type(uniqueNumber);
 
       //Confirm there is an active alert
       cy.contains('Active');
@@ -179,9 +190,7 @@ describe('Alerts', () => {
       cy.reload();
 
       // Type in monitor name in search box to filter out the alert
-      cy.get(`input[type="search"]`)
-        .focus()
-        .type(`${Cypress.config('unique_number')}`);
+      cy.get(`input[type="search"]`).focus().type(uniqueNumber);
 
       // Confirm we can see the alert is in 'Deleted' state
       cy.contains('Deleted');
