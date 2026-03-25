@@ -18,8 +18,7 @@ const TWENTY_SECONDS = 20000;
 const SIXTY_SECONDS = 60000;
 
 describe('AcknowledgeAlertsModal', () => {
-  let bucketMonitorId;
-  let queryMonitorId;
+  let monitorIds = [];
 
   before(() => {
     // Delete any existing monitors
@@ -29,12 +28,12 @@ describe('AcknowledgeAlertsModal', () => {
     // Load sample data
     cy.loadSampleEcommerceData();
 
-    // Create the test monitors and retain IDs so we can force executions in each test.
-    cy.createMonitor(sampleAlertsFlyoutBucketMonitor).then((response) => {
-      bucketMonitorId = response.body._id;
-    });
-    cy.createMonitor(sampleAlertsFlyoutQueryMonitor).then((response) => {
-      queryMonitorId = response.body._id;
+    // Create monitors and execute once so initial alerts exist.
+    cy.createMonitorsAndExecute([
+      sampleAlertsFlyoutBucketMonitor,
+      sampleAlertsFlyoutQueryMonitor,
+    ]).then((ids) => {
+      monitorIds = ids;
     });
 
     // Visit Alerting OpenSearch Dashboards
@@ -45,20 +44,11 @@ describe('AcknowledgeAlertsModal', () => {
     // Confirm test monitors were created successfully
     cy.contains(BUCKET_MONITOR, { timeout: SIXTY_SECONDS });
     cy.contains(QUERY_MONITOR, { timeout: SIXTY_SECONDS });
-
-    // Create initial alerts for both monitors before tests begin.
-    cy.then(() => {
-      cy.executeMonitor(bucketMonitorId);
-      cy.executeMonitor(queryMonitorId);
-    });
   });
 
   beforeEach(() => {
     // Execute monitors before each test so dashboard rows are deterministic.
-    cy.then(() => {
-      cy.executeMonitor(bucketMonitorId);
-      cy.executeMonitor(queryMonitorId);
-    });
+    cy.executeMonitors(monitorIds);
 
     // Reloading the page to close any modals that were not closed by other tests that had failures.
     cy.visit(`${Cypress.env('opensearch_dashboards')}/app/${PLUGIN_NAME}#/dashboard`);

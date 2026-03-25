@@ -38,9 +38,7 @@ describe('Alerts', () => {
     });
 
     it('after the monitor starts running', () => {
-      cy.then(() => {
-        cy.executeMonitor(monitorId);
-      });
+      cy.executeMonitors([monitorId]);
 
       // Reload the page
       cy.reload();
@@ -101,7 +99,7 @@ describe('Alerts', () => {
         monitorId = response.body._id;
       });
       cy.then(() => {
-        cy.executeMonitor(monitorId);
+        cy.executeMonitors([monitorId]);
       });
     });
 
