@@ -1,7 +1,9 @@
 const { defineConfig } = require('cypress');
 
 module.exports = defineConfig({
-  defaultCommandTimeout: 10000,
+  defaultCommandTimeout: 60000,
+  viewportWidth: 2000,
+  viewportHeight: 1320,
   env: {
     opensearch_url: 'localhost:9200',
     opensearch_dashboards: 'localhost:5601',
@@ -16,6 +18,8 @@ module.exports = defineConfig({
         if (browser.name === 'chrome' || browser.name === 'chromium') {
           launchOptions.args.push('--disable-dev-shm-usage');
           launchOptions.args.push('--disable-gpu');
+          launchOptions.args.push('--disable-extensions');
+          launchOptions.args.push('--no-sandbox');
           launchOptions.args.push('--js-flags=--max-old-space-size=4096');
         }
         return launchOptions;

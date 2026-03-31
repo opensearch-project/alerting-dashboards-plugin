@@ -91,9 +91,9 @@ jobs:
         uses: cypress-io/github-action@v2
         with:
           working-directory: OpenSearch-Dashboards/plugins/alerting-dashboards-plugin
-          command: yarn run cypress run --browser chrome --spec '.cypress/integration/${{ matrix.spec }}.spec.js'
+          command: env CYPRESS_NO_COMMAND_LOG=1 yarn run cypress run --browser chrome --spec '.cypress/integration/${{ matrix.spec }}.spec.js'
         env:
-          NODE_OPTIONS: '--max-old-space-size=4096'
+          NODE_OPTIONS: '--max-old-space-size=6144'
 
       # Screenshots are only captured on failure, will change this once we do visual regression tests
       - uses: actions/upload-artifact@v4
