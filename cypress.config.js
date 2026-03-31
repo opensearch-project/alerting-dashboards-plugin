@@ -20,7 +20,6 @@ module.exports = defineConfig({
           launchOptions.args.push('--disable-gpu');
           launchOptions.args.push('--disable-extensions');
           launchOptions.args.push('--no-sandbox');
-          launchOptions.args.push('--js-flags=--max-old-space-size=4096');
         }
         return launchOptions;
       });
