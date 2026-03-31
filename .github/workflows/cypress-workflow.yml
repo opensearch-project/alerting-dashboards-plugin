@@ -77,11 +77,15 @@ jobs:
         run: |
           cd OpenSearch-Dashboards/plugins/alerting-dashboards-plugin
           yarn osd bootstrap --single-version=loose
+      - name: Build plugin bundles
+        run: |
+          cd OpenSearch-Dashboards
+          node scripts/build_opensearch_dashboards_platform_plugins --no-examples --workers 4
       - name: Run OpenSearch Dashboards server
         run: |
           cd OpenSearch-Dashboards
           yarn start --no-base-path --no-watch --server.host="0.0.0.0" 2>&1 | tee /tmp/osd.log &
-          timeout 900 bash -c 'while ! grep -q "bundles compiled successfully" /tmp/osd.log 2>/dev/null; do sleep 10; done'
+          timeout 300 bash -c 'while ! grep -qE "(bundles compiled successfully|all bundles cached)" /tmp/osd.log 2>/dev/null; do sleep 10; done'
           sleep 30
       - name: Run Cypress tests
         uses: cypress-io/github-action@v2
