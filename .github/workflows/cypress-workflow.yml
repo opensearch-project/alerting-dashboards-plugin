@@ -8,12 +8,25 @@ on:
       - "**"
 env:
   OPENSEARCH_DASHBOARDS_VERSION: 'main'
-  OPENSEARCH_VERSION: '3.0.0-SNAPSHOT'
   ALERTING_PLUGIN_BRANCH: 'main'
 jobs:
   tests:
-    name: Run Cypress E2E tests
+    name: Run ${{ matrix.spec }} Cypress tests
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        # Running each spec separately due to cypress memory-related failures
+        spec:
+          - acknowledge_alerts_modal
+          - alert
+          - alerts_dashboard_flyout
+          - bucket_level_monitor
+          - cluster_metrics_monitor
+          - composite_level_monitor
+          - document_level_monitor
+          - monitors_dashboard
+          - query_level_monitor
     env:
       # prevents extra Cypress installation progress messages
       CI: 1
@@ -34,7 +47,7 @@ jobs:
       - name: Run Opensearch with plugin
         run: |
           cd alerting
-          ./gradlew :alerting:run -Dopensearch.version=${{ env.OPENSEARCH_VERSION }} &
+          ./gradlew :alerting:run &
           timeout 300 bash -c 'while [[ "$(curl -s -o /dev/null -w ''%{http_code}'' localhost:9200)" != "200" ]]; do sleep 5; done'
       - name: Checkout OpenSearch Dashboards
         uses: actions/checkout@v2
@@ -74,17 +87,19 @@ jobs:
         uses: cypress-io/github-action@v2
         with:
           working-directory: OpenSearch-Dashboards/plugins/alerting-dashboards-plugin
-          command: yarn run cypress run
+          command: yarn run cypress run --browser chrome --spec '.cypress/integration/${{ matrix.spec }}.spec.js'
+        env:
+          NODE_OPTIONS: '--max-old-space-size=4096'
 
       # Screenshots are only captured on failure, will change this once we do visual regression tests
       - uses: actions/upload-artifact@v4
         if: failure()
         with:
-          name: cypress-screenshots
+          name: cypress-screenshots-${{ matrix.spec }}
           path: OpenSearch-Dashboards/plugins/alerting-dashboards-plugin/cypress/screenshots
       # Test run video was always captured, so this action uses "always()" condition
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: cypress-videos
+          name: cypress-videos-${{ matrix.spec }}
           path: OpenSearch-Dashboards/plugins/alerting-dashboards-plugin/cypress/videos

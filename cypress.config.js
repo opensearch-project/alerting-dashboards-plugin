@@ -1,4 +1,4 @@
-const { defineConfig } = require('cypress')
+const { defineConfig } = require('cypress');
 
 module.exports = defineConfig({
   defaultCommandTimeout: 10000,
@@ -11,16 +11,20 @@ module.exports = defineConfig({
   screenshotsFolder: '.cypress/screenshots',
   videosFolder: '.cypress/videos',
   e2e: {
-    // We've imported your old cypress plugins here.
-    // You may want to clean this up later by importing these.
     setupNodeEvents(on, config) {
-      config.env.NODE_OPTIONS = '—max-old-space-size=8192';
+      on('before:browser:launch', (browser, launchOptions) => {
+        if (browser.name === 'chrome' || browser.name === 'chromium') {
+          launchOptions.args.push('--disable-dev-shm-usage');
+          launchOptions.args.push('--disable-gpu');
+          launchOptions.args.push('--js-flags=--max-old-space-size=4096');
+        }
+        return launchOptions;
+      });
       return require('./.cypress/plugins/index.js')(on, config);
     },
     specPattern: '.cypress/integration/*.spec.js',
     supportFile: '.cypress/support/index.js',
-    // Performance optimizations
     numTestsKeptInMemory: 0,
     experimentalMemoryManagement: true,
   },
-})
+});
