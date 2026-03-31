@@ -103,11 +103,6 @@ export default class MonitorDetailsV1 extends Component {
     if (this.context?.dataSourceId) {
       setDataSource({ dataSourceId: this.context.dataSourceId });
     }
-    console.log('[MonitorDetailsV1] componentDidMount', {
-      monitorId: this.props.match.params.monitorId,
-      viewMode: this.props.viewMode,
-      locationSearch: this.props.location?.search,
-    });
     this.getMonitor(this.props.match.params.monitorId);
     const dataSourceQuery = getDataSourceQueryObj();
     this.getLocalClusterName(dataSourceQuery);
@@ -186,7 +181,6 @@ export default class MonitorDetailsV1 extends Component {
     const isWorkflow = this.isWorkflow();
     const url = `../api/alerting/${isWorkflow ? 'workflows' : 'monitors'}/${id}`;
     const dataSourceQuery = getDataSourceQueryObj();
-    console.log('[MonitorDetailsV1] getMonitor:start', { id, isWorkflow, url, dataSourceQuery });
     const response = httpClient.get(url, dataSourceQuery);
     response
       .then((resp) => {
@@ -199,11 +193,6 @@ export default class MonitorDetailsV1 extends Component {
           ifSeqNo,
           ifPrimaryTerm,
         } = resp;
-        console.log('[MonitorDetailsV1] getMonitor response', {
-          ok,
-          hasResp: Boolean(monitor),
-          version: monitorVersion,
-        });
         if (ok) {
           if (isWorkflow) {
             this.updateDelegateMonitors(monitor);
@@ -229,7 +218,6 @@ export default class MonitorDetailsV1 extends Component {
       })
       .catch((err) => {
         console.log('err', err);
-        console.log('[MonitorDetailsV1] getMonitor error', err);
       });
   };
 

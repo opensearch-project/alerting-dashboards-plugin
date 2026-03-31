@@ -57,11 +57,6 @@ export default class DashboardClassic extends Component {
     super(props);
 
     const { location, perAlertView } = props;
-    console.log('[DashboardClassic] constructor', {
-      monitorIds: props.monitorIds,
-      perAlertView,
-      landingDataSourceId: props.landingDataSourceId,
-    });
 
     const { alertState, from, search, severityLevel, size, sortDirection, sortField } =
       getURLQueryParams(location);
@@ -111,7 +106,6 @@ export default class DashboardClassic extends Component {
   }
 
   componentDidMount() {
-    console.log('[DashboardClassic] componentDidMount');
     const { alertState, page, search, severityLevel, size, sortDirection, sortField, monitorIds } =
       this.state;
     this.getAlerts(
@@ -198,12 +192,6 @@ export default class DashboardClassic extends Component {
         monitorIds,
         monitorType: this.props.monitorType,
       };
-      console.log('[DashboardClassic] getAlerts request', {
-        params,
-        resolvedDataSourceId,
-        url: '../api/alerting/alerts',
-      });
-
       if (resolvedDataSourceId !== undefined) {
         params.dataSourceId = resolvedDataSourceId;
       }
@@ -212,10 +200,6 @@ export default class DashboardClassic extends Component {
       const { httpClient, history, notifications, perAlertView } = this.props;
       history.replace({ ...this.props.location, search: queryParamsString });
       httpClient.get('../api/alerting/alerts', { query: params }).then((resp) => {
-        console.log('[DashboardClassic] getAlerts response', {
-          ok: resp?.ok,
-          totalAlerts: resp?.totalAlerts,
-        });
         if (resp.ok) {
           const { alerts, totalAlerts } = resp;
           this.setState({ alerts, totalAlerts });
@@ -259,11 +243,6 @@ export default class DashboardClassic extends Component {
         this.dataSourceQuery = latestDataSourceQuery;
       }
       const query = (latestDataSourceQuery || this.dataSourceQuery)?.query;
-      console.log('[DashboardClassic] getMonitors request', {
-        monitorIds,
-        query,
-      });
-
       if (dataSourceEnabled() && !_.get(query, 'dataSourceId')) {
         this.setState({ loadingMonitors: false });
         return;
@@ -285,16 +264,11 @@ export default class DashboardClassic extends Component {
 
       if (response.ok) {
         monitors = _.get(response, 'resp.hits.hits', []);
-        console.log('[DashboardClassic] getMonitors response', {
-          count: monitors.length,
-        });
       } else {
         console.log('error getting monitors:', response);
-        console.log('[DashboardClassic] getMonitors response error', response);
       }
     } catch (err) {
       console.error(err);
-      console.log('[DashboardClassic] getMonitors exception', err);
     }
     this.setState({ loadingMonitors: false, monitors });
   }
