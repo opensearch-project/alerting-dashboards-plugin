@@ -3,20 +3,6 @@
 exports[`Monitors renders 1`] = `
 <Fragment>
   <ContentPanel
-    actions={
-      <MonitorActions
-        hasMonitors={false}
-        isDeleteDisabled={true}
-        isDisableDisabled={true}
-        isEditDisabled={true}
-        isEnableDisabled={true}
-        onBulkAcknowledge={[Function]}
-        onBulkDelete={[Function]}
-        onBulkDisable={[Function]}
-        onBulkEnable={[Function]}
-        onClickEdit={[Function]}
-      />
-    }
     bodyStyles={
       Object {
         "padding": "initial",
