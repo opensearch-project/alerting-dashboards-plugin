@@ -20,6 +20,28 @@
     }
   ],
   "ui_metadata": {
-    "schedule": {}
+    "schedule": {
+      "cronExpression": "30 11 * * 1-5",
+      "period": {
+        "unit": "MINUTES",
+        "interval": 1
+      },
+      "timezone": "US/Pacific",
+      "daily": 0,
+      "monthly": {
+        "type": "day",
+        "day": 1
+      },
+      "weekly": {
+        "tue": false,
+        "wed": false,
+        "thur": false,
+        "sat": false,
+        "fri": false,
+        "mon": false,
+        "sun": false
+      },
+      "frequency": "cronExpression"
+    }
   }
 }
