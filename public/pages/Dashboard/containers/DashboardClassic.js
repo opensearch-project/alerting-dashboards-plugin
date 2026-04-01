@@ -614,47 +614,13 @@ export default class DashboardClassic extends Component {
           />
         )}
         <ContentPanel
-          title={perAlertView ? 'Alerts' : undefined}
+          title={perAlertView ? 'Alerts' : useUpdatedUx ? undefined : 'Alerts by triggers'}
           titleSize={'s'}
           bodyStyles={{ padding: 'initial' }}
           actions={useUpdatedUx ? undefined : inlineActions}
           panelOptions={{ hideTitleBorder: useUpdatedUx }}
           panelStyles={{ padding: useUpdatedUx && totalAlerts < 1 ? '16px 16px 0px' : '16px' }}
         >
-          {!perAlertView && (
-            <>
-              <div
-                style={{
-                  padding: useUpdatedUx ? '16px 16px 0px 16px' : '0px 0px 16px',
-                }}
-              >
-                <EuiFlexGroup
-                  alignItems="center"
-                  justifyContent="spaceBetween"
-                  gutterSize="s"
-                  responsive={false}
-                >
-                  <EuiFlexItem grow={false}>
-                    <EuiTitle size="l">
-                      <h1>Alerts by triggers</h1>
-                    </EuiTitle>
-                  </EuiFlexItem>
-                  {showInlineActions && (
-                    <EuiFlexItem grow={false}>
-                      <EuiFlexGroup gutterSize="s" responsive={false}>
-                        {inlineActions.map((action, idx) => (
-                          <EuiFlexItem key={idx} grow={false}>
-                            {action}
-                          </EuiFlexItem>
-                        ))}
-                      </EuiFlexGroup>
-                    </EuiFlexItem>
-                  )}
-                </EuiFlexGroup>
-              </div>
-              {useUpdatedUx && <EuiSpacer size="m" />}
-            </>
-          )}
           <DashboardControls
             activePage={page}
             pageCount={Math.ceil(totalItems / size) || 1}
@@ -667,14 +633,8 @@ export default class DashboardClassic extends Component {
             onPageChange={this.onPageClick}
             isAlertsFlyout={isAlertsFlyout}
             monitorType={monitorType}
-            alertActions={undefined}
-            panelStyles={{
-              padding: perAlertView
-                ? '8px 0px 16px'
-                : useUpdatedUx
-                ? '0px 16px 16px'
-                : '0px 0px 16px',
-            }}
+            alertActions={useUpdatedUx ? inlineActions : undefined}
+            panelStyles={{ padding: perAlertView ? '8px 0px 16px' : '0px 0px 16px' }}
           />
 
           <EuiBasicTable
