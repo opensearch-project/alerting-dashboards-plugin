@@ -58,11 +58,6 @@ export const AlertInsight: React.FC<AlertInsightProps> = (props: AlertInsightPro
 
   const contextProvider = async () => {
     // 1. get monitor definition
-    console.log('[AlertInsight] fetching legacy monitor for alert', {
-      alertId,
-      monitorId: alert.monitor_id,
-      dataSourceQuery,
-    });
     const monitorResp = await httpClient.get(
       `../api/alerting/monitors/${alert.monitor_id}`,
       dataSourceQuery

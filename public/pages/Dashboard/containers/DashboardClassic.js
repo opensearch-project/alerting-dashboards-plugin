@@ -57,11 +57,6 @@ export default class DashboardClassic extends Component {
     super(props);
 
     const { location, perAlertView } = props;
-    console.log('[DashboardClassic] constructor', {
-      monitorIds: props.monitorIds,
-      perAlertView,
-      landingDataSourceId: props.landingDataSourceId,
-    });
 
     const { alertState, from, search, severityLevel, size, sortDirection, sortField } =
       getURLQueryParams(location);
@@ -111,7 +106,6 @@ export default class DashboardClassic extends Component {
   }
 
   componentDidMount() {
-    console.log('[DashboardClassic] componentDidMount');
     const { alertState, page, search, severityLevel, size, sortDirection, sortField, monitorIds } =
       this.state;
     this.getAlerts(
@@ -198,12 +192,6 @@ export default class DashboardClassic extends Component {
         monitorIds,
         monitorType: this.props.monitorType,
       };
-      console.log('[DashboardClassic] getAlerts request', {
-        params,
-        resolvedDataSourceId,
-        url: '../api/alerting/alerts',
-      });
-
       if (resolvedDataSourceId !== undefined) {
         params.dataSourceId = resolvedDataSourceId;
       }
@@ -212,10 +200,6 @@ export default class DashboardClassic extends Component {
       const { httpClient, history, notifications, perAlertView } = this.props;
       history.replace({ ...this.props.location, search: queryParamsString });
       httpClient.get('../api/alerting/alerts', { query: params }).then((resp) => {
-        console.log('[DashboardClassic] getAlerts response', {
-          ok: resp?.ok,
-          totalAlerts: resp?.totalAlerts,
-        });
         if (resp.ok) {
           const { alerts, totalAlerts } = resp;
           this.setState({ alerts, totalAlerts });
@@ -259,11 +243,6 @@ export default class DashboardClassic extends Component {
         this.dataSourceQuery = latestDataSourceQuery;
       }
       const query = (latestDataSourceQuery || this.dataSourceQuery)?.query;
-      console.log('[DashboardClassic] getMonitors request', {
-        monitorIds,
-        query,
-      });
-
       if (dataSourceEnabled() && !_.get(query, 'dataSourceId')) {
         this.setState({ loadingMonitors: false });
         return;
@@ -285,16 +264,11 @@ export default class DashboardClassic extends Component {
 
       if (response.ok) {
         monitors = _.get(response, 'resp.hits.hits', []);
-        console.log('[DashboardClassic] getMonitors response', {
-          count: monitors.length,
-        });
       } else {
         console.log('error getting monitors:', response);
-        console.log('[DashboardClassic] getMonitors response error', response);
       }
     } catch (err) {
       console.error(err);
-      console.log('[DashboardClassic] getMonitors exception', err);
     }
     this.setState({ loadingMonitors: false, monitors });
   }
@@ -640,47 +614,13 @@ export default class DashboardClassic extends Component {
           />
         )}
         <ContentPanel
-          title={perAlertView ? 'Alerts' : undefined}
+          title={perAlertView ? 'Alerts' : useUpdatedUx ? undefined : 'Alerts by triggers'}
           titleSize={'s'}
           bodyStyles={{ padding: 'initial' }}
           actions={useUpdatedUx ? undefined : inlineActions}
           panelOptions={{ hideTitleBorder: useUpdatedUx }}
           panelStyles={{ padding: useUpdatedUx && totalAlerts < 1 ? '16px 16px 0px' : '16px' }}
         >
-          {!perAlertView && (
-            <>
-              <div
-                style={{
-                  padding: useUpdatedUx ? '16px 16px 0px 16px' : '0px 0px 16px',
-                }}
-              >
-                <EuiFlexGroup
-                  alignItems="center"
-                  justifyContent="spaceBetween"
-                  gutterSize="s"
-                  responsive={false}
-                >
-                  <EuiFlexItem grow={false}>
-                    <EuiTitle size="l">
-                      <h1>Alerts by triggers</h1>
-                    </EuiTitle>
-                  </EuiFlexItem>
-                  {showInlineActions && (
-                    <EuiFlexItem grow={false}>
-                      <EuiFlexGroup gutterSize="s" responsive={false}>
-                        {inlineActions.map((action, idx) => (
-                          <EuiFlexItem key={idx} grow={false}>
-                            {action}
-                          </EuiFlexItem>
-                        ))}
-                      </EuiFlexGroup>
-                    </EuiFlexItem>
-                  )}
-                </EuiFlexGroup>
-              </div>
-              {useUpdatedUx && <EuiSpacer size="m" />}
-            </>
-          )}
           <DashboardControls
             activePage={page}
             pageCount={Math.ceil(totalItems / size) || 1}
@@ -693,14 +633,8 @@ export default class DashboardClassic extends Component {
             onPageChange={this.onPageClick}
             isAlertsFlyout={isAlertsFlyout}
             monitorType={monitorType}
-            alertActions={undefined}
-            panelStyles={{
-              padding: perAlertView
-                ? '8px 0px 16px'
-                : useUpdatedUx
-                ? '0px 16px 16px'
-                : '0px 0px 16px',
-            }}
+            alertActions={useUpdatedUx ? inlineActions : undefined}
+            panelStyles={{ padding: perAlertView ? '8px 0px 16px' : '0px 0px 16px' }}
           />
 
           <EuiBasicTable

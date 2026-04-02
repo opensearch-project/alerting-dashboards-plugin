@@ -531,25 +531,8 @@ export default class Monitors extends Component {
           bodyStyles={{ padding: 'initial' }}
           title={useUpdatedUx ? undefined : 'Monitors'}
           panelOptions={{ hideTitleBorder: useUpdatedUx }}
-          panelStyles={{
-            padding: useUpdatedUx ? '0px' : totalMonitors < 1 ? '16px 16px 0px' : '16px',
-          }}
+          panelStyles={{ padding: useUpdatedUx && totalMonitors < 1 ? '16px 16px 0px' : '16px' }}
         >
-          {useUpdatedUx && (
-            <>
-              <div style={{ padding: '16px 16px 0px 16px' }}>
-                <EuiFlexGroup alignItems="center" justifyContent="spaceBetween" responsive={false}>
-                  <EuiFlexItem grow={false}>
-                    <EuiTitle size="l">
-                      <h1>Monitors</h1>
-                    </EuiTitle>
-                  </EuiFlexItem>
-                  <EuiFlexItem grow={false}>{monitorActions}</EuiFlexItem>
-                </EuiFlexGroup>
-              </div>
-              <EuiSpacer size="m" />
-            </>
-          )}
           <MonitorControls
             activePage={page}
             pageCount={Math.ceil(totalMonitors / size) || 1}
@@ -558,7 +541,7 @@ export default class Monitors extends Component {
             onSearchChange={this.onSearchChange}
             onStateChange={this.onMonitorStateChange}
             onPageClick={this.onPageClick}
-            monitorActions={useUpdatedUx ? null : monitorActions}
+            monitorActions={useUpdatedUx ? monitorActions : null}
           />
 
           {showAcknowledgeModal && (

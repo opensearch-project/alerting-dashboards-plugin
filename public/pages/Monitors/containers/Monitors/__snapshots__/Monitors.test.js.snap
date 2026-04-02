@@ -29,27 +29,14 @@ exports[`Monitors renders 1`] = `
     }
     panelStyles={
       Object {
-        "padding": "16px 16px 0px",
+        "padding": "16px",
       }
     }
     title="Monitors"
   >
     <MonitorControls
       activePage={0}
-      monitorActions={
-        <MonitorActions
-          hasMonitors={false}
-          isDeleteDisabled={true}
-          isDisableDisabled={true}
-          isEditDisabled={true}
-          isEnableDisabled={true}
-          onBulkAcknowledge={[Function]}
-          onBulkDelete={[Function]}
-          onBulkDisable={[Function]}
-          onBulkEnable={[Function]}
-          onClickEdit={[Function]}
-        />
-      }
+      monitorActions={null}
       onPageClick={[Function]}
       onSearchChange={[Function]}
       onStateChange={[Function]}
