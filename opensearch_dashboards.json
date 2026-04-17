@@ -3,7 +3,7 @@
   "version": "3.6.0.0",
   "opensearchDashboardsVersion": "3.6.0",
   "configPath": ["opensearch_alerting"],
-  "optionalPlugins": ["dataSource", "dataSourceManagement", "assistantDashboards", "explore"],
+  "optionalPlugins": ["dataSource", "dataSourceManagement", "assistantDashboards", "explore", "workspace"],
   "requiredPlugins": [
     "uiActions",
     "dashboard",

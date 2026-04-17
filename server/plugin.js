@@ -38,6 +38,7 @@ export class AlertingPlugin {
     this.pluginConfig$ = initializerContext.config.create();
     this.core = null;
     this.featureFlagService = null;
+    this.services = null;
   }
 
   async setup(core, { dataSource }) {
@@ -89,6 +90,7 @@ export class AlertingPlugin {
       crossClusterService,
       commentsService,
     };
+    this.services = services;
 
     core.capabilities.registerProvider(() => ({
       alertingDashboards: {
@@ -170,7 +172,17 @@ export class AlertingPlugin {
     return {};
   }
 
-  async start(core) {
+  async start(core, plugins) {
+    if (this.services) {
+      Object.values(this.services).forEach((service) => {
+        if (typeof service.setLogger === 'function') {
+          service.setLogger(this.logger);
+        }
+        if (plugins?.workspace && typeof service.setWorkspaceStart === 'function') {
+          service.setWorkspaceStart(plugins.workspace);
+        }
+      });
+    }
     return {};
   }
 }

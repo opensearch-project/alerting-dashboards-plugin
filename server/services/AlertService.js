@@ -14,7 +14,17 @@ export const GET_ALERTS_SORT_FILTERS = {
 };
 
 export default class AlertService extends MDSEnabledClientService {
+  _enforceWorkspaceAcl = async (context, req, res, permissionModes) => {
+    const authorized = await this.checkWorkspaceAcl(context, req, permissionModes);
+    if (!authorized) {
+      return res.ok({ body: { ok: false, resp: 'Workspace ACL check failed: unauthorized' } });
+    }
+    return null;
+  };
+
   getAlerts = async (context, req, res) => {
+    const aclResponse = await this._enforceWorkspaceAcl(context, req, res, ['library_write', 'library_read']);
+    if (aclResponse) return aclResponse;
     const {
       from = 0,
       size = 20,
@@ -111,6 +121,8 @@ export default class AlertService extends MDSEnabledClientService {
   };
 
   getWorkflowAlerts = async (context, req, res) => {
+    const aclResponse = await this._enforceWorkspaceAcl(context, req, res, ['library_write', 'library_read']);
+    if (aclResponse) return aclResponse;
     const client = this.getClientBasedOnDataSource(context, req);
     try {
       const resp = await client('alerting.getWorkflowAlerts', req.query);
