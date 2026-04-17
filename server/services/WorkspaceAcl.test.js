@@ -1,12 +1,8 @@
 // Mock core server modules that MDSEnabledClientService imports
 jest.mock('../../../../src/core/server', () => ({}), { virtual: true });
-jest.mock('../../../../src/core/server/utils', () => ({
-  getWorkspaceState: jest.fn(),
-}));
 
 import MonitorService from './MonitorService';
 import AlertService from './AlertService';
-import { getWorkspaceState } from '../../../../src/core/server/utils';
 
 const createMockContext = (endpoint = 'https://col.us-west-2.aoss.amazonaws.com') => ({
   core: {
@@ -41,9 +37,8 @@ const setupService = (ServiceClass, { authorized = true, endpoint } = {}) => {
 
   const mockAuthorizeWorkspace = jest.fn().mockResolvedValue({ authorized });
   service.setWorkspaceStart({ authorizeWorkspace: mockAuthorizeWorkspace });
+  service.setWorkspaceIdGetter(() => 'ws-1');
 
-  // Mock checkWorkspaceAcl to control behavior directly for API-level tests
-  // For checkWorkspaceAcl unit tests, we test the real implementation
   return { service, mockAuthorizeWorkspace };
 };
 
@@ -52,7 +47,6 @@ describe('Workspace ACL checks', () => {
 
   beforeEach(() => {
     mockRes = createMockRes();
-    getWorkspaceState.mockReturnValue({ requestWorkspaceId: 'ws-1' });
   });
 
   describe('checkWorkspaceAcl', () => {

@@ -1,5 +1,4 @@
 import { RequestHandlerContext, OpenSearchDashboardsRequest, ILegacyCustomClusterClient, Logger } from '../../../../src/core/server';
-import { getWorkspaceState } from '../../../../src/core/server/utils';
 
 interface WorkspaceAuthorizer {
   authorizeWorkspace: (
@@ -13,11 +12,16 @@ interface WorkspaceAuthorizer {
 export abstract class MDSEnabledClientService {
   private workspaceStart?: WorkspaceAuthorizer;
   private logger?: Logger;
+  private workspaceIdGetter?: (request: OpenSearchDashboardsRequest) => string | undefined;
 
   constructor(private osDriver: ILegacyCustomClusterClient, private dataSourceEnabled: boolean) {}
 
   public setWorkspaceStart(workspaceStart: WorkspaceAuthorizer) {
     this.workspaceStart = workspaceStart;
+  }
+
+  public setWorkspaceIdGetter(fn: (request: OpenSearchDashboardsRequest) => string | undefined) {
+    this.workspaceIdGetter = fn;
   }
 
   public setLogger(logger: Logger) {
@@ -46,7 +50,7 @@ export abstract class MDSEnabledClientService {
     }
 
     const principal = request.headers['x-amzn-aosd-username'] as string;
-    const workspaceId = getWorkspaceState(request).requestWorkspaceId;
+    const workspaceId = this.workspaceIdGetter?.(request);
 
     if (!principal || !workspaceId || !this.workspaceStart) {
       return true;

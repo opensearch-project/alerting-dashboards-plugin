@@ -30,6 +30,7 @@ import {
   comments,
 } from '../server/routes';
 import { JSON_SCHEMA } from 'js-yaml';
+import { getWorkspaceState } from '../../../src/core/server/utils';
 
 export class AlertingPlugin {
   constructor(initializerContext) {
@@ -174,12 +175,22 @@ export class AlertingPlugin {
 
   async start(core, plugins) {
     if (this.services) {
+      const workspaceIdGetter = (request) => {
+        try {
+          return getWorkspaceState(request).requestWorkspaceId;
+        } catch (e) {
+          return undefined;
+        }
+      };
       Object.values(this.services).forEach((service) => {
         if (typeof service.setLogger === 'function') {
           service.setLogger(this.logger);
         }
         if (plugins?.workspace && typeof service.setWorkspaceStart === 'function') {
           service.setWorkspaceStart(plugins.workspace);
+        }
+        if (typeof service.setWorkspaceIdGetter === 'function') {
+          service.setWorkspaceIdGetter(workspaceIdGetter);
         }
       });
     }
