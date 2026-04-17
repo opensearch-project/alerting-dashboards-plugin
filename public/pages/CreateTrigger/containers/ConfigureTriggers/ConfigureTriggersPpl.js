@@ -11,9 +11,10 @@ import AddTriggerButtonPpl from '../../components/AddTriggerButton/AddTriggerBut
 import TriggerEmptyPrompt from '../../components/TriggerEmptyPrompt';
 import { MAX_TRIGGERS } from '../../../MonitorDetails/containers/Triggers/Triggers';
 import monitorToFormik from '../../../CreateMonitor/containers/CreateMonitor/utils/monitorToFormik';
-import { backendErrorNotification, inputLimitText } from '../../../../utils/helpers';
+import { backendErrorNotification, inputLimitText, getClusterSetting } from '../../../../utils/helpers';
 import EnhancedAccordion from '../../../../components/FeatureAnywhereContextMenu/EnhancedAccordion';
 import { getDataSourceQueryObj } from '../../../../../public/pages/utils/helpers';
+import { MAX_TRIGGERS_SETTING } from '../../../utils/constants';
 import DefineTriggerPpl from '../DefineTrigger/DefineTriggerPpl';
 import {
   addTimeFilterToQuery,
@@ -133,6 +134,7 @@ class ConfigureTriggersPpl extends React.Component {
       executeResponse: null,
       previewError: null,
       accordionsOpen,
+      maxTriggers: MAX_TRIGGERS,
       TriggerContainer: props.flyoutMode
         ? (p) => <EnhancedAccordion {...p} />
         : ({ children }) => <>{children}</>,
@@ -142,12 +144,19 @@ class ConfigureTriggersPpl extends React.Component {
 
   componentDidMount() {
     this.onRunExecute(this.props.monitorValues);
+    this.fetchMaxTriggers();
+  }
+
+  async fetchMaxTriggers() {
+    const { httpClient } = this.props;
+    const maxTriggers = await getClusterSetting(httpClient, MAX_TRIGGERS_SETTING, MAX_TRIGGERS);
+    this.setState({ maxTriggers: parseInt(maxTriggers, 10) });
   }
 
   prepareAddTriggerButton = () => {
     const { monitorValues, triggerArrayHelpers, triggerValues } = this.props;
     const disableAddTriggerButton =
-      _.get(triggerValues, 'triggerDefinitions', []).length >= MAX_TRIGGERS;
+      _.get(triggerValues, 'triggerDefinitions', []).length >= this.state.maxTriggers;
     return (
       <AddTriggerButtonPpl arrayHelpers={triggerArrayHelpers} disabled={disableAddTriggerButton} />
     );
@@ -363,7 +372,7 @@ class ConfigureTriggersPpl extends React.Component {
         {!flyoutMode && hasTriggers && (
           <>
             <EuiSpacer size="m" />
-            {inputLimitText(numTriggers, MAX_TRIGGERS, 'trigger', 'triggers')}
+            {inputLimitText(numTriggers, this.state.maxTriggers, 'trigger', 'triggers')}
           </>
         )}
       </ContentPanelStructure>
