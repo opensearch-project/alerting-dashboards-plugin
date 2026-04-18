@@ -11,22 +11,9 @@ import { MDSEnabledClientService } from './MDSEnabledClientService';
 import { DEFAULT_HEADERS } from './utils/constants';
 
 export default class MonitorService extends MDSEnabledClientService {
-
-  /**
-   * Checks workspace ACL and returns an unauthorized response if check fails.
-   * Returns null if authorized, or a response object if unauthorized.
-   */
-  _enforceWorkspaceAcl = async (context, req, res, permissionModes) => {
-    const authorized = await this.checkWorkspaceAcl(context, req, permissionModes);
-    if (!authorized) {
-      return res.ok({ body: { ok: false, resp: 'Workspace ACL check failed: unauthorized' } });
-    }
-    return null;
-  };
-
   createMonitor = async (context, req, res) => {
     try {
-      const aclResponse = await this._enforceWorkspaceAcl(context, req, res, ['library_write']);
+      const aclResponse = await this.enforceWorkspaceAcl(context, req, res, ['library_write']);
       if (aclResponse) return aclResponse;
       const params = { body: req.body };
       const client = this.getClientBasedOnDataSource(context, req);
@@ -50,7 +37,7 @@ export default class MonitorService extends MDSEnabledClientService {
 
   createWorkflow = async (context, req, res) => {
     try {
-      const aclResponse = await this._enforceWorkspaceAcl(context, req, res, ['library_write']);
+      const aclResponse = await this.enforceWorkspaceAcl(context, req, res, ['library_write']);
       if (aclResponse) return aclResponse;
       const params = { body: req.body };
       const client = this.getClientBasedOnDataSource(context, req);
@@ -74,7 +61,7 @@ export default class MonitorService extends MDSEnabledClientService {
 
   deleteMonitor = async (context, req, res) => {
     try {
-      const aclResponse = await this._enforceWorkspaceAcl(context, req, res, ['library_write']);
+      const aclResponse = await this.enforceWorkspaceAcl(context, req, res, ['library_write']);
       if (aclResponse) return aclResponse;
       const { id } = req.params;
       const params = { monitorId: id };
@@ -99,7 +86,7 @@ export default class MonitorService extends MDSEnabledClientService {
 
   deleteWorkflow = async (context, req, res) => {
     try {
-      const aclResponse = await this._enforceWorkspaceAcl(context, req, res, ['library_write']);
+      const aclResponse = await this.enforceWorkspaceAcl(context, req, res, ['library_write']);
       if (aclResponse) return aclResponse;
       const { id } = req.params;
       const params = { workflowId: id };
@@ -124,7 +111,7 @@ export default class MonitorService extends MDSEnabledClientService {
 
   getMonitor = async (context, req, res) => {
     try {
-      const aclResponse = await this._enforceWorkspaceAcl(context, req, res, [
+      const aclResponse = await this.enforceWorkspaceAcl(context, req, res, [
         'library_write',
         'library_read',
       ]);
@@ -211,7 +198,7 @@ export default class MonitorService extends MDSEnabledClientService {
 
   getWorkflow = async (context, req, res) => {
     try {
-      const aclResponse = await this._enforceWorkspaceAcl(context, req, res, [
+      const aclResponse = await this.enforceWorkspaceAcl(context, req, res, [
         'library_write',
         'library_read',
       ]);
@@ -256,7 +243,7 @@ export default class MonitorService extends MDSEnabledClientService {
 
   updateMonitor = async (context, req, res) => {
     try {
-      const aclResponse = await this._enforceWorkspaceAcl(context, req, res, ['library_write']);
+      const aclResponse = await this.enforceWorkspaceAcl(context, req, res, ['library_write']);
       if (aclResponse) return aclResponse;
       const { id } = req.params;
       const params = { monitorId: id, body: req.body, refresh: 'wait_for' };
@@ -295,7 +282,7 @@ export default class MonitorService extends MDSEnabledClientService {
 
   getMonitors = async (context, req, res) => {
     try {
-      const aclResponse = await this._enforceWorkspaceAcl(context, req, res, [
+      const aclResponse = await this.enforceWorkspaceAcl(context, req, res, [
         'library_write',
         'library_read',
       ]);
@@ -546,7 +533,7 @@ export default class MonitorService extends MDSEnabledClientService {
 
   acknowledgeAlerts = async (context, req, res) => {
     try {
-      const aclResponse = await this._enforceWorkspaceAcl(context, req, res, ['library_write']);
+      const aclResponse = await this.enforceWorkspaceAcl(context, req, res, ['library_write']);
       if (aclResponse) return aclResponse;
       const { id } = req.params;
       const params = {
@@ -574,7 +561,7 @@ export default class MonitorService extends MDSEnabledClientService {
 
   acknowledgeChainedAlerts = async (context, req, res) => {
     try {
-      const aclResponse = await this._enforceWorkspaceAcl(context, req, res, ['library_write']);
+      const aclResponse = await this.enforceWorkspaceAcl(context, req, res, ['library_write']);
       if (aclResponse) return aclResponse;
       const { id } = req.params;
       const params = {
@@ -607,7 +594,7 @@ export default class MonitorService extends MDSEnabledClientService {
 
   executeMonitor = async (context, req, res) => {
     try {
-      const aclResponse = await this._enforceWorkspaceAcl(context, req, res, ['library_write']);
+      const aclResponse = await this.enforceWorkspaceAcl(context, req, res, ['library_write']);
       if (aclResponse) return aclResponse;
       const { dryrun = 'true' } = req.query;
       const params = {
@@ -636,7 +623,7 @@ export default class MonitorService extends MDSEnabledClientService {
   //TODO: This is temporarily a pass through call which needs to be deprecated
   searchMonitors = async (context, req, res) => {
     try {
-      const aclResponse = await this._enforceWorkspaceAcl(context, req, res, [
+      const aclResponse = await this.enforceWorkspaceAcl(context, req, res, [
         'library_write',
         'library_read',
       ]);

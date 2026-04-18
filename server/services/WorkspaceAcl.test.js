@@ -1,5 +1,12 @@
 // Mock core server modules that MDSEnabledClientService imports
 jest.mock('../../../../src/core/server', () => ({}), { virtual: true });
+jest.mock(
+  '../alerting_configs.json',
+  () => ({
+    'ws.acl.enforce.endpoint.patterns': ['.aoss.amazonaws.com'],
+  }),
+  { virtual: true }
+);
 
 import MonitorService from './MonitorService';
 import AlertService from './AlertService';
@@ -21,17 +28,15 @@ const createMockReq = (overrides = {}) => ({
   query: { dataSourceId: 'ds-1', ...overrides.query },
   params: { id: 'mon-1', ...overrides.params },
   body: overrides.body || {},
-  headers: {
-    'x-amzn-aosd-username': 'arn:aws:sts::123456:assumed-role/Admin/user1',
-    ...overrides.headers,
-  },
+  headers: overrides.headers || {},
 });
 
 const createMockRes = () => ({
   ok: jest.fn((payload) => payload),
+  unauthorized: jest.fn((payload) => ({ unauthorized: true, ...payload })),
 });
 
-const setupService = (ServiceClass, { authorized = true, endpoint } = {}) => {
+const setupService = (ServiceClass, { authorized = true } = {}) => {
   const service = new ServiceClass();
   service.getClientBasedOnDataSource = jest.fn().mockReturnValue(jest.fn().mockResolvedValue({}));
 
@@ -77,12 +82,7 @@ describe('Workspace ACL checks', () => {
 
       const result = await service.checkWorkspaceAcl(context, req, ['library_read']);
       expect(result).toBe(true);
-      expect(mockAuthorizeWorkspace).toHaveBeenCalledWith(
-        req,
-        ['ws-1'],
-        'arn:aws:sts::123456:assumed-role/Admin/user1',
-        ['library_read']
-      );
+      expect(mockAuthorizeWorkspace).toHaveBeenCalledWith(req, ['ws-1'], ['library_read']);
     });
 
     it('should return false when workspace authorization fails for AOSS', async () => {
@@ -92,16 +92,6 @@ describe('Workspace ACL checks', () => {
 
       const result = await service.checkWorkspaceAcl(context, req, ['library_read']);
       expect(result).toBe(false);
-    });
-
-    it('should skip ACL check when no principal header', async () => {
-      const { service } = setupService(MonitorService, { authorized: false });
-      const context = createMockContext('https://col.us-west-2.aoss.amazonaws.com');
-      const req = createMockReq({ headers: { 'x-amzn-aosd-username': undefined } });
-
-      const result = await service.checkWorkspaceAcl(context, req, ['read']);
-      // Will return true because principal is falsy
-      expect(result).toBe(true);
     });
 
     it('should skip ACL check when workspaceStart is not set', async () => {
@@ -116,23 +106,23 @@ describe('Workspace ACL checks', () => {
     });
   });
 
-  describe('MonitorService - _enforceWorkspaceAcl', () => {
-    it('should return null when checkWorkspaceAcl returns true', async () => {
+  describe('enforceWorkspaceAcl (parent method)', () => {
+    it('should return undefined when checkWorkspaceAcl returns true', async () => {
       const { service } = setupService(MonitorService);
       service.checkWorkspaceAcl = jest.fn().mockResolvedValue(true);
 
-      const result = await service._enforceWorkspaceAcl({}, {}, mockRes, ['library_write']);
-      expect(result).toBeNull();
-      expect(mockRes.ok).not.toHaveBeenCalled();
+      const result = await service.enforceWorkspaceAcl({}, {}, mockRes, ['library_write']);
+      expect(result).toBeUndefined();
+      expect(mockRes.unauthorized).not.toHaveBeenCalled();
     });
 
     it('should return unauthorized response when checkWorkspaceAcl returns false', async () => {
       const { service } = setupService(MonitorService);
       service.checkWorkspaceAcl = jest.fn().mockResolvedValue(false);
 
-      await service._enforceWorkspaceAcl({}, {}, mockRes, ['library_write']);
-      expect(mockRes.ok).toHaveBeenCalledWith({
-        body: { ok: false, resp: 'Workspace ACL check failed: unauthorized' },
+      await service.enforceWorkspaceAcl({}, {}, mockRes, ['library_write']);
+      expect(mockRes.unauthorized).toHaveBeenCalledWith({
+        body: { message: 'Workspace ACL check failed: unauthorized' },
       });
     });
   });
@@ -148,52 +138,52 @@ describe('Workspace ACL checks', () => {
     it('createMonitor should block', async () => {
       const req = createMockReq({ body: { name: 'test' } });
       await service.createMonitor({}, req, mockRes);
-      expect(mockRes.ok).toHaveBeenCalledWith({
-        body: { ok: false, resp: 'Workspace ACL check failed: unauthorized' },
+      expect(mockRes.unauthorized).toHaveBeenCalledWith({
+        body: { message: 'Workspace ACL check failed: unauthorized' },
       });
     });
 
     it('createWorkflow should block', async () => {
       const req = createMockReq({ body: { name: 'test' } });
       await service.createWorkflow({}, req, mockRes);
-      expect(mockRes.ok).toHaveBeenCalledWith({
-        body: { ok: false, resp: 'Workspace ACL check failed: unauthorized' },
+      expect(mockRes.unauthorized).toHaveBeenCalledWith({
+        body: { message: 'Workspace ACL check failed: unauthorized' },
       });
     });
 
     it('deleteMonitor should block', async () => {
       await service.deleteMonitor({}, createMockReq(), mockRes);
-      expect(mockRes.ok).toHaveBeenCalledWith({
-        body: { ok: false, resp: 'Workspace ACL check failed: unauthorized' },
+      expect(mockRes.unauthorized).toHaveBeenCalledWith({
+        body: { message: 'Workspace ACL check failed: unauthorized' },
       });
     });
 
     it('deleteWorkflow should block', async () => {
       await service.deleteWorkflow({}, createMockReq(), mockRes);
-      expect(mockRes.ok).toHaveBeenCalledWith({
-        body: { ok: false, resp: 'Workspace ACL check failed: unauthorized' },
+      expect(mockRes.unauthorized).toHaveBeenCalledWith({
+        body: { message: 'Workspace ACL check failed: unauthorized' },
       });
     });
 
     it('getMonitor should block', async () => {
       await service.getMonitor({}, createMockReq(), mockRes);
-      expect(mockRes.ok).toHaveBeenCalledWith({
-        body: { ok: false, resp: 'Workspace ACL check failed: unauthorized' },
+      expect(mockRes.unauthorized).toHaveBeenCalledWith({
+        body: { message: 'Workspace ACL check failed: unauthorized' },
       });
     });
 
     it('getWorkflow should block', async () => {
       await service.getWorkflow({}, createMockReq(), mockRes);
-      expect(mockRes.ok).toHaveBeenCalledWith({
-        body: { ok: false, resp: 'Workspace ACL check failed: unauthorized' },
+      expect(mockRes.unauthorized).toHaveBeenCalledWith({
+        body: { message: 'Workspace ACL check failed: unauthorized' },
       });
     });
 
     it('updateMonitor should block', async () => {
       const req = createMockReq({ body: { type: 'monitor' } });
       await service.updateMonitor({}, req, mockRes);
-      expect(mockRes.ok).toHaveBeenCalledWith({
-        body: { ok: false, resp: 'Workspace ACL check failed: unauthorized' },
+      expect(mockRes.unauthorized).toHaveBeenCalledWith({
+        body: { message: 'Workspace ACL check failed: unauthorized' },
       });
     });
 
@@ -210,32 +200,32 @@ describe('Workspace ACL checks', () => {
         },
       });
       await service.getMonitors({}, req, mockRes);
-      expect(mockRes.ok).toHaveBeenCalledWith({
-        body: { ok: false, resp: 'Workspace ACL check failed: unauthorized' },
+      expect(mockRes.unauthorized).toHaveBeenCalledWith({
+        body: { message: 'Workspace ACL check failed: unauthorized' },
       });
     });
 
     it('acknowledgeAlerts should block', async () => {
       const req = createMockReq({ body: { alerts: [] } });
       await service.acknowledgeAlerts({}, req, mockRes);
-      expect(mockRes.ok).toHaveBeenCalledWith({
-        body: { ok: false, resp: 'Workspace ACL check failed: unauthorized' },
+      expect(mockRes.unauthorized).toHaveBeenCalledWith({
+        body: { message: 'Workspace ACL check failed: unauthorized' },
       });
     });
 
     it('executeMonitor should block', async () => {
       const req = createMockReq({ body: {} });
       await service.executeMonitor({}, req, mockRes);
-      expect(mockRes.ok).toHaveBeenCalledWith({
-        body: { ok: false, resp: 'Workspace ACL check failed: unauthorized' },
+      expect(mockRes.unauthorized).toHaveBeenCalledWith({
+        body: { message: 'Workspace ACL check failed: unauthorized' },
       });
     });
 
     it('searchMonitors should block', async () => {
       const req = createMockReq({ body: {} });
       await service.searchMonitors({}, req, mockRes);
-      expect(mockRes.ok).toHaveBeenCalledWith({
-        body: { ok: false, resp: 'Workspace ACL check failed: unauthorized' },
+      expect(mockRes.unauthorized).toHaveBeenCalledWith({
+        body: { message: 'Workspace ACL check failed: unauthorized' },
       });
     });
   });
@@ -253,22 +243,22 @@ describe('Workspace ACL checks', () => {
     });
   });
 
-  describe('AlertService - _enforceWorkspaceAcl', () => {
-    it('should return null when authorized', async () => {
+  describe('AlertService - enforceWorkspaceAcl', () => {
+    it('should return undefined when authorized', async () => {
       const { service } = setupService(AlertService);
       service.checkWorkspaceAcl = jest.fn().mockResolvedValue(true);
 
-      const result = await service._enforceWorkspaceAcl({}, {}, mockRes, ['library_read']);
-      expect(result).toBeNull();
+      const result = await service.enforceWorkspaceAcl({}, {}, mockRes, ['library_read']);
+      expect(result).toBeUndefined();
     });
 
     it('should return unauthorized response when not authorized', async () => {
       const { service } = setupService(AlertService);
       service.checkWorkspaceAcl = jest.fn().mockResolvedValue(false);
 
-      await service._enforceWorkspaceAcl({}, {}, mockRes, ['library_read']);
-      expect(mockRes.ok).toHaveBeenCalledWith({
-        body: { ok: false, resp: 'Workspace ACL check failed: unauthorized' },
+      await service.enforceWorkspaceAcl({}, {}, mockRes, ['library_read']);
+      expect(mockRes.unauthorized).toHaveBeenCalledWith({
+        body: { message: 'Workspace ACL check failed: unauthorized' },
       });
     });
   });
@@ -284,16 +274,16 @@ describe('Workspace ACL checks', () => {
     it('getAlerts should block', async () => {
       const req = createMockReq({ query: { dataSourceId: 'ds-1' } });
       await service.getAlerts({}, req, mockRes);
-      expect(mockRes.ok).toHaveBeenCalledWith({
-        body: { ok: false, resp: 'Workspace ACL check failed: unauthorized' },
+      expect(mockRes.unauthorized).toHaveBeenCalledWith({
+        body: { message: 'Workspace ACL check failed: unauthorized' },
       });
     });
 
     it('getWorkflowAlerts should block', async () => {
       const req = createMockReq({ query: { dataSourceId: 'ds-1' } });
       await service.getWorkflowAlerts({}, req, mockRes);
-      expect(mockRes.ok).toHaveBeenCalledWith({
-        body: { ok: false, resp: 'Workspace ACL check failed: unauthorized' },
+      expect(mockRes.unauthorized).toHaveBeenCalledWith({
+        body: { message: 'Workspace ACL check failed: unauthorized' },
       });
     });
   });

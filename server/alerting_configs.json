@@ -1,0 +1,3 @@
+{
+  "ws.acl.enforce.endpoint.patterns": [".aoss.amazonaws.com"]
+}
