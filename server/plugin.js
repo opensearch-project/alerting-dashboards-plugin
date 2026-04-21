@@ -162,7 +162,6 @@ export class AlertingPlugin {
     ]);
 
     // Wrap router to auto-reject unsupported routes on serverless endpoints.
-    const { monitorService } = services;
     const guardedRouter = ['get', 'post', 'put', 'delete'].reduce((proxy, method) => {
       proxy[method] = (route, handler) => {
         const key = `${method.toUpperCase()} ${route.path}`;
