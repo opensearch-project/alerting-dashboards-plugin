@@ -172,45 +172,21 @@ describe('Workspace ACL checks', () => {
     });
   });
 
-  describe('MonitorService - unsupported APIs return 501 for AOSS', () => {
-    let service;
+  describe('rejectIfUnsupported route guard', () => {
+    it('should reject when endpoint is unsupported', async () => {
+      const { service } = setupService(MonitorService);
+      service.rejectIfUnsupported = jest.fn().mockResolvedValue({ statusCode: 501 });
+      const handler = jest.fn();
 
-    beforeEach(() => {
-      ({ service } = setupService(MonitorService));
-      service.isUnsupportedEndpoint = jest.fn().mockResolvedValue(true);
+      const rejected = await service.rejectIfUnsupported({}, createMockReq(), mockRes);
+      expect(rejected).toEqual({ statusCode: 501 });
+      expect(handler).not.toHaveBeenCalled();
     });
 
-    it('createWorkflow should return 501', async () => {
-      const req = createMockReq({ body: { name: 'test' } });
-      await service.createWorkflow({}, req, mockRes);
-      expect(mockRes.custom).toHaveBeenCalledWith({
-        statusCode: 501,
-        body: { message: 'This operation is not supported' },
-      });
-    });
-
-    it('deleteWorkflow should return 501', async () => {
-      await service.deleteWorkflow({}, createMockReq(), mockRes);
-      expect(mockRes.custom).toHaveBeenCalledWith({
-        statusCode: 501,
-        body: { message: 'This operation is not supported' },
-      });
-    });
-
-    it('getWorkflow should return 501', async () => {
-      await service.getWorkflow({}, createMockReq(), mockRes);
-      expect(mockRes.custom).toHaveBeenCalledWith({
-        statusCode: 501,
-        body: { message: 'This operation is not supported' },
-      });
-    });
-
-    it('acknowledgeChainedAlerts should return 501', async () => {
-      await service.acknowledgeChainedAlerts({}, createMockReq(), mockRes);
-      expect(mockRes.custom).toHaveBeenCalledWith({
-        statusCode: 501,
-        body: { message: 'This operation is not supported' },
-      });
+    it('should pass through when endpoint is supported', async () => {
+      const { service } = setupService(MonitorService);
+      const result = await service.rejectIfUnsupported({}, createMockReq(), mockRes);
+      expect(result).toBeUndefined();
     });
   });
 

@@ -37,8 +37,6 @@ export default class MonitorService extends MDSEnabledClientService {
 
   createWorkflow = async (context, req, res) => {
     try {
-      const notSupported = await this.rejectIfUnsupported(context, req, res);
-      if (notSupported) return notSupported;
       const aclResponse = await this.enforceWorkspaceAcl(context, req, res, ['library_write']);
       if (aclResponse) return aclResponse;
       const params = { body: req.body };
@@ -88,8 +86,6 @@ export default class MonitorService extends MDSEnabledClientService {
 
   deleteWorkflow = async (context, req, res) => {
     try {
-      const notSupported = await this.rejectIfUnsupported(context, req, res);
-      if (notSupported) return notSupported;
       const aclResponse = await this.enforceWorkspaceAcl(context, req, res, ['library_write']);
       if (aclResponse) return aclResponse;
       const { id } = req.params;
@@ -202,8 +198,6 @@ export default class MonitorService extends MDSEnabledClientService {
 
   getWorkflow = async (context, req, res) => {
     try {
-      const notSupported = await this.rejectIfUnsupported(context, req, res);
-      if (notSupported) return notSupported;
       const aclResponse = await this.enforceWorkspaceAcl(context, req, res, [
         'library_write',
         'library_read',
@@ -567,8 +561,6 @@ export default class MonitorService extends MDSEnabledClientService {
 
   acknowledgeChainedAlerts = async (context, req, res) => {
     try {
-      const notSupported = await this.rejectIfUnsupported(context, req, res);
-      if (notSupported) return notSupported;
       const aclResponse = await this.enforceWorkspaceAcl(context, req, res, ['library_write']);
       if (aclResponse) return aclResponse;
       const { id } = req.params;
