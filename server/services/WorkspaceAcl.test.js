@@ -1,12 +1,5 @@
 // Mock core server modules that MDSEnabledClientService imports
 jest.mock('../../../../src/core/server', () => ({}), { virtual: true });
-jest.mock(
-  '../alerting_configs.json',
-  () => ({
-    'ws.acl.enforce.endpoint.patterns': ['.aoss.amazonaws.com'],
-  }),
-  { virtual: true }
-);
 
 import MonitorService from './MonitorService';
 import AlertService from './AlertService';
@@ -34,6 +27,7 @@ const createMockReq = (overrides = {}) => ({
 const createMockRes = () => ({
   ok: jest.fn((payload) => payload),
   unauthorized: jest.fn((payload) => ({ unauthorized: true, ...payload })),
+  custom: jest.fn((payload) => ({ custom: true, ...payload })),
 });
 
 const setupService = (ServiceClass, { authorized = true } = {}) => {
@@ -41,7 +35,10 @@ const setupService = (ServiceClass, { authorized = true } = {}) => {
   service.getClientBasedOnDataSource = jest.fn().mockReturnValue(jest.fn().mockResolvedValue({}));
 
   const mockAuthorizeWorkspace = jest.fn().mockResolvedValue({ authorized });
-  service.setWorkspaceStart({ authorizeWorkspace: mockAuthorizeWorkspace });
+  service.setWorkspaceStart({
+    authorizeWorkspace: mockAuthorizeWorkspace,
+    aclEnforceEndpointPatterns: ['.aoss.amazonaws.com'],
+  });
   service.setWorkspaceIdGetter(() => 'ws-1');
 
   return { service, mockAuthorizeWorkspace };
@@ -104,6 +101,21 @@ describe('Workspace ACL checks', () => {
       const result = await service.checkWorkspaceAcl(context, req, ['read']);
       expect(result).toBe(true);
     });
+
+    it('should skip ACL check when aclEnforceEndpointPatterns is empty', async () => {
+      const service = new MonitorService();
+      service.getClientBasedOnDataSource = jest.fn().mockReturnValue(jest.fn());
+      service.setWorkspaceStart({
+        authorizeWorkspace: jest.fn(),
+        aclEnforceEndpointPatterns: [],
+      });
+      service.setWorkspaceIdGetter(() => 'ws-1');
+      const context = createMockContext('https://col.us-west-2.aoss.amazonaws.com');
+      const req = createMockReq();
+
+      const result = await service.checkWorkspaceAcl(context, req, ['read']);
+      expect(result).toBe(true);
+    });
   });
 
   describe('enforceWorkspaceAcl (parent method)', () => {
@@ -127,12 +139,88 @@ describe('Workspace ACL checks', () => {
     });
   });
 
+  describe('rejectIfUnsupported', () => {
+    it('should return 501 for AOSS endpoints', async () => {
+      const { service } = setupService(MonitorService);
+      const context = createMockContext('https://col.us-west-2.aoss.amazonaws.com');
+      const req = createMockReq();
+
+      await service.rejectIfUnsupported(context, req, mockRes);
+      expect(mockRes.custom).toHaveBeenCalledWith({
+        statusCode: 501,
+        body: { message: 'This operation is not supported' },
+      });
+    });
+
+    it('should return undefined for non-AOSS endpoints', async () => {
+      const { service } = setupService(MonitorService);
+      const context = createMockContext('https://search-domain.us-west-2.es.amazonaws.com');
+      const req = createMockReq();
+
+      const result = await service.rejectIfUnsupported(context, req, mockRes);
+      expect(result).toBeUndefined();
+      expect(mockRes.custom).not.toHaveBeenCalled();
+    });
+
+    it('should return undefined when no dataSourceId', async () => {
+      const { service } = setupService(MonitorService);
+      const context = createMockContext();
+      const req = createMockReq({ query: { dataSourceId: undefined } });
+
+      const result = await service.rejectIfUnsupported(context, req, mockRes);
+      expect(result).toBeUndefined();
+    });
+  });
+
+  describe('MonitorService - unsupported APIs return 501 for AOSS', () => {
+    let service;
+
+    beforeEach(() => {
+      ({ service } = setupService(MonitorService));
+      service.isUnsupportedEndpoint = jest.fn().mockResolvedValue(true);
+    });
+
+    it('createWorkflow should return 501', async () => {
+      const req = createMockReq({ body: { name: 'test' } });
+      await service.createWorkflow({}, req, mockRes);
+      expect(mockRes.custom).toHaveBeenCalledWith({
+        statusCode: 501,
+        body: { message: 'This operation is not supported' },
+      });
+    });
+
+    it('deleteWorkflow should return 501', async () => {
+      await service.deleteWorkflow({}, createMockReq(), mockRes);
+      expect(mockRes.custom).toHaveBeenCalledWith({
+        statusCode: 501,
+        body: { message: 'This operation is not supported' },
+      });
+    });
+
+    it('getWorkflow should return 501', async () => {
+      await service.getWorkflow({}, createMockReq(), mockRes);
+      expect(mockRes.custom).toHaveBeenCalledWith({
+        statusCode: 501,
+        body: { message: 'This operation is not supported' },
+      });
+    });
+
+    it('acknowledgeChainedAlerts should return 501', async () => {
+      await service.acknowledgeChainedAlerts({}, createMockReq(), mockRes);
+      expect(mockRes.custom).toHaveBeenCalledWith({
+        statusCode: 501,
+        body: { message: 'This operation is not supported' },
+      });
+    });
+  });
+
   describe('MonitorService - API methods block unauthorized requests', () => {
     let service;
 
     beforeEach(() => {
       ({ service } = setupService(MonitorService));
       service.checkWorkspaceAcl = jest.fn().mockResolvedValue(false);
+      service.isUnsupportedEndpoint = jest.fn().mockResolvedValue(false);
     });
 
     it('createMonitor should block', async () => {
@@ -234,6 +322,7 @@ describe('Workspace ACL checks', () => {
     it('createMonitor should proceed when authorized', async () => {
       const { service } = setupService(MonitorService);
       service.checkWorkspaceAcl = jest.fn().mockResolvedValue(true);
+      service.isUnsupportedEndpoint = jest.fn().mockResolvedValue(false);
       const mockClient = jest.fn().mockResolvedValue({ _id: 'mon-1', _version: 1 });
       service.getClientBasedOnDataSource = jest.fn().mockReturnValue(mockClient);
 

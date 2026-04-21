@@ -182,10 +182,8 @@ export class AlertingPlugin {
           return undefined;
         }
       };
+
       Object.values(this.services).forEach((service) => {
-        if (typeof service.setLogger === 'function') {
-          service.setLogger(this.logger);
-        }
         if (plugins?.workspace && typeof service.setWorkspaceStart === 'function') {
           service.setWorkspaceStart(plugins.workspace);
         }
