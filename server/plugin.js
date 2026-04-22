@@ -30,6 +30,7 @@ import {
   comments,
 } from '../server/routes';
 import { JSON_SCHEMA } from 'js-yaml';
+import { getWorkspaceState } from '../../../src/core/server/utils';
 
 export class AlertingPlugin {
   constructor(initializerContext) {
@@ -38,6 +39,7 @@ export class AlertingPlugin {
     this.pluginConfig$ = initializerContext.config.create();
     this.core = null;
     this.featureFlagService = null;
+    this.services = null;
   }
 
   async setup(core, { dataSource }) {
@@ -89,6 +91,7 @@ export class AlertingPlugin {
       crossClusterService,
       commentsService,
     };
+    this.services = services;
 
     core.capabilities.registerProvider(() => ({
       alertingDashboards: {
@@ -127,7 +130,54 @@ export class AlertingPlugin {
 
     // Create router
     const router = core.http.createRouter();
-    const registerPplRoutes = () => pplAlertingMonitors(services, router, dataSourceEnabled);
+
+    // Routes that return 501 on unsupported (e.g. serverless) endpoints.
+    // Uses path patterns — {param} segments are normalized to match any value.
+    const unsupportedRoutes = new Set([
+      'POST /api/alerting/workflows',
+      'GET /api/alerting/workflows/{id}',
+      'PUT /api/alerting/workflows/{id}',
+      'DELETE /api/alerting/workflows/{id}',
+      'POST /api/alerting/workflows/{id}/_acknowledge/alerts',
+      'POST /api/alerting/comments/_search',
+      'POST /api/alerting/comments/{alertId}',
+      'PUT /api/alerting/comments/{commentId}',
+      'DELETE /api/alerting/comments/{commentId}',
+      'GET /api/alerting/destinations',
+      'GET /api/alerting/destinations/{destinationId}',
+      'POST /api/alerting/destinations',
+      'PUT /api/alerting/destinations/{destinationId}',
+      'DELETE /api/alerting/destinations/{destinationId}',
+      'GET /api/alerting/destinations/email_accounts',
+      'POST /api/alerting/destinations/email_accounts',
+      'GET /api/alerting/destinations/email_accounts/{id}',
+      'PUT /api/alerting/destinations/email_accounts/{id}',
+      'DELETE /api/alerting/destinations/email_accounts/{id}',
+      'GET /api/alerting/destinations/email_groups',
+      'POST /api/alerting/destinations/email_groups',
+      'GET /api/alerting/destinations/email_groups/{id}',
+      'PUT /api/alerting/destinations/email_groups/{id}',
+      'DELETE /api/alerting/destinations/email_groups/{id}',
+      'GET /api/alerting/findings/_search',
+    ]);
+
+    // Wrap router to auto-reject unsupported routes on serverless endpoints.
+    const guardedRouter = ['get', 'post', 'put', 'delete'].reduce((proxy, method) => {
+      proxy[method] = (route, handler) => {
+        const key = `${method.toUpperCase()} ${route.path}`;
+        if (unsupportedRoutes.has(key)) {
+          router[method](route, async (context, req, res) => {
+            const rejected = await monitorService.rejectIfUnsupported(context, req, res);
+            if (rejected) return rejected;
+            return handler(context, req, res);
+          });
+        } else {
+          router[method](route, handler);
+        }
+      };
+      return proxy;
+    }, {});
+    const registerPplRoutes = () => pplAlertingMonitors(services, guardedRouter, dataSourceEnabled);
 
     if (defaultPplEnabled) {
       registerPplRoutes();
@@ -158,19 +208,37 @@ export class AlertingPlugin {
     }
 
     // Add server routes
-    alerts(services, router, dataSourceEnabled);
-    destinations(services, router, dataSourceEnabled);
-    opensearch(services, router, dataSourceEnabled);
-    monitors(services, router, dataSourceEnabled);
-    detectors(services, router, dataSourceEnabled);
-    findings(services, router, dataSourceEnabled);
-    crossCluster(services, router, dataSourceEnabled);
-    comments(services, router, dataSourceEnabled);
+    alerts(services, guardedRouter, dataSourceEnabled);
+    destinations(services, guardedRouter, dataSourceEnabled);
+    opensearch(services, guardedRouter, dataSourceEnabled);
+    monitors(services, guardedRouter, dataSourceEnabled);
+    detectors(services, guardedRouter, dataSourceEnabled);
+    findings(services, guardedRouter, dataSourceEnabled);
+    crossCluster(services, guardedRouter, dataSourceEnabled);
+    comments(services, guardedRouter, dataSourceEnabled);
 
     return {};
   }
 
-  async start(core) {
+  async start(core, plugins) {
+    if (this.services) {
+      const workspaceIdGetter = (request) => {
+        try {
+          return getWorkspaceState(request).requestWorkspaceId;
+        } catch (e) {
+          return undefined;
+        }
+      };
+
+      Object.values(this.services).forEach((service) => {
+        if (plugins?.workspace && typeof service.setWorkspaceStart === 'function') {
+          service.setWorkspaceStart(plugins.workspace);
+        }
+        if (typeof service.setWorkspaceIdGetter === 'function') {
+          service.setWorkspaceIdGetter(workspaceIdGetter);
+        }
+      });
+    }
     return {};
   }
 }

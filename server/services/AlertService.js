@@ -15,6 +15,11 @@ export const GET_ALERTS_SORT_FILTERS = {
 
 export default class AlertService extends MDSEnabledClientService {
   getAlerts = async (context, req, res) => {
+    const aclResponse = await this.enforceWorkspaceAcl(context, req, res, [
+      'library_write',
+      'library_read',
+    ]);
+    if (aclResponse) return aclResponse;
     const {
       from = 0,
       size = 20,
@@ -111,6 +116,11 @@ export default class AlertService extends MDSEnabledClientService {
   };
 
   getWorkflowAlerts = async (context, req, res) => {
+    const aclResponse = await this.enforceWorkspaceAcl(context, req, res, [
+      'library_write',
+      'library_read',
+    ]);
+    if (aclResponse) return aclResponse;
     const client = this.getClientBasedOnDataSource(context, req);
     try {
       const resp = await client('alerting.getWorkflowAlerts', req.query);
