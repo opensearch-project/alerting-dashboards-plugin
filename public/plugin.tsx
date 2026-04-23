@@ -119,17 +119,15 @@ export class AlertingPlugin implements Plugin<void, AlertingStart, AlertingSetup
     });
 
     if (core.chrome.navGroup.getNavGroupEnabled()) {
-      const enableIconSideNav = core.uiSettings.get('home:enableIconSideNav', false);
-
-      // register applications with category and use case information
-      core.chrome.navGroup.addNavLinksToGroup(DEFAULT_NAV_GROUPS.observability, [
-        {
-          id: PLUGIN_NAME,
-          category: enableIconSideNav ? undefined : DEFAULT_APP_CATEGORIES.detect,
-          showInAllNavGroup: false,
-          ...(enableIconSideNav ? { order: 200, title: 'Alerts', euiIconType: 'navAlerting' } : {}),
-        }
-      ])
+      if (!core.chrome.getIsIconSideNavEnabled()) {
+        core.chrome.navGroup.addNavLinksToGroup(DEFAULT_NAV_GROUPS.observability, [
+          {
+            id: PLUGIN_NAME,
+            category: DEFAULT_APP_CATEGORIES.detect,
+            showInAllNavGroup: false
+          }
+        ]);
+      }
 
       core.chrome.navGroup.addNavLinksToGroup(DEFAULT_NAV_GROUPS['security-analytics'], [
         {
@@ -202,10 +200,22 @@ export class AlertingPlugin implements Plugin<void, AlertingStart, AlertingSetup
         },
       ];
 
-      core.chrome.navGroup.addNavLinksToGroup(
-        DEFAULT_NAV_GROUPS.observability,
-        navLinks
-      );
+      if (core.chrome.getIsIconSideNavEnabled()) {
+        core.chrome.navGroup.addNavLinksToGroup(DEFAULT_NAV_GROUPS.observability, [
+          {
+            id: PLUGIN_NAME,
+            category: DEFAULT_APP_CATEGORIES.observabilityTools,
+            order: 8000,
+            euiIconType: 'bell',
+          },
+          ...navLinks,
+        ]);
+      } else {
+        core.chrome.navGroup.addNavLinksToGroup(
+          DEFAULT_NAV_GROUPS.observability,
+          navLinks
+        );
+      }
 
       core.chrome.navGroup.addNavLinksToGroup(
         DEFAULT_NAV_GROUPS['security-analytics'],
