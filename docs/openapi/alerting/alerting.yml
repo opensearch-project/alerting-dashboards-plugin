@@ -1,0 +1,4373 @@
+openapi: 3.0.0
+info:
+  title: OpenSearch Dashboards Alerting APIs
+  description: OpenAPI spec for OpenSearch Dashboards Alerting plugin APIs
+  termsOfService: https://lfprojects.org/policies/terms-of-use/
+  contact:
+    name: OpenSearch Dashboards
+    url: https://opensearch.org
+    email: opensearch@amazon.com
+  license:
+    name: Apache v2.0 License
+    url: https://www.apache.org/licenses/LICENSE-2.0
+  version: 3.1.0
+servers:
+  - url: http://localhost:5601
+externalDocs:
+  description: Official documentation
+  url: https://docs.opensearch.org/latest/about
+components:
+  schemas: {}
+  parameters: {}
+paths:
+  /api/alerting/alerts:
+    get:
+      operationId: getAlerts
+      summary: Get alerts
+      parameters:
+        - schema:
+            type: string
+            minLength: 1
+            description: Unique identifier for the datasource
+          required: false
+          description: Unique identifier for the datasource
+          name: dataSourceId
+          in: query
+        - schema:
+            type: integer
+            minimum: 0
+            description: Pagination offset
+          required: true
+          description: Pagination offset
+          name: from
+          in: query
+        - schema:
+            type: integer
+            minimum: 0
+            maximum: 10000
+            description: Number of results per page
+          required: true
+          description: Number of results per page
+          name: size
+          in: query
+        - schema:
+            type: string
+            description: Search string to filter results
+          required: false
+          description: Search string to filter results
+          name: search
+          in: query
+        - schema:
+            type: string
+            description: Field to sort by
+          required: false
+          description: Field to sort by
+          name: sortField
+          in: query
+        - schema:
+            type: string
+            enum:
+              - asc
+              - desc
+            description: Sort order
+          required: false
+          description: Sort order
+          name: sortDirection
+          in: query
+        - schema:
+            type: string
+            enum:
+              - "1"
+              - "2"
+              - "3"
+              - "4"
+              - "5"
+              - ALL
+            description: Filter by severity level
+          required: false
+          description: Filter by severity level
+          name: severityLevel
+          in: query
+        - schema:
+            type: string
+            enum:
+              - ALL
+              - ACTIVE
+              - ACKNOWLEDGED
+              - COMPLETED
+              - ERROR
+              - DELETED
+            description: Filter by alert state
+          required: false
+          description: Filter by alert state
+          name: alertState
+          in: query
+        - schema:
+            type: string
+            description: Comma-separated monitor IDs to filter by
+          required: false
+          description: Comma-separated monitor IDs to filter by
+          name: monitorIds
+          in: query
+        - schema:
+            type: string
+            description: Filter by monitor type
+          required: false
+          description: Filter by monitor type
+          name: monitorType
+          in: query
+      responses:
+        "200":
+          description: Alerts retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                    enum:
+                      - true
+                  alerts:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                        version:
+                          type: integer
+                        monitor_id:
+                          type: string
+                        schema_version:
+                          type: integer
+                        monitor_version:
+                          type: integer
+                        monitor_name:
+                          type: string
+                        monitor_user:
+                          type: object
+                          nullable: true
+                          properties:
+                            name:
+                              type: string
+                            backend_roles:
+                              type: array
+                              items:
+                                type: string
+                            roles:
+                              type: array
+                              items:
+                                type: string
+                            custom_attribute_names:
+                              type: array
+                              items:
+                                type: string
+                            user_requested_tenant:
+                              type: string
+                              nullable: true
+                          required:
+                            - name
+                            - backend_roles
+                            - roles
+                            - custom_attribute_names
+                          description: User info from security plugin
+                        trigger_id:
+                          type: string
+                        trigger_name:
+                          type: string
+                        state:
+                          type: string
+                          enum:
+                            - ACTIVE
+                            - ACKNOWLEDGED
+                            - COMPLETED
+                            - ERROR
+                            - DELETED
+                          description: Alert state
+                        error_message:
+                          type: string
+                          nullable: true
+                        severity:
+                          type: string
+                          enum:
+                            - "1"
+                            - "2"
+                            - "3"
+                            - "4"
+                            - "5"
+                          description: 'Severity level: "1" (highest) through "5" (lowest)'
+                        action_execution_results:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              action_id:
+                                type: string
+                              last_execution_time:
+                                type: integer
+                                description: Epoch millis
+                              throttled_count:
+                                type: integer
+                            required:
+                              - action_id
+                              - last_execution_time
+                              - throttled_count
+                        start_time:
+                          type: integer
+                          description: Epoch millis
+                        last_notification_time:
+                          type: integer
+                          nullable: true
+                          description: Epoch millis
+                        end_time:
+                          type: integer
+                          nullable: true
+                          description: Epoch millis
+                        acknowledged_time:
+                          type: integer
+                          nullable: true
+                          description: Epoch millis
+                      required:
+                        - id
+                        - version
+                        - monitor_id
+                        - monitor_name
+                        - trigger_id
+                        - trigger_name
+                        - state
+                        - severity
+                        - start_time
+                      description: Alert object
+                  totalAlerts:
+                    type: integer
+                required:
+                  - ok
+                  - alerts
+                  - totalAlerts
+                example:
+                  ok: true
+                  alerts:
+                    - id: eQURa3gBKo1jAh6qUo49
+                      version: 300
+                      monitor_id: awUMa3gBKo1jAh6qu47E
+                      schema_version: 2
+                      monitor_version: 2
+                      monitor_name: Example_monitor_name
+                      trigger_id: bQUQa3gBKo1jAh6qnY6G
+                      trigger_name: Example_trigger_name
+                      state: ACTIVE
+                      error_message: null
+                      severity: "1"
+                      action_execution_results:
+                        - action_id: bgUQa3gBKo1jAh6qnY6G
+                          last_execution_time: 1617317979908
+                          throttled_count: 0
+                      start_time: 1616704000492
+                      last_notification_time: 1617317979908
+                      end_time: null
+                      acknowledged_time: null
+                  totalAlerts: 1
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                    enum:
+                      - false
+                  resp:
+                    type: string
+                required:
+                  - ok
+                  - resp
+  /api/alerting/monitors:
+    get:
+      operationId: getMonitors
+      summary: Get monitors
+      parameters:
+        - schema:
+            type: string
+            minLength: 1
+            description: Unique identifier for the datasource
+          required: false
+          description: Unique identifier for the datasource
+          name: dataSourceId
+          in: query
+        - schema:
+            type: integer
+            minimum: 0
+            description: Pagination offset
+          required: true
+          description: Pagination offset
+          name: from
+          in: query
+        - schema:
+            type: integer
+            minimum: 0
+            maximum: 10000
+            description: Number of results per page
+          required: true
+          description: Number of results per page
+          name: size
+          in: query
+        - schema:
+            type: string
+            description: Search string to filter results
+          required: false
+          description: Search string to filter results
+          name: search
+          in: query
+        - schema:
+            type: string
+            description: Field to sort by
+          required: false
+          description: Field to sort by
+          name: sortField
+          in: query
+        - schema:
+            type: string
+            enum:
+              - asc
+              - desc
+            description: Sort order
+          required: false
+          description: Sort order
+          name: sortDirection
+          in: query
+        - schema:
+            type: string
+            enum:
+              - all
+              - enabled
+              - disabled
+            description: Filter by monitor state
+          required: false
+          description: Filter by monitor state
+          name: state
+          in: query
+        - schema:
+            type: string
+            description: Comma-separated monitor IDs to filter by
+          required: false
+          description: Comma-separated monitor IDs to filter by
+          name: monitorIds
+          in: query
+      responses:
+        "200":
+          description: Monitors retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                    enum:
+                      - true
+                  monitors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        _id:
+                          type: string
+                        _version:
+                          type: integer
+                          minimum: 0
+                        _seq_no:
+                          type: integer
+                          minimum: 0
+                        _primary_term:
+                          type: integer
+                          minimum: 0
+                        monitor:
+                          type: object
+                          properties:
+                            type:
+                              type: string
+                            schema_version:
+                              type: integer
+                            name:
+                              type: string
+                            monitor_type:
+                              type: string
+                              enum:
+                                - query_level_monitor
+                                - bucket_level_monitor
+                                - doc_level_monitor
+                              description: Type of monitor
+                            user:
+                              type: object
+                              properties:
+                                name:
+                                  type: string
+                                backend_roles:
+                                  type: array
+                                  items:
+                                    type: string
+                                roles:
+                                  type: array
+                                  items:
+                                    type: string
+                                custom_attribute_names:
+                                  type: array
+                                  items:
+                                    type: string
+                                user_requested_tenant:
+                                  type: string
+                                  nullable: true
+                              required:
+                                - name
+                                - backend_roles
+                                - roles
+                                - custom_attribute_names
+                              description: User info from security plugin
+                            enabled:
+                              type: boolean
+                            enabled_time:
+                              type: integer
+                              description: Epoch millis when monitor was enabled
+                            schedule:
+                              type: object
+                              properties:
+                                period:
+                                  type: object
+                                  properties:
+                                    interval:
+                                      type: integer
+                                      minimum: 1
+                                    unit:
+                                      type: string
+                                      enum:
+                                        - MINUTES
+                                        - HOURS
+                                        - DAYS
+                                  required:
+                                    - interval
+                                    - unit
+                                cron:
+                                  type: object
+                                  properties:
+                                    expression:
+                                      type: string
+                                    timezone:
+                                      type: string
+                                  required:
+                                    - expression
+                                    - timezone
+                              description: Monitor schedule (period or cron)
+                            inputs:
+                              type: array
+                              items:
+                                type: object
+                                properties:
+                                  search:
+                                    type: object
+                                    properties:
+                                      indices:
+                                        type: array
+                                        items:
+                                          type: string
+                                          minLength: 1
+                                        minItems: 1
+                                      query:
+                                        type: object
+                                        additionalProperties:
+                                          nullable: true
+                                        description: OpenSearch query DSL
+                                    required:
+                                      - indices
+                                      - query
+                                  doc_level_input:
+                                    type: object
+                                    properties:
+                                      description:
+                                        type: string
+                                      indices:
+                                        type: array
+                                        items:
+                                          type: string
+                                          minLength: 1
+                                        minItems: 1
+                                      queries:
+                                        type: array
+                                        items:
+                                          type: object
+                                          properties:
+                                            id:
+                                              type: string
+                                            name:
+                                              type: string
+                                            query:
+                                              type: string
+                                            tags:
+                                              type: array
+                                              items:
+                                                type: string
+                                          required:
+                                            - id
+                                            - name
+                                            - query
+                                    required:
+                                      - indices
+                                      - queries
+                                description: Monitor input (search or doc_level_input)
+                            triggers:
+                              type: array
+                              items:
+                                type: object
+                                properties:
+                                  id:
+                                    type: string
+                                    description: Auto-generated trigger ID (present in responses)
+                                  name:
+                                    type: string
+                                  severity:
+                                    type: string
+                                    enum:
+                                      - "1"
+                                      - "2"
+                                      - "3"
+                                      - "4"
+                                      - "5"
+                                    description: 'Severity level: "1" (highest) through "5" (lowest)'
+                                  condition:
+                                    type: object
+                                    properties:
+                                      script:
+                                        type: object
+                                        properties:
+                                          source:
+                                            type: string
+                                          lang:
+                                            type: string
+                                        required:
+                                          - source
+                                    required:
+                                      - script
+                                  actions:
+                                    type: array
+                                    items:
+                                      type: object
+                                      properties:
+                                        id:
+                                          type: string
+                                          description: Auto-generated action ID (present in responses)
+                                        name:
+                                          type: string
+                                        destination_id:
+                                          type: string
+                                        message_template:
+                                          type: object
+                                          properties:
+                                            source:
+                                              type: string
+                                            lang:
+                                              type: string
+                                          required:
+                                            - source
+                                        subject_template:
+                                          type: object
+                                          properties:
+                                            source:
+                                              type: string
+                                            lang:
+                                              type: string
+                                          required:
+                                            - source
+                                        throttle_enabled:
+                                          type: boolean
+                                        throttle:
+                                          type: object
+                                          properties:
+                                            value:
+                                              type: integer
+                                              minimum: 1
+                                            unit:
+                                              type: string
+                                              enum:
+                                                - MINUTES
+                                                - HOURS
+                                                - DAYS
+                                          required:
+                                            - value
+                                            - unit
+                                      required:
+                                        - name
+                                        - destination_id
+                                        - message_template
+                                      description: Action to execute when trigger fires
+                                  bucket_level_trigger:
+                                    type: object
+                                    properties:
+                                      name:
+                                        type: string
+                                      severity:
+                                        type: string
+                                        enum:
+                                          - "1"
+                                          - "2"
+                                          - "3"
+                                          - "4"
+                                          - "5"
+                                        description: 'Severity level: "1" (highest) through "5" (lowest)'
+                                      condition:
+                                        type: object
+                                        properties:
+                                          buckets_path:
+                                            type: object
+                                            additionalProperties:
+                                              type: string
+                                          parent_bucket_path:
+                                            type: string
+                                          script:
+                                            type: object
+                                            properties:
+                                              source:
+                                                type: string
+                                              lang:
+                                                type: string
+                                            required:
+                                              - source
+                                          gap_policy:
+                                            type: string
+                                        required:
+                                          - script
+                                      actions:
+                                        type: array
+                                        items:
+                                          type: object
+                                          properties:
+                                            id:
+                                              type: string
+                                              description: Auto-generated action ID (present in responses)
+                                            name:
+                                              type: string
+                                            destination_id:
+                                              type: string
+                                            message_template:
+                                              type: object
+                                              properties:
+                                                source:
+                                                  type: string
+                                                lang:
+                                                  type: string
+                                              required:
+                                                - source
+                                            subject_template:
+                                              type: object
+                                              properties:
+                                                source:
+                                                  type: string
+                                                lang:
+                                                  type: string
+                                              required:
+                                                - source
+                                            throttle_enabled:
+                                              type: boolean
+                                            throttle:
+                                              type: object
+                                              properties:
+                                                value:
+                                                  type: integer
+                                                  minimum: 1
+                                                unit:
+                                                  type: string
+                                                  enum:
+                                                    - MINUTES
+                                                    - HOURS
+                                                    - DAYS
+                                              required:
+                                                - value
+                                                - unit
+                                          required:
+                                            - name
+                                            - destination_id
+                                            - message_template
+                                          description: Action to execute when trigger fires
+                                    required:
+                                      - name
+                                      - severity
+                                      - condition
+                                  document_level_trigger:
+                                    type: object
+                                    properties:
+                                      name:
+                                        type: string
+                                      severity:
+                                        type: string
+                                        enum:
+                                          - "1"
+                                          - "2"
+                                          - "3"
+                                          - "4"
+                                          - "5"
+                                        description: 'Severity level: "1" (highest) through "5" (lowest)'
+                                      condition:
+                                        type: object
+                                        properties:
+                                          script:
+                                            type: object
+                                            properties:
+                                              source:
+                                                type: string
+                                              lang:
+                                                type: string
+                                            required:
+                                              - source
+                                        required:
+                                          - script
+                                      actions:
+                                        type: array
+                                        items:
+                                          type: object
+                                          properties:
+                                            id:
+                                              type: string
+                                              description: Auto-generated action ID (present in responses)
+                                            name:
+                                              type: string
+                                            destination_id:
+                                              type: string
+                                            message_template:
+                                              type: object
+                                              properties:
+                                                source:
+                                                  type: string
+                                                lang:
+                                                  type: string
+                                              required:
+                                                - source
+                                            subject_template:
+                                              type: object
+                                              properties:
+                                                source:
+                                                  type: string
+                                                lang:
+                                                  type: string
+                                              required:
+                                                - source
+                                            throttle_enabled:
+                                              type: boolean
+                                            throttle:
+                                              type: object
+                                              properties:
+                                                value:
+                                                  type: integer
+                                                  minimum: 1
+                                                unit:
+                                                  type: string
+                                                  enum:
+                                                    - MINUTES
+                                                    - HOURS
+                                                    - DAYS
+                                              required:
+                                                - value
+                                                - unit
+                                          required:
+                                            - name
+                                            - destination_id
+                                            - message_template
+                                          description: Action to execute when trigger fires
+                                    required:
+                                      - name
+                                      - severity
+                                      - condition
+                                description: Monitor trigger definition
+                            last_update_time:
+                              type: integer
+                              description: Epoch millis of last update
+                          required:
+                            - type
+                            - name
+                            - enabled
+                            - schedule
+                            - inputs
+                            - triggers
+                          description: Monitor object with metadata
+                      required:
+                        - _id
+                        - _version
+                        - _seq_no
+                        - _primary_term
+                        - monitor
+                  totalMonitors:
+                    type: integer
+                required:
+                  - ok
+                  - monitors
+                  - totalMonitors
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                    enum:
+                      - false
+                  resp:
+                    type: string
+                required:
+                  - ok
+                  - resp
+    post:
+      operationId: createMonitor
+      summary: Create a monitor
+      parameters:
+        - schema:
+            type: string
+            minLength: 1
+            description: Unique identifier for the datasource
+          required: false
+          description: Unique identifier for the datasource
+          name: dataSourceId
+          in: query
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                type:
+                  type: string
+                  enum:
+                    - monitor
+                name:
+                  type: string
+                  minLength: 1
+                  description: Monitor name
+                monitor_type:
+                  type: string
+                  enum:
+                    - query_level_monitor
+                    - bucket_level_monitor
+                    - doc_level_monitor
+                  description: Type of monitor
+                enabled:
+                  type: boolean
+                schedule:
+                  type: object
+                  properties:
+                    period:
+                      type: object
+                      properties:
+                        interval:
+                          type: integer
+                          minimum: 1
+                        unit:
+                          type: string
+                          enum:
+                            - MINUTES
+                            - HOURS
+                            - DAYS
+                      required:
+                        - interval
+                        - unit
+                    cron:
+                      type: object
+                      properties:
+                        expression:
+                          type: string
+                        timezone:
+                          type: string
+                      required:
+                        - expression
+                        - timezone
+                  description: Monitor schedule (period or cron)
+                inputs:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      search:
+                        type: object
+                        properties:
+                          indices:
+                            type: array
+                            items:
+                              type: string
+                              minLength: 1
+                            minItems: 1
+                          query:
+                            type: object
+                            additionalProperties:
+                              nullable: true
+                            description: OpenSearch query DSL
+                        required:
+                          - indices
+                          - query
+                      doc_level_input:
+                        type: object
+                        properties:
+                          description:
+                            type: string
+                          indices:
+                            type: array
+                            items:
+                              type: string
+                              minLength: 1
+                            minItems: 1
+                          queries:
+                            type: array
+                            items:
+                              type: object
+                              properties:
+                                id:
+                                  type: string
+                                name:
+                                  type: string
+                                query:
+                                  type: string
+                                tags:
+                                  type: array
+                                  items:
+                                    type: string
+                              required:
+                                - id
+                                - name
+                                - query
+                        required:
+                          - indices
+                          - queries
+                    description: Monitor input (search or doc_level_input)
+                triggers:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                        description: Auto-generated trigger ID (present in responses)
+                      name:
+                        type: string
+                      severity:
+                        type: string
+                        enum:
+                          - "1"
+                          - "2"
+                          - "3"
+                          - "4"
+                          - "5"
+                        description: 'Severity level: "1" (highest) through "5" (lowest)'
+                      condition:
+                        type: object
+                        properties:
+                          script:
+                            type: object
+                            properties:
+                              source:
+                                type: string
+                              lang:
+                                type: string
+                            required:
+                              - source
+                        required:
+                          - script
+                      actions:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            id:
+                              type: string
+                              description: Auto-generated action ID (present in responses)
+                            name:
+                              type: string
+                            destination_id:
+                              type: string
+                            message_template:
+                              type: object
+                              properties:
+                                source:
+                                  type: string
+                                lang:
+                                  type: string
+                              required:
+                                - source
+                            subject_template:
+                              type: object
+                              properties:
+                                source:
+                                  type: string
+                                lang:
+                                  type: string
+                              required:
+                                - source
+                            throttle_enabled:
+                              type: boolean
+                            throttle:
+                              type: object
+                              properties:
+                                value:
+                                  type: integer
+                                  minimum: 1
+                                unit:
+                                  type: string
+                                  enum:
+                                    - MINUTES
+                                    - HOURS
+                                    - DAYS
+                              required:
+                                - value
+                                - unit
+                          required:
+                            - name
+                            - destination_id
+                            - message_template
+                          description: Action to execute when trigger fires
+                      bucket_level_trigger:
+                        type: object
+                        properties:
+                          name:
+                            type: string
+                          severity:
+                            type: string
+                            enum:
+                              - "1"
+                              - "2"
+                              - "3"
+                              - "4"
+                              - "5"
+                            description: 'Severity level: "1" (highest) through "5" (lowest)'
+                          condition:
+                            type: object
+                            properties:
+                              buckets_path:
+                                type: object
+                                additionalProperties:
+                                  type: string
+                              parent_bucket_path:
+                                type: string
+                              script:
+                                type: object
+                                properties:
+                                  source:
+                                    type: string
+                                  lang:
+                                    type: string
+                                required:
+                                  - source
+                              gap_policy:
+                                type: string
+                            required:
+                              - script
+                          actions:
+                            type: array
+                            items:
+                              type: object
+                              properties:
+                                id:
+                                  type: string
+                                  description: Auto-generated action ID (present in responses)
+                                name:
+                                  type: string
+                                destination_id:
+                                  type: string
+                                message_template:
+                                  type: object
+                                  properties:
+                                    source:
+                                      type: string
+                                    lang:
+                                      type: string
+                                  required:
+                                    - source
+                                subject_template:
+                                  type: object
+                                  properties:
+                                    source:
+                                      type: string
+                                    lang:
+                                      type: string
+                                  required:
+                                    - source
+                                throttle_enabled:
+                                  type: boolean
+                                throttle:
+                                  type: object
+                                  properties:
+                                    value:
+                                      type: integer
+                                      minimum: 1
+                                    unit:
+                                      type: string
+                                      enum:
+                                        - MINUTES
+                                        - HOURS
+                                        - DAYS
+                                  required:
+                                    - value
+                                    - unit
+                              required:
+                                - name
+                                - destination_id
+                                - message_template
+                              description: Action to execute when trigger fires
+                        required:
+                          - name
+                          - severity
+                          - condition
+                      document_level_trigger:
+                        type: object
+                        properties:
+                          name:
+                            type: string
+                          severity:
+                            type: string
+                            enum:
+                              - "1"
+                              - "2"
+                              - "3"
+                              - "4"
+                              - "5"
+                            description: 'Severity level: "1" (highest) through "5" (lowest)'
+                          condition:
+                            type: object
+                            properties:
+                              script:
+                                type: object
+                                properties:
+                                  source:
+                                    type: string
+                                  lang:
+                                    type: string
+                                required:
+                                  - source
+                            required:
+                              - script
+                          actions:
+                            type: array
+                            items:
+                              type: object
+                              properties:
+                                id:
+                                  type: string
+                                  description: Auto-generated action ID (present in responses)
+                                name:
+                                  type: string
+                                destination_id:
+                                  type: string
+                                message_template:
+                                  type: object
+                                  properties:
+                                    source:
+                                      type: string
+                                    lang:
+                                      type: string
+                                  required:
+                                    - source
+                                subject_template:
+                                  type: object
+                                  properties:
+                                    source:
+                                      type: string
+                                    lang:
+                                      type: string
+                                  required:
+                                    - source
+                                throttle_enabled:
+                                  type: boolean
+                                throttle:
+                                  type: object
+                                  properties:
+                                    value:
+                                      type: integer
+                                      minimum: 1
+                                    unit:
+                                      type: string
+                                      enum:
+                                        - MINUTES
+                                        - HOURS
+                                        - DAYS
+                                  required:
+                                    - value
+                                    - unit
+                              required:
+                                - name
+                                - destination_id
+                                - message_template
+                              description: Action to execute when trigger fires
+                        required:
+                          - name
+                          - severity
+                          - condition
+                    description: Monitor trigger definition
+                rbac_roles:
+                  type: array
+                  items:
+                    type: string
+              required:
+                - name
+                - enabled
+                - schedule
+                - inputs
+                - triggers
+              description: Monitor definition
+              example: &a1
+                type: monitor
+                name: test-monitor
+                monitor_type: query_level_monitor
+                enabled: true
+                schedule:
+                  period:
+                    interval: 1
+                    unit: MINUTES
+                inputs:
+                  - search:
+                      indices:
+                        - movies
+                      query:
+                        size: 0
+                        query:
+                          bool:
+                            filter:
+                              range:
+                                "@timestamp":
+                                  gte: "{{period_end}}||-1h"
+                                  lte: "{{period_end}}"
+                                  format: epoch_millis
+                triggers:
+                  - name: test-trigger
+                    severity: "1"
+                    condition:
+                      script:
+                        source: ctx.results[0].hits.total.value > 0
+                        lang: painless
+                    actions:
+                      - name: test-action
+                        destination_id: ld7912sBlQ5JUWWFThoW
+                        message_template:
+                          source: This is my message body.
+                        throttle_enabled: true
+                        throttle:
+                          value: 27
+                          unit: MINUTES
+                        subject_template:
+                          source: TheSubject
+      responses:
+        "200":
+          description: Monitor created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                    enum:
+                      - true
+                  resp:
+                    type: object
+                    properties:
+                      _id:
+                        type: string
+                      _version:
+                        type: integer
+                        minimum: 0
+                      _seq_no:
+                        type: integer
+                        minimum: 0
+                      _primary_term:
+                        type: integer
+                        minimum: 0
+                      monitor:
+                        type: object
+                        properties:
+                          type:
+                            type: string
+                          schema_version:
+                            type: integer
+                          name:
+                            type: string
+                          monitor_type:
+                            type: string
+                            enum:
+                              - query_level_monitor
+                              - bucket_level_monitor
+                              - doc_level_monitor
+                            description: Type of monitor
+                          user:
+                            type: object
+                            properties:
+                              name:
+                                type: string
+                              backend_roles:
+                                type: array
+                                items:
+                                  type: string
+                              roles:
+                                type: array
+                                items:
+                                  type: string
+                              custom_attribute_names:
+                                type: array
+                                items:
+                                  type: string
+                              user_requested_tenant:
+                                type: string
+                                nullable: true
+                            required:
+                              - name
+                              - backend_roles
+                              - roles
+                              - custom_attribute_names
+                            description: User info from security plugin
+                          enabled:
+                            type: boolean
+                          enabled_time:
+                            type: integer
+                            description: Epoch millis when monitor was enabled
+                          schedule:
+                            type: object
+                            properties:
+                              period:
+                                type: object
+                                properties:
+                                  interval:
+                                    type: integer
+                                    minimum: 1
+                                  unit:
+                                    type: string
+                                    enum:
+                                      - MINUTES
+                                      - HOURS
+                                      - DAYS
+                                required:
+                                  - interval
+                                  - unit
+                              cron:
+                                type: object
+                                properties:
+                                  expression:
+                                    type: string
+                                  timezone:
+                                    type: string
+                                required:
+                                  - expression
+                                  - timezone
+                            description: Monitor schedule (period or cron)
+                          inputs:
+                            type: array
+                            items:
+                              type: object
+                              properties:
+                                search:
+                                  type: object
+                                  properties:
+                                    indices:
+                                      type: array
+                                      items:
+                                        type: string
+                                        minLength: 1
+                                      minItems: 1
+                                    query:
+                                      type: object
+                                      additionalProperties:
+                                        nullable: true
+                                      description: OpenSearch query DSL
+                                  required:
+                                    - indices
+                                    - query
+                                doc_level_input:
+                                  type: object
+                                  properties:
+                                    description:
+                                      type: string
+                                    indices:
+                                      type: array
+                                      items:
+                                        type: string
+                                        minLength: 1
+                                      minItems: 1
+                                    queries:
+                                      type: array
+                                      items:
+                                        type: object
+                                        properties:
+                                          id:
+                                            type: string
+                                          name:
+                                            type: string
+                                          query:
+                                            type: string
+                                          tags:
+                                            type: array
+                                            items:
+                                              type: string
+                                        required:
+                                          - id
+                                          - name
+                                          - query
+                                  required:
+                                    - indices
+                                    - queries
+                              description: Monitor input (search or doc_level_input)
+                          triggers:
+                            type: array
+                            items:
+                              type: object
+                              properties:
+                                id:
+                                  type: string
+                                  description: Auto-generated trigger ID (present in responses)
+                                name:
+                                  type: string
+                                severity:
+                                  type: string
+                                  enum:
+                                    - "1"
+                                    - "2"
+                                    - "3"
+                                    - "4"
+                                    - "5"
+                                  description: 'Severity level: "1" (highest) through "5" (lowest)'
+                                condition:
+                                  type: object
+                                  properties:
+                                    script:
+                                      type: object
+                                      properties:
+                                        source:
+                                          type: string
+                                        lang:
+                                          type: string
+                                      required:
+                                        - source
+                                  required:
+                                    - script
+                                actions:
+                                  type: array
+                                  items:
+                                    type: object
+                                    properties:
+                                      id:
+                                        type: string
+                                        description: Auto-generated action ID (present in responses)
+                                      name:
+                                        type: string
+                                      destination_id:
+                                        type: string
+                                      message_template:
+                                        type: object
+                                        properties:
+                                          source:
+                                            type: string
+                                          lang:
+                                            type: string
+                                        required:
+                                          - source
+                                      subject_template:
+                                        type: object
+                                        properties:
+                                          source:
+                                            type: string
+                                          lang:
+                                            type: string
+                                        required:
+                                          - source
+                                      throttle_enabled:
+                                        type: boolean
+                                      throttle:
+                                        type: object
+                                        properties:
+                                          value:
+                                            type: integer
+                                            minimum: 1
+                                          unit:
+                                            type: string
+                                            enum:
+                                              - MINUTES
+                                              - HOURS
+                                              - DAYS
+                                        required:
+                                          - value
+                                          - unit
+                                    required:
+                                      - name
+                                      - destination_id
+                                      - message_template
+                                    description: Action to execute when trigger fires
+                                bucket_level_trigger:
+                                  type: object
+                                  properties:
+                                    name:
+                                      type: string
+                                    severity:
+                                      type: string
+                                      enum:
+                                        - "1"
+                                        - "2"
+                                        - "3"
+                                        - "4"
+                                        - "5"
+                                      description: 'Severity level: "1" (highest) through "5" (lowest)'
+                                    condition:
+                                      type: object
+                                      properties:
+                                        buckets_path:
+                                          type: object
+                                          additionalProperties:
+                                            type: string
+                                        parent_bucket_path:
+                                          type: string
+                                        script:
+                                          type: object
+                                          properties:
+                                            source:
+                                              type: string
+                                            lang:
+                                              type: string
+                                          required:
+                                            - source
+                                        gap_policy:
+                                          type: string
+                                      required:
+                                        - script
+                                    actions:
+                                      type: array
+                                      items:
+                                        type: object
+                                        properties:
+                                          id:
+                                            type: string
+                                            description: Auto-generated action ID (present in responses)
+                                          name:
+                                            type: string
+                                          destination_id:
+                                            type: string
+                                          message_template:
+                                            type: object
+                                            properties:
+                                              source:
+                                                type: string
+                                              lang:
+                                                type: string
+                                            required:
+                                              - source
+                                          subject_template:
+                                            type: object
+                                            properties:
+                                              source:
+                                                type: string
+                                              lang:
+                                                type: string
+                                            required:
+                                              - source
+                                          throttle_enabled:
+                                            type: boolean
+                                          throttle:
+                                            type: object
+                                            properties:
+                                              value:
+                                                type: integer
+                                                minimum: 1
+                                              unit:
+                                                type: string
+                                                enum:
+                                                  - MINUTES
+                                                  - HOURS
+                                                  - DAYS
+                                            required:
+                                              - value
+                                              - unit
+                                        required:
+                                          - name
+                                          - destination_id
+                                          - message_template
+                                        description: Action to execute when trigger fires
+                                  required:
+                                    - name
+                                    - severity
+                                    - condition
+                                document_level_trigger:
+                                  type: object
+                                  properties:
+                                    name:
+                                      type: string
+                                    severity:
+                                      type: string
+                                      enum:
+                                        - "1"
+                                        - "2"
+                                        - "3"
+                                        - "4"
+                                        - "5"
+                                      description: 'Severity level: "1" (highest) through "5" (lowest)'
+                                    condition:
+                                      type: object
+                                      properties:
+                                        script:
+                                          type: object
+                                          properties:
+                                            source:
+                                              type: string
+                                            lang:
+                                              type: string
+                                          required:
+                                            - source
+                                      required:
+                                        - script
+                                    actions:
+                                      type: array
+                                      items:
+                                        type: object
+                                        properties:
+                                          id:
+                                            type: string
+                                            description: Auto-generated action ID (present in responses)
+                                          name:
+                                            type: string
+                                          destination_id:
+                                            type: string
+                                          message_template:
+                                            type: object
+                                            properties:
+                                              source:
+                                                type: string
+                                              lang:
+                                                type: string
+                                            required:
+                                              - source
+                                          subject_template:
+                                            type: object
+                                            properties:
+                                              source:
+                                                type: string
+                                              lang:
+                                                type: string
+                                            required:
+                                              - source
+                                          throttle_enabled:
+                                            type: boolean
+                                          throttle:
+                                            type: object
+                                            properties:
+                                              value:
+                                                type: integer
+                                                minimum: 1
+                                              unit:
+                                                type: string
+                                                enum:
+                                                  - MINUTES
+                                                  - HOURS
+                                                  - DAYS
+                                            required:
+                                              - value
+                                              - unit
+                                        required:
+                                          - name
+                                          - destination_id
+                                          - message_template
+                                        description: Action to execute when trigger fires
+                                  required:
+                                    - name
+                                    - severity
+                                    - condition
+                              description: Monitor trigger definition
+                          last_update_time:
+                            type: integer
+                            description: Epoch millis of last update
+                        required:
+                          - type
+                          - name
+                          - enabled
+                          - schedule
+                          - inputs
+                          - triggers
+                        description: Monitor object with metadata
+                    required:
+                      - _id
+                      - _version
+                      - _seq_no
+                      - _primary_term
+                      - monitor
+                    description: Monitor document with version metadata
+                required:
+                  - ok
+                  - resp
+                description: Successful monitor response
+                example:
+                  ok: true
+                  resp:
+                    _id: vd5k2GsBlQ5JUWWFxhsP
+                    _version: 1
+                    _seq_no: 7
+                    _primary_term: 1
+                    monitor:
+                      type: monitor
+                      schema_version: 1
+                      name: test-monitor
+                      enabled: true
+                      enabled_time: 1562703611363
+                      schedule:
+                        period:
+                          interval: 1
+                          unit: MINUTES
+                      inputs:
+                        - search:
+                            indices:
+                              - movies
+                            query:
+                              size: 0
+                              query:
+                                bool:
+                                  filter:
+                                    - range:
+                                        "@timestamp":
+                                          from: "{{period_end}}||-1h"
+                                          to: "{{period_end}}"
+                                          format: epoch_millis
+                      triggers:
+                        - id: ud5k2GsBlQ5JUWWFxRvi
+                          name: test-trigger
+                          severity: "1"
+                          condition:
+                            script:
+                              source: ctx.results[0].hits.total.value > 0
+                              lang: painless
+                          actions:
+                            - id: ut5k2GsBlQ5JUWWFxRvj
+                              name: test-action
+                              destination_id: ld7912sBlQ5JUWWFThoW
+                              message_template:
+                                source: This is my message body.
+                                lang: mustache
+                              throttle_enabled: true
+                              throttle:
+                                value: 27
+                                unit: MINUTES
+                              subject_template:
+                                source: TheSubject
+                                lang: mustache
+                      last_update_time: 1562703611363
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                    enum:
+                      - false
+                  resp:
+                    type: string
+                required:
+                  - ok
+                  - resp
+  /api/alerting/monitors/_search:
+    post:
+      operationId: searchMonitors
+      summary: Search monitors
+      parameters:
+        - schema:
+            type: string
+            minLength: 1
+            description: Unique identifier for the datasource
+          required: false
+          description: Unique identifier for the datasource
+          name: dataSourceId
+          in: query
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                query:
+                  type: object
+                  additionalProperties:
+                    nullable: true
+                  description: OpenSearch query DSL
+                size:
+                  type: integer
+                from:
+                  type: integer
+                sort:
+                  type: array
+                  items:
+                    type: object
+                    additionalProperties:
+                      nullable: true
+                _source:
+                  anyOf:
+                    - type: boolean
+                    - type: array
+                      items:
+                        type: string
+              additionalProperties:
+                nullable: true
+              description: OpenSearch _search request body
+      responses:
+        "200":
+          description: Search results
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                    enum:
+                      - true
+                  resp:
+                    type: object
+                    properties:
+                      took:
+                        type: integer
+                      timed_out:
+                        type: boolean
+                      _shards:
+                        type: object
+                        properties:
+                          total:
+                            type: integer
+                          successful:
+                            type: integer
+                          skipped:
+                            type: integer
+                          failed:
+                            type: integer
+                        required:
+                          - total
+                          - successful
+                          - failed
+                      hits:
+                        type: object
+                        properties:
+                          total:
+                            anyOf:
+                              - type: number
+                              - type: object
+                                properties:
+                                  value:
+                                    type: number
+                                  relation:
+                                    type: string
+                                required:
+                                  - value
+                                  - relation
+                          max_score:
+                            type: number
+                            nullable: true
+                          hits:
+                            type: array
+                            items:
+                              type: object
+                              properties:
+                                _index:
+                                  type: string
+                                _id:
+                                  type: string
+                                _score:
+                                  type: number
+                                  nullable: true
+                                _source:
+                                  type: object
+                                  properties:
+                                    type:
+                                      type: string
+                                    schema_version:
+                                      type: integer
+                                    name:
+                                      type: string
+                                    monitor_type:
+                                      type: string
+                                      enum:
+                                        - query_level_monitor
+                                        - bucket_level_monitor
+                                        - doc_level_monitor
+                                      description: Type of monitor
+                                    user:
+                                      type: object
+                                      properties:
+                                        name:
+                                          type: string
+                                        backend_roles:
+                                          type: array
+                                          items:
+                                            type: string
+                                        roles:
+                                          type: array
+                                          items:
+                                            type: string
+                                        custom_attribute_names:
+                                          type: array
+                                          items:
+                                            type: string
+                                        user_requested_tenant:
+                                          type: string
+                                          nullable: true
+                                      required:
+                                        - name
+                                        - backend_roles
+                                        - roles
+                                        - custom_attribute_names
+                                      description: User info from security plugin
+                                    enabled:
+                                      type: boolean
+                                    enabled_time:
+                                      type: integer
+                                      description: Epoch millis when monitor was enabled
+                                    schedule:
+                                      type: object
+                                      properties:
+                                        period:
+                                          type: object
+                                          properties:
+                                            interval:
+                                              type: integer
+                                              minimum: 1
+                                            unit:
+                                              type: string
+                                              enum:
+                                                - MINUTES
+                                                - HOURS
+                                                - DAYS
+                                          required:
+                                            - interval
+                                            - unit
+                                        cron:
+                                          type: object
+                                          properties:
+                                            expression:
+                                              type: string
+                                            timezone:
+                                              type: string
+                                          required:
+                                            - expression
+                                            - timezone
+                                      description: Monitor schedule (period or cron)
+                                    inputs:
+                                      type: array
+                                      items:
+                                        type: object
+                                        properties:
+                                          search:
+                                            type: object
+                                            properties:
+                                              indices:
+                                                type: array
+                                                items:
+                                                  type: string
+                                                  minLength: 1
+                                                minItems: 1
+                                              query:
+                                                type: object
+                                                additionalProperties:
+                                                  nullable: true
+                                                description: OpenSearch query DSL
+                                            required:
+                                              - indices
+                                              - query
+                                          doc_level_input:
+                                            type: object
+                                            properties:
+                                              description:
+                                                type: string
+                                              indices:
+                                                type: array
+                                                items:
+                                                  type: string
+                                                  minLength: 1
+                                                minItems: 1
+                                              queries:
+                                                type: array
+                                                items:
+                                                  type: object
+                                                  properties:
+                                                    id:
+                                                      type: string
+                                                    name:
+                                                      type: string
+                                                    query:
+                                                      type: string
+                                                    tags:
+                                                      type: array
+                                                      items:
+                                                        type: string
+                                                  required:
+                                                    - id
+                                                    - name
+                                                    - query
+                                            required:
+                                              - indices
+                                              - queries
+                                        description: Monitor input (search or doc_level_input)
+                                    triggers:
+                                      type: array
+                                      items:
+                                        type: object
+                                        properties:
+                                          id:
+                                            type: string
+                                            description: Auto-generated trigger ID (present in responses)
+                                          name:
+                                            type: string
+                                          severity:
+                                            type: string
+                                            enum:
+                                              - "1"
+                                              - "2"
+                                              - "3"
+                                              - "4"
+                                              - "5"
+                                            description: 'Severity level: "1" (highest) through "5" (lowest)'
+                                          condition:
+                                            type: object
+                                            properties:
+                                              script:
+                                                type: object
+                                                properties:
+                                                  source:
+                                                    type: string
+                                                  lang:
+                                                    type: string
+                                                required:
+                                                  - source
+                                            required:
+                                              - script
+                                          actions:
+                                            type: array
+                                            items:
+                                              type: object
+                                              properties:
+                                                id:
+                                                  type: string
+                                                  description: Auto-generated action ID (present in responses)
+                                                name:
+                                                  type: string
+                                                destination_id:
+                                                  type: string
+                                                message_template:
+                                                  type: object
+                                                  properties:
+                                                    source:
+                                                      type: string
+                                                    lang:
+                                                      type: string
+                                                  required:
+                                                    - source
+                                                subject_template:
+                                                  type: object
+                                                  properties:
+                                                    source:
+                                                      type: string
+                                                    lang:
+                                                      type: string
+                                                  required:
+                                                    - source
+                                                throttle_enabled:
+                                                  type: boolean
+                                                throttle:
+                                                  type: object
+                                                  properties:
+                                                    value:
+                                                      type: integer
+                                                      minimum: 1
+                                                    unit:
+                                                      type: string
+                                                      enum:
+                                                        - MINUTES
+                                                        - HOURS
+                                                        - DAYS
+                                                  required:
+                                                    - value
+                                                    - unit
+                                              required:
+                                                - name
+                                                - destination_id
+                                                - message_template
+                                              description: Action to execute when trigger fires
+                                          bucket_level_trigger:
+                                            type: object
+                                            properties:
+                                              name:
+                                                type: string
+                                              severity:
+                                                type: string
+                                                enum:
+                                                  - "1"
+                                                  - "2"
+                                                  - "3"
+                                                  - "4"
+                                                  - "5"
+                                                description: 'Severity level: "1" (highest) through "5" (lowest)'
+                                              condition:
+                                                type: object
+                                                properties:
+                                                  buckets_path:
+                                                    type: object
+                                                    additionalProperties:
+                                                      type: string
+                                                  parent_bucket_path:
+                                                    type: string
+                                                  script:
+                                                    type: object
+                                                    properties:
+                                                      source:
+                                                        type: string
+                                                      lang:
+                                                        type: string
+                                                    required:
+                                                      - source
+                                                  gap_policy:
+                                                    type: string
+                                                required:
+                                                  - script
+                                              actions:
+                                                type: array
+                                                items:
+                                                  type: object
+                                                  properties:
+                                                    id:
+                                                      type: string
+                                                      description: Auto-generated action ID (present in responses)
+                                                    name:
+                                                      type: string
+                                                    destination_id:
+                                                      type: string
+                                                    message_template:
+                                                      type: object
+                                                      properties:
+                                                        source:
+                                                          type: string
+                                                        lang:
+                                                          type: string
+                                                      required:
+                                                        - source
+                                                    subject_template:
+                                                      type: object
+                                                      properties:
+                                                        source:
+                                                          type: string
+                                                        lang:
+                                                          type: string
+                                                      required:
+                                                        - source
+                                                    throttle_enabled:
+                                                      type: boolean
+                                                    throttle:
+                                                      type: object
+                                                      properties:
+                                                        value:
+                                                          type: integer
+                                                          minimum: 1
+                                                        unit:
+                                                          type: string
+                                                          enum:
+                                                            - MINUTES
+                                                            - HOURS
+                                                            - DAYS
+                                                      required:
+                                                        - value
+                                                        - unit
+                                                  required:
+                                                    - name
+                                                    - destination_id
+                                                    - message_template
+                                                  description: Action to execute when trigger fires
+                                            required:
+                                              - name
+                                              - severity
+                                              - condition
+                                          document_level_trigger:
+                                            type: object
+                                            properties:
+                                              name:
+                                                type: string
+                                              severity:
+                                                type: string
+                                                enum:
+                                                  - "1"
+                                                  - "2"
+                                                  - "3"
+                                                  - "4"
+                                                  - "5"
+                                                description: 'Severity level: "1" (highest) through "5" (lowest)'
+                                              condition:
+                                                type: object
+                                                properties:
+                                                  script:
+                                                    type: object
+                                                    properties:
+                                                      source:
+                                                        type: string
+                                                      lang:
+                                                        type: string
+                                                    required:
+                                                      - source
+                                                required:
+                                                  - script
+                                              actions:
+                                                type: array
+                                                items:
+                                                  type: object
+                                                  properties:
+                                                    id:
+                                                      type: string
+                                                      description: Auto-generated action ID (present in responses)
+                                                    name:
+                                                      type: string
+                                                    destination_id:
+                                                      type: string
+                                                    message_template:
+                                                      type: object
+                                                      properties:
+                                                        source:
+                                                          type: string
+                                                        lang:
+                                                          type: string
+                                                      required:
+                                                        - source
+                                                    subject_template:
+                                                      type: object
+                                                      properties:
+                                                        source:
+                                                          type: string
+                                                        lang:
+                                                          type: string
+                                                      required:
+                                                        - source
+                                                    throttle_enabled:
+                                                      type: boolean
+                                                    throttle:
+                                                      type: object
+                                                      properties:
+                                                        value:
+                                                          type: integer
+                                                          minimum: 1
+                                                        unit:
+                                                          type: string
+                                                          enum:
+                                                            - MINUTES
+                                                            - HOURS
+                                                            - DAYS
+                                                      required:
+                                                        - value
+                                                        - unit
+                                                  required:
+                                                    - name
+                                                    - destination_id
+                                                    - message_template
+                                                  description: Action to execute when trigger fires
+                                            required:
+                                              - name
+                                              - severity
+                                              - condition
+                                        description: Monitor trigger definition
+                                    last_update_time:
+                                      type: integer
+                                      description: Epoch millis of last update
+                                  required:
+                                    - type
+                                    - name
+                                    - enabled
+                                    - schedule
+                                    - inputs
+                                    - triggers
+                                  description: Monitor object with metadata
+                              required:
+                                - _index
+                                - _id
+                                - _score
+                                - _source
+                        required:
+                          - total
+                          - max_score
+                          - hits
+                    required:
+                      - took
+                      - timed_out
+                      - _shards
+                      - hits
+                required:
+                  - ok
+                  - resp
+                description: Search monitors response
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                    enum:
+                      - false
+                  resp:
+                    type: string
+                required:
+                  - ok
+                  - resp
+  /api/alerting/monitors/{id}:
+    get:
+      operationId: getMonitor
+      summary: Get a monitor by ID
+      parameters:
+        - schema:
+            type: string
+            minLength: 1
+            description: Monitor ID
+          required: true
+          description: Monitor ID
+          name: id
+          in: path
+        - schema:
+            type: string
+            minLength: 1
+            description: Unique identifier for the datasource
+          required: false
+          description: Unique identifier for the datasource
+          name: dataSourceId
+          in: query
+      responses:
+        "200":
+          description: Monitor retrieved
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                    enum:
+                      - true
+                  resp:
+                    type: object
+                    properties:
+                      _id:
+                        type: string
+                      _version:
+                        type: integer
+                        minimum: 0
+                      _seq_no:
+                        type: integer
+                        minimum: 0
+                      _primary_term:
+                        type: integer
+                        minimum: 0
+                      monitor:
+                        type: object
+                        properties:
+                          type:
+                            type: string
+                          schema_version:
+                            type: integer
+                          name:
+                            type: string
+                          monitor_type:
+                            type: string
+                            enum:
+                              - query_level_monitor
+                              - bucket_level_monitor
+                              - doc_level_monitor
+                            description: Type of monitor
+                          user:
+                            type: object
+                            properties:
+                              name:
+                                type: string
+                              backend_roles:
+                                type: array
+                                items:
+                                  type: string
+                              roles:
+                                type: array
+                                items:
+                                  type: string
+                              custom_attribute_names:
+                                type: array
+                                items:
+                                  type: string
+                              user_requested_tenant:
+                                type: string
+                                nullable: true
+                            required:
+                              - name
+                              - backend_roles
+                              - roles
+                              - custom_attribute_names
+                            description: User info from security plugin
+                          enabled:
+                            type: boolean
+                          enabled_time:
+                            type: integer
+                            description: Epoch millis when monitor was enabled
+                          schedule:
+                            type: object
+                            properties:
+                              period:
+                                type: object
+                                properties:
+                                  interval:
+                                    type: integer
+                                    minimum: 1
+                                  unit:
+                                    type: string
+                                    enum:
+                                      - MINUTES
+                                      - HOURS
+                                      - DAYS
+                                required:
+                                  - interval
+                                  - unit
+                              cron:
+                                type: object
+                                properties:
+                                  expression:
+                                    type: string
+                                  timezone:
+                                    type: string
+                                required:
+                                  - expression
+                                  - timezone
+                            description: Monitor schedule (period or cron)
+                          inputs:
+                            type: array
+                            items:
+                              type: object
+                              properties:
+                                search:
+                                  type: object
+                                  properties:
+                                    indices:
+                                      type: array
+                                      items:
+                                        type: string
+                                        minLength: 1
+                                      minItems: 1
+                                    query:
+                                      type: object
+                                      additionalProperties:
+                                        nullable: true
+                                      description: OpenSearch query DSL
+                                  required:
+                                    - indices
+                                    - query
+                                doc_level_input:
+                                  type: object
+                                  properties:
+                                    description:
+                                      type: string
+                                    indices:
+                                      type: array
+                                      items:
+                                        type: string
+                                        minLength: 1
+                                      minItems: 1
+                                    queries:
+                                      type: array
+                                      items:
+                                        type: object
+                                        properties:
+                                          id:
+                                            type: string
+                                          name:
+                                            type: string
+                                          query:
+                                            type: string
+                                          tags:
+                                            type: array
+                                            items:
+                                              type: string
+                                        required:
+                                          - id
+                                          - name
+                                          - query
+                                  required:
+                                    - indices
+                                    - queries
+                              description: Monitor input (search or doc_level_input)
+                          triggers:
+                            type: array
+                            items:
+                              type: object
+                              properties:
+                                id:
+                                  type: string
+                                  description: Auto-generated trigger ID (present in responses)
+                                name:
+                                  type: string
+                                severity:
+                                  type: string
+                                  enum:
+                                    - "1"
+                                    - "2"
+                                    - "3"
+                                    - "4"
+                                    - "5"
+                                  description: 'Severity level: "1" (highest) through "5" (lowest)'
+                                condition:
+                                  type: object
+                                  properties:
+                                    script:
+                                      type: object
+                                      properties:
+                                        source:
+                                          type: string
+                                        lang:
+                                          type: string
+                                      required:
+                                        - source
+                                  required:
+                                    - script
+                                actions:
+                                  type: array
+                                  items:
+                                    type: object
+                                    properties:
+                                      id:
+                                        type: string
+                                        description: Auto-generated action ID (present in responses)
+                                      name:
+                                        type: string
+                                      destination_id:
+                                        type: string
+                                      message_template:
+                                        type: object
+                                        properties:
+                                          source:
+                                            type: string
+                                          lang:
+                                            type: string
+                                        required:
+                                          - source
+                                      subject_template:
+                                        type: object
+                                        properties:
+                                          source:
+                                            type: string
+                                          lang:
+                                            type: string
+                                        required:
+                                          - source
+                                      throttle_enabled:
+                                        type: boolean
+                                      throttle:
+                                        type: object
+                                        properties:
+                                          value:
+                                            type: integer
+                                            minimum: 1
+                                          unit:
+                                            type: string
+                                            enum:
+                                              - MINUTES
+                                              - HOURS
+                                              - DAYS
+                                        required:
+                                          - value
+                                          - unit
+                                    required:
+                                      - name
+                                      - destination_id
+                                      - message_template
+                                    description: Action to execute when trigger fires
+                                bucket_level_trigger:
+                                  type: object
+                                  properties:
+                                    name:
+                                      type: string
+                                    severity:
+                                      type: string
+                                      enum:
+                                        - "1"
+                                        - "2"
+                                        - "3"
+                                        - "4"
+                                        - "5"
+                                      description: 'Severity level: "1" (highest) through "5" (lowest)'
+                                    condition:
+                                      type: object
+                                      properties:
+                                        buckets_path:
+                                          type: object
+                                          additionalProperties:
+                                            type: string
+                                        parent_bucket_path:
+                                          type: string
+                                        script:
+                                          type: object
+                                          properties:
+                                            source:
+                                              type: string
+                                            lang:
+                                              type: string
+                                          required:
+                                            - source
+                                        gap_policy:
+                                          type: string
+                                      required:
+                                        - script
+                                    actions:
+                                      type: array
+                                      items:
+                                        type: object
+                                        properties:
+                                          id:
+                                            type: string
+                                            description: Auto-generated action ID (present in responses)
+                                          name:
+                                            type: string
+                                          destination_id:
+                                            type: string
+                                          message_template:
+                                            type: object
+                                            properties:
+                                              source:
+                                                type: string
+                                              lang:
+                                                type: string
+                                            required:
+                                              - source
+                                          subject_template:
+                                            type: object
+                                            properties:
+                                              source:
+                                                type: string
+                                              lang:
+                                                type: string
+                                            required:
+                                              - source
+                                          throttle_enabled:
+                                            type: boolean
+                                          throttle:
+                                            type: object
+                                            properties:
+                                              value:
+                                                type: integer
+                                                minimum: 1
+                                              unit:
+                                                type: string
+                                                enum:
+                                                  - MINUTES
+                                                  - HOURS
+                                                  - DAYS
+                                            required:
+                                              - value
+                                              - unit
+                                        required:
+                                          - name
+                                          - destination_id
+                                          - message_template
+                                        description: Action to execute when trigger fires
+                                  required:
+                                    - name
+                                    - severity
+                                    - condition
+                                document_level_trigger:
+                                  type: object
+                                  properties:
+                                    name:
+                                      type: string
+                                    severity:
+                                      type: string
+                                      enum:
+                                        - "1"
+                                        - "2"
+                                        - "3"
+                                        - "4"
+                                        - "5"
+                                      description: 'Severity level: "1" (highest) through "5" (lowest)'
+                                    condition:
+                                      type: object
+                                      properties:
+                                        script:
+                                          type: object
+                                          properties:
+                                            source:
+                                              type: string
+                                            lang:
+                                              type: string
+                                          required:
+                                            - source
+                                      required:
+                                        - script
+                                    actions:
+                                      type: array
+                                      items:
+                                        type: object
+                                        properties:
+                                          id:
+                                            type: string
+                                            description: Auto-generated action ID (present in responses)
+                                          name:
+                                            type: string
+                                          destination_id:
+                                            type: string
+                                          message_template:
+                                            type: object
+                                            properties:
+                                              source:
+                                                type: string
+                                              lang:
+                                                type: string
+                                            required:
+                                              - source
+                                          subject_template:
+                                            type: object
+                                            properties:
+                                              source:
+                                                type: string
+                                              lang:
+                                                type: string
+                                            required:
+                                              - source
+                                          throttle_enabled:
+                                            type: boolean
+                                          throttle:
+                                            type: object
+                                            properties:
+                                              value:
+                                                type: integer
+                                                minimum: 1
+                                              unit:
+                                                type: string
+                                                enum:
+                                                  - MINUTES
+                                                  - HOURS
+                                                  - DAYS
+                                            required:
+                                              - value
+                                              - unit
+                                        required:
+                                          - name
+                                          - destination_id
+                                          - message_template
+                                        description: Action to execute when trigger fires
+                                  required:
+                                    - name
+                                    - severity
+                                    - condition
+                              description: Monitor trigger definition
+                          last_update_time:
+                            type: integer
+                            description: Epoch millis of last update
+                        required:
+                          - type
+                          - name
+                          - enabled
+                          - schedule
+                          - inputs
+                          - triggers
+                        description: Monitor object with metadata
+                    required:
+                      - _id
+                      - _version
+                      - _seq_no
+                      - _primary_term
+                      - monitor
+                    description: Monitor document with version metadata
+                required:
+                  - ok
+                  - resp
+                description: Successful monitor response
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                    enum:
+                      - false
+                  resp:
+                    type: string
+                required:
+                  - ok
+                  - resp
+    put:
+      operationId: updateMonitor
+      summary: Update a monitor
+      parameters:
+        - schema:
+            type: string
+            minLength: 1
+            description: Monitor ID
+          required: true
+          description: Monitor ID
+          name: id
+          in: path
+        - schema:
+            type: string
+            minLength: 1
+            description: Unique identifier for the datasource
+          required: false
+          description: Unique identifier for the datasource
+          name: dataSourceId
+          in: query
+        - schema:
+            type: integer
+            minimum: 0
+            description: Sequence number for optimistic concurrency control
+          required: false
+          description: Sequence number for optimistic concurrency control
+          name: ifSeqNo
+          in: query
+        - schema:
+            type: integer
+            minimum: 0
+            description: Primary term for optimistic concurrency control
+          required: false
+          description: Primary term for optimistic concurrency control
+          name: ifPrimaryTerm
+          in: query
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                type:
+                  type: string
+                  enum:
+                    - monitor
+                name:
+                  type: string
+                  minLength: 1
+                  description: Monitor name
+                monitor_type:
+                  type: string
+                  enum:
+                    - query_level_monitor
+                    - bucket_level_monitor
+                    - doc_level_monitor
+                  description: Type of monitor
+                enabled:
+                  type: boolean
+                schedule:
+                  type: object
+                  properties:
+                    period:
+                      type: object
+                      properties:
+                        interval:
+                          type: integer
+                          minimum: 1
+                        unit:
+                          type: string
+                          enum:
+                            - MINUTES
+                            - HOURS
+                            - DAYS
+                      required:
+                        - interval
+                        - unit
+                    cron:
+                      type: object
+                      properties:
+                        expression:
+                          type: string
+                        timezone:
+                          type: string
+                      required:
+                        - expression
+                        - timezone
+                  description: Monitor schedule (period or cron)
+                inputs:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      search:
+                        type: object
+                        properties:
+                          indices:
+                            type: array
+                            items:
+                              type: string
+                              minLength: 1
+                            minItems: 1
+                          query:
+                            type: object
+                            additionalProperties:
+                              nullable: true
+                            description: OpenSearch query DSL
+                        required:
+                          - indices
+                          - query
+                      doc_level_input:
+                        type: object
+                        properties:
+                          description:
+                            type: string
+                          indices:
+                            type: array
+                            items:
+                              type: string
+                              minLength: 1
+                            minItems: 1
+                          queries:
+                            type: array
+                            items:
+                              type: object
+                              properties:
+                                id:
+                                  type: string
+                                name:
+                                  type: string
+                                query:
+                                  type: string
+                                tags:
+                                  type: array
+                                  items:
+                                    type: string
+                              required:
+                                - id
+                                - name
+                                - query
+                        required:
+                          - indices
+                          - queries
+                    description: Monitor input (search or doc_level_input)
+                triggers:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                        description: Auto-generated trigger ID (present in responses)
+                      name:
+                        type: string
+                      severity:
+                        type: string
+                        enum:
+                          - "1"
+                          - "2"
+                          - "3"
+                          - "4"
+                          - "5"
+                        description: 'Severity level: "1" (highest) through "5" (lowest)'
+                      condition:
+                        type: object
+                        properties:
+                          script:
+                            type: object
+                            properties:
+                              source:
+                                type: string
+                              lang:
+                                type: string
+                            required:
+                              - source
+                        required:
+                          - script
+                      actions:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            id:
+                              type: string
+                              description: Auto-generated action ID (present in responses)
+                            name:
+                              type: string
+                            destination_id:
+                              type: string
+                            message_template:
+                              type: object
+                              properties:
+                                source:
+                                  type: string
+                                lang:
+                                  type: string
+                              required:
+                                - source
+                            subject_template:
+                              type: object
+                              properties:
+                                source:
+                                  type: string
+                                lang:
+                                  type: string
+                              required:
+                                - source
+                            throttle_enabled:
+                              type: boolean
+                            throttle:
+                              type: object
+                              properties:
+                                value:
+                                  type: integer
+                                  minimum: 1
+                                unit:
+                                  type: string
+                                  enum:
+                                    - MINUTES
+                                    - HOURS
+                                    - DAYS
+                              required:
+                                - value
+                                - unit
+                          required:
+                            - name
+                            - destination_id
+                            - message_template
+                          description: Action to execute when trigger fires
+                      bucket_level_trigger:
+                        type: object
+                        properties:
+                          name:
+                            type: string
+                          severity:
+                            type: string
+                            enum:
+                              - "1"
+                              - "2"
+                              - "3"
+                              - "4"
+                              - "5"
+                            description: 'Severity level: "1" (highest) through "5" (lowest)'
+                          condition:
+                            type: object
+                            properties:
+                              buckets_path:
+                                type: object
+                                additionalProperties:
+                                  type: string
+                              parent_bucket_path:
+                                type: string
+                              script:
+                                type: object
+                                properties:
+                                  source:
+                                    type: string
+                                  lang:
+                                    type: string
+                                required:
+                                  - source
+                              gap_policy:
+                                type: string
+                            required:
+                              - script
+                          actions:
+                            type: array
+                            items:
+                              type: object
+                              properties:
+                                id:
+                                  type: string
+                                  description: Auto-generated action ID (present in responses)
+                                name:
+                                  type: string
+                                destination_id:
+                                  type: string
+                                message_template:
+                                  type: object
+                                  properties:
+                                    source:
+                                      type: string
+                                    lang:
+                                      type: string
+                                  required:
+                                    - source
+                                subject_template:
+                                  type: object
+                                  properties:
+                                    source:
+                                      type: string
+                                    lang:
+                                      type: string
+                                  required:
+                                    - source
+                                throttle_enabled:
+                                  type: boolean
+                                throttle:
+                                  type: object
+                                  properties:
+                                    value:
+                                      type: integer
+                                      minimum: 1
+                                    unit:
+                                      type: string
+                                      enum:
+                                        - MINUTES
+                                        - HOURS
+                                        - DAYS
+                                  required:
+                                    - value
+                                    - unit
+                              required:
+                                - name
+                                - destination_id
+                                - message_template
+                              description: Action to execute when trigger fires
+                        required:
+                          - name
+                          - severity
+                          - condition
+                      document_level_trigger:
+                        type: object
+                        properties:
+                          name:
+                            type: string
+                          severity:
+                            type: string
+                            enum:
+                              - "1"
+                              - "2"
+                              - "3"
+                              - "4"
+                              - "5"
+                            description: 'Severity level: "1" (highest) through "5" (lowest)'
+                          condition:
+                            type: object
+                            properties:
+                              script:
+                                type: object
+                                properties:
+                                  source:
+                                    type: string
+                                  lang:
+                                    type: string
+                                required:
+                                  - source
+                            required:
+                              - script
+                          actions:
+                            type: array
+                            items:
+                              type: object
+                              properties:
+                                id:
+                                  type: string
+                                  description: Auto-generated action ID (present in responses)
+                                name:
+                                  type: string
+                                destination_id:
+                                  type: string
+                                message_template:
+                                  type: object
+                                  properties:
+                                    source:
+                                      type: string
+                                    lang:
+                                      type: string
+                                  required:
+                                    - source
+                                subject_template:
+                                  type: object
+                                  properties:
+                                    source:
+                                      type: string
+                                    lang:
+                                      type: string
+                                  required:
+                                    - source
+                                throttle_enabled:
+                                  type: boolean
+                                throttle:
+                                  type: object
+                                  properties:
+                                    value:
+                                      type: integer
+                                      minimum: 1
+                                    unit:
+                                      type: string
+                                      enum:
+                                        - MINUTES
+                                        - HOURS
+                                        - DAYS
+                                  required:
+                                    - value
+                                    - unit
+                              required:
+                                - name
+                                - destination_id
+                                - message_template
+                              description: Action to execute when trigger fires
+                        required:
+                          - name
+                          - severity
+                          - condition
+                    description: Monitor trigger definition
+                rbac_roles:
+                  type: array
+                  items:
+                    type: string
+              required:
+                - name
+                - enabled
+                - schedule
+                - inputs
+                - triggers
+              description: Monitor definition
+      responses:
+        "200":
+          description: Monitor updated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                    enum:
+                      - true
+                  resp:
+                    type: object
+                    properties:
+                      _id:
+                        type: string
+                      _version:
+                        type: integer
+                        minimum: 0
+                      _seq_no:
+                        type: integer
+                        minimum: 0
+                      _primary_term:
+                        type: integer
+                        minimum: 0
+                      monitor:
+                        type: object
+                        properties:
+                          type:
+                            type: string
+                          schema_version:
+                            type: integer
+                          name:
+                            type: string
+                          monitor_type:
+                            type: string
+                            enum:
+                              - query_level_monitor
+                              - bucket_level_monitor
+                              - doc_level_monitor
+                            description: Type of monitor
+                          user:
+                            type: object
+                            properties:
+                              name:
+                                type: string
+                              backend_roles:
+                                type: array
+                                items:
+                                  type: string
+                              roles:
+                                type: array
+                                items:
+                                  type: string
+                              custom_attribute_names:
+                                type: array
+                                items:
+                                  type: string
+                              user_requested_tenant:
+                                type: string
+                                nullable: true
+                            required:
+                              - name
+                              - backend_roles
+                              - roles
+                              - custom_attribute_names
+                            description: User info from security plugin
+                          enabled:
+                            type: boolean
+                          enabled_time:
+                            type: integer
+                            description: Epoch millis when monitor was enabled
+                          schedule:
+                            type: object
+                            properties:
+                              period:
+                                type: object
+                                properties:
+                                  interval:
+                                    type: integer
+                                    minimum: 1
+                                  unit:
+                                    type: string
+                                    enum:
+                                      - MINUTES
+                                      - HOURS
+                                      - DAYS
+                                required:
+                                  - interval
+                                  - unit
+                              cron:
+                                type: object
+                                properties:
+                                  expression:
+                                    type: string
+                                  timezone:
+                                    type: string
+                                required:
+                                  - expression
+                                  - timezone
+                            description: Monitor schedule (period or cron)
+                          inputs:
+                            type: array
+                            items:
+                              type: object
+                              properties:
+                                search:
+                                  type: object
+                                  properties:
+                                    indices:
+                                      type: array
+                                      items:
+                                        type: string
+                                        minLength: 1
+                                      minItems: 1
+                                    query:
+                                      type: object
+                                      additionalProperties:
+                                        nullable: true
+                                      description: OpenSearch query DSL
+                                  required:
+                                    - indices
+                                    - query
+                                doc_level_input:
+                                  type: object
+                                  properties:
+                                    description:
+                                      type: string
+                                    indices:
+                                      type: array
+                                      items:
+                                        type: string
+                                        minLength: 1
+                                      minItems: 1
+                                    queries:
+                                      type: array
+                                      items:
+                                        type: object
+                                        properties:
+                                          id:
+                                            type: string
+                                          name:
+                                            type: string
+                                          query:
+                                            type: string
+                                          tags:
+                                            type: array
+                                            items:
+                                              type: string
+                                        required:
+                                          - id
+                                          - name
+                                          - query
+                                  required:
+                                    - indices
+                                    - queries
+                              description: Monitor input (search or doc_level_input)
+                          triggers:
+                            type: array
+                            items:
+                              type: object
+                              properties:
+                                id:
+                                  type: string
+                                  description: Auto-generated trigger ID (present in responses)
+                                name:
+                                  type: string
+                                severity:
+                                  type: string
+                                  enum:
+                                    - "1"
+                                    - "2"
+                                    - "3"
+                                    - "4"
+                                    - "5"
+                                  description: 'Severity level: "1" (highest) through "5" (lowest)'
+                                condition:
+                                  type: object
+                                  properties:
+                                    script:
+                                      type: object
+                                      properties:
+                                        source:
+                                          type: string
+                                        lang:
+                                          type: string
+                                      required:
+                                        - source
+                                  required:
+                                    - script
+                                actions:
+                                  type: array
+                                  items:
+                                    type: object
+                                    properties:
+                                      id:
+                                        type: string
+                                        description: Auto-generated action ID (present in responses)
+                                      name:
+                                        type: string
+                                      destination_id:
+                                        type: string
+                                      message_template:
+                                        type: object
+                                        properties:
+                                          source:
+                                            type: string
+                                          lang:
+                                            type: string
+                                        required:
+                                          - source
+                                      subject_template:
+                                        type: object
+                                        properties:
+                                          source:
+                                            type: string
+                                          lang:
+                                            type: string
+                                        required:
+                                          - source
+                                      throttle_enabled:
+                                        type: boolean
+                                      throttle:
+                                        type: object
+                                        properties:
+                                          value:
+                                            type: integer
+                                            minimum: 1
+                                          unit:
+                                            type: string
+                                            enum:
+                                              - MINUTES
+                                              - HOURS
+                                              - DAYS
+                                        required:
+                                          - value
+                                          - unit
+                                    required:
+                                      - name
+                                      - destination_id
+                                      - message_template
+                                    description: Action to execute when trigger fires
+                                bucket_level_trigger:
+                                  type: object
+                                  properties:
+                                    name:
+                                      type: string
+                                    severity:
+                                      type: string
+                                      enum:
+                                        - "1"
+                                        - "2"
+                                        - "3"
+                                        - "4"
+                                        - "5"
+                                      description: 'Severity level: "1" (highest) through "5" (lowest)'
+                                    condition:
+                                      type: object
+                                      properties:
+                                        buckets_path:
+                                          type: object
+                                          additionalProperties:
+                                            type: string
+                                        parent_bucket_path:
+                                          type: string
+                                        script:
+                                          type: object
+                                          properties:
+                                            source:
+                                              type: string
+                                            lang:
+                                              type: string
+                                          required:
+                                            - source
+                                        gap_policy:
+                                          type: string
+                                      required:
+                                        - script
+                                    actions:
+                                      type: array
+                                      items:
+                                        type: object
+                                        properties:
+                                          id:
+                                            type: string
+                                            description: Auto-generated action ID (present in responses)
+                                          name:
+                                            type: string
+                                          destination_id:
+                                            type: string
+                                          message_template:
+                                            type: object
+                                            properties:
+                                              source:
+                                                type: string
+                                              lang:
+                                                type: string
+                                            required:
+                                              - source
+                                          subject_template:
+                                            type: object
+                                            properties:
+                                              source:
+                                                type: string
+                                              lang:
+                                                type: string
+                                            required:
+                                              - source
+                                          throttle_enabled:
+                                            type: boolean
+                                          throttle:
+                                            type: object
+                                            properties:
+                                              value:
+                                                type: integer
+                                                minimum: 1
+                                              unit:
+                                                type: string
+                                                enum:
+                                                  - MINUTES
+                                                  - HOURS
+                                                  - DAYS
+                                            required:
+                                              - value
+                                              - unit
+                                        required:
+                                          - name
+                                          - destination_id
+                                          - message_template
+                                        description: Action to execute when trigger fires
+                                  required:
+                                    - name
+                                    - severity
+                                    - condition
+                                document_level_trigger:
+                                  type: object
+                                  properties:
+                                    name:
+                                      type: string
+                                    severity:
+                                      type: string
+                                      enum:
+                                        - "1"
+                                        - "2"
+                                        - "3"
+                                        - "4"
+                                        - "5"
+                                      description: 'Severity level: "1" (highest) through "5" (lowest)'
+                                    condition:
+                                      type: object
+                                      properties:
+                                        script:
+                                          type: object
+                                          properties:
+                                            source:
+                                              type: string
+                                            lang:
+                                              type: string
+                                          required:
+                                            - source
+                                      required:
+                                        - script
+                                    actions:
+                                      type: array
+                                      items:
+                                        type: object
+                                        properties:
+                                          id:
+                                            type: string
+                                            description: Auto-generated action ID (present in responses)
+                                          name:
+                                            type: string
+                                          destination_id:
+                                            type: string
+                                          message_template:
+                                            type: object
+                                            properties:
+                                              source:
+                                                type: string
+                                              lang:
+                                                type: string
+                                            required:
+                                              - source
+                                          subject_template:
+                                            type: object
+                                            properties:
+                                              source:
+                                                type: string
+                                              lang:
+                                                type: string
+                                            required:
+                                              - source
+                                          throttle_enabled:
+                                            type: boolean
+                                          throttle:
+                                            type: object
+                                            properties:
+                                              value:
+                                                type: integer
+                                                minimum: 1
+                                              unit:
+                                                type: string
+                                                enum:
+                                                  - MINUTES
+                                                  - HOURS
+                                                  - DAYS
+                                            required:
+                                              - value
+                                              - unit
+                                        required:
+                                          - name
+                                          - destination_id
+                                          - message_template
+                                        description: Action to execute when trigger fires
+                                  required:
+                                    - name
+                                    - severity
+                                    - condition
+                              description: Monitor trigger definition
+                          last_update_time:
+                            type: integer
+                            description: Epoch millis of last update
+                        required:
+                          - type
+                          - name
+                          - enabled
+                          - schedule
+                          - inputs
+                          - triggers
+                        description: Monitor object with metadata
+                    required:
+                      - _id
+                      - _version
+                      - _seq_no
+                      - _primary_term
+                      - monitor
+                    description: Monitor document with version metadata
+                required:
+                  - ok
+                  - resp
+                description: Successful monitor response
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                    enum:
+                      - false
+                  resp:
+                    type: string
+                required:
+                  - ok
+                  - resp
+    delete:
+      operationId: deleteMonitor
+      summary: Delete a monitor
+      parameters:
+        - schema:
+            type: string
+            minLength: 1
+            description: Monitor ID
+          required: true
+          description: Monitor ID
+          name: id
+          in: path
+        - schema:
+            type: string
+            minLength: 1
+            description: Unique identifier for the datasource
+          required: false
+          description: Unique identifier for the datasource
+          name: dataSourceId
+          in: query
+        - schema:
+            type: string
+            description: Document version for concurrency control
+          required: true
+          description: Document version for concurrency control
+          name: version
+          in: query
+      responses:
+        "200":
+          description: Monitor deleted
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                    enum:
+                      - true
+                  resp:
+                    type: object
+                    properties:
+                      _index:
+                        type: string
+                      _id:
+                        type: string
+                      _version:
+                        type: integer
+                        minimum: 0
+                      result:
+                        type: string
+                        description: Deletion result, e.g. "deleted"
+                      forced_refresh:
+                        type: boolean
+                      _shards:
+                        type: object
+                        properties:
+                          total:
+                            type: integer
+                          successful:
+                            type: integer
+                          failed:
+                            type: integer
+                        required:
+                          - total
+                          - successful
+                          - failed
+                      _seq_no:
+                        type: integer
+                        minimum: 0
+                      _primary_term:
+                        type: integer
+                        minimum: 0
+                    required:
+                      - _index
+                      - _id
+                      - _version
+                      - result
+                      - _shards
+                      - _seq_no
+                      - _primary_term
+                required:
+                  - ok
+                  - resp
+                description: Delete monitor response
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                    enum:
+                      - false
+                  resp:
+                    type: string
+                required:
+                  - ok
+                  - resp
+  /api/alerting/monitors/_execute:
+    post:
+      operationId: executeMonitor
+      summary: Execute a monitor
+      parameters:
+        - schema:
+            type: string
+            minLength: 1
+            description: Unique identifier for the datasource
+          required: false
+          description: Unique identifier for the datasource
+          name: dataSourceId
+          in: query
+        - schema:
+            type: string
+            enum:
+              - "true"
+              - "false"
+            description: If "true", shows results without sending notifications
+          required: false
+          description: If "true", shows results without sending notifications
+          name: dryrun
+          in: query
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                type:
+                  type: string
+                  enum:
+                    - monitor
+                name:
+                  type: string
+                  minLength: 1
+                  description: Monitor name
+                monitor_type:
+                  type: string
+                  enum:
+                    - query_level_monitor
+                    - bucket_level_monitor
+                    - doc_level_monitor
+                  description: Type of monitor
+                enabled:
+                  type: boolean
+                schedule:
+                  type: object
+                  properties:
+                    period:
+                      type: object
+                      properties:
+                        interval:
+                          type: integer
+                          minimum: 1
+                        unit:
+                          type: string
+                          enum:
+                            - MINUTES
+                            - HOURS
+                            - DAYS
+                      required:
+                        - interval
+                        - unit
+                    cron:
+                      type: object
+                      properties:
+                        expression:
+                          type: string
+                        timezone:
+                          type: string
+                      required:
+                        - expression
+                        - timezone
+                  description: Monitor schedule (period or cron)
+                inputs:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      search:
+                        type: object
+                        properties:
+                          indices:
+                            type: array
+                            items:
+                              type: string
+                              minLength: 1
+                            minItems: 1
+                          query:
+                            type: object
+                            additionalProperties:
+                              nullable: true
+                            description: OpenSearch query DSL
+                        required:
+                          - indices
+                          - query
+                      doc_level_input:
+                        type: object
+                        properties:
+                          description:
+                            type: string
+                          indices:
+                            type: array
+                            items:
+                              type: string
+                              minLength: 1
+                            minItems: 1
+                          queries:
+                            type: array
+                            items:
+                              type: object
+                              properties:
+                                id:
+                                  type: string
+                                name:
+                                  type: string
+                                query:
+                                  type: string
+                                tags:
+                                  type: array
+                                  items:
+                                    type: string
+                              required:
+                                - id
+                                - name
+                                - query
+                        required:
+                          - indices
+                          - queries
+                    description: Monitor input (search or doc_level_input)
+                triggers:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                        description: Auto-generated trigger ID (present in responses)
+                      name:
+                        type: string
+                      severity:
+                        type: string
+                        enum:
+                          - "1"
+                          - "2"
+                          - "3"
+                          - "4"
+                          - "5"
+                        description: 'Severity level: "1" (highest) through "5" (lowest)'
+                      condition:
+                        type: object
+                        properties:
+                          script:
+                            type: object
+                            properties:
+                              source:
+                                type: string
+                              lang:
+                                type: string
+                            required:
+                              - source
+                        required:
+                          - script
+                      actions:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            id:
+                              type: string
+                              description: Auto-generated action ID (present in responses)
+                            name:
+                              type: string
+                            destination_id:
+                              type: string
+                            message_template:
+                              type: object
+                              properties:
+                                source:
+                                  type: string
+                                lang:
+                                  type: string
+                              required:
+                                - source
+                            subject_template:
+                              type: object
+                              properties:
+                                source:
+                                  type: string
+                                lang:
+                                  type: string
+                              required:
+                                - source
+                            throttle_enabled:
+                              type: boolean
+                            throttle:
+                              type: object
+                              properties:
+                                value:
+                                  type: integer
+                                  minimum: 1
+                                unit:
+                                  type: string
+                                  enum:
+                                    - MINUTES
+                                    - HOURS
+                                    - DAYS
+                              required:
+                                - value
+                                - unit
+                          required:
+                            - name
+                            - destination_id
+                            - message_template
+                          description: Action to execute when trigger fires
+                      bucket_level_trigger:
+                        type: object
+                        properties:
+                          name:
+                            type: string
+                          severity:
+                            type: string
+                            enum:
+                              - "1"
+                              - "2"
+                              - "3"
+                              - "4"
+                              - "5"
+                            description: 'Severity level: "1" (highest) through "5" (lowest)'
+                          condition:
+                            type: object
+                            properties:
+                              buckets_path:
+                                type: object
+                                additionalProperties:
+                                  type: string
+                              parent_bucket_path:
+                                type: string
+                              script:
+                                type: object
+                                properties:
+                                  source:
+                                    type: string
+                                  lang:
+                                    type: string
+                                required:
+                                  - source
+                              gap_policy:
+                                type: string
+                            required:
+                              - script
+                          actions:
+                            type: array
+                            items:
+                              type: object
+                              properties:
+                                id:
+                                  type: string
+                                  description: Auto-generated action ID (present in responses)
+                                name:
+                                  type: string
+                                destination_id:
+                                  type: string
+                                message_template:
+                                  type: object
+                                  properties:
+                                    source:
+                                      type: string
+                                    lang:
+                                      type: string
+                                  required:
+                                    - source
+                                subject_template:
+                                  type: object
+                                  properties:
+                                    source:
+                                      type: string
+                                    lang:
+                                      type: string
+                                  required:
+                                    - source
+                                throttle_enabled:
+                                  type: boolean
+                                throttle:
+                                  type: object
+                                  properties:
+                                    value:
+                                      type: integer
+                                      minimum: 1
+                                    unit:
+                                      type: string
+                                      enum:
+                                        - MINUTES
+                                        - HOURS
+                                        - DAYS
+                                  required:
+                                    - value
+                                    - unit
+                              required:
+                                - name
+                                - destination_id
+                                - message_template
+                              description: Action to execute when trigger fires
+                        required:
+                          - name
+                          - severity
+                          - condition
+                      document_level_trigger:
+                        type: object
+                        properties:
+                          name:
+                            type: string
+                          severity:
+                            type: string
+                            enum:
+                              - "1"
+                              - "2"
+                              - "3"
+                              - "4"
+                              - "5"
+                            description: 'Severity level: "1" (highest) through "5" (lowest)'
+                          condition:
+                            type: object
+                            properties:
+                              script:
+                                type: object
+                                properties:
+                                  source:
+                                    type: string
+                                  lang:
+                                    type: string
+                                required:
+                                  - source
+                            required:
+                              - script
+                          actions:
+                            type: array
+                            items:
+                              type: object
+                              properties:
+                                id:
+                                  type: string
+                                  description: Auto-generated action ID (present in responses)
+                                name:
+                                  type: string
+                                destination_id:
+                                  type: string
+                                message_template:
+                                  type: object
+                                  properties:
+                                    source:
+                                      type: string
+                                    lang:
+                                      type: string
+                                  required:
+                                    - source
+                                subject_template:
+                                  type: object
+                                  properties:
+                                    source:
+                                      type: string
+                                    lang:
+                                      type: string
+                                  required:
+                                    - source
+                                throttle_enabled:
+                                  type: boolean
+                                throttle:
+                                  type: object
+                                  properties:
+                                    value:
+                                      type: integer
+                                      minimum: 1
+                                    unit:
+                                      type: string
+                                      enum:
+                                        - MINUTES
+                                        - HOURS
+                                        - DAYS
+                                  required:
+                                    - value
+                                    - unit
+                              required:
+                                - name
+                                - destination_id
+                                - message_template
+                              description: Action to execute when trigger fires
+                        required:
+                          - name
+                          - severity
+                          - condition
+                    description: Monitor trigger definition
+                rbac_roles:
+                  type: array
+                  items:
+                    type: string
+              required:
+                - name
+                - enabled
+                - schedule
+                - inputs
+                - triggers
+              description: Monitor definition to execute
+              example: *a1
+      responses:
+        "200":
+          description: Monitor executed
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                    enum:
+                      - true
+                  resp:
+                    type: object
+                    properties:
+                      monitor_name:
+                        type: string
+                      period_start:
+                        type: integer
+                        description: Epoch millis
+                      period_end:
+                        type: integer
+                        description: Epoch millis
+                      error:
+                        type: string
+                        nullable: true
+                      trigger_results:
+                        type: object
+                        additionalProperties:
+                          type: object
+                          properties:
+                            name:
+                              type: string
+                            triggered:
+                              type: boolean
+                            error:
+                              type: string
+                              nullable: true
+                            action_results:
+                              type: object
+                              additionalProperties:
+                                type: object
+                                properties:
+                                  id:
+                                    type: string
+                                  name:
+                                    type: string
+                                  output:
+                                    type: object
+                                    additionalProperties:
+                                      nullable: true
+                                  throttled:
+                                    type: boolean
+                                  error:
+                                    type: string
+                                    nullable: true
+                                required:
+                                  - id
+                                  - name
+                                  - throttled
+                                  - error
+                          required:
+                            - name
+                            - triggered
+                            - error
+                            - action_results
+                    required:
+                      - monitor_name
+                      - period_start
+                      - period_end
+                      - error
+                      - trigger_results
+                required:
+                  - ok
+                  - resp
+                description: Execute monitor response
+                example:
+                  ok: true
+                  resp:
+                    monitor_name: logs
+                    period_start: 1547161872322
+                    period_end: 1547161932322
+                    error: null
+                    trigger_results:
+                      Sooi7GcB53a0ewuj_6MH:
+                        name: Over
+                        triggered: true
+                        error: null
+                        action_results: {}
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                    enum:
+                      - false
+                  resp:
+                    type: string
+                required:
+                  - ok
+                  - resp
+  /api/alerting/monitors/{id}/_acknowledge/alerts:
+    post:
+      operationId: acknowledgeAlerts
+      summary: Acknowledge alerts for a monitor
+      parameters:
+        - schema:
+            type: string
+            minLength: 1
+            description: Monitor ID
+          required: true
+          description: Monitor ID
+          name: id
+          in: path
+        - schema:
+            type: string
+            minLength: 1
+            description: Unique identifier for the datasource
+          required: false
+          description: Unique identifier for the datasource
+          name: dataSourceId
+          in: query
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                alerts:
+                  type: array
+                  items:
+                    type: string
+                  description: Alert IDs to acknowledge
+              required:
+                - alerts
+              description: Acknowledge alerts request body
+              example:
+                alerts:
+                  - eQURa3gBKo1jAh6qUo49
+      responses:
+        "200":
+          description: Alerts acknowledged
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                    enum:
+                      - true
+                  resp:
+                    type: object
+                    properties:
+                      success:
+                        type: array
+                        items:
+                          type: string
+                        description: Successfully acknowledged alert IDs
+                      failed:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            alert_id:
+                              type: string
+                            error:
+                              type: string
+                        description: Alerts that could not be acknowledged
+                    required:
+                      - success
+                      - failed
+                required:
+                  - ok
+                  - resp
+                description: Acknowledge alerts response
+                example:
+                  ok: true
+                  resp:
+                    success:
+                      - eQURa3gBKo1jAh6qUo49
+                    failed: []
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                    enum:
+                      - false
+                  resp:
+                    type: string
+                required:
+                  - ok
+                  - resp
