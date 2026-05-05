@@ -34,12 +34,12 @@ jobs:
       TERM: xterm
     steps:
       - name: Set up JDK
-        uses: actions/setup-java@v1
+        uses: actions/setup-java@v4
         with:
-          # TODO: Parse this from alerting plugin
+          distribution: 'temurin'
           java-version: 21
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
         with:
           path: alerting
           repository: opensearch-project/alerting
@@ -50,13 +50,13 @@ jobs:
           ./gradlew :alerting:run &
           timeout 300 bash -c 'while [[ "$(curl -s -o /dev/null -w ''%{http_code}'' localhost:9200)" != "200" ]]; do sleep 5; done'
       - name: Checkout OpenSearch Dashboards
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
         with:
           repository: opensearch-project/OpenSearch-Dashboards
           ref: ${{ env.OPENSEARCH_DASHBOARDS_VERSION }}
           path: OpenSearch-Dashboards
       - name: Checkout Alerting OpenSearch Dashboards plugin
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
         with:
           path: OpenSearch-Dashboards/plugins/alerting-dashboards-plugin
       - name: Setup Node
