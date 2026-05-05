@@ -188,7 +188,7 @@ describe('monitorToFormik', () => {
   });
 });
 
-describe('schedule derivation without ui_metadata', () => {
+describe('schedule derivation prioritizes monitor.schedule', () => {
   test('derives interval schedule from monitor.schedule.period when ui_metadata is absent', () => {
     const monitor = {
       name: 'No UI Metadata Monitor',
@@ -215,10 +215,13 @@ describe('schedule derivation without ui_metadata', () => {
     expect(formikValues.cronExpression).toBe('0 0 * * *');
   });
 
-  test('uses ui_metadata.schedule when present (does not override)', () => {
-    const formikValues = monitorToFormik(exampleMonitor);
-    expect(formikValues.frequency).toBe('cronExpression');
-    expect(formikValues.cronExpression).toBe('0 0 0/2 * * ?');
+  test('monitor.schedule.period overrides ui_metadata.schedule when both present', () => {
+    const monitor = _.cloneDeep(exampleMonitor);
+    // ui_metadata says cronExpression with interval 1 MINUTES, but actual schedule is 10 HOURS
+    monitor.schedule = { period: { interval: 10, unit: 'HOURS' } };
+    const formikValues = monitorToFormik(monitor);
+    expect(formikValues.frequency).toBe('interval');
+    expect(formikValues.period).toEqual({ interval: 10, unit: 'HOURS' });
   });
 
   test('preserves default schedule when ui_metadata is absent and no period/cron', () => {

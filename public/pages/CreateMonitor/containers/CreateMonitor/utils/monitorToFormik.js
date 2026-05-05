@@ -30,15 +30,14 @@ export default function monitorToFormik(monitor) {
     monitorOptions = [],
   } = monitor;
 
-  // When ui_metadata.schedule is absent, derive schedule fields from monitor.schedule
-  if (!monitor.ui_metadata?.schedule) {
-    if (schedulePeriod) {
-      schedule.frequency = 'interval';
-      schedule.period = { interval: schedulePeriod.interval, unit: schedulePeriod.unit };
-    } else if (monitor.schedule?.cron) {
-      schedule.frequency = 'cronExpression';
-    }
+  // Derive schedule fields from monitor.schedule (source of truth)
+  if (schedulePeriod) {
+    schedule.frequency = 'interval';
+    schedule.period = { interval: schedulePeriod.interval, unit: schedulePeriod.unit };
+  } else if (monitor.schedule?.cron) {
+    schedule.frequency = 'cronExpression';
   }
+
   // Default searchType to query, because if there is no ui_metadata or search then it was created through API or overwritten by API
   // In that case we don't want to guess on the UI what selections a user made, so we will default to just showing the extraction query
   const { searchType = 'query', fieldName } = search;
