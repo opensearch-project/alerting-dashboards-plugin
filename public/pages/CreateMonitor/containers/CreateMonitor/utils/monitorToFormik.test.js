@@ -187,3 +187,50 @@ describe('monitorToFormik', () => {
     });
   });
 });
+
+describe('schedule derivation without ui_metadata', () => {
+  test('derives interval schedule from monitor.schedule.period when ui_metadata is absent', () => {
+    const monitor = {
+      name: 'No UI Metadata Monitor',
+      enabled: true,
+      schedule: { period: { interval: 5, unit: 'DAYS' } },
+      inputs: [{ search: { indices: ['test-index'], query: JSON.parse(MATCH_ALL_QUERY) } }],
+      triggers: [],
+    };
+    const formikValues = monitorToFormik(monitor);
+    expect(formikValues.frequency).toBe('interval');
+    expect(formikValues.period).toEqual({ interval: 5, unit: 'DAYS' });
+  });
+
+  test('derives cron schedule when ui_metadata is absent and monitor uses cron', () => {
+    const monitor = {
+      name: 'Cron No UI Metadata',
+      enabled: true,
+      schedule: { cron: { expression: '0 0 * * *', timezone: 'US/Pacific' } },
+      inputs: [{ search: { indices: ['test-index'], query: JSON.parse(MATCH_ALL_QUERY) } }],
+      triggers: [],
+    };
+    const formikValues = monitorToFormik(monitor);
+    expect(formikValues.frequency).toBe('cronExpression');
+    expect(formikValues.cronExpression).toBe('0 0 * * *');
+  });
+
+  test('uses ui_metadata.schedule when present (does not override)', () => {
+    const formikValues = monitorToFormik(exampleMonitor);
+    expect(formikValues.frequency).toBe('cronExpression');
+    expect(formikValues.cronExpression).toBe('0 0 0/2 * * ?');
+  });
+
+  test('preserves default schedule when ui_metadata is absent and no period/cron', () => {
+    const monitor = {
+      name: 'Empty Schedule Monitor',
+      enabled: true,
+      schedule: {},
+      inputs: [{ search: { indices: ['test-index'], query: JSON.parse(MATCH_ALL_QUERY) } }],
+      triggers: [],
+    };
+    const formikValues = monitorToFormik(monitor);
+    expect(formikValues.frequency).toBe(FORMIK_INITIAL_VALUES.frequency);
+    expect(formikValues.period).toEqual(FORMIK_INITIAL_VALUES.period);
+  });
+});
