@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Alerting OpenSearch Dashboards plugin
-        uses: actions/checkout@v2
+        uses: actions/checkout@ee0669bd1cc54295c223e0bb666b733df41de1c5 # v2
         with:
           path: alerting-dashboards-plugin
       - name: Get OpenSearch Dashboards version
@@ -19,14 +19,14 @@ jobs:
         run: |
           echo "::set-output name=opensearch_dashboards_version::$(node -p "(require('./alerting-dashboards-plugin/opensearch_dashboards.json').opensearchDashboardsVersion).match(/[.0-9]+/)[0]")"
       - name: Checkout OpenSearch Dashboards
-        uses: actions/checkout@v2
+        uses: actions/checkout@ee0669bd1cc54295c223e0bb666b733df41de1c5 # v2
         with:
           repository: opensearch-project/OpenSearch-Dashboards
           ref: ${{ steps.opensearch_dashboards_version.outputs.opensearch_dashboards_version }}
           token: ${{ secrets.GITHUB_OPENSEARCH_DASHBOARDS_OSS }}
           path: opensearchDashboards
       - name: Setup Node
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@3235b876344d2a9aa001b8d1453c930bba69e610 # v3
         with:
           node-version-file: './OpenSearch-Dashboards/.nvmrc'
           registry-url: 'https://registry.npmjs.org'
@@ -53,7 +53,7 @@ jobs:
           zip_path=`ls $(pwd)/build/*.zip`
           echo "::set-output name=zip_path::$zip_path"
       - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v1
+        uses: aws-actions/configure-aws-credentials@67fbcbb121271f7775d2e7715933280b06314838 # v1
         with:
           aws-access-key-id: ${{ secrets.AWS_STAGING_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_STAGING_SECRET_ACCESS_KEY }}
@@ -71,7 +71,7 @@ jobs:
           aws s3 cp --quiet $zip ${s3_prefix}${zip_outfile}
       - name: Create Github Draft Release
         id: create_release
-        uses: actions/create-release@v1.0.0
+        uses: actions/create-release@8d93430eddafb926c668181c71f579556f68668c # v1.0.0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
@@ -80,7 +80,7 @@ jobs:
           draft: true
           prerelease: false
       - name: Upload Release Asset
-        uses: actions/upload-release-asset@v1.0.1
+        uses: actions/upload-release-asset@64e5e85fc528f162d7ba7ce2d15a3bb67efb3d80 # v1.0.1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
@@ -89,7 +89,7 @@ jobs:
           asset_path: ${{ steps.build_zip.outputs.zip_path }}
           asset_content_type: application/zip
       - name: Upload Workflow Artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: alerting-plugin
           path: ${{ steps.build_zip.outputs.zip_path }}
