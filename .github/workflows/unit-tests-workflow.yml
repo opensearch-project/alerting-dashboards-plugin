@@ -40,7 +40,7 @@ jobs:
         run: |
           chown -R 1000:1000 `pwd`
           cd ./OpenSearch-Dashboards/
-          su `id -un 1000` -c "source $NVM_DIR/nvm.sh && nvm use && node -v && yarn -v &&
+          su `id -un 1000` -c "source $NVM_DIR/nvm.sh && nvm install && node -v && yarn -v &&
                                cd ./plugins/alerting-dashboards-plugin &&
                                whoami && yarn osd bootstrap --single-version=loose && yarn build && yarn run test:jest --coverage"
       - name: Uploads coverage
