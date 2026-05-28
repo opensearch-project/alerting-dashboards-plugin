@@ -1,6 +1,6 @@
 {
   "name": "opensearch-alerting-dashboards",
-  "version": "2.19.5.0",
+  "version": "2.19.6.0",
   "description": "OpenSearch Dashboards Alerting Plugin",
   "main": "index.js",
   "license": "Apache-2.0",
@@ -34,18 +34,18 @@
     "@babel/plugin-transform-modules-commonjs": "^7.22.9",
     "@elastic/elastic-eslint-config-kibana": "link:../../packages/opensearch-eslint-config-opensearch-dashboards",
     "@elastic/eslint-import-resolver-kibana": "link:../../packages/osd-eslint-import-resolver-opensearch-dashboards",
+    "@types/react": "^16.14.23",
     "cypress": "12.17.4",
     "husky": "^8.0.0",
-    "lint-staged": "^10.2.0",
-    "@types/react": "^16.14.23"
+    "lint-staged": "^10.2.0"
   },
   "dependencies": {
     "brace": "0.11.1",
     "formik": "^2.2.6",
     "lodash": "^4.17.21",
+    "prettier": "^2.1.1",
     "query-string": "^6.13.2",
-    "react-vis": "^1.8.1",
-    "prettier": "^2.1.1"
+    "react-vis": "^1.8.1"
   },
   "resolutions": {
     "ansi-regex": "^5.0.1",
@@ -70,7 +70,7 @@
     "cipher-base": "^1.0.7",
     "sha.js": "^2.4.12",
     "form-data": "4.0.4",
-    "qs": "^6.14.2",
+    "qs": "^6.15.2",
     "minimatch": "^3.1.4",
     "picomatch": "^2.3.2",
     "brace-expansion": "^5.0.5",
