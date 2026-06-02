@@ -52,6 +52,17 @@ export interface AlertingSetup { }
 
 export interface AlertingStart { }
 
+/**
+ * Structural shape for the slice of `dashboards-observability`'s setup
+ * contract we depend on. Inlined (rather than imported from the
+ * observability package) to avoid a hard cross-plugin type dependency —
+ * we only need to know whether observability has claimed ownership of
+ * the Explore "Create monitor" entry.
+ */
+interface ObservabilityDashboardsSetupShape {
+  ownsMonitorCreation: boolean;
+}
+
 export interface AlertingSetupDeps {
   expressions: ExpressionsSetup;
   uiActions: UiActionsSetup;
@@ -59,6 +70,13 @@ export interface AlertingSetupDeps {
   dataSource: DataSourcePluginSetup;
   assistantDashboards?: AssistantSetup;
   explore?: ExplorePluginSetup;
+  /**
+   * Optional. Present when the observability plugin is loaded; carries an
+   * `ownsMonitorCreation` flag set to `true` when observability's alert
+   * manager is enabled. We skip our own Explore registration in that case
+   * so the user only sees one "Create monitor" entry.
+   */
+  observabilityDashboards?: ObservabilityDashboardsSetupShape;
 }
 
 export interface AlertingStartDeps {
@@ -92,7 +110,7 @@ export class AlertingPlugin implements Plugin<void, AlertingStart, AlertingSetup
   private startServicesPromise!: ReturnType<CoreSetup['getStartServices']>;
 
 
-  public setup(core: CoreSetup<AlertingStartDeps, AlertingStart>, { expressions, uiActions, dataSourceManagement, dataSource, assistantDashboards, explore }: AlertingSetupDeps) {
+  public setup(core: CoreSetup<AlertingStartDeps, AlertingStart>, { expressions, uiActions, dataSourceManagement, dataSource, assistantDashboards, explore, observabilityDashboards }: AlertingSetupDeps) {
 
     this.startServicesPromise = core.getStartServices();
 
@@ -259,11 +277,16 @@ export class AlertingPlugin implements Plugin<void, AlertingStart, AlertingSetup
 
     /**
      * Register a flyout action in Explore's Query Panel "Actions" menu
-     * that opens an inline monitor creation flyout with the PPL query pre-filled.
-     * Only register if the explore plugin is available.
+     * that opens an inline monitor creation flyout with the PPL query
+     * pre-filled. Skipped when:
+     *  - explore plugin isn't installed (nothing to register against), or
+     *  - observability has claimed ownership of "Create monitor" via the
+     *    `ownsMonitorCreation` flag on its setup contract — registering
+     *    ours alongside theirs would surface two duplicate menu entries.
      */
     const isExploreEnabled = !!explore;
-    if (isExploreEnabled) {
+    const obsOwnsMonitorCreation = !!observabilityDashboards?.ownsMonitorCreation;
+    if (isExploreEnabled && !obsOwnsMonitorCreation) {
       explore.queryPanelActionsRegistry.register({
         id: 'alerting-create-monitor-from-explore',
         order: 1,
