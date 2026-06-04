@@ -39,6 +39,10 @@ import type { ExplorePluginSetup, ExplorePluginStart } from '../../../src/plugin
 import { ResultStatus } from '../../../src/plugins/data/public';
 import { CreateMonitorFlyout } from './components/CreateMonitorFlyout';
 import { CoreContext } from './utils/CoreContext';
+import {
+  ObservabilityDashboardsSetupShape,
+  shouldRegisterAlertingExploreAction,
+} from './utils/should_register_alerting_explore_action';
 
 declare module '../../../src/plugins/ui_actions/public' {
   export interface ActionContextMapping {
@@ -51,17 +55,6 @@ let navigateToAppRef: CoreStart['application']['navigateToApp'] | null = null;
 export interface AlertingSetup { }
 
 export interface AlertingStart { }
-
-/**
- * Structural shape for the slice of `dashboards-observability`'s setup
- * contract we depend on. Inlined (rather than imported from the
- * observability package) to avoid a hard cross-plugin type dependency —
- * we only need to know whether observability has claimed ownership of
- * the Explore "Create monitor" entry.
- */
-interface ObservabilityDashboardsSetupShape {
-  ownsMonitorCreation: boolean;
-}
 
 export interface AlertingSetupDeps {
   expressions: ExpressionsSetup;
@@ -284,10 +277,8 @@ export class AlertingPlugin implements Plugin<void, AlertingStart, AlertingSetup
      *    `ownsMonitorCreation` flag on its setup contract — registering
      *    ours alongside theirs would surface two duplicate menu entries.
      */
-    const isExploreEnabled = !!explore;
-    const obsOwnsMonitorCreation = !!observabilityDashboards?.ownsMonitorCreation;
-    if (isExploreEnabled && !obsOwnsMonitorCreation) {
-      explore.queryPanelActionsRegistry.register({
+    if (shouldRegisterAlertingExploreAction({ explore, observabilityDashboards })) {
+      explore!.queryPanelActionsRegistry.register({
         id: 'alerting-create-monitor-from-explore',
         order: 1,
         getIsEnabled: (deps) => {
