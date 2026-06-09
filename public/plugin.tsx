@@ -39,11 +39,6 @@ import type { ExplorePluginSetup, ExplorePluginStart } from '../../../src/plugin
 import { ResultStatus } from '../../../src/plugins/data/public';
 import { CreateMonitorFlyout } from './components/CreateMonitorFlyout';
 import { CoreContext } from './utils/CoreContext';
-import {
-  ObservabilityDashboardsSetupShape,
-  shouldRegisterAlertingExploreAction,
-} from './utils/should_register_alerting_explore_action';
-
 declare module '../../../src/plugins/ui_actions/public' {
   export interface ActionContextMapping {
     [ACTION_ALERTING]: {};
@@ -64,12 +59,13 @@ export interface AlertingSetupDeps {
   assistantDashboards?: AssistantSetup;
   explore?: ExplorePluginSetup;
   /**
-   * Optional. Present when the observability plugin is loaded; carries an
-   * `ownsMonitorCreation` flag set to `true` when observability's alert
-   * manager is enabled. We skip our own Explore registration in that case
-   * so the user only sees one "Create monitor" entry.
+   * Optional. Present when dashboards-observability is loaded. We no
+   * longer read its setup contract; coordination of which "Create
+   * monitor" entry shows happens at request time via
+   * `capabilities.observability.alertManagerEnabled`. Field kept so
+   * declared optional plugin deps still resolve without warnings.
    */
-  observabilityDashboards?: ObservabilityDashboardsSetupShape;
+  observabilityDashboards?: unknown;
 }
 
 export interface AlertingStartDeps {
@@ -103,7 +99,7 @@ export class AlertingPlugin implements Plugin<void, AlertingStart, AlertingSetup
   private startServicesPromise!: ReturnType<CoreSetup['getStartServices']>;
 
 
-  public setup(core: CoreSetup<AlertingStartDeps, AlertingStart>, { expressions, uiActions, dataSourceManagement, dataSource, assistantDashboards, explore, observabilityDashboards }: AlertingSetupDeps) {
+  public setup(core: CoreSetup<AlertingStartDeps, AlertingStart>, { expressions, uiActions, dataSourceManagement, dataSource, assistantDashboards, explore }: AlertingSetupDeps) {
 
     this.startServicesPromise = core.getStartServices();
 
@@ -271,14 +267,60 @@ export class AlertingPlugin implements Plugin<void, AlertingStart, AlertingSetup
     /**
      * Register a flyout action in Explore's Query Panel "Actions" menu
      * that opens an inline monitor creation flyout with the PPL query
-     * pre-filled. Skipped when:
-     *  - explore plugin isn't installed (nothing to register against), or
-     *  - observability has claimed ownership of "Create monitor" via the
-     *    `ownsMonitorCreation` flag on its setup contract — registering
-     *    ours alongside theirs would surface two duplicate menu entries.
+     * pre-filled.
+     *
+     * Both alerting and dashboards-observability register a "Create
+     * monitor" entry on Explore. The two coordinate via the
+     * `capabilities.observability.alertManagerEnabled` capability so
+     * exactly one button shows at a time:
+     *  - When `alertManagerEnabled === true`, observability's entry shows
+     *    and ours hides itself (see `getIsEnabled` below).
+     *  - When `alertManagerEnabled === false` (or observability isn't
+     *    installed), ours shows.
+     *
+     * That capability is yml-seeded by default and overridable per
+     * request via DynamicConfigService — so flipping observability's
+     * yml or AppConfig flag swaps which button the user sees without
+     * coordinating registration order at boot. Skipped only when the
+     * Explore plugin itself isn't installed (nothing to register
+     * against).
      */
-    if (shouldRegisterAlertingExploreAction({ explore, observabilityDashboards })) {
-      explore!.queryPanelActionsRegistry.register({
+    if (explore) {
+      // Capture `explore` in a local so the `.then()` closure has a
+      // narrowed reference and doesn't need a non-null assertion below.
+      const explorePlugin = explore;
+      // Defer registration until `getStartServices()` resolves so we can
+      // read `capabilities.observability.alertManagerEnabled` and decide
+      // whether dashboards-observability is owning the "Create monitor"
+      // entry on Explore. Explore's registry has no `isVisible` hook —
+      // only `getIsEnabled`, which greys out rather than hides — so the
+      // only way to avoid two duplicate menu entries is to skip
+      // `register()` entirely on the loser side. We're the loser when
+      // observability's capability is on; observability is the loser
+      // when it's off.
+      //
+      // Race window: in the common case, `getStartServices()` resolves
+      // before any user can open the Explore Actions menu — start runs
+      // ahead of any UI mount, and the menu is gated behind a click
+      // inside Explore. If a user navigates straight to Explore on a
+      // host where start is unusually slow, they may briefly see no
+      // "Create monitor" entry until the promise settles. The registry
+      // does not support unregistration, so registering optimistically
+      // and tearing down later isn't an option; deferring is the
+      // correct trade-off given the constraints.
+      this.startServicesPromise
+        .then(([coreStart]) => {
+        const capabilities = coreStart.application.capabilities as {
+          observability?: { alertManagerEnabled?: boolean };
+        };
+        // Strict `=== true` rather than truthy: capability values can be
+        // non-boolean (e.g. structured objects from a dynamic-config
+        // store), and we must only stand down when the field is
+        // explicitly `true`. Do not "simplify" to a truthy check.
+        if (capabilities?.observability?.alertManagerEnabled === true) {
+          return;
+        }
+        explorePlugin.queryPanelActionsRegistry.register({
         id: 'alerting-create-monitor-from-explore',
         order: 1,
         getIsEnabled: (deps) => {
@@ -346,7 +388,17 @@ export class AlertingPlugin implements Plugin<void, AlertingStart, AlertingSetup
           );
           flyoutSession = overlays.openFlyout(toMountPoint(flyoutContent));
         },
-      });
+        });
+      })
+        .catch((error) => {
+          // Surface failures from the deferred-registration path. Without
+          // this catch, a `getStartServices()` rejection (rare, but
+          // possible during a failed start lifecycle or late teardown)
+          // would become an unhandled promise rejection and the
+          // registration would silently no-op.
+          // eslint-disable-next-line no-console
+          console.error('Failed to register Explore "Create monitor" action', error);
+        });
     }
   }
 
