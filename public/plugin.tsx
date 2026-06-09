@@ -58,14 +58,6 @@ export interface AlertingSetupDeps {
   dataSource: DataSourcePluginSetup;
   assistantDashboards?: AssistantSetup;
   explore?: ExplorePluginSetup;
-  /**
-   * Optional. Present when dashboards-observability is loaded. We no
-   * longer read its setup contract; coordination of which "Create
-   * monitor" entry shows happens at request time via
-   * `capabilities.observability.alertManagerEnabled`. Field kept so
-   * declared optional plugin deps still resolve without warnings.
-   */
-  observabilityDashboards?: unknown;
 }
 
 export interface AlertingStartDeps {

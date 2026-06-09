@@ -8,7 +8,6 @@
     "dataSourceManagement",
     "assistantDashboards",
     "explore",
-    "observabilityDashboards",
     "workspace"
   ],
   "requiredPlugins": [
