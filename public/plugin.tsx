@@ -286,6 +286,9 @@ export class AlertingPlugin implements Plugin<void, AlertingStart, AlertingSetup
      * against).
      */
     if (explore) {
+      // Capture `explore` in a local so the `.then()` closure has a
+      // narrowed reference and doesn't need a non-null assertion below.
+      const explorePlugin = explore;
       // Defer registration until `getStartServices()` resolves so we can
       // read `capabilities.observability.alertManagerEnabled` and decide
       // whether dashboards-observability is owning the "Create monitor"
@@ -294,16 +297,30 @@ export class AlertingPlugin implements Plugin<void, AlertingStart, AlertingSetup
       // only way to avoid two duplicate menu entries is to skip
       // `register()` entirely on the loser side. We're the loser when
       // observability's capability is on; observability is the loser
-      // when it's off. Resolves before any user can open the actions
-      // menu.
-      this.startServicesPromise.then(([coreStart]) => {
-        const capabilities = coreStart.application.capabilities as
-          | { observability?: { alertManagerEnabled?: boolean } }
-          | undefined;
+      // when it's off.
+      //
+      // Race window: in the common case, `getStartServices()` resolves
+      // before any user can open the Explore Actions menu — start runs
+      // ahead of any UI mount, and the menu is gated behind a click
+      // inside Explore. If a user navigates straight to Explore on a
+      // host where start is unusually slow, they may briefly see no
+      // "Create monitor" entry until the promise settles. The registry
+      // does not support unregistration, so registering optimistically
+      // and tearing down later isn't an option; deferring is the
+      // correct trade-off given the constraints.
+      this.startServicesPromise
+        .then(([coreStart]) => {
+        const capabilities = coreStart.application.capabilities as {
+          observability?: { alertManagerEnabled?: boolean };
+        };
+        // Strict `=== true` rather than truthy: capability values can be
+        // non-boolean (e.g. structured objects from a dynamic-config
+        // store), and we must only stand down when the field is
+        // explicitly `true`. Do not "simplify" to a truthy check.
         if (capabilities?.observability?.alertManagerEnabled === true) {
           return;
         }
-        explore!.queryPanelActionsRegistry.register({
+        explorePlugin.queryPanelActionsRegistry.register({
         id: 'alerting-create-monitor-from-explore',
         order: 1,
         getIsEnabled: (deps) => {
@@ -372,7 +389,16 @@ export class AlertingPlugin implements Plugin<void, AlertingStart, AlertingSetup
           flyoutSession = overlays.openFlyout(toMountPoint(flyoutContent));
         },
         });
-      });
+      })
+        .catch((error) => {
+          // Surface failures from the deferred-registration path. Without
+          // this catch, a `getStartServices()` rejection (rare, but
+          // possible during a failed start lifecycle or late teardown)
+          // would become an unhandled promise rejection and the
+          // registration would silently no-op.
+          // eslint-disable-next-line no-console
+          console.error('Failed to register Explore "Create monitor" action', error);
+        });
     }
   }
 
