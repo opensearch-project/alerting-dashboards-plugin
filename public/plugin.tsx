@@ -58,14 +58,6 @@ export interface AlertingSetupDeps {
   dataSource: DataSourcePluginSetup;
   assistantDashboards?: AssistantSetup;
   explore?: ExplorePluginSetup;
-  /**
-   * Optional. Present when dashboards-observability is loaded. We no
-   * longer read its setup contract; coordination of which "Create
-   * monitor" entry shows happens at request time via
-   * `capabilities.observability.alertManagerEnabled`. Field kept so
-   * declared optional plugin deps still resolve without warnings.
-   */
-  observabilityDashboards?: unknown;
 }
 
 export interface AlertingStartDeps {
@@ -310,86 +302,91 @@ export class AlertingPlugin implements Plugin<void, AlertingStart, AlertingSetup
       // correct trade-off given the constraints.
       this.startServicesPromise
         .then(([coreStart]) => {
-        const capabilities = coreStart.application.capabilities as {
-          observability?: { alertManagerEnabled?: boolean };
-        };
-        // Strict `=== true` rather than truthy: capability values can be
-        // non-boolean (e.g. structured objects from a dynamic-config
-        // store), and we must only stand down when the field is
-        // explicitly `true`. Do not "simplify" to a truthy check.
-        if (capabilities?.observability?.alertManagerEnabled === true) {
-          return;
-        }
-        explorePlugin.queryPanelActionsRegistry.register({
-        id: 'alerting-create-monitor-from-explore',
-        order: 1,
-        getIsEnabled: (deps) => {
-          if (!isPplAlertingEnabled()) {
-            return false;
-          }
-          // Allow monitor creation for READY, NO_RESULTS, and ERROR statuses
-          const allowedStatuses = [ResultStatus.READY, ResultStatus.NO_RESULTS, ResultStatus.ERROR];
-          const isStatusAllowed = allowedStatuses.includes(deps.resultStatus.status);
-
-          // Check if data source is AOSS collection - if so, disable the button
-          const isAOSSCollection = deps.query?.dataset?.dataSource?.type === 'OpenSearch Serverless';
-
-          return isStatusAllowed && !isAOSSCollection;
-        },
-        getLabel: () => 'Create monitor',
-        getIcon: () => 'bell',
-        onClick: async (deps) => {
-          const actionsButton = document.querySelector<HTMLButtonElement>(
-            '[data-test-subj="queryPanelFooterActionsButton"]'
-          );
-          if (actionsButton) {
-            const triggerClose = () => {
-            actionsButton.click();
-            };
-            if (typeof requestAnimationFrame === 'function') {
-              requestAnimationFrame(triggerClose);
-            } else {
-              setTimeout(triggerClose, 0);
-            }
-          }
-          const [coreStart, depsStart] = await this.startServicesPromise;
-          if (!isPplAlertingEnabled()) {
+          const capabilities = coreStart.application.capabilities as {
+            observability?: { alertManagerEnabled?: boolean };
+          };
+          // Strict `=== true` rather than truthy: capability values can be
+          // non-boolean (e.g. structured objects from a dynamic-config
+          // store), and we must only stand down when the field is
+          // explicitly `true`. Do not "simplify" to a truthy check.
+          if (capabilities?.observability?.alertManagerEnabled === true) {
             return;
           }
-          const { overlays, http, notifications, chrome, uiSettings, i18n } = coreStart;
-          const services = {
-            ...(coreStart as unknown as Record<string, unknown>),
-            ...(depsStart as unknown as Record<string, unknown>),
-          };
-          const contextValue = {
-            http,
-            isDarkMode: uiSettings.get('theme:darkMode'),
-            notifications,
-            chrome,
-            defaultRoute: '/',
-            data: (depsStart as any)?.data,
-            services,
-          };
-          const queryInEditor =
-            (deps.query as any)?.query ?? (deps.query as any)?.queryString ?? '';
-          let flyoutSession: OverlayRef | undefined;
-          const flyoutContent = (
-            <CoreContext.Provider value={contextValue}>
-              <CreateMonitorFlyout
-                closeFlyout={() => flyoutSession?.close()}
-                dependencies={{
-                  query: deps.query,
-                  resultStatus: deps.resultStatus,
-                  queryInEditor,
-                }}
-                services={services}
-              />
-            </CoreContext.Provider>
-          );
-          flyoutSession = overlays.openFlyout(toMountPoint(flyoutContent));
-        },
-        });
-      })
+          explorePlugin.queryPanelActionsRegistry.register({
+            id: 'alerting-create-monitor-from-explore',
+            order: 1,
+            getIsEnabled: (deps) => {
+              if (!isPplAlertingEnabled()) {
+                return false;
+              }
+              // Allow monitor creation for READY, NO_RESULTS, and ERROR statuses
+              const allowedStatuses = [
+                ResultStatus.READY,
+                ResultStatus.NO_RESULTS,
+                ResultStatus.ERROR,
+              ];
+              const isStatusAllowed = allowedStatuses.includes(deps.resultStatus.status);
+
+              // Check if data source is AOSS collection - if so, disable the button
+              const isAOSSCollection =
+                deps.query?.dataset?.dataSource?.type === 'OpenSearch Serverless';
+
+              return isStatusAllowed && !isAOSSCollection;
+            },
+            getLabel: () => 'Create monitor',
+            getIcon: () => 'bell',
+            onClick: async (deps) => {
+              const actionsButton = document.querySelector<HTMLButtonElement>(
+                '[data-test-subj="queryPanelFooterActionsButton"]'
+              );
+              if (actionsButton) {
+                const triggerClose = () => {
+                  actionsButton.click();
+                };
+                if (typeof requestAnimationFrame === 'function') {
+                  requestAnimationFrame(triggerClose);
+                } else {
+                  setTimeout(triggerClose, 0);
+                }
+              }
+              const [innerCoreStart, depsStart] = await this.startServicesPromise;
+              if (!isPplAlertingEnabled()) {
+                return;
+              }
+              const { overlays, http, notifications, chrome, uiSettings } = innerCoreStart;
+              const services = {
+                ...((innerCoreStart as unknown) as Record<string, unknown>),
+                ...((depsStart as unknown) as Record<string, unknown>),
+              };
+              const contextValue = {
+                http,
+                isDarkMode: uiSettings.get('theme:darkMode'),
+                notifications,
+                chrome,
+                defaultRoute: '/',
+                data: (depsStart as any)?.data,
+                services,
+              };
+              const queryInEditor =
+                (deps.query as any)?.query ?? (deps.query as any)?.queryString ?? '';
+              let flyoutSession: OverlayRef | undefined;
+              const flyoutContent = (
+                <CoreContext.Provider value={contextValue}>
+                  <CreateMonitorFlyout
+                    closeFlyout={() => flyoutSession?.close()}
+                    dependencies={{
+                      query: deps.query,
+                      resultStatus: deps.resultStatus,
+                      queryInEditor,
+                    }}
+                    services={services}
+                  />
+                </CoreContext.Provider>
+              );
+              flyoutSession = overlays.openFlyout(toMountPoint(flyoutContent));
+            },
+          });
+        })
         .catch((error) => {
           // Surface failures from the deferred-registration path. Without
           // this catch, a `getStartServices()` rejection (rare, but
