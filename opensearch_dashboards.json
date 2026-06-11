@@ -1,6 +1,6 @@
 {
   "id": "alertingDashboards",
-  "version": "2.19.5.0",
+  "version": "2.19.6.0",
   "opensearchDashboardsVersion": "2.19.6",
   "configPath": [
     "opensearch_alerting"
