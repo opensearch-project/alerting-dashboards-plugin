@@ -318,6 +318,7 @@ export default class MonitorService {
           query: {
             bool: {
               should,
+              minimum_should_match: state !== 'all' ? 1 : 0,
               must: mustList,
             },
           },
