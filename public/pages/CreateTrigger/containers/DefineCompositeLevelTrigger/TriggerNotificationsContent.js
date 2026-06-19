@@ -8,9 +8,10 @@ import { EuiPanel, EuiFlexGroup, EuiFlexItem, EuiButtonEmpty, EuiSpacer } from '
 import { FormikComboBox } from '../../../../components/FormControls';
 import NotificationConfigDialog from './NotificationConfigDialog';
 import _ from 'lodash';
-import { FORMIK_INITIAL_ACTION_VALUES, MANAGE_CHANNELS_PATH } from '../../utils/constants';
+import { FORMIK_INITIAL_ACTION_VALUES } from '../../utils/constants';
 import { NOTIFY_OPTIONS_VALUES } from '../../components/Action/actions/Message';
 import { required } from '../../../../utils/validate';
+import { getManageChannelsUrl } from '../../../../utils/helpers';
 
 const TriggerNotificationsContent = ({
   action,
@@ -97,7 +98,7 @@ const TriggerNotificationsContent = ({
               iconType={'popout'}
               style={{ marginTop: '22px' }}
               disabled={!hasNotifications}
-              onClick={() => window.open(httpClient.basePath.prepend(MANAGE_CHANNELS_PATH))}
+              onClick={() => window.open(getManageChannelsUrl())}
             >
               Manage channels
             </EuiButtonEmpty>
