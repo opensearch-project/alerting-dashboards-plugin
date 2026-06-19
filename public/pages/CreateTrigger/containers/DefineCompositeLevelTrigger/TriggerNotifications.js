@@ -51,7 +51,7 @@ const TriggerNotifications = ({
     let channels = [];
     let index = 0;
     const getChannels = async () => {
-      const config_types = await this.props.notificationService.getServerFeatures();
+      const config_types = await notificationService.getServerFeatures();
       const getChannelsQuery = {
         from_index: index,
         max_items: MAX_CHANNELS_RESULT_SIZE,
