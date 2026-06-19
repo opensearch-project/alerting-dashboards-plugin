@@ -5,8 +5,8 @@
 
 import React from 'react';
 import { EuiButton, EuiEmptyPrompt, EuiLink, EuiPanel, EuiText } from '@elastic/eui';
-import { MANAGE_CHANNELS_PATH } from '../../../CreateTrigger/utils/constants';
 import { NOTIFICATIONS_LEARN_MORE_HREF } from '../../utils/constants';
+import { getManageChannelsUrl } from '../../../../utils/helpers';
 
 const noNotificationsTitle = 'Destinations will become channels in Notifications';
 const noNotificationsText = (
@@ -40,20 +40,23 @@ const hasNotificationsText = (
     </p>
   </EuiText>
 );
-const hasNotificationsButton = (
-  <EuiButton fill href={MANAGE_CHANNELS_PATH}>
-    View in Notifications
-  </EuiButton>
-);
 
-const FullPageNotificationsInfoCallOut = ({ hasNotificationPlugin }) => (
-  <EuiPanel>
-    <EuiEmptyPrompt
-      title={<h2>{hasNotificationPlugin ? hasNotificationsTitle : noNotificationsTitle}</h2>}
-      body={hasNotificationPlugin ? hasNotificationsText : noNotificationsText}
-      actions={hasNotificationPlugin ? hasNotificationsButton : noNotificationsButton}
-    />
-  </EuiPanel>
-);
+const FullPageNotificationsInfoCallOut = ({ hasNotificationPlugin }) => {
+  const hasNotificationsButton = (
+    <EuiButton fill href={getManageChannelsUrl()}>
+      View in Notifications
+    </EuiButton>
+  );
+  
+  return (
+    <EuiPanel>
+      <EuiEmptyPrompt
+        title={<h2>{hasNotificationPlugin ? hasNotificationsTitle : noNotificationsTitle}</h2>}
+        body={hasNotificationPlugin ? hasNotificationsText : noNotificationsText}
+        actions={hasNotificationPlugin ? hasNotificationsButton : noNotificationsButton}
+      />
+    </EuiPanel>
+  );
+}
 
 export default FullPageNotificationsInfoCallOut;

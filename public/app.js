@@ -14,6 +14,7 @@ import './app.scss';
 import Main from './pages/Main';
 import { CoreContext } from './utils/CoreContext';
 import { ServicesContext, NotificationService } from './services';
+import { initManageChannelsUrl } from './utils/helpers';
 
 export function renderApp(coreStart, params) {
   const isDarkMode = coreStart.uiSettings.get('theme:darkMode') || false;
@@ -28,6 +29,8 @@ export function renderApp(coreStart, params) {
   } else {
     require('@elastic/charts/dist/theme_only_light.css');
   }
+
+  initManageChannelsUrl(coreStart.http);
 
   // render react to DOM
   ReactDOM.render(
