@@ -112,9 +112,10 @@ class Main extends Component {
     const { setActionMenu } = this.props;
     const componentConfig = {
       fullWidth: false,
-      activeOption: this.state.dataSourceLoading
-        ? undefined
-        : [{ id: this.state.selectedDataSourceId }],
+      activeOption:
+        this.state.selectedDataSourceId !== undefined
+          ? [{ id: this.state.selectedDataSourceId }]
+          : [],
       savedObjects: getSavedObjectsClient(),
       notifications: getNotifications(),
       dataSourceFilter: dataSourceFilterFn,
