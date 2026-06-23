@@ -268,6 +268,22 @@ paths:
                       end_time: null
                       acknowledged_time: null
                   totalAlerts: 1
+        "400":
+          description: Invalid query parameters
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                    enum:
+                      - false
+                  resp:
+                    type: string
+                required:
+                  - ok
+                  - resp
         "500":
           description: Internal server error
           content:
@@ -801,6 +817,22 @@ paths:
                   - ok
                   - monitors
                   - totalMonitors
+        "400":
+          description: Invalid query parameters
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                    enum:
+                      - false
+                  resp:
+                    type: string
+                required:
+                  - ok
+                  - resp
         "500":
           description: Internal server error
           content:
@@ -1747,6 +1779,22 @@ paths:
                                 source: TheSubject
                                 lang: mustache
                       last_update_time: 1562703611363
+        "400":
+          description: Invalid monitor parameters
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                    enum:
+                      - false
+                  resp:
+                    type: string
+                required:
+                  - ok
+                  - resp
         "500":
           description: Internal server error
           content:
@@ -2772,6 +2820,22 @@ paths:
                   - ok
                   - resp
                 description: Successful monitor response
+        "404":
+          description: Monitor not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                    enum:
+                      - false
+                  resp:
+                    type: string
+                required:
+                  - ok
+                  - resp
         "500":
           description: Internal server error
           content:
@@ -3647,6 +3711,38 @@ paths:
                   - ok
                   - resp
                 description: Successful monitor response
+        "400":
+          description: Invalid monitor parameters
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                    enum:
+                      - false
+                  resp:
+                    type: string
+                required:
+                  - ok
+                  - resp
+        "404":
+          description: Monitor not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                    enum:
+                      - false
+                  resp:
+                    type: string
+                required:
+                  - ok
+                  - resp
         "500":
           description: Internal server error
           content:
@@ -3685,9 +3781,9 @@ paths:
           in: query
         - schema:
             type: string
-            description: Document version for concurrency control
+            description: Document version for optimistic concurrency control
           required: true
-          description: Document version for concurrency control
+          description: Document version for optimistic concurrency control
           name: version
           in: query
       responses:
@@ -3748,6 +3844,38 @@ paths:
                   - ok
                   - resp
                 description: Delete monitor response
+        "400":
+          description: Missing required version parameter
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                    enum:
+                      - false
+                  resp:
+                    type: string
+                required:
+                  - ok
+                  - resp
+        "404":
+          description: Monitor not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                    enum:
+                      - false
+                  resp:
+                    type: string
+                required:
+                  - ok
+                  - resp
         "500":
           description: Internal server error
           content:
@@ -4355,6 +4483,22 @@ paths:
                     success:
                       - eQURa3gBKo1jAh6qUo49
                     failed: []
+        "404":
+          description: Monitor not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                    enum:
+                      - false
+                  resp:
+                    type: string
+                required:
+                  - ok
+                  - resp
         "500":
           description: Internal server error
           content:

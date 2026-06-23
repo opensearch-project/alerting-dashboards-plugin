@@ -39,7 +39,6 @@ import type { ExplorePluginSetup, ExplorePluginStart } from '../../../src/plugin
 import { ResultStatus } from '../../../src/plugins/data/public';
 import { CreateMonitorFlyout } from './components/CreateMonitorFlyout';
 import { CoreContext } from './utils/CoreContext';
-
 declare module '../../../src/plugins/ui_actions/public' {
   export interface ActionContextMapping {
     [ACTION_ALERTING]: {};
@@ -119,14 +118,15 @@ export class AlertingPlugin implements Plugin<void, AlertingStart, AlertingSetup
     });
 
     if (core.chrome.navGroup.getNavGroupEnabled()) {
-      // register applications with category and use case information
-      core.chrome.navGroup.addNavLinksToGroup(DEFAULT_NAV_GROUPS.observability, [
-        {
-          id: PLUGIN_NAME,
-          category: DEFAULT_APP_CATEGORIES.detect,
-          showInAllNavGroup: false
-        }
-      ])
+      if (!core.chrome.getIsIconSideNavEnabled()) {
+        core.chrome.navGroup.addNavLinksToGroup(DEFAULT_NAV_GROUPS.observability, [
+          {
+            id: PLUGIN_NAME,
+            category: DEFAULT_APP_CATEGORIES.detect,
+            showInAllNavGroup: false
+          }
+        ]);
+      }
 
       core.chrome.navGroup.addNavLinksToGroup(DEFAULT_NAV_GROUPS['security-analytics'], [
         {
@@ -199,10 +199,22 @@ export class AlertingPlugin implements Plugin<void, AlertingStart, AlertingSetup
         },
       ];
 
-      core.chrome.navGroup.addNavLinksToGroup(
-        DEFAULT_NAV_GROUPS.observability,
-        navLinks
-      );
+      if (core.chrome.getIsIconSideNavEnabled()) {
+        core.chrome.navGroup.addNavLinksToGroup(DEFAULT_NAV_GROUPS.observability, [
+          {
+            id: PLUGIN_NAME,
+            category: DEFAULT_APP_CATEGORIES.observabilityTools,
+            order: 8000,
+            euiIconType: 'bell',
+          },
+          ...navLinks,
+        ]);
+      } else {
+        core.chrome.navGroup.addNavLinksToGroup(
+          DEFAULT_NAV_GROUPS.observability,
+          navLinks
+        );
+      }
 
       core.chrome.navGroup.addNavLinksToGroup(
         DEFAULT_NAV_GROUPS['security-analytics'],
@@ -246,80 +258,144 @@ export class AlertingPlugin implements Plugin<void, AlertingStart, AlertingSetup
 
     /**
      * Register a flyout action in Explore's Query Panel "Actions" menu
-     * that opens an inline monitor creation flyout with the PPL query pre-filled.
-     * Only register if the explore plugin is available.
+     * that opens an inline monitor creation flyout with the PPL query
+     * pre-filled.
+     *
+     * Both alerting and dashboards-observability register a "Create
+     * monitor" entry on Explore. The two coordinate via the
+     * `capabilities.observability.alertManagerEnabled` capability so
+     * exactly one button shows at a time:
+     *  - When `alertManagerEnabled === true`, observability's entry shows
+     *    and ours hides itself (see `getIsEnabled` below).
+     *  - When `alertManagerEnabled === false` (or observability isn't
+     *    installed), ours shows.
+     *
+     * That capability is yml-seeded by default and overridable per
+     * request via DynamicConfigService — so flipping observability's
+     * yml or AppConfig flag swaps which button the user sees without
+     * coordinating registration order at boot. Skipped only when the
+     * Explore plugin itself isn't installed (nothing to register
+     * against).
      */
-    const isExploreEnabled = !!explore;
-    if (isExploreEnabled) {
-      explore.queryPanelActionsRegistry.register({
-        id: 'alerting-create-monitor-from-explore',
-        order: 1,
-        getIsEnabled: (deps) => {
-          if (!isPplAlertingEnabled()) {
-            return false;
-          }
-          // Allow monitor creation for READY, NO_RESULTS, and ERROR statuses
-          const allowedStatuses = [ResultStatus.READY, ResultStatus.NO_RESULTS, ResultStatus.ERROR];
-          const isStatusAllowed = allowedStatuses.includes(deps.resultStatus.status);
-
-          // Check if data source is AOSS collection - if so, disable the button
-          const isAOSSCollection = deps.query?.dataset?.dataSource?.type === 'OpenSearch Serverless';
-
-          return isStatusAllowed && !isAOSSCollection;
-        },
-        getLabel: () => 'Create monitor',
-        getIcon: () => 'bell',
-        onClick: async (deps) => {
-          const actionsButton = document.querySelector<HTMLButtonElement>(
-            '[data-test-subj="queryPanelFooterActionsButton"]'
-          );
-          if (actionsButton) {
-            const triggerClose = () => {
-            actionsButton.click();
-            };
-            if (typeof requestAnimationFrame === 'function') {
-              requestAnimationFrame(triggerClose);
-            } else {
-              setTimeout(triggerClose, 0);
-            }
-          }
-          const [coreStart, depsStart] = await this.startServicesPromise;
-          if (!isPplAlertingEnabled()) {
+    if (explore) {
+      // Capture `explore` in a local so the `.then()` closure has a
+      // narrowed reference and doesn't need a non-null assertion below.
+      const explorePlugin = explore;
+      // Defer registration until `getStartServices()` resolves so we can
+      // read `capabilities.observability.alertManagerEnabled` and decide
+      // whether dashboards-observability is owning the "Create monitor"
+      // entry on Explore. Explore's registry has no `isVisible` hook —
+      // only `getIsEnabled`, which greys out rather than hides — so the
+      // only way to avoid two duplicate menu entries is to skip
+      // `register()` entirely on the loser side. We're the loser when
+      // observability's capability is on; observability is the loser
+      // when it's off.
+      //
+      // Race window: in the common case, `getStartServices()` resolves
+      // before any user can open the Explore Actions menu — start runs
+      // ahead of any UI mount, and the menu is gated behind a click
+      // inside Explore. If a user navigates straight to Explore on a
+      // host where start is unusually slow, they may briefly see no
+      // "Create monitor" entry until the promise settles. The registry
+      // does not support unregistration, so registering optimistically
+      // and tearing down later isn't an option; deferring is the
+      // correct trade-off given the constraints.
+      this.startServicesPromise
+        .then(([coreStart]) => {
+          const capabilities = coreStart.application.capabilities as {
+            observability?: { alertManagerEnabled?: boolean };
+          };
+          // Strict `=== true` rather than truthy: capability values can be
+          // non-boolean (e.g. structured objects from a dynamic-config
+          // store), and we must only stand down when the field is
+          // explicitly `true`. Do not "simplify" to a truthy check.
+          if (capabilities?.observability?.alertManagerEnabled === true) {
             return;
           }
-          const { overlays, http, notifications, chrome, uiSettings, i18n } = coreStart;
-          const services = {
-            ...(coreStart as unknown as Record<string, unknown>),
-            ...(depsStart as unknown as Record<string, unknown>),
-          };
-          const contextValue = {
-            http,
-            isDarkMode: uiSettings.get('theme:darkMode'),
-            notifications,
-            chrome,
-            defaultRoute: '/',
-            data: (depsStart as any)?.data,
-            services,
-          };
-          const queryInEditor =
-            (deps.query as any)?.query ?? (deps.query as any)?.queryString ?? '';
-          let flyoutSession: OverlayRef | undefined;
-          const flyoutContent = (
-            <CoreContext.Provider value={contextValue}>
-              <CreateMonitorFlyout
-                closeFlyout={() => flyoutSession?.close()}
-                dependencies={{
-                  query: deps.query,
-                  resultStatus: deps.resultStatus,
-                  queryInEditor,
-                }}
-                services={services}
-              />
-            </CoreContext.Provider>
-          );
-          flyoutSession = overlays.openFlyout(toMountPoint(flyoutContent));
-        },
-      });
+          explorePlugin.queryPanelActionsRegistry.register({
+            id: 'alerting-create-monitor-from-explore',
+            order: 1,
+            getIsEnabled: (deps) => {
+              if (!isPplAlertingEnabled()) {
+                return false;
+              }
+              // Allow monitor creation for READY, NO_RESULTS, and ERROR statuses
+              const allowedStatuses = [
+                ResultStatus.READY,
+                ResultStatus.NO_RESULTS,
+                ResultStatus.ERROR,
+              ];
+              const isStatusAllowed = allowedStatuses.includes(deps.resultStatus.status);
+
+              // Check if data source is AOSS collection - if so, disable the button
+              const isAOSSCollection =
+                deps.query?.dataset?.dataSource?.type === 'OpenSearch Serverless';
+
+              return isStatusAllowed && !isAOSSCollection;
+            },
+            getLabel: () => 'Create monitor',
+            getIcon: () => 'bell',
+            onClick: async (deps) => {
+              const actionsButton = document.querySelector<HTMLButtonElement>(
+                '[data-test-subj="queryPanelFooterActionsButton"]'
+              );
+              if (actionsButton) {
+                const triggerClose = () => {
+                  actionsButton.click();
+                };
+                if (typeof requestAnimationFrame === 'function') {
+                  requestAnimationFrame(triggerClose);
+                } else {
+                  setTimeout(triggerClose, 0);
+                }
+              }
+              const [innerCoreStart, depsStart] = await this.startServicesPromise;
+              if (!isPplAlertingEnabled()) {
+                return;
+              }
+              const { overlays, http, notifications, chrome, uiSettings } = innerCoreStart;
+              const services = {
+                ...((innerCoreStart as unknown) as Record<string, unknown>),
+                ...((depsStart as unknown) as Record<string, unknown>),
+              };
+              const contextValue = {
+                http,
+                isDarkMode: uiSettings.get('theme:darkMode'),
+                notifications,
+                chrome,
+                defaultRoute: '/',
+                data: (depsStart as any)?.data,
+                services,
+              };
+              const queryInEditor =
+                (deps.query as any)?.query ?? (deps.query as any)?.queryString ?? '';
+              let flyoutSession: OverlayRef | undefined;
+              const flyoutContent = (
+                <CoreContext.Provider value={contextValue}>
+                  <CreateMonitorFlyout
+                    closeFlyout={() => flyoutSession?.close()}
+                    dependencies={{
+                      query: deps.query,
+                      resultStatus: deps.resultStatus,
+                      queryInEditor,
+                    }}
+                    services={services}
+                  />
+                </CoreContext.Provider>
+              );
+              flyoutSession = overlays.openFlyout(toMountPoint(flyoutContent));
+            },
+          });
+        })
+        .catch((error) => {
+          // Surface failures from the deferred-registration path. Without
+          // this catch, a `getStartServices()` rejection (rare, but
+          // possible during a failed start lifecycle or late teardown)
+          // would become an unhandled promise rejection and the
+          // registration would silently no-op.
+          // eslint-disable-next-line no-console
+          console.error('Failed to register Explore "Create monitor" action', error);
+        });
     }
   }
 
