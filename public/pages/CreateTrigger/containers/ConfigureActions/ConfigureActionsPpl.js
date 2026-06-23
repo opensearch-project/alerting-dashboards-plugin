@@ -22,6 +22,7 @@ import { TRIGGER_TYPE } from '../CreateTrigger/utils/constants';
 import { formikToTrigger } from '../CreateTrigger/utils/formikToTrigger';
 import { getChannelOptions, toChannelType } from '../../utils/helper';
 import { getDataSourceId } from '../../../utils/helpers';
+import { isServerlessDataSource } from '../../../../services';
 import MessagePpl from '../../components/Action/actions/MessagePpl';
 
 const createActionContext = (context, action) => {
@@ -118,12 +119,17 @@ class ConfigureActionsPpl extends React.Component {
   getChannels = async () => {
     const { plugins } = this.props;
     const hasNotificationPlugin = plugins.indexOf(OS_NOTIFICATION_PLUGIN) !== -1;
+    const isAoss = isServerlessDataSource();
 
     let channels = [];
     let index = 0;
+    const DEFAULT_CHANNEL_TYPES = ['slack', 'email', 'chime', 'microsoft_teams', 'webhook', 'sns'];
     const getChannels = async () => {
-      const serverFeatures = await this.props.notificationService.getServerFeatures();
-      const configTypes = Object.keys(serverFeatures.availableChannels);
+      let configTypes = DEFAULT_CHANNEL_TYPES;
+      if (!isAoss) {
+        const serverFeatures = await this.props.notificationService.getServerFeatures();
+        configTypes = Object.keys(serverFeatures.availableChannels);
+      }
       const getChannelsQuery = {
         from_index: index,
         max_items: MAX_CHANNELS_RESULT_SIZE,
@@ -159,6 +165,33 @@ class ConfigureActionsPpl extends React.Component {
   loadDestinations = async (searchText = '') => {
     const { httpClient, values, arrayHelpers, notifications, fieldPath, flyoutMode } = this.props;
     const { allowList, actionDeleted } = this.state;
+    const isAoss = isServerlessDataSource();
+
+    // Destinations-related API do not exist in AOSS. Only load notification channels.
+    if (isAoss) {
+      this.setState({ loadingDestinations: true });
+      try {
+        const channels = await this.getChannels();
+        const channelOptionsByType = getChannelOptions(channels);
+        this.setState({
+          destinations: channelOptionsByType,
+          flattenedDestinations: channels,
+          loadingDestinations: false,
+        });
+
+        const actions = _.get(values, `${fieldPath}actions`, []);
+        const initialActionValues = getInitialPplActionValues({ flyoutMode, actions });
+
+        if (channels.length > 0 && !_.get(values, `${fieldPath}actions`) && !actionDeleted) {
+          arrayHelpers.insert(0, initialActionValues);
+        }
+      } catch (err) {
+        console.error(err);
+        this.setState({ destinations: [], flattenedDestinations: [], loadingDestinations: false });
+      }
+      this.setState({ isInitialLoading: false });
+      return;
+    }
 
     this.setState({ loadingDestinations: true });
     try {

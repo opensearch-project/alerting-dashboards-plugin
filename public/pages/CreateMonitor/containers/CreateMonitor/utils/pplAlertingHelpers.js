@@ -58,8 +58,7 @@ export const getInitialValues = ({
         sessionStorage.removeItem(transferKey);
       }
     } catch (err) {
-      // eslint-disable-next-line no-console
-      console.error('[getInitialValues] Failed to load query from sessionStorage:', err);
+      /* no-op */
     }
   }
 
@@ -452,8 +451,6 @@ export const findCommonDateFields = async (httpClient, indices, dataSourceId) =>
 
     return { commonDateFields: commonFields, error: null };
   } catch (err) {
-    // eslint-disable-next-line no-console
-    console.error('[findCommonDateFields] Error:', err);
     return {
       commonDateFields: [],
       error: err?.body?.message || err?.message || 'Failed to fetch mappings',

@@ -44,6 +44,7 @@ const toV1MonitorBody = (body) => {
     v1.look_back_window_minutes = body.look_back_window_minutes;
   if (body?.timestamp_field !== undefined && v1.timestamp_field === undefined)
     v1.timestamp_field = body.timestamp_field;
+  if (body?.target !== undefined) v1.target = body.target;
 
   return v1;
 };
@@ -76,34 +77,34 @@ export default class PplAlertingMonitorService extends MDSEnabledClientService {
     this.logger = logger;
   }
 
-  logWarn(message) {
+  logWarn = (message) => {
     if (this.logger?.warn) {
       this.logger.warn(message);
     } else {
       // eslint-disable-next-line no-console
       console.warn(message);
     }
-  }
+  };
 
-  logError(message, err) {
+  logError = (message, err) => {
     if (this.logger?.error) {
       this.logger.error(`${message}: ${err?.message ?? err}`);
     } else {
       // eslint-disable-next-line no-console
       console.error(message, err);
     }
-  }
+  };
 
-  buildAlertsPath(query = {}, { omitDataSourceId = false } = {}) {
+  buildAlertsPath = (query = {}, { omitDataSourceId = false } = {}) => {
     const queryCopy = { ...query };
     if (omitDataSourceId) {
       delete queryCopy.dataSourceId;
     }
     const queryString = querystring.stringify(queryCopy);
     return `${ALERTS_BASE_PATH}${queryString ? `?${queryString}` : ''}`;
-  }
+  };
 
-  normalizeAlertsQuery(query = {}) {
+  normalizeAlertsQuery = (query = {}) => {
     const {
       from,
       size,
@@ -151,9 +152,9 @@ export default class PplAlertingMonitorService extends MDSEnabledClientService {
     if (monitorIdValue) normalized.monitorId = String(monitorIdValue);
 
     return normalized;
-  }
+  };
 
-  normalizeMonitorListQuery(query = {}) {
+  normalizeMonitorListQuery = (query = {}) => {
     const { from, size, search, sortField, sortDirection, state, dataSourceId } = query;
     const normalized = {};
 
@@ -173,11 +174,16 @@ export default class PplAlertingMonitorService extends MDSEnabledClientService {
     if (sortDirection) normalized.sortDirection = String(sortDirection);
     if (state) normalized.state = String(state);
     return normalized;
-  }
+  };
 
-  async proxyPPLQuery(context, req, res) {
+  proxyPPLQuery = async (context, req, res) => {
     try {
-      const client = this.getClientBasedOnDataSource(context, req);
+      const aclResponse = await this.enforceWorkspaceAcl(context, req, res, [
+        'library_write',
+        'library_read',
+      ]);
+      if (aclResponse) return aclResponse;
+      const client = await this.getClientBasedOnDataSource(context, req);
       const params = {
         method: 'POST',
         path: '/_plugins/_ppl',
@@ -201,15 +207,26 @@ export default class PplAlertingMonitorService extends MDSEnabledClientService {
         },
       });
     }
-  }
+  };
 
-  async listIndices(context, req, res) {
+  listIndices = async (context, req, res) => {
     try {
-      const client = this.getClientBasedOnDataSource(context, req);
-      const resp = await client('transport.request', {
-        method: 'GET',
-        path: '/_cat/indices?format=json&h=index',
-        headers: DEFAULT_HEADERS,
+      const aclResponse = await this.enforceWorkspaceAcl(context, req, res, [
+        'library_write',
+        'library_read',
+      ]);
+      if (aclResponse) return aclResponse;
+      // Bypass oasis for _cat/indices — use the standard MDS client directly
+      const dataSourceId = req.query?.dataSourceId;
+      let client;
+      if (this.dataSourceEnabled && dataSourceId) {
+        client = context.dataSource.opensearch.legacy.getClient(dataSourceId.toString()).callAPI;
+      } else {
+        client = this.osDriver.asScoped(req).callAsCurrentUser;
+      }
+      const resp = await client('cat.indices', {
+        format: 'json',
+        h: 'index',
       });
       const body = resp?.body ?? resp;
       const rows = Array.isArray(body) ? body : [];
@@ -220,11 +237,16 @@ export default class PplAlertingMonitorService extends MDSEnabledClientService {
       this.logError('Alerting - PplAlertingMonitorService - listIndices', err);
       return res.ok({ body: { ok: false, indices: [], resp: err?.message ?? err } });
     }
-  }
+  };
 
-  async getMonitors(context, req, res) {
+  getMonitors = async (context, req, res) => {
     try {
-      const client = this.getClientBasedOnDataSource(context, req);
+      const aclResponse = await this.enforceWorkspaceAcl(context, req, res, [
+        'library_write',
+        'library_read',
+      ]);
+      if (aclResponse) return aclResponse;
+      const client = await this.getClientBasedOnDataSource(context, req);
       const {
         from = 0,
         size = 20,
@@ -279,7 +301,8 @@ export default class PplAlertingMonitorService extends MDSEnabledClientService {
       }
 
       const monitorSorts = { name: 'monitor.name.keyword' };
-      const monitorSortPageData = { size: 1000 };
+      const isAoss = await this.isUnsupportedEndpoint(context, req);
+      const monitorSortPageData = { size: isAoss ? 100 : 1000 };
 
       if (monitorSorts[sortField]) {
         monitorSortPageData.sort = [{ [monitorSorts[sortField]]: sanitizedSortDirection }];
@@ -516,11 +539,16 @@ export default class PplAlertingMonitorService extends MDSEnabledClientService {
       this.logError('Alerting - PplAlertingMonitorService - getMonitors', err);
       return res.ok({ body: { ok: false, resp: err?.message ?? err } });
     }
-  }
+  };
 
-  async searchMonitors(context, req, res) {
+  searchMonitors = async (context, req, res) => {
     try {
-      const client = this.getClientBasedOnDataSource(context, req);
+      const aclResponse = await this.enforceWorkspaceAcl(context, req, res, [
+        'library_write',
+        'library_read',
+      ]);
+      if (aclResponse) return aclResponse;
+      const client = await this.getClientBasedOnDataSource(context, req);
       const resp = await client('transport.request', {
         method: 'POST',
         path: `${PPL_MONITOR_BASE_API}/_search`,
@@ -532,12 +560,14 @@ export default class PplAlertingMonitorService extends MDSEnabledClientService {
       this.logError('Alerting - PplAlertingMonitorService - searchMonitors', err);
       return res.ok({ body: { ok: false, resp: err?.message ?? err } });
     }
-  }
+  };
 
-  async createMonitor(context, req, res) {
+  createMonitor = async (context, req, res) => {
     try {
-      const client = this.getClientBasedOnDataSource(context, req);
-      const v1Body = toV1MonitorBody(req.body);
+      const aclResponse = await this.enforceWorkspaceAcl(context, req, res, ['library_write']);
+      if (aclResponse) return aclResponse;
+      const client = await this.getClientBasedOnDataSource(context, req);
+      const v1Body = toV1MonitorBody(await this.enrichTargetArn(context, req, req.body));
       const resp = await client('transport.request', {
         method: 'POST',
         path: PPL_MONITOR_BASE_API,
@@ -549,11 +579,13 @@ export default class PplAlertingMonitorService extends MDSEnabledClientService {
       this.logError('Alerting - PplAlertingMonitorService - createMonitor', err);
       return res.ok({ body: { ok: false, resp: err?.message ?? err } });
     }
-  }
+  };
 
-  async updateMonitor(context, req, res) {
+  updateMonitor = async (context, req, res) => {
     try {
-      const client = this.getClientBasedOnDataSource(context, req);
+      const aclResponse = await this.enforceWorkspaceAcl(context, req, res, ['library_write']);
+      if (aclResponse) return aclResponse;
+      const client = await this.getClientBasedOnDataSource(context, req);
       const id = req.params.id;
       const ifSeqNo = req.query?.if_seq_no ?? req.query?.ifSeqNo;
       const ifPrimaryTerm = req.query?.if_primary_term ?? req.query?.ifPrimaryTerm;
@@ -582,7 +614,9 @@ export default class PplAlertingMonitorService extends MDSEnabledClientService {
         );
       }
 
-      const v1Body = toV1MonitorBody({ ppl_monitor: cleanMonitor });
+      const v1Body = toV1MonitorBody(
+        await this.enrichTargetArn(context, req, { ppl_monitor: cleanMonitor })
+      );
 
       const resp = await client('transport.request', {
         method: 'PUT',
@@ -597,12 +631,17 @@ export default class PplAlertingMonitorService extends MDSEnabledClientService {
       this.logError('Alerting - PplAlertingMonitorService - updateMonitor', err);
       return res.ok({ body: { ok: false, resp: err?.message ?? err } });
     }
-  }
+  };
 
-  async getMonitor(context, req, res) {
+  getMonitor = async (context, req, res) => {
     try {
+      const aclResponse = await this.enforceWorkspaceAcl(context, req, res, [
+        'library_write',
+        'library_read',
+      ]);
+      if (aclResponse) return aclResponse;
       const id = req.params.id;
-      const client = this.getClientBasedOnDataSource(context, req);
+      const client = await this.getClientBasedOnDataSource(context, req);
 
       const raw = await client('transport.request', {
         method: 'GET',
@@ -638,12 +677,14 @@ export default class PplAlertingMonitorService extends MDSEnabledClientService {
       this.logError('Alerting - PplAlertingMonitorService - getMonitor', err);
       return res.ok({ body: { ok: false, resp: err?.message ?? err } });
     }
-  }
+  };
 
-  async deleteMonitor(context, req, res) {
+  deleteMonitor = async (context, req, res) => {
     try {
+      const aclResponse = await this.enforceWorkspaceAcl(context, req, res, ['library_write']);
+      if (aclResponse) return aclResponse;
       const id = req.params.id;
-      const client = this.getClientBasedOnDataSource(context, req);
+      const client = await this.getClientBasedOnDataSource(context, req);
       const resp = await client('transport.request', {
         method: 'DELETE',
         path: `${PPL_MONITOR_BASE_API}/${encodeURIComponent(id)}`,
@@ -654,16 +695,19 @@ export default class PplAlertingMonitorService extends MDSEnabledClientService {
       this.logError('Alerting - PplAlertingMonitorService - deleteMonitor', err);
       return res.ok({ body: { ok: false, resp: err?.message ?? err } });
     }
-  }
+  };
 
-  async executeMonitorById(context, req, res) {
+  executeMonitorById = async (context, req, res) => {
     try {
+      const aclResponse = await this.enforceWorkspaceAcl(context, req, res, ['library_write']);
+      if (aclResponse) return aclResponse;
       const id = req.params.id;
-      const client = this.getClientBasedOnDataSource(context, req);
+      const client = await this.getClientBasedOnDataSource(context, req);
+      const body = await this.enrichTargetArn(context, req, req.body);
       const resp = await client('transport.request', {
         method: 'POST',
         path: `${PPL_MONITOR_BASE_API}/${encodeURIComponent(id)}/_execute`,
-        body: req.body,
+        body,
         headers: DEFAULT_HEADERS,
       });
       return res.ok({ body: { ok: true, resp } });
@@ -671,15 +715,18 @@ export default class PplAlertingMonitorService extends MDSEnabledClientService {
       this.logError('Alerting - PplAlertingMonitorService - executeMonitorById', err);
       return res.ok({ body: { ok: false, resp: err?.message ?? err } });
     }
-  }
+  };
 
-  async executeMonitor(context, req, res) {
+  executeMonitor = async (context, req, res) => {
     try {
-      const client = this.getClientBasedOnDataSource(context, req);
+      const aclResponse = await this.enforceWorkspaceAcl(context, req, res, ['library_write']);
+      if (aclResponse) return aclResponse;
+      const client = await this.getClientBasedOnDataSource(context, req);
+      const body = await this.enrichTargetArn(context, req, req.body);
       const resp = await client('transport.request', {
         method: 'POST',
         path: `${PPL_MONITOR_BASE_API}/_execute`,
-        body: req.body,
+        body,
         headers: DEFAULT_HEADERS,
       });
       return res.ok({ body: { ok: true, resp } });
@@ -687,16 +734,17 @@ export default class PplAlertingMonitorService extends MDSEnabledClientService {
       this.logError('Alerting - PplAlertingMonitorService - executeMonitor', err);
       return res.ok({ body: { ok: false, resp: err?.message ?? err } });
     }
-  }
+  };
 
   // TODO: remove later once we combine ppl monitors and regular monitors
-  async _getPplMonitorIds(client) {
+  async _getPplMonitorIds(client, context, req) {
     try {
+      const isAoss = context && req ? await this.isUnsupportedEndpoint(context, req) : false;
       const resp = await client('transport.request', {
         method: 'POST',
         path: `${PPL_MONITOR_BASE_API}/_search`,
         body: {
-          size: 1000,
+          size: isAoss ? 100 : 1000,
           _source: false,
           query: { term: { 'monitor.monitor_type': 'ppl_monitor' } },
         },
@@ -709,9 +757,14 @@ export default class PplAlertingMonitorService extends MDSEnabledClientService {
     }
   }
 
-  async alertsForMonitors(context, req, res) {
+  alertsForMonitors = async (context, req, res) => {
     try {
-      const client = this.getClientBasedOnDataSource(context, req);
+      const aclResponse = await this.enforceWorkspaceAcl(context, req, res, [
+        'library_write',
+        'library_read',
+      ]);
+      if (aclResponse) return aclResponse;
+      const client = await this.getClientBasedOnDataSource(context, req);
       const backendQuery = this.normalizeAlertsQuery(req.query);
       const path = this.buildAlertsPath(backendQuery, { omitDataSourceId: true });
 
@@ -721,7 +774,7 @@ export default class PplAlertingMonitorService extends MDSEnabledClientService {
           path,
           headers: DEFAULT_HEADERS,
         }),
-        this._getPplMonitorIds(client),
+        this._getPplMonitorIds(client, context, req),
       ]);
 
       const allAlerts = Array.isArray(resp?.alerts) ? resp.alerts : [];
@@ -751,5 +804,5 @@ export default class PplAlertingMonitorService extends MDSEnabledClientService {
       this.logError('Alerting - PplAlertingMonitorService - alertsForMonitors', err);
       return res.ok({ body: { ok: false, resp: err?.message ?? err } });
     }
-  }
+  };
 }

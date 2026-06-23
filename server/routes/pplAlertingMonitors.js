@@ -4,9 +4,10 @@
  */
 
 import { schema } from '@osd/config-schema';
-import { createValidateQuerySchema } from '../services/utils/helpers';
+import { createValidateQuerySchema, getDynamicConfig } from '../services/utils/helpers';
+import { FEATURE_FLAGS } from '../services/utils/constants';
 
-export default function (services, router, dataSourceEnabled) {
+export default function (services, router, dataSourceEnabled, coreSetup, logger) {
   const { pplMonitorService } = services;
   if (!pplMonitorService) {
     return;
@@ -33,6 +34,18 @@ export default function (services, router, dataSourceEnabled) {
     monitorId: schema.maybe(schema.string()),
   };
 
+  const serviceCallWrapper = async (context, req, res, serviceMethod) => {
+    const config = await getDynamicConfig(req, coreSetup);
+    if (config[FEATURE_FLAGS.PPL_MONITOR]) {
+      return serviceMethod(context, req, res);
+    } else {
+      // use logger to log warning
+      logger?.warn(
+        `[Alerting][PPLAlertingRouter] PPL Alerting is not enabled in the app config for app: ${req.headers['x-amzn-aosd-app-id']}`
+      );
+    }
+  };
+
   router.post(
     {
       path: '/_plugins/_ppl',
@@ -41,7 +54,7 @@ export default function (services, router, dataSourceEnabled) {
         query: createValidateQuerySchema(dataSourceEnabled),
       },
     },
-    (context, req, res) => pplMonitorService.proxyPPLQuery(context, req, res)
+    (context, req, res) => serviceCallWrapper(context, req, res, pplMonitorService.proxyPPLQuery)
   );
 
   router.get(
@@ -51,7 +64,7 @@ export default function (services, router, dataSourceEnabled) {
         query: createValidateQuerySchema(dataSourceEnabled, {}),
       },
     },
-    (context, req, res) => pplMonitorService.listIndices(context, req, res)
+    (context, req, res) => serviceCallWrapper(context, req, res, pplMonitorService.listIndices)
   );
 
   router.get(
@@ -61,7 +74,7 @@ export default function (services, router, dataSourceEnabled) {
         query: createValidateQuerySchema(dataSourceEnabled, listFieldValidations),
       },
     },
-    (context, req, res) => pplMonitorService.getMonitors(context, req, res)
+    (context, req, res) => serviceCallWrapper(context, req, res, pplMonitorService.getMonitors)
   );
 
   router.post(
@@ -72,7 +85,7 @@ export default function (services, router, dataSourceEnabled) {
         query: createValidateQuerySchema(dataSourceEnabled),
       },
     },
-    (context, req, res) => pplMonitorService.searchMonitors(context, req, res)
+    (context, req, res) => serviceCallWrapper(context, req, res, pplMonitorService.searchMonitors)
   );
 
   router.post(
@@ -83,7 +96,7 @@ export default function (services, router, dataSourceEnabled) {
         query: createValidateQuerySchema(dataSourceEnabled),
       },
     },
-    (context, req, res) => pplMonitorService.createMonitor(context, req, res)
+    (context, req, res) => serviceCallWrapper(context, req, res, pplMonitorService.createMonitor)
   );
 
   router.put(
@@ -98,7 +111,7 @@ export default function (services, router, dataSourceEnabled) {
         }),
       },
     },
-    (context, req, res) => pplMonitorService.updateMonitor(context, req, res)
+    (context, req, res) => serviceCallWrapper(context, req, res, pplMonitorService.updateMonitor)
   );
 
   router.get(
@@ -109,7 +122,7 @@ export default function (services, router, dataSourceEnabled) {
         query: createValidateQuerySchema(dataSourceEnabled),
       },
     },
-    (context, req, res) => pplMonitorService.getMonitor(context, req, res)
+    (context, req, res) => serviceCallWrapper(context, req, res, pplMonitorService.getMonitor)
   );
 
   router.delete(
@@ -120,7 +133,7 @@ export default function (services, router, dataSourceEnabled) {
         query: createValidateQuerySchema(dataSourceEnabled),
       },
     },
-    (context, req, res) => pplMonitorService.deleteMonitor(context, req, res)
+    (context, req, res) => serviceCallWrapper(context, req, res, pplMonitorService.deleteMonitor)
   );
 
   router.post(
@@ -132,7 +145,8 @@ export default function (services, router, dataSourceEnabled) {
         query: createValidateQuerySchema(dataSourceEnabled),
       },
     },
-    (context, req, res) => pplMonitorService.executeMonitorById(context, req, res)
+    (context, req, res) =>
+      serviceCallWrapper(context, req, res, pplMonitorService.executeMonitorById)
   );
 
   router.post(
@@ -143,7 +157,7 @@ export default function (services, router, dataSourceEnabled) {
         query: createValidateQuerySchema(dataSourceEnabled),
       },
     },
-    (context, req, res) => pplMonitorService.executeMonitor(context, req, res)
+    (context, req, res) => serviceCallWrapper(context, req, res, pplMonitorService.executeMonitor)
   );
 
   router.get(
@@ -153,6 +167,7 @@ export default function (services, router, dataSourceEnabled) {
         query: createValidateQuerySchema(dataSourceEnabled, alertsFieldValidations),
       },
     },
-    (context, req, res) => pplMonitorService.alertsForMonitors(context, req, res)
+    (context, req, res) =>
+      serviceCallWrapper(context, req, res, pplMonitorService.alertsForMonitors)
   );
 }

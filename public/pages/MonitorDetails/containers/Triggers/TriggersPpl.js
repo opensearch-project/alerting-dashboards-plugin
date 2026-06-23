@@ -10,23 +10,6 @@ import _ from 'lodash';
 
 import ContentPanel from '../../../../components/ContentPanel';
 import { DEFAULT_EMPTY_DATA } from '../../../../utils/constants';
-import { formatDuration } from '../../../CreateMonitor/containers/CreateMonitor/utils/pplAlertingHelpers';
-
-const MAX_TRIGGERS = 10;
-
-const formatTriggerMode = (mode) => {
-  if (!mode) return DEFAULT_EMPTY_DATA;
-  switch (mode) {
-    case 'result_set':
-      return 'Per result';
-    case 'per_execution':
-    case 'execution':
-    case 'once':
-      return 'Once';
-    default:
-      return mode;
-  }
-};
 
 const formatTriggerType = (type) => {
   if (!type) return DEFAULT_EMPTY_DATA;
@@ -130,14 +113,6 @@ class TriggersPpl extends Component {
         width: '15%',
       },
       {
-        field: 'mode',
-        name: 'Trigger mode',
-        sortable: false,
-        truncateText: false,
-        width: '12%',
-        render: (mode) => formatTriggerMode(mode),
-      },
-      {
         field: 'type',
         name: 'Trigger type',
         sortable: false,
@@ -166,8 +141,7 @@ class TriggersPpl extends Component {
         sortable: false,
         truncateText: false,
         width: '12%',
-        render: (value, item) =>
-          item.type === 'number_of_results' ? value || DEFAULT_EMPTY_DATA : DEFAULT_EMPTY_DATA,
+        render: (value) => (_.isEmpty(value) ? DEFAULT_EMPTY_DATA : value),
       },
       {
         field: 'num_results_value',
@@ -175,34 +149,15 @@ class TriggersPpl extends Component {
         sortable: false,
         truncateText: false,
         width: '12%',
-        render: (value, item) =>
-          item.type === 'number_of_results' ? value ?? DEFAULT_EMPTY_DATA : DEFAULT_EMPTY_DATA,
+        render: (value) => (_.isNil(value) ? DEFAULT_EMPTY_DATA : value),
       },
       {
+        field: 'custom_condition',
         name: 'Custom condition',
         sortable: false,
         truncateText: false,
         width: '20%',
-        render: (item) =>
-          item.type !== 'number_of_results'
-            ? _.get(item, 'condition.script.source') || DEFAULT_EMPTY_DATA
-            : DEFAULT_EMPTY_DATA,
-      },
-      {
-        field: 'expires_minutes',
-        name: getExpireDurationHeader(),
-        sortable: false,
-        truncateText: false,
-        width: '12%',
-        render: (value) => formatDuration(value),
-      },
-      {
-        field: 'throttle_minutes',
-        name: 'Throttle duration',
-        sortable: false,
-        truncateText: false,
-        width: '12%',
-        render: (value) => formatDuration(value),
+        render: (value) => (_.isEmpty(value) ? DEFAULT_EMPTY_DATA : value),
       },
     ];
 

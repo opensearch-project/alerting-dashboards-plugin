@@ -4,7 +4,6 @@
  */
 
 import React, { Component } from 'react';
-import PropTypes from 'prop-types';
 import _ from 'lodash';
 import {
   EuiAccordion,
@@ -16,12 +15,8 @@ import {
   EuiTitle,
   EuiFlexGroup,
   EuiFlexItem,
-  EuiSelect,
   EuiFieldText,
-  EuiFieldNumber,
-  EuiCheckbox,
   EuiFormRow,
-  EuiRadioGroup,
   EuiPanel,
 } from '@elastic/eui';
 import { Field, FieldArray } from 'formik';
@@ -34,25 +29,16 @@ import {
   FormikFieldNumber,
 } from '../../../../components/FormControls';
 import { isInvalid, hasError } from '../../../../utils/validate';
-import { validateTriggerName, validateNumResultsValue } from './utils/validation';
-import { OS_NOTIFICATION_PLUGIN } from '../../../../utils/constants';
+import { validateTriggerName } from './utils/validation';
+import { OS_NOTIFICATION_PLUGIN, SEVERITY_OPTIONS } from '../../../../utils/constants';
 import ConfigureActionsPpl from '../ConfigureActions/ConfigureActionsPpl';
 import TriggerGraphPpl from '../../components/TriggerGraphPpl';
 import { DEFAULT_TRIGGER_NAME } from '../../utils/constants';
-import MinimalAccordion from '../../../../components/FeatureAnywhereContextMenu/MinimalAccordion';
 import { getTriggerContext } from '../../utils/helper';
 
 const GRID_MAX = 720;
 const GRID_PAD = 10;
 const SECTION_WIDTH = { paddingLeft: GRID_PAD, maxWidth: GRID_MAX };
-const twoColRowStyle = SECTION_WIDTH;
-const twoColRowProps = {
-  gutterSize: 'm',
-  responsive: false,
-  alignItems: 'flexEnd',
-  style: twoColRowStyle,
-};
-const HALF_COL = { flexBasis: '50%', minWidth: 0 };
 
 const defaultRowProps = {
   label: 'Trigger name',
@@ -65,24 +51,9 @@ const defaultRowProps = {
 const defaultInputProps = { isInvalid, fullWidth: true };
 const selectFieldProps = { validate: () => {} };
 
-const PPL_SEVERITY_OPTIONS = [
-  { value: 'critical', text: 'Critical' },
-  { value: 'high', text: 'High' },
-  { value: 'medium', text: 'Medium' },
-  { value: 'low', text: 'Low' },
-  { value: 'info', text: 'Info' },
-  { value: 'error', text: 'Error' },
-];
-
 const TYPE_OPTIONS = [
   { value: 'number_of_results', text: 'Number of results' },
   { value: 'custom', text: 'Custom' },
-];
-
-const DURATION_OPTIONS = [
-  { value: 'minutes', text: 'minute(s)' },
-  { value: 'hours', text: 'hour(s)' },
-  { value: 'days', text: 'day(s)' },
 ];
 
 const NUMBER_OF_RESULTS_OPERATOR_OPTIONS = [
@@ -94,9 +65,6 @@ const NUMBER_OF_RESULTS_OPERATOR_OPTIONS = [
   { value: '!=', text: 'Not equal to' },
 ];
 
-const THROTTLE_DEFAULT = { value: '', unit: 'minutes' };
-const EXPIRES_DEFAULT = { value: 7, unit: 'days' };
-
 class DefineTriggerPpl extends Component {
   constructor(props) {
     super(props);
@@ -105,35 +73,6 @@ class DefineTriggerPpl extends Component {
       currentSubmitCount: 0,
       accordionsOpen: {},
     };
-  }
-
-  renderModeSelector(fieldPath) {
-    const containerStyle = this.props.flyoutMode ? {} : SECTION_WIDTH;
-    return (
-      <Field name={`${fieldPath}mode`}>
-        {({ field, form }) => (
-          <div style={containerStyle}>
-            <EuiFormRow
-              label="Trigger"
-              fullWidth
-              labelProps={{
-                onClick: (e) => e.preventDefault(),
-                style: { pointerEvents: 'none', cursor: 'default' },
-              }}
-            >
-              <EuiRadioGroup
-                options={[
-                  { id: 'result_set', label: 'Once' },
-                  { id: 'per_result', label: 'For each result' },
-                ]}
-                idSelected={field.value === 'per_result' ? 'per_result' : 'result_set'}
-                onChange={(id) => form.setFieldValue(`${fieldPath}mode`, id)}
-              />
-            </EuiFormRow>
-          </div>
-        )}
-      </Field>
-    );
   }
 
   renderNumberConditionFields(fieldPath) {
@@ -235,82 +174,6 @@ class DefineTriggerPpl extends Component {
     );
   }
 
-  renderThrottleFields(fieldPath) {
-    const widthStyle = this.props.flyoutMode ? {} : SECTION_WIDTH;
-    return (
-      <div style={widthStyle}>
-        <EuiText size="xs" style={{ marginBottom: 4 }}>
-          <strong>Throttle for</strong>
-        </EuiText>
-        <EuiFlexGroup gutterSize="s" responsive={false} alignItems="flexEnd">
-          <EuiFlexItem>
-            <FormikFieldNumber
-              name={`${fieldPath}suppress.value`}
-              formRow
-              rowProps={{
-                hasEmptyLabelSpace: true,
-                fullWidth: true,
-                style: { paddingLeft: 0, marginTop: 0 },
-              }}
-              inputProps={{ min: 1, fullWidth: true }}
-            />
-          </EuiFlexItem>
-          <EuiFlexItem>
-            <FormikSelect
-              name={`${fieldPath}suppress.unit`}
-              formRow
-              fieldProps={selectFieldProps}
-              rowProps={{
-                hasEmptyLabelSpace: true,
-                fullWidth: true,
-                style: { paddingLeft: 0, marginTop: 0 },
-              }}
-              inputProps={{ options: DURATION_OPTIONS, fullWidth: true }}
-            />
-          </EuiFlexItem>
-        </EuiFlexGroup>
-      </div>
-    );
-  }
-
-  renderExpiresFields(fieldPath) {
-    const widthStyle = this.props.flyoutMode ? {} : SECTION_WIDTH;
-    return (
-      <div style={widthStyle}>
-        <EuiText size="xs" style={{ marginBottom: 4 }}>
-          <strong>Expires</strong>
-        </EuiText>
-        <EuiFlexGroup gutterSize="s" responsive={false} alignItems="flexEnd">
-          <EuiFlexItem>
-            <FormikFieldNumber
-              name={`${fieldPath}expires.value`}
-              formRow
-              rowProps={{
-                hasEmptyLabelSpace: true,
-                fullWidth: true,
-                style: { paddingLeft: 0, marginTop: 0 },
-              }}
-              inputProps={{ min: 1, fullWidth: true }}
-            />
-          </EuiFlexItem>
-          <EuiFlexItem>
-            <FormikSelect
-              name={`${fieldPath}expires.unit`}
-              formRow
-              fieldProps={selectFieldProps}
-              rowProps={{
-                hasEmptyLabelSpace: true,
-                fullWidth: true,
-                style: { paddingLeft: 0, marginTop: 0 },
-              }}
-              inputProps={{ options: DURATION_OPTIONS, fullWidth: true }}
-            />
-          </EuiFlexItem>
-        </EuiFlexGroup>
-      </div>
-    );
-  }
-
   renderCustomCondition({ fieldPath, onUpdate }) {
     const widthStyle = this.props.flyoutMode ? {} : SECTION_WIDTH;
     return (
@@ -357,9 +220,7 @@ class DefineTriggerPpl extends Component {
       monitorValues,
       onRun,
       setFlyout,
-      triggers,
       triggerValues,
-      isDarkMode,
       triggerIndex,
       httpClient,
       notifications,
@@ -377,7 +238,6 @@ class DefineTriggerPpl extends Component {
     const triggerName = _.get(triggerValues, `${fieldPath}name`, DEFAULT_TRIGGER_NAME);
     const type = _.get(triggerValues, `${fieldPath}type`, 'number_of_results');
     const widthStyle = flyoutMode ? {} : SECTION_WIDTH;
-    const throttleEnabled = !!_.get(triggerValues, `${fieldPath}throttle_enabled`, false);
     const customConditionValue = _.get(triggerValues, `${fieldPath}custom_condition`, '');
     const graphErrorMessage = executeResponse?.ok === false ? executeResponse.error : null;
     const handleCustomConditionUpdate = () => {
@@ -449,7 +309,7 @@ class DefineTriggerPpl extends Component {
                     fullWidth: true,
                     style: { paddingLeft: 0 },
                   }}
-                  inputProps={{ options: PPL_SEVERITY_OPTIONS, fullWidth: true }}
+                  inputProps={{ options: SEVERITY_OPTIONS, fullWidth: true }}
                 />
               </EuiFlexItem>
               <EuiFlexItem>
@@ -481,9 +341,6 @@ class DefineTriggerPpl extends Component {
               {this.renderNumberConditionFields(fieldPath)}
             </>
           )}
-
-          <EuiSpacer size="m" />
-          {this.renderModeSelector(fieldPath)}
 
           <EuiSpacer size="m" />
           <div style={widthStyle}>
@@ -533,45 +390,6 @@ class DefineTriggerPpl extends Component {
               />
             </EuiPanel>
           </div>
-
-          <EuiSpacer size="m" />
-          <Field name={`${fieldPath}throttle_enabled`}>
-            {({ field, form }) => (
-              <div style={widthStyle}>
-                <EuiCheckbox
-                  id={`${fieldPath}throttle_enabled`}
-                  label="Throttle"
-                  checked={!!field.value}
-                  onChange={(e) => {
-                    const checked = e.target.checked;
-                    form.setFieldValue(field.name, checked);
-                    if (
-                      checked &&
-                      (_.get(form.values, `${fieldPath}suppress.value`) === undefined ||
-                        _.get(form.values, `${fieldPath}suppress.value`) === null ||
-                        _.get(form.values, `${fieldPath}suppress.value`) === '')
-                    ) {
-                      form.setFieldValue(`${fieldPath}suppress.value`, THROTTLE_DEFAULT.value);
-                      form.setFieldValue(`${fieldPath}suppress.unit`, THROTTLE_DEFAULT.unit);
-                    }
-                    if (!checked) {
-                      form.setFieldValue(`${fieldPath}suppress.value`, '');
-                    }
-                  }}
-                />
-              </div>
-            )}
-          </Field>
-
-          {throttleEnabled && (
-            <>
-              <EuiSpacer size="s" />
-              {this.renderThrottleFields(fieldPath)}
-            </>
-          )}
-
-          <EuiSpacer size="m" />
-          {this.renderExpiresFields(fieldPath)}
 
           <EuiSpacer size={'l'} />
 

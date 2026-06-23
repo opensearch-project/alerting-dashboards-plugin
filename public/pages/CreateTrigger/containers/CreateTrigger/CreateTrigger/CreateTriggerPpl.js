@@ -33,12 +33,8 @@ const DEFAULT_TRIGGER = {
   name: '',
   severity: 'info',
   type: 'number_of_results',
-  mode: 'result_set',
   num_results_condition: '>=',
   num_results_value: 1,
-  throttle_enabled: false,
-  suppress: { value: 10, unit: 'minutes' },
-  expires: { value: 24, unit: 'hours' },
   actions: [],
 };
 

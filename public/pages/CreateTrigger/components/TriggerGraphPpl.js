@@ -115,7 +115,7 @@ const TriggerGraphPpl = ({
           useEffect(() => {
             if (hasSetInitialThreshold.current) return;
             const numericValue = Number(field.value);
-            if (Number.isFinite(numericValue) && numericValue > 0) {
+            if (field.value !== null && field.value !== undefined && field.value !== '') {
               hasSetInitialThreshold.current = true;
               return;
             }
