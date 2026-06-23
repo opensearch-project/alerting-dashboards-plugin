@@ -20,10 +20,11 @@ import TriggerEmptyPrompt from '../../components/TriggerEmptyPrompt';
 import { MAX_TRIGGERS } from '../../../MonitorDetails/containers/Triggers/Triggers';
 import DefineTrigger from '../DefineTrigger';
 import { MONITOR_TYPE, SEARCH_TYPE } from '../../../../utils/constants';
+import { MAX_TRIGGERS_SETTING } from '../../../utils/constants';
 import { getPathsPerDataType } from '../../../CreateMonitor/containers/DefineMonitor/utils/mappings';
 import monitorToFormik from '../../../CreateMonitor/containers/CreateMonitor/utils/monitorToFormik';
 import { buildRequest } from '../../../CreateMonitor/containers/DefineMonitor/utils/searchRequests';
-import { backendErrorNotification, inputLimitText } from '../../../../utils/helpers';
+import { backendErrorNotification, inputLimitText, getClusterSetting } from '../../../../utils/helpers';
 import DefineDocumentLevelTrigger from '../DefineDocumentLevelTrigger/DefineDocumentLevelTrigger';
 import {
   buildClusterMetricsRequest,
@@ -51,6 +52,7 @@ class ConfigureTriggers extends React.Component {
       triggerEmptyPrompt: this.prepareTriggerEmptyPrompt(),
       currentSubmitCount: 0,
       accordionsOpen,
+      maxTriggers: MAX_TRIGGERS,
       TriggerContainer: props.flyoutMode
         ? (props) => <EnhancedAccordion {...props} />
         : ({ children }) => <>{children}</>,
@@ -65,6 +67,13 @@ class ConfigureTriggers extends React.Component {
 
   componentDidMount() {
     this.monitorSetupByType();
+    this.fetchMaxTriggers();
+  }
+
+  async fetchMaxTriggers() {
+    const { httpClient } = this.props;
+    const maxTriggers = await getClusterSetting(httpClient, MAX_TRIGGERS_SETTING, MAX_TRIGGERS);
+    this.setState({ maxTriggers: parseInt(maxTriggers, 10) });
   }
 
   componentDidUpdate(prevProps) {
@@ -132,7 +141,7 @@ class ConfigureTriggers extends React.Component {
   prepareAddTriggerButton = () => {
     const { monitorValues, triggerArrayHelpers, triggerValues } = this.props;
     const disableAddTriggerButton =
-      _.get(triggerValues, 'triggerDefinitions', []).length >= MAX_TRIGGERS;
+      _.get(triggerValues, 'triggerDefinitions', []).length >= this.state.maxTriggers;
     return (
       <AddTriggerButton
         arrayHelpers={triggerArrayHelpers}
@@ -440,7 +449,7 @@ class ConfigureTriggers extends React.Component {
     const { ContentPanelStructure } = this.state;
     const numOfTriggers = _.get(triggerValues, 'triggerDefinitions', []).length;
     const displayAddTriggerButton = numOfTriggers > 0;
-    const disableAddTriggerButton = numOfTriggers >= MAX_TRIGGERS;
+    const disableAddTriggerButton = numOfTriggers >= this.state.maxTriggers;
     const monitorType = monitorValues.monitor_type;
     const isComposite = monitorType === MONITOR_TYPE.COMPOSITE_LEVEL;
 
@@ -477,7 +486,7 @@ class ConfigureTriggers extends React.Component {
               monitorType={monitorType}
             />
             <EuiSpacer size={'s'} />
-            {inputLimitText(numOfTriggers, MAX_TRIGGERS, 'trigger', 'triggers')}
+            {inputLimitText(numOfTriggers, this.state.maxTriggers, 'trigger', 'triggers')}
           </div>
         ) : null}
       </ContentPanelStructure>

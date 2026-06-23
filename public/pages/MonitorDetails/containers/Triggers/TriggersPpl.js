@@ -12,8 +12,6 @@ import ContentPanel from '../../../../components/ContentPanel';
 import { DEFAULT_EMPTY_DATA } from '../../../../utils/constants';
 import { formatDuration } from '../../../CreateMonitor/containers/CreateMonitor/utils/pplAlertingHelpers';
 
-const MAX_TRIGGERS = 10;
-
 const formatTriggerMode = (mode) => {
   if (!mode) return DEFAULT_EMPTY_DATA;
   switch (mode) {
