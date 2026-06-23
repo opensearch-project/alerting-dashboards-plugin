@@ -64,7 +64,7 @@ jobs:
           ref: ${{ env.OPENSEARCH_DASHBOARDS_VERSION }}
           path: OpenSearch-Dashboards
       - name: Setup Node
-        uses: actions/setup-node@49933ea5288caeca8642195f2b7faed39fd491e7 # v4
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
           node-version-file: './OpenSearch-Dashboards/.nvmrc'
           registry-url: 'https://registry.npmjs.org'
