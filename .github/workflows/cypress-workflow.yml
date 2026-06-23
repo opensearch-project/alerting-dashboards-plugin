@@ -20,12 +20,12 @@ jobs:
       TERM: xterm
     steps:
       - name: Set up JDK
-        uses: actions/setup-java@v1
+        uses: actions/setup-java@b6e674f4b717d7b0ae3baee0fbe79f498905dfde # v1
         with:
           # TODO: Parse this from alerting plugin
           java-version: 17
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@ee0669bd1cc54295c223e0bb666b733df41de1c5 # v2
         with:
           path: alerting
           repository: opensearch-project/alerting
@@ -36,17 +36,17 @@ jobs:
           ./gradlew :alerting:run &
           timeout 300 bash -c 'while [[ "$(curl -s -o /dev/null -w ''%{http_code}'' localhost:9200)" != "200" ]]; do sleep 5; done'
       - name: Checkout OpenSearch Dashboards
-        uses: actions/checkout@v2
+        uses: actions/checkout@ee0669bd1cc54295c223e0bb666b733df41de1c5 # v2
         with:
           repository: opensearch-project/OpenSearch-Dashboards
           ref: ${{ env.OPENSEARCH_DASHBOARDS_VERSION }}
           path: OpenSearch-Dashboards
       - name: Checkout Alerting OpenSearch Dashboards plugin
-        uses: actions/checkout@v2
+        uses: actions/checkout@ee0669bd1cc54295c223e0bb666b733df41de1c5 # v2
         with:
           path: OpenSearch-Dashboards/plugins/alerting-dashboards-plugin
       - name: Setup Node
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@3235b876344d2a9aa001b8d1453c930bba69e610 # v3
         with:
           node-version-file: './OpenSearch-Dashboards/.nvmrc'
           registry-url: 'https://registry.npmjs.org'
@@ -62,7 +62,7 @@ jobs:
       - name: Bootstrap OpenSearch Dashboards with plugin
         run: |
           cd OpenSearch-Dashboards/plugins/alerting-dashboards-plugin
-          yarn osd bootstrap
+          yarn osd bootstrap --single-version=loose
       - name: Run OpenSearch Dashboards server
         run: |
           cd OpenSearch-Dashboards
@@ -70,19 +70,19 @@ jobs:
           timeout 900 bash -c 'while ! grep -q "bundles compiled successfully" /tmp/osd.log 2>/dev/null; do sleep 10; done'
           sleep 30
       - name: Run Cypress tests
-        uses: cypress-io/github-action@v2
+        uses: cypress-io/github-action@f5bea478b80a774068179089247f13d60abc5010 # v2
         with:
           working-directory: OpenSearch-Dashboards/plugins/alerting-dashboards-plugin
           command: yarn run cypress run
 
       # Screenshots are only captured on failure, will change this once we do visual regression tests
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         if: failure()
         with:
           name: cypress-screenshots
           path: OpenSearch-Dashboards/plugins/alerting-dashboards-plugin/.cypress/screenshots
       # Test run video was always captured, so this action uses "always()" condition
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         if: always()
         with:
           name: cypress-videos
