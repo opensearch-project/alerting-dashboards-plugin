@@ -10,19 +10,11 @@ import PropTypes from 'prop-types';
 import {
   EuiSpacer,
   EuiSmallButton,
-  EuiButton,
   EuiCallOut,
   EuiAccordion,
   EuiLoadingSpinner,
   EuiEmptyPrompt,
   EuiPanel,
-  EuiFlexGroup,
-  EuiFlexItem,
-  EuiText,
-  EuiIconTip,
-  EuiTitle,
-  EuiHorizontalRule,
-  EuiCodeBlock,
 } from '@elastic/eui';
 import ContentPanel from '../../../../components/ContentPanel';
 import VisualGraph from '../../components/VisualGraph';
@@ -47,14 +39,9 @@ import ConfigureDocumentLevelQueries from '../../components/DocumentLevelMonitor
 import FindingsDashboard from '../../../Dashboard/containers/FindingsDashboard';
 import { validDocLevelGraphQueries } from '../../components/DocumentLevelMonitorQueries/utils/helpers';
 import { validateWhereFilters } from '../../components/MonitorExpressions/expressions/utils/whereHelpers';
-import {
-  getDataSourceQueryObj,
-  getDataSourceId,
-  getClusterSetting,
-} from '../../../../../public/pages/utils/helpers';
+import { getDataSourceQueryObj, getDataSourceId, getClusterSetting } from '../../../utils/helpers';
 import { CROSS_CLUSTER_MONITORING_ENABLED_SETTING } from '../../components/CrossClusterConfigurations/utils/helpers';
-import { QueryEditor } from '../../components/QueryEditor';
-import { AlertingDataTable } from '../../../../components/DataTable';
+import { PplQueryEditor } from '../../../../components/PplQueryEditor';
 import {
   runPPLPreview,
   extractIndicesFromPPL,
@@ -788,94 +775,24 @@ class DefineMonitor extends Component {
     return {
       actions: [],
       content: (
-        <div style={{ padding: '0px 10px' }}>
-          <EuiFlexGroup
-            alignItems="center"
-            justifyContent="spaceBetween"
-            gutterSize="s"
-            responsive={false}
-          >
-            <EuiFlexItem grow={false}>
-              <EuiFlexGroup alignItems="center" gutterSize="xs" responsive={false}>
-                <EuiFlexItem grow={false}>
-                  <EuiText>PPL</EuiText>
-                </EuiFlexItem>
-                <EuiFlexItem grow={false}>
-                  <EuiIconTip
-                    type="iInCircle"
-                    content="Write queries in PPL."
-                    position="left"
-                    iconProps={{ style: { border: 'none', background: 'none' } }}
-                  />
-                </EuiFlexItem>
-              </EuiFlexGroup>
-            </EuiFlexItem>
-            <EuiFlexItem grow={false}>
-              <EuiButton
-                size="s"
-                onClick={this.runPplPreview}
-                isLoading={pplPreviewLoading}
-                data-test-subj="runPplPreview"
-              >
-                Run preview
-              </EuiButton>
-            </EuiFlexItem>
-          </EuiFlexGroup>
-
-          <EuiSpacer size="s" />
-
-          <div data-test-subj="pplEditorMonaco">
-            <QueryEditor
-              value={values.pplQuery || ''}
-              onChange={(text) => {
-                if (text.length <= 10000 && this.props.onPplQueryChange) {
-                  this.props.onPplQueryChange(text);
-                  this.debouncedDetectPplTimestampFields(text);
-                }
-              }}
-              height={220}
-              indices={pplIndices}
-            />
-            {values.pplQuery && (
-              <EuiText size="xs" color="subdued" style={{ marginTop: '4px' }}>
-                {values.pplQuery.length} / 10,000 characters
-              </EuiText>
-            )}
-          </div>
-
-          <EuiSpacer size="m" />
-
-          <EuiAccordion
-            id="pplPreviewAccordion"
-            buttonContent="Preview results"
-            paddingSize="m"
-            data-test-subj="pplPreviewAccordion"
-            forceState={pplPreviewOpen ? 'open' : 'closed'}
-            onToggle={(isOpen) => this.setState({ pplPreviewOpen: isOpen })}
-          >
-            <EuiPanel hasBorder paddingSize="l" data-test-subj="pplResultsPanel">
-              <EuiTitle size="s">
-                <h2>Results</h2>
-              </EuiTitle>
-              <EuiHorizontalRule margin="m" />
-              {!pplPreviewResult && !pplPreviewError ? (
-                <EuiEmptyPrompt
-                  iconType="editorCodeBlock"
-                  title={<h3>Run a query to view results</h3>}
-                  layout="vertical"
-                />
-              ) : pplPreviewError ? (
-                <EuiCodeBlock isCopyable>{pplPreviewError}</EuiCodeBlock>
-              ) : (
-                <AlertingDataTable
-                  pplResponse={pplPreviewResult}
-                  isLoading={pplPreviewLoading}
-                  className="ppl-preview-table"
-                />
-              )}
-            </EuiPanel>
-          </EuiAccordion>
-        </div>
+        <PplQueryEditor
+          pplQuery={values.pplQuery || ''}
+          onQueryChange={(text) => {
+            if (this.props.onPplQueryChange) {
+              this.props.onPplQueryChange(text);
+              this.debouncedDetectPplTimestampFields(text);
+            }
+          }}
+          previewResult={pplPreviewResult}
+          previewError={pplPreviewError}
+          previewLoading={pplPreviewLoading}
+          previewOpen={pplPreviewOpen}
+          onPreviewToggle={(isOpen) => this.setState({ pplPreviewOpen: isOpen })}
+          onRunPreview={this.runPplPreview}
+          services={this.props.services}
+          indices={pplIndices}
+          wrapperStyle={{ padding: '0px 10px' }}
+        />
       ),
     };
   }

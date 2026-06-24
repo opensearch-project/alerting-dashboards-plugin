@@ -33,6 +33,7 @@
     width: 2px;
     background-color: #d3dae6;
     z-index: 0; // Ensure line is behind circle
+    flex: 1;
   }
 
   .custom-step-content-column {

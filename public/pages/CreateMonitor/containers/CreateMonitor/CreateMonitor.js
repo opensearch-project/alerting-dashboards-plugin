@@ -13,25 +13,16 @@ import {
   EuiFlexItem,
   EuiSpacer,
   EuiText,
-  EuiFormRow,
-  EuiCheckbox,
-  EuiFieldNumber,
-  EuiSelect,
-  EuiTextArea,
-  EuiLink,
-  EuiIconTip,
 } from '@elastic/eui';
 import ContentPanel from '../../../../components/ContentPanel';
 import DefineMonitor from '../DefineMonitor';
-import { FORMIK_INITIAL_VALUES, LOOKBACK_WINDOW_MAX_MINUTES } from './utils/constants';
+import { FORMIK_INITIAL_VALUES } from './utils/constants';
 import { formikToMonitor } from './utils/formikToMonitor';
 import { MONITOR_TYPE, SEARCH_TYPE } from '../../../../utils/constants';
 import { SubmitErrorHandler } from '../../../../utils/SubmitErrorHandler';
 import MonitorDetails from '../MonitorDetails';
 import ConfigureTriggers from '../../../CreateTrigger/containers/ConfigureTriggers';
 import ConfigureTriggersPpl from '../../../CreateTrigger/containers/ConfigureTriggers/ConfigureTriggersPpl';
-import { triggerToFormik } from '../../../CreateTrigger/containers/CreateTrigger/utils/triggerToFormik';
-import { triggerToFormikPpl } from '../../../CreateTrigger/containers/CreateTrigger/utils/triggerToFormikPpl';
 import WorkflowDetails from '../WorkflowDetails/WorkflowDetails';
 import { getInitialValues, getPlugins, submit } from './utils/helpers';
 import { submitPPL } from './utils/pplAlertingHelpers';
@@ -40,7 +31,10 @@ import {
   RECOMMENDED_DURATION,
 } from '../../components/QueryPerformance/QueryPerformance';
 import { isDataSourceChanged } from '../../../utils/helpers';
+import { isMustangDomain } from '../../../../utils/helpers';
 import { PageHeader } from '../../../../components/PageHeader/PageHeader';
+import { PplScheduleEditor } from '../../../../components/PplScheduleEditor';
+import { buildPplMonitorForTriggers } from '../../../../utils/buildPplMonitorForTriggers';
 
 export default class CreateMonitor extends Component {
   static defaultProps = {
@@ -56,40 +50,14 @@ export default class CreateMonitor extends Component {
 
     const { location, edit, monitorToEdit } = props;
     const initialValues = getInitialValues({ location, monitorToEdit, edit });
-    let triggerToEdit;
-
-    if (edit && monitorToEdit) {
-      const isPpl =
-        monitorToEdit?.monitor_type === MONITOR_TYPE.PPL || !!monitorToEdit?.ppl_monitor;
-      if (isPpl) {
-        const monitorLevelTriggers = _.get(monitorToEdit, 'ppl_monitor.triggers', []);
-        const rootLevelTriggers = _.get(monitorToEdit, 'triggers', []);
-        const rawTriggers =
-          Array.isArray(monitorLevelTriggers) && monitorLevelTriggers.length
-            ? monitorLevelTriggers
-            : Array.isArray(rootLevelTriggers)
-            ? rootLevelTriggers
-            : [];
-        const normalizedTriggers = rawTriggers.map((trigger) => triggerToFormikPpl(trigger));
-        if (normalizedTriggers.length) {
-          initialValues.triggerDefinitions = normalizedTriggers;
-          triggerToEdit = normalizedTriggers[0];
-        }
-        initialValues.monitor_type = MONITOR_TYPE.PPL;
-        initialValues.searchType = SEARCH_TYPE.PPL;
-        initialValues.pplQuery =
-          initialValues.pplQuery || _.get(monitorToEdit, 'ppl_monitor.query') || '';
-      } else {
-        triggerToEdit = triggerToFormik(_.get(monitorToEdit, 'triggers', []), monitorToEdit);
-      }
-    }
+    initialValues.dataSourceEndpoint = props.dataSourceEndpoint || '';
 
     this.state = {
       plugins: [],
       response: null,
       performanceResponse: null,
       initialValues,
-      triggerToEdit,
+      triggerToEdit: initialValues.triggerDefinitions || [],
       createModalOpen: false,
       formikBag: undefined,
       pplDateFields: {
@@ -207,33 +175,22 @@ export default class CreateMonitor extends Component {
 
   componentDidUpdate(prevProps) {
     if (isDataSourceChanged(prevProps, this.props)) {
+      const mustang = isMustangDomain(this.props.landingDataSourceId);
+      const monitorTypeOverrides = mustang
+        ? { monitor_type: MONITOR_TYPE.PPL, searchType: SEARCH_TYPE.PPL }
+        : { monitor_type: MONITOR_TYPE.QUERY_LEVEL, searchType: SEARCH_TYPE.GRAPH };
       this.setState({
         initialValues: {
           ...this.state.initialValues,
           dataSourceId: this.props.landingDataSourceId,
+          dataSourceEndpoint: this.props.dataSourceEndpoint,
+          ...monitorTypeOverrides,
         },
       });
     }
   }
 
-  buildPplMonitorForTriggers = (values) => {
-    const triggers = _.cloneDeep(values.triggerDefinitions || []);
-    const rawIndices = Array.isArray(values.index)
-      ? values.index.map((entry) => entry?.value || entry?.label).filter(Boolean)
-      : [];
-    const indices = rawIndices.length ? rawIndices : ['*'];
-    return {
-      name: values.name || '',
-      type: 'monitor',
-      monitor_type: values.monitor_type || MONITOR_TYPE.QUERY_LEVEL,
-      enabled: true,
-      schedule: { period: { interval: 1, unit: 'MINUTES' } },
-      inputs: [{ search: { indices, query: { size: 0, query: { match_all: {} } } } }],
-      ui_metadata: { search: { searchType: SEARCH_TYPE.PPL }, triggers: {} },
-      triggers,
-      ppl_monitor: { query: values.pplQuery || '', triggers },
-    };
-  };
+  buildPplMonitorForTriggers = (values) => buildPplMonitorForTriggers(values);
 
   handlePplDateFieldsChange = (dateFieldsState) => {
     this.setState({ pplDateFields: dateFieldsState });
@@ -247,231 +204,28 @@ export default class CreateMonitor extends Component {
       loading: dateFieldsLoading,
     } = pplDateFields;
 
-    const useLB = values.useLookBackWindow !== undefined ? values.useLookBackWindow : true;
-    const lbAmount = Number(values.lookBackAmount !== undefined ? values.lookBackAmount : 1);
-    const lbUnit = values.lookBackUnit || 'hours';
-
-    const lbMinutes =
-      lbUnit === 'minutes' ? lbAmount : lbUnit === 'hours' ? lbAmount * 60 : lbAmount * 1440;
-    const lbTooSmall = lbAmount !== '' && lbMinutes < 1;
-    const lbTooLarge = lbAmount !== '' && lbMinutes > LOOKBACK_WINDOW_MAX_MINUTES;
-    const lbError = lbTooSmall || lbTooLarge;
-
-    const intervalAmount = Number(values.period?.interval ?? 1);
-    const intervalUnit = values.period?.unit || 'MINUTES';
-    const intervalMinutes =
-      intervalUnit === 'MINUTES'
-        ? intervalAmount
-        : intervalUnit === 'HOURS'
-        ? intervalAmount * 60
-        : intervalAmount * 1440;
-    const intervalError = intervalAmount !== '' && intervalMinutes < 1;
-
-    const noDateFields = dateFieldsError !== null && availableDateFields.length === 0;
+    // Auto-select the first detected date field if the current value isn't in the list
+    if (availableDateFields.length > 0 && !availableDateFields.includes(values.timestampField)) {
+      setFieldValue('timestampField', availableDateFields[0]);
+    }
 
     return (
       <ContentPanel title="Schedule" titleSize="s">
-        <EuiFormRow label="Frequency" fullWidth style={{ maxWidth: '720px' }}>
-          <EuiSelect
-            data-test-subj="pplFrequency"
-            options={[
-              { value: 'interval', text: 'By interval' },
-              { value: 'daily', text: 'Daily' },
-              { value: 'weekly', text: 'Weekly' },
-              { value: 'monthly', text: 'Monthly' },
-              { value: 'cronExpression', text: 'Custom cron job' },
-            ]}
-            value={values.frequency}
-            onChange={(e) => setFieldValue('frequency', e.target.value)}
-            fullWidth
-          />
-        </EuiFormRow>
-
-        {values.frequency === 'interval' && (
-          <EuiFormRow
-            label="Run every"
-            fullWidth
-            style={{ maxWidth: '720px' }}
-            isInvalid={intervalError}
-            error={intervalError ? 'Must be at least 1 minute' : undefined}
-          >
-            <EuiFlexGroup gutterSize="s" alignItems="center" responsive={false}>
-              <EuiFlexItem>
-                <EuiFieldNumber
-                  data-test-subj="pplIntervalValue"
-                  value={values.period?.interval === 0 ? '' : values.period?.interval ?? 1}
-                  onChange={(e) => {
-                    const val = e.target.value === '' ? '' : Number(e.target.value);
-                    setFieldValue('period.interval', val);
-                  }}
-                  fullWidth
-                  isInvalid={intervalError}
-                />
-              </EuiFlexItem>
-              <EuiFlexItem>
-                <EuiSelect
-                  data-test-subj="pplIntervalUnit"
-                  options={[
-                    { value: 'MINUTES', text: 'minute(s)' },
-                    { value: 'HOURS', text: 'hour(s)' },
-                    { value: 'DAYS', text: 'day(s)' },
-                  ]}
-                  value={values.period?.unit || 'MINUTES'}
-                  onChange={(e) => setFieldValue('period.unit', e.target.value)}
-                  fullWidth
-                />
-              </EuiFlexItem>
-            </EuiFlexGroup>
-          </EuiFormRow>
-        )}
-
-        {values.frequency === 'cronExpression' && (
-          <>
-            <EuiFormRow label="Run every">
-              <EuiTextArea
-                data-test-subj="pplCronExpression"
-                value={values.cronExpression || ''}
-                onChange={(e) => setFieldValue('cronExpression', e.target.value)}
-                placeholder="0 */1 * * *"
-                rows={2}
-              />
-            </EuiFormRow>
-            <EuiText size="xs" color="subdued">
-              <EuiLink
-                href="https://docs.opensearch.org/latest/observing-your-data/alerting/cron/"
-                target="_blank"
-                external
-              >
-                Use cron expressions for complex schedules
-              </EuiLink>
-            </EuiText>
-            <EuiSpacer size="m" />
-          </>
-        )}
-
-        <EuiFormRow>
-          <EuiCheckbox
-            id="useLookBackWindow"
-            label={
-              <span>
-                Add look back window{' '}
-                <EuiIconTip
-                  type="iInCircle"
-                  content="Look back window specifies how far back in time the monitor should query data during each execution."
-                />
-              </span>
-            }
-            checked={useLB && !noDateFields}
-            onChange={(e) => {
-              if (noDateFields) {
-                setFieldValue('useLookBackWindow', false);
-              } else {
-                const checked = e.target.checked;
-                setFieldValue('useLookBackWindow', checked);
-                if (checked) {
-                  if (values.lookBackAmount === undefined || values.lookBackAmount === null) {
-                    setFieldValue('lookBackAmount', 1);
-                  }
-                  if (!values.lookBackUnit) {
-                    setFieldValue('lookBackUnit', 'hours');
-                  }
-                }
-              }
-            }}
-            data-test-subj="pplUseLookBack"
-            disabled={noDateFields}
-          />
-        </EuiFormRow>
-
-        {noDateFields && (
-          <>
-            <EuiSpacer size="s" />
-            <EuiText size="xs" color="warning">
-              <EuiIconTip type="alert" color="warning" /> Look back window requires a common
-              timestamp field across all indices
-            </EuiText>
-            <EuiSpacer size="s" />
-          </>
-        )}
-
-        {useLB && !noDateFields && (
-          <>
-            <EuiFormRow
-              label="Look back from"
-              fullWidth
-              style={{ maxWidth: '720px' }}
-              isInvalid={lbError}
-              error={
-                lbTooSmall
-                  ? 'Must be at least 1 minute'
-                  : lbTooLarge
-                  ? 'Must be at most 7 days (10,080 minutes)'
-                  : undefined
-              }
-            >
-              <EuiFlexGroup gutterSize="s" alignItems="center" responsive={false}>
-                <EuiFlexItem>
-                  <EuiFieldNumber
-                    data-test-subj="pplLookBackAmount"
-                    value={lbAmount === 0 ? '' : lbAmount}
-                    onChange={(e) => {
-                      const val = e.target.value === '' ? '' : Number(e.target.value);
-                      setFieldValue('lookBackAmount', val);
-                    }}
-                    fullWidth
-                    isInvalid={lbError}
-                  />
-                </EuiFlexItem>
-                <EuiFlexItem>
-                  <EuiSelect
-                    data-test-subj="pplLookBackUnit"
-                    options={[
-                      { value: 'minutes', text: 'Minute(s) ago' },
-                      { value: 'hours', text: 'Hour(s) ago' },
-                      { value: 'days', text: 'Day(s) ago' },
-                    ]}
-                    value={lbUnit}
-                    onChange={(e) => setFieldValue('lookBackUnit', e.target.value)}
-                    fullWidth
-                  />
-                </EuiFlexItem>
-              </EuiFlexGroup>
-            </EuiFormRow>
-
-            <EuiFormRow
-              label={
-                <span>
-                  Timestamp field{' '}
-                  <EuiIconTip
-                    type="iInCircle"
-                    content="The date field used to filter data within the look back window."
-                  />
-                </span>
-              }
-              fullWidth
-              style={{ maxWidth: '720px' }}
-              helpText={dateFieldsLoading ? 'Detecting timestamp fields...' : undefined}
-            >
-              <EuiSelect
-                data-test-subj="pplTimestampField"
-                options={
-                  availableDateFields.length > 0
-                    ? availableDateFields.map((field) => ({ value: field, text: field }))
-                    : [
-                        {
-                          value: values.timestampField || '@timestamp',
-                          text: values.timestampField || '@timestamp',
-                        },
-                      ]
-                }
-                value={values.timestampField || '@timestamp'}
-                onChange={(e) => setFieldValue('timestampField', e.target.value)}
-                fullWidth
-                isLoading={dateFieldsLoading}
-              />
-            </EuiFormRow>
-          </>
-        )}
+        <PplScheduleEditor
+          frequency={values.frequency}
+          period={values.period}
+          cronExpression={values.cronExpression}
+          useLookBackWindow={values.useLookBackWindow}
+          lookBackAmount={values.lookBackAmount}
+          lookBackUnit={values.lookBackUnit}
+          timestampField={values.timestampField}
+          setFieldValue={setFieldValue}
+          availableDateFields={availableDateFields}
+          dateFieldsError={dateFieldsError}
+          dateFieldsLoading={dateFieldsLoading}
+          isEdit={this.props.edit}
+          isMustang={isMustangDomain(this.props.landingDataSourceId)}
+        />
       </ContentPanel>
     );
   }
@@ -521,6 +275,7 @@ export default class CreateMonitor extends Component {
                   detectorId={this.props.detectorId}
                   setFlyout={this.props.setFlyout}
                   landingDataSourceId={this.props.landingDataSourceId}
+                  isServerless={this.props.isServerless}
                 />
 
                 {values.preventVisualEditor ? null : (
@@ -552,6 +307,7 @@ export default class CreateMonitor extends Component {
                             notifications={notifications}
                             isDarkMode={isDarkMode}
                             landingDataSourceId={this.props.landingDataSourceId}
+                            services={this.props.services}
                             onPplQueryChange={
                               isPpl ? (text) => setFieldValue('pplQuery', text) : undefined
                             }
@@ -606,6 +362,7 @@ export default class CreateMonitor extends Component {
                             notifications={notifications}
                             notificationService={notificationService}
                             plugins={plugins}
+                            isServerless={this.props.isServerless}
                           />
                         )}
                       </FieldArray>
