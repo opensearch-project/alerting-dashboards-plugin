@@ -7,13 +7,26 @@ on:
     branches:
       - "**"
 env:
-  OPENSEARCH_DASHBOARDS_VERSION: 'main'
-  OPENSEARCH_VERSION: '3.0.0-SNAPSHOT'
-  ALERTING_PLUGIN_BRANCH: 'main'
+  OPENSEARCH_DASHBOARDS_VERSION: '3.5'
+  ALERTING_PLUGIN_BRANCH: '3.5'
 jobs:
   tests:
-    name: Run Cypress E2E tests
+    name: Run ${{ matrix.spec }} Cypress tests
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        # Running each spec separately due to cypress memory-related failures
+        spec:
+          - acknowledge_alerts_modal
+          - alert
+          - alerts_dashboard_flyout
+          - bucket_level_monitor
+          - cluster_metrics_monitor
+          - composite_level_monitor
+          - document_level_monitor
+          - monitors_dashboard
+          - query_level_monitor
     env:
       # prevents extra Cypress installation progress messages
       CI: 1
@@ -21,12 +34,12 @@ jobs:
       TERM: xterm
     steps:
       - name: Set up JDK
-        uses: actions/setup-java@v1
+        uses: actions/setup-java@c1e323688fd81a25caa38c78aa6df2d33d3e20d9 # v4
         with:
-          # TODO: Parse this from alerting plugin
+          distribution: temurin
           java-version: 21
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@ee0669bd1cc54295c223e0bb666b733df41de1c5 # v2
         with:
           path: alerting
           repository: opensearch-project/alerting
@@ -34,25 +47,24 @@ jobs:
       - name: Run Opensearch with plugin
         run: |
           cd alerting
-          ./gradlew :alerting:run -Dopensearch.version=${{ env.OPENSEARCH_VERSION }} &
+          ./gradlew :alerting:run &
           timeout 300 bash -c 'while [[ "$(curl -s -o /dev/null -w ''%{http_code}'' localhost:9200)" != "200" ]]; do sleep 5; done'
       - name: Checkout OpenSearch Dashboards
-        uses: actions/checkout@v2
+        uses: actions/checkout@ee0669bd1cc54295c223e0bb666b733df41de1c5 # v2
         with:
           repository: opensearch-project/OpenSearch-Dashboards
           ref: ${{ env.OPENSEARCH_DASHBOARDS_VERSION }}
           path: OpenSearch-Dashboards
       - name: Checkout Alerting OpenSearch Dashboards plugin
-        uses: actions/checkout@v2
+        uses: actions/checkout@ee0669bd1cc54295c223e0bb666b733df41de1c5 # v2
         with:
           path: OpenSearch-Dashboards/plugins/alerting-dashboards-plugin
       - name: Setup Node
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@3235b876344d2a9aa001b8d1453c930bba69e610 # v3
         with:
           node-version-file: './OpenSearch-Dashboards/.nvmrc'
           registry-url: 'https://registry.npmjs.org'
       - name: Install Yarn
-        # Need to use bash to avoid having a windows/linux specific step
         shell: bash
         run: |
           YARN_VERSION=$(node -p "require('./OpenSearch-Dashboards/package.json').engines.yarn")
@@ -64,27 +76,30 @@ jobs:
         run: |
           cd OpenSearch-Dashboards/plugins/alerting-dashboards-plugin
           yarn osd bootstrap --single-version=loose
+      - name: Build plugin bundles
+        run: |
+          cd OpenSearch-Dashboards
+          node scripts/build_opensearch_dashboards_platform_plugins --no-examples --workers 4
       - name: Run OpenSearch Dashboards server
         run: |
           cd OpenSearch-Dashboards
-          yarn start --no-base-path --no-watch --server.host="0.0.0.0" &
-          sleep 300
-        # timeout 300 bash -c 'while [[ "$(curl -s -o /dev/null -w ''%{http_code}'' localhost:5601/api/status)" != "200" ]]; do sleep 5; done'
+          yarn start --no-base-path --no-watch --server.host="0.0.0.0" 2>&1 | tee /tmp/osd.log &
+          timeout 300 bash -c 'while ! grep -qE "(bundles compiled successfully|all bundles cached)" /tmp/osd.log 2>/dev/null; do sleep 10; done'
+          sleep 30
       - name: Run Cypress tests
-        uses: cypress-io/github-action@v2
+        uses: cypress-io/github-action@f5bea478b80a774068179089247f13d60abc5010 # v2
         with:
           working-directory: OpenSearch-Dashboards/plugins/alerting-dashboards-plugin
-          command: yarn run cypress run
-
-      # Screenshots are only captured on failure, will change this once we do visual regression tests
-      - uses: actions/upload-artifact@v4
+          command: env CYPRESS_NO_COMMAND_LOG=1 yarn run cypress run --browser chrome --spec '.cypress/integration/${{ matrix.spec }}.spec.js'
+        env:
+          NODE_OPTIONS: '--max-old-space-size=6144'
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         if: failure()
         with:
-          name: cypress-screenshots
-          path: OpenSearch-Dashboards/plugins/alerting-dashboards-plugin/cypress/screenshots
-      # Test run video was always captured, so this action uses "always()" condition
-      - uses: actions/upload-artifact@v4
+          name: cypress-screenshots-${{ matrix.spec }}
+          path: OpenSearch-Dashboards/plugins/alerting-dashboards-plugin/.cypress/screenshots
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         if: always()
         with:
-          name: cypress-videos
-          path: OpenSearch-Dashboards/plugins/alerting-dashboards-plugin/cypress/videos
+          name: cypress-videos-${{ matrix.spec }}
+          path: OpenSearch-Dashboards/plugins/alerting-dashboards-plugin/.cypress/videos

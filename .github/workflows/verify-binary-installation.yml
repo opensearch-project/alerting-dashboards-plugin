@@ -1,10 +1,8 @@
 name: 'Install Dashboards with Plugin via Binary'
 
-on: [push, pull_request]
+on: [push]
 env:
-  OPENSEARCH_VERSION: '3.0.0-alpha1'
   CI: 1
-  # avoid warnings like "tput: No value for $TERM and no -T specified"
   TERM: xterm
 
 jobs:
@@ -14,11 +12,10 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest]
-        # TODO: add windows support when OSD core is stable on windows
     runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout Branch
-        uses: actions/checkout@v3
+        uses: actions/checkout@f43a0e5ff2bd294095638e18286ca9a3d1956744 # v3
 
       - name: Set env
         run: |
@@ -28,29 +25,53 @@ jobs:
           echo "PLUGIN_VERSION=$plugin_version" >> $GITHUB_ENV
         shell: bash
 
-      - name: Run Opensearch
-        uses: derek-ho/start-opensearch@v6
+      - name: Set up JDK
+        uses: actions/setup-java@c1e323688fd81a25caa38c78aa6df2d33d3e20d9 # v4
         with:
-          opensearch-version: ${{ env.OPENSEARCH_VERSION }}
-          security-enabled: false
-          jdk-version: 21
+          distribution: temurin
+          java-version: 21
 
-      - name: Run Dashboard
-        id: setup-dashboards
-        uses: derek-ho/setup-opensearch-dashboards@v1
-        with:
-          plugin_name: alerting-dashboards-plugin
-          built_plugin_name: alertingDashboards
-          install_zip: true
-
-      - name: Start the binary
+      - name: Download and Run OpenSearch
         run: |
-          nohup ./bin/opensearch-dashboards &
-        working-directory: ${{ steps.setup-dashboards.outputs.dashboards-binary-directory }}
+          wget -q https://artifacts.opensearch.org/snapshots/core/opensearch/${{ env.OPENSEARCH_VERSION }}-SNAPSHOT/opensearch-min-${{ env.OPENSEARCH_VERSION }}-SNAPSHOT-linux-x64-latest.tar.gz
+          tar -xzf opensearch-*.tar.gz
+          ./opensearch-${{ env.OPENSEARCH_VERSION }}-SNAPSHOT/bin/opensearch &
+          timeout 120 bash -c 'while [[ "$(curl -s -o /dev/null -w ''%{http_code}'' localhost:9200)" != "200" ]]; do sleep 5; done'
+        shell: bash
+
+      - name: Setup Node
+        uses: actions/setup-node@3235b876344d2a9aa001b8d1453c930bba69e610 # v3
+        with:
+          node-version: '18'
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: Download OpenSearch Dashboards
+        run: |
+          wget -q https://artifacts.opensearch.org/snapshots/core/opensearch-dashboards/${{ env.OPENSEARCH_VERSION }}-SNAPSHOT/opensearch-dashboards-min-${{ env.OPENSEARCH_VERSION }}-SNAPSHOT-linux-x64-latest.tar.gz
+          tar -xzf opensearch-dashboards-*.tar.gz
+        shell: bash
+
+      - name: Install Yarn and Build Plugin
+        run: |
+          YARN_VERSION=$(node -p "require('./package.json').engines.yarn")
+          npm i -g yarn@$YARN_VERSION
+          yarn osd bootstrap --single-version=loose
+          yarn build
+        shell: bash
+
+      - name: Install Plugin into Dashboards
+        run: |
+          cd opensearch-dashboards-${{ env.OPENSEARCH_VERSION }}-SNAPSHOT
+          bin/opensearch-dashboards-plugin install file:$(cd .. && pwd)/build/alertingDashboards-${{ env.PLUGIN_VERSION }}.zip
+        shell: bash
+
+      - name: Start Dashboards
+        run: |
+          cd opensearch-dashboards-${{ env.OPENSEARCH_VERSION }}-SNAPSHOT
+          nohup bin/opensearch-dashboards --allow-root &
         shell: bash
 
       - name: Health check
         run: |
-          timeout 300 bash -c 'while [[ "$(curl http://localhost:5601/api/status | jq -r '.status.overall.state')" != "green" ]]; do sleep 5; done'
+          timeout 300 bash -c 'while [[ "$(curl -s http://localhost:5601/api/status | jq -r '.status.overall.state')" != "green" ]]; do sleep 5; done'
         shell: bash
-
