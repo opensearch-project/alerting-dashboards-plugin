@@ -265,8 +265,8 @@ exports[`Action renders with Notifications plugin installed 1`] = `
                   </div>
                 </div>
                 <div
-                  class="euiFormRow euiFormRow--compressed"
-                  id="testPathactions.0.message_template.source-form-row-row"
+                  class="euiFormRow euiFormRow--fullWidth euiFormRow--compressed"
+                  id="generated-id-row"
                   style="max-width:100%"
                 >
                   <div
@@ -275,7 +275,7 @@ exports[`Action renders with Notifications plugin installed 1`] = `
                     <label
                       aria-invalid="false"
                       class="euiFormLabel euiFormRow__label"
-                      for="testPathactions.0.message_template.source-form-row"
+                      for="generated-id"
                     >
                       <div>
                         <div
@@ -317,12 +317,221 @@ exports[`Action renders with Notifications plugin installed 1`] = `
                   <div
                     class="euiFormRow__fieldWrapper"
                   >
-                    <textarea
-                      class="euiTextArea euiTextArea--resizeVertical euiTextArea--fullWidth euiTextArea--compressed"
-                      name="testPathactions.0.message_template.source"
-                      placeholder="Can use mustache templates"
-                      rows="3"
-                    />
+                    <div
+                      style="position:relative"
+                    >
+                      <div
+                        class="euiCallOut euiCallOut--primary euiCallOut--small"
+                      >
+                        <div
+                          class="euiCallOutHeader"
+                        >
+                          <div>
+                            EuiIconMock
+                          </div>
+                          <span
+                            class="euiCallOutHeader__title"
+                          >
+                            The receiving webhook must support Markdown rendering for formatting to display correctly.
+                          </span>
+                        </div>
+                      </div>
+                      <div
+                        class="euiMarkdownEditor"
+                        id="generated-id"
+                        placeholder="Can use mustache templates"
+                      >
+                        <div
+                          class="euiMarkdownEditorToolbar"
+                        >
+                          <div
+                            class="euiMarkdownEditorToolbar__buttons"
+                          >
+                            <span
+                              class="euiToolTipAnchor"
+                            >
+                              <button
+                                aria-label="Bold"
+                                class="euiButtonIcon euiButtonIcon--text euiButtonIcon--empty euiButtonIcon--xSmall"
+                                type="button"
+                              >
+                                <div>
+                                  EuiIconMock
+                                </div>
+                              </button>
+                            </span>
+                            <span
+                              class="euiToolTipAnchor"
+                            >
+                              <button
+                                aria-label="Italic"
+                                class="euiButtonIcon euiButtonIcon--text euiButtonIcon--empty euiButtonIcon--xSmall"
+                                type="button"
+                              >
+                                <div>
+                                  EuiIconMock
+                                </div>
+                              </button>
+                            </span>
+                            <span
+                              class="euiMarkdownEditorToolbar__divider"
+                            />
+                            <span
+                              class="euiToolTipAnchor"
+                            >
+                              <button
+                                aria-label="Unordered list"
+                                class="euiButtonIcon euiButtonIcon--text euiButtonIcon--empty euiButtonIcon--xSmall"
+                                type="button"
+                              >
+                                <div>
+                                  EuiIconMock
+                                </div>
+                              </button>
+                            </span>
+                            <span
+                              class="euiToolTipAnchor"
+                            >
+                              <button
+                                aria-label="Ordered list"
+                                class="euiButtonIcon euiButtonIcon--text euiButtonIcon--empty euiButtonIcon--xSmall"
+                                type="button"
+                              >
+                                <div>
+                                  EuiIconMock
+                                </div>
+                              </button>
+                            </span>
+                            <span
+                              class="euiToolTipAnchor"
+                            >
+                              <button
+                                aria-label="Task list"
+                                class="euiButtonIcon euiButtonIcon--text euiButtonIcon--empty euiButtonIcon--xSmall"
+                                type="button"
+                              >
+                                <div>
+                                  EuiIconMock
+                                </div>
+                              </button>
+                            </span>
+                            <span
+                              class="euiMarkdownEditorToolbar__divider"
+                            />
+                            <span
+                              class="euiToolTipAnchor"
+                            >
+                              <button
+                                aria-label="Quote"
+                                class="euiButtonIcon euiButtonIcon--text euiButtonIcon--empty euiButtonIcon--xSmall"
+                                type="button"
+                              >
+                                <div>
+                                  EuiIconMock
+                                </div>
+                              </button>
+                            </span>
+                            <span
+                              class="euiToolTipAnchor"
+                            >
+                              <button
+                                aria-label="Code"
+                                class="euiButtonIcon euiButtonIcon--text euiButtonIcon--empty euiButtonIcon--xSmall"
+                                type="button"
+                              >
+                                <div>
+                                  EuiIconMock
+                                </div>
+                              </button>
+                            </span>
+                            <span
+                              class="euiToolTipAnchor"
+                            >
+                              <button
+                                aria-label="Link"
+                                class="euiButtonIcon euiButtonIcon--text euiButtonIcon--empty euiButtonIcon--xSmall"
+                                type="button"
+                              >
+                                <div>
+                                  EuiIconMock
+                                </div>
+                              </button>
+                            </span>
+                            <span
+                              class="euiMarkdownEditorToolbar__divider"
+                            />
+                            <span
+                              class="euiToolTipAnchor"
+                            >
+                              <button
+                                aria-label="Tooltip"
+                                class="euiButtonIcon euiButtonIcon--text euiButtonIcon--empty euiButtonIcon--xSmall"
+                                type="button"
+                              >
+                                <div>
+                                  EuiIconMock
+                                </div>
+                              </button>
+                            </span>
+                          </div>
+                          <button
+                            class="euiButtonEmpty euiButtonEmpty--text euiButtonEmpty--small"
+                            type="button"
+                          >
+                            <span
+                              class="euiButtonContent euiButtonEmpty__content"
+                            >
+                              <div>
+                                EuiIconMock
+                              </div>
+                              <span
+                                class="euiButtonEmpty__text"
+                              >
+                                Preview
+                              </span>
+                            </span>
+                          </button>
+                        </div>
+                        <div
+                          class="euiMarkdownEditor__toggleContainer"
+                          style="height:calc(100% - 0px)"
+                        >
+                          <div
+                            class="euiMarkdownEditorDropZone"
+                            role="presentation"
+                          >
+                            <textarea
+                              class="euiMarkdownEditorTextArea"
+                              id="generated-id"
+                              rows="6"
+                              style="height:calc(200px);max-height:500px"
+                            />
+                            <div
+                              class="euiMarkdownEditorFooter"
+                            >
+                              <div
+                                class="euiMarkdownEditorFooter__actions"
+                              />
+                              <button
+                                aria-label="Show markdown help"
+                                class="euiButtonIcon euiButtonIcon--text euiButtonIcon--empty euiButtonIcon--xSmall euiMarkdownEditorFooter__help"
+                                type="button"
+                              >
+                                <div>
+                                  EuiIconMock
+                                </div>
+                              </button>
+                            </div>
+                            <input
+                              multiple=""
+                              style="display:none"
+                              tabindex="-1"
+                              type="file"
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </div>
                 <div
@@ -334,31 +543,9 @@ exports[`Action renders with Notifications plugin installed 1`] = `
                     class="euiFormRow__fieldWrapper"
                   >
                     <div
-                      class="euiFlexGroup euiFlexGroup--gutterLarge euiFlexGroup--alignItemsFlexStart euiFlexGroup--justifyContentSpaceBetween euiFlexGroup--directionRow euiFlexGroup--responsive"
+                      class="euiFlexGroup euiFlexGroup--gutterLarge euiFlexGroup--justifyContentFlexEnd euiFlexGroup--directionRow euiFlexGroup--responsive"
                       id="generated-id"
                     >
-                      <div
-                        class="euiFlexItem"
-                      >
-                        <div
-                          class="euiCheckbox euiCheckbox--compressed"
-                        >
-                          <input
-                            class="euiCheckbox__input"
-                            id="testPathactions.0"
-                            type="checkbox"
-                          />
-                          <div
-                            class="euiCheckbox__square"
-                          />
-                          <label
-                            class="euiCheckbox__label"
-                            for="testPathactions.0"
-                          >
-                            Preview message
-                          </label>
-                        </div>
-                      </div>
                       <div
                         class="euiFlexItem euiFlexItem--flexGrowZero"
                       >
@@ -862,8 +1049,8 @@ exports[`Action renders without Notifications plugin installed 1`] = `
                   </div>
                 </div>
                 <div
-                  class="euiFormRow euiFormRow--compressed"
-                  id="testPathactions.0.message_template.source-form-row-row"
+                  class="euiFormRow euiFormRow--fullWidth euiFormRow--compressed"
+                  id="generated-id-row"
                   style="max-width:100%"
                 >
                   <div
@@ -872,7 +1059,7 @@ exports[`Action renders without Notifications plugin installed 1`] = `
                     <label
                       aria-invalid="false"
                       class="euiFormLabel euiFormRow__label"
-                      for="testPathactions.0.message_template.source-form-row"
+                      for="generated-id"
                     >
                       <div>
                         <div
@@ -914,12 +1101,221 @@ exports[`Action renders without Notifications plugin installed 1`] = `
                   <div
                     class="euiFormRow__fieldWrapper"
                   >
-                    <textarea
-                      class="euiTextArea euiTextArea--resizeVertical euiTextArea--fullWidth euiTextArea--compressed"
-                      name="testPathactions.0.message_template.source"
-                      placeholder="Can use mustache templates"
-                      rows="3"
-                    />
+                    <div
+                      style="position:relative"
+                    >
+                      <div
+                        class="euiCallOut euiCallOut--primary euiCallOut--small"
+                      >
+                        <div
+                          class="euiCallOutHeader"
+                        >
+                          <div>
+                            EuiIconMock
+                          </div>
+                          <span
+                            class="euiCallOutHeader__title"
+                          >
+                            The receiving webhook must support Markdown rendering for formatting to display correctly.
+                          </span>
+                        </div>
+                      </div>
+                      <div
+                        class="euiMarkdownEditor"
+                        id="generated-id"
+                        placeholder="Can use mustache templates"
+                      >
+                        <div
+                          class="euiMarkdownEditorToolbar"
+                        >
+                          <div
+                            class="euiMarkdownEditorToolbar__buttons"
+                          >
+                            <span
+                              class="euiToolTipAnchor"
+                            >
+                              <button
+                                aria-label="Bold"
+                                class="euiButtonIcon euiButtonIcon--text euiButtonIcon--empty euiButtonIcon--xSmall"
+                                type="button"
+                              >
+                                <div>
+                                  EuiIconMock
+                                </div>
+                              </button>
+                            </span>
+                            <span
+                              class="euiToolTipAnchor"
+                            >
+                              <button
+                                aria-label="Italic"
+                                class="euiButtonIcon euiButtonIcon--text euiButtonIcon--empty euiButtonIcon--xSmall"
+                                type="button"
+                              >
+                                <div>
+                                  EuiIconMock
+                                </div>
+                              </button>
+                            </span>
+                            <span
+                              class="euiMarkdownEditorToolbar__divider"
+                            />
+                            <span
+                              class="euiToolTipAnchor"
+                            >
+                              <button
+                                aria-label="Unordered list"
+                                class="euiButtonIcon euiButtonIcon--text euiButtonIcon--empty euiButtonIcon--xSmall"
+                                type="button"
+                              >
+                                <div>
+                                  EuiIconMock
+                                </div>
+                              </button>
+                            </span>
+                            <span
+                              class="euiToolTipAnchor"
+                            >
+                              <button
+                                aria-label="Ordered list"
+                                class="euiButtonIcon euiButtonIcon--text euiButtonIcon--empty euiButtonIcon--xSmall"
+                                type="button"
+                              >
+                                <div>
+                                  EuiIconMock
+                                </div>
+                              </button>
+                            </span>
+                            <span
+                              class="euiToolTipAnchor"
+                            >
+                              <button
+                                aria-label="Task list"
+                                class="euiButtonIcon euiButtonIcon--text euiButtonIcon--empty euiButtonIcon--xSmall"
+                                type="button"
+                              >
+                                <div>
+                                  EuiIconMock
+                                </div>
+                              </button>
+                            </span>
+                            <span
+                              class="euiMarkdownEditorToolbar__divider"
+                            />
+                            <span
+                              class="euiToolTipAnchor"
+                            >
+                              <button
+                                aria-label="Quote"
+                                class="euiButtonIcon euiButtonIcon--text euiButtonIcon--empty euiButtonIcon--xSmall"
+                                type="button"
+                              >
+                                <div>
+                                  EuiIconMock
+                                </div>
+                              </button>
+                            </span>
+                            <span
+                              class="euiToolTipAnchor"
+                            >
+                              <button
+                                aria-label="Code"
+                                class="euiButtonIcon euiButtonIcon--text euiButtonIcon--empty euiButtonIcon--xSmall"
+                                type="button"
+                              >
+                                <div>
+                                  EuiIconMock
+                                </div>
+                              </button>
+                            </span>
+                            <span
+                              class="euiToolTipAnchor"
+                            >
+                              <button
+                                aria-label="Link"
+                                class="euiButtonIcon euiButtonIcon--text euiButtonIcon--empty euiButtonIcon--xSmall"
+                                type="button"
+                              >
+                                <div>
+                                  EuiIconMock
+                                </div>
+                              </button>
+                            </span>
+                            <span
+                              class="euiMarkdownEditorToolbar__divider"
+                            />
+                            <span
+                              class="euiToolTipAnchor"
+                            >
+                              <button
+                                aria-label="Tooltip"
+                                class="euiButtonIcon euiButtonIcon--text euiButtonIcon--empty euiButtonIcon--xSmall"
+                                type="button"
+                              >
+                                <div>
+                                  EuiIconMock
+                                </div>
+                              </button>
+                            </span>
+                          </div>
+                          <button
+                            class="euiButtonEmpty euiButtonEmpty--text euiButtonEmpty--small"
+                            type="button"
+                          >
+                            <span
+                              class="euiButtonContent euiButtonEmpty__content"
+                            >
+                              <div>
+                                EuiIconMock
+                              </div>
+                              <span
+                                class="euiButtonEmpty__text"
+                              >
+                                Preview
+                              </span>
+                            </span>
+                          </button>
+                        </div>
+                        <div
+                          class="euiMarkdownEditor__toggleContainer"
+                          style="height:calc(100% - 0px)"
+                        >
+                          <div
+                            class="euiMarkdownEditorDropZone"
+                            role="presentation"
+                          >
+                            <textarea
+                              class="euiMarkdownEditorTextArea"
+                              id="generated-id"
+                              rows="6"
+                              style="height:calc(200px);max-height:500px"
+                            />
+                            <div
+                              class="euiMarkdownEditorFooter"
+                            >
+                              <div
+                                class="euiMarkdownEditorFooter__actions"
+                              />
+                              <button
+                                aria-label="Show markdown help"
+                                class="euiButtonIcon euiButtonIcon--text euiButtonIcon--empty euiButtonIcon--xSmall euiMarkdownEditorFooter__help"
+                                type="button"
+                              >
+                                <div>
+                                  EuiIconMock
+                                </div>
+                              </button>
+                            </div>
+                            <input
+                              multiple=""
+                              style="display:none"
+                              tabindex="-1"
+                              type="file"
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </div>
                 <div
@@ -931,31 +1327,9 @@ exports[`Action renders without Notifications plugin installed 1`] = `
                     class="euiFormRow__fieldWrapper"
                   >
                     <div
-                      class="euiFlexGroup euiFlexGroup--gutterLarge euiFlexGroup--alignItemsFlexStart euiFlexGroup--justifyContentSpaceBetween euiFlexGroup--directionRow euiFlexGroup--responsive"
+                      class="euiFlexGroup euiFlexGroup--gutterLarge euiFlexGroup--justifyContentFlexEnd euiFlexGroup--directionRow euiFlexGroup--responsive"
                       id="generated-id"
                     >
-                      <div
-                        class="euiFlexItem"
-                      >
-                        <div
-                          class="euiCheckbox euiCheckbox--compressed"
-                        >
-                          <input
-                            class="euiCheckbox__input"
-                            id="testPathactions.0"
-                            type="checkbox"
-                          />
-                          <div
-                            class="euiCheckbox__square"
-                          />
-                          <label
-                            class="euiCheckbox__label"
-                            for="testPathactions.0"
-                          >
-                            Preview message
-                          </label>
-                        </div>
-                      </div>
                       <div
                         class="euiFlexItem euiFlexItem--flexGrowZero"
                       >

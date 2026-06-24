@@ -20,28 +20,18 @@ import { formikToTrigger } from '../containers/CreateTrigger/utils/formikToTrigg
 import { getUISettings } from '../../../services';
 
 export const getChannelOptions = (channels) => {
-  const channelMap = {};
-
-  // Iterate over channels to group options by channel type
-  channels.forEach(channel => {
-    if (!channelMap[channel.type]) {
-      channelMap[channel.type] = {
-        key: channel.type,
-        label: channel.type,
-        options: []
-      };
+  const groupsByType = {};
+  channels.forEach((channel) => {
+    if (!groupsByType[channel.type]) {
+      groupsByType[channel.type] = [];
     }
-    // Add the option to the corresponding channel type
-    channelMap[channel.type].options.push({
-      key: channel.value,
-      ...channel
-    });
+    groupsByType[channel.type].push({ key: channel.value, ...channel });
   });
-
-  // Convert the channelMap object to an array of values
-  const channelOptions = Object.values(channelMap);
-  
-  return channelOptions;
+  return Object.entries(groupsByType).map(([type, options]) => ({
+    key: type,
+    label: type,
+    options,
+  }));
 };
 
 // Custom Webhooks for Destinations used `custom_webhook` for the type whereas Notification Channels use 'webhook'
@@ -74,8 +64,14 @@ export const getTriggerContext = (executeResponse, monitor, values, triggerIndex
   if (_.isArray(trigger) && triggerIndex >= 0) trigger = trigger[triggerIndex];
 
   return {
-    periodStart: moment.utc(_.get(executeResponse, 'period_start', Date.now())).tz(getTimeZone()).format(),
-    periodEnd: moment.utc(_.get(executeResponse, 'period_end', Date.now())).tz(getTimeZone()).format(),
+    periodStart: moment
+      .utc(_.get(executeResponse, 'period_start', Date.now()))
+      .tz(getTimeZone())
+      .format(),
+    periodEnd: moment
+      .utc(_.get(executeResponse, 'period_end', Date.now()))
+      .tz(getTimeZone())
+      .format(),
     results: [_.get(executeResponse, 'input_results.results[0]')].filter((result) => !!result),
     trigger: trigger,
     alert: null,
@@ -122,8 +118,8 @@ export const conditionToExpressions = (condition = '', monitors) => {
 };
 
 export function getTimeZone() {
-  // TODO: Include support to configure timezones rather than using the default UTC as requested here - https://github.com/opensearch-project/alerting/issues/1744
-  // const detectedTimeZone = getUISettings().get('dateFormat:tz', 'Browser');
-  // return detectedTimeZone === 'Browser' ? (moment.tz.guess() || moment.format('Z')) : detectedTimeZone;
-  return "UTC";
+  const detectedTimeZone = getUISettings().get('dateFormat:tz', 'Browser');
+  return detectedTimeZone === 'Browser'
+    ? moment.tz.guess() || moment.format('Z')
+    : detectedTimeZone;
 }

@@ -14,6 +14,7 @@ import {
   ACTIONABLE_ALERTS_OPTIONS_LABELS,
   NOTIFY_OPTIONS_VALUES,
 } from '../../../components/Action/actions/Message';
+import { triggerToFormikPpl } from './triggerToFormikPpl';
 
 export function triggerToFormik(trigger, monitor) {
   return _.isArray(trigger)
@@ -37,6 +38,8 @@ export function triggerDefinitionToFormik(trigger, monitor) {
       return documentLevelTriggerToFormik(trigger, monitor);
     case MONITOR_TYPE.COMPOSITE_LEVEL:
       return compositeTriggerToFormik(trigger, monitor);
+    case MONITOR_TYPE.PPL:
+      return triggerToFormikPpl(trigger);
     default:
       return queryLevelTriggerToFormik(trigger, monitor);
   }

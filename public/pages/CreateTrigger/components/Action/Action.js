@@ -162,7 +162,7 @@ const Action = ({
                     </EuiText>
                   </React.Fragment>
                 ),
-                rowHeight: 30,
+                rowHeight: 45,
                 isLoading: !flyoutMode && loadingDestinations,
               }}
             />
@@ -271,7 +271,7 @@ const Action = ({
             {flyoutMode && !isInitialLoading && (
               <>
                 <EuiSmallButtonEmpty iconType="pencil" iconSide="left" onClick={onConfigureOpen}>
-                  Configure notification
+                  Configure alert message
                 </EuiSmallButtonEmpty>
                 {isConfigureOpen && (
                   <EuiModal onClose={onConfigureCancel}>
@@ -303,7 +303,6 @@ const Action = ({
             )}
           </div>
         </Accordion>
-        {flyoutMode && <EuiHorizontalRule margin="s" />}
       </EuiPanel>
     </div>
   );
