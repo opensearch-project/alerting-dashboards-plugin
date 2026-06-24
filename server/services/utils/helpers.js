@@ -43,3 +43,17 @@ export function createValidateQuerySchema(dataSourceEnabled, fields = {}) {
   }
   return schema.object(schemaObj);
 }
+
+let dynamicConfig = undefined;
+export const getDynamicConfig = async (request, coreSetup) => {
+  if (dynamicConfig === undefined) {
+    const { dynamicConfigService } = coreSetup;
+    dynamicConfig = await dynamicConfigService.getStartService();
+  }
+  const client = dynamicConfig.getClient();
+  const dynamicConfigContextStore = dynamicConfig.createStoreFromRequest(request);
+  return await client.getConfig(
+    { pluginConfigPath: 'opensearch_alerting' },
+    { asyncLocalStorageContext: dynamicConfigContextStore }
+  );
+};

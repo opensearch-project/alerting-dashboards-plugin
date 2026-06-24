@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { Component, useMemo } from 'react';
+import React, { Component } from 'react';
 import { Switch, Route } from 'react-router-dom';
 import { CoreConsumer, CoreContext } from '../../utils/CoreContext';
 import Home from '../Home';
@@ -12,20 +12,21 @@ import MonitorDetails from '../MonitorDetails/containers/MonitorDetails';
 import CreateDestination from '../Destinations/containers/CreateDestination';
 import Flyout from '../../components/Flyout';
 import { APP_PATH } from '../../utils/constants';
-import { ServicesConsumer } from '../../services';
-import { getBreadcrumbs } from '../../components/Breadcrumbs/Breadcrumbs';
 import {
+  ServicesConsumer,
   getDataSourceManagementPlugin,
+  getDataSourceMetadata,
   getNotifications,
   getSavedObjectsClient,
   setDataSource,
-} from '../../../public/services';
-import { MultiDataSourceContext } from '../../../public/utils/MultiDataSourceContext';
+  setDataSourceMetadata,
+  isServerlessDataSource,
+} from '../../services';
+import { getBreadcrumbs } from '../../components/Breadcrumbs/Breadcrumbs';
+import { MultiDataSourceContext } from '../../utils/MultiDataSourceContext';
 import { parseQueryStringAndGetDataSource } from '../utils/helpers';
-import * as pluginManifest from '../../../opensearch_dashboards.json';
-import semver from 'semver';
-import { dataSourceObservable } from '../../pages/utils/constants';
-import { dataSourceFilterFn } from '../../utils/helpers';
+import { dataSourceObservable } from '../utils/constants';
+import { dataSourceFilterFn, isMustangDomain, prefetchMustangStatus } from '../../utils/helpers';
 
 class Main extends Component {
   static contextType = CoreContext;
@@ -33,10 +34,22 @@ class Main extends Component {
     flyout: null,
     selectedDataSourceId: undefined,
     dataSourceLoading: this.props.dataSourceEnabled,
+    dataSourceEndpoint: '',
   };
   async componentDidMount() {
     if (this.context) {
       this.updateBreadcrumbs();
+    }
+    if (this.props.dataSourceEnabled) {
+      try {
+        const allDataSources = await getSavedObjectsClient().find({
+          type: 'data-source',
+          perPage: 1000,
+        });
+        await prefetchMustangStatus(this.context?.http, allDataSources.savedObjects || []);
+      } catch (e) {
+        /* ignore - filter will fall back to default behavior */
+      }
     }
   }
 
@@ -52,6 +65,30 @@ class Main extends Component {
     }
   }
 
+  async resolveAndSetDataSource(dataSourceId) {
+    setDataSource({ dataSourceId });
+    let dataSourceEndpoint = '';
+    let dataSourceLabel = '';
+    try {
+      const savedObject = await getSavedObjectsClient().get('data-source', dataSourceId);
+      dataSourceEndpoint = savedObject?.attributes?.endpoint || '';
+      dataSourceLabel = savedObject?.attributes?.title || '';
+      setDataSourceMetadata({
+        dataSourceVersion: savedObject?.attributes?.dataSourceVersion || '',
+        dataSourceEngineType: savedObject?.attributes?.dataSourceEngineType || '',
+        dataSourceLabel,
+      });
+      await prefetchMustangStatus(this.context?.http, [savedObject]);
+      setDataSourceMetadata({
+        ...getDataSourceMetadata(),
+        isMustang: isMustangDomain(dataSourceId),
+      });
+    } catch (e) {
+      setDataSourceMetadata({ dataSourceVersion: '', dataSourceEngineType: '' });
+    }
+    this.setState({ selectedDataSourceId: dataSourceId, dataSourceEndpoint });
+  }
+
   async updateBreadcrumbs() {
     if (this.props.dataSourceEnabled && this.props.location) {
       const search = this.props.location?.search;
@@ -59,14 +96,11 @@ class Main extends Component {
         search || this.props.location?.pathname
       );
       if (dataSourceId !== undefined) {
-        setDataSource({ dataSourceId });
-        this.setState({
-          selectedDataSourceId: dataSourceId,
-        });
+        if (this.state.selectedDataSourceId !== dataSourceId) {
+          await this.resolveAndSetDataSource(dataSourceId);
+        }
         if (this.state.dataSourceLoading) {
-          this.setState({
-            dataSourceLoading: false,
-          });
+          this.setState({ dataSourceLoading: false });
         }
       }
     }
@@ -89,16 +123,13 @@ class Main extends Component {
     }
   };
 
-  handleDataSourceChange = ([dataSource]) => {
+  handleDataSourceChange = async ([dataSource]) => {
     const dataSourceId = dataSource?.id;
     const dataSourceLabel = dataSource?.label;
     if (this.props.dataSourceEnabled && dataSourceId === undefined) {
       getNotifications().toasts.addDanger('Unable to set data source.');
-    } else if (this.state.selectedDataSourceId != dataSourceId) {
-      this.setState({
-        selectedDataSourceId: dataSourceId,
-      });
-      setDataSource({ dataSourceId });
+    } else if (this.state.selectedDataSourceId !== dataSourceId) {
+      await this.resolveAndSetDataSource(dataSourceId);
     }
     dataSourceObservable.next({ id: dataSourceId, label: dataSourceLabel });
     if (this.state.dataSourceLoading) {
@@ -114,7 +145,12 @@ class Main extends Component {
       fullWidth: false,
       activeOption: this.state.dataSourceLoading
         ? undefined
-        : [{ id: this.state.selectedDataSourceId }],
+        : [
+            {
+              id: this.state.selectedDataSourceId,
+              label: getDataSourceMetadata()?.dataSourceLabel,
+            },
+          ],
       savedObjects: getSavedObjectsClient(),
       notifications: getNotifications(),
       dataSourceFilter: dataSourceFilterFn,
@@ -136,6 +172,7 @@ class Main extends Component {
   render() {
     const { flyout } = this.state;
     const { history, dataSourceEnabled, ...rest } = this.props;
+    const isServerless = isServerlessDataSource();
     return (
       <CoreConsumer>
         {(core) =>
@@ -180,8 +217,11 @@ class Main extends Component {
                               notifications={core.notifications}
                               isDarkMode={core.isDarkMode}
                               notificationService={services.notificationService}
+                              services={core.services}
                               {...props}
                               landingDataSourceId={this.state.selectedDataSourceId}
+                              dataSourceEndpoint={this.state.dataSourceEndpoint}
+                              isServerless={isServerless}
                             />
                           )}
                         />
@@ -220,8 +260,11 @@ class Main extends Component {
                                   notifications={core.notifications}
                                   isDarkMode={core.isDarkMode}
                                   notificationService={services.notificationService}
+                                  services={core.services}
                                   {...props}
                                   landingDataSourceId={this.state.selectedDataSourceId}
+                                  dataSourceEndpoint={this.state.dataSourceEndpoint}
+                                  isServerless={isServerless}
                                 />
                               )}
                             />

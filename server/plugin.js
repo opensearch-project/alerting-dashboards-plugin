@@ -16,8 +16,7 @@ import {
   CrossClusterService,
   CommentsService,
 } from './services';
-import { FeatureFlagService } from './services/FeatureFlagService';
-import { FEATURE_FLAGS, PLUGIN_ID } from './services/utils/constants';
+import { FEATURE_FLAGS } from './services/utils/constants';
 import {
   alerts,
   destinations,
@@ -29,8 +28,9 @@ import {
   crossCluster,
   comments,
 } from '../server/routes';
-import { JSON_SCHEMA } from 'js-yaml';
+import { getDynamicConfig } from './services/utils/helpers';
 import { getWorkspaceState } from '../../../src/core/server/utils';
+import { MDSEnabledClientService } from './services/MDSEnabledClientService';
 
 export class AlertingPlugin {
   constructor(initializerContext) {
@@ -38,24 +38,25 @@ export class AlertingPlugin {
     this.globalConfig$ = initializerContext.config.legacy.globalConfig$;
     this.pluginConfig$ = initializerContext.config.create();
     this.core = null;
-    this.featureFlagService = null;
     this.services = null;
   }
 
-  async setup(core, { dataSource }) {
+  async setup(core, { dataSource, neoDashboardsOasisPlugin }) {
     this.core = core;
+
+    // Get oasis observability client from NeoDashboardsOasisPlugin (available at setup time)
+    const oasisEnabled = !!neoDashboardsOasisPlugin?.observability;
+    if (oasisEnabled) {
+      const oasisClient = neoDashboardsOasisPlugin.observability.getClient();
+      MDSEnabledClientService.setOasisObservabilityClient(oasisClient);
+    }
+
     // Get the global configuration settings of the cluster
     const globalConfig = await this.globalConfig$.pipe(first()).toPromise();
     const pluginConfig = await this.pluginConfig$.pipe(first()).toPromise();
 
     const dataSourceEnabled = !!dataSource;
     const defaultPplEnabled = Boolean(pluginConfig?.pplAlertingEnabled);
-    this.featureFlagService = new FeatureFlagService(core, this.logger, {
-      pluginConfigPath: PLUGIN_ID,
-      defaults: {
-        [FEATURE_FLAGS.PPL_MONITOR]: defaultPplEnabled,
-      },
-    });
 
     // Create clusters
     const alertingESClient = createAlertingCluster(
@@ -96,33 +97,29 @@ export class AlertingPlugin {
     core.capabilities.registerProvider(() => ({
       alertingDashboards: {
         pplV2: defaultPplEnabled,
+        serverlessEnabled: false,
       },
     }));
 
     core.capabilities.registerSwitcher(async (request) => {
       try {
-        if (!this.featureFlagService) {
-          return {
-            alertingDashboards: {
-              pplV2: defaultPplEnabled,
-            },
-          };
-        }
-        const status = await this.featureFlagService.getFeatureStatus(request, [
-          FEATURE_FLAGS.PPL_MONITOR,
-        ]);
+        const config = await getDynamicConfig(request, this.core);
+        const pplAlertingEnabled = !!config[FEATURE_FLAGS.PPL_MONITOR];
+        const isServerlessAlertingAllowlisted = !!config[FEATURE_FLAGS.SERVERLESS];
+
         return {
           alertingDashboards: {
-            pplV2: Boolean(status?.[FEATURE_FLAGS.PPL_MONITOR]),
+            pplV2: pplAlertingEnabled,
+            serverlessEnabled: oasisEnabled && isServerlessAlertingAllowlisted,
           },
         };
-      } catch (err) {
-        this.logger?.debug?.(
-          `[Alerting][Plugin] Failed to resolve dynamic feature flags: ${err?.message ?? err}`
+      } catch (e) {
+        this.logger.warn(
+          `[Alerting] Failed to get dynamic config in capabilities switcher: ${e.message ?? e}`
         );
         return {
           alertingDashboards: {
-            pplV2: defaultPplEnabled,
+            serverlessEnabled: false,
           },
         };
       }
@@ -132,7 +129,6 @@ export class AlertingPlugin {
     const router = core.http.createRouter();
 
     // Routes that return 501 on unsupported (e.g. serverless) endpoints.
-    // Uses path patterns — {param} segments are normalized to match any value.
     const unsupportedRoutes = new Set([
       'POST /api/alerting/workflows',
       'GET /api/alerting/workflows/{id}',
@@ -177,35 +173,6 @@ export class AlertingPlugin {
       };
       return proxy;
     }, {});
-    const registerPplRoutes = () => pplAlertingMonitors(services, guardedRouter, dataSourceEnabled);
-
-    if (defaultPplEnabled) {
-      registerPplRoutes();
-    } else if (this.featureFlagService) {
-      core
-        .getStartServices()
-        .then(async () => {
-          try {
-            const config = await this.featureFlagService.getConfigFromDynamicStore();
-            if (config?.[FEATURE_FLAGS.PPL_MONITOR]) {
-              registerPplRoutes();
-            }
-          } catch (err) {
-            this.logger?.debug?.(
-              `[Alerting][Plugin] Failed to register PPL routes from dynamic config: ${
-                err?.message ?? err
-              }`
-            );
-          }
-        })
-        .catch((err) => {
-          this.logger?.debug?.(
-            `[Alerting][Plugin] Failed to resolve start services for dynamic PPL flag: ${
-              err?.message ?? err
-            }`
-          );
-        });
-    }
 
     // Add server routes
     alerts(services, guardedRouter, dataSourceEnabled);
@@ -216,6 +183,7 @@ export class AlertingPlugin {
     findings(services, guardedRouter, dataSourceEnabled);
     crossCluster(services, guardedRouter, dataSourceEnabled);
     comments(services, guardedRouter, dataSourceEnabled);
+    pplAlertingMonitors(services, guardedRouter, dataSourceEnabled, core, this.logger);
 
     return {};
   }

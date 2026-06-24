@@ -81,10 +81,7 @@ export const useInitializeDataset = (services: any, indices: string[]) => {
           dispatch(setDataset(dataset));
           isInitialized.current = true;
         }
-      } catch (error) {
-        // eslint-disable-next-line no-console
-        console.error('[useInitializeDataset] Error initializing dataset:', error);
-      }
+      } catch (error) { /* no-op */ }
     };
 
     initializeDataset();

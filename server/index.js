@@ -9,6 +9,7 @@ import { AlertingPlugin } from './plugin';
 export const configSchema = schema.object({
   enabled: schema.boolean({ defaultValue: true }),
   pplAlertingEnabled: schema.boolean({ defaultValue: false }),
+  serverlessEnabled: schema.boolean({ defaultValue: false }),
 });
 
 export const config = {
@@ -16,6 +17,7 @@ export const config = {
     // following configs are visible to browser side plugin
     enabled: true,
     pplAlertingEnabled: true,
+    serverlessEnabled: true,
   },
   schema: configSchema,
 };
