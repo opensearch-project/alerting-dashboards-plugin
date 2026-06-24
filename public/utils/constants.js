@@ -61,6 +61,9 @@ export const OS_AD_PLUGIN = 'opensearch-anomaly-detection';
 export const OS_NOTIFICATION_PLUGIN = 'opensearch-notifications';
 export const OPENSEARCH_DASHBOARDS_AD_PLUGIN = 'anomaly-detection-dashboards';
 
+// TODO: Update to 3.7.0 if it's confirmed that it should be supported on >=3.7.0
+export const BASE_PPL_ALERTING_SUPPORTED_VERSION = '3.5.0';
+
 export const INPUTS_DETECTOR_ID = '0.search.query.query.bool.filter[1].term.detector_id.value';
 
 export const MONITOR_INPUT_DETECTOR_ID = `inputs.${INPUTS_DETECTOR_ID}`;

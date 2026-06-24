@@ -15,6 +15,8 @@ import { NavigationPublicPluginStart } from '../../../../src/plugins/navigation/
 import { ContentManagementPluginStart } from '../../../../src/plugins/content_management/public';
 import { createNullableGetterSetter } from './utils/helper';
 import { AssistantSetup, AssistantPublicPluginStart } from '../types';
+import semver from 'semver';
+import { BASE_PPL_ALERTING_SUPPORTED_VERSION } from '../utils/constants';
 
 const ServicesContext = createContext<BrowserServices | null>(null);
 
@@ -64,6 +66,16 @@ export const [getDataSource, setDataSource] =
 export const [getDataSourceReadOnly, setDataSourceReadOnly] =
   createGetterSetter<DataSourceReadOnly>('DataSourceReadOnly');
 
+export interface DataSourceMetadata {
+  dataSourceVersion?: string;
+  dataSourceEngineType?: string;
+  dataSourceLabel?: string;
+  isMustang?: boolean;
+}
+
+export const [getDataSourceMetadata, setDataSourceMetadata] =
+  createNullableGetterSetter<DataSourceMetadata>();
+
 export const [getNotifications, setNotifications] =
   createGetterSetter<NotificationsStart>('Notifications');
 
@@ -74,7 +86,19 @@ export const [getApplication, setApplication] = createGetterSetter<CoreStart['ap
 export const isPplAlertingEnabled = () => {
   const application = getApplication();
   const capabilities = application?.capabilities as Record<string, any> | undefined;
-  return !!capabilities?.alertingDashboards?.pplV2;
+  if (capabilities?.alertingDashboards?.pplV2) return true;
+
+  const metadata = getDataSourceMetadata();
+  if (metadata?.dataSourceEngineType === 'OpenSearch Serverless') return true;
+  if (metadata?.dataSourceVersion && semver.gte(semver.coerce(metadata.dataSourceVersion) || '0.0.0', BASE_PPL_ALERTING_SUPPORTED_VERSION)) return true;
+
+  return false;
+};
+
+export const isServerlessEnabled = () => {
+  const application = getApplication();
+  const capabilities = application?.capabilities as Record<string, any> | undefined;
+  return !!capabilities?.alertingDashboards?.serverlessEnabled;
 };
 
 export const getUseUpdatedUx = () => {
@@ -82,3 +106,6 @@ export const getUseUpdatedUx = () => {
 };
 
 export const [getContentManagementStart, setContentManagementStart] = createGetterSetter<ContentManagementPluginStart>('contentManagementStart');
+
+export const OS_SERVERLESS_ENGINE_TYPE = 'OpenSearch Serverless';
+export const isServerlessDataSource = () => getDataSourceMetadata()?.dataSourceEngineType === OS_SERVERLESS_ENGINE_TYPE;
