@@ -5,7 +5,10 @@
 
 import _ from 'lodash';
 import { OPERATORS_MAP, Expressions } from './constants';
-import { TRIGGER_COMPARISON_OPERATORS } from '../../../../../CreateTrigger/containers/DefineBucketLevelTrigger/DefineBucketLevelTrigger';
+import {
+  TRIGGER_COMPARISON_OPERATORS,
+  TRIGGER_OPERATORS_MAP,
+} from '../../../../../CreateTrigger/containers/DefineBucketLevelTrigger/DefineBucketLevelTrigger';
 import { DATA_TYPES } from '../../../../../../utils/constants';
 import { FORMIK_INITIAL_WHERE_EXPRESSION_VALUES } from '../../../../containers/CreateMonitor/utils/constants';
 
@@ -97,6 +100,10 @@ export const validateWhereFilter = (filter = FORMIK_INITIAL_WHERE_EXPRESSION_VAL
     case OPERATORS_MAP.IS_NOT_NULL.value:
       // These operators don't store a query value in the FORMIK_INITIAL_WHERE_EXPRESSION_VALUES.
       // No further validation needed.
+      break;
+    case TRIGGER_OPERATORS_MAP.INCLUDE:
+    case TRIGGER_OPERATORS_MAP.EXCLUDE:
+      filterIsValid = filterIsValid && !_.isEmpty(filter.fieldValue?.toString());
       break;
     default:
       console.log('Unknown query operator detected:', fieldOperator);
