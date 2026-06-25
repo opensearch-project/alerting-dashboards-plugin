@@ -14,26 +14,13 @@ import {
   EuiButtonEmpty,
   EuiFlexGroup,
   EuiFlexItem,
-  EuiText,
   EuiSpacer,
   EuiCallOut,
   EuiFormRow,
   EuiFieldText,
   EuiTextArea,
-  EuiCheckbox,
-  EuiToolTip,
-  EuiIconTip,
-  EuiIcon,
+  EuiText,
   EuiTextColor,
-  EuiSelect,
-  EuiFieldNumber,
-  EuiAccordion,
-  EuiPanel,
-  EuiHorizontalRule,
-  EuiEmptyPrompt,
-  EuiCodeBlock,
-  EuiSmallButton,
-  EuiLink,
 } from '@elastic/eui';
 import './CreateMonitorFlyout.scss';
 import { Formik, FieldArray } from 'formik';
@@ -45,14 +32,10 @@ import {
   MONITOR_DESCRIPTION_MAX_LENGTH,
   LOOKBACK_WINDOW_MIN_MINUTES,
 } from '../../pages/CreateMonitor/containers/CreateMonitor/utils/constants';
-import { formikToMonitor } from '../../pages/CreateMonitor/containers/CreateMonitor/utils/formikToMonitor';
 import { getClient, setDataSource, NotificationService } from '../../services';
-import { backendErrorNotification } from '../../utils/helpers';
 import { MONITOR_TYPE, SEARCH_TYPE } from '../../utils/constants';
 import CustomSteps from '../../pages/CreateMonitor/components/CustomSteps';
 import ConfigureTriggersPpl from '../../pages/CreateTrigger/containers/ConfigureTriggers/ConfigureTriggersPpl';
-import { QueryEditor } from '../../pages/CreateMonitor/components/QueryEditor';
-import { AlertingDataTable } from '../DataTable';
 import {
   runPPLPreview,
   extractIndicesFromPPL,
@@ -61,8 +44,11 @@ import {
   makeAlertingV2Service,
 } from '../../pages/CreateMonitor/containers/CreateMonitor/utils/pplAlertingHelpers';
 import { buildPPLMonitorFromFormik } from '../../pages/CreateMonitor/containers/CreateMonitor/utils/pplFormikToMonitor';
+import { buildPplMonitorForTriggers } from '../../utils/buildPplMonitorForTriggers';
+import { PplQueryEditor } from '../../components/PplQueryEditor';
+import { PplScheduleEditor } from '../../components/PplScheduleEditor';
 import { CoreContext } from '../../utils/CoreContext';
-import { getAlertingStore } from '../../redux/store';
+import { getAlertingStore } from '../../redux';
 
 // Import type from explore plugin
 type FlyoutComponentProps = {
@@ -151,9 +137,7 @@ export class CreateMonitorFlyout extends Component<FlyoutComponentProps, CreateM
                 return dataViews.convertToDataset(defaultDataView);
               }
             }
-          } catch (err) {
-            console.error('[CreateMonitorFlyout] Error getting default dataset:', err);
-          }
+          } catch (err) { /* no-op */ }
           return undefined;
         };
 
@@ -165,7 +149,6 @@ export class CreateMonitorFlyout extends Component<FlyoutComponentProps, CreateM
         });
       }
     } catch (e) {
-      console.error('[CreateMonitorFlyout] Error initializing query:', e);
       const toasts = services?.notifications?.toasts;
       if (toasts?.addDanger) {
         toasts.addDanger({
@@ -182,7 +165,6 @@ export class CreateMonitorFlyout extends Component<FlyoutComponentProps, CreateM
         const newPlugins = await getPlugins(httpClient);
         this.setState({ plugins: newPlugins, pluginsLoading: false });
       } catch (error) {
-        console.error('[CreateMonitorFlyout] Error fetching plugins:', error);
         this.setState({ pluginsLoading: false });
       }
     };
@@ -213,7 +195,6 @@ export class CreateMonitorFlyout extends Component<FlyoutComponentProps, CreateM
       const indices = resp?.indices || [];
       this.setState({ indices });
     } catch (e) {
-      console.error('[CreateMonitorFlyout] Error fetching indices:', e);
       this.setState({ indices: [] });
     }
   };
@@ -269,7 +250,6 @@ export class CreateMonitorFlyout extends Component<FlyoutComponentProps, CreateM
         dateFieldsLoading: false,
       });
     } catch (err: any) {
-      console.error('[detectTimestampFields] Error:', err);
       this.setState({
         availableDateFields: [],
         dateFieldsError: err?.message || 'Failed to detect timestamp fields',
@@ -278,6 +258,24 @@ export class CreateMonitorFlyout extends Component<FlyoutComponentProps, CreateM
       if (this.formikRef.current) {
         this.formikRef.current.setFieldValue('useLookBackWindow', false, false);
       }
+    }
+  };
+
+  runPreview = async (values: any) => {
+    const httpClient = getClient();
+    this.setState({ previewLoading: true, previewError: null, previewResult: null, previewQuery: '', previewOpen: true });
+    try {
+      const data = await runPPLPreview(httpClient, {
+        queryText: values.pplQuery || '',
+        dataSourceId: values.dataSourceId || this.props.dependencies.query.dataset?.dataSource?.id,
+      });
+      if ((data as any)?.ok === false) {
+        this.setState({ previewError: (data as any).error || 'Incorrect data source or invalid query', previewLoading: false });
+        return;
+      }
+      this.setState({ previewResult: data, previewQuery: values.pplQuery || '', previewLoading: false });
+    } catch (e: any) {
+      this.setState({ previewError: e?.body?.message || e?.message || 'Incorrect data source or invalid query', previewLoading: false });
     }
   };
 
@@ -325,7 +323,7 @@ export class CreateMonitorFlyout extends Component<FlyoutComponentProps, CreateM
         closeFlyout();
     } catch (error: any) {
       console.error('Error creating monitor:', error);
-      
+
       // Parse error message to provide user-friendly feedback
       let userMessage = 'An error occurred while creating the monitor';
       const rawErrorMessage = error?.message || error?.body?.message || '';
@@ -361,7 +359,7 @@ export class CreateMonitorFlyout extends Component<FlyoutComponentProps, CreateM
         title: 'Failed to create monitor',
         text: userMessage,
       });
-      
+
       formikBag.setSubmitting(false);
     } finally {
       this.setState({ isSubmitting: false });
@@ -429,42 +427,6 @@ export class CreateMonitorFlyout extends Component<FlyoutComponentProps, CreateM
     return errors;
   };
 
-  buildMonitorForTriggers = (values: any) => {
-    const triggers = _.cloneDeep(values.triggerDefinitions || []);
-    const rawIndices = Array.isArray(values.index)
-      ? values.index.map((entry: any) => entry?.value || entry?.label).filter(Boolean)
-      : [];
-    const indices = rawIndices.length ? rawIndices : ['*'];
-
-    return {
-      name: values.name || '',
-      type: 'monitor',
-      monitor_type: MONITOR_TYPE.QUERY_LEVEL,
-      enabled: true,
-      schedule: { period: { interval: 1, unit: 'MINUTES' } },
-      inputs: [
-        {
-          search: {
-            indices,
-            query: {
-              size: 0,
-              query: { match_all: {} },
-            },
-          },
-        },
-      ],
-      ui_metadata: {
-        search: { searchType: 'query' },
-        triggers: {},
-      },
-      triggers,
-      ppl_monitor: {
-        query: values.pplQuery || '',
-        triggers,
-      },
-    };
-  };
-
   renderPplDetailsBody = (values: any, setFieldValue: any) => (
     <>
       <EuiFormRow label="Monitor name" fullWidth style={{ marginLeft: '-6px', maxWidth: '720px' }}>
@@ -515,393 +477,49 @@ export class CreateMonitorFlyout extends Component<FlyoutComponentProps, CreateM
   );
 
   renderPplQueryBody = (values: any, setFieldValue: any) => (
-    <>
-      <EuiFlexGroup alignItems="center" justifyContent="spaceBetween" gutterSize="s" responsive={false}>
-        <EuiFlexItem grow={false}>
-          <EuiFlexGroup alignItems="center" gutterSize="xs" responsive={false}>
-            <EuiFlexItem grow={false}>
-              <EuiText>PPL</EuiText>
-            </EuiFlexItem>
-            <EuiFlexItem grow={false}>
-              <EuiIconTip
-                type="iInCircle"
-                content="Write queries in PPL."
-                position="left"
-                iconProps={{ style: { border: 'none', background: 'none' } }}
-              />
-            </EuiFlexItem>
-          </EuiFlexGroup>
-        </EuiFlexItem>
-
-        <EuiFlexItem grow={false}>
-          <EuiSmallButton
-            onClick={async () => {
-              const httpClient = getClient();
-              this.setState({
-                previewLoading: true,
-                previewError: null,
-                previewResult: null,
-                previewQuery: '',
-                previewOpen: true,
-              });
-              try {
-                const data = await runPPLPreview(httpClient, {
-                  queryText: values.pplQuery || '',
-                  dataSourceId: values.dataSourceId || this.props.dependencies.query.dataset?.dataSource?.id,
-                });
-                if ((data as any)?.ok === false) {
-                  this.setState({
-                    previewError:
-                      (data as any).error || 'Incorrect data source or invalid query',
-                    previewLoading: false,
-                    previewOpen: true,
-                  });
-                  return;
-                }
-                this.setState({
-                  previewResult: data,
-                  previewQuery: values.pplQuery || '',
-                  previewLoading: false,
-                  previewOpen: true,
-                });
-              } catch (e: any) {
-                const errorMessage =
-                  e?.body?.message || e?.message || 'Incorrect data source or invalid query';
-                let userFriendlyMessage = errorMessage;
-
-                // Provide user-friendly error messages for common issues
-                if (errorMessage.includes('syntax') || errorMessage.includes('parse')) {
-                  userFriendlyMessage = 'Invalid PPL query syntax. Please check your query.';
-                } else if (errorMessage.includes('index') && errorMessage.includes('not found')) {
-                  userFriendlyMessage = 'Index not found. Please verify the index name in your query.';
-                } else if (errorMessage.includes('timeout')) {
-                  userFriendlyMessage = 'Query execution timed out. Try reducing the time range or simplifying the query.';
-                }
-
-                this.setState({
-                  previewError: userFriendlyMessage,
-                  previewLoading: false,
-                  previewOpen: true,
-                });
-              }
-            }}
-            isLoading={this.state.previewLoading}
-            data-test-subj="runPreview"
-          >
-            Run preview
-          </EuiSmallButton>
-        </EuiFlexItem>
-      </EuiFlexGroup>
-
-      <EuiSpacer size="s" />
-
-      <div data-test-subj="pplEditorMonaco">
-        <QueryEditor
-          value={values.pplQuery || ''}
-          onChange={(text: string) => {
-            if (text.length <= 10000) {
-              setFieldValue('pplQuery', text);
-
-              try {
-                const queryString = this.props.services?.data?.query?.queryString;
-                if (queryString) {
-                  queryString.setQuery({
-                    query: text,
-                    language: 'PPL',
-                  });
-                }
-              } catch (err) {
-                // Silent fail
-              }
-
-              this.debouncedDetectTimestampFields(text);
-            }
-          }}
-          services={this.props.services}
-          height={80}
-          indices={this.state.indices}
-          autoExpand={true}
-        />
-        {values.pplQuery && (
-          <EuiText size="xs" color="subdued" style={{ marginTop: '4px' }}>
-            {values.pplQuery.length} / 10,000 characters
-          </EuiText>
-        )}
-      </div>
-
-      <EuiSpacer size="m" />
-
-      <EuiAccordion
-        id="pplPreviewAccordion"
-        buttonContent="Preview results"
-        paddingSize="m"
-        data-test-subj="pplPreviewAccordion"
-        forceState={this.state.previewOpen ? 'open' : 'closed'}
-        onToggle={(isOpen) => this.setState({ previewOpen: isOpen })}
-      >
-        <EuiPanel hasBorder paddingSize="l" data-test-subj="pplResultsPanel">
-          <EuiTitle size="s">
-            <h2>Results</h2>
-          </EuiTitle>
-          <EuiHorizontalRule margin="m" />
-          {!this.state.previewResult && !this.state.previewError ? (
-            <EuiEmptyPrompt iconType="editorCodeBlock" title={<h3>Run a query to view results</h3>} />
-          ) : this.state.previewError ? (
-            <EuiCodeBlock isCopyable>{this.state.previewError}</EuiCodeBlock>
-          ) : (
-            <AlertingDataTable
-              pplResponse={this.state.previewResult}
-              isLoading={this.state.previewLoading}
-              services={this.props.services}
-            />
-          )}
-        </EuiPanel>
-      </EuiAccordion>
-    </>
+    <PplQueryEditor
+      pplQuery={values.pplQuery || ''}
+      onQueryChange={(text) => {
+        setFieldValue('pplQuery', text);
+        try {
+          this.props.services?.data?.query?.queryString?.setQuery({ query: text, language: 'PPL' });
+        } catch (err) { /* silent */ }
+        this.debouncedDetectTimestampFields(text);
+      }}
+      previewResult={this.state.previewResult}
+      previewError={this.state.previewError}
+      previewLoading={this.state.previewLoading}
+      previewOpen={this.state.previewOpen}
+      onPreviewToggle={(isOpen) => this.setState({ previewOpen: isOpen })}
+      onRunPreview={() => this.runPreview(values)}
+      editorHeight={80}
+      autoExpand={true}
+      services={this.props.services}
+      indices={this.state.indices}
+    />
   );
 
-  renderPplScheduleBody = (values: any, setFieldValue: any, errors: any) => {
-    const useLB = values.useLookBackWindow !== undefined ? values.useLookBackWindow : true;
-    const lbAmount = Number(values.lookBackAmount !== undefined ? values.lookBackAmount : 1);
-    const lbUnit = values.lookBackUnit || 'hours';
-    const { availableDateFields, dateFieldsError, dateFieldsLoading } = this.state;
-
-    const LIMITS = {
-      lookback: { min: LOOKBACK_WINDOW_MIN_MINUTES },
-      interval: { min: 1 },
-    };
-
-    const lbMinutes =
-      lbUnit === 'minutes' ? lbAmount : lbUnit === 'hours' ? lbAmount * 60 : lbAmount * 1440;
-    const lookBackAmountValidationError = errors?.lookBackAmount as string | undefined;
-    const lbError =
-      useLB &&
-      (Number.isNaN(lbAmount) || lbAmount <= 0 || (lbAmount > 0 && lbMinutes < LIMITS.lookback.min));
-    const lbErrorMessage =
-      lookBackAmountValidationError ||
-      (lbError ? `Look back window must be at least ${LIMITS.lookback.min} minute.` : undefined);
-
-    const intervalAmount = Number(values.period?.interval ?? 1);
-    const intervalUnit = values.period?.unit || 'MINUTES';
-    const intervalMinutes = intervalUnit === 'MINUTES' ? intervalAmount : intervalUnit === 'HOURS' ? intervalAmount * 60 : intervalAmount * 1440;
-    const intervalError = intervalAmount > 0 && intervalMinutes < LIMITS.interval.min;
-
-    const LookBackControls = (
-      <>
-        <EuiFormRow>
-          <EuiFlexGroup gutterSize="s" alignItems="center" responsive={false} style={{ marginLeft: '-4px' }}>
-            <EuiFlexItem grow={false}>
-              <EuiCheckbox
-                id="useLookBackWindow"
-                label={null}
-                aria-label="Add look back window"
-                checked={useLB && !(dateFieldsError && availableDateFields.length === 0)}
-                onChange={(e) => {
-                  if (dateFieldsError && availableDateFields.length === 0) {
-                    setFieldValue('useLookBackWindow', false);
-                  } else {
-                    setFieldValue('useLookBackWindow', e.target.checked);
-                  }
-                }}
-                data-test-subj="pplUseLookBack"
-                disabled={dateFieldsError !== null && availableDateFields.length === 0}
-              />
-            </EuiFlexItem>
-            <EuiFlexItem grow={false}>
-              <EuiText size="s" style={{ display: 'inline-flex', alignItems: 'center' }}>
-                Add look back window&nbsp;
-                <EuiIconTip
-                  type="iInCircle"
-                  content="Look back window specifies how far back in time the monitor should query data during each execution."
-                />
-              </EuiText>
-            </EuiFlexItem>
-          </EuiFlexGroup>
-        </EuiFormRow>
-
-        {dateFieldsError && availableDateFields.length === 0 && (
-          <>
-            <EuiSpacer size="s" />
-            <EuiText size="xs" color="warning">
-              <EuiIconTip type="alert" color="warning" /> Look back window requires a common timestamp field across all indices
-            </EuiText>
-            <EuiSpacer size="s" />
-          </>
-        )}
-
-        {useLB && !(dateFieldsError && availableDateFields.length === 0) && (
-          <>
-            <EuiFormRow
-              label="look back from"
-              fullWidth
-              style={{ marginLeft: '-6px', maxWidth: '720px' }}
-              isInvalid={Boolean(lbErrorMessage)}
-              error={lbErrorMessage}
-            >
-              <EuiFlexGroup gutterSize="s" alignItems="center" responsive={false}>
-                <EuiFlexItem>
-                  <EuiFieldNumber
-                    data-test-subj="pplLookBackAmount"
-                    value={lbAmount === 0 ? '' : lbAmount}
-                    onChange={(e) => {
-                      const val = e.target.value === '' ? '' : Number(e.target.value);
-                      setFieldValue('lookBackAmount', val);
-                    }}
-                    fullWidth
-                    isInvalid={Boolean(lbErrorMessage)}
-                  />
-                </EuiFlexItem>
-
-                <EuiFlexItem>
-                  <EuiSelect
-                    data-test-subj="pplLookBackUnit"
-                    options={[
-                      { value: 'minutes', text: 'Minute(s) ago' },
-                      { value: 'hours', text: 'Hour(s) ago' },
-                      { value: 'days', text: 'Day(s) ago' },
-                    ]}
-                    value={lbUnit}
-                    onChange={(e) => setFieldValue('lookBackUnit', e.target.value)}
-                    fullWidth
-                  />
-                </EuiFlexItem>
-              </EuiFlexGroup>
-            </EuiFormRow>
-
-            <EuiFormRow
-              label={
-                <span>
-                  Timestamp field{' '}
-                  <EuiIconTip
-                    type="iInCircle"
-                    content="The date field used to filter data within the look back window."
-                  />
-                </span>
-              }
-              fullWidth
-              style={{ marginLeft: '-6px', maxWidth: '720px' }}
-              helpText={dateFieldsLoading ? 'Detecting timestamp fields...' : undefined}
-            >
-              <EuiSelect
-                data-test-subj="pplTimestampField"
-                options={
-                  availableDateFields.length > 0
-                    ? availableDateFields.map((field) => ({ value: field, text: field }))
-                    : [{ value: values.timestampField || '@timestamp', text: values.timestampField || '@timestamp' }]
-                }
-                value={values.timestampField || '@timestamp'}
-                onChange={(e) => setFieldValue('timestampField', e.target.value)}
-                fullWidth
-                isLoading={dateFieldsLoading}
-              />
-            </EuiFormRow>
-          </>
-        )}
-      </>
-    );
-
-    return (
-      <>
-        <EuiFormRow label="Frequency" fullWidth style={{ marginLeft: '-6px', maxWidth: '720px' }}>
-          <EuiSelect
-            data-test-subj="pplFrequency"
-            options={[
-              { value: 'interval', text: 'By interval' },
-              { value: 'daily', text: 'Daily' },
-              { value: 'weekly', text: 'Weekly' },
-              { value: 'monthly', text: 'Monthly' },
-              { value: 'cronExpression', text: 'Custom cron job' },
-            ]}
-            value={values.frequency}
-            onChange={(e) => setFieldValue('frequency', e.target.value)}
-            fullWidth
-          />
-        </EuiFormRow>
-
-        {values.frequency === 'interval' && (
-          <>
-            <EuiFormRow
-              label="Run every"
-              fullWidth
-              style={{ marginLeft: '-6px', maxWidth: '720px' }}
-              isInvalid={intervalError}
-              error={intervalError ? 'Must be at least 1 minute' : undefined}
-            >
-              <EuiFlexGroup gutterSize="s" alignItems="center" responsive={false}>
-                <EuiFlexItem>
-                  <EuiFieldNumber
-                    data-test-subj="pplIntervalValue"
-                    value={values.period?.interval === 0 ? '' : values.period?.interval ?? 1}
-                    onChange={(e) => {
-                      const val = e.target.value === '' ? '' : Number(e.target.value);
-                      setFieldValue('period.interval', val);
-                    }}
-                    fullWidth
-                    isInvalid={intervalError}
-                  />
-                </EuiFlexItem>
-                <EuiFlexItem>
-                  <EuiSelect
-                    data-test-subj="pplIntervalUnit"
-                    options={[
-                      { value: 'MINUTES', text: 'minute(s)' },
-                      { value: 'HOURS', text: 'hour(s)' },
-                      { value: 'DAYS', text: 'day(s)' },
-                    ]}
-                    value={values.period?.unit || 'MINUTES'}
-                    onChange={(e) => setFieldValue('period.unit', e.target.value)}
-                    fullWidth
-                  />
-                </EuiFlexItem>
-              </EuiFlexGroup>
-            </EuiFormRow>
-          </>
-        )}
-
-        {values.frequency === 'cronExpression' && (
-          <>
-            <EuiFormRow label="Run every">
-              <EuiTextArea
-                data-test-subj="pplCronExpression"
-                value={values.cronExpression || ''}
-                onChange={(e) => setFieldValue('cronExpression', e.target.value)}
-                placeholder="0 */1 * * *"
-                rows={2}
-              />
-            </EuiFormRow>
-            <EuiText size="xs" color="subdued">
-              <a
-                href="https://docs.opensearch.org/latest/observing-your-data/alerting/cron/"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="euiLink"
-                style={{ display: 'inline-flex', alignItems: 'center' }}
-              >
-                Use cron expressions for complex schedules
-                <EuiIcon
-                  type="popout"
-                  size="s"
-                  color="primary"
-                  style={{ marginLeft: 4 }}
-                  aria-hidden="true"
-                />
-              </a>
-            </EuiText>
-            <EuiSpacer size="m" />
-          </>
-        )}
-        {LookBackControls}
-      </>
-    );
-  };
+  renderPplScheduleBody = (values: any, setFieldValue: any, errors: any) => (
+    <PplScheduleEditor
+      frequency={values.frequency}
+      period={values.period}
+      cronExpression={values.cronExpression}
+      useLookBackWindow={values.useLookBackWindow}
+      lookBackAmount={values.lookBackAmount}
+      lookBackUnit={values.lookBackUnit}
+      timestampField={values.timestampField}
+      setFieldValue={setFieldValue}
+      availableDateFields={this.state.availableDateFields}
+      dateFieldsError={this.state.dateFieldsError}
+      dateFieldsLoading={this.state.dateFieldsLoading}
+      errors={errors}
+      wrapperStyle={{ marginLeft: '-6px', maxWidth: '720px' }}
+    />
+  );
 
   render() {
     const { closeFlyout, dependencies, services } = this.props;
     const { isSubmitting, submitError, plugins, pluginsLoading } = this.state;
-
-    // Clean up the query by removing backticks from index names
-    // Explore plugin adds backticks like: source = `test` but we need: source = test
-    const cleanQuery = (dependencies.queryInEditor || '').replace(/`([^`]+)`/g, '$1');
 
     const initialValues = {
       ..._.cloneDeep(FORMIK_INITIAL_VALUES),
@@ -920,23 +538,22 @@ export class CreateMonitorFlyout extends Component<FlyoutComponentProps, CreateM
 
     return (
       <Provider store={this.store}>
-        <EuiFlyout onClose={closeFlyout} size="l" ownFocus maxWidth={800}>
-          <EuiFlyoutHeader hasBorder>
-            <EuiTitle size="m">
-              <h2>Create monitor</h2>
-            </EuiTitle>
-          </EuiFlyoutHeader>
+        <EuiFlyoutHeader hasBorder>
+          <EuiTitle size="m">
+            <h2>Create monitor</h2>
+          </EuiTitle>
+        </EuiFlyoutHeader>
 
-          <Formik
-            innerRef={this.formikRef}
-            initialValues={initialValues}
-            validate={this.validateForm}
-            onSubmit={this.handleSubmit}
-            validateOnChange={true}
-            validateOnMount
-            enableReinitialize={false}
-          >
-            {({
+        <Formik
+          innerRef={this.formikRef}
+          initialValues={initialValues}
+          validate={this.validateForm}
+          onSubmit={this.handleSubmit}
+          validateOnChange={true}
+          validateOnMount
+          enableReinitialize={false}
+        >
+          {({
               values,
               errors,
               handleSubmit,
@@ -947,91 +564,91 @@ export class CreateMonitorFlyout extends Component<FlyoutComponentProps, CreateM
               setFieldValue,
               submitCount,
             }) => {
-              const safeMonitor = this.buildMonitorForTriggers(values);
-              const safeTriggers = _.get(safeMonitor, 'triggers', []);
-              const httpClient = getClient();
+            const safeMonitor = buildPplMonitorForTriggers(values);
+            const safeTriggers = _.get(safeMonitor, 'triggers', []);
+            const httpClient = getClient();
 
-              return (
-                <>
-                  <EuiFlyoutBody className="create-monitor-flyout">
-                    {submitError && (
-                      <>
-                        <EuiCallOut title="Error creating monitor" color="danger" iconType="alert">
-                          <p>{submitError}</p>
-                        </EuiCallOut>
-                        <EuiSpacer />
-                      </>
-                    )}
+            return (
+              <>
+                <EuiFlyoutBody className="create-monitor-flyout">
+                  {submitError && (
+                    <>
+                      <EuiCallOut title="Error creating monitor" color="danger" iconType="alert">
+                        <p>{submitError}</p>
+                      </EuiCallOut>
+                      <EuiSpacer />
+                    </>
+                  )}
 
-                    <CustomSteps
-                      steps={[
-                        {
-                          title: 'Monitor details',
-                          children: this.renderPplDetailsBody(values, setFieldValue),
-                        },
-                        {
-                          title: 'Query',
-                          children: this.renderPplQueryBody(values, setFieldValue),
-                        },
-                        {
-                          title: 'Schedule',
-                          children: this.renderPplScheduleBody(values, setFieldValue, errors),
-                        },
-                        {
-                          title: 'Triggers',
-                          children: (
-                            <FieldArray name="triggerDefinitions" validateOnChange>
-                              {(triggerArrayHelpers) => (
-                                <ConfigureTriggersPpl
-                                  edit={false}
-                                  triggerArrayHelpers={triggerArrayHelpers}
-                                  monitor={safeMonitor}
-                                  monitorValues={values}
-                                  touched={touched}
-                                  setFlyout={() => {}}
-                                  triggers={safeTriggers}
-                                  triggerValues={values}
-                                  isDarkMode={false}
-                                  httpClient={httpClient}
-                                  notifications={services.notifications}
-                                  notificationService={this.notificationService}
-                                  plugins={plugins}
-                                  pluginsLoading={pluginsLoading}
-                                  submitCount={submitCount}
-                                  errors={errors}
-                                />
-                              )}
-                            </FieldArray>
-                          ),
-                        },
-                      ]}
-                    />
-                  </EuiFlyoutBody>
+                  <CustomSteps
+                    steps={[
+                      {
+                        title: 'Monitor details',
+                        children: this.renderPplDetailsBody(values, setFieldValue),
+                      },
+                      {
+                        title: 'Query',
+                        children: this.renderPplQueryBody(values, setFieldValue),
+                      },
+                      {
+                        title: 'Schedule',
+                        children: this.renderPplScheduleBody(values, setFieldValue, errors),
+                      },
+                      {
+                        title: 'Triggers',
+                        children: (
+                          <FieldArray name="triggerDefinitions" validateOnChange>
+                            {(triggerArrayHelpers) => (
+                              <ConfigureTriggersPpl
+                                edit={false}
+                                triggerArrayHelpers={triggerArrayHelpers}
+                                monitor={safeMonitor}
+                                monitorValues={values}
+                                touched={touched}
+                                setFlyout={() => {}}
+                                triggers={safeTriggers}
+                                triggerValues={values}
+                                isDarkMode={false}
+                                httpClient={httpClient}
+                                notifications={services.notifications}
+                                notificationService={this.notificationService}
+                                plugins={plugins}
+                                pluginsLoading={pluginsLoading}
+                                submitCount={submitCount}
+                                errors={errors}
+                                flyoutMode={true}
+                              />
+                            )}
+                          </FieldArray>
+                        ),
+                      },
+                    ]}
+                  />
+                </EuiFlyoutBody>
 
-                  <EuiFlyoutFooter>
-                    <EuiFlexGroup justifyContent="spaceBetween">
-                      <EuiFlexItem grow={false}>
-                        <EuiButtonEmpty onClick={closeFlyout} flush="left">
-                          Cancel
-                        </EuiButtonEmpty>
-                      </EuiFlexItem>
-                      <EuiFlexItem grow={false}>
-                        <EuiButton
-                          onClick={() => handleSubmit()}
-                          fill
-                          isLoading={isSubmitting || formikSubmitting}
-                          isDisabled={formikSubmitting || isSubmitting || !isValid || !dirty}
-                        >
-                          Create
-                        </EuiButton>
-                      </EuiFlexItem>
-                    </EuiFlexGroup>
-                  </EuiFlyoutFooter>
-                </>
-              );
-            }}
-          </Formik>
-        </EuiFlyout>
+                <EuiFlyoutFooter>
+                  <EuiFlexGroup justifyContent="spaceBetween">
+                    <EuiFlexItem grow={false}>
+                      <EuiButtonEmpty onClick={closeFlyout} flush="left">
+                        Cancel
+                      </EuiButtonEmpty>
+                    </EuiFlexItem>
+                    <EuiFlexItem grow={false}>
+                      <EuiButton
+                        onClick={() => handleSubmit()}
+                        fill
+                        isLoading={isSubmitting || formikSubmitting}
+                        isDisabled={formikSubmitting || isSubmitting || !isValid || !dirty}
+                      >
+                        Create
+                      </EuiButton>
+                    </EuiFlexItem>
+                  </EuiFlexGroup>
+                </EuiFlyoutFooter>
+              </>
+            );
+          }}
+        </Formik>
       </Provider>
     );
   }
