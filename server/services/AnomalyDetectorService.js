@@ -12,8 +12,8 @@ const MAX_DETECTOR_COUNT = 1000;
 export default class DestinationsService extends MDSEnabledClientService {
   getDetector = async (context, req, res) => {
     const { detectorId } = req.params;
-    const client = this.getClientBasedOnDataSource(context, req);
     try {
+      const client = await this.getClientBasedOnDataSource(context, req);
       const resp = await client('alertingAD.getDetector', { detectorId, headers: DEFAULT_HEADERS });
       const {
         anomaly_detector,
@@ -46,8 +46,8 @@ export default class DestinationsService extends MDSEnabledClientService {
       query: { bool: {} },
       size: MAX_DETECTOR_COUNT,
     };
-    const client = this.getClientBasedOnDataSource(context, req);
     try {
+      const client = await this.getClientBasedOnDataSource(context, req);
       const resp = await client('alertingAD.searchDetectors', {
         body: searchRequest,
         headers: DEFAULT_HEADERS,
@@ -86,7 +86,7 @@ export default class DestinationsService extends MDSEnabledClientService {
     try {
       const { startTime = 0, endTime = 20, preview = 'false' } = req.query;
       const { detectorId } = req.params;
-      const client = this.getClientBasedOnDataSource(context, req);
+      const client = await this.getClientBasedOnDataSource(context, req);
       if (preview == 'true') {
         const requestBody = {
           period_start: startTime,

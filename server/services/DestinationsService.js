@@ -11,7 +11,7 @@ export default class DestinationsService extends MDSEnabledClientService {
   createDestination = async (context, req, res) => {
     try {
       const params = { body: req.body };
-      const client = this.getClientBasedOnDataSource(context, req);
+      const client = await this.getClientBasedOnDataSource(context, req);
       const createResponse = await client('alerting.createDestination', params);
       return res.ok({
         body: {
@@ -40,7 +40,7 @@ export default class DestinationsService extends MDSEnabledClientService {
         ifSeqNo,
         ifPrimaryTerm,
       };
-      const client = this.getClientBasedOnDataSource(context, req);
+      const client = await this.getClientBasedOnDataSource(context, req);
       const updateResponse = await client('alerting.updateDestination', params);
       const { _version, _id } = updateResponse;
       return res.ok({
@@ -65,7 +65,7 @@ export default class DestinationsService extends MDSEnabledClientService {
     try {
       const { destinationId } = req.params;
       const params = { destinationId };
-      const client = this.getClientBasedOnDataSource(context, req);
+      const client = await this.getClientBasedOnDataSource(context, req);
       const response = await client('alerting.deleteDestination', params);
       return res.ok({
         body: {
@@ -85,8 +85,8 @@ export default class DestinationsService extends MDSEnabledClientService {
 
   getDestination = async (context, req, res) => {
     const { destinationId } = req.params;
-    const client = this.getClientBasedOnDataSource(context, req);
     try {
+      const client = await this.getClientBasedOnDataSource(context, req);
       const params = {
         destinationId,
       };
@@ -118,8 +118,6 @@ export default class DestinationsService extends MDSEnabledClientService {
   };
 
   getDestinations = async (context, req, res) => {
-    const client = this.getClientBasedOnDataSource(context, req);
-
     const {
       from = 0,
       size = 20,
@@ -154,6 +152,7 @@ export default class DestinationsService extends MDSEnabledClientService {
     params.destinationType = type;
 
     try {
+      const client = await this.getClientBasedOnDataSource(context, req);
       const resp = await client('alerting.searchDestinations', params);
 
       const destinations = resp.destinations.map((hit) => {
@@ -180,9 +179,9 @@ export default class DestinationsService extends MDSEnabledClientService {
         return res.ok({
           body: {
             ok: false,
-            totalMonitors: 0, 
+            totalMonitors: 0,
             monitors: [],
-            message: "Config index will be created automatically when the monitor is created"
+            message: 'Config index will be created automatically when the monitor is created',
           },
         });
       } else {
@@ -205,7 +204,7 @@ export default class DestinationsService extends MDSEnabledClientService {
   createEmailAccount = async (context, req, res) => {
     try {
       const params = { body: req.body };
-      const client = this.getClientBasedOnDataSource(context, req);
+      const client = await this.getClientBasedOnDataSource(context, req);
       const createResponse = await client('alerting.createEmailAccount', params);
       return res.ok({
         body: {
@@ -234,7 +233,7 @@ export default class DestinationsService extends MDSEnabledClientService {
         ifPrimaryTerm,
         body: req.body,
       };
-      const client = this.getClientBasedOnDataSource(context, req);
+      const client = await this.getClientBasedOnDataSource(context, req);
       const updateResponse = await client('alerting.updateEmailAccount', params);
       const { _id } = updateResponse;
       return res.ok({
@@ -258,7 +257,7 @@ export default class DestinationsService extends MDSEnabledClientService {
     try {
       const { id } = req.params;
       const params = { emailAccountId: id };
-      const client = this.getClientBasedOnDataSource(context, req);
+      const client = await this.getClientBasedOnDataSource(context, req);
       const deleteResponse = await client('alerting.deleteEmailAccount', params);
       return res.ok({
         body: {
@@ -280,7 +279,7 @@ export default class DestinationsService extends MDSEnabledClientService {
     try {
       const { id } = req.params;
       const params = { emailAccountId: id };
-      const client = this.getClientBasedOnDataSource(context, req);
+      const client = await this.getClientBasedOnDataSource(context, req);
       const getResponse = await client('alerting.getEmailAccount', params);
       const emailAccount = _.get(getResponse, 'email_account', null);
       const ifSeqNo = _.get(getResponse, '_seq_no', null);
@@ -352,7 +351,7 @@ export default class DestinationsService extends MDSEnabledClientService {
         },
       };
 
-      const client = this.getClientBasedOnDataSource(context, req);
+      const client = await this.getClientBasedOnDataSource(context, req);
       const getResponse = await client('alerting.getEmailAccounts', params);
 
       const totalEmailAccounts = _.get(getResponse, 'hits.total.value', 0);
@@ -392,7 +391,7 @@ export default class DestinationsService extends MDSEnabledClientService {
   createEmailGroup = async (context, req, res) => {
     try {
       const params = { body: req.body };
-      const client = this.getClientBasedOnDataSource(context, req);
+      const client = await this.getClientBasedOnDataSource(context, req);
       const createResponse = await client('alerting.createEmailGroup', params);
       return res.ok({
         body: {
@@ -421,7 +420,7 @@ export default class DestinationsService extends MDSEnabledClientService {
         ifPrimaryTerm,
         body: req.body,
       };
-      const client = this.getClientBasedOnDataSource(context, req);
+      const client = await this.getClientBasedOnDataSource(context, req);
       const updateResponse = await client('alerting.updateEmailGroup', params);
       const { _id } = updateResponse;
       return res.ok({
@@ -445,7 +444,7 @@ export default class DestinationsService extends MDSEnabledClientService {
     try {
       const { id } = req.params;
       const params = { emailGroupId: id };
-      const client = this.getClientBasedOnDataSource(context, req);
+      const client = await this.getClientBasedOnDataSource(context, req);
       const deleteResponse = await client('alerting.deleteEmailGroup', params);
       return res.ok({
         body: {
@@ -467,7 +466,7 @@ export default class DestinationsService extends MDSEnabledClientService {
     try {
       const { id } = req.params;
       const params = { emailGroupId: id };
-      const client = this.getClientBasedOnDataSource(context, req);
+      const client = await this.getClientBasedOnDataSource(context, req);
       const getResponse = await client('alerting.getEmailGroup', params);
       const emailGroup = _.get(getResponse, 'email_group', null);
       const ifSeqNo = _.get(getResponse, '_seq_no', null);
@@ -539,7 +538,7 @@ export default class DestinationsService extends MDSEnabledClientService {
         },
       };
 
-      const client = this.getClientBasedOnDataSource(context, req);
+      const client = await this.getClientBasedOnDataSource(context, req);
       const getResponse = await client('alerting.getEmailGroups', params);
 
       const totalEmailGroups = _.get(getResponse, 'hits.total.value', 0);
