@@ -74,7 +74,9 @@
     "brace-expansion": "^5.0.5",
     "yaml": "^1.10.3",
     "qs": "^6.15.2",
-    "uuid": "^14.0.0"
+    "uuid": "^14.0.0",
+    "bn.js": "^5.2.3",
+    "serialize-javascript": "^7.0.3"
   },
   "engines": {
     "yarn": "^1.21.1"
