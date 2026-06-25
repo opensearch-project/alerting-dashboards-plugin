@@ -41,6 +41,18 @@ export const getDataSources = (monitor, localClusterName) => {
     case MONITOR_TYPE.DOC_LEVEL:
       dataSources = _.get(monitor, 'inputs.0.doc_level_input.indices', [DEFAULT_EMPTY_DATA]);
       break;
+    case MONITOR_TYPE.PPL: {
+      const query = _.get(monitor, 'inputs.0.ppl_input.query', '');
+      const match = query.match(/^source\s*=\s*([^|]+)/i);
+      dataSources = match
+        ? match[1]
+            .split(',')
+            .map((s) => s.trim())
+            .filter(Boolean)
+        : [DEFAULT_EMPTY_DATA];
+      if (_.isEmpty(dataSources)) dataSources = [DEFAULT_EMPTY_DATA];
+      break;
+    }
     default:
       dataSources = _.get(monitor, 'inputs.0.search.indices', [DEFAULT_EMPTY_DATA]);
   }

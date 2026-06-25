@@ -526,7 +526,6 @@ export default class MonitorDetailsV2 extends Component {
       }
       return deleteResult;
     } catch (err) {
-      console.error('[MonitorDetailsV2] deleteMonitor error', err);
       return err;
     }
   };

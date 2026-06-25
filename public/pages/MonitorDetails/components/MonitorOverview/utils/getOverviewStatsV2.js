@@ -29,12 +29,6 @@ const getLastUpdatedHeader = () => {
 };
 
 export default function getOverviewStatsV2(monitor, monitorId, activeCount = 0) {
-  const lookbackMeta = monitor?.ui_metadata?.lookback;
-  const lookBackWindowMinutes =
-    monitor?.look_back_window_minutes ??
-    monitor?.look_back_window ??
-    (lookbackMeta?.enabled ? lookbackMeta.minutes : undefined);
-
   const firstRow = [
     {
       header: 'Total active alerts',
@@ -43,10 +37,6 @@ export default function getOverviewStatsV2(monitor, monitorId, activeCount = 0) 
     {
       header: 'Schedule',
       value: getScheduleFromPplMonitor(monitor),
-    },
-    {
-      header: 'Look back window',
-      value: formatDuration(lookBackWindowMinutes),
     },
     {
       header: getLastUpdatedHeader(),

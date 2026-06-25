@@ -303,6 +303,8 @@ export default class AlertsDashboardFlyoutComponent extends Component {
         return TRIGGER_TYPE.DOC_LEVEL;
       case MONITOR_TYPE.COMPOSITE_LEVEL:
         return TRIGGER_TYPE.COMPOSITE_LEVEL;
+      case MONITOR_TYPE.PPL:
+        return TRIGGER_TYPE.PPL;
       default:
         return TRIGGER_TYPE.QUERY_LEVEL;
     }
@@ -550,11 +552,21 @@ export default class AlertsDashboardFlyoutComponent extends Component {
 
     const severity = _.get(trigger, 'severity');
     const groupBy = _.get(monitor, MONITOR_GROUP_BY);
-    const condition =
+
+    let condition;
+    if (triggerType === TRIGGER_TYPE.PPL) {
+      // The PPL trigger data model stores conditions differently than other trigger types
+      condition =
+        trigger.custom_condition || `${trigger.num_results_condition} ${trigger.num_results_value}`;
+    } else if (
       searchType === SEARCH_TYPE.GRAPH &&
       (monitorType === MONITOR_TYPE.BUCKET_LEVEL || monitorType === MONITOR_TYPE.DOC_LEVEL)
-        ? this.getMultipleGraphConditions(trigger)
-        : _.get(trigger, 'condition.script.source', DEFAULT_EMPTY_DATA);
+    ) {
+      condition = this.getMultipleGraphConditions(trigger);
+    } else {
+      condition = _.get(trigger, 'condition.script.source');
+    }
+    if (_.isEmpty(condition)) condition = DEFAULT_EMPTY_DATA;
 
     let displayMultipleConditions;
     switch (monitorType) {
@@ -598,6 +610,10 @@ export default class AlertsDashboardFlyoutComponent extends Component {
 
     const dataSources = getDataSources(monitor, localClusterName).join('\n');
 
+    // Only display the 'Filters', 'Time range for last', and 'Group by' sections for specific monitor types
+    const displayMonitorFilters = [MONITOR_TYPE.BUCKET_LEVEL, MONITOR_TYPE.QUERY_LEVEL].includes(
+      monitorType
+    );
     return (
       <div>
         <EuiFlexGroup>
@@ -656,7 +672,7 @@ export default class AlertsDashboardFlyoutComponent extends Component {
               </p>
             </EuiText>
           </EuiFlexItem>
-          {![MONITOR_TYPE.DOC_LEVEL, MONITOR_TYPE.COMPOSITE_LEVEL].includes(monitorType) && (
+          {displayMonitorFilters && (
             <EuiFlexItem>
               <EuiText size="s" data-test-subj={`alertsDashboardFlyout_timeRange_${trigger_name}`}>
                 <strong>Time range for the last</strong>
@@ -665,7 +681,7 @@ export default class AlertsDashboardFlyoutComponent extends Component {
             </EuiFlexItem>
           )}
         </EuiFlexGroup>
-        {![MONITOR_TYPE.DOC_LEVEL, MONITOR_TYPE.COMPOSITE_LEVEL].includes(monitorType) && (
+        {displayMonitorFilters && (
           <div>
             <EuiSpacer size={'xxl'} />
             <EuiFlexGroup>

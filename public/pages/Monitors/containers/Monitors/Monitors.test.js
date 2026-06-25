@@ -77,6 +77,19 @@ describe('Monitors', () => {
     expect(getMonitors).toHaveBeenCalledTimes(2);
   });
 
+  test.skip('logs resp.data when getMonitors fails with ok: false', async () => {
+    // TODO: Skipping this test as we need to migrate the plugin away from using enzyme for unit tests - https://github.com/opensearch-project/alerting-dashboards-plugin/issues/236
+    const log = jest.spyOn(global.console, 'log');
+    httpClientMock.get.mockResolvedValue({ ok: false, resp: 'no index found' });
+    const mountWrapper = getMountWrapper();
+    await mountWrapper.instance().getMonitors(0, 10, '', 'start_time', 'desc', 'ALL');
+    expect(log).toHaveBeenCalled();
+    expect(log).toHaveBeenCalledWith('error getting monitors:', {
+      ok: false,
+      resp: 'no index found',
+    });
+  });
+
   test.skip('onTableChange updates page,size,sorts', () => {
     // TODO: Skipping this test as we need to migrate the plugin away from using enzyme for unit tests - https://github.com/opensearch-project/alerting-dashboards-plugin/issues/236
     const onTableChange = jest.spyOn(Monitors.prototype, 'onTableChange');

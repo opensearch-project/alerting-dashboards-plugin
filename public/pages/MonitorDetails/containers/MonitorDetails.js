@@ -8,6 +8,7 @@ import MonitorDetailsV1 from './MonitorDetailsV1';
 import MonitorDetailsV2 from './MonitorDetailsV2';
 import { getDataSourceQueryObj } from '../../utils/helpers';
 import { isPplMonitor as isPplMonitorUtil } from '../../../utils/pplHelpers';
+import { getNotifications } from '../../../services';
 
 export default class MonitorDetailsRouter extends Component {
   state = {
@@ -41,6 +42,7 @@ export default class MonitorDetailsRouter extends Component {
           `../api/alerting/monitors/${encodeURIComponent(monitorId)}`,
           dataSourceQuery
         );
+        if (!resp?.ok) throw new Error(JSON.stringify(resp?.resp || resp));
         const monitor = resp?.resp ?? null;
         if (this._isMounted) {
           this.setState({ isPplMonitor: monitor ? isPplMonitorUtil(monitor) : false });
@@ -48,7 +50,10 @@ export default class MonitorDetailsRouter extends Component {
         return;
       }
     } catch (err) {
-      console.error('MonitorDetails: unable to determine monitor type', err);
+      getNotifications().toasts.addDanger({
+        title: 'Failed to retrieve monitor details.',
+        text: err?.message || String(err),
+      });
     }
 
     if (this._isMounted) this.setState({ isPplMonitor: false });
