@@ -11,11 +11,14 @@ import {
   filterActiveAlerts,
 } from '../pages/Dashboard/utils/helpers';
 import _ from 'lodash';
-import { getDataSourceQueryObj } from '../pages/utils/helpers';
+import { getDataSourceQueryObj, getDataSourceId } from '../pages/utils/helpers';
 import {
   getContentManagementStart,
   getDataSourceManagementPlugin,
   getUseUpdatedUx,
+  isServerlessEnabled,
+  getClient,
+  OS_SERVERLESS_ENGINE_TYPE,
 } from '../services';
 import * as pluginManifest from '../../opensearch_dashboards.json';
 import semver from 'semver';
@@ -170,12 +173,83 @@ export function getManageChannelsUrl() {
   const relativePath = `/app/${
     getUseUpdatedUx() ? 'channels' : 'notifications-dashboards'
   }#/channels`;
+
+  // TODO: The `isServerlessEnabled` feature flag is currently gating the UI changes that moves the
+  //  notification plugin UI from app level to workspace level.
+  //  Remove the feature flag check when these changes are GA released.
+  if (isServerlessEnabled()) {
+    const httpClient = getClient();
+    let url = httpClient?.basePath?.prepend(relativePath) || relativePath;
+    try {
+      const dataSourceId = getDataSourceId();
+      if (dataSourceId) {
+        url += `${url.includes('?') ? '&' : '?'}dataSourceId=${dataSourceId}`;
+      }
+    } catch (e) {
+      /* DataSource not set yet */
+    }
+    return url;
+  }
   return MANAGE_CHANNELS_URL || relativePath;
+}
+
+const mustangCache = new Map();
+
+/**
+ * Returns whether a data source is a mustang domain from the prefetched cache.
+ */
+export function isMustangDomain(dataSourceId) {
+  return mustangCache.get(dataSourceId) || false;
+}
+
+/**
+ * Pre-fetches cluster settings for non-serverless data sources to determine
+ * which are mustang domains. Must be called before dataSourceFilterFn is used.
+ */
+export async function prefetchMustangStatus(httpClient, dataSources) {
+  const nonServerless = dataSources.filter(
+    (ds) => ds.attributes?.dataSourceEngineType !== OS_SERVERLESS_ENGINE_TYPE
+  );
+  await Promise.all(
+    nonServerless.map(async (ds) => {
+      if (mustangCache.has(ds.id)) return;
+      try {
+        const resp = await httpClient.get('../api/alerting/_settings', {
+          query: { dataSourceId: ds.id },
+        });
+        if (resp.ok) {
+          const { defaults, transient, persistent } = resp.resp;
+          const value =
+            transient?.cluster?.pluggable?.['dataformat.enabled'] ??
+            persistent?.cluster?.pluggable?.['dataformat.enabled'] ??
+            defaults?.cluster?.pluggable?.['dataformat.enabled'];
+          mustangCache.set(ds.id, value === 'true' || value === true);
+        } else {
+          mustangCache.set(ds.id, false);
+        }
+      } catch (e) {
+        mustangCache.set(ds.id, false);
+      }
+    })
+  );
 }
 
 export function dataSourceFilterFn(dataSource) {
   const dataSourceVersion = dataSource?.attributes?.dataSourceVersion || '';
   const installedPlugins = dataSource?.attributes?.installedPlugins || [];
+
+  // Allow serverless collections when oasis routing is available.
+  // Serverless collections do not have a concept of having the backend plugin installed, so the `installedPlugins.includes` check isn't needed.
+  const engineType = dataSource?.attributes?.dataSourceEngineType || '';
+  if (engineType === OS_SERVERLESS_ENGINE_TYPE && isServerlessEnabled()) {
+    return true;
+  }
+
+  // Allow mustang domains (cluster.pluggable.dataformat.enabled === true)
+  if (mustangCache.get(dataSource.id)) {
+    return true;
+  }
+
   return (
     semver.satisfies(dataSourceVersion, pluginManifest.supportedOSDataSourceVersions) &&
     pluginManifest.requiredOSDataSourcePlugins.every((plugin) => installedPlugins.includes(plugin))

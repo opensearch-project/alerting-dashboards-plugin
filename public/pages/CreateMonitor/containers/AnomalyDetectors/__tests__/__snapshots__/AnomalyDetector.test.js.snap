@@ -60,7 +60,7 @@ exports[`AnomalyDetectors renders 1`] = `
 }",
       "searchType": "graph",
       "timeField": "",
-      "timestampField": "@timestamp",
+      "timestampField": "",
       "timezone": Array [],
       "uri": Object {
         "api_type": "",
@@ -69,7 +69,7 @@ exports[`AnomalyDetectors renders 1`] = `
         "path_params": "",
         "url": "",
       },
-      "useLookBackWindow": true,
+      "useLookBackWindow": false,
       "weekly": Object {
         "fri": false,
         "mon": false,
@@ -142,7 +142,7 @@ exports[`AnomalyDetectors renders 1`] = `
 }",
         "searchType": "graph",
         "timeField": "",
-        "timestampField": "@timestamp",
+        "timestampField": "",
         "timezone": Array [],
         "uri": Object {
           "api_type": "",
@@ -151,7 +151,7 @@ exports[`AnomalyDetectors renders 1`] = `
           "path_params": "",
           "url": "",
         },
-        "useLookBackWindow": true,
+        "useLookBackWindow": false,
         "weekly": Object {
           "fri": false,
           "mon": false,
@@ -285,7 +285,7 @@ exports[`AnomalyDetectors renders 1`] = `
 }",
                     "searchType": "graph",
                     "timeField": "",
-                    "timestampField": "@timestamp",
+                    "timestampField": "",
                     "timezone": Array [],
                     "uri": Object {
                       "api_type": "",
@@ -294,7 +294,7 @@ exports[`AnomalyDetectors renders 1`] = `
                       "path_params": "",
                       "url": "",
                     },
-                    "useLookBackWindow": true,
+                    "useLookBackWindow": false,
                     "weekly": Object {
                       "fri": false,
                       "mon": false,
@@ -386,7 +386,7 @@ exports[`AnomalyDetectors renders 1`] = `
 }",
                     "searchType": "graph",
                     "timeField": "",
-                    "timestampField": "@timestamp",
+                    "timestampField": "",
                     "timezone": Array [],
                     "uri": Object {
                       "api_type": "",
@@ -395,7 +395,7 @@ exports[`AnomalyDetectors renders 1`] = `
                       "path_params": "",
                       "url": "",
                     },
-                    "useLookBackWindow": true,
+                    "useLookBackWindow": false,
                     "weekly": Object {
                       "fri": false,
                       "mon": false,
@@ -535,7 +535,7 @@ exports[`AnomalyDetectors renders 1`] = `
 }",
                             "searchType": "graph",
                             "timeField": "",
-                            "timestampField": "@timestamp",
+                            "timestampField": "",
                             "timezone": Array [],
                             "uri": Object {
                               "api_type": "",
@@ -544,7 +544,7 @@ exports[`AnomalyDetectors renders 1`] = `
                               "path_params": "",
                               "url": "",
                             },
-                            "useLookBackWindow": true,
+                            "useLookBackWindow": false,
                             "weekly": Object {
                               "fri": false,
                               "mon": false,
@@ -636,7 +636,7 @@ exports[`AnomalyDetectors renders 1`] = `
 }",
                             "searchType": "graph",
                             "timeField": "",
-                            "timestampField": "@timestamp",
+                            "timestampField": "",
                             "timezone": Array [],
                             "uri": Object {
                               "api_type": "",
@@ -645,7 +645,7 @@ exports[`AnomalyDetectors renders 1`] = `
                               "path_params": "",
                               "url": "",
                             },
-                            "useLookBackWindow": true,
+                            "useLookBackWindow": false,
                             "weekly": Object {
                               "fri": false,
                               "mon": false,

@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useMemo, Fragment } from 'react';
+import React, { useMemo, Fragment, useEffect } from 'react';
 import { EuiSpacer, EuiCallOut } from '@elastic/eui';
 import ContentPanel from '../../../../components/ContentPanel';
 import FormikFieldText from '../../../../components/FormControls/FormikFieldText';
@@ -11,8 +11,12 @@ import { hasError, isInvalid, required, validateMonitorName } from '../../../../
 import MonitorDefinitionCard from '../../components/MonitorDefinitionCard';
 import MonitorType from '../../components/MonitorType';
 import AnomalyDetectors from '../AnomalyDetectors/AnomalyDetectors';
-import { MONITOR_TYPE } from '../../../../utils/constants';
+import { MONITOR_TYPE, SEARCH_TYPE } from '../../../../utils/constants';
 import Schedule from '../../components/Schedule';
+import { getDataSourceId } from '../../../utils/helpers';
+import { getDataSourceMetadata, isPplAlertingEnabled } from '../../../../services';
+import { useFormikContext } from 'formik';
+import { FORMIK_INITIAL_VALUES } from '../CreateMonitor/utils/constants';
 
 const renderAnomalyDetector = ({
   httpClient,
@@ -58,17 +62,44 @@ const MonitorDetails = ({
   detectorId,
   flyoutMode,
   landingDataSourceId,
+  isServerless,
 }) => {
+  const { setFieldValue } = useFormikContext();
+  const dataSourceId =
+    (() => {
+      try {
+        return getDataSourceId();
+      } catch (e) {
+        return undefined;
+      }
+    })() || landingDataSourceId;
+  const isMustang = getDataSourceMetadata()?.isMustang || false;
   const anomalyDetectorContent =
     isAd &&
     renderAnomalyDetector({ httpClient, values, detectorId, flyoutMode, landingDataSourceId });
   const isPpl = values.monitor_type === MONITOR_TYPE.PPL;
   const displayMonitorDefinitionCards =
-    values.monitor_type !== MONITOR_TYPE.CLUSTER_METRICS && !isPpl;
+    values.monitor_type !== MONITOR_TYPE.CLUSTER_METRICS && !isPpl && !isMustang;
   const Container = useMemo(
     () => (flyoutMode ? ({ children }) => <>{children}</> : ContentPanel),
     [flyoutMode]
   );
+
+  // Mustang domains only support PPL monitor type. Auto-select PPL type
+  useEffect(() => {
+    if (isMustang && values.monitor_type !== MONITOR_TYPE.PPL) {
+      setFieldValue('monitor_type', MONITOR_TYPE.PPL);
+      setFieldValue('searchType', SEARCH_TYPE.PPL);
+      setFieldValue('pplQuery', FORMIK_INITIAL_VALUES.pplQuery || '');
+      setFieldValue('useLookBackWindow', false);
+      setFieldValue('lookBackAmount', FORMIK_INITIAL_VALUES.lookBackAmount);
+      setFieldValue('lookBackUnit', FORMIK_INITIAL_VALUES.lookBackUnit);
+      setFieldValue('timestampField', FORMIK_INITIAL_VALUES.timestampField);
+    } else if (!isMustang && values.monitor_type === MONITOR_TYPE.PPL && !isPplAlertingEnabled()) {
+      setFieldValue('monitor_type', MONITOR_TYPE.QUERY_LEVEL);
+      setFieldValue('searchType', SEARCH_TYPE.GRAPH);
+    }
+  }, [isMustang]);
 
   return (
     <Container
@@ -98,13 +129,18 @@ const MonitorDetails = ({
           },
         }}
       />
-      <EuiSpacer size="m" />
-      {!flyoutMode && <MonitorType values={values} />}
+
+      {!flyoutMode && !isMustang && (
+        <div>
+          <EuiSpacer size="m" />
+          <MonitorType values={values} isServerless={isServerless} />
+        </div>
+      )}
 
       {!flyoutMode && displayMonitorDefinitionCards ? (
         <div>
           <EuiSpacer size="m" />
-          <MonitorDefinitionCard values={values} plugins={plugins} />
+          <MonitorDefinitionCard values={values} plugins={plugins} isServerless={isServerless} />
         </div>
       ) : null}
 

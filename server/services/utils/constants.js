@@ -27,4 +27,5 @@ export const CLUSTER = {
 
 export const FEATURE_FLAGS = Object.freeze({
   PPL_MONITOR: 'pplAlertingEnabled',
+  SERVERLESS: 'serverlessEnabled',
 });

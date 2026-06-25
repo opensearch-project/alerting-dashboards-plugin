@@ -3,17 +3,28 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { request } from 'http';
 import { MDSEnabledClientService } from './MDSEnabledClientService';
 
 export default class OpensearchService extends MDSEnabledClientService {
+  // Skip oasis for general OpenSearch APIs (_cat, _cluster, etc.) — use the standard MDS client.
+  async getClientBasedOnDataSource(context, request) {
+    const dataSourceId = request.query?.dataSourceId;
+    if (!this.dataSourceEnabled || !dataSourceId) {
+      return this.osDriver.asScoped(request).callAsCurrentUser;
+    }
+    return context.dataSource.opensearch.legacy.getClient(dataSourceId.toString()).callAPI;
+  }
+
   // TODO: This will be deprecated as we do not want to support accessing alerting indices directly
   //  and that is what this is used for
   search = async (context, req, res) => {
     try {
+      const aclResponse = await this.enforceWorkspaceAcl(context, req, res, ['library_read']);
+      if (aclResponse) return aclResponse;
+
       const { query, index, size } = req.body;
       const params = { index, size, body: query };
-      const client = this.getClientBasedOnDataSource(context, req);
+      const client = await this.getClientBasedOnDataSource(context, req);
       const results = await client('search', params);
       return res.ok({
         body: {
@@ -34,8 +45,11 @@ export default class OpensearchService extends MDSEnabledClientService {
 
   getIndices = async (context, req, res) => {
     try {
+      const aclResponse = await this.enforceWorkspaceAcl(context, req, res, ['library_read']);
+      if (aclResponse) return aclResponse;
+
       const { index } = req.body;
-      const client = this.getClientBasedOnDataSource(context, req);
+      const client = await this.getClientBasedOnDataSource(context, req);
       const indices = await client('cat.indices', {
         index,
         format: 'json',
@@ -70,8 +84,11 @@ export default class OpensearchService extends MDSEnabledClientService {
 
   getAliases = async (context, req, res) => {
     try {
+      const aclResponse = await this.enforceWorkspaceAcl(context, req, res, ['library_read']);
+      if (aclResponse) return aclResponse;
+
       const { alias } = req.body;
-      const client = this.getClientBasedOnDataSource(context, req);
+      const client = await this.getClientBasedOnDataSource(context, req);
       const aliases = await client('cat.aliases', {
         alias,
         format: 'json',
@@ -96,7 +113,10 @@ export default class OpensearchService extends MDSEnabledClientService {
 
   getClusterHealth = async (context, req, res) => {
     try {
-      const client = this.getClientBasedOnDataSource(context, req);
+      const aclResponse = await this.enforceWorkspaceAcl(context, req, res, ['library_read']);
+      if (aclResponse) return aclResponse;
+
+      const client = await this.getClientBasedOnDataSource(context, req);
       const health = await client('cat.health', {
         format: 'json',
         h: 'cluster,status',
@@ -120,8 +140,11 @@ export default class OpensearchService extends MDSEnabledClientService {
 
   getMappings = async (context, req, res) => {
     try {
+      const aclResponse = await this.enforceWorkspaceAcl(context, req, res, ['library_read']);
+      if (aclResponse) return aclResponse;
+
       const { index } = req.body;
-      const client = this.getClientBasedOnDataSource(context, req);
+      const client = await this.getClientBasedOnDataSource(context, req);
       const mappings = await client('indices.getMapping', { index });
       return res.ok({
         body: {
@@ -145,7 +168,10 @@ export default class OpensearchService extends MDSEnabledClientService {
 
   getPlugins = async (context, req, res) => {
     try {
-      const client = this.getClientBasedOnDataSource(context, req);
+      const aclResponse = await this.enforceWorkspaceAcl(context, req, res, ['library_read']);
+      if (aclResponse) return aclResponse;
+
+      const client = await this.getClientBasedOnDataSource(context, req);
       const plugins = await client('cat.plugins', {
         format: 'json',
         h: 'component',
@@ -169,7 +195,10 @@ export default class OpensearchService extends MDSEnabledClientService {
 
   getSettings = async (context, req, res) => {
     try {
-      const client = this.getClientBasedOnDataSource(context, req);
+      const aclResponse = await this.enforceWorkspaceAcl(context, req, res, ['library_read']);
+      if (aclResponse) return aclResponse;
+
+      const client = await this.getClientBasedOnDataSource(context, req);
       const settings = await client('cluster.getSettings', {
         include_defaults: 'true',
       });

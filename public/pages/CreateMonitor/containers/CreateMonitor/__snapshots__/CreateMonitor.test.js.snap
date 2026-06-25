@@ -27,6 +27,7 @@ exports[`CreateMonitor renders 1`] = `
         "clusterNames": Array [],
         "cronExpression": "0 */1 * * *",
         "daily": 0,
+        "dataSourceEndpoint": "",
         "description": "",
         "detectorId": "",
         "disabled": false,
@@ -69,7 +70,7 @@ exports[`CreateMonitor renders 1`] = `
 }",
         "searchType": "graph",
         "timeField": "",
-        "timestampField": "@timestamp",
+        "timestampField": "",
         "timezone": Array [],
         "uri": Object {
           "api_type": "",
@@ -78,7 +79,7 @@ exports[`CreateMonitor renders 1`] = `
           "path_params": "",
           "url": "",
         },
-        "useLookBackWindow": true,
+        "useLookBackWindow": false,
         "weekly": Object {
           "fri": false,
           "mon": false,

@@ -179,6 +179,7 @@ export default class VisualGraph extends Component {
 
   render() {
     const { values, response, fieldName, aggregationType } = this.props;
+    if (!values) return <>{this.renderEmptyData()}</>;
     const monitorType = values.monitor_type;
     const isQueryMonitor = monitorType === MONITOR_TYPE.QUERY_LEVEL;
     const aggTypeFieldName = `${aggregationType}_${fieldName}`;

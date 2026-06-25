@@ -3,11 +3,12 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useCallback, useEffect, useMemo, useRef } from 'react';
+import React, { useEffect, useMemo, useRef } from 'react';
 import { monaco } from '@osd/monaco';
 import { useDispatch, useSelector } from 'react-redux';
-import { selectQueryLanguage, selectIsQueryEditorDirty } from '../../../../redux/selectors';
-import { setIsQueryEditorDirty, setDataset } from '../../../../redux/slices';
+import { selectQueryLanguage, selectIsQueryEditorDirty } from '../../../../redux';
+import { setIsQueryEditorDirty, setDataset } from '../../../../redux';
+import { resolveDataset, getFallbackSuggestions } from './queryEditorHelpers';
 
 type Editor = monaco.editor.IStandaloneCodeEditor;
 
@@ -57,6 +58,10 @@ export const QueryEditor: React.FC<QueryEditorProps> = ({
   }, [onChange]);
   useEffect(() => {
     indicesRef.current = indices;
+    // Reset dataset initialization when indices change (e.g., data source switch)
+    if (indices && indices.length > 0) {
+      isDatasetInitialized.current = false;
+    }
   }, [indices]);
   useEffect(() => {
     indexPatternIdRef.current = indexPatternId;
@@ -79,68 +84,20 @@ export const QueryEditor: React.FC<QueryEditorProps> = ({
 
       try {
         const { data } = services;
+        const currentIndices = indicesRef.current || [];
+        const { dataset, initialized, alreadyConfigured } = await resolveDataset(
+          data.dataViews,
+          data.query.queryString,
+          currentIndices
+        );
 
-        // Check if dataset already set
-        const existingQuery = data.query.queryString.getQuery();
-
-        if (existingQuery?.dataset) {
-          dispatch(setDataset(existingQuery.dataset));
-          isDatasetInitialized.current = true;
-          return;
+        if (dataset && !alreadyConfigured) {
+          data.query.queryString.setQuery({ query: '', language: 'PPL', dataset });
         }
-
-        // IMPORTANT: Set language to 'ppl' FIRST to avoid toast notification
-        // This ensures that when we set the dataset, the current language is already 'ppl'
-        data.query.queryString.setQuery({
-          language: 'PPL',
-        });
-
-        // Fetch first available index pattern
-        const indexPatterns = await data.dataViews.getIdsWithTitle();
-
-        let dataset = null;
-
-        const indexPatternId = indexPatternIdRef.current;
-        const indices = indicesRef.current || [];
-
-        if (indexPatterns && indexPatterns.length > 0) {
-          const firstPattern = indexPatterns[0];
-
-          const dataView = await data.dataViews.get(firstPattern.id);
-
-          dataset = {
-            id: dataView.id,
-            title: dataView.title,
-            type: INDEX_PATTERN_TYPE,
-            timeFieldName: dataView.timeFieldName,
-          };
-        } else if (indices && indices.length > 0) {
-          const dataView = await data.dataViews.create(
-            {
-              title: indices.join(','),
-            },
-            false,
-            true
-          );
-
-          dataset = {
-            id: dataView.id!,
-            title: dataView.title,
-            type: INDEX_PATTERN_TYPE,
-            timeFieldName: dataView.timeFieldName,
-          };
-        }
-
         if (dataset) {
-          // THIS IS THE KEY: Set dataset in queryString service like explore does
-          // Set the language to 'ppl' directly in the query to avoid language change toast
-          data.query.queryString.setQuery({
-            query: '',
-            language: 'PPL',
-            dataset,
-          });
-
           dispatch(setDataset(dataset));
+        }
+        if (initialized) {
           isDatasetInitialized.current = true;
         }
       } catch (error) {
@@ -194,7 +151,7 @@ export const QueryEditor: React.FC<QueryEditorProps> = ({
             try {
               currentDataView = await dataViews.get(
                 currentDataset.id,
-              currentDataset.type !== INDEX_PATTERN_TYPE
+                currentDataset.type !== INDEX_PATTERN_TYPE
               );
             } catch (dvError) {
               // Silent fail - continue without dataView
@@ -216,27 +173,15 @@ export const QueryEditor: React.FC<QueryEditorProps> = ({
             services: currentServices as any,
           });
 
-          // Fallback: Provide basic PPL keywords when no dataset/indexPattern is available
-          if (
-            (!suggestions || suggestions.length === 0) &&
-            !currentDataView &&
-            effectiveLanguage === 'PPL'
-          ) {
-            suggestions = [
-              { text: 'source', type: 2, insertText: 'source = ', detail: 'Keyword' },
-              { text: 'where', type: 2, insertText: 'where ', detail: 'Keyword' },
-              { text: 'fields', type: 2, insertText: 'fields ', detail: 'Keyword' },
-              { text: 'rename', type: 2, insertText: 'rename ', detail: 'Keyword' },
-              { text: 'stats', type: 2, insertText: 'stats ', detail: 'Keyword' },
-              { text: 'dedup', type: 2, insertText: 'dedup ', detail: 'Keyword' },
-              { text: 'sort', type: 2, insertText: 'sort ', detail: 'Keyword' },
-              { text: 'eval', type: 2, insertText: 'eval ', detail: 'Keyword' },
-              { text: 'head', type: 2, insertText: 'head ', detail: 'Keyword' },
-              { text: 'top', type: 2, insertText: 'top ', detail: 'Keyword' },
-              { text: 'rare', type: 2, insertText: 'rare ', detail: 'Keyword' },
-              { text: 'parse', type: 2, insertText: 'parse ', detail: 'Keyword' },
-            ];
-          }
+          // Fallback: Provide PPL keywords or index suggestions when autocomplete service returns no results
+          suggestions = getFallbackSuggestions(
+            suggestions,
+            currentDataView,
+            effectiveLanguage,
+            indicesRef.current,
+            queryValue,
+            offset
+          );
 
           // current completion item range being given as last 'word' at pos
           const wordUntil = model.getWordUntilPosition(position);
@@ -426,5 +371,3 @@ export const QueryEditor: React.FC<QueryEditorProps> = ({
     />
   );
 };
-
-

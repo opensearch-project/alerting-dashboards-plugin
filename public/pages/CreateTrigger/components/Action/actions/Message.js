@@ -3,18 +3,16 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useState } from 'react';
+import React from 'react';
 import _ from 'lodash';
-import Mustache from 'mustache';
+import { Field } from 'formik';
 import {
-  EuiCompressedCheckbox,
   EuiFlexGroup,
   EuiFlexItem,
   EuiCompressedFormRow,
   EuiLink,
   EuiSpacer,
   EuiText,
-  EuiCompressedTextArea,
 } from '@elastic/eui';
 
 import {
@@ -34,6 +32,7 @@ import {
 } from '../../../../../utils/validate';
 import { URL, MAX_THROTTLE_VALUE, WRONG_THROTTLE_WARNING } from '../../../../../../utils/constants';
 import { MONITOR_TYPE } from '../../../../../utils/constants';
+import MustacheAutocompleteTextArea from '../../../../../components/MustacheAutocompleteTextArea/MustacheAutocompleteTextArea';
 import OverviewStat from '../../../../MonitorDetails/components/OverviewStat';
 
 export const NOTIFY_OPTIONS_VALUES = {
@@ -86,49 +85,6 @@ export const DEFAULT_ACTIONABLE_ALERTS_SELECTIONS = [
 
 export const NO_ACTIONABLE_ALERT_SELECTIONS = 'Must select at least 1 option.';
 
-const renderSendTestMessageButton = (
-  index,
-  sendTestMessage,
-  isBucketLevelMonitor,
-  displayPreview,
-  setDisplayPreview,
-  fieldPath
-) => {
-  return (
-    <EuiFlexGroup justifyContent="spaceBetween" alignItems="flexStart">
-      <EuiFlexItem>
-        <EuiCompressedCheckbox
-          id={`${fieldPath}actions.${index}`}
-          label={'Preview message'}
-          checked={displayPreview}
-          onChange={(e) => setDisplayPreview(e)}
-        />
-      </EuiFlexItem>
-      <EuiFlexItem grow={false}>
-        <EuiFlexGroup alignItems="flexEnd" direction="column" gutterSize="xs">
-          <EuiFlexItem grow={false}>
-            <EuiLink
-              onClick={() => {
-                sendTestMessage(index);
-              }}
-            >
-              <EuiText>Send test message</EuiText>
-            </EuiLink>
-          </EuiFlexItem>
-          {isBucketLevelMonitor ? (
-            <EuiFlexItem>
-              <EuiText size="xs">
-                For bucket-level triggers, at least one bucket of data is required from the monitor
-                input query.
-              </EuiText>
-            </EuiFlexItem>
-          ) : null}
-        </EuiFlexGroup>
-      </EuiFlexItem>
-    </EuiFlexGroup>
-  );
-};
-
 const validateActionableAlertsSelections = (options) => {
   if (!_.isArray(options) || _.isEmpty(options)) return NO_ACTIONABLE_ALERT_SELECTIONS;
 };
@@ -137,8 +93,6 @@ export default function Message(
   { action, context, index, isSubjectDisabled = false, sendTestMessage, fieldPath, values } = this
     .props
 ) {
-  const [displayPreview, setDisplayPreview] = useState(false);
-  const onDisplayPreviewChange = (e) => setDisplayPreview(e.target.checked);
   const monitorType = _.get(context, 'ctx.monitor.monitor_type', MONITOR_TYPE.QUERY_LEVEL);
   const editableActionExecutionPolicy =
     monitorType === MONITOR_TYPE.BUCKET_LEVEL || monitorType === MONITOR_TYPE.DOC_LEVEL;
@@ -201,14 +155,6 @@ export default function Message(
 
   if (!displayThrottlingSettings) _.set(values, `${actionPath}.throttle_enabled`, false);
 
-  let preview = '';
-  try {
-    preview = Mustache.render(action.message_template.source, context);
-  } catch (err) {
-    preview = err.message;
-    console.error('There was an error rendering mustache template', err);
-  }
-
   return (
     <div>
       {!isSubjectDisabled ? (
@@ -229,57 +175,60 @@ export default function Message(
           }}
         />
       ) : null}
-      <FormikTextArea
-        name={`${fieldPath}actions.${index}.message_template.source`}
-        formRow
-        fieldProps={{ validate: required }}
-        rowProps={{
-          label: (
-            <div>
-              <EuiText size={'xs'} style={{ paddingBottom: '0px', marginBottom: '0px' }}>
-                <h4>Message</h4>
-              </EuiText>
-              <EuiText color={'subdued'} size={'xs'}>
-                Embed variables in your message using Mustache templates.{' '}
-                <EuiLink external href={URL.MUSTACHE} target="_blank">
-                  Learn more
-                </EuiLink>
-              </EuiText>
-            </div>
-          ),
-          style: { maxWidth: '100%' },
-          isInvalid,
-          error: hasError,
-        }}
-        inputProps={{
-          placeholder: 'Can use mustache templates',
-          fullWidth: true,
-          isInvalid,
-        }}
-      />
+      <Field name={`${fieldPath}actions.${index}.message_template.source`} validate={required}>
+        {({ field, form, meta }) => (
+          <EuiCompressedFormRow
+            label={
+              <div>
+                <EuiText size={'xs'} style={{ paddingBottom: '0px', marginBottom: '0px' }}>
+                  <h4>Message</h4>
+                </EuiText>
+                <EuiText color={'subdued'} size={'xs'}>
+                  Embed variables in your message using Mustache templates.{' '}
+                  <EuiLink external href={URL.MUSTACHE} target="_blank">
+                    Learn more
+                  </EuiLink>
+                </EuiText>
+              </div>
+            }
+            style={{ maxWidth: '100%' }}
+            fullWidth
+            isInvalid={meta.touched && !!meta.error}
+            error={meta.touched && meta.error}
+          >
+            <MustacheAutocompleteTextArea
+              value={field.value || ''}
+              onChange={(e) => form.setFieldValue(field.name, e.target.value)}
+              onBlur={() => form.setFieldTouched(field.name, true)}
+              context={context}
+              placeholder="Can use mustache templates"
+              fullWidth
+            />
+          </EuiCompressedFormRow>
+        )}
+      </Field>
 
       <EuiCompressedFormRow style={{ maxWidth: '100%' }}>
-        {renderSendTestMessageButton(
-          index,
-          sendTestMessage,
-          monitorType === MONITOR_TYPE.BUCKET_LEVEL,
-          displayPreview,
-          onDisplayPreviewChange,
-          fieldPath
-        )}
+        <EuiFlexGroup justifyContent="flexEnd">
+          <EuiFlexItem grow={false}>
+            <EuiFlexGroup alignItems="flexEnd" direction="column" gutterSize="xs">
+              <EuiFlexItem grow={false}>
+                <EuiLink onClick={() => sendTestMessage(index)}>
+                  <EuiText>Send test message</EuiText>
+                </EuiLink>
+              </EuiFlexItem>
+              {monitorType === MONITOR_TYPE.BUCKET_LEVEL ? (
+                <EuiFlexItem>
+                  <EuiText size="xs">
+                    For bucket-level triggers, at least one bucket of data is required from the
+                    monitor input query.
+                  </EuiText>
+                </EuiFlexItem>
+              ) : null}
+            </EuiFlexGroup>
+          </EuiFlexItem>
+        </EuiFlexGroup>
       </EuiCompressedFormRow>
-
-      {displayPreview ? (
-        <EuiCompressedFormRow label="Message preview" style={{ maxWidth: '100%' }}>
-          <EuiCompressedTextArea
-            placeholder="Preview of mustache template"
-            fullWidth
-            value={preview}
-            readOnly
-            className="read-only-text-area"
-          />
-        </EuiCompressedFormRow>
-      ) : null}
 
       <EuiSpacer size="m" />
 

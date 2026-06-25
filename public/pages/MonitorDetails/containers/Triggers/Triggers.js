@@ -5,7 +5,6 @@
 
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { v4 as uuidv4 } from 'uuid';
 import { EuiInMemoryTable } from '@elastic/eui';
 import _ from 'lodash';
 
@@ -15,6 +14,7 @@ import { TRIGGER_TYPE } from '../../../CreateTrigger/containers/CreateTrigger/ut
 import { conditionToExpressions } from '../../../CreateTrigger/utils/helper';
 
 export const MAX_TRIGGERS = 10;
+export const MAX_SERVERLESS_BUCKET_TRIGGERS = 1;
 
 // TODO: For now, unwrapping all the Triggers since it's conflicting with the table
 //   retrieving the 'id' and causing it to behave strangely
@@ -218,14 +218,6 @@ export default class Triggers extends Component {
       ...(showPplColumns
         ? [
             {
-              field: 'mode',
-              name: 'Trigger mode',
-              sortable: false,
-              truncateText: false,
-              width: '12%',
-              render: (mode) => formatTriggerMode(mode),
-            },
-            {
               field: 'type',
               name: 'Trigger type',
               sortable: false,
@@ -283,22 +275,6 @@ export default class Triggers extends Component {
                 item.type !== 'number_of_results'
                   ? _.get(item, 'condition.script.source') || DEFAULT_EMPTY_DATA
                   : DEFAULT_EMPTY_DATA,
-            },
-            {
-              field: 'expires_minutes',
-              name: 'Expire duration',
-              sortable: false,
-              truncateText: false,
-              width: '12%',
-              render: (value) => formatMinutes(value),
-            },
-            {
-              field: 'throttle_minutes',
-              name: 'Throttle duration',
-              sortable: false,
-              truncateText: false,
-              width: '12%',
-              render: (value) => formatMinutes(value),
             },
           ]
         : []),

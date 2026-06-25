@@ -85,6 +85,7 @@ class PplAlertingCreateMonitor extends Component {
       initial.useLookBackWindow !== undefined ? initial.useLookBackWindow : true;
     const initialValues = {
       ...initial,
+      dataSourceEndpoint: props.dataSourceEndpoint || '',
       monitor_mode: initial.monitor_mode || (pplEnabled ? 'ppl' : 'legacy'),
       useLookBackWindow,
       // Only set default lookBackAmount/lookBackUnit if useLookBackWindow is true
@@ -96,7 +97,7 @@ class PplAlertingCreateMonitor extends Component {
           ? 1
           : undefined,
       lookBackUnit: initial.lookBackUnit || (useLookBackWindow ? 'hours' : undefined),
-      timestampField: initial.timestampField || '@timestamp',
+      timestampField: initial.timestampField || '',
     };
 
     if (!pplEnabled) {
@@ -175,9 +176,10 @@ class PplAlertingCreateMonitor extends Component {
 
   componentDidUpdate(prevProps) {
     if (isDataSourceChanged(prevProps, this.props) && this.formikRef.current) {
-      const { landingDataSourceId } = this.props;
+      const { landingDataSourceId, dataSourceEndpoint } = this.props;
       setDataSource({ dataSourceId: landingDataSourceId });
       this.formikRef.current.setFieldValue('dataSourceId', landingDataSourceId, false);
+      this.formikRef.current.setFieldValue('dataSourceEndpoint', dataSourceEndpoint || '', false);
       this.fetchPlugins(this.props.httpClient);
     }
   }
@@ -188,8 +190,6 @@ class PplAlertingCreateMonitor extends Component {
       const newPlugins = await getPlugins(httpClient);
       this.setState({ plugins: newPlugins, pluginsLoading: false });
     } catch (error) {
-      // eslint-disable-next-line no-console
-      console.error('[CreateMonitor] Error fetching plugins:', error);
       this.setState({ pluginsLoading: false });
     }
   };
@@ -743,17 +743,9 @@ class PplAlertingCreateMonitor extends Component {
             >
               <EuiSelect
                 data-test-subj="pplTimestampField"
-                options={
-                  availableDateFields.length > 0
-                    ? availableDateFields.map((field) => ({ value: field, text: field }))
-                    : [
-                        {
-                          value: values.timestampField || '@timestamp',
-                          text: values.timestampField || '@timestamp',
-                        },
-                      ]
-                }
-                value={values.timestampField || '@timestamp'}
+                options={availableDateFields.map((field) => ({ value: field, text: field }))}
+                hasNoInitialSelection={!values.timestampField}
+                value={values.timestampField || ''}
                 onChange={(e) => setFieldValue('timestampField', e.target.value)}
                 fullWidth
                 isLoading={dateFieldsLoading}

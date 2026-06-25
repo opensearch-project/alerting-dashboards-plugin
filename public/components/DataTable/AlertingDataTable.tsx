@@ -361,7 +361,7 @@ export const AlertingDataTable: React.FC<AlertingDataTableProps> = ({
   const showPagination = docs.length > PAGINATED_PAGE_SIZE;
 
   return (
-    <div className="explore-table-container" data-test-subj="alerting-data-table">
+    <div className="alerting-table-container" data-test-subj="alerting-data-table">
       {showPagination && (
         <Pagination
           pageCount={pageCount}

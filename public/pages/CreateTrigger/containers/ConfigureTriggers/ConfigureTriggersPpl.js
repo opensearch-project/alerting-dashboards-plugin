@@ -306,7 +306,7 @@ class ConfigureTriggersPpl extends React.Component {
           key={id}
           id={`${id}`}
           title={trigger.name || `Trigger ${index + 1}`}
-          extraActions={
+          extraAction={
             flyoutMode ? (
               <EuiSmallButtonIcon
                 aria-label="Delete trigger"
@@ -353,7 +353,7 @@ class ConfigureTriggersPpl extends React.Component {
       >
         {hasTriggers ? this.renderTriggers() : triggerEmptyPrompt}
 
-        {flyoutMode && (
+        {flyoutMode && hasTriggers && (
           <>
             <EuiSpacer size="m" />
             {addTriggerButton}

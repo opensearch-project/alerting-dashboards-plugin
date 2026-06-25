@@ -4,7 +4,13 @@
  */
 
 import React from 'react';
-import { ALERTS_NAV_ID, DESTINATIONS_NAV_ID, MONITORS_NAV_ID, PLUGIN_NAME } from '../utils/constants';
+import { BehaviorSubject, Observable } from 'rxjs';
+import {
+  ALERTS_NAV_ID,
+  DESTINATIONS_NAV_ID,
+  MONITORS_NAV_ID,
+  PLUGIN_NAME,
+} from '../utils/constants';
 import {
   Plugin,
   CoreSetup,
@@ -24,19 +30,34 @@ import { alertingTriggerAd } from './utils/contextMenu/triggers';
 import { ExpressionsSetup } from '../../../src/plugins/expressions/public';
 import { UiActionsSetup } from '../../../src/plugins/ui_actions/public';
 import { overlayAlertsFunction } from './expressions/overlay_alerts';
-import { setClient, setEmbeddable, setNotifications, setOverlays, setSavedAugmentVisLoader, setUISettings, setQueryService, setSavedObjectsClient, setDataSourceEnabled, setDataSourceManagementPlugin, setNavigationUI, setApplication, setContentManagementStart, setAssistantDashboards, setAssistantClient, isPplAlertingEnabled } from './services';
+import {
+  setClient,
+  setEmbeddable,
+  setNotifications,
+  setOverlays,
+  setSavedAugmentVisLoader,
+  setUISettings,
+  setQueryService,
+  setSavedObjectsClient,
+  setDataSourceEnabled,
+  setDataSourceManagementPlugin,
+  setNavigationUI,
+  setApplication,
+  setContentManagementStart,
+  setAssistantDashboards,
+  setAssistantClient,
+  isPplAlertingEnabled,
+} from './services';
 import { VisAugmenterStart } from '../../../src/plugins/vis_augmenter/public';
-import { DataPublicPluginStart } from '../../../src/plugins/data/public';
-import { AssistantSetup, AssistantPublicPluginStart  } from './types';
+import { DataPublicPluginStart, ResultStatus } from '../../../src/plugins/data/public';
+import { AssistantSetup, AssistantPublicPluginStart } from './types';
 import { DataSourceManagementPluginSetup } from '../../../src/plugins/data_source_management/public';
 import { DataSourcePluginSetup } from '../../../src/plugins/data_source/public';
 import { NavigationPublicPluginStart } from '../../../src/plugins/navigation/public';
-import { BehaviorSubject, Observable } from 'rxjs';
 import { dataSourceObservable } from './pages/utils/constants';
 import { ContentManagementPluginStart } from '../../../src/plugins/content_management/public';
 import { registerAlertsCard } from './utils/helpers';
 import type { ExplorePluginSetup, ExplorePluginStart } from '../../../src/plugins/explore/public';
-import { ResultStatus } from '../../../src/plugins/data/public';
 import { CreateMonitorFlyout } from './components/CreateMonitorFlyout';
 import { CoreContext } from './utils/CoreContext';
 declare module '../../../src/plugins/ui_actions/public' {
@@ -47,9 +68,9 @@ declare module '../../../src/plugins/ui_actions/public' {
 
 let navigateToAppRef: CoreStart['application']['navigateToApp'] | null = null;
 
-export interface AlertingSetup { }
+export interface AlertingSetup {}
 
-export interface AlertingStart { }
+export interface AlertingStart {}
 
 export interface AlertingSetupDeps {
   expressions: ExpressionsSetup;
@@ -70,8 +91,8 @@ export interface AlertingStartDeps {
   explore?: ExplorePluginStart;
 }
 
-export class AlertingPlugin implements Plugin<void, AlertingStart, AlertingSetupDeps, AlertingStartDeps> {
-
+export class AlertingPlugin
+  implements Plugin<void, AlertingStart, AlertingSetupDeps, AlertingStartDeps> {
   private updateDefaultRouteOfManagementApplications: AppUpdater = () => {
     const dataSourceValue = dataSourceObservable.value?.id;
     let hash = `#/`;
@@ -86,20 +107,31 @@ export class AlertingPlugin implements Plugin<void, AlertingStart, AlertingSetup
     };
   };
 
-  private appStateUpdater = new BehaviorSubject<AppUpdater>(this.updateDefaultRouteOfManagementApplications);
+  private appStateUpdater = new BehaviorSubject<AppUpdater>(
+    this.updateDefaultRouteOfManagementApplications
+  );
   private appStateUpdater$: Observable<AppUpdater> = this.appStateUpdater.asObservable();
   private startServicesPromise!: ReturnType<CoreSetup['getStartServices']>;
 
-
-  public setup(core: CoreSetup<AlertingStartDeps, AlertingStart>, { expressions, uiActions, dataSourceManagement, dataSource, assistantDashboards, explore }: AlertingSetupDeps) {
-
+  public setup(
+    core: CoreSetup<AlertingStartDeps, AlertingStart>,
+    {
+      expressions,
+      uiActions,
+      dataSourceManagement,
+      dataSource,
+      assistantDashboards,
+      explore,
+    }: AlertingSetupDeps
+  ) {
     this.startServicesPromise = core.getStartServices();
 
     const mountWrapper = async (params: AppMountParameters, redirect: string) => {
-      const { renderApp } = await import("./app");
+      const { renderApp } = await import('./app');
       const [coreStart, depsStart] = await core.getStartServices();
       return renderApp(coreStart, depsStart, params, redirect);
     };
+
     core.application.register({
       id: PLUGIN_NAME,
       title: 'Alerting',
@@ -123,28 +155,20 @@ export class AlertingPlugin implements Plugin<void, AlertingStart, AlertingSetup
           {
             id: PLUGIN_NAME,
             category: DEFAULT_APP_CATEGORIES.detect,
-            showInAllNavGroup: false
-          }
+            showInAllNavGroup: false,
+          },
         ]);
       }
-
-      core.chrome.navGroup.addNavLinksToGroup(DEFAULT_NAV_GROUPS['security-analytics'], [
-        {
-          id: PLUGIN_NAME,
-          category: DEFAULT_APP_CATEGORIES.detect,
-          showInAllNavGroup: false
-        }
-      ])
 
       core.chrome.navGroup.addNavLinksToGroup(DEFAULT_NAV_GROUPS.all, [
         {
           id: PLUGIN_NAME,
           category: DEFAULT_APP_CATEGORIES.detect,
-          showInAllNavGroup: false
-        }
-      ])
+          showInAllNavGroup: false,
+        },
+      ]);
 
-      // channels route
+      // alerting sub-routes
       core.application.register({
         id: ALERTS_NAV_ID,
         title: 'Alerts',
@@ -152,7 +176,7 @@ export class AlertingPlugin implements Plugin<void, AlertingStart, AlertingSetup
         category: DEFAULT_APP_CATEGORIES.detect,
         updater$: this.appStateUpdater$ as any,
         mount: async (params: AppMountParameters) => {
-          return mountWrapper(params, "/dashboard");
+          return mountWrapper(params, '/dashboard');
         },
       });
 
@@ -163,7 +187,7 @@ export class AlertingPlugin implements Plugin<void, AlertingStart, AlertingSetup
         category: DEFAULT_APP_CATEGORIES.detect,
         updater$: this.appStateUpdater$ as any,
         mount: async (params: AppMountParameters) => {
-          return mountWrapper(params, "/monitors");
+          return mountWrapper(params, '/monitors');
         },
       });
 
@@ -174,7 +198,7 @@ export class AlertingPlugin implements Plugin<void, AlertingStart, AlertingSetup
         category: DEFAULT_APP_CATEGORIES.detect,
         updater$: this.appStateUpdater$ as any,
         mount: async (params: AppMountParameters) => {
-          return mountWrapper(params, "/destinations");
+          return mountWrapper(params, '/destinations');
         },
       });
 
@@ -210,34 +234,20 @@ export class AlertingPlugin implements Plugin<void, AlertingStart, AlertingSetup
           ...navLinks,
         ]);
       } else {
-        core.chrome.navGroup.addNavLinksToGroup(
-          DEFAULT_NAV_GROUPS.observability,
-          navLinks
-        );
+        core.chrome.navGroup.addNavLinksToGroup(DEFAULT_NAV_GROUPS.observability, navLinks);
       }
 
-      core.chrome.navGroup.addNavLinksToGroup(
-        DEFAULT_NAV_GROUPS['security-analytics'],
-        navLinks
-      );
-
-      core.chrome.navGroup.addNavLinksToGroup(
-        DEFAULT_NAV_GROUPS.all,
-        navLinks
-      );
+      core.chrome.navGroup.addNavLinksToGroup(DEFAULT_NAV_GROUPS.all, navLinks);
     }
 
-    setAssistantDashboards(assistantDashboards || { getFeatureStatus: () => ({ chat: false, alertInsight: false }) });
+    setAssistantDashboards(
+      assistantDashboards || { getFeatureStatus: () => ({ chat: false, alertInsight: false }) }
+    );
     setUISettings(core.uiSettings);
-
-    // Set the HTTP client so it can be pulled into expression fns to make
-    // direct server-side calls
     setClient(core.http);
-
     setDataSourceManagementPlugin(dataSourceManagement);
 
     const enabled = !!dataSource;
-
     setDataSourceEnabled({ enabled });
 
     // registers the expression function used to render anomalies on an Augmented Visualization
@@ -399,7 +409,17 @@ export class AlertingPlugin implements Plugin<void, AlertingStart, AlertingSetup
     }
   }
 
-  public start(core: CoreStart, { visAugmenter, embeddable, data, navigation, contentManagement, assistantDashboards}: AlertingStartDeps): AlertingStart {
+  public start(
+    core: CoreStart,
+    {
+      visAugmenter,
+      embeddable,
+      data,
+      navigation,
+      contentManagement,
+      assistantDashboards,
+    }: AlertingStartDeps
+  ): AlertingStart {
     navigateToAppRef = core.application.navigateToApp;
     setEmbeddable(embeddable);
     setOverlays(core.overlays);
@@ -411,7 +431,13 @@ export class AlertingPlugin implements Plugin<void, AlertingStart, AlertingSetup
     setApplication(core.application);
     setContentManagementStart(contentManagement);
     registerAlertsCard();
-    setAssistantClient(assistantDashboards?.assistantClient || {agentConfigExists: (agentConfigName: string | string[], options?: string) => {return Promise.resolve({ exists: false });}})
+    setAssistantClient(
+      assistantDashboards?.assistantClient || {
+        agentConfigExists: (agentConfigName: string | string[], options?: string) => {
+          return Promise.resolve({ exists: false });
+        },
+      }
+    );
 
     return {};
   }

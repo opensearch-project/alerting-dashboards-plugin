@@ -15,8 +15,9 @@ export default class MonitorService extends MDSEnabledClientService {
     try {
       const aclResponse = await this.enforceWorkspaceAcl(context, req, res, ['library_write']);
       if (aclResponse) return aclResponse;
-      const params = { body: req.body };
-      const client = this.getClientBasedOnDataSource(context, req);
+      const body = await this.enrichTargetArn(context, req, req.body);
+      const params = { body };
+      const client = await this.getClientBasedOnDataSource(context, req);
       const createResponse = await client('alerting.createMonitor', params);
       return res.ok({
         body: {
@@ -40,7 +41,7 @@ export default class MonitorService extends MDSEnabledClientService {
       const aclResponse = await this.enforceWorkspaceAcl(context, req, res, ['library_write']);
       if (aclResponse) return aclResponse;
       const params = { body: req.body };
-      const client = this.getClientBasedOnDataSource(context, req);
+      const client = await this.getClientBasedOnDataSource(context, req);
       const createResponse = await client('alerting.createWorkflow', params);
       return res.ok({
         body: {
@@ -65,7 +66,7 @@ export default class MonitorService extends MDSEnabledClientService {
       if (aclResponse) return aclResponse;
       const { id } = req.params;
       const params = { monitorId: id };
-      const client = this.getClientBasedOnDataSource(context, req);
+      const client = await this.getClientBasedOnDataSource(context, req);
       const response = await client('alerting.deleteMonitor', params);
 
       return res.ok({
@@ -90,7 +91,7 @@ export default class MonitorService extends MDSEnabledClientService {
       if (aclResponse) return aclResponse;
       const { id } = req.params;
       const params = { workflowId: id };
-      const client = this.getClientBasedOnDataSource(context, req);
+      const client = await this.getClientBasedOnDataSource(context, req);
       const response = await client('alerting.deleteWorkflow', params);
 
       return res.ok({
@@ -118,7 +119,7 @@ export default class MonitorService extends MDSEnabledClientService {
       if (aclResponse) return aclResponse;
       const { id } = req.params;
       const params = { monitorId: id, headers: DEFAULT_HEADERS };
-      const client = this.getClientBasedOnDataSource(context, req);
+      const client = await this.getClientBasedOnDataSource(context, req);
       const getResponse = await client('alerting.getMonitor', params);
       let monitor = _.get(getResponse, 'monitor', null);
       const version = _.get(getResponse, '_version', null);
@@ -126,7 +127,6 @@ export default class MonitorService extends MDSEnabledClientService {
       const ifPrimaryTerm = _.get(getResponse, '_primary_term', null);
       const associated_workflows = _.get(getResponse, 'associated_workflows', null);
       if (monitor) {
-        const client = this.getClientBasedOnDataSource(context, req);
         const aggsParams = {
           index: INDEX.ALL_ALERTS,
           body: {
@@ -205,7 +205,7 @@ export default class MonitorService extends MDSEnabledClientService {
       if (aclResponse) return aclResponse;
       const { id } = req.params;
       const params = { monitorId: id };
-      const client = this.getClientBasedOnDataSource(context, req);
+      const client = await this.getClientBasedOnDataSource(context, req);
       const getResponse = await client('alerting.getWorkflow', params);
       let workflow = _.get(getResponse, 'workflow', null);
       const version = _.get(getResponse, '_version', null);
@@ -246,8 +246,9 @@ export default class MonitorService extends MDSEnabledClientService {
       const aclResponse = await this.enforceWorkspaceAcl(context, req, res, ['library_write']);
       if (aclResponse) return aclResponse;
       const { id } = req.params;
-      const params = { monitorId: id, body: req.body, refresh: 'wait_for' };
-      const { type } = req.body;
+      const body = await this.enrichTargetArn(context, req, req.body);
+      const params = { monitorId: id, body, refresh: 'wait_for' };
+      const { type } = body;
 
       // TODO DRAFT: Are we sure we need to include ifSeqNo and ifPrimaryTerm from the UI side when updating monitors?
       const { ifSeqNo, ifPrimaryTerm } = req.query;
@@ -256,7 +257,7 @@ export default class MonitorService extends MDSEnabledClientService {
         params.if_primary_term = ifPrimaryTerm;
       }
 
-      const client = this.getClientBasedOnDataSource(context, req);
+      const client = await this.getClientBasedOnDataSource(context, req);
       const updateResponse = await client(
         `alerting.${type === 'workflow' ? 'updateWorkflow' : 'updateMonitor'}`,
         params
@@ -287,6 +288,7 @@ export default class MonitorService extends MDSEnabledClientService {
         'library_read',
       ]);
       if (aclResponse) return aclResponse;
+
       const { from, size, search, sortDirection, sortField, state, monitorIds } = req.query;
 
       let must = { match_all: {} };
@@ -325,11 +327,12 @@ export default class MonitorService extends MDSEnabledClientService {
         should.push({ term: { 'workflow.enabled': enabled } });
       }
 
+      const isAoss = await this.isUnsupportedEndpoint(context, req);
       const monitorSorts = { name: 'monitor.name.keyword' };
       const monitorSortPageData = { size: 1000 };
       if (monitorSorts[sortField]) {
         monitorSortPageData.sort = [{ [monitorSorts[sortField]]: sortDirection }];
-        monitorSortPageData.size = _.defaultTo(size, 1000);
+        monitorSortPageData.size = _.defaultTo(size, isAoss ? 100 : 1000);
         monitorSortPageData.from = _.defaultTo(from, 0);
       }
 
@@ -362,7 +365,7 @@ export default class MonitorService extends MDSEnabledClientService {
         },
       };
 
-      const client = this.getClientBasedOnDataSource(context, req);
+      const client = await this.getClientBasedOnDataSource(context, req);
       const getResponse = await client('alerting.getMonitors', params);
 
       const totalMonitors = _.get(getResponse, 'hits.total.value', 0);
@@ -540,7 +543,7 @@ export default class MonitorService extends MDSEnabledClientService {
         monitorId: id,
         body: req.body,
       };
-      const client = this.getClientBasedOnDataSource(context, req);
+      const client = await this.getClientBasedOnDataSource(context, req);
       const acknowledgeResponse = await client('alerting.acknowledgeAlerts', params);
       return res.ok({
         body: {
@@ -568,7 +571,7 @@ export default class MonitorService extends MDSEnabledClientService {
         workflowId: id,
         body: req.body,
       };
-      const client = this.getClientBasedOnDataSource(
+      const client = await this.getClientBasedOnDataSource(
         context,
         this.dataSourceEnabled,
         req,
@@ -597,11 +600,12 @@ export default class MonitorService extends MDSEnabledClientService {
       const aclResponse = await this.enforceWorkspaceAcl(context, req, res, ['library_write']);
       if (aclResponse) return aclResponse;
       const { dryrun = 'true' } = req.query;
+      const body = await this.enrichTargetArn(context, req, req.body);
       const params = {
-        body: req.body,
+        body,
         dryrun,
       };
-      const client = this.getClientBasedOnDataSource(context, req);
+      const client = await this.getClientBasedOnDataSource(context, req);
       const executeResponse = await client('alerting.executeMonitor', params);
       return res.ok({
         body: {
@@ -631,11 +635,12 @@ export default class MonitorService extends MDSEnabledClientService {
       const { query: queryBody, index, size, ...rest } = req.body || {};
       const body = { ...(queryBody ?? {}), ...rest };
       if (size !== undefined) {
-        body.size = size;
+        const isAoss = await this.isUnsupportedEndpoint(context, req);
+        body.size = isAoss ? Math.min(size, 100) : size;
       }
       const params = { index, body };
 
-      const client = this.getClientBasedOnDataSource(context, req);
+      const client = await this.getClientBasedOnDataSource(context, req);
       const results = await client('alerting.getMonitors', params);
       return res.ok({
         body: {

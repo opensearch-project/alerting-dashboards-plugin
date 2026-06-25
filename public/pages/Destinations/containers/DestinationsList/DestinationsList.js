@@ -35,6 +35,7 @@ import { backendErrorNotification } from '../../../../utils/helpers';
 import NotificationsInfoCallOut from '../../components/NotificationsInfoCallOut';
 import FullPageNotificationsInfoCallOut from '../../components/FullPageNotificationsInfoCallOut';
 import { getDataSourceQueryObj } from '../../../utils/helpers';
+import { isServerlessDataSource } from '../../../../services';
 
 class DestinationsList extends React.Component {
   constructor(props) {
@@ -231,6 +232,7 @@ class DestinationsList extends React.Component {
         ...this.props.location,
         search: queryParms,
       });
+
       try {
         const resp = await httpClient.get('../api/alerting/destinations', {
           query: { from, ...params, ...this.dataSourceQuery?.query },
@@ -320,6 +322,10 @@ class DestinationsList extends React.Component {
         field: sortField,
       },
     };
+
+    // Alerting plugin destinations are not supported on serverless data sources. Always redirect to notifications plugin.
+    const isServerless = isServerlessDataSource();
+
     return (
       <React.Fragment>
         {destinationConsumedByOthers ? (
@@ -330,7 +336,7 @@ class DestinationsList extends React.Component {
           />
         ) : null}
 
-        {isDestinationLoading || totalDestinations > 0 || isFilterApplied ? (
+        {!isServerless && (isDestinationLoading || totalDestinations > 0 || isFilterApplied) ? (
           <div>
             <EuiTitle size={'l'}>
               <h3>Destinations (deprecated)</h3>

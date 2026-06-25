@@ -23,14 +23,13 @@ describe('getOverviewStatsV2', () => {
 
     expect(stats).toHaveProperty('firstRow');
     expect(stats).toHaveProperty('secondRow');
-    expect(stats.firstRow).toHaveLength(5);
+    expect(stats.firstRow).toHaveLength(4);
     expect(stats.firstRow[0]).toEqual({ header: 'Total active alerts', value: activeCount });
     expect(stats.firstRow[1].header).toBe('Schedule');
-    expect(stats.firstRow[2].header).toBe('Look back window');
     // Last updated header is now a React element with tooltip
-    expect(stats.firstRow[3].header).toBeDefined();
-    expect(React.isValidElement(stats.firstRow[3].header)).toBe(true);
-    expect(stats.firstRow[4]).toEqual({ header: 'Monitor ID', value: monitorId });
+    expect(stats.firstRow[2].header).toBeDefined();
+    expect(React.isValidElement(stats.firstRow[2].header)).toBe(true);
+    expect(stats.firstRow[3]).toEqual({ header: 'Monitor ID', value: monitorId });
     expect(stats.secondRow).toHaveLength(1);
     expect(stats.secondRow[0]).toEqual({ header: 'Description', value: 'Example description' });
   });

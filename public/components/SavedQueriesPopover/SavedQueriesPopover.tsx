@@ -78,8 +78,6 @@ export const SavedQueriesPopover: React.FC<SavedQueriesPopoverProps> = ({
           setIsLoading(false);
         })
         .catch((err: any) => {
-          // eslint-disable-next-line no-console
-          console.error('[SavedQueriesPopover] Error fetching saved queries:', err);
           setIsLoading(false);
         });
     }

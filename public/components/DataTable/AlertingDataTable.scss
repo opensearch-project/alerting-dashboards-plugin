@@ -5,7 +5,7 @@
 
 $osdDocTableCellPadding: calc($euiSizeM / 2);
 
-.explore-table-container {
+.alerting-table-container {
   @include euiScrollBar;
 
   overflow: auto;
@@ -107,7 +107,7 @@ $osdDocTableCellPadding: calc($euiSizeM / 2);
 }
 
 // Table Header
-.exploreDocTableHeader {
+.alerting-table-container .exploreDocTableHeader {
   text-align: left;
 
   .exploreDocTableHeaderField {
@@ -120,11 +120,11 @@ $osdDocTableCellPadding: calc($euiSizeM / 2);
   }
 }
 
-.exploreDocTableHeader button {
+.alerting-table-container .exploreDocTableHeader button {
   margin-left: $euiSizeXS;
 }
 
-.exploreDocTableHeaderField {
+.alerting-table-container .exploreDocTableHeaderField {
   &__actionButton {
     opacity: 0;
     height: 10px;
@@ -143,20 +143,20 @@ $osdDocTableCellPadding: calc($euiSizeM / 2);
 }
 
 // Table Cell
-.exploreDocTable__detailsParent {
+.alerting-table-container .exploreDocTable__detailsParent {
   border-top: none !important;
 }
 
-.euiFlexItem.exploreDocTable__detailsIconContainer {
+.alerting-table-container .euiFlexItem.exploreDocTable__detailsIconContainer {
   margin-right: 0;
 }
 
-.explore-table td.exploreDocTableCell__toggleDetails {
+.alerting-table-container .explore-table td.exploreDocTableCell__toggleDetails {
   padding: 4px 0 0 4px;
   z-index: 3;
 }
 
-.exploreDocTableCell {
+.alerting-table-container .exploreDocTableCell {
   position: relative;
 
   &__filter {
@@ -208,13 +208,13 @@ $osdDocTableCellPadding: calc($euiSizeM / 2);
   }
 }
 
-.explore-table {
+.alerting-table-container .explore-table {
   .exploreDocTableCell {
     padding: $euiSizeS;
   }
 }
 
-.exploreDocTableCell__dataField {
+.alerting-table-container .exploreDocTableCell__dataField {
   white-space: pre-wrap;
   font-family: monospace;
   font-size: 12px;
@@ -226,7 +226,7 @@ $osdDocTableCellPadding: calc($euiSizeM / 2);
 }
 
 // Field name highlighting in log stream (exact match to Discover)
-.field-name-highlight {
+.alerting-table-container .field-name-highlight {
   background-color: transparentize(shade($euiColorPrimary, 20%), 0.9);
   color: $euiTextColor;
   padding: calc($euiSizeXS / 2) $euiSizeXS;
@@ -236,7 +236,7 @@ $osdDocTableCellPadding: calc($euiSizeM / 2);
 }
 
 // Expanded document table styling to match Discover
-.expanded-document-table {
+.alerting-table-container .expanded-document-table {
   .table {
     font-family: monospace;
     font-size: 12px;
@@ -259,7 +259,7 @@ $osdDocTableCellPadding: calc($euiSizeM / 2);
 }
 
 // Pagination
-.exploreDocTable_pagination {
+.alerting-table-container .exploreDocTable_pagination {
   width: 100%;
   padding: $euiSizeS 0;
 

@@ -20,6 +20,8 @@ const onChangeDefinition = (e, form) => {
   const type = e.target.value;
   form.setFieldValue('monitor_type', type);
 
+  // Clearing various form fields when changing monitor types.
+  // TODO: Implement modal that confirms the change before clearing.
   form.setFieldValue('index', FORMIK_INITIAL_VALUES.index);
   form.setFieldValue('searchType', FORMIK_INITIAL_VALUES.searchType);
   form.setFieldValue('triggerDefinitions', FORMIK_INITIAL_TRIGGER_VALUES.triggerConditions);
@@ -88,7 +90,7 @@ const pplDescription = (
   </EuiText>
 );
 
-const MonitorType = ({ values }) => (
+const MonitorType = ({ values, isServerless }) => (
   <>
     <EuiFormLabel>Monitor type</EuiFormLabel>
     <EuiSpacer size="xs" />
@@ -121,48 +123,54 @@ const MonitorType = ({ values }) => (
           }}
         />
       </EuiFlexItem>
-      <EuiFlexItem grow={false} style={{ width: 350 }}>
-        <FormikCheckableCard
-          name="monitorTypeClusterMetrics"
-          inputProps={{
-            id: 'clusterMetricsMonitorRadioCard',
-            label: 'Per cluster metrics monitor',
-            checked: values.monitor_type === MONITOR_TYPE.CLUSTER_METRICS,
-            value: MONITOR_TYPE.CLUSTER_METRICS,
-            onChange: (e, field, form) => onChangeDefinition(e, form),
-            children: clusterMetricsDescription,
-            'data-test-subj': 'clusterMetricsMonitorRadioCard',
-          }}
-        />
-      </EuiFlexItem>
-      <EuiFlexItem grow={false} style={{ width: 350 }}>
-        <FormikCheckableCard
-          name="monitorTypeDocLevel"
-          inputProps={{
-            id: 'docLevelMonitorRadioCard',
-            label: 'Per document monitor',
-            checked: values.monitor_type === MONITOR_TYPE.DOC_LEVEL,
-            value: MONITOR_TYPE.DOC_LEVEL,
-            onChange: (e, field, form) => onChangeDefinition(e, form),
-            children: documentLevelDescription,
-            'data-test-subj': 'docLevelMonitorRadioCard',
-          }}
-        />
-      </EuiFlexItem>
-      <EuiFlexItem grow={false} style={{ width: 350 }}>
-        <FormikCheckableCard
-          name="monitorTypeCompositeLevel"
-          inputProps={{
-            id: 'compositeLevelMonitorRadioCard',
-            label: 'Composite monitor',
-            checked: values.monitor_type === MONITOR_TYPE.COMPOSITE_LEVEL,
-            value: MONITOR_TYPE.COMPOSITE_LEVEL,
-            onChange: (e, field, form) => onChangeDefinition(e, form),
-            children: compositeLevelDescription,
-            'data-test-subj': 'compositeLevelMonitorRadioCard',
-          }}
-        />
-      </EuiFlexItem>
+      {!isServerless && (
+        <EuiFlexItem grow={false} style={{ width: 350 }}>
+          <FormikCheckableCard
+            name="monitorTypeClusterMetrics"
+            inputProps={{
+              id: 'clusterMetricsMonitorRadioCard',
+              label: 'Per cluster metrics monitor',
+              checked: values.monitor_type === MONITOR_TYPE.CLUSTER_METRICS,
+              value: MONITOR_TYPE.CLUSTER_METRICS,
+              onChange: (e, field, form) => onChangeDefinition(e, form),
+              children: clusterMetricsDescription,
+              'data-test-subj': 'clusterMetricsMonitorRadioCard',
+            }}
+          />
+        </EuiFlexItem>
+      )}
+      {!isServerless && (
+        <EuiFlexItem grow={false} style={{ width: 350 }}>
+          <FormikCheckableCard
+            name="monitorTypeDocLevel"
+            inputProps={{
+              id: 'docLevelMonitorRadioCard',
+              label: 'Per document monitor',
+              checked: values.monitor_type === MONITOR_TYPE.DOC_LEVEL,
+              value: MONITOR_TYPE.DOC_LEVEL,
+              onChange: (e, field, form) => onChangeDefinition(e, form),
+              children: documentLevelDescription,
+              'data-test-subj': 'docLevelMonitorRadioCard',
+            }}
+          />
+        </EuiFlexItem>
+      )}
+      {!isServerless && (
+        <EuiFlexItem grow={false} style={{ width: 350 }}>
+          <FormikCheckableCard
+            name="monitorTypeCompositeLevel"
+            inputProps={{
+              id: 'compositeLevelMonitorRadioCard',
+              label: 'Composite monitor',
+              checked: values.monitor_type === MONITOR_TYPE.COMPOSITE_LEVEL,
+              value: MONITOR_TYPE.COMPOSITE_LEVEL,
+              onChange: (e, field, form) => onChangeDefinition(e, form),
+              children: compositeLevelDescription,
+              'data-test-subj': 'compositeLevelMonitorRadioCard',
+            }}
+          />
+        </EuiFlexItem>
+      )}
       {isPplAlertingEnabled() && (
         <EuiFlexItem grow={false} style={{ width: 350 }}>
           <FormikCheckableCard

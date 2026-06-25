@@ -64,8 +64,8 @@ export default class FindingService extends MDSEnabledClientService {
     params.searchString = search;
     if (search.trim()) params.searchString = `*${search.trim().split(' ').join('* *')}*`;
 
-    const client = this.getClientBasedOnDataSource(context, req);
     try {
+      const client = await this.getClientBasedOnDataSource(context, req);
       const resp = await client('alerting.getFindings', params);
       const findings = resp.findings.map((result) => ({ [result.finding.id]: { ...result } }));
       const totalFindings = resp.totalFindings;

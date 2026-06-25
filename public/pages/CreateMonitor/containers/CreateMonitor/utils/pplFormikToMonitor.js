@@ -4,6 +4,7 @@
  */
 
 import _ from 'lodash';
+import { computeLookBackMinutes, addTimeFilterToQuery } from './pplAlertingHelpers';
 /**
  * Normalize timezone coming from formik (can be array/object/string)
  */
@@ -66,41 +67,6 @@ export const pplToV2Schedule = (values) => {
   };
 };
 
-const durationToMinutes = (raw) => {
-  if (!raw) return null;
-
-  if (typeof raw === 'number') {
-    return Number.isFinite(raw) && raw > 0 ? Math.floor(raw) : null;
-  }
-
-  if (typeof raw === 'string') {
-    const match = raw.trim().match(/^(\d+)\s*([smhd]?)$/i);
-    if (match) {
-      const val = Number(match[1]);
-      const unit = (match[2] || 'm').toLowerCase();
-
-      if (unit === 's') return Math.max(1, Math.ceil(val / 60));
-      if (unit === 'm') return Math.floor(val);
-      if (unit === 'h') return Math.floor(val * 60);
-      if (unit === 'd') return Math.floor(val * 60 * 24);
-    }
-    return null;
-  }
-
-  if (typeof raw === 'object' && raw.value) {
-    const val = Number(raw.value);
-    if (!Number.isFinite(val) || val <= 0) return null;
-
-    const unit = String(raw.unit || 'minutes').toLowerCase();
-    if (unit.startsWith('minute')) return Math.floor(val);
-    if (unit.startsWith('hour')) return Math.floor(val * 60);
-    if (unit.startsWith('day')) return Math.floor(val * 60 * 24);
-    return Math.floor(val);
-  }
-
-  return null;
-};
-
 const normalizeNumCondition = (raw) => {
   const v = String(raw ?? '')
     .trim()
@@ -154,9 +120,6 @@ const formikPplTriggerToWire = (t, i = 0) => {
   ).toLowerCase();
   const isNum = type === 'number_of_results';
 
-  const throttle = durationToMinutes(t?.suppress ?? t?.throttle);
-  const expires = durationToMinutes(t?.expires ?? t?.queryLevelTrigger?.expires);
-
   const cleanActions = (actions) => {
     if (!Array.isArray(actions)) return [];
     return actions.map((a) => ({
@@ -169,9 +132,8 @@ const formikPplTriggerToWire = (t, i = 0) => {
 
   const trigger = {
     name: t?.name || `trigger${i + 1}`,
-    severity: normalizeSeverity(t?.severity),
+    severity: t.severity,
     actions: cleanActions(t?.actions),
-    mode: (t?.mode || 'result_set').toLowerCase(),
     type,
     num_results_condition: isNum
       ? normalizeNumCondition(t?.num_results_condition || t?.thresholdEnum)
@@ -182,13 +144,6 @@ const formikPplTriggerToWire = (t, i = 0) => {
 
   if (t?.id) {
     trigger.id = t.id;
-  }
-
-  if (throttle !== null) {
-    trigger.throttle_minutes = throttle;
-  }
-  if (expires !== null) {
-    trigger.expires_minutes = expires;
   }
 
   return trigger;
@@ -221,12 +176,10 @@ export const buildPPLMonitorFromFormik = (values) => {
           name: 'trigger1',
           severity: 'info',
           actions: [],
-          mode: 'result_set',
           type: 'number_of_results',
           num_results_condition: '>=',
           num_results_value: 1,
           custom_condition: null,
-          expires_minutes: 10080,
         },
       ];
 
@@ -248,7 +201,14 @@ export const buildPPLMonitorFromFormik = (values) => {
     description: values.description || '',
     enabled: !values.disabled,
     schedule,
-    query: values.pplQuery || '',
+    query: (() => {
+      let q = values.pplQuery || '';
+      const lbMinutes = computeLookBackMinutes(values);
+      if (lbMinutes > 0 && values.timestampField) {
+        q = addTimeFilterToQuery(q, lbMinutes, values.timestampField);
+      }
+      return q;
+    })(),
     triggers,
     ui_metadata: {
       ...(values.ui_metadata || {}),

@@ -20,6 +20,7 @@ import { TRIGGER_TYPE } from '../../../../CreateTrigger/containers/CreateTrigger
 import { getInitialTriggerValues } from '../../../../CreateTrigger/components/AddTriggerButton/utils';
 import { AGGREGATION_TYPES } from '../../../components/MonitorExpressions/expressions/utils/constants';
 import { getDataSourceQueryObj } from '../../../../utils/helpers';
+import pplAlertingMonitorToFormik from './pplAlertingMonitorToFormik';
 
 export const getInitialValues = ({
   title,
@@ -65,10 +66,19 @@ export const getInitialValues = ({
 
   if (edit && monitorToEdit) {
     const triggers = triggerToFormik(_.get(monitorToEdit, 'triggers', []), monitorToEdit);
-    initialValues = {
-      ...monitorToFormik(monitorToEdit),
-      triggerDefinitions: triggers.triggerDefinitions,
-    };
+    switch (monitorToEdit.monitor_type) {
+      case MONITOR_TYPE.PPL:
+        initialValues = {
+          ...pplAlertingMonitorToFormik(monitorToEdit),
+          triggerDefinitions: triggers.triggerDefinitions,
+        };
+        break;
+      default:
+        initialValues = {
+          ...monitorToFormik(monitorToEdit),
+          triggerDefinitions: triggers.triggerDefinitions,
+        };
+    }
   }
 
   return initialValues;

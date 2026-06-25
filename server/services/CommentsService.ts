@@ -8,8 +8,8 @@ import { MDSEnabledClientService } from "./MDSEnabledClientService";
 
 export default class CommentsService extends MDSEnabledClientService {
   createComment = async (context, req, res) => {
-    const client = this.getClientBasedOnDataSource(context, req);
     try {
+      const client = await this.getClientBasedOnDataSource(context, req);
       const resp = await client('alerting.createComment', { alertId: req.params.alertId, body: req.body });
 
       return res.ok({
@@ -30,8 +30,8 @@ export default class CommentsService extends MDSEnabledClientService {
   };
 
   updateComment = async (context, req, res) => {
-    const client = this.getClientBasedOnDataSource(context, req);
     try {
+      const client = await this.getClientBasedOnDataSource(context, req);
       const resp = await client('alerting.updateComment', { commentId: req.params.commentId, body: req.body });
 
       return res.ok({
@@ -52,8 +52,8 @@ export default class CommentsService extends MDSEnabledClientService {
   };
 
   searchComments = async (context, req, res) => {
-    const client = this.getClientBasedOnDataSource(context, req);
     try {
+      const client = await this.getClientBasedOnDataSource(context, req);
       const resp = await client('alerting.searchComments', { body: req.body });
 
       const comments: Comment[] = resp.hits.hits.map(({ _id, _source: { entity_id, content, created_time, last_updated_time, user } }) => ({
@@ -83,8 +83,8 @@ export default class CommentsService extends MDSEnabledClientService {
   };
 
   deleteComment = async (context, req, res) => {
-    const client = this.getClientBasedOnDataSource(context, req);
     try {
+      const client = await this.getClientBasedOnDataSource(context, req);
       const resp = await client('alerting.deleteComment', { commentId: req.params.commentId });
 
       return res.ok({

@@ -80,15 +80,26 @@ export function getAnnotationData(xDomain, yDomain, thresholdValue) {
   ];
 }
 
+// Resolves an aggregation value by name from an object, handling both plain keys
+// (e.g. "over") and typed keys (e.g. "date_histogram#over") returned by OpenSearch.
+export function resolveTypedKey(obj, name) {
+  if (!obj) return undefined;
+  if (obj[name] !== undefined) return obj[name];
+  const key = Object.keys(obj).find((k) => k.endsWith(`#${name}`));
+  return key ? obj[key] : undefined;
+}
+
 export function getDataFromResponse(response, fieldName, monitorType) {
   if (!response) return [];
   const isQueryMonitor = monitorType === MONITOR_TYPE.QUERY_LEVEL;
 
   if (isQueryMonitor) {
-    const buckets = _.get(response, 'aggregations.over.buckets', []);
+    const overAgg = resolveTypedKey(_.get(response, 'aggregations'), 'over');
+    const buckets = _.get(overAgg, 'buckets', []);
     return buckets.map(getXYValues).filter(filterInvalidYValues);
   } else {
-    const buckets = _.get(response, 'aggregations.composite_agg.buckets', []);
+    const compositeAgg = resolveTypedKey(_.get(response, 'aggregations'), 'composite_agg');
+    const buckets = _.get(compositeAgg, 'buckets', []);
     return buckets
       .map((bucket) => getXYValuesByFieldName(bucket, fieldName))
       .filter(filterInvalidYValues)
@@ -101,7 +112,8 @@ export function getDataFromResponse(response, fieldName, monitorType) {
 // The number n is based on the constant BAY_KEY_COUNT.
 export function getMapDataFromResponse(response, fieldName, groupByFields) {
   if (!response) return [];
-  const buckets = _.get(response, 'aggregations.composite_agg.buckets', []);
+  const compositeAgg = resolveTypedKey(_.get(response, 'aggregations'), 'composite_agg');
+  const buckets = _.get(compositeAgg, 'buckets', []);
   const allData = new Map();
   buckets.map((bucket) => {
     const dataPoint = getXYValuesByFieldName(bucket, fieldName);
@@ -135,8 +147,9 @@ export function getXYValuesByFieldName(bucket, fieldName) {
 
 export function getXYValues(bucket) {
   const x = new Date(bucket.key_as_string);
-  const path = bucket.metric ? 'metric.value' : 'doc_count';
-  const y = _.get(bucket, path, null);
+  const metricAgg = resolveTypedKey(bucket, 'metric');
+  const path = metricAgg ? 'value' : undefined;
+  const y = path ? _.get(metricAgg, path, null) : _.get(bucket, 'doc_count', null);
   return { x, y };
 }
 

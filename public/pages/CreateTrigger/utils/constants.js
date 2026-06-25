@@ -11,8 +11,8 @@ export const DEFAULT_MESSAGE_SOURCE = {
   Monitor {{ctx.monitor.name}} just entered alert status. Please investigate the issue.
   - Trigger: {{ctx.trigger.name}}
   - Severity: {{ctx.trigger.severity}}
-  - Period start: {{ctx.periodStart}} UTC
-  - Period end: {{ctx.periodEnd}} UTC
+  - Period start: {{ctx.periodStart}}
+  - Period end: {{ctx.periodEnd}}
 
   - Deduped Alerts:
   {{#ctx.dedupedAlerts}}
@@ -33,11 +33,11 @@ export const DEFAULT_MESSAGE_SOURCE = {
   Monitor {{ctx.monitor.name}} just entered alert status. Please investigate the issue.
   - Trigger: {{ctx.trigger.name}}
   - Severity: {{ctx.trigger.severity}}
-  - Period start: {{ctx.periodStart}} UTC
-  - Period end: {{ctx.periodEnd}} UTC
+  - Period start: {{ctx.periodStart}}
+  - Period end: {{ctx.periodEnd}}
   `.trim(),
   PPL_MONITOR: `
-Monitor {{ctx.monitorV2.name}} just entered alert status. Please investigate the issue.
+Monitor {{ctx.monitor.name}} just entered alert status. Please investigate the issue.
   - Trigger: {{ctx.ppl_trigger.name}}
   - Severity: {{ctx.ppl_trigger.severity}}
   `.trim(),

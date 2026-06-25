@@ -69,7 +69,8 @@ export default class AlertService extends MDSEnabledClientService {
     }
 
     params.startIndex = from;
-    params.size = size;
+    const isAoss = await this.isUnsupportedEndpoint(context, req);
+    params.size = isAoss ? Math.min(size, 100) : size;
     params.severityLevel = severityLevel;
     params.alertState = alertState;
     params.searchString = search;
@@ -79,7 +80,7 @@ export default class AlertService extends MDSEnabledClientService {
       params[idField] = !Array.isArray(monitorIds) ? monitorIds : monitorIds[0];
     }
 
-    const client = this.getClientBasedOnDataSource(context, req);
+    const client = await this.getClientBasedOnDataSource(context, req);
     try {
       const resp = await client('alerting.getAlerts', params);
 
@@ -121,7 +122,7 @@ export default class AlertService extends MDSEnabledClientService {
       'library_read',
     ]);
     if (aclResponse) return aclResponse;
-    const client = this.getClientBasedOnDataSource(context, req);
+    const client = await this.getClientBasedOnDataSource(context, req);
     try {
       const resp = await client('alerting.getWorkflowAlerts', req.query);
 

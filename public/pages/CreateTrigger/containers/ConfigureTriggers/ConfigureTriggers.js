@@ -17,7 +17,10 @@ import _ from 'lodash';
 import DefineBucketLevelTrigger from '../DefineBucketLevelTrigger';
 import AddTriggerButton from '../../components/AddTriggerButton';
 import TriggerEmptyPrompt from '../../components/TriggerEmptyPrompt';
-import { MAX_TRIGGERS } from '../../../MonitorDetails/containers/Triggers/Triggers';
+import {
+  MAX_SERVERLESS_BUCKET_TRIGGERS,
+  MAX_TRIGGERS,
+} from '../../../MonitorDetails/containers/Triggers/Triggers';
 import DefineTrigger from '../DefineTrigger';
 import { MONITOR_TYPE, SEARCH_TYPE } from '../../../../utils/constants';
 import { getPathsPerDataType } from '../../../CreateMonitor/containers/DefineMonitor/utils/mappings';
@@ -47,7 +50,6 @@ class ConfigureTriggers extends React.Component {
       dataTypes: {},
       executeResponse: null,
       triggerDeleted: false,
-      addTriggerButton: this.prepareAddTriggerButton(),
       triggerEmptyPrompt: this.prepareTriggerEmptyPrompt(),
       currentSubmitCount: 0,
       accordionsOpen,
@@ -59,7 +61,6 @@ class ConfigureTriggers extends React.Component {
 
     this.onQueryMappings = this.onQueryMappings.bind(this);
     this.onRunExecute = this.onRunExecute.bind(this);
-    this.prepareAddTriggerButton = this.prepareAddTriggerButton.bind(this);
     this.prepareTriggerEmptyPrompt = this.prepareTriggerEmptyPrompt.bind(this);
   }
 
@@ -104,7 +105,6 @@ class ConfigureTriggers extends React.Component {
       prevApiType !== currApiType ||
       prevMonitorType !== currMonitorType
     ) {
-      this.setState({ addTriggerButton: this.prepareAddTriggerButton() });
       this.setState({ triggerEmptyPrompt: this.prepareTriggerEmptyPrompt() });
     }
 
@@ -127,20 +127,6 @@ class ConfigureTriggers extends React.Component {
         if (numOfTriggers > 0 && canExecuteClusterMetricsMonitor(uri)) this.onRunExecute();
         break;
     }
-  };
-
-  prepareAddTriggerButton = () => {
-    const { monitorValues, triggerArrayHelpers, triggerValues } = this.props;
-    const disableAddTriggerButton =
-      _.get(triggerValues, 'triggerDefinitions', []).length >= MAX_TRIGGERS;
-    return (
-      <AddTriggerButton
-        arrayHelpers={triggerArrayHelpers}
-        disabled={disableAddTriggerButton}
-        monitorType={monitorValues.monitor_type}
-        script={getDefaultScript(monitorValues)}
-      />
-    );
   };
 
   prepareTriggerEmptyPrompt = () => {
@@ -438,11 +424,17 @@ class ConfigureTriggers extends React.Component {
   render() {
     const { triggerArrayHelpers, triggerValues, flyoutMode, monitorValues } = this.props;
     const { ContentPanelStructure } = this.state;
-    const numOfTriggers = _.get(triggerValues, 'triggerDefinitions', []).length;
-    const displayAddTriggerButton = numOfTriggers > 0;
-    const disableAddTriggerButton = numOfTriggers >= MAX_TRIGGERS;
     const monitorType = monitorValues.monitor_type;
     const isComposite = monitorType === MONITOR_TYPE.COMPOSITE_LEVEL;
+
+    const maxTriggers =
+      monitorType === MONITOR_TYPE.BUCKET_LEVEL && this.props.isServerless
+        ? MAX_SERVERLESS_BUCKET_TRIGGERS
+        : MAX_TRIGGERS;
+
+    const numOfTriggers = _.get(triggerValues, 'triggerDefinitions', []).length;
+    const displayAddTriggerButton = numOfTriggers > 0;
+    const disableAddTriggerButton = numOfTriggers >= maxTriggers;
 
     return (
       <ContentPanelStructure
@@ -477,7 +469,7 @@ class ConfigureTriggers extends React.Component {
               monitorType={monitorType}
             />
             <EuiSpacer size={'s'} />
-            {inputLimitText(numOfTriggers, MAX_TRIGGERS, 'trigger', 'triggers')}
+            {inputLimitText(numOfTriggers, maxTriggers, 'trigger', 'triggers')}
           </div>
         ) : null}
       </ContentPanelStructure>

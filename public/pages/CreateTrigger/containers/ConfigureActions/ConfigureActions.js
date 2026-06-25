@@ -22,6 +22,7 @@ import { formikToTrigger } from '../CreateTrigger/utils/formikToTrigger';
 import { getChannelOptions, toChannelType } from '../../utils/helper';
 import { getInitialActionValues } from '../../components/AddActionButton/utils';
 import { getDataSourceId } from '../../../utils/helpers';
+import { getDataSourceMetadata, isServerlessDataSource } from '../../../../services';
 
 const createActionContext = (context, action) => {
   let trigger = context.trigger;
@@ -78,6 +79,7 @@ class ConfigureActions extends React.Component {
       currentSubmitCount: 0,
       accordionsOpen,
       isInitialLoading: true,
+      isAoss: false,
     };
   }
 
@@ -85,10 +87,11 @@ class ConfigureActions extends React.Component {
     const { httpClient, plugins } = this.props;
 
     const allowList = await getAllowList(httpClient);
-    this.setState({ allowList });
+    const isAoss = isServerlessDataSource();
+    this.setState({ allowList, isAoss });
 
     // Check if notification plugin is present
-    if (plugins.indexOf(OS_NOTIFICATION_PLUGIN) !== -1) {
+    if (plugins.indexOf(OS_NOTIFICATION_PLUGIN) !== -1 || isAoss) {
       this.setState({ hasNotificationPlugin: true });
     }
 
@@ -96,10 +99,16 @@ class ConfigureActions extends React.Component {
   }
 
   componentDidUpdate(prevProps) {
-    if (this.props.plugins !== prevProps.plugins) {
-      if (this.props.plugins.indexOf(OS_NOTIFICATION_PLUGIN) !== -1) {
-        this.setState({ hasNotificationPlugin: true });
-      }
+    const isAoss = isServerlessDataSource();
+    const isAossChanged = isAoss !== this.state.isAoss;
+    if (isAossChanged) {
+      this.setState({ isAoss });
+    }
+
+    if (this.props.plugins !== prevProps.plugins || isAossChanged) {
+      const hasNotificationPlugin =
+        this.props.plugins.indexOf(OS_NOTIFICATION_PLUGIN) !== -1 || isAoss;
+      this.setState({ hasNotificationPlugin });
 
       this.loadDestinations();
     }
@@ -116,14 +125,17 @@ class ConfigureActions extends React.Component {
    * @returns {Promise<*[]>}
    */
   getChannels = async () => {
-    const { plugins } = this.props;
-    const hasNotificationPlugin = plugins.indexOf(OS_NOTIFICATION_PLUGIN) !== -1;
+    const { hasNotificationPlugin, isAoss } = this.state;
 
     let channels = [];
     let index = 0;
+    const DEFAULT_CHANNEL_TYPES = ['slack', 'email', 'chime', 'microsoft_teams', 'webhook', 'sns'];
     const getChannels = async () => {
-      const serverFeatures = await this.props.notificationService.getServerFeatures();
-      const configTypes = Object.keys(serverFeatures.availableChannels);
+      let configTypes = DEFAULT_CHANNEL_TYPES;
+      if (!isAoss) {
+        const serverFeatures = await this.props.notificationService.getServerFeatures();
+        configTypes = Object.keys(serverFeatures.availableChannels);
+      }
       const getChannelsQuery = {
         from_index: index,
         max_items: MAX_CHANNELS_RESULT_SIZE,
@@ -160,7 +172,38 @@ class ConfigureActions extends React.Component {
 
   loadDestinations = async (searchText = '') => {
     const { httpClient, values, arrayHelpers, notifications, fieldPath, flyoutMode } = this.props;
-    const { allowList, actionDeleted } = this.state;
+    const { allowList, actionDeleted, isAoss } = this.state;
+
+    // Destinations-related API do not exist in AOSS. Only load notification channels.
+    if (isAoss) {
+      this.setState({ loadingDestinations: true });
+      try {
+        const channels = await this.getChannels();
+        const channelOptionsByType = getChannelOptions(channels);
+        this.setState({
+          destinations: channelOptionsByType,
+          flattenedDestinations: channels,
+          loadingDestinations: false,
+        });
+
+        const monitorType = _.get(
+          arrayHelpers,
+          'form.values.monitor_type',
+          MONITOR_TYPE.QUERY_LEVEL
+        );
+        const actions = _.get(values, `${fieldPath}actions`, []);
+        const initialActionValues = getInitialActionValues({ monitorType, flyoutMode, actions });
+
+        if (channels.length > 0 && !_.get(values, `${fieldPath}actions`) && !actionDeleted) {
+          arrayHelpers.insert(0, initialActionValues);
+        }
+      } catch (err) {
+        console.error(err);
+        this.setState({ destinations: [], flattenedDestinations: [], loadingDestinations: false });
+      }
+      this.setState({ isInitialLoading: false });
+      return;
+    }
 
     this.setState({ loadingDestinations: true });
     try {
@@ -298,28 +341,18 @@ class ConfigureActions extends React.Component {
   };
 
   renderActions = (arrayHelpers) => {
-    const {
-      context,
-      setFlyout,
-      values,
-      fieldPath,
-      httpClient,
-      plugins,
-      flyoutMode,
-      submitCount,
-      errors,
-    } = this.props;
+    const { context, setFlyout, values, fieldPath, flyoutMode, submitCount, errors } = this.props;
     const {
       destinations,
       flattenedDestinations,
       accordionsOpen,
       isInitialLoading,
       currentSubmitCount,
+      hasNotificationPlugin,
     } = this.state;
     const hasDestinations = !_.isEmpty(destinations);
     const hasActions = !_.isEmpty(_.get(values, `${fieldPath}actions`));
     const shouldRenderActions = hasActions || (hasDestinations && hasActions);
-    const hasNotificationPlugin = plugins.indexOf(OS_NOTIFICATION_PLUGIN) !== -1;
     const numActions = _.get(values, `${fieldPath}actions`, []).length;
 
     return shouldRenderActions ? (
