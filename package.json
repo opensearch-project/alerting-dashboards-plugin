@@ -15,7 +15,7 @@
   "scripts": {
     "osd": "node ../../scripts/osd",
     "opensearch": "node ../../scripts/opensearch",
-    "lint": "../../node_modules/.bin/eslint '**/*.js' -c .eslintrc --ignore-path .gitignore",
+    "lint": "node ../../scripts/eslint",
     "test:jest:windows": "SET TZ=UTC ../../node_modules/.bin/jest --config ./test/jest.config.js",
     "test:jest": "TZ=UTC ../../node_modules/.bin/jest --config ./test/jest.config.js",
     "test:jest:update-snapshots": "yarn run test:jest -u",
@@ -39,7 +39,6 @@
     "@reduxjs/toolkit": "^1.6.1",
     "brace": "0.11.1",
     "formik": "^2.2.6",
-    "prettier": "^2.1.1",
     "query-string": "^6.13.2",
     "react-redux": "^8.1.0",
     "react-vis": "^1.8.1"
