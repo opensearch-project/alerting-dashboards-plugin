@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`Chart Helpers Time Series dataPointsGenerator should generate correct data point for an alert has acknowledged_time 1`] = `
 Array [
