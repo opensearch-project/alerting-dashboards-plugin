@@ -3,7 +3,11 @@
  
 ### Issues Resolved
 [List any issues this PR will resolve]
- 
+
+Functional test repo location:
+remote: <remote of the FTR to test against. If this is not edited, it will default to opensearch-project>
+branch: <branch of the FTR to test against. If this is not edited, it will default to branch version the PR is against>
+
 ### Check List
 - [ ] New functionality includes testing.
   - [ ] All tests pass
