@@ -63,6 +63,7 @@ export function formikToMonitor(values) {
         monitor_type: values.monitor_type,
         ...monitorUiMetadata(),
       },
+      ...(formikToRoles(values).length && { rbac_roles: formikToRoles(values) }),
     };
   }
 
@@ -79,6 +80,7 @@ export function formikToMonitor(values) {
       monitor_type: values.monitor_type,
       ...monitorUiMetadata(),
     },
+    ...(formikToRoles(values).length && { rbac_roles: formikToRoles(values) }),
   };
 }
 
@@ -205,6 +207,10 @@ export function formikToUiSearch(values) {
 
 export function formikToIndices(values) {
   return values.index.map(({ label }) => label);
+}
+
+export function formikToRoles(values) {
+  return values.roles.map(({ label }) => label);
 }
 
 export function formikToQuery(values) {
