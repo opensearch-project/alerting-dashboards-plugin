@@ -98,8 +98,8 @@ export default class DashboardClassic extends Component {
         typeof totalAlerts === 'number'
           ? totalAlerts
           : Number.isFinite(Number(totalAlerts))
-          ? Number(totalAlerts)
-          : NaN;
+            ? Number(totalAlerts)
+            : NaN;
       const normalizedTotal = Number.isFinite(numeric) ? numeric : 0;
       this.props.onTotalsChange({ totalAlerts: normalizedTotal });
     }
@@ -172,10 +172,6 @@ export default class DashboardClassic extends Component {
       const storedDataSourceId = _.get(this.dataSourceQuery, 'query.dataSourceId');
       const resolvedDataSourceId =
         storedDataSourceId ?? getDataSourceId(this.props.landingDataSourceId);
-
-      if (dataSourceEnabled() && resolvedDataSourceId === undefined) {
-        return;
-      }
 
       if (resolvedDataSourceId !== undefined && !storedDataSourceId) {
         this.dataSourceQuery = { query: { dataSourceId: resolvedDataSourceId } };
