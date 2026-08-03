@@ -46,6 +46,16 @@ Object.defineProperty(window, 'matchMedia', {
   })),
 });
 
+// jsdom does not provide ResizeObserver, but EUI / elastic-charts instantiate it at render time.
+class ResizeObserver {
+  observe() {}
+  unobserve() {}
+  disconnect() {}
+}
+
+window.ResizeObserver = ResizeObserver;
+global.ResizeObserver = ResizeObserver;
+
 // jsdom 26 marks window.localStorage and window.sessionStorage as non-configurable.
 // Re-declare them as configurable once here so individual tests can override them
 // with Object.defineProperty without hitting "Cannot redefine property" errors.
