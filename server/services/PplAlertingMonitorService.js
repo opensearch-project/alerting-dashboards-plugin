@@ -722,7 +722,10 @@ export default class PplAlertingMonitorService extends MDSEnabledClientService {
       const aclResponse = await this.enforceWorkspaceAcl(context, req, res, ['library_write']);
       if (aclResponse) return aclResponse;
       const client = await this.getClientBasedOnDataSource(context, req);
-      const body = await this.enrichTargetArn(context, req, req.body);
+      // The engine only speaks the v1 monitor format -- translate the
+      // { ppl_monitor: {...} } body the same way createMonitor/updateMonitor
+      // do, otherwise Monitor.parse fails with "Monitor name is null".
+      const body = toV1MonitorBody(await this.enrichTargetArn(context, req, req.body));
       const resp = await client('transport.request', {
         method: 'POST',
         path: `${PPL_MONITOR_BASE_API}/_execute`,
