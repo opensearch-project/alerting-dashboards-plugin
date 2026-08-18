@@ -20,6 +20,7 @@ import {
 import { backendErrorNotification } from '../../../../utils/helpers';
 import { TRIGGER_TYPE } from '../CreateTrigger/utils/constants';
 import { formikToTrigger } from '../CreateTrigger/utils/formikToTrigger';
+import { buildPPLMonitorFromFormik } from '../../../CreateMonitor/containers/CreateMonitor/utils/pplFormikToMonitor';
 import { getChannelOptions, toChannelType } from '../../utils/helper';
 import { getDataSourceId } from '../../../utils/helpers';
 import { isServerlessDataSource } from '../../../../services';
@@ -249,6 +250,57 @@ class ConfigureActionsPpl extends React.Component {
     this.setState({ isInitialLoading: false });
   };
 
+  // PPL monitors use the v2 API shape ({ ppl_monitor: {...} } with ppl-typed
+  // triggers). The generic sendTestMessage path below serializes a v1
+  // query-level monitor (painless condition at the top level), which the
+  // backend rejects for monitor_type ppl_monitor with
+  // "Incompatible trigger [...] for monitor type [ppl_monitor]".
+  sendTestMessageForPplMonitor = async (index) => {
+    const { httpClient, notifications, triggerIndex, values } = this.props;
+    const { flattenedDestinations } = this.state;
+
+    const payload = _.cloneDeep(buildPPLMonitorFromFormik(values));
+    const triggers = _.get(payload, 'ppl_monitor.triggers', []);
+    const testTrigger = _.cloneDeep(triggers[triggerIndex] || triggers[0]);
+    if (!testTrigger) return;
+
+    const action = _.get(testTrigger, `actions[${index}]`);
+    // Force the trigger to fire so the action is exercised regardless of data.
+    testTrigger.actions = [action];
+    testTrigger.type = 'number_of_results';
+    testTrigger.num_results_condition = '>=';
+    testTrigger.num_results_value = 0;
+    testTrigger.custom_condition = null;
+    _.set(payload, 'ppl_monitor.triggers', [testTrigger]);
+    _.set(payload, 'ppl_monitor.enabled', true);
+
+    try {
+      const response = await httpClient.post('/api/alerting/v2/monitors/_execute', {
+        query: { dryrun: false, dataSourceId: getDataSourceId() },
+        body: JSON.stringify(payload),
+      });
+
+      let error = null;
+      if (response.ok) {
+        error = checkForError(response, error);
+        if (!_.isEmpty(action?.destination_id)) {
+          const destinationName = _.get(
+            _.find(flattenedDestinations, { value: action.destination_id }),
+            'label'
+          );
+          notifications.toasts.addSuccess(`Test message sent to "${destinationName}."`);
+        }
+      }
+      if (error || !response.ok) {
+        const errorMessage = error == null ? response.resp : error;
+        console.error('There was an error trying to send test message', errorMessage);
+        backendErrorNotification(notifications, 'send', 'test message', errorMessage);
+      }
+    } catch (err) {
+      console.error('There was an error trying to send test message', err);
+    }
+  };
+
   sendTestMessage = async (index) => {
     const {
       context: { monitor },
@@ -258,6 +310,11 @@ class ConfigureActionsPpl extends React.Component {
       values,
     } = this.props;
     const { flattenedDestinations } = this.state;
+
+    if (monitor.monitor_type === MONITOR_TYPE.PPL) {
+      return this.sendTestMessageForPplMonitor(index);
+    }
+
     let testTrigger = _.cloneDeep(formikToTrigger(values, monitor.ui_metadata)[triggerIndex]);
     let action;
     let condition;
