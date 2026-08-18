@@ -75,7 +75,8 @@ describe('ConfigureActionsPpl sendTestMessage for PPL monitors', () => {
     expect(httpClient.post).toHaveBeenCalledTimes(1);
     const [url, options] = httpClient.post.mock.calls[0];
     expect(url).toBe('/api/alerting/v2/monitors/_execute');
-    expect(options.query).toEqual({ dryrun: false, dataSourceId: 'test-ds-id' });
+    // v2 route query schema only accepts dataSourceId (no dryrun, unlike v1)
+    expect(options.query).toEqual({ dataSourceId: 'test-ds-id' });
   });
 
   test('sends a v2 ppl_monitor payload with no v1 query-level trigger shape', async () => {

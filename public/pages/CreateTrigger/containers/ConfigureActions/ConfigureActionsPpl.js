@@ -275,8 +275,10 @@ class ConfigureActionsPpl extends React.Component {
     _.set(payload, 'ppl_monitor.enabled', true);
 
     try {
+      // Note: unlike the v1 _execute route, the v2 route's query schema only
+      // accepts dataSourceId -- passing dryrun fails validation with 400.
       const response = await httpClient.post('/api/alerting/v2/monitors/_execute', {
-        query: { dryrun: false, dataSourceId: getDataSourceId() },
+        query: { dataSourceId: getDataSourceId() },
         body: JSON.stringify(payload),
       });
 
@@ -297,7 +299,15 @@ class ConfigureActionsPpl extends React.Component {
         backendErrorNotification(notifications, 'send', 'test message', errorMessage);
       }
     } catch (err) {
+      // A rejected fetch (e.g. route validation 400) never reaches the
+      // response.ok path -- surface it as a toast instead of failing silently.
       console.error('There was an error trying to send test message', err);
+      backendErrorNotification(
+        notifications,
+        'send',
+        'test message',
+        err?.body?.message || err?.message || String(err)
+      );
     }
   };
 
