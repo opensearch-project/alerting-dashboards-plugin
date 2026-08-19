@@ -66,17 +66,23 @@ export const getInitialValues = ({
 
   if (edit && monitorToEdit) {
     const triggers = triggerToFormik(_.get(monitorToEdit, 'triggers', []), monitorToEdit);
+    // pplAlertingMonitorToFormik/monitorToFormik rebuild initialValues from the
+    // stored monitor, which has no dataSourceId — preserve it from the edit-page
+    // URL so preview/field-detection calls route to the monitor's data source.
+    const { dataSourceId } = queryString.parse(location.search);
     switch (monitorToEdit.monitor_type) {
       case MONITOR_TYPE.PPL:
         initialValues = {
           ...pplAlertingMonitorToFormik(monitorToEdit),
           triggerDefinitions: triggers.triggerDefinitions,
+          ...(dataSourceId ? { dataSourceId } : {}),
         };
         break;
       default:
         initialValues = {
           ...monitorToFormik(monitorToEdit),
           triggerDefinitions: triggers.triggerDefinitions,
+          ...(dataSourceId ? { dataSourceId } : {}),
         };
     }
   }
