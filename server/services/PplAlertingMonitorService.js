@@ -614,6 +614,20 @@ export default class PplAlertingMonitorService extends MDSEnabledClientService {
         );
       }
 
+      // Guard against silent data loss: toV1MonitorBody defaults a missing
+      // query to '', so an update body without a query would silently wipe
+      // the monitor's PPL query. Reject it instead.
+      if (!cleanMonitor.query || !String(cleanMonitor.query).trim()) {
+        return res.ok({
+          body: {
+            ok: false,
+            resp:
+              'Monitor update rejected: the request body is missing the PPL query. ' +
+              'Updating without a query would erase the existing one.',
+          },
+        });
+      }
+
       const v1Body = toV1MonitorBody(
         await this.enrichTargetArn(context, req, { ppl_monitor: cleanMonitor })
       );
@@ -722,7 +736,10 @@ export default class PplAlertingMonitorService extends MDSEnabledClientService {
       const aclResponse = await this.enforceWorkspaceAcl(context, req, res, ['library_write']);
       if (aclResponse) return aclResponse;
       const client = await this.getClientBasedOnDataSource(context, req);
-      const body = await this.enrichTargetArn(context, req, req.body);
+      // The engine only speaks the v1 monitor format -- translate the
+      // { ppl_monitor: {...} } body the same way createMonitor/updateMonitor
+      // do, otherwise Monitor.parse fails with "Monitor name is null".
+      const body = toV1MonitorBody(await this.enrichTargetArn(context, req, req.body));
       const resp = await client('transport.request', {
         method: 'POST',
         path: `${PPL_MONITOR_BASE_API}/_execute`,
