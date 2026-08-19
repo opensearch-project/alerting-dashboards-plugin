@@ -614,6 +614,20 @@ export default class PplAlertingMonitorService extends MDSEnabledClientService {
         );
       }
 
+      // Guard against silent data loss: toV1MonitorBody defaults a missing
+      // query to '', so an update body without a query would silently wipe
+      // the monitor's PPL query. Reject it instead.
+      if (!cleanMonitor.query || !String(cleanMonitor.query).trim()) {
+        return res.ok({
+          body: {
+            ok: false,
+            resp:
+              'Monitor update rejected: the request body is missing the PPL query. ' +
+              'Updating without a query would erase the existing one.',
+          },
+        });
+      }
+
       const v1Body = toV1MonitorBody(
         await this.enrichTargetArn(context, req, { ppl_monitor: cleanMonitor })
       );
