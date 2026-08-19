@@ -304,6 +304,82 @@ export default class DashboardClassic extends Component {
     this.refreshDashboard();
   };
 
+  // Disables the monitors behind the selected alerts (Fidelity issue #4:
+  // previously monitors could only be disabled from the Monitors page).
+  // Mirrors Monitors.updateMonitor: fetch the full monitor body and PUT it
+  // back with enabled=false, so all monitor types (including PPL) round-trip
+  // through the same v1 route the Monitors page uses.
+  disableSelectedMonitors = async () => {
+    const { httpClient, notifications } = this.props;
+    const { selectedItems } = this.state;
+
+    const monitorIds = Array.from(
+      new Set(
+        selectedItems
+          // Chained (workflow) alerts are not backed by a single monitor
+          .filter((item) => item.alert_source !== 'workflow' && !item.workflow_id)
+          .map((item) => item.monitor_id)
+          .filter(Boolean)
+      )
+    );
+    if (!monitorIds.length) return;
+
+    const dataSourceQuery = getDataSourceQueryObj();
+    const dataSourceId = dataSourceQuery?.query?.dataSourceId;
+
+    const results = await Promise.all(
+      monitorIds.map(async (monitorId) => {
+        try {
+          const detailResp = await httpClient.get(
+            `../api/alerting/monitors/${monitorId}`,
+            dataSourceQuery
+          );
+          if (!detailResp?.ok) {
+            backendErrorNotification(notifications, 'get', 'monitor', detailResp?.resp);
+            return detailResp;
+          }
+
+          const monitorDetail = detailResp.resp || {};
+          const query = {};
+          if (detailResp.ifSeqNo !== undefined) query.ifSeqNo = detailResp.ifSeqNo;
+          if (detailResp.ifPrimaryTerm !== undefined) query.ifPrimaryTerm = detailResp.ifPrimaryTerm;
+          if (dataSourceId !== undefined) query.dataSourceId = dataSourceId;
+
+          const payload = _.omit({ ...monitorDetail, enabled: false }, [
+            'id',
+            '_id',
+            'item_type',
+            'currentTime',
+            'version',
+            '_version',
+            'ifSeqNo',
+            'ifPrimaryTerm',
+          ]);
+
+          const resp = await httpClient.put(`../api/alerting/monitors/${monitorId}`, {
+            query,
+            body: JSON.stringify(payload),
+          });
+          if (!resp?.ok) {
+            backendErrorNotification(notifications, 'update', 'monitor', resp?.resp);
+          }
+          return resp;
+        } catch (err) {
+          return err;
+        }
+      })
+    );
+
+    const successCount = results.filter((resp) => resp?.ok).length;
+    if (successCount) {
+      notifications.toasts.addSuccess(
+        `Disabled ${successCount} monitor${successCount === 1 ? '' : 's'}.`
+      );
+    }
+    this.setState({ selectedItems: [] });
+    this.refreshDashboard();
+  };
+
   onTableChange = ({ page: tablePage = {}, sort = {} }) => {
     const { index: page, size } = tablePage;
     const { field: sortField, direction: sortDirection } = sort;
@@ -545,7 +621,17 @@ export default class DashboardClassic extends Component {
     };
 
     const actions = () => {
+      const hasDisableableSelection = selectedItems.some(
+        (item) => item.monitor_id && item.alert_source !== 'workflow' && !item.workflow_id
+      );
       const actions = [
+        <EuiSmallButton
+          onClick={this.disableSelectedMonitors}
+          disabled={!hasDisableableSelection}
+          data-test-subj={'disableMonitorsButton'}
+        >
+          Disable monitors
+        </EuiSmallButton>,
         <EuiSmallButton
           onClick={perAlertView ? this.acknowledgeAlert : this.openModal}
           disabled={perAlertView ? !selectedItems.length : selectedItems.length !== 1}
