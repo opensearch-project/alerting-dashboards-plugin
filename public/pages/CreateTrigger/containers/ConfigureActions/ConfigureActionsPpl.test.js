@@ -7,10 +7,12 @@ import ConfigureActionsPpl from './ConfigureActionsPpl';
 import { MONITOR_TYPE } from '../../../../utils/constants';
 
 jest.mock('../../../utils/helpers', () => ({
+  ...jest.requireActual('../../../utils/helpers'),
   getDataSourceId: jest.fn(() => 'test-ds-id'),
 }));
 
 jest.mock('../../../../services', () => ({
+  ...jest.requireActual('../../../../services'),
   isServerlessDataSource: jest.fn(() => false),
   getNotifications: jest.fn(),
 }));
