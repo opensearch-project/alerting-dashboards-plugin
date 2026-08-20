@@ -27,7 +27,11 @@ import {
   MONITOR_TYPE,
   OPENSEARCH_DASHBOARDS_AD_PLUGIN,
 } from '../../../utils/constants';
-import { acknowledgeAlerts, backendErrorNotification } from '../../../utils/helpers';
+import {
+  acknowledgeAlerts,
+  backendErrorNotification,
+  fetchAndUpdateMonitor,
+} from '../../../utils/helpers';
 import {
   getInitialSize,
   getQueryObjectFromState,
@@ -304,6 +308,43 @@ export default class DashboardClassic extends Component {
     this.refreshDashboard();
   };
 
+  // Disables the monitors behind the selected alerts (Fidelity issue #4:
+  // previously monitors could only be disabled from the Monitors page).
+  // Uses the shared fetchAndUpdateMonitor round-trip (same as the Monitors
+  // page), so all monitor types (including PPL) are handled and failures —
+  // including thrown/network errors — surface as error notifications.
+  disableSelectedMonitors = async () => {
+    const { httpClient, notifications } = this.props;
+    const { selectedItems } = this.state;
+
+    const monitorIds = Array.from(
+      new Set(
+        selectedItems
+          // Chained (workflow) alerts are not backed by a single monitor
+          .filter((item) => item.alert_source !== 'workflow' && !item.workflow_id)
+          .map((item) => item.monitor_id)
+          .filter(Boolean)
+      )
+    );
+    if (!monitorIds.length) return;
+
+    const dataSourceQuery = getDataSourceQueryObj();
+    const results = await Promise.all(
+      monitorIds.map((monitorId) =>
+        fetchAndUpdateMonitor(httpClient, notifications, monitorId, { enabled: false }, dataSourceQuery)
+      )
+    );
+
+    const successCount = results.filter((resp) => resp?.ok).length;
+    if (successCount) {
+      notifications.toasts.addSuccess(
+        `Disabled ${successCount} monitor${successCount === 1 ? '' : 's'}.`
+      );
+    }
+    this.setState({ selectedItems: [] });
+    this.refreshDashboard();
+  };
+
   onTableChange = ({ page: tablePage = {}, sort = {} }) => {
     const { index: page, size } = tablePage;
     const { field: sortField, direction: sortDirection } = sort;
@@ -545,7 +586,17 @@ export default class DashboardClassic extends Component {
     };
 
     const actions = () => {
+      const hasDisableableSelection = selectedItems.some(
+        (item) => item.monitor_id && item.alert_source !== 'workflow' && !item.workflow_id
+      );
       const actions = [
+        <EuiSmallButton
+          onClick={this.disableSelectedMonitors}
+          disabled={!hasDisableableSelection}
+          data-test-subj={'disableMonitorsButton'}
+        >
+          Disable monitors
+        </EuiSmallButton>,
         <EuiSmallButton
           onClick={perAlertView ? this.acknowledgeAlert : this.openModal}
           disabled={perAlertView ? !selectedItems.length : selectedItems.length !== 1}

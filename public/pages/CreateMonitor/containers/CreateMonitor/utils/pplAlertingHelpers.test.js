@@ -9,6 +9,7 @@ import {
   extractIndicesFromPPL,
   formatDuration,
 } from './pplAlertingHelpers';
+import { buildPPLMonitorFromFormik } from './pplFormikToMonitor';
 
 describe('computeLookBackMinutes', () => {
   test('returns 0 when lookback is disabled', () => {
@@ -58,25 +59,21 @@ describe('computeLookBackMinutes', () => {
 });
 
 describe('addTimeFilterToQuery', () => {
-  const fixedEnd = new Date('2025-06-15T12:00:00Z');
-
   test('returns original query when inputs are missing', () => {
     expect(addTimeFilterToQuery('', 60, '@timestamp')).toBe('');
     expect(addTimeFilterToQuery('source=logs', 0, '@timestamp')).toBe('source=logs');
     expect(addTimeFilterToQuery('source=logs', 60, '')).toBe('source=logs');
   });
 
-  test('appends time filter when query has no pipes', () => {
-    const result = addTimeFilterToQuery('source=logs', 60, '@timestamp', fixedEnd);
-    expect(result).toContain("| where @timestamp > TIMESTAMP('2025-06-15 11:00:00')");
-    expect(result).toContain("and @timestamp < TIMESTAMP('2025-06-15 12:00:00')");
-    expect(result).toMatch(/^source=logs \|/);
+  test('appends sliding time filter when query has no pipes', () => {
+    const result = addTimeFilterToQuery('source=logs', 60, '@timestamp');
+    expect(result).toBe('source=logs | where @timestamp > DATE_SUB(NOW(), INTERVAL 1 HOUR)');
   });
 
   test('injects time filter before first pipe when query has pipes', () => {
     const query = 'source=logs | stats count() by status';
-    const result = addTimeFilterToQuery(query, 120, '@timestamp', fixedEnd);
-    expect(result).toContain("| where @timestamp > TIMESTAMP('2025-06-15 10:00:00')");
+    const result = addTimeFilterToQuery(query, 120, '@timestamp');
+    expect(result).toContain('| where @timestamp > DATE_SUB(NOW(), INTERVAL 2 HOUR)');
     expect(result).toContain('| stats count() by status');
     // Time filter should come before the stats command
     const timeFilterIdx = result.indexOf('| where @timestamp');
@@ -84,25 +81,69 @@ describe('addTimeFilterToQuery', () => {
     expect(timeFilterIdx).toBeLessThan(statsIdx);
   });
 
-  test('uses correct lookback window in minutes', () => {
-    const result = addTimeFilterToQuery('source=idx', 30, 'event_time', fixedEnd);
-    expect(result).toContain("event_time > TIMESTAMP('2025-06-15 11:30:00')");
-    expect(result).toContain("event_time < TIMESTAMP('2025-06-15 12:00:00')");
+  test('uses MINUTE unit for sub-hour lookback', () => {
+    const result = addTimeFilterToQuery('source=idx', 30, 'event_time');
+    expect(result).toContain('event_time > DATE_SUB(NOW(), INTERVAL 30 MINUTE)');
   });
 
-  test('handles multi-day lookback', () => {
-    const result = addTimeFilterToQuery('source=idx', 1440, 'ts', fixedEnd);
-    expect(result).toContain("ts > TIMESTAMP('2025-06-14 12:00:00')");
-    expect(result).toContain("ts < TIMESTAMP('2025-06-15 12:00:00')");
+  test('uses DAY unit for multi-day lookback', () => {
+    const result = addTimeFilterToQuery('source=idx', 2880, 'ts');
+    expect(result).toContain('ts > DATE_SUB(NOW(), INTERVAL 2 DAY)');
   });
 
   test('preserves original query structure with complex piped query', () => {
     const query = 'source=logs | where status=500 | stats avg(latency) as avg_lat by region';
-    const result = addTimeFilterToQuery(query, 60, '@timestamp', fixedEnd);
+    const result = addTimeFilterToQuery(query, 60, '@timestamp');
     expect(result).toContain('| where status=500');
     expect(result).toContain('| stats avg(latency) as avg_lat by region');
     // Time filter injected before the first original pipe
     expect(result.indexOf('| where @timestamp')).toBeLessThan(result.indexOf('| where status=500'));
+  });
+
+  test('is idempotent — re-injecting replaces the existing sliding filter instead of stacking', () => {
+    const once = addTimeFilterToQuery('source=logs | stats count()', 60, '@timestamp');
+    const twice = addTimeFilterToQuery(once, 120, '@timestamp');
+    expect(twice.match(/DATE_SUB/g)).toHaveLength(1);
+    expect(twice).toContain('INTERVAL 2 HOUR');
+    expect(twice).not.toContain('INTERVAL 1 HOUR');
+  });
+
+  test('buildPPLMonitorFromFormik strips the injected filter when lookback is disabled', () => {
+    // Simulates: edit a monitor saved with lookback ON, uncheck the lookback
+    // window, save. The persisted query must no longer carry the old filter.
+    const storedQuery = addTimeFilterToQuery('source=logs | stats count()', 60, '@timestamp');
+    const monitor = buildPPLMonitorFromFormik({
+      name: 'm',
+      pplQuery: storedQuery,
+      timestampField: '@timestamp',
+      useLookBackWindow: false,
+      frequency: 'interval',
+      period: { interval: 1, unit: 'MINUTES' },
+      triggerDefinitions: [],
+    });
+    expect(monitor.query).not.toContain('DATE_SUB');
+    expect(monitor.query).toContain('source=logs');
+    expect(monitor.query).toContain('| stats count()');
+  });
+
+  test('replaces a legacy absolute TIMESTAMP filter persisted by older saves', () => {
+    // Shape persisted by the previous implementation at save time
+    const stored =
+      "source=logs | where @timestamp > TIMESTAMP('2025-06-15 11:00:00') " +
+      "and @timestamp < TIMESTAMP('2025-06-15 12:00:00') | stats count() by status";
+    const result = addTimeFilterToQuery(stored, 60, '@timestamp');
+    expect(result).not.toContain('TIMESTAMP(');
+    expect(result.match(/DATE_SUB/g)).toHaveLength(1);
+    expect(result).toContain('| where @timestamp > DATE_SUB(NOW(), INTERVAL 1 HOUR)');
+    expect(result).toContain('| stats count() by status');
+  });
+
+  test('does not strip user-written filters on other fields', () => {
+    const query = "source=logs | where created > TIMESTAMP('2025-01-01 00:00:00') | stats count()";
+    const result = addTimeFilterToQuery(query, 60, '@timestamp');
+    // User filter on 'created' untouched (single-bound clause on another field)
+    expect(result).toContain("created > TIMESTAMP('2025-01-01 00:00:00')");
+    expect(result).toContain('DATE_SUB(NOW(), INTERVAL 1 HOUR)');
   });
 });
 

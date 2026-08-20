@@ -621,40 +621,61 @@ export const computeLookBackMinutes = (values) => {
   return Math.floor(amount);
 };
 
-//Formats date 'yyyy-MM-dd HH:mm:ss' in UTC
-const formatPplTimestamp = (date) => {
-  const pad = (n) => String(n).padStart(2, '0');
-  return (
-    `${date.getUTCFullYear()}-${pad(date.getUTCMonth() + 1)}-${pad(date.getUTCDate())} ` +
-    `${pad(date.getUTCHours())}:${pad(date.getUTCMinutes())}:${pad(date.getUTCSeconds())}`
-  );
+const escapeRegExp = (s) => String(s).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
+//Formats the lookback window as a PPL INTERVAL expression (e.g. 1 HOUR, 2 DAY, 30 MINUTE).
+const formatPplInterval = (lookBackMinutes) => {
+  if (lookBackMinutes % 1440 === 0) return `${lookBackMinutes / 1440} DAY`;
+  if (lookBackMinutes % 60 === 0) return `${lookBackMinutes / 60} HOUR`;
+  return `${lookBackMinutes} MINUTE`;
 };
 
-//Injects a time-range filter into a PPL query based on the lookback window.
-export const addTimeFilterToQuery = (
-  query,
-  lookBackMinutes,
-  timestampField,
-  endTime = new Date()
-) => {
+/**
+ * Removes a previously injected lookback time filter for the given timestamp
+ * field. Handles both the current sliding-window form
+ * (`| where ts > DATE_SUB(NOW(), INTERVAL n UNIT)`) and the legacy
+ * absolute-timestamp form (`| where ts > TIMESTAMP('...') and ts < TIMESTAMP('...')`)
+ * that older monitors persisted at save time. Makes injection idempotent so
+ * editing/previewing a monitor never stacks stale filters.
+ */
+export const stripTimeFilterFromQuery = (query, timestampField) => {
+  if (!query || !timestampField) return query;
+  const field = escapeRegExp(timestampField);
+  const legacyAbsoluteClause = new RegExp(
+    `\\s*\\|\\s*where\\s+${field}\\s*>\\s*TIMESTAMP\\('[^']*'\\)\\s+and\\s+${field}\\s*<\\s*TIMESTAMP\\('[^']*'\\)`,
+    'gi'
+  );
+  const slidingWindowClause = new RegExp(
+    `\\s*\\|\\s*where\\s+${field}\\s*>\\s*DATE_SUB\\(NOW\\(\\),\\s*INTERVAL\\s+\\d+\\s+(?:MINUTE|HOUR|DAY)S?\\)`,
+    'gi'
+  );
+  return query.replace(legacyAbsoluteClause, '').replace(slidingWindowClause, '').trim();
+};
+
+/**
+ * Injects a sliding time-window filter into a PPL query based on the lookback
+ * window: `| where <field> > DATE_SUB(NOW(), INTERVAL <n> <UNIT>)`.
+ * The window is evaluated dynamically at each execution — unlike the previous
+ * absolute TIMESTAMP('...') literals, which froze the window at save time so
+ * every scheduled run forever queried the same static range.
+ * Any previously injected filter (either form) is stripped first, so calling
+ * this on an already-filtered query replaces the filter instead of stacking.
+ */
+export const addTimeFilterToQuery = (query, lookBackMinutes, timestampField) => {
   if (!query || !timestampField || !lookBackMinutes || lookBackMinutes <= 0) return query;
 
-  const periodEnd = endTime;
-  const periodStart = new Date(periodEnd.getTime() - lookBackMinutes * 60 * 1000);
+  const cleanQuery = stripTimeFilterFromQuery(query, timestampField);
+  const timeFilterClause = `| where ${timestampField} > DATE_SUB(NOW(), INTERVAL ${formatPplInterval(
+    lookBackMinutes
+  )})`;
 
-  const startTs = formatPplTimestamp(periodStart);
-  const endTs = formatPplTimestamp(periodEnd);
-
-  const timeFilterClause =
-    `| where ${timestampField} > TIMESTAMP('${startTs}') ` +
-    `and ${timestampField} < TIMESTAMP('${endTs}')`;
-
-  if (query.includes('|')) {
-    // Inject time filter before the first pipe so it runs before aggregations
-    return query.replace('|', `${timeFilterClause} |`);
+  if (cleanQuery.includes('|')) {
+    // Inject time filter before the first pipe so it runs before aggregations.
+    // Function replacer inserts the clause literally ($-patterns not interpreted).
+    return cleanQuery.replace('|', () => `${timeFilterClause} |`);
   }
   // No pipes — append at the end
-  return `${query} ${timeFilterClause}`;
+  return `${cleanQuery} ${timeFilterClause}`;
 };
 
 /**

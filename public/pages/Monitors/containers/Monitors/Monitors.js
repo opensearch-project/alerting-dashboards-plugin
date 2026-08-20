@@ -16,7 +16,11 @@ import { DEFAULT_PAGE_SIZE_OPTIONS, DEFAULT_QUERY_PARAMS } from './utils/constan
 import { getURLQueryParams } from './utils/helpers';
 import { columns as staticColumns } from './utils/tableUtils';
 import { MONITOR_ACTIONS, MONITOR_TYPE } from '../../../../utils/constants';
-import { backendErrorNotification, deleteMonitor } from '../../../../utils/helpers';
+import {
+  backendErrorNotification,
+  deleteMonitor,
+  fetchAndUpdateMonitor,
+} from '../../../../utils/helpers';
 import { deletePplMonitor, isPplMonitor } from '../../../../utils/pplHelpers';
 import { displayAcknowledgedAlertsToast } from '../../../Dashboard/utils/helpers';
 import { DeleteMonitorModal } from '../../../../components/DeleteModal/DeleteMonitorModal';
@@ -211,54 +215,11 @@ export default class Monitors extends Component {
   async updateMonitor(item, update) {
     const { httpClient, notifications } = this.props;
     const dataSourceQuery = getDataSourceQueryObj();
-    const dataSourceId = dataSourceQuery?.query?.dataSourceId;
 
-    try {
-      const detailResp = await httpClient.get(
-        `../api/alerting/monitors/${item.id}`,
-        dataSourceQuery
-      );
-
-      if (!detailResp?.ok) {
-        backendErrorNotification(notifications, 'get', 'monitor', detailResp?.resp);
-        return detailResp;
-      }
-
-      const monitorDetail = detailResp.resp || {};
-      const ifSeqNo = detailResp.ifSeqNo ?? item.ifSeqNo;
-      const ifPrimaryTerm = detailResp.ifPrimaryTerm ?? item.ifPrimaryTerm;
-
-      const query = {};
-      if (ifSeqNo !== undefined) query.ifSeqNo = ifSeqNo;
-      if (ifPrimaryTerm !== undefined) query.ifPrimaryTerm = ifPrimaryTerm;
-      if (dataSourceId !== undefined) query.dataSourceId = dataSourceId;
-
-      const legacyPayload = _.omit({ ...monitorDetail, ...update }, [
-        'id',
-        '_id',
-        'item_type',
-        'currentTime',
-        'version',
-        '_version',
-        'ifSeqNo',
-        'ifPrimaryTerm',
-      ]);
-
-      return httpClient
-        .put(`../api/alerting/monitors/${item.id}`, {
-          query,
-          body: JSON.stringify(legacyPayload),
-        })
-        .then((resp) => {
-          if (!resp.ok) {
-            backendErrorNotification(notifications, 'update', 'monitor', resp.resp);
-          }
-          return resp;
-        })
-        .catch((err) => err);
-    } catch (err) {
-      return err;
-    }
+    return fetchAndUpdateMonitor(httpClient, notifications, item.id, update, dataSourceQuery, {
+      ifSeqNo: item.ifSeqNo,
+      ifPrimaryTerm: item.ifPrimaryTerm,
+    });
   }
 
   async updateMonitors(items, update) {

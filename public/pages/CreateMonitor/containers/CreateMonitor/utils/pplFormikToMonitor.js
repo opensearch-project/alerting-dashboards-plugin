@@ -4,7 +4,11 @@
  */
 
 import _ from 'lodash';
-import { computeLookBackMinutes, addTimeFilterToQuery } from './pplAlertingHelpers';
+import {
+  computeLookBackMinutes,
+  addTimeFilterToQuery,
+  stripTimeFilterFromQuery,
+} from './pplAlertingHelpers';
 /**
  * Normalize timezone coming from formik (can be array/object/string)
  */
@@ -206,6 +210,10 @@ export const buildPPLMonitorFromFormik = (values) => {
       const lbMinutes = computeLookBackMinutes(values);
       if (lbMinutes > 0 && values.timestampField) {
         q = addTimeFilterToQuery(q, lbMinutes, values.timestampField);
+      } else if (values.timestampField) {
+        // Lookback disabled: remove any previously injected time filter so the
+        // persisted query stops filtering by a window the user just turned off.
+        q = stripTimeFilterFromQuery(q, values.timestampField);
       }
       return q;
     })(),
