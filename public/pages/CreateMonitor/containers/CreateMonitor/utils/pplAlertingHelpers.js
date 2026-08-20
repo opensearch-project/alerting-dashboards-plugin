@@ -670,8 +670,9 @@ export const addTimeFilterToQuery = (query, lookBackMinutes, timestampField) => 
   )})`;
 
   if (cleanQuery.includes('|')) {
-    // Inject time filter before the first pipe so it runs before aggregations
-    return cleanQuery.replace('|', `${timeFilterClause} |`);
+    // Inject time filter before the first pipe so it runs before aggregations.
+    // Function replacer inserts the clause literally ($-patterns not interpreted).
+    return cleanQuery.replace('|', () => `${timeFilterClause} |`);
   }
   // No pipes — append at the end
   return `${cleanQuery} ${timeFilterClause}`;

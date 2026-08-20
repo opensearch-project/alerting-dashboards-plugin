@@ -9,6 +9,7 @@ import {
   extractIndicesFromPPL,
   formatDuration,
 } from './pplAlertingHelpers';
+import { buildPPLMonitorFromFormik } from './pplFormikToMonitor';
 
 describe('computeLookBackMinutes', () => {
   test('returns 0 when lookback is disabled', () => {
@@ -105,6 +106,24 @@ describe('addTimeFilterToQuery', () => {
     expect(twice.match(/DATE_SUB/g)).toHaveLength(1);
     expect(twice).toContain('INTERVAL 2 HOUR');
     expect(twice).not.toContain('INTERVAL 1 HOUR');
+  });
+
+  test('buildPPLMonitorFromFormik strips the injected filter when lookback is disabled', () => {
+    // Simulates: edit a monitor saved with lookback ON, uncheck the lookback
+    // window, save. The persisted query must no longer carry the old filter.
+    const storedQuery = addTimeFilterToQuery('source=logs | stats count()', 60, '@timestamp');
+    const monitor = buildPPLMonitorFromFormik({
+      name: 'm',
+      pplQuery: storedQuery,
+      timestampField: '@timestamp',
+      useLookBackWindow: false,
+      frequency: 'interval',
+      period: { interval: 1, unit: 'MINUTES' },
+      triggerDefinitions: [],
+    });
+    expect(monitor.query).not.toContain('DATE_SUB');
+    expect(monitor.query).toContain('source=logs');
+    expect(monitor.query).toContain('| stats count()');
   });
 
   test('replaces a legacy absolute TIMESTAMP filter persisted by older saves', () => {

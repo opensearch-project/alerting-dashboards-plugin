@@ -34,10 +34,11 @@ export const getInitialValues = ({
   detectorId,
   embeddable,
 }) => {
+  const queryParams = queryString.parse(location.search);
   let initialValues = _.mergeWith(
     {},
     _.cloneDeep(FORMIK_INITIAL_VALUES),
-    initializeFromQueryParams(queryString.parse(location.search)),
+    initializeFromQueryParams(queryParams),
     (initialValue, queryValue) => (_.isEmpty(queryValue) ? initialValue : queryValue)
   );
 
@@ -69,7 +70,7 @@ export const getInitialValues = ({
     // pplAlertingMonitorToFormik/monitorToFormik rebuild initialValues from the
     // stored monitor, which has no dataSourceId — preserve it from the edit-page
     // URL so preview/field-detection calls route to the monitor's data source.
-    const { dataSourceId } = queryString.parse(location.search);
+    const { dataSourceId } = queryParams;
     switch (monitorToEdit.monitor_type) {
       case MONITOR_TYPE.PPL:
         initialValues = {

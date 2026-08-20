@@ -141,4 +141,17 @@ describe('DashboardClassic disableSelectedMonitors', () => {
     expect(notifications.toasts.addDanger).toHaveBeenCalled();
     expect(notifications.toasts.addSuccess).not.toHaveBeenCalled();
   });
+
+  test('surfaces a backend error notification when the request throws', async () => {
+    const wrapper = render();
+    const instance = wrapper.instance();
+    httpClientMock.get.mockResolvedValue(monitorDetail);
+    httpClientMock.put.mockRejectedValue(new Error('socket hang up'));
+
+    instance.setState({ selectedItems: [{ id: 'alert-1', monitor_id: 'monitor-1' }] });
+    await instance.disableSelectedMonitors();
+
+    expect(notifications.toasts.addDanger).toHaveBeenCalled();
+    expect(notifications.toasts.addSuccess).not.toHaveBeenCalled();
+  });
 });

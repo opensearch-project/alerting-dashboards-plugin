@@ -27,7 +27,11 @@ import {
   MONITOR_TYPE,
   OPENSEARCH_DASHBOARDS_AD_PLUGIN,
 } from '../../../utils/constants';
-import { acknowledgeAlerts, backendErrorNotification } from '../../../utils/helpers';
+import {
+  acknowledgeAlerts,
+  backendErrorNotification,
+  fetchAndUpdateMonitor,
+} from '../../../utils/helpers';
 import {
   getInitialSize,
   getQueryObjectFromState,
@@ -306,9 +310,9 @@ export default class DashboardClassic extends Component {
 
   // Disables the monitors behind the selected alerts (Fidelity issue #4:
   // previously monitors could only be disabled from the Monitors page).
-  // Mirrors Monitors.updateMonitor: fetch the full monitor body and PUT it
-  // back with enabled=false, so all monitor types (including PPL) round-trip
-  // through the same v1 route the Monitors page uses.
+  // Uses the shared fetchAndUpdateMonitor round-trip (same as the Monitors
+  // page), so all monitor types (including PPL) are handled and failures —
+  // including thrown/network errors — surface as error notifications.
   disableSelectedMonitors = async () => {
     const { httpClient, notifications } = this.props;
     const { selectedItems } = this.state;
@@ -325,49 +329,10 @@ export default class DashboardClassic extends Component {
     if (!monitorIds.length) return;
 
     const dataSourceQuery = getDataSourceQueryObj();
-    const dataSourceId = dataSourceQuery?.query?.dataSourceId;
-
     const results = await Promise.all(
-      monitorIds.map(async (monitorId) => {
-        try {
-          const detailResp = await httpClient.get(
-            `../api/alerting/monitors/${monitorId}`,
-            dataSourceQuery
-          );
-          if (!detailResp?.ok) {
-            backendErrorNotification(notifications, 'get', 'monitor', detailResp?.resp);
-            return detailResp;
-          }
-
-          const monitorDetail = detailResp.resp || {};
-          const query = {};
-          if (detailResp.ifSeqNo !== undefined) query.ifSeqNo = detailResp.ifSeqNo;
-          if (detailResp.ifPrimaryTerm !== undefined) query.ifPrimaryTerm = detailResp.ifPrimaryTerm;
-          if (dataSourceId !== undefined) query.dataSourceId = dataSourceId;
-
-          const payload = _.omit({ ...monitorDetail, enabled: false }, [
-            'id',
-            '_id',
-            'item_type',
-            'currentTime',
-            'version',
-            '_version',
-            'ifSeqNo',
-            'ifPrimaryTerm',
-          ]);
-
-          const resp = await httpClient.put(`../api/alerting/monitors/${monitorId}`, {
-            query,
-            body: JSON.stringify(payload),
-          });
-          if (!resp?.ok) {
-            backendErrorNotification(notifications, 'update', 'monitor', resp?.resp);
-          }
-          return resp;
-        } catch (err) {
-          return err;
-        }
-      })
+      monitorIds.map((monitorId) =>
+        fetchAndUpdateMonitor(httpClient, notifications, monitorId, { enabled: false }, dataSourceQuery)
+      )
     );
 
     const successCount = results.filter((resp) => resp?.ok).length;
