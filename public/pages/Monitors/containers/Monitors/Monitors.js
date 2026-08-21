@@ -136,7 +136,7 @@ export default class Monitors extends Component {
               // button is mounted here by security-dashboards-plugin when
               // installed and resource sharing is enabled for monitors.
               field: 'id',
-              name: 'Share',
+              name: 'Access',
               sortable: false,
               width: '50px',
               render: (id, item) => {
@@ -149,6 +149,7 @@ export default class Monitors extends Component {
                     data-resource-share-button
                     data-resource-id={id}
                     data-resource-type={resourceType}
+                    {...(item.name ? { 'data-resource-name': item.name } : {})}
                     data-resource-share-display="icon"
                   />
                 ) : null;
