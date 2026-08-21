@@ -29,7 +29,12 @@ import {
   isDataSourceChanged,
   getDataSourceId,
 } from '../../../utils/helpers';
-import { getUseUpdatedUx } from '../../../../services';
+import {
+  ALERTING_WORKFLOW_RESOURCE_TYPE,
+  getUseUpdatedUx,
+  isResourceSharingAvailable,
+  MONITOR_RESOURCE_TYPE,
+} from '../../../../services';
 
 const MAX_MONITOR_COUNT = 1000;
 
@@ -128,6 +133,34 @@ export default class Monitors extends Component {
 
     return [
       ...staticColumns,
+      ...(isResourceSharingAvailable(MONITOR_RESOURCE_TYPE)
+        ? [
+            {
+              // Resource-sharing SPI marker column: the centralized Share
+              // button is mounted here by security-dashboards-plugin when
+              // installed and resource sharing is enabled for monitors.
+              field: 'id',
+              name: 'Access',
+              sortable: false,
+              width: '50px',
+              render: (id, item) => {
+                const resourceType =
+                  item.monitor?.type === 'workflow'
+                    ? ALERTING_WORKFLOW_RESOURCE_TYPE
+                    : MONITOR_RESOURCE_TYPE;
+                return isResourceSharingAvailable(resourceType) ? (
+                  <div
+                    data-resource-share-button
+                    data-resource-id={id}
+                    data-resource-type={resourceType}
+                    {...(item.name ? { 'data-resource-name': item.name } : {})}
+                    data-resource-share-display="icon"
+                  />
+                ) : null;
+              },
+            },
+          ]
+        : []),
       {
         name: 'Actions',
         width: '60px',

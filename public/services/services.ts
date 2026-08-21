@@ -101,6 +101,28 @@ export const isServerlessEnabled = () => {
   return !!capabilities?.alertingDashboards?.serverlessEnabled;
 };
 
+/**
+ * Resource types registered by the alerting backend plugin with the security
+ * plugin's resource-sharing framework (AlertingResourceSharingExtension).
+ */
+export const MONITOR_RESOURCE_TYPE = 'monitor';
+export const ALERTING_WORKFLOW_RESOURCE_TYPE = 'workflow';
+
+/**
+ * Whether resource sharing is available for the given alerting resource type,
+ * via the core capability registered by security-dashboards-plugin. False
+ * when that plugin is not installed, the feature is disabled, or the type is
+ * not registered — no plugin dependency involved.
+ */
+export const isResourceSharingAvailable = (resourceType: string): boolean => {
+  const application = getApplication();
+  const capabilities = application?.capabilities as Record<string, any> | undefined;
+  const resourceSharing = capabilities?.resourceSharing;
+  if (!resourceSharing?.enabled) return false;
+  const types: string = resourceSharing.availableTypes ?? '';
+  return types.split(',').includes(resourceType);
+};
+
 export const getUseUpdatedUx = () => {
   return getUISettings().get('home:useNewHomePage', false);
 };
