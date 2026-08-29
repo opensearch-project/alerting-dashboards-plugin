@@ -14,6 +14,7 @@ describe('getPathsPerDataType', () => {
             '@message': { type: 'text' },
             '@timestamp': { type: 'date' },
             username: { type: 'keyword' },
+            description: { type: 'text', fields: { kwsubfield: { type: 'keyword' } } },
             memory: { type: 'double' },
             phpmemory: { type: 'long' },
             bytes: { type: 'long' },
@@ -25,9 +26,9 @@ describe('getPathsPerDataType', () => {
       },
     };
     expect(getPathsPerDataType(mappings)).toEqual({
-      text: new Set(['@message']),
+      text: new Set(['@message', 'description']),
       date: new Set(['@timestamp']),
-      keyword: new Set(['username']),
+      keyword: new Set(['username', 'description.kwsubfield']),
       double: new Set(['memory']),
       long: new Set(['phpmemory', 'bytes']),
       ip: new Set(['clientip', 'ip']),
