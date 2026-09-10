@@ -109,12 +109,9 @@ export const MONITOR_RESOURCE_TYPE = 'monitor';
 export const ALERTING_WORKFLOW_RESOURCE_TYPE = 'workflow';
 
 /**
- * The resource-sharing types available for the given data source, gated on BOTH
- * the global feature flag (plugins.security.experimental.resource_sharing.enabled)
- * and the per-type protected list, evaluated per data source rather than via the
- * local Dashboards capability. Returns [] when the security plugin is not
- * installed, the feature is disabled on that data source, or on any error
- * (fail-closed).
+ * Resource-sharing types available on the given data source, gated on the
+ * feature flag and the per-type protected list. Returns [] when disabled or on
+ * error (fail-closed).
  */
 export const getResourceSharingAvailableTypes = async (
   resourceDataSourceId?: string
