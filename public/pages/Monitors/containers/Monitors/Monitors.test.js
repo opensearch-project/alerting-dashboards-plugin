@@ -5,12 +5,19 @@
 
 import React from 'react';
 import { mount, shallow } from 'enzyme';
+import { act } from 'react-dom/test-utils';
 import _ from 'lodash';
 
 import Monitors from './Monitors';
-import { getApplication, setApplication } from '../../../../services';
 import { historyMock, httpClientMock } from '../../../../../test/mocks';
 import { AlertingFakes, setupCoreStart } from '../../../../../test/utils/helpers';
+
+// Resource-sharing availability is probed per data source; default to none so
+// unrelated tests are unaffected, and drive it explicitly in the Access-column tests.
+jest.mock('../../../../services', () => ({
+  ...jest.requireActual('../../../../services'),
+  getResourceSharingAvailableTypes: jest.fn(() => Promise.resolve([])),
+}));
 
 const alertingFakes = new AlertingFakes('random seed');
 
@@ -419,28 +426,28 @@ describe('Monitors', () => {
 });
 
 describe('Monitors resource sharing Access column', () => {
-  let originalApplication;
-
   beforeEach(() => {
     httpClientMock.get.mockResolvedValue({ ok: true, monitors: [], totalMonitors: 0 });
-    originalApplication = getApplication();
   });
 
-  afterEach(() => setApplication(originalApplication));
-
-  const setResourceSharing = (resourceSharing) =>
-    setApplication({
-      ...originalApplication,
-      capabilities: { ...(originalApplication?.capabilities || {}), resourceSharing },
-    });
-
-  test('adds an Access column with a share-button marker when resource sharing is available', () => {
-    setResourceSharing({ enabled: true, availableTypes: 'monitor,workflow' });
+  // The Access column is gated on the per-data-source availability probed into
+  // component state; flush the mount probe, then set the desired state and read.
+  const buildColumnsWithTypes = async (availableTypes) => {
     const wrapper = getMountWrapper();
-    const accessColumn = wrapper
-      .instance()
-      .buildColumns()
-      .find((column) => column.name === 'Access');
+    await act(async () => {
+      await Promise.resolve();
+    });
+    await act(async () => {
+      wrapper.instance().setState({ resourceSharingAvailableTypes: availableTypes });
+    });
+    wrapper.update();
+    return wrapper.instance().buildColumns();
+  };
+
+  test('adds an Access column with a share-button marker when resource sharing is available', async () => {
+    const accessColumn = (await buildColumnsWithTypes(['monitor', 'workflow'])).find(
+      (column) => column.name === 'Access'
+    );
     expect(accessColumn).toBeDefined();
 
     const marker = accessColumn.render('monitor-1', {
@@ -453,13 +460,10 @@ describe('Monitors resource sharing Access column', () => {
     expect(marker.props['data-resource-share-display']).toBe('icon');
   });
 
-  test('uses the workflow resource type for composite (workflow) monitors', () => {
-    setResourceSharing({ enabled: true, availableTypes: 'monitor,workflow' });
-    const wrapper = getMountWrapper();
-    const accessColumn = wrapper
-      .instance()
-      .buildColumns()
-      .find((column) => column.name === 'Access');
+  test('uses the workflow resource type for composite (workflow) monitors', async () => {
+    const accessColumn = (await buildColumnsWithTypes(['monitor', 'workflow'])).find(
+      (column) => column.name === 'Access'
+    );
 
     const marker = accessColumn.render('workflow-1', {
       name: 'My Workflow',
@@ -469,22 +473,17 @@ describe('Monitors resource sharing Access column', () => {
     expect(marker.props['data-resource-type']).toBe('workflow');
   });
 
-  test('does not add the Access column when resource sharing is unavailable', () => {
-    setResourceSharing(undefined);
-    const wrapper = getMountWrapper();
-    const accessColumn = wrapper
-      .instance()
-      .buildColumns()
-      .find((column) => column.name === 'Access');
+  test('does not add the Access column when resource sharing is unavailable', async () => {
+    const accessColumn = (await buildColumnsWithTypes([])).find(
+      (column) => column.name === 'Access'
+    );
     expect(accessColumn).toBeUndefined();
   });
 
-  test('renders the Access column when only the workflow type is available', () => {
-    setResourceSharing({ enabled: true, availableTypes: 'workflow' });
-    const accessColumn = getMountWrapper()
-      .instance()
-      .buildColumns()
-      .find((column) => column.name === 'Access');
+  test('renders the Access column when only the workflow type is available', async () => {
+    const accessColumn = (await buildColumnsWithTypes(['workflow'])).find(
+      (column) => column.name === 'Access'
+    );
     expect(accessColumn).toBeDefined();
 
     // A composite (workflow) monitor row still gets a share-button marker.

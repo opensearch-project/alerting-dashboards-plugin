@@ -3,45 +3,77 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import {
-  isResourceSharingAvailable,
-  setApplication,
-  MONITOR_RESOURCE_TYPE,
-  ALERTING_WORKFLOW_RESOURCE_TYPE,
-} from '../services';
+import { getResourceSharingAvailableTypes, setClient } from '../services';
 
-const setResourceSharing = (resourceSharing?: Record<string, unknown>) =>
-  setApplication({ capabilities: resourceSharing ? { resourceSharing } : {} } as any);
+const mockGet = jest.fn();
 
-describe('isResourceSharingAvailable', () => {
-  it('returns false when the resourceSharing capability is absent', () => {
-    setResourceSharing();
-    expect(isResourceSharingAvailable(MONITOR_RESOURCE_TYPE)).toBe(false);
+const respondPerRoute = (info: any, types: any) => (url: string) => {
+  if (url.includes('dashboardsinfo')) return Promise.resolve(info);
+  if (url.includes('resource/types')) return Promise.resolve(types);
+  return Promise.resolve({});
+};
+
+describe('getResourceSharingAvailableTypes', () => {
+  beforeEach(() => {
+    mockGet.mockReset();
+    setClient({ get: mockGet } as any);
   });
 
-  it('returns false when resource sharing is disabled', () => {
-    setResourceSharing({ enabled: false, availableTypes: 'monitor' });
-    expect(isResourceSharingAvailable(MONITOR_RESOURCE_TYPE)).toBe(false);
+  it('returns [] (global gate) when the feature flag is disabled, even if types exist', async () => {
+    mockGet.mockImplementation(
+      respondPerRoute({ resource_sharing_enabled: false }, { types: [{ type: 'monitor' }] })
+    );
+    await expect(getResourceSharingAvailableTypes('ds-1')).resolves.toEqual([]);
+    // per-type probe should be short-circuited when the global flag is off
+    expect(mockGet).toHaveBeenCalledTimes(1);
   });
 
-  it('returns false when the resource type is not in availableTypes', () => {
-    setResourceSharing({ enabled: true, availableTypes: 'anomaly-detector,notification_config' });
-    expect(isResourceSharingAvailable(MONITOR_RESOURCE_TYPE)).toBe(false);
+  it('returns the protected type names when enabled', async () => {
+    mockGet.mockImplementation(
+      respondPerRoute(
+        { resource_sharing_enabled: true },
+        { types: [{ type: 'monitor' }, { type: 'workflow' }] }
+      )
+    );
+    await expect(getResourceSharingAvailableTypes('ds-1')).resolves.toEqual(['monitor', 'workflow']);
   });
 
-  it('returns true when enabled and the monitor type is present', () => {
-    setResourceSharing({ enabled: true, availableTypes: 'monitor,workflow' });
-    expect(isResourceSharingAvailable(MONITOR_RESOURCE_TYPE)).toBe(true);
+  it('handles a bare array types response (no { types } wrapper)', async () => {
+    mockGet.mockImplementation(
+      respondPerRoute({ resource_sharing_enabled: true }, [{ type: 'monitor' }])
+    );
+    await expect(getResourceSharingAvailableTypes()).resolves.toEqual(['monitor']);
   });
 
-  it('returns true for the workflow resource type when present', () => {
-    setResourceSharing({ enabled: true, availableTypes: 'monitor,workflow' });
-    expect(isResourceSharingAvailable(ALERTING_WORKFLOW_RESOURCE_TYPE)).toBe(true);
+  it('filters out malformed type entries', async () => {
+    mockGet.mockImplementation(
+      respondPerRoute(
+        { resource_sharing_enabled: true },
+        { types: [{ type: 'monitor' }, {}, { type: '' }] }
+      )
+    );
+    await expect(getResourceSharingAvailableTypes()).resolves.toEqual(['monitor']);
   });
 
-  it('trims whitespace around availableTypes tokens', () => {
-    setResourceSharing({ enabled: true, availableTypes: 'monitor, workflow' });
-    expect(isResourceSharingAvailable(MONITOR_RESOURCE_TYPE)).toBe(true);
-    expect(isResourceSharingAvailable(ALERTING_WORKFLOW_RESOURCE_TYPE)).toBe(true);
+  it('passes the data source id as a query param to both routes', async () => {
+    mockGet.mockImplementation(respondPerRoute({ resource_sharing_enabled: true }, { types: [] }));
+    await getResourceSharingAvailableTypes('ds-9');
+    expect(mockGet).toHaveBeenCalledWith('/api/v1/auth/dashboardsinfo', {
+      query: { dataSourceId: 'ds-9' },
+    });
+    expect(mockGet).toHaveBeenCalledWith('/api/resource/types', {
+      query: { dataSourceId: 'ds-9' },
+    });
+  });
+
+  it('omits the query when no data source id is provided', async () => {
+    mockGet.mockImplementation(respondPerRoute({ resource_sharing_enabled: true }, { types: [] }));
+    await getResourceSharingAvailableTypes();
+    expect(mockGet).toHaveBeenCalledWith('/api/v1/auth/dashboardsinfo', { query: {} });
+  });
+
+  it('returns [] (fail-closed) when a request throws', async () => {
+    mockGet.mockRejectedValue(new Error('boom'));
+    await expect(getResourceSharingAvailableTypes('ds-1')).resolves.toEqual([]);
   });
 });

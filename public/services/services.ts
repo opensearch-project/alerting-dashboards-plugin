@@ -109,21 +109,31 @@ export const MONITOR_RESOURCE_TYPE = 'monitor';
 export const ALERTING_WORKFLOW_RESOURCE_TYPE = 'workflow';
 
 /**
- * Whether resource sharing is available for the given alerting resource type,
- * via the core capability registered by security-dashboards-plugin. False
- * when that plugin is not installed, the feature is disabled, or the type is
- * not registered — no plugin dependency involved.
+ * The resource-sharing types available for the given data source, gated on BOTH
+ * the global feature flag (plugins.security.experimental.resource_sharing.enabled)
+ * and the per-type protected list, evaluated per data source rather than via the
+ * local Dashboards capability. Returns [] when the security plugin is not
+ * installed, the feature is disabled on that data source, or on any error
+ * (fail-closed).
  */
-export const isResourceSharingAvailable = (resourceType: string): boolean => {
-  const application = getApplication();
-  const capabilities = application?.capabilities as Record<string, any> | undefined;
-  const resourceSharing = capabilities?.resourceSharing;
-  if (!resourceSharing?.enabled) return false;
-  const types: string = resourceSharing.availableTypes ?? '';
-  return types
-    .split(',')
-    .map((type) => type.trim())
-    .includes(resourceType);
+export const getResourceSharingAvailableTypes = async (
+  resourceDataSourceId?: string
+): Promise<string[]> => {
+  try {
+    const http = getClient();
+    const query = resourceDataSourceId ? { dataSourceId: resourceDataSourceId } : {};
+    // Global gate: resource sharing must be enabled on the selected data source.
+    const info: any = await http.get('/api/v1/auth/dashboardsinfo', { query });
+    if (!info?.resource_sharing_enabled) return [];
+    // Per-type gate: the registered/protected shareable types on that source.
+    const typesResp: any = await http.get('/api/resource/types', { query });
+    const rawTypes = Array.isArray(typesResp) ? typesResp : typesResp?.types ?? [];
+    return rawTypes
+      .map((entry: { type: string }) => entry?.type)
+      .filter((type: string | undefined): type is string => Boolean(type));
+  } catch (e) {
+    return [];
+  }
 };
 
 export const getUseUpdatedUx = () => {
