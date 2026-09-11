@@ -53,6 +53,7 @@ import {
   getIsCommentsEnabled,
   getIsAgentConfigured,
   dataSourceEnabled,
+  isLocalClusterSelected,
 } from '../../utils/helpers';
 import { getUseUpdatedUx } from '../../../services';
 
@@ -102,8 +103,8 @@ export default class DashboardClassic extends Component {
         typeof totalAlerts === 'number'
           ? totalAlerts
           : Number.isFinite(Number(totalAlerts))
-          ? Number(totalAlerts)
-          : NaN;
+            ? Number(totalAlerts)
+            : NaN;
       const normalizedTotal = Number.isFinite(numeric) ? numeric : 0;
       this.props.onTotalsChange({ totalAlerts: normalizedTotal });
     }
@@ -147,11 +148,17 @@ export default class DashboardClassic extends Component {
       _.get(this.dataSourceQuery, 'query.dataSourceId') ??
       getDataSourceId(this.props.landingDataSourceId);
 
-    if (dataSourceEnabled() && dataSourceId === undefined) {
+    // The local cluster's data source id is the empty string, which resolves to undefined.
+    // Honor it as a valid selection (dataSourceId='') instead of bailing; only bail when no
+    // data source is selected at all.
+    const localClusterSelected = isLocalClusterSelected();
+    if (dataSourceEnabled() && dataSourceId === undefined && !localClusterSelected) {
       return;
     }
 
-    getIsAgentConfigured(dataSourceId).then((isAgentConfigured) => {
+    const resolvedDataSourceId =
+      dataSourceId === undefined && localClusterSelected ? '' : dataSourceId;
+    getIsAgentConfigured(resolvedDataSourceId).then((isAgentConfigured) => {
       this.setState({ isAgentConfigured });
     });
   }
@@ -177,7 +184,11 @@ export default class DashboardClassic extends Component {
       const resolvedDataSourceId =
         storedDataSourceId ?? getDataSourceId(this.props.landingDataSourceId);
 
-      if (dataSourceEnabled() && resolvedDataSourceId === undefined) {
+      // The local cluster's data source id is the empty string, which resolves to undefined.
+      // Treat it as a valid selection so its alerts are fetched instead of bailing out (which
+      // would leave the Alerts view empty). Only bail when no data source is selected at all.
+      const localClusterSelected = isLocalClusterSelected();
+      if (dataSourceEnabled() && resolvedDataSourceId === undefined && !localClusterSelected) {
         return;
       }
 
@@ -198,6 +209,8 @@ export default class DashboardClassic extends Component {
       };
       if (resolvedDataSourceId !== undefined) {
         params.dataSourceId = resolvedDataSourceId;
+      } else if (localClusterSelected) {
+        params.dataSourceId = ''; // local cluster
       }
 
       const queryParamsString = queryString.stringify(params);
@@ -246,10 +259,17 @@ export default class DashboardClassic extends Component {
       if (latestDataSourceQuery) {
         this.dataSourceQuery = latestDataSourceQuery;
       }
-      const query = (latestDataSourceQuery || this.dataSourceQuery)?.query;
+      let query = (latestDataSourceQuery || this.dataSourceQuery)?.query;
+      // The local cluster's data source id is the empty string, which is falsy and also makes
+      // getDataSourceQueryObj return undefined. Honor it as a valid selection (dataSourceId='')
+      // instead of bailing; only bail when no data source is selected at all.
       if (dataSourceEnabled() && !_.get(query, 'dataSourceId')) {
-        this.setState({ loadingMonitors: false });
-        return;
+        if (isLocalClusterSelected()) {
+          query = { dataSourceId: '' };
+        } else {
+          this.setState({ loadingMonitors: false });
+          return;
+        }
       }
 
       const response = await httpClient.post('../api/alerting/monitors/_search', {
@@ -331,7 +351,13 @@ export default class DashboardClassic extends Component {
     const dataSourceQuery = getDataSourceQueryObj();
     const results = await Promise.all(
       monitorIds.map((monitorId) =>
-        fetchAndUpdateMonitor(httpClient, notifications, monitorId, { enabled: false }, dataSourceQuery)
+        fetchAndUpdateMonitor(
+          httpClient,
+          notifications,
+          monitorId,
+          { enabled: false },
+          dataSourceQuery
+        )
       )
     );
 

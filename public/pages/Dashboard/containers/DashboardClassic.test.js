@@ -27,6 +27,8 @@ jest.mock('../../utils/helpers', () => {
 import DashboardClassic from './DashboardClassic';
 import { historyMock, httpClientMock } from '../../../../test/mocks';
 import { setupCoreStart } from '../../../../test/utils/helpers';
+import { setDataSource, setDataSourceEnabled } from '../../../services/services';
+import { getDataSourceQueryObj, getIsAgentConfigured } from '../../utils/helpers';
 
 const location = {
   hash: '',
@@ -153,5 +155,120 @@ describe('DashboardClassic disableSelectedMonitors', () => {
 
     expect(notifications.toasts.addDanger).toHaveBeenCalled();
     expect(notifications.toasts.addSuccess).not.toHaveBeenCalled();
+  });
+});
+
+describe('DashboardClassic getAlerts under MDS', () => {
+  beforeAll(() => {
+    setupCoreStart();
+  });
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+    httpClientMock.get.mockResolvedValue({
+      ok: true,
+      alerts: [],
+      totalAlerts: 0,
+      resp: { totalAlerts: 0, alerts: [] },
+    });
+  });
+
+  afterEach(() => {
+    setDataSourceEnabled({ enabled: false });
+  });
+
+  const alertsCalls = () =>
+    httpClientMock.get.mock.calls.filter(([url]) => url === '../api/alerting/alerts');
+
+  const render = (props = {}) =>
+    shallow(
+      <DashboardClassic
+        httpClient={httpClientMock}
+        history={historyMock}
+        location={location}
+        notifications={notifications}
+        perAlertView={true}
+        {...props}
+      />
+    );
+
+  test('fetches local-cluster alerts (empty-string dataSourceId) instead of bailing', () => {
+    // Local cluster: MDS enabled, data source id is the empty string, no stored query id.
+    getDataSourceQueryObj.mockReturnValue(undefined);
+    setDataSourceEnabled({ enabled: true });
+    setDataSource({ dataSourceId: '' });
+
+    render();
+
+    const calls = alertsCalls();
+    expect(calls.length).toBeGreaterThan(0);
+    expect(calls[0][1].query.dataSourceId).toBe('');
+  });
+
+  test('bails when MDS is enabled and no data source is selected', () => {
+    getDataSourceQueryObj.mockReturnValue(undefined);
+    setDataSourceEnabled({ enabled: true });
+    setDataSource({ dataSourceId: undefined });
+
+    render();
+
+    expect(alertsCalls().length).toBe(0);
+  });
+
+  test('getUpdatedAgentConfig checks agent config for the local cluster (dataSourceId="")', () => {
+    getDataSourceQueryObj.mockReturnValue(undefined);
+    setDataSourceEnabled({ enabled: true });
+    setDataSource({ dataSourceId: '' });
+
+    render(); // componentDidMount -> getUpdatedAgentConfig
+
+    expect(getIsAgentConfigured).toHaveBeenCalledWith('');
+  });
+
+  test('getUpdatedAgentConfig bails when no data source is selected', () => {
+    getDataSourceQueryObj.mockReturnValue(undefined);
+    setDataSourceEnabled({ enabled: true });
+    setDataSource({ dataSourceId: undefined });
+
+    render();
+
+    expect(getIsAgentConfigured).not.toHaveBeenCalled();
+  });
+
+  const monitorSearchCalls = () =>
+    httpClientMock.post.mock.calls.filter(([url]) => url === '../api/alerting/monitors/_search');
+
+  test('getMonitors fetches for the local cluster (dataSourceId="") instead of bailing', async () => {
+    getDataSourceQueryObj.mockReturnValue(undefined);
+    setDataSourceEnabled({ enabled: true });
+    setDataSource({ dataSourceId: '' });
+    httpClientMock.post.mockResolvedValue({ ok: true, resp: { hits: { hits: [] } } });
+
+    const wrapper = render();
+    const instance = wrapper.instance();
+    instance.setState({ alertsByTriggers: [{ monitor_id: 'm-1' }] });
+    httpClientMock.post.mockClear();
+
+    await instance.getMonitors();
+
+    const calls = monitorSearchCalls();
+    expect(calls.length).toBe(1);
+    expect(calls[0][1].query).toEqual({ dataSourceId: '' });
+  });
+
+  test('getMonitors bails when no data source is selected', async () => {
+    getDataSourceQueryObj.mockReturnValue(undefined);
+    setDataSourceEnabled({ enabled: true });
+    setDataSource({ dataSourceId: undefined });
+    httpClientMock.post.mockResolvedValue({ ok: true, resp: { hits: { hits: [] } } });
+
+    const wrapper = render();
+    const instance = wrapper.instance();
+    instance.setState({ alertsByTriggers: [{ monitor_id: 'm-1' }] });
+    httpClientMock.post.mockClear();
+
+    await instance.getMonitors();
+
+    expect(monitorSearchCalls().length).toBe(0);
   });
 });

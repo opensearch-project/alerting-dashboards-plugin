@@ -28,6 +28,13 @@ const normalizeDataSourceId = (dataSourceId) => {
   return dataSourceId;
 };
 
+// The local cluster is represented by the empty-string data source id. getDataSourceId()
+// normalizes that to undefined (same as "no selection"), so callers that need to treat the
+// local cluster as a valid selection use this to tell the two cases apart.
+export function isLocalClusterSelected() {
+  return dataSourceEnabled() && getDataSource()?.dataSourceId === '';
+}
+
 export function getDataSourceId(fallbackDataSourceId) {
   if (!dataSourceEnabled()) {
     return undefined;
