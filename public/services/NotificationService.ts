@@ -6,7 +6,7 @@
 import { HttpFetchQuery, HttpSetup } from '../../../../src/core/public';
 import { ChannelItemType, NotificationServerFeatures } from './models/interfaces';
 import { configListToChannels, configToChannel } from './utils/helper';
-import { getDataSourceQueryObj, getDataSourceId } from '../pages/utils/helpers';
+import { getDataSourceId, dataSourceEnabled } from '../pages/utils/helpers';
 
 interface ConfigsResponse {
   total_hits: number;
@@ -27,9 +27,14 @@ export default class NotificationService {
     this.httpClient = httpClient;
   }
 
+  // Under MDS the notifications server requires a dataSourceId. The local cluster is the
+  // empty string, which getDataSourceId() normalizes to undefined, so fall back to '' rather
+  // than omitting the param (as getDataSourceQueryObj would), which the server rejects with 400.
+  private getDataSourceQuery = () =>
+    dataSourceEnabled() ? { query: { dataSourceId: getDataSourceId() ?? '' } } : undefined;
 
   getServerFeatures = async (): Promise<NotificationServerFeatures> => {
-    const dataSourceQuery = getDataSourceQueryObj();
+    const dataSourceQuery = this.getDataSourceQuery();
     try {
       const response = await this.httpClient.get(
         NODE_API.GET_AVAILABLE_FEATURES, dataSourceQuery
@@ -48,7 +53,10 @@ export default class NotificationService {
   getConfigs = async (queryObject: HttpFetchQuery) => {
     const dataSourceId = getDataSourceId();
     const extendedParams = {
-      ...(dataSourceId !== undefined && { dataSourceId }), // Only include dataSourceId if it exists
+      // When MDS is enabled the notifications server requires a dataSourceId. The local
+      // cluster is represented by the empty string, which getDataSourceId() normalizes to
+      // undefined, so fall back to '' rather than omitting the param (which would 400).
+      ...(dataSourceEnabled() ? { dataSourceId: dataSourceId ?? '' } : {}),
       ...queryObject // Other parameters
     };
     return this.httpClient.get<ConfigsResponse>(NODE_API.GET_CONFIGS, {
@@ -57,19 +65,16 @@ export default class NotificationService {
   };
 
   getConfig = async (id: string) => {
-    const dataSourceQuery = getDataSourceQueryObj();
+    const dataSourceQuery = this.getDataSourceQuery();
     return this.httpClient.get<ConfigsResponse>(`${NODE_API.GET_CONFIG}/${id}`, dataSourceQuery);
   };
 
   getChannels = async (
     queryObject: HttpFetchQuery // config_type: Object.keys(CHANNEL_TYPE)
   ): Promise<{ items: ChannelItemType[]; total: number }> => {
-    const dataSourceId = getDataSourceId();
-    const extendedParams = {
-      ...(dataSourceId !== undefined && { dataSourceId }), // Only include dataSourceId if it exists
-      ...queryObject // Other parameters
-    };
-    const response = await this.getConfigs(extendedParams);
+    // getConfigs attaches the dataSourceId (including the empty-string local cluster id
+    // under MDS), so just forward the query params here.
+    const response = await this.getConfigs(queryObject);
     return {
       items: configListToChannels(response.config_list),
       total: response.total_hits || 0,
