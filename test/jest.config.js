@@ -65,8 +65,8 @@ module.exports = {
     '^.+\\.html$': '<rootDir>/test/utils/mockTransform.js',
   },
   transformIgnorePatterns: [
-    // ignore all node_modules except d3-color which requires babel transforms to handle export statement
-    // since ESM modules are not natively supported in Jest yet (https://github.com/facebook/jest/issues/4842)
-    '[/\\\\]node_modules(?![\\/\\\\](monaco-editor|react-monaco-editor|weak-lru-cache|ordered-binary|d3-color|axios|uuid|query-string|decode-uri-component|filter-obj|split-on-first))[/\\\\].+\\.js$',
+    // ignore all node_modules except packages that require babel transforms to handle export statements,
+    // including nested dependencies resolved from parent node_modules directories
+    String.raw`[/\\]node_modules[/\\](?!((?:@[^/\\]+[/\\])?[^/\\]+[/\\])*?(monaco-editor|react-monaco-editor|weak-lru-cache|ordered-binary|d3-color|axios|uuid|query-string|decode-uri-component|filter-obj|split-on-first)([/\\]|$))`,
   ],
 };

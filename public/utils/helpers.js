@@ -44,6 +44,77 @@ export const backendErrorNotification = (notifications, actionName, objectName, 
   });
 };
 
+// Fields that must not be echoed back when round-tripping a monitor through
+// GET -> PUT (server-managed / response-only fields).
+const MONITOR_UPDATE_OMIT_FIELDS = [
+  'id',
+  '_id',
+  'item_type',
+  'currentTime',
+  'version',
+  '_version',
+  'ifSeqNo',
+  'ifPrimaryTerm',
+];
+
+/**
+ * Fetches the full monitor body and writes it back with `update` applied —
+ * the safe way to toggle fields (e.g. enabled) for ALL monitor types,
+ * since the untouched body round-trips verbatim. Shared by the Monitors
+ * page actions and the Alerts page disable action so the omit list and
+ * concurrency handling cannot drift apart.
+ * Surfaces failures (including thrown/network errors) via
+ * backendErrorNotification and always resolves (never rejects).
+ */
+export const fetchAndUpdateMonitor = async (
+  httpClient,
+  notifications,
+  monitorId,
+  update,
+  dataSourceQuery,
+  fallbacks = {}
+) => {
+  try {
+    const detailResp = await httpClient.get(
+      `../api/alerting/monitors/${monitorId}`,
+      dataSourceQuery
+    );
+    if (!detailResp?.ok) {
+      backendErrorNotification(notifications, 'get', 'monitor', detailResp?.resp);
+      return detailResp;
+    }
+
+    const monitorDetail = detailResp.resp || {};
+    const ifSeqNo = detailResp.ifSeqNo ?? fallbacks.ifSeqNo;
+    const ifPrimaryTerm = detailResp.ifPrimaryTerm ?? fallbacks.ifPrimaryTerm;
+    const dataSourceId = dataSourceQuery?.query?.dataSourceId;
+
+    const query = {};
+    if (ifSeqNo !== undefined) query.ifSeqNo = ifSeqNo;
+    if (ifPrimaryTerm !== undefined) query.ifPrimaryTerm = ifPrimaryTerm;
+    if (dataSourceId !== undefined) query.dataSourceId = dataSourceId;
+
+    const payload = _.omit({ ...monitorDetail, ...update }, MONITOR_UPDATE_OMIT_FIELDS);
+
+    const resp = await httpClient.put(`../api/alerting/monitors/${monitorId}`, {
+      query,
+      body: JSON.stringify(payload),
+    });
+    if (!resp?.ok) {
+      backendErrorNotification(notifications, 'update', 'monitor', resp?.resp);
+    }
+    return resp;
+  } catch (err) {
+    backendErrorNotification(
+      notifications,
+      'update',
+      'monitor',
+      err?.body?.message || err?.message || String(err)
+    );
+    return { ok: false, resp: err };
+  }
+};
+
 // A helper function to generate a simple string explaining how many elements a user can add to a list.
 export const inputLimitText = (
   currCount = 0,

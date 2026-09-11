@@ -348,8 +348,8 @@ class DefineMonitor extends Component {
                     'Invalid input in data filter. Remove data filter or adjust filter '
                   )
                 : loadingResponse
-                ? renderEmptyMessage()
-                : previewContent()}
+                  ? renderEmptyMessage()
+                  : previewContent()}
             </EuiAccordion>
             <EuiSpacer size="m" />
           </>
@@ -369,6 +369,24 @@ class DefineMonitor extends Component {
         const canExecute = searchType === SEARCH_TYPE.GRAPH && validDocLevelGraphQueries(queries);
         if (!canExecute) return;
     }
+
+    // Don't attempt to run a preview until the query is actually executable.
+    // A freshly-opened monitor (e.g. reached via a direct deep-link to
+    // #/create-monitor, which mounts CreateMonitor before the data source
+    // resolves) has no index and no time field yet. Building a graph/query
+    // request from that state yields a `range` clause with an empty field
+    // name (`{ range: { "": {...} } }`), which the backend rejects with
+    // "[bool] failed to parse field [filter]" and surfaces as a spurious
+    // "Failed to run the query" toast. componentDidMount already gates the
+    // initial run on these conditions; centralize the same guard here so the
+    // componentDidUpdate aggregation/bucket branch can't bypass it.
+    const isIndexBackedSearch =
+      searchType === SEARCH_TYPE.GRAPH || searchType === SEARCH_TYPE.QUERY;
+    const hasIndices = Array.isArray(values.index) && values.index.length > 0;
+    if (isIndexBackedSearch && (!hasIndices || (this.requiresTimeField() && !values.timeField))) {
+      return;
+    }
+
     this.setState({ loadingResponse: true });
 
     const formikSnapshot = _.cloneDeep(values);

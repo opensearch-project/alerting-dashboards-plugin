@@ -15,18 +15,34 @@ const ALERTS_BASE_PATH = `${PPL_MONITOR_BASE_API}/alerts`;
 
 /**
  * Transforms the frontend body format ({ ppl_monitor: { name, query, triggers, ... } })
- * into the v1 backend format ({ name, monitor_type, inputs, triggers, ... }).
+ * into the engine's native monitor format ({ name, monitor_type, inputs, triggers, ... }).
  */
-const toV1MonitorBody = (body) => {
+/**
+ * Extracts the PPL query from a monitor object, accepting both the flattened
+ * frontend shape (query at top level) and the raw engine shape (query nested
+ * in inputs[0].ppl_input.query). Callers that round-trip an engine-format
+ * monitor (e.g. the monitor details page enable/disable toggle) send the
+ * latter. A blank (whitespace-only) top-level query does not short-circuit
+ * the nested fallback. Shared by toEngineMonitorBody and the update guard so
+ * the two can never drift apart.
+ */
+const extractPplQuery = (pplMon) => {
+  const topLevel = typeof pplMon?.query === 'string' ? pplMon.query : '';
+  if (topLevel.trim()) return topLevel;
+  const nested = pplMon?.inputs?.[0]?.ppl_input?.query;
+  return typeof nested === 'string' ? nested : '';
+};
+
+const toEngineMonitorBody = (body) => {
   const pplMon = body?.ppl_monitor || body;
-  const query = pplMon.query || '';
+  const query = extractPplQuery(pplMon);
   const rawTriggers = Array.isArray(pplMon.triggers) ? pplMon.triggers : [];
   const triggers = rawTriggers.map((t) => {
     if (t.ppl_trigger) return t;
     return { ppl_trigger: t };
   });
 
-  const v1 = {
+  const engineMonitor = {
     name: pplMon.name,
     monitor_type: 'ppl_monitor',
     enabled: pplMon.enabled !== false,
@@ -35,25 +51,25 @@ const toV1MonitorBody = (body) => {
     triggers,
   };
 
-  if (pplMon.description !== undefined) v1.description = pplMon.description;
-  if (pplMon.ui_metadata !== undefined) v1.ui_metadata = pplMon.ui_metadata;
+  if (pplMon.description !== undefined) engineMonitor.description = pplMon.description;
+  if (pplMon.ui_metadata !== undefined) engineMonitor.ui_metadata = pplMon.ui_metadata;
   if (pplMon.look_back_window_minutes !== undefined)
-    v1.look_back_window_minutes = pplMon.look_back_window_minutes;
-  if (pplMon.timestamp_field !== undefined) v1.timestamp_field = pplMon.timestamp_field;
-  if (body?.look_back_window_minutes !== undefined && v1.look_back_window_minutes === undefined)
-    v1.look_back_window_minutes = body.look_back_window_minutes;
-  if (body?.timestamp_field !== undefined && v1.timestamp_field === undefined)
-    v1.timestamp_field = body.timestamp_field;
-  if (body?.target !== undefined) v1.target = body.target;
+    engineMonitor.look_back_window_minutes = pplMon.look_back_window_minutes;
+  if (pplMon.timestamp_field !== undefined) engineMonitor.timestamp_field = pplMon.timestamp_field;
+  if (body?.look_back_window_minutes !== undefined && engineMonitor.look_back_window_minutes === undefined)
+    engineMonitor.look_back_window_minutes = body.look_back_window_minutes;
+  if (body?.timestamp_field !== undefined && engineMonitor.timestamp_field === undefined)
+    engineMonitor.timestamp_field = body.timestamp_field;
+  if (body?.target !== undefined) engineMonitor.target = body.target;
 
-  return v1;
+  return engineMonitor;
 };
 
 /**
- * Flattens a v1 monitor object (with wrapped inputs/triggers) into the
+ * Flattens an engine-format monitor object (with wrapped inputs/triggers) into the
  * flat format the frontend expects (query at top level, unwrapped triggers).
  */
-const flattenV1Monitor = (monitor) => {
+const flattenEngineMonitor = (monitor) => {
   if (!monitor) return {};
 
   const pplInput = monitor.inputs?.[0]?.ppl_input;
@@ -365,7 +381,7 @@ export default class PplAlertingMonitorService extends MDSEnabledClientService {
         } = result;
 
         let monitor = _source?.monitor ? _source.monitor : _source || {};
-        monitor = flattenV1Monitor(monitor);
+        monitor = flattenEngineMonitor(monitor);
 
         if (!monitor.monitor_type) {
           monitor.monitor_type = 'query_level';
@@ -567,11 +583,11 @@ export default class PplAlertingMonitorService extends MDSEnabledClientService {
       const aclResponse = await this.enforceWorkspaceAcl(context, req, res, ['library_write']);
       if (aclResponse) return aclResponse;
       const client = await this.getClientBasedOnDataSource(context, req);
-      const v1Body = toV1MonitorBody(await this.enrichTargetArn(context, req, req.body));
+      const engineBody = toEngineMonitorBody(await this.enrichTargetArn(context, req, req.body));
       const resp = await client('transport.request', {
         method: 'POST',
         path: PPL_MONITOR_BASE_API,
-        body: v1Body,
+        body: engineBody,
         headers: DEFAULT_HEADERS,
       });
       return res.ok({ body: { ok: true, resp } });
@@ -609,12 +625,38 @@ export default class PplAlertingMonitorService extends MDSEnabledClientService {
       } = pplMon;
 
       if (Array.isArray(cleanMonitor.triggers)) {
-        cleanMonitor.triggers = cleanMonitor.triggers.map(
-          ({ id: triggerId, last_triggered_time, last_execution_time, ...trigger }) => trigger
-        );
+        // Strip stale ids/run timestamps from both trigger shapes: unwrapped
+        // (flattened frontend) and ppl_trigger-wrapped (raw engine shape).
+        cleanMonitor.triggers = cleanMonitor.triggers.map((t) => {
+          const {
+            id: triggerId,
+            last_triggered_time,
+            last_execution_time,
+            ...trigger
+          } = t?.ppl_trigger || t;
+          return t?.ppl_trigger ? { ppl_trigger: trigger } : trigger;
+        });
       }
 
-      const v1Body = toV1MonitorBody(
+      // Guard against silent data loss: toEngineMonitorBody defaults a missing
+      // query to '', so an update body without a query would silently wipe
+      // the monitor's PPL query. Accept the query from either the flattened
+      // shape (top-level query) or the raw engine shape (inputs[0].ppl_input.query,
+      // sent by callers that round-trip an engine-format monitor such as the
+      // details-page enable/disable toggle); reject only if neither is present.
+      const bodyQuery = extractPplQuery(cleanMonitor);
+      if (!bodyQuery.trim()) {
+        return res.ok({
+          body: {
+            ok: false,
+            resp:
+              'Monitor update rejected: the request body is missing the PPL query. ' +
+              'Updating without a query would erase the existing one.',
+          },
+        });
+      }
+
+      const engineBody = toEngineMonitorBody(
         await this.enrichTargetArn(context, req, { ppl_monitor: cleanMonitor })
       );
 
@@ -623,7 +665,7 @@ export default class PplAlertingMonitorService extends MDSEnabledClientService {
         path: `${PPL_MONITOR_BASE_API}/${encodeURIComponent(id)}${
           qs.toString() ? `?${qs.toString()}` : ''
         }`,
-        body: v1Body,
+        body: engineBody,
         headers: DEFAULT_HEADERS,
       });
       return res.ok({ body: { ok: true, resp } });
@@ -650,7 +692,7 @@ export default class PplAlertingMonitorService extends MDSEnabledClientService {
       });
 
       const rawMonitor = _.get(raw, 'monitor') || _.get(raw, '_source') || {};
-      const monitor = flattenV1Monitor(rawMonitor);
+      const monitor = flattenEngineMonitor(rawMonitor);
 
       const normalized = {
         ...monitor,
@@ -722,7 +764,10 @@ export default class PplAlertingMonitorService extends MDSEnabledClientService {
       const aclResponse = await this.enforceWorkspaceAcl(context, req, res, ['library_write']);
       if (aclResponse) return aclResponse;
       const client = await this.getClientBasedOnDataSource(context, req);
-      const body = await this.enrichTargetArn(context, req, req.body);
+      // The engine only speaks its native monitor format -- translate the
+      // { ppl_monitor: {...} } body the same way createMonitor/updateMonitor
+      // do, otherwise Monitor.parse fails with "Monitor name is null".
+      const body = toEngineMonitorBody(await this.enrichTargetArn(context, req, req.body));
       const resp = await client('transport.request', {
         method: 'POST',
         path: `${PPL_MONITOR_BASE_API}/_execute`,
