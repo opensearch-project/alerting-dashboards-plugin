@@ -29,7 +29,12 @@ import {
   isDataSourceChanged,
   getDataSourceId,
 } from '../../../utils/helpers';
-import { getUseUpdatedUx } from '../../../../services';
+import {
+  ALERTING_WORKFLOW_RESOURCE_TYPE,
+  getUseUpdatedUx,
+  getResourceSharingAvailableTypes,
+  MONITOR_RESOURCE_TYPE,
+} from '../../../../services';
 
 const MAX_MONITOR_COUNT = 1000;
 
@@ -57,6 +62,7 @@ export default class Monitors extends Component {
       monitorState: state,
       loadingMonitors: true,
       monitorItemsToDelete: undefined,
+      resourceSharingAvailableTypes: [],
     };
     this.getMonitors = _.debounce(this.getMonitors.bind(this), 500, { leading: true });
     this.onTableChange = this.onTableChange.bind(this);
@@ -86,7 +92,13 @@ export default class Monitors extends Component {
   componentDidMount() {
     const { page, size, search, sortField, sortDirection, monitorState } = this.state;
     this.getMonitors(page * size, size, search, sortField, sortDirection, monitorState);
+    this.loadResourceSharingAvailability();
   }
+
+  loadResourceSharingAvailability = async () => {
+    const availableTypes = await getResourceSharingAvailableTypes(this.props.landingDataSourceId);
+    this.setState({ resourceSharingAvailableTypes: availableTypes });
+  };
 
   buildColumns() {
     const actions = [
@@ -128,6 +140,36 @@ export default class Monitors extends Component {
 
     return [
       ...staticColumns,
+      ...(this.state.resourceSharingAvailableTypes.includes(MONITOR_RESOURCE_TYPE) ||
+      this.state.resourceSharingAvailableTypes.includes(ALERTING_WORKFLOW_RESOURCE_TYPE)
+        ? [
+            {
+              // Resource-sharing SPI marker column: the centralized Share
+              // button is mounted here by security-dashboards-plugin when
+              // installed and resource sharing is enabled for monitors or
+              // composite (workflow) monitors.
+              field: 'id',
+              name: 'Access',
+              sortable: false,
+              width: '120px',
+              render: (id, item) => {
+                const resourceType =
+                  item.monitor?.type === 'workflow'
+                    ? ALERTING_WORKFLOW_RESOURCE_TYPE
+                    : MONITOR_RESOURCE_TYPE;
+                return this.state.resourceSharingAvailableTypes.includes(resourceType) ? (
+                  <div
+                    data-resource-share-button
+                    data-resource-id={id}
+                    data-resource-type={resourceType}
+                    {...(item.name ? { 'data-resource-name': item.name } : {})}
+                    data-resource-share-display="icon"
+                  />
+                ) : null;
+              },
+            },
+          ]
+        : []),
       {
         name: 'Actions',
         width: '60px',
@@ -144,6 +186,7 @@ export default class Monitors extends Component {
     }
     if (isDataSourceChanged(prevProps, this.props)) {
       this.updateMonitorList();
+      this.loadResourceSharingAvailability();
     }
   }
 

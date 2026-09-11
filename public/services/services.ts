@@ -101,6 +101,40 @@ export const isServerlessEnabled = () => {
   return !!capabilities?.alertingDashboards?.serverlessEnabled;
 };
 
+/**
+ * Resource types registered by the alerting backend plugin with the security
+ * plugin's resource-sharing framework (AlertingResourceSharingExtension).
+ */
+export const MONITOR_RESOURCE_TYPE = 'monitor';
+export const ALERTING_WORKFLOW_RESOURCE_TYPE = 'workflow';
+
+/**
+ * Resource-sharing types available on the given data source, gated on the
+ * feature flag and the per-type protected list. Returns [] when disabled or on
+ * error (fail-closed).
+ */
+export const getResourceSharingAvailableTypes = async (
+  resourceDataSourceId?: string
+): Promise<string[]> => {
+  try {
+    const http = getClient();
+    const query = resourceDataSourceId ? { dataSourceId: resourceDataSourceId } : {};
+    // Global gate: resource sharing must be enabled on the selected data source.
+    const info: any = await http.get('/api/v1/auth/resource_sharing_enabled', {
+      query,
+    });
+    if (!info?.enabled) return [];
+    // Per-type gate: the registered/protected shareable types on that source.
+    const typesResp: any = await http.get('/api/resource/types', { query });
+    const rawTypes = Array.isArray(typesResp) ? typesResp : (typesResp?.types ?? []);
+    return rawTypes
+      .map((entry: { type: string }) => entry?.type)
+      .filter((type: string | undefined): type is string => Boolean(type));
+  } catch (e) {
+    return [];
+  }
+};
+
 export const getUseUpdatedUx = () => {
   return getUISettings().get('home:useNewHomePage', false);
 };
