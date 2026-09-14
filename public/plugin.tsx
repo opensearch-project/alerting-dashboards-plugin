@@ -46,6 +46,7 @@ import {
   setContentManagementStart,
   setAssistantDashboards,
   setAssistantClient,
+  setSecurityDashboards,
   isPplAlertingEnabled,
 } from './services';
 import { VisAugmenterStart } from '../../../src/plugins/vis_augmenter/public';
@@ -58,6 +59,7 @@ import { dataSourceObservable } from './pages/utils/constants';
 import { ContentManagementPluginStart } from '../../../src/plugins/content_management/public';
 import { registerAlertsCard } from './utils/helpers';
 import type { ExplorePluginSetup, ExplorePluginStart } from '../../../src/plugins/explore/public';
+import { SecurityPluginStart } from '../../security-dashboards-plugin/public/types';
 import { CreateMonitorFlyout } from './components/CreateMonitorFlyout';
 import { CoreContext } from './utils/CoreContext';
 declare module '../../../src/plugins/ui_actions/public' {
@@ -89,6 +91,7 @@ export interface AlertingStartDeps {
   contentManagement: ContentManagementPluginStart;
   assistantDashboards?: AssistantPublicPluginStart;
   explore?: ExplorePluginStart;
+  securityDashboards?: SecurityPluginStart;
 }
 
 export class AlertingPlugin
@@ -418,6 +421,7 @@ export class AlertingPlugin
       navigation,
       contentManagement,
       assistantDashboards,
+      securityDashboards,
     }: AlertingStartDeps
   ): AlertingStart {
     navigateToAppRef = core.application.navigateToApp;
@@ -430,6 +434,12 @@ export class AlertingPlugin
     setNavigationUI(navigation.ui);
     setApplication(core.application);
     setContentManagementStart(contentManagement);
+    if (securityDashboards) {
+      // Presence alone doesn't guarantee the DOM-marker SPI is running (that
+      // depends on resource sharing being enabled on the local cluster); each
+      // call to securityDashboards.ui.isResourceSharingAvailable re-checks it.
+      setSecurityDashboards(securityDashboards);
+    }
     registerAlertsCard();
     setAssistantClient(
       assistantDashboards?.assistantClient || {
