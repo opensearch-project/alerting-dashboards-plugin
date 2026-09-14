@@ -1,3 +1,8 @@
+/*
+ * Copyright OpenSearch Contributors
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 // Mock core server modules that MDSEnabledClientService imports
 jest.mock('../../../../src/core/server', () => ({}), { virtual: true });
 jest.mock('../../../NeoDashboardsOasisPlugin/server/oasis/client', () => ({}), { virtual: true });
