@@ -45,8 +45,40 @@ jobs:
                                npm i -g yarn@\${YARN_VERSION} && yarn -v &&
                                cd ./plugins/alerting-dashboards-plugin &&
                                whoami && yarn osd bootstrap --single-version=loose && yarn build && yarn run test:jest --coverage"
+      - name: Upload coverage report artifact
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: jest-coverage-report
+          path: |
+            OpenSearch-Dashboards/plugins/alerting-dashboards-plugin/coverage/lcov.info
+            OpenSearch-Dashboards/plugins/alerting-dashboards-plugin/coverage/cobertura-coverage.xml
+          retention-days: 1
+          if-no-files-found: error
+
+  upload-coverage:
+    needs: tests-linux
+    name: Upload coverage report to Codecov
+    if: ${{ !cancelled() && github.repository == 'opensearch-project/alerting-dashboards-plugin' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Alerting OpenSearch Dashboards plugin
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+
+      - name: Download coverage report
+        id: download-coverage
+        continue-on-error: true
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+        with:
+          name: jest-coverage-report
+          path: coverage
+
       - name: Uploads coverage
-        uses: codecov/codecov-action@29386c70ef20e286228c72b668a06fd0e8399192 # v1
+        uses: codecov/codecov-action@fb8b3582c8e4def4969c97caa2f19720cb33a72f # v7.0.0
+        if: steps.download-coverage.outcome == 'success'
+        with:
+          directory: coverage
+          token: ${{ secrets.CODECOV_TOKEN }}
 
   tests-macos-windows:
     name: Run unit tests
