@@ -62,7 +62,7 @@ export default class Monitors extends Component {
       monitorState: state,
       loadingMonitors: true,
       monitorItemsToDelete: undefined,
-      resourceSharingAvailableTypes: [],
+      resourceSharing: { dataSourceId: undefined, types: [] },
     };
     this.getMonitors = _.debounce(this.getMonitors.bind(this), 500, { leading: true });
     this.onTableChange = this.onTableChange.bind(this);
@@ -96,8 +96,15 @@ export default class Monitors extends Component {
   }
 
   loadResourceSharingAvailability = async () => {
-    const availableTypes = await getResourceSharingAvailableTypes(this.props.landingDataSourceId);
-    this.setState({ resourceSharingAvailableTypes: availableTypes });
+    // Capture which data source this probe is for so a late-resolving call
+    // (e.g. from a data source the user has since switched away from) can't
+    // overwrite state with a result that no longer matches the current
+    // selection.
+    const requestedDataSourceId = this.props.landingDataSourceId;
+    const types = await getResourceSharingAvailableTypes(requestedDataSourceId);
+    if (requestedDataSourceId === this.props.landingDataSourceId) {
+      this.setState({ resourceSharing: { dataSourceId: requestedDataSourceId, types } });
+    }
   };
 
   buildColumns() {
@@ -138,10 +145,17 @@ export default class Monitors extends Component {
       }
     );
 
+    // Guard against a stale value flashing the column during a data-source
+    // switch: only trust availability resolved for the currently selected
+    // data source.
+    const resourceSharingAvailable =
+      this.state.resourceSharing.dataSourceId === this.props.landingDataSourceId &&
+      (this.state.resourceSharing.types.includes(MONITOR_RESOURCE_TYPE) ||
+        this.state.resourceSharing.types.includes(ALERTING_WORKFLOW_RESOURCE_TYPE));
+
     return [
       ...staticColumns,
-      ...(this.state.resourceSharingAvailableTypes.includes(MONITOR_RESOURCE_TYPE) ||
-      this.state.resourceSharingAvailableTypes.includes(ALERTING_WORKFLOW_RESOURCE_TYPE)
+      ...(resourceSharingAvailable
         ? [
             {
               // Resource-sharing SPI marker column: the centralized Share
@@ -157,7 +171,8 @@ export default class Monitors extends Component {
                   item.monitor?.type === 'workflow'
                     ? ALERTING_WORKFLOW_RESOURCE_TYPE
                     : MONITOR_RESOURCE_TYPE;
-                return this.state.resourceSharingAvailableTypes.includes(resourceType) ? (
+                return this.state.resourceSharing.dataSourceId === this.props.landingDataSourceId &&
+                  this.state.resourceSharing.types.includes(resourceType) ? (
                   <div
                     data-resource-share-button
                     data-resource-id={id}
