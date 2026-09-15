@@ -8,7 +8,8 @@
     "dataSourceManagement",
     "assistantDashboards",
     "explore",
-    "workspace"
+    "workspace",
+    "securityDashboards"
   ],
   "requiredPlugins": [
     "uiActions",
