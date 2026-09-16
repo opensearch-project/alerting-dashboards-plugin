@@ -432,13 +432,13 @@ describe('Monitors resource sharing Access column', () => {
 
   // The Access column is gated on the per-data-source availability probed into
   // component state; flush the mount probe, then set the desired state and read.
-  const buildColumnsWithTypes = async (availableTypes) => {
-    const wrapper = getMountWrapper();
+  const buildColumnsWithTypes = async (availableTypes, dataSourceId = undefined) => {
+    const wrapper = getMountWrapper({ landingDataSourceId: dataSourceId });
     await act(async () => {
       await Promise.resolve();
     });
     await act(async () => {
-      wrapper.instance().setState({ resourceSharingAvailableTypes: availableTypes });
+      wrapper.instance().setState({ resourceSharing: { dataSourceId, types: availableTypes } });
     });
     wrapper.update();
     return wrapper.instance().buildColumns();
@@ -499,5 +499,68 @@ describe('Monitors resource sharing Access column', () => {
       monitor: { type: 'query_level_monitor' },
     });
     expect(monitorMarker).toBeNull();
+  });
+
+  test('discards a probe result that resolves after the data source has changed', async () => {
+    // Covers the resolve-time guard rather than the render guard: the probe for
+    // "ds-a" is still in flight when the selection moves to "ds-b", so its late
+    // result must not be written to state.
+    const { getResourceSharingAvailableTypes } = require('../../../../services');
+    let resolveDsA;
+    getResourceSharingAvailableTypes.mockImplementation((dataSourceId) =>
+      dataSourceId === 'ds-a'
+        ? new Promise((resolve) => {
+            resolveDsA = resolve;
+          })
+        : Promise.resolve([])
+    );
+
+    const wrapper = getMountWrapper({ landingDataSourceId: 'ds-a' });
+    await act(async () => {
+      await Promise.resolve();
+    });
+
+    // Switch away before the ds-a probe resolves; componentDidUpdate starts a
+    // fresh probe for ds-b.
+    await act(async () => {
+      wrapper.setProps({ landingDataSourceId: 'ds-b' });
+    });
+
+    // Now let the stale ds-a probe resolve with types that would otherwise
+    // switch the Access column on.
+    await act(async () => {
+      resolveDsA(['monitor', 'workflow']);
+      await Promise.resolve();
+    });
+    wrapper.update();
+
+    expect(wrapper.instance().state.resourceSharing.dataSourceId).not.toBe('ds-a');
+    expect(wrapper.instance().state.resourceSharing.types).not.toContain('monitor');
+
+    const accessColumn = wrapper
+      .instance()
+      .buildColumns()
+      .find((column) => column.name === 'Access');
+    expect(accessColumn).toBeUndefined();
+  });
+
+  test('does not show the Access column using a stale result resolved for a different data source', async () => {
+    // resourceSharing.dataSourceId ("ds-a") does not match the component's
+    // current landingDataSourceId ("ds-b"), simulating a data-source switch
+    // whose new probe has not resolved yet.
+    const wrapper = getMountWrapper({ landingDataSourceId: 'ds-b' });
+    await act(async () => {
+      await Promise.resolve();
+    });
+    await act(async () => {
+      wrapper.instance().setState({
+        resourceSharing: { dataSourceId: 'ds-a', types: ['monitor', 'workflow'] },
+      });
+    });
+    wrapper.update();
+
+    const columns = wrapper.instance().buildColumns();
+    const accessColumn = columns.find((column) => column.name === 'Access');
+    expect(accessColumn).toBeUndefined();
   });
 });
