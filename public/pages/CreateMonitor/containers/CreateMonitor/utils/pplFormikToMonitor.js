@@ -206,14 +206,19 @@ export const buildPPLMonitorFromFormik = (values) => {
     enabled: !values.disabled,
     schedule,
     query: (() => {
-      let q = values.pplQuery || '';
       const lbMinutes = computeLookBackMinutes(values);
-      if (lbMinutes > 0 && values.timestampField) {
-        q = addTimeFilterToQuery(q, lbMinutes, values.timestampField);
-      } else if (values.timestampField) {
-        // Lookback disabled: remove any previously injected time filter so the
-        // persisted query stops filtering by a window the user just turned off.
-        q = stripTimeFilterFromQuery(q, values.timestampField);
+      const currentField = values.timestampField;
+      // The field the plugin previously injected the look-back clause with, per
+      // the persisted monitor. Stripping this (in addition to the current field)
+      // is what removes the stale clause when the user switches the timestamp
+      // field on edit, or disables lookback — without touching a DATE_SUB /
+      // TIMESTAMP filter the user hand-wrote on some unrelated field.
+      const previousField = _.get(values, 'ui_metadata.lookback.timestamp_field');
+      let q = values.pplQuery || '';
+      if (previousField) q = stripTimeFilterFromQuery(q, previousField);
+      if (currentField) q = stripTimeFilterFromQuery(q, currentField);
+      if (lbMinutes > 0 && currentField) {
+        q = addTimeFilterToQuery(q, lbMinutes, currentField);
       }
       return q;
     })(),
