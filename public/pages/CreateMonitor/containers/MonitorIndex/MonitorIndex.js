@@ -171,23 +171,66 @@ class MonitorIndex extends React.Component {
     }
   }
 
+  async handleQueryDataStreams(rawDataStream) {
+    const dataStream = rawDataStream.trim();
+
+    if (dataStream === '*:' || dataStream === '') {
+      return [];
+    }
+
+    try {
+      const dataSourceQuery = getDataSourceQueryObj();
+      const response = await this.props.httpClient.post('../api/alerting/_data_streams', {
+        body: JSON.stringify({ dataStream }),
+        query: dataSourceQuery?.query,
+      });
+
+      if (response.ok) {
+        // Shape identical to handleQueryIndices so data streams flow through the
+        // picker as selectable indices — a data stream is queried like an index.
+        const dataStreams = response.resp.map(({ health, index, status }) => ({
+          label: index,
+          health,
+          status,
+        }));
+        return _.sortBy(dataStreams, 'label');
+      }
+      return [];
+    } catch (err) {
+      console.error(err);
+      return [];
+    }
+  }
+
+  // Merge data streams into the index option list (dedup by label, keep sorted).
+  mergeIndexOptions(indices, dataStreams) {
+    return _.sortBy(_.uniqBy([...indices, ...dataStreams], 'label'), 'label');
+  }
+
   async onFetch(query) {
     this.setState({ isLoading: true, indexPatternExists: false });
     if (query.endsWith('*')) {
       const exactMatchedIndices = await this.handleQueryIndices(query);
       const exactMatchedAliases = await this.handleQueryAliases(query);
+      const exactMatchedDataStreams = await this.handleQueryDataStreams(query);
       createReasonableWait(() => {
         // If the search changed, discard this state
         if (query !== this.lastQuery) {
           return;
         }
-        this.setState({ exactMatchedIndices, exactMatchedAliases, isLoading: false });
+        this.setState({
+          exactMatchedIndices: this.mergeIndexOptions(exactMatchedIndices, exactMatchedDataStreams),
+          exactMatchedAliases,
+          isLoading: false,
+        });
       });
     } else {
       const partialMatchedIndices = await this.handleQueryIndices(`${query}*`);
       const exactMatchedIndices = await this.handleQueryIndices(query);
       const partialMatchedAliases = await this.handleQueryAliases(`${query}*`);
       const exactMatchedAliases = await this.handleQueryAliases(query);
+      const partialMatchedDataStreams = await this.handleQueryDataStreams(`${query}*`);
+      const exactMatchedDataStreams = await this.handleQueryDataStreams(query);
       createReasonableWait(() => {
         // If the search changed, discard this state
         if (query !== this.lastQuery) {
@@ -195,8 +238,11 @@ class MonitorIndex extends React.Component {
         }
 
         this.setState({
-          partialMatchedIndices,
-          exactMatchedIndices,
+          partialMatchedIndices: this.mergeIndexOptions(
+            partialMatchedIndices,
+            partialMatchedDataStreams
+          ),
+          exactMatchedIndices: this.mergeIndexOptions(exactMatchedIndices, exactMatchedDataStreams),
           partialMatchedAliases,
           exactMatchedAliases,
           isLoading: false,

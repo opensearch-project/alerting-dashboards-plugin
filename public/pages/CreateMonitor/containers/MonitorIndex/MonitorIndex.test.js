@@ -30,6 +30,12 @@ function getMountWrapper(customProps = {}) {
 describe('MonitorIndex', () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    httpClientMock.post.mockResolvedValue({ ok: true, resp: [] });
+  });
+  // Flush the async onFetch chain (indices/aliases/data streams) so a late
+  // setState never fires after the test's jsdom is torn down.
+  afterEach(async () => {
+    await runAllPromises();
   });
   test('renders', () => {
     const wrapper = getMountWrapper();
@@ -162,5 +168,36 @@ describe('MonitorIndex', () => {
     expect(wrapper.find('[data-test-subj="comboBoxInput"]').text()).toEqual(
       'logstash-0EuiIconMock'
     );
+  });
+
+  test('returns empty data stream array for *:', async () => {
+    const wrapper = getMountWrapper();
+    expect(await wrapper.find(MonitorIndex).instance().handleQueryDataStreams('*:')).toEqual([]);
+  });
+
+  test('returns data streams shaped as index options', async () => {
+    httpClientMock.post.mockResolvedValue({
+      ok: true,
+      resp: [{ health: 'green', status: 'open', index: 'repro-ds-logs', alias: 'repro-ds-logs' }],
+    });
+    const wrapper = getMountWrapper();
+
+    expect(await wrapper.find(MonitorIndex).instance().handleQueryDataStreams('repro')).toEqual([
+      { label: 'repro-ds-logs', health: 'green', status: 'open' },
+    ]);
+  });
+
+  test('mergeIndexOptions merges data streams into indices, deduped and sorted', () => {
+    const wrapper = getMountWrapper();
+    const instance = wrapper.find(MonitorIndex).instance();
+
+    const merged = instance.mergeIndexOptions(
+      [{ label: 'repro-regular', health: 'green', status: 'open' }],
+      [{ label: 'repro-ds-logs', health: 'green', status: 'open' }]
+    );
+
+    // Data stream shows up as a selectable index option, sorted by label.
+    expect(merged.map((option) => option.label)).toEqual(['repro-ds-logs', 'repro-regular']);
+    wrapper.unmount();
   });
 });

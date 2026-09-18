@@ -60,8 +60,11 @@ export class CrossClusterConfiguration extends Component {
         dataSourceId: getDataSourceId(),
       };
       const response = await httpClient.get(`../api/alerting/remote/indexes`, { query: query });
+      // The remote-indexes API only returns indices/aliases, so resolve the local
+      // cluster's data streams separately and merge them in during parseOptions.
+      const localDataStreams = await this.getLocalDataStreams();
       if (response.ok) {
-        this.parseOptions(response.resp);
+        this.parseOptions(response.resp, localDataStreams);
       } else {
         console.log('Error getting clusters:', response);
       }
@@ -71,7 +74,21 @@ export class CrossClusterConfiguration extends Component {
     this.setState({ loading: false });
   }
 
-  parseOptions = (clusterInfos = {}) => {
+  async getLocalDataStreams() {
+    const { httpClient } = this.props;
+    try {
+      const response = await httpClient.post(`../api/alerting/_data_streams`, {
+        body: JSON.stringify({ dataStream: '*' }),
+        query: { dataSourceId: getDataSourceId() },
+      });
+      return response.ok ? response.resp : [];
+    } catch (e) {
+      console.error(e);
+      return [];
+    }
+  }
+
+  parseOptions = (clusterInfos = {}, dataStreams = []) => {
     const {
       formik: { values },
     } = this.props;
@@ -153,7 +170,7 @@ export class CrossClusterConfiguration extends Component {
 
       // Only display indexes for the selected clusters
       if (selectedClusters.some((option) => option.cluster === clusterName)) {
-        const clusterIndexOptions =
+        let clusterIndexOptions =
           clusterInfo.indexes === undefined
             ? []
             : Object.entries(clusterInfo.indexes).map(([_, indexInfo]) => {
@@ -176,6 +193,20 @@ export class CrossClusterConfiguration extends Component {
                   selectedIndexes.push(indexOption);
                 return indexOption;
               });
+
+        // The remote-indexes API only returns indices/aliases, never data stream
+        // names. Merge the local (hub) cluster's data streams in so they are
+        // selectable in the picker.
+        if (clusterInfo.hub_cluster && dataStreams.length) {
+          const dataStreamOptions = dataStreams.map((ds) => ({
+            label: ds.index,
+            health: ds.health,
+            index: ds.index,
+            cluster: clusterInfo.cluster,
+            value: ds.index,
+          }));
+          clusterIndexOptions = _.uniqBy([...clusterIndexOptions, ...dataStreamOptions], 'index');
+        }
 
         if (!categorizedIndexOptions[clusterInfo.cluster])
           categorizedIndexOptions[clusterInfo.cluster] = { label: clusterLabel, options: [] };
