@@ -121,7 +121,13 @@ class DefineMonitor extends Component {
       if (hasTimeField || !this.requiresTimeField()) this.onRunQuery();
     }
     if (searchType === SEARCH_TYPE.CLUSTER_METRICS) this.getSupportedApiList();
-    if (searchType === SEARCH_TYPE.PPL) this.initializePplIndices();
+    if (searchType === SEARCH_TYPE.PPL) {
+      this.initializePplIndices();
+      // Without this the timestamp dropdown only shows the previously selected field instead of all available fields.
+      if (this.props.values?.pplQuery) {
+        this.detectPplTimestampFields(this.props.values.pplQuery);
+      }
+    }
   }
 
   componentDidUpdate(prevProps) {

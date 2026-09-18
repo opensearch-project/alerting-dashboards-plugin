@@ -8,6 +8,7 @@ import {
   computeLookBackMinutes,
   extractIndicesFromPPL,
   formatDuration,
+  stripTimeFilterFromQuery,
 } from './pplAlertingHelpers';
 import { buildPPLMonitorFromFormik } from './pplFormikToMonitor';
 
@@ -195,5 +196,38 @@ describe('formatDuration', () => {
   test('handles zero and null', () => {
     expect(formatDuration(0)).toBe('0 minutes');
     expect(formatDuration(null)).toBe('-');
+  });
+});
+
+describe('stripTimeFilterFromQuery strips only the given field clause', () => {
+  test('removes the sliding-window clause for the specified field', () => {
+    const q = 'source=logs | where @timestamp > DATE_SUB(NOW(), INTERVAL 1 HOUR) | stats count()';
+    expect(stripTimeFilterFromQuery(q, '@timestamp')).toBe('source=logs | stats count()');
+  });
+
+  test('removes the legacy absolute-timestamp clause for the specified field', () => {
+    const q =
+      "source=logs | where event_time > TIMESTAMP('2026-01-01 00:00:00') and event_time < TIMESTAMP('2026-01-01 01:00:00') | head 5";
+    expect(stripTimeFilterFromQuery(q, 'event_time')).toBe('source=logs | head 5');
+  });
+
+  test('leaves a DATE_SUB clause on a different field untouched (no user-filter data loss)', () => {
+    const q =
+      'source=logs | where response_time > DATE_SUB(NOW(), INTERVAL 5 MINUTE) | stats count()';
+    expect(stripTimeFilterFromQuery(q, '@timestamp')).toBe(q);
+  });
+
+  test('returns the query unchanged when no field is provided', () => {
+    const q = 'source=logs | where @timestamp > DATE_SUB(NOW(), INTERVAL 1 HOUR)';
+    expect(stripTimeFilterFromQuery(q, undefined)).toBe(q);
+  });
+});
+
+describe('addTimeFilterToQuery is idempotent for the same field', () => {
+  test('re-injecting replaces the existing clause instead of stacking', () => {
+    const q = 'source=logs | where @timestamp > DATE_SUB(NOW(), INTERVAL 1 HOUR) | stats count()';
+    const out = addTimeFilterToQuery(q, 120, '@timestamp');
+    expect((out.match(/where/g) || []).length).toBe(1);
+    expect(out).toContain('where @timestamp > DATE_SUB(NOW(), INTERVAL 2 HOUR)');
   });
 });
