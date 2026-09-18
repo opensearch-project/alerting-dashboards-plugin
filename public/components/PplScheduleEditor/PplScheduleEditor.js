@@ -33,11 +33,10 @@ const PplScheduleEditor = ({
   dateFieldsError,
   dateFieldsLoading,
   errors = {},
-  isEdit = false,
   isMustang = false,
   wrapperStyle = { maxWidth: '720px' },
 }) => {
-  const useLB = isEdit ? false : useLookBackWindow !== undefined ? useLookBackWindow : true;
+  const useLB = useLookBackWindow !== undefined ? useLookBackWindow : true;
   const lbAmount = Number(lookBackAmount !== undefined ? lookBackAmount : 1);
   const lbUnit = lookBackUnit || 'hours';
   const lbMinutes =
@@ -52,11 +51,21 @@ const PplScheduleEditor = ({
     intervalUnit === 'MINUTES'
       ? intervalAmount
       : intervalUnit === 'HOURS'
-      ? intervalAmount * 60
-      : intervalAmount * 1440;
+        ? intervalAmount * 60
+        : intervalAmount * 1440;
   const intervalError = intervalAmount !== '' && intervalMinutes < 1;
 
   const noDateFields = dateFieldsError !== null && availableDateFields.length === 0;
+
+  // A saved timestamp field that isn't among the detected fields (e.g. renamed
+  // or dropped from the index on the edit page) is surfaced as invalid so the
+  // user can pick a valid one, instead of silently keeping a field that would
+  // fail at run time.
+  const savedTimestampFieldMissing =
+    !!timestampField &&
+    !dateFieldsLoading &&
+    availableDateFields.length > 0 &&
+    !availableDateFields.includes(timestampField);
 
   return (
     <>
@@ -88,7 +97,7 @@ const PplScheduleEditor = ({
             <EuiFlexItem>
               <EuiFieldNumber
                 data-test-subj="pplIntervalValue"
-                value={period?.interval === 0 ? '' : period?.interval ?? 1}
+                value={period?.interval === 0 ? '' : (period?.interval ?? 1)}
                 onChange={(e) => {
                   const val = e.target.value === '' ? '' : Number(e.target.value);
                   setFieldValue('period.interval', val);
@@ -148,12 +157,12 @@ const PplScheduleEditor = ({
       )}
 
       {/*// TODO: investigate whether we can add back the lookback window component for mustang domains*/}
-      {!isEdit && !isMustang && (
+      {!isMustang && (
         <>
           <EuiFormRow
             fullWidth={true}
             helpText={
-              'The look back window will be added to your PPL query as a "where" filter. After creating this monitor, that filter can be edited in the query itself.'
+              'The look back window is added to your PPL query as a "where" filter. You can change or remove it here at any time, or edit the filter directly in the query.'
             }
           >
             <EuiCheckbox
@@ -180,6 +189,11 @@ const PplScheduleEditor = ({
                     }
                     if (!lookBackUnit) {
                       setFieldValue('lookBackUnit', 'hours');
+                    }
+                    // Re-enabling the loopback window after a prior removal leaves timestampField empty.
+                    // Default it to the first detected date field so the select isn't blank.
+                    if (!timestampField && availableDateFields && availableDateFields.length > 0) {
+                      setFieldValue('timestampField', availableDateFields[0]);
                     }
                   }
                 }
@@ -211,8 +225,8 @@ const PplScheduleEditor = ({
                   lbTooSmall
                     ? 'Must be at least 1 minute'
                     : lbTooLarge
-                    ? 'Must be at most 7 days (10,080 minutes)'
-                    : undefined
+                      ? 'Must be at most 7 days (10,080 minutes)'
+                      : undefined
                 }
               >
                 <EuiFlexGroup gutterSize="s" alignItems="center" responsive={false}>
@@ -256,18 +270,31 @@ const PplScheduleEditor = ({
                 }
                 fullWidth
                 style={wrapperStyle}
+                isInvalid={savedTimestampFieldMissing}
+                error={
+                  savedTimestampFieldMissing
+                    ? `Field "${timestampField}" isn't present in the selected indices. Choose an available field.`
+                    : undefined
+                }
                 helpText={dateFieldsLoading ? 'Detecting timestamp fields...' : undefined}
               >
                 <EuiSelect
                   data-test-subj="pplTimestampField"
-                  options={(availableDateFields || []).map((field) => ({
-                    value: field,
-                    text: field,
-                  }))}
+                  options={(() => {
+                    const opts = (availableDateFields || []).map((field) => ({
+                      value: field,
+                      text: field,
+                    }));
+                    if (timestampField && !opts.some((o) => o.value === timestampField)) {
+                      opts.unshift({ value: timestampField, text: timestampField });
+                    }
+                    return opts;
+                  })()}
                   hasNoInitialSelection={!timestampField}
                   value={timestampField || ''}
                   onChange={(e) => setFieldValue('timestampField', e.target.value)}
                   fullWidth
+                  isInvalid={savedTimestampFieldMissing}
                   isLoading={dateFieldsLoading}
                 />
               </EuiFormRow>

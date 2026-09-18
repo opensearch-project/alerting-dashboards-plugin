@@ -91,6 +91,11 @@ exports[`CreateMonitor renders 1`] = `
         },
       }
     }
+    innerRef={
+      Object {
+        "current": null,
+      }
+    }
     onSubmit={[Function]}
     validateOnChange={false}
   >

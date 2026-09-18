@@ -302,4 +302,51 @@ describe('CreateMonitor', () => {
       expect(log).toHaveBeenCalledWith('Failed to create:', { ok: false, resp: 'test' });
     });
   });
+
+  describe('handlePplDateFieldsChange (PPL timestamp auto-select)', () => {
+    const buildInstance = (initialTimestampField) => {
+      const wrapper = shallow(
+        <CreateMonitor
+          httpClient={httpClientMock}
+          history={historyMock}
+          setFlyout={setFlyout}
+          match={match}
+          location={location}
+        />
+      );
+      const instance = wrapper.instance();
+      instance.formikRef = {
+        current: {
+          values: { timestampField: initialTimestampField },
+          setFieldValue: jest.fn(),
+        },
+      };
+      return instance;
+    };
+
+    test('stores detected fields and defaults the timestamp field when none is set', () => {
+      const instance = buildInstance('');
+      instance.handlePplDateFieldsChange({ availableDateFields: ['@timestamp', 'event_time'] });
+      expect(instance.state.pplDateFields.availableDateFields).toEqual([
+        '@timestamp',
+        'event_time',
+      ]);
+      expect(instance.formikRef.current.setFieldValue).toHaveBeenCalledWith(
+        'timestampField',
+        '@timestamp'
+      );
+    });
+
+    test('does not overwrite a timestamp field that is already set', () => {
+      const instance = buildInstance('event_time');
+      instance.handlePplDateFieldsChange({ availableDateFields: ['@timestamp', 'event_time'] });
+      expect(instance.formikRef.current.setFieldValue).not.toHaveBeenCalled();
+    });
+
+    test('does nothing when no fields are detected', () => {
+      const instance = buildInstance('');
+      instance.handlePplDateFieldsChange({ availableDateFields: [] });
+      expect(instance.formikRef.current.setFieldValue).not.toHaveBeenCalled();
+    });
+  });
 });
