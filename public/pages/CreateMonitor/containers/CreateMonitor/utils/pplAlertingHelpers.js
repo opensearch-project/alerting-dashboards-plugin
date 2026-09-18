@@ -110,8 +110,8 @@ export const getInitialValues = ({
       Array.isArray(monitorLevelTriggers) && monitorLevelTriggers.length
         ? monitorLevelTriggers
         : Array.isArray(rootLevelTriggers)
-        ? rootLevelTriggers
-        : [];
+          ? rootLevelTriggers
+          : [];
 
     const normalizedTriggers = rawTriggers.map((trigger) => triggerToFormikPpl(trigger));
 
@@ -631,12 +631,16 @@ const formatPplInterval = (lookBackMinutes) => {
 };
 
 /**
- * Removes a previously injected lookback time filter for the given timestamp
- * field. Handles both the current sliding-window form
- * (`| where ts > DATE_SUB(NOW(), INTERVAL n UNIT)`) and the legacy
- * absolute-timestamp form (`| where ts > TIMESTAMP('...') and ts < TIMESTAMP('...')`)
- * that older monitors persisted at save time. Makes injection idempotent so
- * editing/previewing a monitor never stacks stale filters.
+ * Removes a lookback time filter this plugin injected for a *specific* timestamp
+ * field. Handles the current sliding-window form
+ * (`| where <field> > DATE_SUB(NOW(), INTERVAL n UNIT)`) and the legacy
+ * absolute-timestamp form
+ * (`| where <field> > TIMESTAMP('...') and <field> < TIMESTAMP('...')`).
+ * Keyed on the field name so it only ever removes the plugin's own injected
+ * clause — a `DATE_SUB`/`TIMESTAMP` filter the user hand-wrote on a different
+ * field is left untouched. Callers strip both the previously-injected field
+ * (from ui_metadata.lookback.timestamp_field) and the current field so that
+ * switching the field on edit, or disabling lookback, drops the stale clause.
  */
 export const stripTimeFilterFromQuery = (query, timestampField) => {
   if (!query || !timestampField) return query;
