@@ -1,3 +1,8 @@
+/*
+ * Copyright OpenSearch Contributors
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 const templatePkg = require('./package.json');
 const opensearchDashboardsPkg = require('../../package.json');
 
