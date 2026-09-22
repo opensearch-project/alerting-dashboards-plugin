@@ -48,6 +48,19 @@ export default function (services, router, dataSourceEnabled) {
 
   router.post(
     {
+      path: '/api/alerting/_data_streams',
+      validate: {
+        body: schema.object({
+          dataStream: schema.string(),
+        }),
+        query: createValidateQuerySchema(dataSourceEnabled),
+      },
+    },
+    opensearchService.getDataStreams
+  );
+
+  router.post(
+    {
       path: '/api/alerting/_mappings',
       validate: {
         body: schema.object({

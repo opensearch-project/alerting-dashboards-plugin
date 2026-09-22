@@ -10,7 +10,7 @@ import { FormikComboBox } from '../../../../../components/FormControls';
 import { MONITOR_TYPE } from '../../../../../utils/constants';
 import { connect } from 'formik';
 import { validateIndex } from '../../../../../utils/validate';
-import { getDataSourceId } from '../../../../utils/helpers';
+import { getDataSourceId, getDataSourceQueryObj } from '../../../../utils/helpers';
 export const CROSS_CLUSTER_SETUP_LINK =
   'https://opensearch.org/docs/latest/security/access-control/cross-cluster-search/';
 
@@ -60,8 +60,11 @@ export class CrossClusterConfiguration extends Component {
         dataSourceId: getDataSourceId(),
       };
       const response = await httpClient.get(`../api/alerting/remote/indexes`, { query: query });
+      // The remote-indexes API only returns indices/aliases, so resolve the local
+      // cluster's data streams separately and merge them in during parseOptions.
+      const localDataStreams = await this.getLocalDataStreams();
       if (response.ok) {
-        this.parseOptions(response.resp);
+        this.parseOptions(response.resp, localDataStreams);
       } else {
         console.log('Error getting clusters:', response);
       }
@@ -71,7 +74,30 @@ export class CrossClusterConfiguration extends Component {
     this.setState({ loading: false });
   }
 
-  parseOptions = (clusterInfos = {}) => {
+  async getLocalDataStreams() {
+    // The data stream list is independent of cluster selection, so resolve it once
+    // and reuse it — getIndexes() runs on every selectedClusters change and would
+    // otherwise re-fetch the entire list on each add/remove of a remote cluster.
+    if (this.localDataStreams) return this.localDataStreams;
+    const { httpClient } = this.props;
+    try {
+      const dataSourceQuery = getDataSourceQueryObj();
+      const response = await httpClient.post(`../api/alerting/_data_streams`, {
+        body: JSON.stringify({ dataStream: '*' }),
+        query: dataSourceQuery?.query,
+      });
+      if (response.ok) {
+        this.localDataStreams = response.resp;
+        return this.localDataStreams;
+      }
+      return [];
+    } catch (e) {
+      console.error(e);
+      return [];
+    }
+  }
+
+  parseOptions = (clusterInfos = {}, dataStreams = []) => {
     const {
       formik: { values },
     } = this.props;
@@ -153,7 +179,7 @@ export class CrossClusterConfiguration extends Component {
 
       // Only display indexes for the selected clusters
       if (selectedClusters.some((option) => option.cluster === clusterName)) {
-        const clusterIndexOptions =
+        let clusterIndexOptions =
           clusterInfo.indexes === undefined
             ? []
             : Object.entries(clusterInfo.indexes).map(([_, indexInfo]) => {
@@ -176,6 +202,36 @@ export class CrossClusterConfiguration extends Component {
                   selectedIndexes.push(indexOption);
                 return indexOption;
               });
+
+        // The remote-indexes API only returns indices/aliases, never data stream
+        // names. Merge the local (hub) cluster's data streams in so they are
+        // selectable in the picker.
+        if (clusterInfo.hub_cluster && dataStreams.length) {
+          const dataStreamOptions = dataStreams.map((ds) => {
+            const dataStreamOption = {
+              label: ds.index,
+              health: ds.health,
+              index: ds.index,
+              cluster: clusterInfo.cluster,
+              value: ds.index,
+            };
+
+            // Restore pre-selected data streams when editing a monitor. Data streams
+            // are absent from clusterInfo.indexes, so unlike regular indexes they are
+            // not captured by the .map() above. Because this merge adds them to the
+            // displayed options, the reconciliation below would see them as "already
+            // an option" and skip restoring them into selectedIndexes — silently
+            // dropping the stream on save. Push them here instead.
+            if (
+              !loadedInitialValues &&
+              (indexes[clusterName] || []).includes(dataStreamOption.index)
+            ) {
+              selectedIndexes.push(dataStreamOption);
+            }
+            return dataStreamOption;
+          });
+          clusterIndexOptions = _.uniqBy([...clusterIndexOptions, ...dataStreamOptions], 'index');
+        }
 
         if (!categorizedIndexOptions[clusterInfo.cluster])
           categorizedIndexOptions[clusterInfo.cluster] = { label: clusterLabel, options: [] };
