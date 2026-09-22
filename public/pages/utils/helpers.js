@@ -56,7 +56,15 @@ export function isDataSourceChanged(prevProps, currProps) {
 }
 
 export function getURL(url, dataSourceId) {
-  return dataSourceEnabled() ? `${url}&dataSourceId=${dataSourceId}` : url;
+  if (!dataSourceEnabled()) {
+    return url;
+  }
+  // An unresolved selection must never be serialized as the literal string "undefined": the
+  // receiving page parses the query string back into a saved object id and the lookup fails.
+  // Dropping the parameter is not an alternative either - Main only clears `dataSourceLoading`
+  // when the query string carries a dataSourceId, so a deep link without it renders nothing.
+  // The empty string is the local cluster, which is what an unresolved selection already queries.
+  return `${url}&dataSourceId=${dataSourceId ?? ''}`;
 }
 
 export function parseQueryStringAndGetDataSource(queryString) {
@@ -70,7 +78,8 @@ export function parseQueryStringAndGetDataSource(queryString) {
 }
 
 export function constructUrlFromDataSource(url) {
-  return dataSourceEnabled() ? `${url}&dataSourceId=${getDataSource()?.dataSourceId}` : url;
+  // Keep the short circuit so the disabled path still never reads the data source service.
+  return dataSourceEnabled() ? getURL(url, getDataSource()?.dataSourceId) : url;
 }
 
 export const appendCommentsAction = (columns, httpClient) => {
