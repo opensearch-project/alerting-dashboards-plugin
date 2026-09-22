@@ -111,6 +111,53 @@ export default class OpensearchService extends MDSEnabledClientService {
     }
   };
 
+  getDataStreams = async (context, req, res) => {
+    try {
+      const aclResponse = await this.enforceWorkspaceAcl(context, req, res, ['library_read']);
+      if (aclResponse) return aclResponse;
+
+      const { dataStream } = req.body;
+      // Strip characters that cannot legally appear in a data stream name but could
+      // alter the request when interpolated into the path: path separators ('/', '\')
+      // that would let the pattern escape the /_data_stream/ endpoint, and URL
+      // metacharacters ('?', '#', '%', whitespace, '"', '<', '>', '|') that could
+      // inject a query string/fragment. The '*' wildcard is intentionally preserved,
+      // so URL-encoding the whole segment is avoided (it would break wildcards).
+      const pattern = String(dataStream || '*').replace(/[/\\?#%\s"<>|]/g, '') || '*';
+      const client = await this.getClientBasedOnDataSource(context, req);
+      // _cat/indices (used by getIndices) only returns a data stream's backing
+      // indices (.ds-*), never the stream name, so data streams are resolved
+      // separately here and merged into the index picker on the client.
+      const response = await client('transport.request', {
+        method: 'GET',
+        path: `/_data_stream/${pattern}`,
+      });
+      const dataStreams = (response?.data_streams || []).map((ds) => ({
+        health: (ds.status || '').toLowerCase(),
+        index: ds.name,
+        status: 'open',
+      }));
+      return res.ok({
+        body: {
+          ok: true,
+          resp: dataStreams,
+        },
+      });
+    } catch (err) {
+      // Treat "no data streams match" (404) as an empty result, like getIndices.
+      if (err.statusCode === 404) {
+        return res.ok({ body: { ok: true, resp: [] } });
+      }
+      console.error('Alerting - OpensearchService - getDataStreams:', err);
+      return res.ok({
+        body: {
+          ok: false,
+          resp: err.message,
+        },
+      });
+    }
+  };
+
   getClusterHealth = async (context, req, res) => {
     try {
       const aclResponse = await this.enforceWorkspaceAcl(context, req, res, ['library_read']);
