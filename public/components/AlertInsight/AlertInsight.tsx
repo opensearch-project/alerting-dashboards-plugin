@@ -89,12 +89,13 @@ export const AlertInsight: React.FC<AlertInsightProps> = (props: AlertInsightPro
       // Only keep the query part
       dsl = JSON.stringify({ query: search.query.query });
       let latestAlertTriggerTime = '';
-      let latestAlertExecuteStartTime = '';
       let hasTimeReplaced = false;
       const periodStart = getPeriodStart(monitorDefinition.schedule, alert.last_notification_time);
       if (query.indexOf(PERIOD_START_PLACEHOLDER) !== -1 && periodStart !== null) {
         query = query.replaceAll(PERIOD_START_PLACEHOLDER, String(periodStart));
-        latestAlertExecuteStartTime = moment.utc(periodStart).format(DEFAULT_DSL_QUERY_DATE_FORMAT);
+        const latestAlertExecuteStartTime = moment
+          .utc(periodStart)
+          .format(DEFAULT_DSL_QUERY_DATE_FORMAT);
         dsl = dsl.replaceAll(PERIOD_START_PLACEHOLDER, latestAlertExecuteStartTime);
         monitorDefinitionStr = monitorDefinitionStr.replaceAll(
           PERIOD_START_PLACEHOLDER,
@@ -134,16 +135,19 @@ export const AlertInsight: React.FC<AlertInsightProps> = (props: AlertInsightPro
 
       if (index) {
         // 3.4 dsl query result with aggregation results
-        const alertData = await searchQuery(
-          httpClient,
-          `${index}/_search`,
-          'GET',
-          dataSourceQuery,
-          query
-        );
-        alertTriggeredByValue = JSON.stringify(
-          alertData.body.aggregations?.metric?.value || alertData.body.hits.total.value
-        );
+        // {{period_start}} stays unresolved for cron schedules and would fail the search
+        if (query.indexOf(PERIOD_START_PLACEHOLDER) === -1) {
+          const alertData = await searchQuery(
+            httpClient,
+            `${index}/_search`,
+            'GET',
+            dataSourceQuery,
+            query
+          );
+          alertTriggeredByValue = JSON.stringify(
+            alertData.body.aggregations?.metric?.value || alertData.body.hits.total.value
+          );
+        }
 
         try {
           if (isVisualEditorMonitor) {

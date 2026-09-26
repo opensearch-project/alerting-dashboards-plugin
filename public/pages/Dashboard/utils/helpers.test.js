@@ -903,6 +903,9 @@ describe('searchQuery', () => {
     const periodEnd = 1700000000000;
 
     test('subtracts one interval for interval schedules', () => {
+      expect(getPeriodStart({ period: { interval: 30, unit: 'SECONDS' } }, periodEnd)).toBe(
+        periodEnd - 30 * 1000
+      );
       expect(getPeriodStart({ period: { interval: 1, unit: 'MINUTES' } }, periodEnd)).toBe(
         periodEnd - 60 * 1000
       );
@@ -918,6 +921,10 @@ describe('searchQuery', () => {
       expect(
         getPeriodStart({ cron: { expression: '0 * * * *', timezone: 'UTC' } }, periodEnd)
       ).toBeNull();
+    });
+
+    test('returns null for units the backend does not accept', () => {
+      expect(getPeriodStart({ period: { interval: 1, unit: 'WEEKS' } }, periodEnd)).toBeNull();
     });
 
     test('returns null when schedule is missing', () => {
