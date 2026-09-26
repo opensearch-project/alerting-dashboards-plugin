@@ -23,8 +23,20 @@ jest.mock('../../pages/Dashboard/utils/helpers', () => ({
 }));
 
 const LAST_NOTIFICATION_TIME = 1700000000000;
+const TEN_MINUTES = 10 * 60 * 1000;
 
-const buildMonitor = (schedule) => ({
+// Range clause as GET monitor returns it: the backend re-serializes the query, so the bounds are
+// from/to and format is followed by boost
+const buildRange = (from, to) => ({
+  from,
+  to,
+  include_lower: true,
+  include_upper: true,
+  format: 'epoch_millis',
+  boost: 1,
+});
+
+const buildMonitor = (schedule, range = buildRange('{{period_start}}', '{{period_end}}')) => ({
   monitor_type: 'query_level_monitor',
   schedule,
   inputs: [
@@ -33,28 +45,16 @@ const buildMonitor = (schedule) => ({
         indices: ['logs'],
         query: {
           size: 0,
-          query: {
-            bool: {
-              filter: [
-                {
-                  range: {
-                    '@timestamp': {
-                      gte: '{{period_start}}',
-                      lte: '{{period_end}}',
-                      format: 'epoch_millis',
-                    },
-                  },
-                },
-              ],
-            },
-          },
+          query: { bool: { filter: [{ range: { '@timestamp': range } }] } },
         },
       },
     },
   ],
 });
 
-const getContextProvider = async (monitor) => {
+const getRange = (queryString) => JSON.parse(queryString).query.bool.filter[0].range['@timestamp'];
+
+const getContextProvider = (monitor) => {
   const registerIncontextInsight = jest.fn();
   getApplication.mockReturnValue({ capabilities: { assistant: { enabled: true } } });
   getAssistantDashboards.mockReturnValue({
@@ -79,31 +79,90 @@ const getContextProvider = async (monitor) => {
 };
 
 describe('AlertInsight', () => {
+  const interval = { period: { interval: 10, unit: 'MINUTES' } };
+  const cron = { cron: { expression: '0 * * * *', timezone: 'UTC' } };
+
   beforeEach(() => {
     jest.clearAllMocks();
     searchQuery.mockResolvedValue({ body: { hits: { total: { value: 3 } } } });
   });
 
-  test('replaces {{period_start}} and {{period_end}} for interval schedules', async () => {
-    const contextProvider = await getContextProvider(
-      buildMonitor({ period: { interval: 10, unit: 'MINUTES' } })
-    );
-    const { additionalInfo } = await contextProvider();
+  test('searches the period of the run that raised the alert', async () => {
+    await getContextProvider(buildMonitor(interval))();
 
     expect(searchQuery).toHaveBeenCalledTimes(1);
-    const range = JSON.parse(searchQuery.mock.calls[0][4]).query.bool.filter[0].range['@timestamp'];
-    expect(range.gte).toBe(String(LAST_NOTIFICATION_TIME - 10 * 60 * 1000));
-    expect(range.lte).toBe(String(LAST_NOTIFICATION_TIME));
-    expect(additionalInfo.dsl).not.toContain('{{period_');
+    expect(getRange(searchQuery.mock.calls[0][4])).toEqual(
+      buildRange(String(LAST_NOTIFICATION_TIME - TEN_MINUTES), String(LAST_NOTIFICATION_TIME))
+    );
   });
 
-  test('skips the search when {{period_start}} cannot be resolved for cron schedules', async () => {
-    const contextProvider = await getContextProvider(
-      buildMonitor({ cron: { expression: '0 * * * *', timezone: 'UTC' } })
+  test('passes on a dsl with ISO dates and without the epoch_millis format', async () => {
+    const { additionalInfo, context } = await getContextProvider(buildMonitor(interval))();
+
+    const range = getRange(additionalInfo.dsl);
+    expect(range.from).toBe('2023-11-14T22:03:20+00:00');
+    expect(range.to).toBe('2023-11-14T22:13:20+00:00');
+    expect(range).not.toHaveProperty('format');
+    expect(context).not.toContain('{{period_');
+    expect(context).not.toContain('epoch_millis');
+  });
+
+  test('drops the format also when it is the last key of the range', async () => {
+    const { additionalInfo } = await getContextProvider(
+      buildMonitor(interval, {
+        gte: '{{period_start}}',
+        lte: '{{period_end}}',
+        format: 'epoch_millis',
+      })
+    )();
+
+    expect(getRange(additionalInfo.dsl)).toEqual({
+      gte: '2023-11-14T22:03:20+00:00',
+      lte: '2023-11-14T22:13:20+00:00',
+    });
+  });
+
+  test('resolves placeholders written with spaces', async () => {
+    await getContextProvider(
+      buildMonitor(interval, buildRange('{{ period_start }}', '{{ period_end }}'))
+    )();
+
+    expect(getRange(searchQuery.mock.calls[0][4]).from).toBe(
+      String(LAST_NOTIFICATION_TIME - TEN_MINUTES)
     );
-    const { context } = await contextProvider();
+  });
+
+  test('neither searches nor passes on dsl when {{period_start}} cannot be resolved', async () => {
+    const { additionalInfo, context } = await getContextProvider(buildMonitor(cron))();
 
     expect(searchQuery).not.toHaveBeenCalled();
+    expect(additionalInfo.dsl).toBe('');
     expect(context).toContain('Here is the detail information about alert trigger');
+  });
+
+  test('keeps the dsl when only aggregations use an unresolved {{period_start}}', async () => {
+    const monitor = buildMonitor(cron, buildRange('{{period_end}}||-1h', '{{period_end}}'));
+    monitor.inputs[0].search.query.aggs = {
+      histogram: {
+        date_histogram: {
+          field: '@timestamp',
+          fixed_interval: '1m',
+          extended_bounds: { min: '{{period_start}}', max: '{{period_end}}' },
+        },
+      },
+    };
+    const { additionalInfo } = await getContextProvider(monitor)();
+
+    expect(searchQuery).not.toHaveBeenCalled();
+    expect(getRange(additionalInfo.dsl).to).toBe('2023-11-14T22:13:20+00:00');
+  });
+
+  test('still searches a cron monitor that only uses {{period_end}}', async () => {
+    await getContextProvider(
+      buildMonitor(cron, buildRange('{{period_end}}||-1h', '{{period_end}}'))
+    )();
+
+    expect(searchQuery).toHaveBeenCalledTimes(1);
+    expect(getRange(searchQuery.mock.calls[0][4]).from).toBe(`${LAST_NOTIFICATION_TIME}||-1h`);
   });
 });

@@ -19,6 +19,7 @@ import {
   findLongestStringField,
   searchQuery,
   getPeriodStart,
+  resolvePeriodPlaceholders,
 } from './helpers';
 import { ALERT_STATE, DEFAULT_EMPTY_DATA } from '../../../utils/constants';
 import { bucketColumns } from './tableUtils';
@@ -860,10 +861,10 @@ describe('findLongestStringField', () => {
         schema: [
           { name: 'firstName', type: 'string' },
           { name: 'lastName', type: 'string' },
-          { name: 'timestamp', type: 'number' }
+          { name: 'timestamp', type: 'number' },
         ],
-        datarows: [['Alice', 'Johnson', 3000000000000]]
-      }
+        datarows: [['Alice', 'Johnson', 3000000000000]],
+      },
     };
     expect(findLongestStringField(input)).toBe('lastName');
   });
@@ -874,7 +875,7 @@ describe('searchQuery', () => {
 
   beforeEach(() => {
     httpClient = {
-      post: jest.fn()
+      post: jest.fn(),
     };
   });
 
@@ -898,37 +899,116 @@ describe('searchQuery', () => {
       withLongNumeralsSupport: true,
     });
   });
+});
 
-  describe('getPeriodStart', () => {
-    const periodEnd = 1700000000000;
+describe('getPeriodStart', () => {
+  const periodEnd = 1700000000000;
 
-    test('subtracts one interval for interval schedules', () => {
-      expect(getPeriodStart({ period: { interval: 30, unit: 'SECONDS' } }, periodEnd)).toBe(
-        periodEnd - 30 * 1000
-      );
-      expect(getPeriodStart({ period: { interval: 1, unit: 'MINUTES' } }, periodEnd)).toBe(
-        periodEnd - 60 * 1000
-      );
-      expect(getPeriodStart({ period: { interval: 2, unit: 'HOURS' } }, periodEnd)).toBe(
-        periodEnd - 2 * 60 * 60 * 1000
-      );
-      expect(getPeriodStart({ period: { interval: 1, unit: 'DAYS' } }, periodEnd)).toBe(
-        periodEnd - 24 * 60 * 60 * 1000
-      );
+  test('subtracts one interval for interval schedules', () => {
+    expect(getPeriodStart({ period: { interval: 30, unit: 'SECONDS' } }, periodEnd)).toBe(
+      periodEnd - 30 * 1000
+    );
+    expect(getPeriodStart({ period: { interval: 1, unit: 'MINUTES' } }, periodEnd)).toBe(
+      periodEnd - 60 * 1000
+    );
+    expect(getPeriodStart({ period: { interval: 2, unit: 'HOURS' } }, periodEnd)).toBe(
+      periodEnd - 2 * 60 * 60 * 1000
+    );
+    expect(getPeriodStart({ period: { interval: 1, unit: 'DAYS' } }, periodEnd)).toBe(
+      periodEnd - 24 * 60 * 60 * 1000
+    );
+  });
+
+  test('returns null for cron schedules', () => {
+    expect(
+      getPeriodStart({ cron: { expression: '0 * * * *', timezone: 'UTC' } }, periodEnd)
+    ).toBeNull();
+  });
+
+  test('returns null for units the backend does not accept', () => {
+    expect(getPeriodStart({ period: { interval: 1, unit: 'WEEKS' } }, periodEnd)).toBeNull();
+  });
+
+  test('returns null when schedule is missing', () => {
+    expect(getPeriodStart(undefined, periodEnd)).toBeNull();
+  });
+});
+
+describe('resolvePeriodPlaceholders', () => {
+  const values = { period_start: 'START', period_end: 'END' };
+
+  test('replaces placeholders in nested strings and keeps the structure', () => {
+    const source = {
+      size: 0,
+      query: {
+        bool: {
+          filter: [
+            { range: { '@timestamp': { from: '{{period_start}}', to: '{{period_end}}||-1m' } } },
+            { term: { level: 'error' } },
+          ],
+        },
+      },
+    };
+    const { result, unresolved } = resolvePeriodPlaceholders(source, values);
+
+    expect(unresolved).toBe(false);
+    expect(result.size).toBe(0);
+    expect(result.query.bool.filter[0].range['@timestamp']).toEqual({
+      from: 'START',
+      to: 'END||-1m',
     });
+    expect(result.query.bool.filter[1]).toEqual({ term: { level: 'error' } });
+    expect(source.query.bool.filter[0].range['@timestamp'].from).toBe('{{period_start}}');
+  });
 
-    test('returns null for cron schedules', () => {
-      expect(
-        getPeriodStart({ cron: { expression: '0 * * * *', timezone: 'UTC' } }, periodEnd)
-      ).toBeNull();
-    });
+  test('accepts the mustache spellings the backend renders', () => {
+    const { result } = resolvePeriodPlaceholders(
+      [
+        '{{ period_start }}',
+        '{{{period_end}}}',
+        '{{{ period_start }}}',
+        '{{&period_end}}',
+        '{{& period_start}}',
+      ],
+      values
+    );
+    expect(result).toEqual(['START', 'END', 'START', 'END', 'START']);
+  });
 
-    test('returns null for units the backend does not accept', () => {
-      expect(getPeriodStart({ period: { interval: 1, unit: 'WEEKS' } }, periodEnd)).toBeNull();
-    });
+  test('leaves other tags alone', () => {
+    const tags = ['{{period_startx}}', '{{ctx.period_end}}', '{{#period_end}}', '{{ &period_end}}'];
+    const { result, unresolved } = resolvePeriodPlaceholders(tags, values);
+    expect(result).toEqual(tags);
+    expect(unresolved).toBe(false);
+  });
 
-    test('returns null when schedule is missing', () => {
-      expect(getPeriodStart(undefined, periodEnd)).toBeNull();
-    });
+  test('keeps and reports placeholders without a value', () => {
+    const { result, unresolved } = resolvePeriodPlaceholders(
+      { from: '{{period_start}}', to: '{{period_end}}' },
+      { period_start: null, period_end: 'END' }
+    );
+    expect(unresolved).toBe(true);
+    expect(result).toEqual({ from: '{{period_start}}', to: 'END' });
+  });
+
+  test('drops format only where a value was replaced, regardless of key order', () => {
+    const source = {
+      replacedFormatLast: { from: '{{period_start}}', format: 'epoch_millis' },
+      replacedFormatFirst: { format: 'epoch_millis', to: '{{period_end}}', boost: 1 },
+      untouched: { from: 'now-1h', format: 'epoch_millis' },
+    };
+    const { result } = resolvePeriodPlaceholders(source, values, { dropFormat: true });
+
+    expect(result.replacedFormatLast).toEqual({ from: 'START' });
+    expect(result.replacedFormatFirst).toEqual({ to: 'END', boost: 1 });
+    expect(result.untouched).toEqual({ from: 'now-1h', format: 'epoch_millis' });
+  });
+
+  test('keeps format when dropFormat is not set', () => {
+    const { result } = resolvePeriodPlaceholders(
+      { from: '{{period_start}}', format: 'epoch_millis' },
+      values
+    );
+    expect(result).toEqual({ from: 'START', format: 'epoch_millis' });
   });
 });

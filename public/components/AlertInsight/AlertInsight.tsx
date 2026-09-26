@@ -13,8 +13,6 @@ import {
   DEFAULT_LOG_PATTERN_SAMPLE_SIZE,
   DEFAULT_LOG_PATTERN_TOP_N,
   DEFAULT_PPL_QUERY_DATE_FORMAT,
-  PERIOD_START_PLACEHOLDER,
-  PERIOD_END_PLACEHOLDER,
   PPL_SEARCH_PATH,
 } from '../../pages/Dashboard/utils/constants';
 import { MONITOR_TYPE, SEARCH_TYPE } from '../../utils/constants';
@@ -23,6 +21,7 @@ import {
   filterActiveAlerts,
   findLongestStringField,
   getPeriodStart,
+  resolvePeriodPlaceholders,
   searchQuery,
 } from '../../pages/Dashboard/utils/helpers';
 import { getApplication, getAssistantDashboards, getClient } from '../../services';
@@ -84,42 +83,40 @@ export const AlertInsight: React.FC<AlertInsightProps> = (props: AlertInsightPro
       // 3.1 preprocess index, only support first index use case
       const search = monitorResp.resp.inputs[0].search;
       index = String(search.indices).split(',')[0]?.trim() || '';
-      // 3.2 preprocess dsl query with right time range
-      let query = JSON.stringify(search.query);
+      // 3.2 resolve {{period_start}} and {{period_end}} for the run that raised the alert
+      const periodEnd = alert.last_notification_time;
+      const periodStart = getPeriodStart(monitorDefinition.schedule, periodEnd);
+      const withPeriod = (
+        source: object,
+        formatTime: (time: number) => number | string,
+        options?: { dropFormat?: boolean }
+      ) =>
+        resolvePeriodPlaceholders(
+          source,
+          {
+            period_start: periodStart === null ? null : formatTime(periodStart),
+            period_end: formatTime(periodEnd),
+          },
+          options
+        );
+      // An unresolved placeholder (e.g. {{period_start}} on a cron schedule) makes a query fail
+      // wherever it is executed, so neither the search nor the dsl is used when it remains
+      const resolvedQuery = withPeriod(search.query, (time) => time);
+      const query = JSON.stringify(resolvedQuery.result);
+      const isQueryResolved = !resolvedQuery.unresolved;
       // Only keep the query part
-      dsl = JSON.stringify({ query: search.query.query });
-      let latestAlertTriggerTime = '';
-      let hasTimeReplaced = false;
-      const periodStart = getPeriodStart(monitorDefinition.schedule, alert.last_notification_time);
-      if (query.indexOf(PERIOD_START_PLACEHOLDER) !== -1 && periodStart !== null) {
-        query = query.replaceAll(PERIOD_START_PLACEHOLDER, String(periodStart));
-        const latestAlertExecuteStartTime = moment
-          .utc(periodStart)
-          .format(DEFAULT_DSL_QUERY_DATE_FORMAT);
-        dsl = dsl.replaceAll(PERIOD_START_PLACEHOLDER, latestAlertExecuteStartTime);
-        monitorDefinitionStr = monitorDefinitionStr.replaceAll(
-          PERIOD_START_PLACEHOLDER,
-          getTime(periodStart) // human-readable time format for summary
-        );
-        hasTimeReplaced = true;
+      const resolvedDsl = withPeriod(
+        { query: search.query.query },
+        (time) => moment.utc(time).format(DEFAULT_DSL_QUERY_DATE_FORMAT),
+        { dropFormat: true }
+      );
+      if (!resolvedDsl.unresolved) {
+        dsl = JSON.stringify(resolvedDsl.result);
       }
-      if (query.indexOf(PERIOD_END_PLACEHOLDER) !== -1) {
-        query = query.replaceAll(PERIOD_END_PLACEHOLDER, alert.last_notification_time);
-        latestAlertTriggerTime = moment
-          .utc(alert.last_notification_time)
-          .format(DEFAULT_DSL_QUERY_DATE_FORMAT);
-        dsl = dsl.replaceAll(PERIOD_END_PLACEHOLDER, latestAlertTriggerTime);
-        monitorDefinitionStr = monitorDefinitionStr.replaceAll(
-          PERIOD_END_PLACEHOLDER,
-          getTime(alert.last_notification_time) // human-readable time format for summary
-        );
-        hasTimeReplaced = true;
-      }
-      // as we changed the format, remove it
-      if (hasTimeReplaced) {
-        dsl = dsl.replaceAll('"format":"epoch_millis",', '');
-        monitorDefinitionStr = monitorDefinitionStr.replaceAll('"format":"epoch_millis",', '');
-      }
+      monitorDefinitionStr = JSON.stringify(
+        // human-readable time format for summary
+        withPeriod(monitorDefinition, getTime, { dropFormat: true }).result
+      );
       // 3.3 preprocess ppl query base with concatenated filters
       const pplAlertTriggerTime = moment
         .utc(alert.last_notification_time)
@@ -135,8 +132,7 @@ export const AlertInsight: React.FC<AlertInsightProps> = (props: AlertInsightPro
 
       if (index) {
         // 3.4 dsl query result with aggregation results
-        // {{period_start}} stays unresolved for cron schedules and would fail the search
-        if (query.indexOf(PERIOD_START_PLACEHOLDER) === -1) {
+        if (isQueryResolved) {
           const alertData = await searchQuery(
             httpClient,
             `${index}/_search`,
