@@ -40,7 +40,10 @@ export const DEFAULT_LOG_PATTERN_SAMPLE_SIZE = 20;
 export const DEFAULT_ACTIVE_ALERTS_AI_TOP_N = 1;
 export const DEFAULT_DSL_QUERY_DATE_FORMAT = 'YYYY-MM-DDTHH:mm:ssZ';
 export const DEFAULT_PPL_QUERY_DATE_FORMAT = 'YYYY-MM-DD HH:mm:ss';
-export const PERIOD_END_PLACEHOLDER = '{{period_end}}';
+// Mustache variable tags the backend renders for these params:
+// {{period_end}}, {{ period_end }}, {{{period_end}}}, {{&period_end}}
+export const PERIOD_PLACEHOLDER_REGEX =
+  /\{\{\{\s*(period_start|period_end)\s*\}\}\}|\{\{&?\s*(period_start|period_end)\s*\}\}/g;
 export const BUCKET_UNIT_PPL_UNIT_MAP = {
   'd': 'DAY',
   'h': 'HOUR',
