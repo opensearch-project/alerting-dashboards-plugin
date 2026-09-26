@@ -63,6 +63,9 @@ class MonitorIndex extends React.Component {
     this.handleQueryIndices = this.handleQueryIndices.bind(this);
     this.handleQueryAliases = this.handleQueryAliases.bind(this);
     this.onFetch = this.onFetch.bind(this);
+    // Debounce fetches triggered by search input to avoid firing an API
+    // request on every keystroke.
+    this.debouncedFetch = _.debounce(this.onFetch, 300);
   }
 
   componentDidMount() {
@@ -102,7 +105,7 @@ class MonitorIndex extends React.Component {
     this.lastQuery = query;
     this.setState({ query, showingIndexPatternQueryErrors: !!query.length });
 
-    await this.onFetch(query);
+    this.debouncedFetch(query);
   }
 
   async handleQueryIndices(rawIndex) {
