@@ -4,6 +4,7 @@
  */
 
 import _ from 'lodash';
+import moment from 'moment';
 import { DEFAULT_GET_ALERTS_QUERY_PARAMS, EMPTY_ALERT_LIST, MAX_ALERT_COUNT } from './constants';
 import { bucketColumns } from './tableUtils';
 import { ALERT_STATE, DEFAULT_EMPTY_DATA } from '../../../utils/constants';
@@ -197,4 +198,15 @@ export async function searchQuery(httpClient, path, method, dataSourceQuery, que
     asResponse: true,
     withLongNumeralsSupport: true,
   });
+}
+/**
+ * Mirrors the backend's IntervalSchedule.getPeriodEndingAt, which resolves {{period_start}}
+ * to periodEnd minus one interval. Cron schedules resolve it to the previous cron fire time,
+ * which cannot be computed here without a cron parser, so null is returned for them.
+ */
+export function getPeriodStart(schedule, periodEnd) {
+  const interval = _.get(schedule, 'period.interval');
+  const unit = _.get(schedule, 'period.unit');
+  if (!interval || !unit) return null;
+  return moment.utc(periodEnd).subtract(interval, unit.toLowerCase()).valueOf();
 }
