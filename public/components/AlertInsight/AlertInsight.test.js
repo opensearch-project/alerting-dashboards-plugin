@@ -54,7 +54,7 @@ const buildMonitor = (schedule, range = buildRange('{{period_start}}', '{{period
 
 const getRange = (queryString) => JSON.parse(queryString).query.bool.filter[0].range['@timestamp'];
 
-const getContextProvider = (monitor) => {
+const getContextProvider = (monitor, lastNotificationTime = LAST_NOTIFICATION_TIME) => {
   const registerIncontextInsight = jest.fn();
   getApplication.mockReturnValue({ capabilities: { assistant: { enabled: true } } });
   getAssistantDashboards.mockReturnValue({
@@ -69,7 +69,7 @@ const getContextProvider = (monitor) => {
       monitor_id: 'monitor-id',
       trigger_name: 'trigger',
       start_time: LAST_NOTIFICATION_TIME,
-      last_notification_time: LAST_NOTIFICATION_TIME,
+      last_notification_time: lastNotificationTime,
     },
     alertId: 'alert-id',
     isAgentConfigured: true,
@@ -155,6 +155,13 @@ describe('AlertInsight', () => {
 
     expect(searchQuery).not.toHaveBeenCalled();
     expect(getRange(additionalInfo.dsl).to).toBe('2023-11-14T22:13:20+00:00');
+  });
+
+  test('neither searches nor passes on dsl when the alert has no notification time', async () => {
+    const { additionalInfo } = await getContextProvider(buildMonitor(interval), null)();
+
+    expect(searchQuery).not.toHaveBeenCalled();
+    expect(additionalInfo.dsl).toBe('');
   });
 
   test('still searches a cron monitor that only uses {{period_end}}', async () => {

@@ -222,7 +222,7 @@ export function getPeriodStart(schedule, periodEnd) {
   const interval = _.get(schedule, 'period.interval');
   const unit = _.get(schedule, 'period.unit');
   const momentUnit = PERIOD_UNIT_MOMENT_UNIT_MAP[unit];
-  if (!interval || !momentUnit) return null;
+  if (!interval || !momentUnit || !Number.isFinite(periodEnd)) return null;
   return moment.utc(periodEnd).subtract(interval, momentUnit).valueOf();
 }
 

@@ -929,6 +929,12 @@ describe('getPeriodStart', () => {
     expect(getPeriodStart({ period: { interval: 1, unit: 'WEEKS' } }, periodEnd)).toBeNull();
   });
 
+  test('returns null when the period end is unknown', () => {
+    const schedule = { period: { interval: 1, unit: 'MINUTES' } };
+    expect(getPeriodStart(schedule, null)).toBeNull();
+    expect(getPeriodStart(schedule, undefined)).toBeNull();
+  });
+
   test('returns null when schedule is missing', () => {
     expect(getPeriodStart(undefined, periodEnd)).toBeNull();
   });
