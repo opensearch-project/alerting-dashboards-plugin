@@ -84,7 +84,10 @@ export const AlertInsight: React.FC<AlertInsightProps> = (props: AlertInsightPro
       const search = monitorResp.resp.inputs[0].search;
       index = String(search.indices).split(',')[0]?.trim() || '';
       // 3.2 resolve {{period_start}} and {{period_end}} for the run that raised the alert
-      const periodEnd = alert.last_notification_time;
+      // Alerts store no period, so the run's end is approximated by its notification time
+      const periodEnd = Number.isFinite(alert.last_notification_time)
+        ? alert.last_notification_time
+        : null;
       const periodStart = getPeriodStart(monitorDefinition.schedule, periodEnd);
       const withPeriod = (
         source: object,
@@ -95,7 +98,7 @@ export const AlertInsight: React.FC<AlertInsightProps> = (props: AlertInsightPro
           source,
           {
             period_start: periodStart === null ? null : formatTime(periodStart),
-            period_end: formatTime(periodEnd),
+            period_end: periodEnd === null ? null : formatTime(periodEnd),
           },
           options
         );
