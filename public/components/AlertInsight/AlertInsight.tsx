@@ -22,6 +22,7 @@ import { getTime } from '../../pages/MonitorDetails/components/MonitorOverview/u
 import {
   filterActiveAlerts,
   findLongestStringField,
+  getPeriodStart,
   searchQuery,
 } from '../../pages/Dashboard/utils/helpers';
 import { getApplication, getAssistantDashboards, getClient } from '../../services';
@@ -90,16 +91,14 @@ export const AlertInsight: React.FC<AlertInsightProps> = (props: AlertInsightPro
       let latestAlertTriggerTime = '';
       let latestAlertExecuteStartTime = '';
       let hasTimeReplaced = false;
-      if (query.indexOf(PERIOD_START_PLACEHOLDER) !== -1) {
-        const START_TIME = moment.utc(alert.last_notification_time).subtract(monitorDefinition.schedule.period.interval, monitorDefinition.schedule.period.unit).valueOf();
-        query = query.replaceAll(PERIOD_START_PLACEHOLDER, START_TIME);
-        latestAlertExecuteStartTime = moment
-          .utc(START_TIME)
-          .format(DEFAULT_DSL_QUERY_DATE_FORMAT);
+      const periodStart = getPeriodStart(monitorDefinition.schedule, alert.last_notification_time);
+      if (query.indexOf(PERIOD_START_PLACEHOLDER) !== -1 && periodStart !== null) {
+        query = query.replaceAll(PERIOD_START_PLACEHOLDER, String(periodStart));
+        latestAlertExecuteStartTime = moment.utc(periodStart).format(DEFAULT_DSL_QUERY_DATE_FORMAT);
         dsl = dsl.replaceAll(PERIOD_START_PLACEHOLDER, latestAlertExecuteStartTime);
         monitorDefinitionStr = monitorDefinitionStr.replaceAll(
           PERIOD_START_PLACEHOLDER,
-          getTime(START_TIME) // human-readable time format for summary
+          getTime(periodStart) // human-readable time format for summary
         );
         hasTimeReplaced = true;
       }

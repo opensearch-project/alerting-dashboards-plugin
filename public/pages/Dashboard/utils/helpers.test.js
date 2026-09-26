@@ -18,6 +18,7 @@ import {
   renderEmptyValue,
   findLongestStringField,
   searchQuery,
+  getPeriodStart,
 } from './helpers';
 import { ALERT_STATE, DEFAULT_EMPTY_DATA } from '../../../utils/constants';
 import { bucketColumns } from './tableUtils';
@@ -895,6 +896,32 @@ describe('searchQuery', () => {
       prependBasePath: true,
       asResponse: true,
       withLongNumeralsSupport: true,
+    });
+  });
+
+  describe('getPeriodStart', () => {
+    const periodEnd = 1700000000000;
+
+    test('subtracts one interval for interval schedules', () => {
+      expect(getPeriodStart({ period: { interval: 1, unit: 'MINUTES' } }, periodEnd)).toBe(
+        periodEnd - 60 * 1000
+      );
+      expect(getPeriodStart({ period: { interval: 2, unit: 'HOURS' } }, periodEnd)).toBe(
+        periodEnd - 2 * 60 * 60 * 1000
+      );
+      expect(getPeriodStart({ period: { interval: 1, unit: 'DAYS' } }, periodEnd)).toBe(
+        periodEnd - 24 * 60 * 60 * 1000
+      );
+    });
+
+    test('returns null for cron schedules', () => {
+      expect(
+        getPeriodStart({ cron: { expression: '0 * * * *', timezone: 'UTC' } }, periodEnd)
+      ).toBeNull();
+    });
+
+    test('returns null when schedule is missing', () => {
+      expect(getPeriodStart(undefined, periodEnd)).toBeNull();
     });
   });
 });
