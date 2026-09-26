@@ -997,17 +997,27 @@ describe('resolvePeriodPlaceholders', () => {
     expect(result).toEqual({ from: '{{period_start}}', to: 'END' });
   });
 
-  test('drops format only where a value was replaced, regardless of key order', () => {
+  test('drops format only from ranges whose bounds were replaced, regardless of key order', () => {
     const source = {
-      replacedFormatLast: { from: '{{period_start}}', format: 'epoch_millis' },
-      replacedFormatFirst: { format: 'epoch_millis', to: '{{period_end}}', boost: 1 },
-      untouched: { from: 'now-1h', format: 'epoch_millis' },
+      formatLast: { from: '{{period_start}}', format: 'epoch_millis' },
+      formatFirst: { format: 'epoch_millis', lte: '{{period_end}}', boost: 1 },
+      untouched: { gte: 'now-1h', format: 'epoch_millis' },
+      notABound: { script: '{{period_end}}', format: 'epoch_millis' },
+      dateHistogram: {
+        format: 'epoch_millis',
+        extended_bounds: { min: '{{period_start}}', max: '{{period_end}}' },
+      },
     };
     const { result } = resolvePeriodPlaceholders(source, values, { dropFormat: true });
 
-    expect(result.replacedFormatLast).toEqual({ from: 'START' });
-    expect(result.replacedFormatFirst).toEqual({ to: 'END', boost: 1 });
-    expect(result.untouched).toEqual({ from: 'now-1h', format: 'epoch_millis' });
+    expect(result.formatLast).toEqual({ from: 'START' });
+    expect(result.formatFirst).toEqual({ lte: 'END', boost: 1 });
+    expect(result.untouched).toEqual({ gte: 'now-1h', format: 'epoch_millis' });
+    expect(result.notABound).toEqual({ script: 'END', format: 'epoch_millis' });
+    expect(result.dateHistogram).toEqual({
+      format: 'epoch_millis',
+      extended_bounds: { min: 'START', max: 'END' },
+    });
   });
 
   test('keeps format when dropFormat is not set', () => {
