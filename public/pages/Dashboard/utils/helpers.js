@@ -199,6 +199,15 @@ export async function searchQuery(httpClient, path, method, dataSourceQuery, que
     withLongNumeralsSupport: true,
   });
 }
+
+// Units accepted by the backend IntervalSchedule
+const PERIOD_UNIT_MOMENT_UNIT_MAP = {
+  SECONDS: 'seconds',
+  MINUTES: 'minutes',
+  HOURS: 'hours',
+  DAYS: 'days',
+};
+
 /**
  * Mirrors the backend's IntervalSchedule.getPeriodEndingAt, which resolves {{period_start}}
  * to periodEnd minus one interval. Cron schedules resolve it to the previous cron fire time,
@@ -207,6 +216,7 @@ export async function searchQuery(httpClient, path, method, dataSourceQuery, que
 export function getPeriodStart(schedule, periodEnd) {
   const interval = _.get(schedule, 'period.interval');
   const unit = _.get(schedule, 'period.unit');
-  if (!interval || !unit) return null;
-  return moment.utc(periodEnd).subtract(interval, unit.toLowerCase()).valueOf();
+  const momentUnit = PERIOD_UNIT_MOMENT_UNIT_MAP[unit];
+  if (!interval || !momentUnit) return null;
+  return moment.utc(periodEnd).subtract(interval, momentUnit).valueOf();
 }
