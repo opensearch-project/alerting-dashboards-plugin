@@ -14,7 +14,7 @@ import AnomalyDetectors from '../AnomalyDetectors/AnomalyDetectors';
 import { MONITOR_TYPE, SEARCH_TYPE } from '../../../../utils/constants';
 import Schedule from '../../components/Schedule';
 import { getDataSourceId } from '../../../utils/helpers';
-import { getDataSourceMetadata, isPplAlertingEnabled } from '../../../../services';
+import { getDataSourceMetadata, isPplAlertingAvailableForDataSource } from '../../../../services';
 import { useFormikContext } from 'formik';
 import { FORMIK_INITIAL_VALUES } from '../CreateMonitor/utils/constants';
 
@@ -95,7 +95,11 @@ const MonitorDetails = ({
       setFieldValue('lookBackAmount', FORMIK_INITIAL_VALUES.lookBackAmount);
       setFieldValue('lookBackUnit', FORMIK_INITIAL_VALUES.lookBackUnit);
       setFieldValue('timestampField', FORMIK_INITIAL_VALUES.timestampField);
-    } else if (!isMustang && values.monitor_type === MONITOR_TYPE.PPL && !isPplAlertingEnabled()) {
+    } else if (
+      !isMustang &&
+      values.monitor_type === MONITOR_TYPE.PPL &&
+      !isPplAlertingAvailableForDataSource()
+    ) {
       setFieldValue('monitor_type', MONITOR_TYPE.QUERY_LEVEL);
       setFieldValue('searchType', SEARCH_TYPE.GRAPH);
     }

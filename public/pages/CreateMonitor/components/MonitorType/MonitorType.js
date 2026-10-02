@@ -7,7 +7,7 @@ import React from 'react';
 import { EuiFlexGrid, EuiFlexItem, EuiFormLabel, EuiSpacer, EuiText } from '@elastic/eui';
 import FormikCheckableCard from '../../../../components/FormControls/FormikCheckableCard';
 import { MONITOR_TYPE, SEARCH_TYPE } from '../../../../utils/constants';
-import { isPplAlertingEnabled } from '../../../../services';
+import { isPplAlertingAvailableForDataSource } from '../../../../services';
 import { FORMIK_INITIAL_TRIGGER_VALUES } from '../../../CreateTrigger/containers/CreateTrigger/utils/constants';
 import {
   DEFAULT_DOCUMENT_LEVEL_QUERY,
@@ -171,7 +171,7 @@ const MonitorType = ({ values, isServerless }) => (
           />
         </EuiFlexItem>
       )}
-      {isPplAlertingEnabled() && (
+      {isPplAlertingAvailableForDataSource() && (
         <EuiFlexItem grow={false} style={{ width: 350 }}>
           <FormikCheckableCard
             name="monitorTypePpl"

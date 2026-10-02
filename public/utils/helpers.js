@@ -305,6 +305,23 @@ export async function prefetchMustangStatus(httpClient, dataSources) {
   );
 }
 
+/**
+ * Ask the selected data source for its live engine version (GET / through the plugin's
+ * `_version` route). Returns '' when the route fails or the data source is unreachable, so the
+ * caller keeps whatever the saved object recorded.
+ */
+export async function fetchLiveDataSourceVersion(httpClient, dataSourceId) {
+  if (!httpClient) return '';
+  try {
+    const resp = await httpClient.get('../api/alerting/_version', {
+      query: { dataSourceId: dataSourceId ?? '' },
+    });
+    return resp?.ok && typeof resp.resp?.version === 'string' ? resp.resp.version : '';
+  } catch (e) {
+    return '';
+  }
+}
+
 export function dataSourceFilterFn(dataSource) {
   const dataSourceVersion = dataSource?.attributes?.dataSourceVersion || '';
   const installedPlugins = dataSource?.attributes?.installedPlugins || [];

@@ -240,6 +240,36 @@ export default class OpensearchService extends MDSEnabledClientService {
     }
   };
 
+  /**
+   * Live engine version of the selected data source (GET /). The data-source saved object only
+   * records the version at registration time, so after a cluster upgrade it is stale; the
+   * client refreshes the version from here before deciding which monitor types to offer.
+   */
+  getVersion = async (context, req, res) => {
+    try {
+      const aclResponse = await this.enforceWorkspaceAcl(context, req, res, ['library_read']);
+      if (aclResponse) return aclResponse;
+
+      const client = await this.getClientBasedOnDataSource(context, req);
+      const info = await client('info');
+      const version = info?.version?.number || info?.body?.version?.number || '';
+      return res.ok({
+        body: {
+          ok: !!version,
+          resp: { version, distribution: info?.version?.distribution || '' },
+        },
+      });
+    } catch (err) {
+      console.error('Alerting - OpensearchService - getVersion:', err);
+      return res.ok({
+        body: {
+          ok: false,
+          resp: err.message,
+        },
+      });
+    }
+  };
+
   getSettings = async (context, req, res) => {
     try {
       const aclResponse = await this.enforceWorkspaceAcl(context, req, res, ['library_read']);

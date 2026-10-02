@@ -15,6 +15,7 @@ import { APP_PATH } from '../../utils/constants';
 import {
   ServicesConsumer,
   getDataSourceManagementPlugin,
+  getDataSource,
   getDataSourceMetadata,
   getNotifications,
   getSavedObjectsClient,
@@ -26,7 +27,12 @@ import { getBreadcrumbs } from '../../components/Breadcrumbs/Breadcrumbs';
 import { MultiDataSourceContext } from '../../utils/MultiDataSourceContext';
 import { parseQueryStringAndGetDataSource } from '../utils/helpers';
 import { dataSourceObservable } from '../utils/constants';
-import { dataSourceFilterFn, isMustangDomain, prefetchMustangStatus } from '../../utils/helpers';
+import {
+  dataSourceFilterFn,
+  fetchLiveDataSourceVersion,
+  isMustangDomain,
+  prefetchMustangStatus,
+} from '../../utils/helpers';
 
 class Main extends Component {
   static contextType = CoreContext;
@@ -73,9 +79,10 @@ class Main extends Component {
       const savedObject = await getSavedObjectsClient().get('data-source', dataSourceId);
       dataSourceEndpoint = savedObject?.attributes?.endpoint || '';
       dataSourceLabel = savedObject?.attributes?.title || '';
+      const dataSourceEngineType = savedObject?.attributes?.dataSourceEngineType || '';
       setDataSourceMetadata({
         dataSourceVersion: savedObject?.attributes?.dataSourceVersion || '',
-        dataSourceEngineType: savedObject?.attributes?.dataSourceEngineType || '',
+        dataSourceEngineType,
         dataSourceLabel,
       });
       await prefetchMustangStatus(this.context?.http, [savedObject]);
@@ -83,10 +90,29 @@ class Main extends Component {
         ...getDataSourceMetadata(),
         isMustang: isMustangDomain(dataSourceId),
       });
+      // The saved object records the engine version only at registration time, so refresh it
+      // from the live cluster: a data source registered on 2.x and since upgraded must not keep
+      // PPL monitors hidden. Serverless collections report no version and need no refresh. The
+      // refresh is deliberately not awaited: the rest of the app must learn the selected data
+      // source (setState below) without waiting on one more round trip.
+      if (dataSourceEngineType !== 'OpenSearch Serverless') {
+        this.refreshLiveDataSourceVersion(dataSourceId);
+      }
     } catch (e) {
       setDataSourceMetadata({ dataSourceVersion: '', dataSourceEngineType: '' });
     }
     this.setState({ selectedDataSourceId: dataSourceId, dataSourceEndpoint });
+  }
+
+  refreshLiveDataSourceVersion(dataSourceId) {
+    return fetchLiveDataSourceVersion(this.context?.http, dataSourceId).then((liveVersion) => {
+      // A late answer must not be merged into another data source's metadata: only apply it
+      // while the data source it was fetched for is still the selected one.
+      if (!liveVersion || getDataSource()?.dataSourceId !== dataSourceId) return;
+      setDataSourceMetadata({ ...getDataSourceMetadata(), dataSourceVersion: liveVersion });
+      // The PPL gate reads the metadata getter, not state, so nudge a re-render.
+      this.forceUpdate();
+    });
   }
 
   async updateBreadcrumbs() {
