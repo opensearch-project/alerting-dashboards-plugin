@@ -8,7 +8,7 @@ import queryString from 'query-string';
 import { FORMIK_INITIAL_VALUES } from './constants';
 import monitorToFormik from './monitorToFormik';
 import { formikToMonitor } from './formikToMonitor';
-import { MONITOR_TYPE } from '../../../../../utils/constants';
+import { MONITOR_TYPE, OS_NOTIFICATION_PLUGIN } from '../../../../../utils/constants';
 import { initializeFromQueryParams } from './monitorQueryParams';
 import { backendErrorNotification, getDigitId } from '../../../../../utils/helpers';
 import {
@@ -110,6 +110,69 @@ const getMetricAgg = (embeddable) => {
   ];
 };
 
+/**
+ * When the `_cat/plugins` probe cannot be answered for the selected data source (the call is
+ * forbidden or fails on some managed deployments), do not report an empty plugin list: the UI
+ * reads an empty list as "Notifications is not installed" and disables channel selection even
+ * though channel create and delivery work. Ask the Notifications plugin itself instead; a
+ * successful features call means it is installed.
+ */
+const probeNotificationsPlugin = async (httpClient) => {
+  try {
+    const dataSourceQuery = getDataSourceQueryObj();
+    const features = await httpClient.get('../api/notifications/features', dataSourceQuery);
+    const channels = features?.availableChannels || features?.resp?.availableChannels;
+    return channels && Object.keys(channels).length > 0 ? [OS_NOTIFICATION_PLUGIN] : [];
+  } catch (e) {
+    return [];
+  }
+};
+
+/**
+ * Fields a user may already have filled in that do not depend on which cluster the monitor
+ * targets. They survive a data source change; everything cluster-bound (index, time field,
+ * query, aggregations, triggers built on fields) is reset with the monitor type.
+ */
+export const DATA_SOURCE_INDEPENDENT_FIELDS = [
+  'name',
+  'description',
+  'disabled',
+  'frequency',
+  'period',
+  'daily',
+  'weekly',
+  'monthly',
+  'cronExpression',
+  'timezone',
+];
+
+/**
+ * Build the Formik initialValues to apply when the selected data source changes while the
+ * create form is open. Formik is mounted with enableReinitialize, so replacing initialValues
+ * resets the whole form; without this merge the user's name, description and schedule are wiped
+ * as soon as the data source menu finishes resolving (which can happen seconds after the page
+ * is interactive, while they are already typing).
+ *
+ * @param {object} initialValues  the current initialValues in component state
+ * @param {object|null} currentValues  the live Formik values (formikRef.current?.values)
+ * @param {object} dataSourceProps  { dataSourceId, dataSourceEndpoint, monitorTypeOverrides }
+ */
+export const reinitializeForDataSource = (initialValues, currentValues, dataSourceProps) => {
+  const preserved = {};
+  if (currentValues) {
+    DATA_SOURCE_INDEPENDENT_FIELDS.forEach((field) => {
+      if (currentValues[field] !== undefined) preserved[field] = currentValues[field];
+    });
+  }
+  return {
+    ...initialValues,
+    ...preserved,
+    dataSourceId: dataSourceProps.dataSourceId,
+    dataSourceEndpoint: dataSourceProps.dataSourceEndpoint,
+    ...dataSourceProps.monitorTypeOverrides,
+  };
+};
+
 export const getPlugins = async (httpClient) => {
   try {
     const dataSourceQuery = getDataSourceQueryObj();
@@ -118,11 +181,11 @@ export const getPlugins = async (httpClient) => {
       return pluginsResponse.resp.map((plugin) => plugin.component);
     } else {
       console.error('There was a problem getting plugins list');
-      return [];
+      return probeNotificationsPlugin(httpClient);
     }
   } catch (e) {
     console.error('There was a problem getting plugins list', e);
-    return [];
+    return probeNotificationsPlugin(httpClient);
   }
 };
 

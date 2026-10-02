@@ -10,6 +10,32 @@ import { isIndexNotFoundError } from './utils/helpers';
 import { MDSEnabledClientService } from './MDSEnabledClientService';
 import { DEFAULT_HEADERS } from './utils/constants';
 
+const NAME_SEARCH_FIELDS = ['monitor.name.keyword', 'workflow.name.keyword'];
+
+// Escape the wildcard-query metacharacters so a literal "*" or "?" typed by the user is
+// matched as text rather than widening the pattern.
+const escapeWildcard = (term) => term.replace(/([\\*?])/g, '\\$1');
+
+/**
+ * Build the name filter for the monitors list. Every whitespace-separated term must appear
+ * (case-insensitively) in the job's name; a job matches on either its monitor or workflow name.
+ */
+export const buildNameSearchQuery = (search) => {
+  const terms = search.trim().split(/\s+/).filter(Boolean);
+  return {
+    bool: {
+      should: NAME_SEARCH_FIELDS.map((field) => ({
+        bool: {
+          must: terms.map((term) => ({
+            wildcard: { [field]: { value: `*${escapeWildcard(term)}*`, case_insensitive: true } },
+          })),
+        },
+      })),
+      minimum_should_match: 1,
+    },
+  };
+};
+
 export default class MonitorService extends MDSEnabledClientService {
   createMonitor = async (context, req, res) => {
     try {
@@ -293,16 +319,13 @@ export default class MonitorService extends MDSEnabledClientService {
 
       let must = { match_all: {} };
       if (search.trim()) {
-        // This is an expensive wildcard query to match monitor names such as: "This is a long monitor name"
-        // search query => "long monit"
-        // This is acceptable because we will never allow more than 1,000 monitors
-        must = {
-          query_string: {
-            default_field: 'monitor.name',
-            default_operator: 'AND',
-            query: `*${search.trim().split(' ').join('* *')}*`,
-          },
-        };
+        // Wildcard search on the keyword sub-fields, not the analyzed text field. The analyzed
+        // field is tokenized ("my-prod-monitor" -> my, prod, monitor) while wildcard terms are
+        // not analyzed, so the previous query_string(*my-prod*) could never match a hyphenated
+        // name. Workflows (composite monitors) live in the same index under workflow.name and
+        // were never searched at all. This is still an expensive leading-wildcard query, which is
+        // acceptable because the index is capped at 1,000 jobs.
+        must = buildNameSearchQuery(search);
       }
 
       const should = [];

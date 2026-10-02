@@ -24,7 +24,7 @@ import MonitorDetails from '../MonitorDetails';
 import ConfigureTriggers from '../../../CreateTrigger/containers/ConfigureTriggers';
 import ConfigureTriggersPpl from '../../../CreateTrigger/containers/ConfigureTriggers/ConfigureTriggersPpl';
 import WorkflowDetails from '../WorkflowDetails/WorkflowDetails';
-import { getInitialValues, getPlugins, submit } from './utils/helpers';
+import { getInitialValues, getPlugins, reinitializeForDataSource, submit } from './utils/helpers';
 import { submitPPL } from './utils/pplAlertingHelpers';
 import {
   getPerformanceModal,
@@ -184,13 +184,19 @@ export default class CreateMonitor extends Component {
       const monitorTypeOverrides = mustang
         ? { monitor_type: MONITOR_TYPE.PPL, searchType: SEARCH_TYPE.PPL }
         : { monitor_type: MONITOR_TYPE.QUERY_LEVEL, searchType: SEARCH_TYPE.GRAPH };
+      // Formik is mounted with enableReinitialize, so a new initialValues object resets the
+      // form. Carry over what the user has already typed into cluster-independent fields
+      // (name, description, schedule) instead of discarding it with the index-bound fields.
       this.setState({
-        initialValues: {
-          ...this.state.initialValues,
-          dataSourceId: this.props.landingDataSourceId,
-          dataSourceEndpoint: this.props.dataSourceEndpoint,
-          ...monitorTypeOverrides,
-        },
+        initialValues: reinitializeForDataSource(
+          this.state.initialValues,
+          this.formikRef.current?.values,
+          {
+            dataSourceId: this.props.landingDataSourceId,
+            dataSourceEndpoint: this.props.dataSourceEndpoint,
+            monitorTypeOverrides,
+          }
+        ),
       });
     }
   }
