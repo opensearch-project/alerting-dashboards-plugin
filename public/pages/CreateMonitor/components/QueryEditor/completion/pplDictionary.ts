@@ -1,3 +1,8 @@
+/*
+ * Copyright OpenSearch Contributors
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 // ===== Commands (from lexer & parser) =====
 export const COMMANDS = [
   'SEARCH',

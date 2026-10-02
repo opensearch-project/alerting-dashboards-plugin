@@ -1,3 +1,8 @@
+/*
+ * Copyright OpenSearch Contributors
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 import { EuiIconType } from '@elastic/eui/src/components/icon/icon';
 import { IEmbeddable } from '../../../../src/plugins/dashboard/public/embeddable_plugin';
 import {

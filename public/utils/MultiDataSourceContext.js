@@ -1,3 +1,8 @@
+/*
+ * Copyright OpenSearch Contributors
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 import React, { createContext, useState } from 'react';
 
 const MultiDataSourceContext = createContext();
