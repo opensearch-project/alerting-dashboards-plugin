@@ -59,6 +59,18 @@ describe('buildNameSearchQuery', () => {
     );
     expect(values).toEqual(['*cpu\\*\\?*', '*\\\\x*']);
   });
+
+  test('also matches on the analyzed name fields so names over ignore_above (256) are found', () => {
+    const query = buildNameSearchQuery('  very long monitor name ');
+
+    expect(query.bool.should).toHaveLength(4);
+    expect(query.bool.should[2]).toEqual({
+      match_phrase_prefix: { 'monitor.name': 'very long monitor name' },
+    });
+    expect(query.bool.should[3]).toEqual({
+      match_phrase_prefix: { 'workflow.name': 'very long monitor name' },
+    });
+  });
 });
 
 describe('MonitorService.getMonitors', () => {

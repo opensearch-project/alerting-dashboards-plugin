@@ -111,3 +111,30 @@ describe('OpensearchService.getDataStreams', () => {
     expect(callArgs.path).toBe('/_data_stream/reprox*');
   });
 });
+
+describe('OpensearchService.getVersion', () => {
+  test('returns the live engine version from GET /', async () => {
+    const client = jest.fn().mockResolvedValue({
+      version: { number: '3.7.0', distribution: 'opensearch' },
+    });
+    const service = buildService(client);
+
+    const result = await service.getVersion({}, { query: {} }, buildRes());
+
+    expect(client).toHaveBeenCalledWith('info');
+    expect(result.body).toEqual({
+      ok: true,
+      resp: { version: '3.7.0', distribution: 'opensearch' },
+    });
+  });
+
+  test('reports ok:false when the data source cannot answer', async () => {
+    const client = jest.fn().mockRejectedValue(new Error('Unknown alerting action: info'));
+    const service = buildService(client);
+
+    const result = await service.getVersion({}, { query: {} }, buildRes());
+
+    expect(result.body.ok).toBe(false);
+    expect(result.body.resp).toBe('Unknown alerting action: info');
+  });
+});

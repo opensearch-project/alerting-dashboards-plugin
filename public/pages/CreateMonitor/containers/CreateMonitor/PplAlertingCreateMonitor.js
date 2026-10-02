@@ -58,7 +58,7 @@ import { PageHeader } from '../../../../components/PageHeader/PageHeader';
 import { QueryEditor } from '../../components/QueryEditor';
 import { AlertingDataTable } from '../../../../components/DataTable';
 import { CoreContext } from '../../../../utils/CoreContext';
-import { setDataSource, isPplAlertingEnabled } from '../../../../services';
+import { setDataSource, isPplAlertingAvailableForDataSource } from '../../../../services';
 
 class PplAlertingCreateMonitor extends Component {
   static contextType = CoreContext;
@@ -77,7 +77,7 @@ class PplAlertingCreateMonitor extends Component {
 
     const { location, edit, monitorToEdit } = props;
     const initial = getInitialValues({ location, monitorToEdit, edit });
-    const pplEnabled = isPplAlertingEnabled();
+    const pplEnabled = isPplAlertingAvailableForDataSource();
     // When editing, useLookBackWindow is set by pplAlertingMonitorToFormik based on monitor data
     // When creating new, default to true if not specified
     // Use explicit check to ensure false values from pplAlertingMonitorToFormik are preserved
@@ -158,7 +158,7 @@ class PplAlertingCreateMonitor extends Component {
   componentDidMount() {
     const { httpClient, landingDataSourceId } = this.props;
 
-    if (!isPplAlertingEnabled()) {
+    if (!isPplAlertingAvailableForDataSource()) {
       this.redirectToLegacy();
       return;
     }

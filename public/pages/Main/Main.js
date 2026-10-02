@@ -26,7 +26,12 @@ import { getBreadcrumbs } from '../../components/Breadcrumbs/Breadcrumbs';
 import { MultiDataSourceContext } from '../../utils/MultiDataSourceContext';
 import { parseQueryStringAndGetDataSource } from '../utils/helpers';
 import { dataSourceObservable } from '../utils/constants';
-import { dataSourceFilterFn, isMustangDomain, prefetchMustangStatus } from '../../utils/helpers';
+import {
+  dataSourceFilterFn,
+  fetchLiveDataSourceVersion,
+  isMustangDomain,
+  prefetchMustangStatus,
+} from '../../utils/helpers';
 
 class Main extends Component {
   static contextType = CoreContext;
@@ -73,12 +78,22 @@ class Main extends Component {
       const savedObject = await getSavedObjectsClient().get('data-source', dataSourceId);
       dataSourceEndpoint = savedObject?.attributes?.endpoint || '';
       dataSourceLabel = savedObject?.attributes?.title || '';
+      const dataSourceEngineType = savedObject?.attributes?.dataSourceEngineType || '';
       setDataSourceMetadata({
         dataSourceVersion: savedObject?.attributes?.dataSourceVersion || '',
-        dataSourceEngineType: savedObject?.attributes?.dataSourceEngineType || '',
+        dataSourceEngineType,
         dataSourceLabel,
       });
       await prefetchMustangStatus(this.context?.http, [savedObject]);
+      // The saved object records the engine version only at registration time, so refresh it
+      // from the live cluster: a data source registered on 2.x and since upgraded must not keep
+      // PPL monitors hidden. Serverless collections report no version and need no refresh.
+      if (dataSourceEngineType !== 'OpenSearch Serverless') {
+        const liveVersion = await fetchLiveDataSourceVersion(this.context?.http, dataSourceId);
+        if (liveVersion) {
+          setDataSourceMetadata({ ...getDataSourceMetadata(), dataSourceVersion: liveVersion });
+        }
+      }
       setDataSourceMetadata({
         ...getDataSourceMetadata(),
         isMustang: isMustangDomain(dataSourceId),

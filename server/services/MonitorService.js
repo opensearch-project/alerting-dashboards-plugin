@@ -11,6 +11,9 @@ import { MDSEnabledClientService } from './MDSEnabledClientService';
 import { DEFAULT_HEADERS } from './utils/constants';
 
 const NAME_SEARCH_FIELDS = ['monitor.name.keyword', 'workflow.name.keyword'];
+// The keyword sub-fields carry ignore_above: 256 in the scheduled-jobs mapping, so a longer
+// name is never indexed there; the analyzed field is the fallback that still matches it.
+const NAME_SEARCH_TEXT_FIELDS = ['monitor.name', 'workflow.name'];
 
 // Escape the wildcard-query metacharacters so a literal "*" or "?" typed by the user is
 // matched as text rather than widening the pattern.
@@ -19,18 +22,28 @@ const escapeWildcard = (term) => term.replace(/([\\*?])/g, '\\$1');
 /**
  * Build the name filter for the monitors list. Every whitespace-separated term must appear
  * (case-insensitively) in the job's name; a job matches on either its monitor or workflow name.
+ * The keyword wildcard handles hyphenated and partial matches; a match_phrase_prefix on the
+ * analyzed field covers names longer than the keyword field's ignore_above.
  */
 export const buildNameSearchQuery = (search) => {
-  const terms = search.trim().split(/\s+/).filter(Boolean);
+  const trimmed = search.trim();
+  const terms = trimmed.split(/\s+/).filter(Boolean);
   return {
     bool: {
-      should: NAME_SEARCH_FIELDS.map((field) => ({
-        bool: {
-          must: terms.map((term) => ({
-            wildcard: { [field]: { value: `*${escapeWildcard(term)}*`, case_insensitive: true } },
-          })),
-        },
-      })),
+      should: [
+        ...NAME_SEARCH_FIELDS.map((field) => ({
+          bool: {
+            must: terms.map((term) => ({
+              wildcard: {
+                [field]: { value: `*${escapeWildcard(term)}*`, case_insensitive: true },
+              },
+            })),
+          },
+        })),
+        ...NAME_SEARCH_TEXT_FIELDS.map((field) => ({
+          match_phrase_prefix: { [field]: trimmed },
+        })),
+      ],
       minimum_should_match: 1,
     },
   };

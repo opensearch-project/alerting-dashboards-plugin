@@ -84,31 +84,40 @@ export const [getNavigationUI, setNavigationUI] = createGetterSetter<NavigationP
 export const [getApplication, setApplication] = createGetterSetter<CoreStart['application']>('application');
 
 /**
- * Does the data source the user is working against support PPL monitors?
- *
- * PPL monitors exist in the alerting backend from 3.5.0 (BASE_PPL_ALERTING_SUPPORTED_VERSION).
- * On an older engine the create request fails deep inside the backend's input parser with an
- * opaque 500, so the card must not be offered there even when the pplV2 capability is turned on
- * for the deployment: the capability says the dashboards side can build PPL monitors, the data
- * source version says whether the backend can run them. Serverless collections report no
- * version and always have a current engine.
+ * Is PPL alerting turned on for this deployment? Deployment-level switch only (the pplV2
+ * capability): it is what the Explore "Create monitor" action and the rest of the plugin key off,
+ * independent of whichever data source the Alerting app last resolved.
  */
 export const isPplAlertingEnabled = () => {
   const application = getApplication();
   const capabilities = application?.capabilities as Record<string, any> | undefined;
-  const metadata = getDataSourceMetadata();
-
-  if (metadata?.dataSourceEngineType === 'OpenSearch Serverless') return true;
-  if (metadata?.dataSourceVersion) {
-    return semver.gte(
-      semver.coerce(metadata.dataSourceVersion) || '0.0.0',
-      BASE_PPL_ALERTING_SUPPORTED_VERSION
-    );
-  }
-  // No data source version known (local cluster, or metadata not loaded yet): fall back to the
-  // deployment-level capability.
   return !!capabilities?.alertingDashboards?.pplV2;
 };
+
+/**
+ * Can the data source the Alerting app is currently working against run PPL monitors?
+ *
+ * PPL monitors exist in the alerting backend from 3.5.0 (BASE_PPL_ALERTING_SUPPORTED_VERSION).
+ * On an older engine the create request fails deep inside the backend's input parser with an
+ * opaque 500, so the create flow must not offer the card there even when pplV2 is on. Serverless
+ * collections always have a current engine. When no version is known the answer is yes and the
+ * capability alone decides. The version is refreshed from the live cluster when the data source
+ * is resolved (Main.resolveAndSetDataSource), so a saved object registered before an upgrade
+ * does not keep the card hidden.
+ */
+export const isPplAlertingSupportedByDataSource = () => {
+  const metadata = getDataSourceMetadata();
+  if (metadata?.dataSourceEngineType === 'OpenSearch Serverless') return true;
+  if (!metadata?.dataSourceVersion) return true;
+  return semver.gte(
+    semver.coerce(metadata.dataSourceVersion) || '0.0.0',
+    BASE_PPL_ALERTING_SUPPORTED_VERSION
+  );
+};
+
+/** PPL alerting is on for the deployment AND the selected data source can run it. */
+export const isPplAlertingAvailableForDataSource = () =>
+  isPplAlertingEnabled() && isPplAlertingSupportedByDataSource();
 
 export const isServerlessEnabled = () => {
   const application = getApplication();

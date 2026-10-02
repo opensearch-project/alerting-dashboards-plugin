@@ -101,4 +101,14 @@ export default function (services, router, dataSourceEnabled) {
     },
     opensearchService.getClusterHealth
   );
+
+  router.get(
+    {
+      path: '/api/alerting/_version',
+      validate: {
+        query: createValidateQuerySchema(dataSourceEnabled),
+      },
+    },
+    opensearchService.getVersion
+  );
 }

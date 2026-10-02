@@ -19,7 +19,11 @@ import { triggerToFormik } from '../../../../CreateTrigger/containers/CreateTrig
 import { TRIGGER_TYPE } from '../../../../CreateTrigger/containers/CreateTrigger/utils/constants';
 import { getInitialTriggerValues } from '../../../../CreateTrigger/components/AddTriggerButton/utils';
 import { AGGREGATION_TYPES } from '../../../components/MonitorExpressions/expressions/utils/constants';
-import { getDataSourceQueryObj } from '../../../../utils/helpers';
+import {
+  dataSourceEnabled,
+  getDataSourceId,
+  getDataSourceQueryObj,
+} from '../../../../utils/helpers';
 import pplAlertingMonitorToFormik from './pplAlertingMonitorToFormik';
 
 export const getInitialValues = ({
@@ -119,10 +123,16 @@ const getMetricAgg = (embeddable) => {
  */
 const probeNotificationsPlugin = async (httpClient) => {
   try {
-    const dataSourceQuery = getDataSourceQueryObj();
+    // Under MDS the Notifications features route requires dataSourceId, and the local cluster
+    // is the empty string (getDataSourceQueryObj would omit the param and the route 400s), so
+    // build the query the same way NotificationService.getDataSourceQuery does.
+    const dataSourceQuery = dataSourceEnabled()
+      ? { query: { dataSourceId: getDataSourceId() ?? '' } }
+      : undefined;
     const features = await httpClient.get('../api/notifications/features', dataSourceQuery);
-    const channels = features?.availableChannels || features?.resp?.availableChannels;
-    return channels && Object.keys(channels).length > 0 ? [OS_NOTIFICATION_PLUGIN] : [];
+    // The route only answers when the Notifications plugin served it, so any successful
+    // response means it is installed, whatever shape the channel list takes.
+    return features ? [OS_NOTIFICATION_PLUGIN] : [];
   } catch (e) {
     return [];
   }

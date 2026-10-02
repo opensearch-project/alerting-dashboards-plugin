@@ -13,6 +13,7 @@ import { FORMIK_INITIAL_VALUES } from '../../containers/CreateMonitor/utils/cons
 jest.mock('../../../../services/services', () => ({
   ...jest.requireActual('../../../../services/services'),
   isPplAlertingEnabled: jest.fn(() => false),
+  isPplAlertingAvailableForDataSource: jest.fn(() => false),
 }));
 
 describe('MonitorType', () => {

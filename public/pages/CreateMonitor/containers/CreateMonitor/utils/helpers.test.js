@@ -5,6 +5,7 @@
 
 import { getInitialValues, getPlugins, reinitializeForDataSource } from './helpers';
 import { MONITOR_TYPE, OS_NOTIFICATION_PLUGIN, SEARCH_TYPE } from '../../../../../utils/constants';
+import { setDataSource, setDataSourceEnabled } from '../../../../../services';
 
 const pplMonitorToEdit = {
   name: 'ppl-monitor',
@@ -142,6 +143,39 @@ describe('getPlugins', () => {
 
     await expect(getPlugins(httpClient)).resolves.toEqual([OS_NOTIFICATION_PLUGIN]);
     expect(httpClient.get.mock.calls[1][0]).toBe('../api/notifications/features');
+  });
+
+  test('sends dataSourceId="" for the local cluster when MDS is enabled', async () => {
+    setDataSourceEnabled({ enabled: true });
+    setDataSource({ dataSourceId: '' });
+    const httpClient = {
+      get: jest
+        .fn()
+        .mockResolvedValueOnce({ ok: false, resp: 'forbidden' })
+        .mockResolvedValueOnce({ availableChannels: { slack: 'Slack' } }),
+    };
+
+    await expect(getPlugins(httpClient)).resolves.toEqual([OS_NOTIFICATION_PLUGIN]);
+    expect(httpClient.get.mock.calls[1]).toEqual([
+      '../api/notifications/features',
+      { query: { dataSourceId: '' } },
+    ]);
+    setDataSourceEnabled({ enabled: false });
+  });
+
+  test('passes the selected data source id to the features route', async () => {
+    setDataSourceEnabled({ enabled: true });
+    setDataSource({ dataSourceId: 'ds-9' });
+    const httpClient = {
+      get: jest
+        .fn()
+        .mockRejectedValueOnce(new Error('forbidden'))
+        .mockResolvedValueOnce({ availableChannels: {} }),
+    };
+
+    await expect(getPlugins(httpClient)).resolves.toEqual([OS_NOTIFICATION_PLUGIN]);
+    expect(httpClient.get.mock.calls[1][1]).toEqual({ query: { dataSourceId: 'ds-9' } });
+    setDataSourceEnabled({ enabled: false });
   });
 
   test('reports no plugins when both the probe and the Notifications route fail', async () => {
