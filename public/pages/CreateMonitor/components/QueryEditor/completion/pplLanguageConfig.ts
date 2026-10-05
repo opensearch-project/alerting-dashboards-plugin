@@ -1,3 +1,8 @@
+/*
+ * Copyright OpenSearch Contributors
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 import { monaco } from '@osd/monaco';
 
 type LanguageConfiguration = Parameters<typeof monaco.languages.setLanguageConfiguration>[1];

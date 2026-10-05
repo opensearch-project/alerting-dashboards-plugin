@@ -1,3 +1,8 @@
+/*
+ * Copyright OpenSearch Contributors
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 import React, { useEffect, useState, useCallback } from 'react';
 import {
   EuiFlexItem,
