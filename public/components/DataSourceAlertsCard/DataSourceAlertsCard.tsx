@@ -98,7 +98,7 @@ export const DataSourceAlertsCard: React.FC<DataSourceAlertsCardProps> =  ({ get
         </EuiFlexItem>
       </EuiFlexGroup>
     )
-  }, [agentAvailable]);
+  }, [agentAvailable, dataSource?.id]);
 
   const createAlertDetailsDescription = useCallback((alert) => {
     const monitorName = alert.monitor_name ?? DEFAULT_EMPTY_DATA;
