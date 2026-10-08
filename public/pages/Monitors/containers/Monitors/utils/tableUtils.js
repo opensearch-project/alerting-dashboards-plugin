@@ -42,6 +42,14 @@ export const columns = [
     render: (item_type) => getItemLevelType(item_type),
   },
   {
+    field: 'createdBy',
+    name: 'Created by',
+    sortable: true,
+    truncateText: true,
+    textOnly: true,
+    render: (createdBy) => createdBy || DEFAULT_EMPTY_DATA,
+  },
+  {
     field: 'latestAlert',
     name: 'Latest alert',
     sortable: false,
