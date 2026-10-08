@@ -203,6 +203,28 @@ export const getResourceCreators = async (
   return creators;
 };
 
+/**
+ * Creator of one resource on the given data source, as recorded by the security
+ * plugin's resource-sharing framework. Undefined when the record is missing,
+ * the user cannot view it, or the request fails.
+ */
+export const getResourceCreator = async (
+  resourceId: string,
+  resourceType: string,
+  resourceDataSourceId?: string
+): Promise<string | undefined> => {
+  try {
+    const dataSourceQuery = resourceDataSourceId ? { dataSourceId: resourceDataSourceId } : {};
+    const response: any = await getClient().get('/api/resource/view', {
+      query: { resourceId, resourceType, ...dataSourceQuery },
+    });
+    const creator = response?.sharing_info?.created_by?.user;
+    return typeof creator === 'string' && creator ? creator : undefined;
+  } catch (e) {
+    return undefined;
+  }
+};
+
 export const getUseUpdatedUx = () => {
   return getUISettings().get('home:useNewHomePage', false);
 };

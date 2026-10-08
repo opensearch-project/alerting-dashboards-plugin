@@ -11,6 +11,10 @@ import getOverviewStatsV2 from './utils/getOverviewStatsV2';
 import { RelatedMonitors } from '../RelatedMonitors/RelatedMonitors';
 import { RelatedMonitorsFlyout } from '../RelatedMonitors/RelatedMonitorsFlyout';
 import { getURL } from '../../../utils/helpers';
+import {
+  getMonitorResourceType,
+  useResourceSharingCreator,
+} from '../../../../utils/monitorCreator';
 
 const MonitorOverviewV2 = ({
   monitor,
@@ -20,6 +24,11 @@ const MonitorOverviewV2 = ({
   landingDataSourceId,
 }) => {
   const [flyoutData, setFlyoutData] = useState(undefined);
+  const resourceSharingCreator = useResourceSharingCreator(
+    monitorId,
+    getMonitorResourceType(monitor),
+    landingDataSourceId
+  );
 
   let relatedMonitorsStat = null;
   let relatedMonitorsData = null;
@@ -63,7 +72,12 @@ const MonitorOverviewV2 = ({
 
   const onFlyoutClose = () => setFlyoutData(undefined);
 
-  const { firstRow, secondRow } = getOverviewStatsV2(monitor, monitorId, activeCount);
+  const { firstRow, secondRow } = getOverviewStatsV2(
+    monitor,
+    monitorId,
+    activeCount,
+    resourceSharingCreator
+  );
 
   return (
     <>
