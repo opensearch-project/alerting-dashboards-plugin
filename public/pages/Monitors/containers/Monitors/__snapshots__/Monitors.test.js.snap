@@ -76,6 +76,14 @@ exports[`Monitors renders 1`] = `
               "truncateText": false,
             },
             Object {
+              "field": "createdBy",
+              "name": "Created by",
+              "render": [Function],
+              "sortable": true,
+              "textOnly": true,
+              "truncateText": true,
+            },
+            Object {
               "field": "latestAlert",
               "name": "Latest alert",
               "sortable": false,

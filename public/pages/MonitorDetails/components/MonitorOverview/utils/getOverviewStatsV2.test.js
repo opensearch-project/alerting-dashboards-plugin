@@ -11,6 +11,7 @@ describe('getOverviewStatsV2', () => {
   test('returns minimal overview stats for PPL monitors', () => {
     const monitor = {
       description: 'Example description',
+      created_by: 'creator',
       last_update_time: '2024-01-01T00:00:00Z',
       schedule: {
         period: { interval: 5, unit: 'MINUTES' },
@@ -30,12 +31,14 @@ describe('getOverviewStatsV2', () => {
     expect(stats.firstRow[2].header).toBeDefined();
     expect(React.isValidElement(stats.firstRow[2].header)).toBe(true);
     expect(stats.firstRow[3]).toEqual({ header: 'Monitor ID', value: monitorId });
-    expect(stats.secondRow).toHaveLength(1);
+    expect(stats.secondRow).toHaveLength(2);
     expect(stats.secondRow[0]).toEqual({ header: 'Description', value: 'Example description' });
+    expect(stats.secondRow[1]).toEqual({ header: 'Created by', value: 'creator' });
   });
 
   test('handles missing fields gracefully', () => {
     const stats = getOverviewStatsV2({}, 'id-1');
     expect(stats.secondRow[0]).toEqual({ header: 'Description', value: DEFAULT_EMPTY_DATA });
+    expect(stats.secondRow[1]).toEqual({ header: 'Created by', value: DEFAULT_EMPTY_DATA });
   });
 });
