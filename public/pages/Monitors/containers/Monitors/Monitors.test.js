@@ -13,10 +13,12 @@ import { historyMock, httpClientMock } from '../../../../../test/mocks';
 import { AlertingFakes, setupCoreStart } from '../../../../../test/utils/helpers';
 
 // Resource-sharing availability is probed per data source; default to none so
-// unrelated tests are unaffected, and drive it explicitly in the Access-column tests.
+// unrelated tests are unaffected, and drive it explicitly in the Access and
+// Created by column tests.
 jest.mock('../../../../services', () => ({
   ...jest.requireActual('../../../../services'),
   getResourceSharingAvailableTypes: jest.fn(() => Promise.resolve([])),
+  getResourceCreators: jest.fn(() => Promise.resolve(new Map())),
 }));
 
 const alertingFakes = new AlertingFakes('random seed');
@@ -562,5 +564,131 @@ describe('Monitors resource sharing Access column', () => {
     const columns = wrapper.instance().buildColumns();
     const accessColumn = columns.find((column) => column.name === 'Access');
     expect(accessColumn).toBeUndefined();
+  });
+});
+
+describe('Monitors resource sharing Created by column', () => {
+  const services = require('../../../../services');
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+    httpClientMock.get.mockResolvedValue({ ok: true, monitors: [], totalMonitors: 0 });
+    services.getResourceSharingAvailableTypes.mockImplementation(() => Promise.resolve([]));
+    services.getResourceCreators.mockImplementation(() => Promise.resolve(new Map()));
+  });
+
+  const flush = async () => {
+    await act(async () => {
+      await Promise.resolve();
+      await Promise.resolve();
+    });
+  };
+
+  const createdByColumn = (wrapper) =>
+    wrapper
+      .instance()
+      .buildColumns()
+      .find((column) => column.name === 'Created by');
+
+  test('fetches creators for the shared monitor and workflow types and renders them', async () => {
+    services.getResourceSharingAvailableTypes.mockImplementation(() =>
+      Promise.resolve(['monitor', 'workflow', 'other-type'])
+    );
+    services.getResourceCreators.mockImplementation(() =>
+      Promise.resolve(
+        new Map([
+          ['monitor-1', 'alice'],
+          ['workflow-1', 'bob'],
+        ])
+      )
+    );
+
+    const wrapper = getMountWrapper({ landingDataSourceId: 'ds-1' });
+    await flush();
+
+    expect(services.getResourceCreators).toHaveBeenCalledWith(['monitor', 'workflow'], 'ds-1');
+    const column = createdByColumn(wrapper);
+    expect(column).toBeDefined();
+    expect(column.sortable).toBe(false);
+    expect(column.render('monitor-1')).toBe('alice');
+    expect(column.render('workflow-1')).toBe('bob');
+  });
+
+  test('renders the empty placeholder for a monitor without a sharing record', async () => {
+    services.getResourceSharingAvailableTypes.mockImplementation(() =>
+      Promise.resolve(['monitor'])
+    );
+    services.getResourceCreators.mockImplementation(() =>
+      Promise.resolve(new Map([['monitor-1', 'alice']]))
+    );
+
+    const wrapper = getMountWrapper();
+    await flush();
+
+    expect(createdByColumn(wrapper).render('monitor-unknown')).toBe('-');
+  });
+
+  test('does not add the column or fetch creators when resource sharing is unavailable', async () => {
+    const wrapper = getMountWrapper();
+    await flush();
+
+    expect(createdByColumn(wrapper)).toBeUndefined();
+    expect(services.getResourceCreators).not.toHaveBeenCalled();
+  });
+
+  test('does not fetch creators when no monitor or workflow type is shared', async () => {
+    services.getResourceSharingAvailableTypes.mockImplementation(() =>
+      Promise.resolve(['other-type'])
+    );
+
+    const wrapper = getMountWrapper();
+    await flush();
+
+    expect(services.getResourceCreators).not.toHaveBeenCalled();
+    expect(createdByColumn(wrapper)).toBeUndefined();
+  });
+
+  test('discards creators that resolve after the data source has changed', async () => {
+    services.getResourceSharingAvailableTypes.mockImplementation(() =>
+      Promise.resolve(['monitor'])
+    );
+    let resolveDsA;
+    services.getResourceCreators.mockImplementation((types, dataSourceId) =>
+      dataSourceId === 'ds-a'
+        ? new Promise((resolve) => {
+            resolveDsA = resolve;
+          })
+        : Promise.resolve(new Map())
+    );
+
+    const wrapper = getMountWrapper({ landingDataSourceId: 'ds-a' });
+    await flush();
+    await act(async () => {
+      wrapper.setProps({ landingDataSourceId: 'ds-b' });
+    });
+    await flush();
+    await act(async () => {
+      resolveDsA(new Map([['monitor-1', 'alice']]));
+      await Promise.resolve();
+    });
+    wrapper.update();
+
+    expect(wrapper.instance().state.resourceCreators.dataSourceId).not.toBe('ds-a');
+    expect(wrapper.instance().state.resourceCreators.byId.has('monitor-1')).toBe(false);
+  });
+
+  test('does not render creators held for a different data source', async () => {
+    services.getResourceSharingAvailableTypes.mockImplementation(() =>
+      Promise.resolve(['monitor'])
+    );
+    const wrapper = getMountWrapper({ landingDataSourceId: 'ds-b' });
+    await flush();
+    await act(async () => {
+      wrapper.instance().setState({
+        resourceCreators: { dataSourceId: 'ds-a', byId: new Map([['monitor-1', 'alice']]) },
+      });
+    });
+
+    expect(createdByColumn(wrapper).render('monitor-1')).toBe('-');
   });
 });
