@@ -1,3 +1,8 @@
+/*
+ * Copyright OpenSearch Contributors
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 import { CompletionScope, Token } from './types';
 
 const isWordChar = (ch: string) =>
