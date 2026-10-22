@@ -18,6 +18,8 @@
     ".snap",
     ".less",
     ".git",
+    ".github",
+    ".cypress",
     ".gitignore",
     ".prettierrc",
     ".prettierignore",
