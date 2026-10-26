@@ -1007,6 +1007,10 @@ describe('resolvePeriodPlaceholders', () => {
         format: 'epoch_millis',
         extended_bounds: { min: '{{period_start}}', max: '{{period_end}}' },
       },
+      aggsNamedLikeBounds: {
+        from: { terms: { field: 'source' } },
+        format: { terms: { field: 'format' } },
+      },
     };
     const { result } = resolvePeriodPlaceholders(source, values, { dropFormat: true });
 
@@ -1018,6 +1022,7 @@ describe('resolvePeriodPlaceholders', () => {
       format: 'epoch_millis',
       extended_bounds: { min: 'START', max: 'END' },
     });
+    expect(result.aggsNamedLikeBounds).toEqual(source.aggsNamedLikeBounds);
   });
 
   test('keeps format when dropFormat is not set', () => {

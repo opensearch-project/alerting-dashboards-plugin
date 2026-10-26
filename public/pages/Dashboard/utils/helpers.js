@@ -256,7 +256,10 @@ export function resolvePeriodPlaceholders(source, values, { dropFormat = false }
     let hasReplacedBound = false;
     const result = _.mapValues(node, (child, key) => {
       const resolved = walk(child);
-      if (RANGE_BOUND_KEYS.includes(key) && resolved !== child) hasReplacedBound = true;
+      // walk rebuilds every object and array, so only a string bound can show a replacement
+      if (typeof child === 'string' && resolved !== child && RANGE_BOUND_KEYS.includes(key)) {
+        hasReplacedBound = true;
+      }
       return resolved;
     });
     if (dropFormat && hasReplacedBound) delete result.format;
