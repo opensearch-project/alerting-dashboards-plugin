@@ -3,7 +3,10 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+import React from 'react';
+import { render } from '@testing-library/react';
 import { AlertInsight } from './AlertInsight';
+import { getTime } from '../../pages/MonitorDetails/components/MonitorOverview/utils/getOverviewStats';
 import { getApplication, getAssistantDashboards, getClient } from '../../services';
 import { searchQuery } from '../../pages/Dashboard/utils/helpers';
 
@@ -54,26 +57,29 @@ const buildMonitor = (schedule, range = buildRange('{{period_start}}', '{{period
 
 const getRange = (queryString) => JSON.parse(queryString).query.bool.filter[0].range['@timestamp'];
 
-const getContextProvider = (monitor, lastNotificationTime = LAST_NOTIFICATION_TIME) => {
+const getContextProvider = (monitor, alertOverrides = {}) => {
   const registerIncontextInsight = jest.fn();
   getApplication.mockReturnValue({ capabilities: { assistant: { enabled: true } } });
   getAssistantDashboards.mockReturnValue({
     getFeatureStatus: () => ({ alertInsight: true }),
     registerIncontextInsight,
-    renderIncontextInsight: jest.fn(),
+    renderIncontextInsight: jest.fn(() => null),
   });
   getClient.mockReturnValue({ get: jest.fn().mockResolvedValue({ resp: monitor }) });
 
-  AlertInsight({
-    alert: {
-      monitor_id: 'monitor-id',
-      trigger_name: 'trigger',
-      start_time: LAST_NOTIFICATION_TIME,
-      last_notification_time: lastNotificationTime,
-    },
-    alertId: 'alert-id',
-    isAgentConfigured: true,
-  });
+  render(
+    <AlertInsight
+      alert={{
+        monitor_id: 'monitor-id',
+        trigger_name: 'trigger',
+        start_time: LAST_NOTIFICATION_TIME,
+        last_notification_time: LAST_NOTIFICATION_TIME,
+        ...alertOverrides,
+      }}
+      alertId="alert-id"
+      isAgentConfigured
+    />
+  );
 
   return registerIncontextInsight.mock.calls[0][0][0].contextProvider;
 };
@@ -87,7 +93,7 @@ describe('AlertInsight', () => {
     searchQuery.mockResolvedValue({ body: { hits: { total: { value: 3 } } } });
   });
 
-  test('searches the period of the run that raised the alert', async () => {
+  test('searches the interval that ends at the notification time', async () => {
     await getContextProvider(buildMonitor(interval))();
 
     expect(searchQuery).toHaveBeenCalledTimes(1);
@@ -105,6 +111,13 @@ describe('AlertInsight', () => {
     expect(range).not.toHaveProperty('format');
     expect(context).not.toContain('{{period_');
     expect(context).not.toContain('epoch_millis');
+  });
+
+  test('gives the summary the period in human-readable time', async () => {
+    const { context } = await getContextProvider(buildMonitor(interval))();
+
+    expect(context).toContain(`"from":"${getTime(LAST_NOTIFICATION_TIME - TEN_MINUTES)}"`);
+    expect(context).toContain(`"to":"${getTime(LAST_NOTIFICATION_TIME)}"`);
   });
 
   test('drops the format also when it is the last key of the range', async () => {
@@ -157,12 +170,19 @@ describe('AlertInsight', () => {
     expect(getRange(additionalInfo.dsl).to).toBe('2023-11-14T22:13:20+00:00');
   });
 
-  test('neither searches nor passes on dsl when the alert has no notification time', async () => {
-    const { additionalInfo } = await getContextProvider(buildMonitor(interval), null)();
+  test.each([null, undefined])(
+    'neither searches nor passes on dsl when the notification time is %p',
+    async (lastNotificationTime) => {
+      // Only {{period_end}}, so nothing but the missing notification time can leave it unresolved
+      const monitor = buildMonitor(interval, buildRange('{{period_end}}||-1h', '{{period_end}}'));
+      const { additionalInfo } = await getContextProvider(monitor, {
+        last_notification_time: lastNotificationTime,
+      })();
 
-    expect(searchQuery).not.toHaveBeenCalled();
-    expect(additionalInfo.dsl).toBe('');
-  });
+      expect(searchQuery).not.toHaveBeenCalled();
+      expect(additionalInfo.dsl).toBe('');
+    }
+  );
 
   test('still searches a cron monitor that only uses {{period_end}}', async () => {
     await getContextProvider(

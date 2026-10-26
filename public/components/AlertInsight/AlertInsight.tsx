@@ -98,8 +98,9 @@ export const AlertInsight: React.FC<AlertInsightProps> = (props: AlertInsightPro
       // 3.1 preprocess index, only support first index use case
       const search = monitorResp.resp.inputs[0].search;
       index = String(search.indices).split(',')[0]?.trim() || '';
-      // 3.2 resolve {{period_start}} and {{period_end}} for the run that raised the alert
-      // Alerts store no period, so the run's end is approximated by its notification time
+      // 3.2 resolve {{period_start}} and {{period_end}} for the latest run that updated the alert
+      // Alerts store no period, so that run's end is approximated by the notification time, which
+      // every run that keeps the alert active resets
       const periodEnd = Number.isFinite(alert.last_notification_time)
         ? alert.last_notification_time
         : null;
