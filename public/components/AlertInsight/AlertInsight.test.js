@@ -184,6 +184,15 @@ describe('AlertInsight', () => {
     }
   );
 
+  test('leaves {{period_start}} unresolved for an alert of a workflow run', async () => {
+    const { additionalInfo } = await getContextProvider(buildMonitor(interval), {
+      workflow_id: 'workflow-id',
+    })();
+
+    expect(searchQuery).not.toHaveBeenCalled();
+    expect(additionalInfo.dsl).toBe('');
+  });
+
   test('still searches a cron monitor that only uses {{period_end}}', async () => {
     await getContextProvider(
       buildMonitor(cron, buildRange('{{period_end}}||-1h', '{{period_end}}'))

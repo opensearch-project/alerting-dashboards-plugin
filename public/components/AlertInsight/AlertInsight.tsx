@@ -104,7 +104,11 @@ export const AlertInsight: React.FC<AlertInsightProps> = (props: AlertInsightPro
       const periodEnd = Number.isFinite(alert.last_notification_time)
         ? alert.last_notification_time
         : null;
-      const periodStart = getPeriodStart(monitorDefinition.schedule, periodEnd);
+      // A workflow runs its delegate monitors with the workflow's period, which the delegate's
+      // schedule does not give, so {{period_start}} stays unresolved for alerts of a workflow run
+      const periodStart = alert.workflow_id
+        ? null
+        : getPeriodStart(monitorDefinition.schedule, periodEnd);
       const withPeriod = (
         source: object,
         formatTime: (time: number) => number | string,
