@@ -130,7 +130,9 @@ export const isServerlessEnabled = () => {
  * plugin's resource-sharing framework (AlertingResourceSharingExtension).
  */
 export const MONITOR_RESOURCE_TYPE = 'monitor';
-export const ALERTING_WORKFLOW_RESOURCE_TYPE = 'workflow';
+// Alerting registers composite monitors as "alerting-workflow", not "workflow",
+// which is flow-framework's resource type in the same registry.
+export const ALERTING_WORKFLOW_RESOURCE_TYPE = 'alerting-workflow';
 
 /**
  * Resource-sharing types available on the given data source, gated on the
@@ -157,6 +159,48 @@ export const getResourceSharingAvailableTypes = async (
   } catch (e) {
     return [];
   }
+};
+
+/**
+ * Creators of the given resource types on the given data source, keyed by
+ * resource id, as recorded by the security plugin's resource-sharing framework
+ * when each resource was created. Covers only resources the current user can
+ * access. A type whose request fails is skipped, so its resources have no entry.
+ */
+export const getResourceCreators = async (
+  resourceTypes: string[],
+  resourceDataSourceId?: string
+): Promise<Map<string, string>> => {
+  const creators = new Map<string, string>();
+  try {
+    const http = getClient();
+    const dataSourceQuery = resourceDataSourceId ? { dataSourceId: resourceDataSourceId } : {};
+    const responses = await Promise.allSettled(
+      resourceTypes.map((resourceType) =>
+        http.get('/api/resource/list', { query: { resourceType, ...dataSourceQuery } })
+      )
+    );
+    responses.forEach((response) => {
+      if (response.status !== 'fulfilled') return;
+      const resources = (response.value as any)?.resources;
+      if (!Array.isArray(resources)) return;
+      resources.forEach((resource) => {
+        const resourceId = resource?.resource_id;
+        const creator = resource?.created_by?.user;
+        if (
+          typeof resourceId === 'string' &&
+          resourceId &&
+          typeof creator === 'string' &&
+          creator
+        ) {
+          creators.set(resourceId, creator);
+        }
+      });
+    });
+  } catch (e) {
+    // The HTTP client is not set (e.g. before app mount): no creator data.
+  }
+  return creators;
 };
 
 export const getUseUpdatedUx = () => {

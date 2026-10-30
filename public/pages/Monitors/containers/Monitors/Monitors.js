@@ -15,7 +15,7 @@ import MonitorEmptyPrompt from '../../components/MonitorEmptyPrompt';
 import { DEFAULT_PAGE_SIZE_OPTIONS, DEFAULT_QUERY_PARAMS } from './utils/constants';
 import { getURLQueryParams } from './utils/helpers';
 import { columns as staticColumns } from './utils/tableUtils';
-import { MONITOR_ACTIONS, MONITOR_TYPE } from '../../../../utils/constants';
+import { DEFAULT_EMPTY_DATA, MONITOR_ACTIONS, MONITOR_TYPE } from '../../../../utils/constants';
 import {
   backendErrorNotification,
   deleteMonitor,
@@ -32,6 +32,7 @@ import {
 import {
   ALERTING_WORKFLOW_RESOURCE_TYPE,
   getUseUpdatedUx,
+  getResourceCreators,
   getResourceSharingAvailableTypes,
   MONITOR_RESOURCE_TYPE,
 } from '../../../../services';
@@ -63,6 +64,7 @@ export default class Monitors extends Component {
       loadingMonitors: true,
       monitorItemsToDelete: undefined,
       resourceSharing: { dataSourceId: undefined, types: [] },
+      resourceCreators: { dataSourceId: undefined, byId: new Map(), checkedIds: new Set() },
     };
     this.getMonitors = _.debounce(this.getMonitors.bind(this), 500, { leading: true });
     this.onTableChange = this.onTableChange.bind(this);
@@ -102,9 +104,60 @@ export default class Monitors extends Component {
     // selection.
     const requestedDataSourceId = this.props.landingDataSourceId;
     const types = await getResourceSharingAvailableTypes(requestedDataSourceId);
-    if (requestedDataSourceId === this.props.landingDataSourceId) {
-      this.setState({ resourceSharing: { dataSourceId: requestedDataSourceId, types } });
+    if (requestedDataSourceId !== this.props.landingDataSourceId) return;
+    this.setState(
+      { resourceSharing: { dataSourceId: requestedDataSourceId, types } },
+      this.loadResourceCreators
+    );
+  };
+
+  // Runs after resource-sharing availability resolves and after every monitor
+  // list load. A monitor's creator never changes, so creators are re-fetched
+  // only when the current page shows a monitor not checked by the last fetch
+  // (e.g. one created since then), not on every search or page change.
+  loadResourceCreators = async () => {
+    const requestedDataSourceId = this.props.landingDataSourceId;
+    const { resourceSharing, resourceCreators, monitors } = this.state;
+    if (resourceSharing.dataSourceId !== requestedDataSourceId) return;
+
+    // Creators come from the resource-sharing records, so they are only
+    // available for the types shared on this data source.
+    const creatorTypes = resourceSharing.types.filter(
+      (type) => type === MONITOR_RESOURCE_TYPE || type === ALERTING_WORKFLOW_RESOURCE_TYPE
+    );
+    if (!creatorTypes.length) return;
+
+    const pageIds = monitors.map((monitor) => monitor.id);
+    const cacheValid = resourceCreators.dataSourceId === requestedDataSourceId;
+    if (cacheValid && pageIds.every((id) => resourceCreators.checkedIds.has(id))) return;
+
+    // The list load and the availability probe both call this on mount. Run one
+    // request at a time and re-check once afterwards, so calls made while a
+    // request is in flight are neither duplicated nor lost.
+    if (this.creatorsRequestPending) {
+      this.creatorsRecheckNeeded = true;
+      return;
     }
+    this.creatorsRequestPending = true;
+    const byId = await getResourceCreators(creatorTypes, requestedDataSourceId);
+    this.creatorsRequestPending = false;
+    const recheck = () => {
+      if (!this.creatorsRecheckNeeded) return;
+      this.creatorsRecheckNeeded = false;
+      this.loadResourceCreators();
+    };
+    if (requestedDataSourceId !== this.props.landingDataSourceId) {
+      recheck();
+      return;
+    }
+    // Remember the ids looked up, including those with no sharing record, so a
+    // monitor that has none (e.g. a composite monitor on 3.9) does not trigger
+    // a re-fetch on every list load.
+    const checkedIds = new Set([...byId.keys(), ...pageIds]);
+    this.setState(
+      { resourceCreators: { dataSourceId: requestedDataSourceId, byId, checkedIds } },
+      recheck
+    );
   };
 
   buildColumns() {
@@ -152,11 +205,26 @@ export default class Monitors extends Component {
       this.state.resourceSharing.dataSourceId === this.props.landingDataSourceId &&
       (this.state.resourceSharing.types.includes(MONITOR_RESOURCE_TYPE) ||
         this.state.resourceSharing.types.includes(ALERTING_WORKFLOW_RESOURCE_TYPE));
+    // Same staleness guard for creators fetched for a previous data source.
+    const creatorsById =
+      this.state.resourceCreators.dataSourceId === this.props.landingDataSourceId
+        ? this.state.resourceCreators.byId
+        : undefined;
 
     return [
       ...staticColumns,
       ...(resourceSharingAvailable
         ? [
+            {
+              // Not sortable: monitors are sorted server-side, and the creator
+              // lives in the security plugin's sharing record, not the monitor.
+              field: 'id',
+              name: 'Created by',
+              sortable: false,
+              truncateText: true,
+              textOnly: true,
+              render: (id) => creatorsById?.get(id) ?? DEFAULT_EMPTY_DATA,
+            },
             {
               // Resource-sharing SPI marker column: the centralized Share
               // button is mounted here by security-dashboards-plugin when
@@ -244,7 +312,7 @@ export default class Monitors extends Component {
         const legacyMonitors = Array.isArray(response?.monitors) ? response.monitors : [];
         const monitors = legacyMonitors;
         const totalMonitors = Number(response?.totalMonitors ?? legacyMonitors.length) || 0;
-        this.setState({ monitors, totalMonitors, selectedItems: [] });
+        this.setState({ monitors, totalMonitors, selectedItems: [] }, this.loadResourceCreators);
       }
     } catch (err) {
       console.error(err);
