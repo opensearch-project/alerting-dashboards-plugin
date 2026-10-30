@@ -32,10 +32,13 @@ describe('getResourceSharingAvailableTypes', () => {
     mockGet.mockImplementation(
       respondPerRoute(
         { enabled: true },
-        { types: [{ type: 'monitor' }, { type: 'workflow' }] }
+        { types: [{ type: 'monitor' }, { type: 'alerting-workflow' }] }
       )
     );
-    await expect(getResourceSharingAvailableTypes('ds-1')).resolves.toEqual(['monitor', 'workflow']);
+    await expect(getResourceSharingAvailableTypes('ds-1')).resolves.toEqual([
+      'monitor',
+      'alerting-workflow',
+    ]);
   });
 
   it('handles a bare array types response (no { types } wrapper)', async () => {
@@ -94,19 +97,19 @@ describe('getResourceCreators', () => {
           : listResponse({ resource_id: 'workflow-1', created_by: { user: 'bob' } })
       )
     );
-    const creators = await getResourceCreators(['monitor', 'workflow'], 'ds-1');
+    const creators = await getResourceCreators(['monitor', 'alerting-workflow'], 'ds-1');
     expect(Object.fromEntries(creators)).toEqual({ 'monitor-1': 'alice', 'workflow-1': 'bob' });
   });
 
   it('calls the list route once per type with the data source id', async () => {
     mockGet.mockResolvedValue(listResponse());
-    await getResourceCreators(['monitor', 'workflow'], 'ds-9');
+    await getResourceCreators(['monitor', 'alerting-workflow'], 'ds-9');
     expect(mockGet).toHaveBeenCalledTimes(2);
     expect(mockGet).toHaveBeenCalledWith('/api/resource/list', {
       query: { resourceType: 'monitor', dataSourceId: 'ds-9' },
     });
     expect(mockGet).toHaveBeenCalledWith('/api/resource/list', {
-      query: { resourceType: 'workflow', dataSourceId: 'ds-9' },
+      query: { resourceType: 'alerting-workflow', dataSourceId: 'ds-9' },
     });
   });
 
@@ -130,7 +133,7 @@ describe('getResourceCreators', () => {
         ? Promise.resolve(listResponse({ resource_id: 'monitor-1', created_by: { user: 'alice' } }))
         : Promise.reject(new Error('403'))
     );
-    const creators = await getResourceCreators(['monitor', 'workflow']);
+    const creators = await getResourceCreators(['monitor', 'alerting-workflow']);
     expect(Object.fromEntries(creators)).toEqual({ 'monitor-1': 'alice' });
   });
 
@@ -149,7 +152,7 @@ describe('getResourceCreators', () => {
           : { resources: 'not-an-array' }
       )
     );
-    const creators = await getResourceCreators(['monitor', 'workflow']);
+    const creators = await getResourceCreators(['monitor', 'alerting-workflow']);
     expect(Object.fromEntries(creators)).toEqual({ 'monitor-1': 'alice' });
   });
 

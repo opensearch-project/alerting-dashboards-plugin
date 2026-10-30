@@ -130,7 +130,9 @@ export const isServerlessEnabled = () => {
  * plugin's resource-sharing framework (AlertingResourceSharingExtension).
  */
 export const MONITOR_RESOURCE_TYPE = 'monitor';
-export const ALERTING_WORKFLOW_RESOURCE_TYPE = 'workflow';
+// Alerting registers composite monitors as "alerting-workflow", not "workflow",
+// which is flow-framework's resource type in the same registry.
+export const ALERTING_WORKFLOW_RESOURCE_TYPE = 'alerting-workflow';
 
 /**
  * Resource-sharing types available on the given data source, gated on the
