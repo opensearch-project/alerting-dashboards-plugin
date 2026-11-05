@@ -125,7 +125,7 @@ exports[`MonitorOverview renders 1`] = `
           <div
             style="word-wrap:break-word;overflow-wrap:break-word"
           >
-            -
+            Every 5 minutes
           </div>
         </div>
       </div>
