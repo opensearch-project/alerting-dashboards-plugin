@@ -85,6 +85,41 @@ describe('getScheduleFromMonitor', () => {
     ).toBe(`${uiMetadata.schedule.cronExpression}`);
   });
 
+  test('can get schedule from period when ui_metadata holds no schedule', () => {
+    expect(getScheduleFromMonitor({ ...periodMonitor, ui_metadata: { created_by: 'admin' } })).toBe(
+      `Every ${
+        periodMonitor.schedule.period.interval
+      } ${periodMonitor.schedule.period.unit.toLowerCase()}`
+    );
+  });
+
+  test('can get schedule from cron when ui_metadata holds no schedule', () => {
+    expect(getScheduleFromMonitor({ ...cronMonitor, ui_metadata: { created_by: 'admin' } })).toBe(
+      `${cronMonitor.schedule.cron.expression} ${cronMonitor.schedule.cron.timezone}`
+    );
+  });
+
+  test('can get frequency from a ui_metadata schedule that omits unrelated keys', () => {
+    expect(
+      getScheduleFromMonitor({
+        ui_metadata: { schedule: { frequency: 'daily', daily: 0, timezone: 'Asia/Kolkata' } },
+      })
+    ).toBe(`Every day around 12:00 am IST`);
+  });
+
+  test('falls back to the monitor schedule when the ui_metadata schedule is incomplete', () => {
+    expect(
+      getScheduleFromMonitor({
+        ...periodMonitor,
+        ui_metadata: { schedule: { frequency: 'interval' } },
+      })
+    ).toBe(
+      `Every ${
+        periodMonitor.schedule.period.interval
+      } ${periodMonitor.schedule.period.unit.toLowerCase()}`
+    );
+  });
+
   test('can render default when nothing matches', () => {
     expect(getScheduleFromMonitor({})).toBe(`-`);
   });

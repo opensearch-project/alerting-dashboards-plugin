@@ -18,25 +18,31 @@ export default function getScheduleFromMonitor(monitor) {
     So show period or cron in schedule (whichever exists)
   */
   try {
-    const uiMetadata = _.get(monitor, 'ui_metadata');
-    if (uiMetadata) {
+    // Check for the schedule itself, not for ui_metadata as a whole. ui_metadata can hold other keys
+    // while carrying no schedule, in which case the monitor's own schedule is the only source.
+    const uiSchedule = _.get(monitor, 'ui_metadata.schedule');
+    if (!_.isEmpty(uiSchedule)) {
       const {
         frequency,
-        period: { interval, unit },
+        period: { interval, unit } = {},
         daily,
         weekly,
-        monthly: { day },
+        monthly: { day } = {},
         cronExpression,
         timezone,
-      } = _.get(uiMetadata, 'schedule', {});
+      } = uiSchedule;
 
-      if (frequency === 'interval') {
+      // Each branch checks the fields it is about to read. A schedule that names a frequency but
+      // omits its fields would otherwise throw, and the catch below would return the placeholder
+      // instead of falling through to the monitor's own schedule.
+
+      if (frequency === 'interval' && unit) {
         return `Every ${interval} ${unit.toLowerCase()}`;
       }
-      if (frequency === 'daily') {
+      if (frequency === 'daily' && daily !== undefined) {
         return `Every day around ${moment.tz(timezone).hours(daily).minutes(0).format('h:mm a z')}`;
       }
-      if (frequency === 'weekly') {
+      if (frequency === 'weekly' && weekly && daily !== undefined) {
         const daysOfWeek = Object.entries(weekly)
           .filter(([day, checked]) => checked)
           .map(([day]) => day);
@@ -53,14 +59,14 @@ export default function getScheduleFromMonitor(monitor) {
           .minutes(0)
           .format('h:mm a z')}`;
       }
-      if (frequency === 'monthly') {
+      if (frequency === 'monthly' && day !== undefined && daily !== undefined) {
         return `Every month on the ${moment(day, 'DD').format('Do')} around ${moment
           .tz(timezone)
           .hours(daily)
           .minutes(0)
           .format('h:mm a z')}`;
       }
-      if (frequency === 'cronExpression') {
+      if (frequency === 'cronExpression' && cronExpression) {
         return cronExpression;
       }
     }
