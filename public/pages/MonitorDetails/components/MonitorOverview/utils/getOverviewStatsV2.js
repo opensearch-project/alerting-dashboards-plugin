@@ -53,6 +53,10 @@ export default function getOverviewStatsV2(monitor, monitorId, activeCount = 0) 
       header: 'Description',
       value: monitor.description || DEFAULT_EMPTY_DATA,
     },
+    {
+      header: 'Created by',
+      value: monitor.created_by || DEFAULT_EMPTY_DATA,
+    },
   ];
 
   return {

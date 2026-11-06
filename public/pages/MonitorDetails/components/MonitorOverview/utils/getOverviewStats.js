@@ -165,6 +165,10 @@ export default function getOverviewStats(
       value: getTime(monitor.last_update_time),
     },
     {
+      header: 'Created by',
+      value: monitor.created_by || DEFAULT_EMPTY_DATA,
+    },
+    {
       header: 'Monitor ID',
       value: monitorId,
     },
