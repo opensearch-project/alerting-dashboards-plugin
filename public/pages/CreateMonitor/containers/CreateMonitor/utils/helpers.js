@@ -8,7 +8,7 @@ import queryString from 'query-string';
 import { FORMIK_INITIAL_VALUES } from './constants';
 import monitorToFormik from './monitorToFormik';
 import { formikToMonitor } from './formikToMonitor';
-import { MONITOR_TYPE, OS_NOTIFICATION_PLUGIN } from '../../../../../utils/constants';
+import { MONITOR_TYPE, OS_AD_PLUGIN, OS_NOTIFICATION_PLUGIN } from '../../../../../utils/constants';
 import { initializeFromQueryParams } from './monitorQueryParams';
 import { backendErrorNotification, getDigitId } from '../../../../../utils/helpers';
 import {
@@ -24,6 +24,7 @@ import {
   getDataSourceId,
   getDataSourceQueryObj,
 } from '../../../../utils/helpers';
+
 import pplAlertingMonitorToFormik from './pplAlertingMonitorToFormik';
 
 export const getInitialValues = ({
@@ -183,7 +184,26 @@ export const reinitializeForDataSource = (initialValues, currentValues, dataSour
   };
 };
 
-export const getPlugins = async (httpClient) => {
+/**
+ * Whether Anomaly Detection is available on the selected data source, for when `_cat/plugins`
+ * doesn't list it: some data sources serve the AD API while `_cat/plugins` fails or doesn't
+ * report the plugin, which hid the anomaly detector monitor and turned the AD "Set up alerts" link
+ * into a generic form. The server's check is a `size: 0` detectors search that logs nothing, and
+ * counts "no detector yet" and "no permission to read detectors" as available.
+ */
+const probeAnomalyDetectionPlugin = async (httpClient) => {
+  try {
+    const response = await httpClient.get(
+      '../api/alerting/detectors/_available',
+      getDataSourceQueryObj()
+    );
+    return response?.available === true;
+  } catch {
+    return false;
+  }
+};
+
+const listPlugins = async (httpClient) => {
   try {
     const dataSourceQuery = getDataSourceQueryObj();
     const pluginsResponse = await httpClient.get('../api/alerting/_plugins', dataSourceQuery);
@@ -197,6 +217,17 @@ export const getPlugins = async (httpClient) => {
     console.error('There was a problem getting plugins list', e);
     return probeNotificationsPlugin(httpClient);
   }
+};
+
+export const getPlugins = async (httpClient) => {
+  // The AD check runs alongside the listing (one round trip, not one after another); its answer
+  // is used only when the listing doesn't include AD (or couldn't be read).
+  const [listed, adAvailable] = await Promise.all([
+    listPlugins(httpClient),
+    probeAnomalyDetectionPlugin(httpClient),
+  ]);
+  const plugins = Array.isArray(listed) ? listed : [];
+  return plugins.includes(OS_AD_PLUGIN) || !adAvailable ? plugins : [...plugins, OS_AD_PLUGIN];
 };
 
 export const prepareTriggers = ({

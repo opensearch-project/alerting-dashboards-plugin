@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 import { get } from 'lodash';
-import { mapKeysDeep, toCamel } from './utils/helpers';
+import { isIndexNotFoundError, mapKeysDeep, toCamel } from './utils/helpers';
 import { anomalyResultMapper } from './utils/adHelpers';
 import { MDSEnabledClientService } from './MDSEnabledClientService';
 import { DEFAULT_HEADERS } from './utils/constants';
@@ -38,6 +38,27 @@ export default class DestinationsService extends MDSEnabledClientService {
           resp: err.message,
         },
       });
+    }
+  };
+
+  /**
+   * Whether Anomaly Detection is available on the data source, for data sources whose
+   * `_cat/plugins` doesn't report it. A `size: 0` detectors search, and nothing is logged: on a
+   * cluster without AD this fails on every create-monitor visit. A missing AD config index (AD
+   * installed, no detector yet) and a permission error (AD installed, the user can't read
+   * detectors) both mean AD is there; anything else, such as "no handler found", means it isn't.
+   */
+  getAvailability = async (context, req, res) => {
+    try {
+      const client = await this.getClientBasedOnDataSource(context, req);
+      await client('alertingAD.searchDetectors', {
+        body: { size: 0, query: { match_all: {} } },
+        headers: DEFAULT_HEADERS,
+      });
+      return res.ok({ body: { ok: true, available: true } });
+    } catch (err) {
+      const available = isIndexNotFoundError(err) || err?.statusCode === 403;
+      return res.ok({ body: { ok: true, available } });
     }
   };
 

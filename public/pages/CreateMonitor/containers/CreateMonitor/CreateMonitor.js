@@ -78,16 +78,16 @@ export default class CreateMonitor extends Component {
   }
 
   componentDidMount() {
-    const { httpClient } = this.props;
-
-    const updatePlugins = async () => {
-      const newPlugins = await getPlugins(httpClient);
-      this.setState({ plugins: newPlugins });
-    };
-
-    updatePlugins();
+    this.updatePlugins();
     this.setSchedule();
   }
+
+  /** The selected data source's plugins; a later data source's answer wins over an earlier one. */
+  updatePlugins = async () => {
+    const requestId = (this.pluginsRequestId = (this.pluginsRequestId || 0) + 1);
+    const newPlugins = await getPlugins(this.props.httpClient);
+    if (requestId === this.pluginsRequestId) this.setState({ plugins: newPlugins });
+  };
 
   resetResponse() {
     this.setState({ response: null, performanceResponse: null });
@@ -180,6 +180,9 @@ export default class CreateMonitor extends Component {
 
   componentDidUpdate(prevProps) {
     if (isDataSourceChanged(prevProps, this.props)) {
+      // The plugin list (e.g. whether the anomaly detector option shows) belongs to the data
+      // source: look it up again for the new one.
+      this.updatePlugins();
       const mustang = isMustangDomain(this.props.landingDataSourceId);
       const monitorTypeOverrides = mustang
         ? { monitor_type: MONITOR_TYPE.PPL, searchType: SEARCH_TYPE.PPL }
@@ -316,6 +319,7 @@ export default class CreateMonitor extends Component {
                             values={values}
                             errors={errors}
                             touched={touched}
+                            plugins={plugins}
                             httpClient={httpClient}
                             location={location}
                             detectorId={this.props.detectorId}

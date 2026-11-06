@@ -28,6 +28,26 @@ describe('DefineMonitor', () => {
     expect(wrapper).toMatchSnapshot();
   });
 
+  describe('anomaly detection plugin', () => {
+    const adValues = { ...FORMIK_INITIAL_VALUES, searchType: 'ad' };
+    test("uses the parent's plugin list, without its own _plugins call", () => {
+      const wrapper = getShallowWrapper({
+        values: adValues,
+        plugins: ['opensearch-anomaly-detection'],
+      });
+      expect(httpClientMock.get).not.toHaveBeenCalledWith(
+        '../api/alerting/_plugins',
+        expect.anything()
+      );
+      // AD reported by the parent (e.g. through the AD check): no "not installed" warning.
+      expect(wrapper.instance().showPluginWarning()).toBe(false);
+    });
+    test('warns when the parent reports no AD', () => {
+      const wrapper = getShallowWrapper({ values: adValues, plugins: [] });
+      expect(wrapper.instance().showPluginWarning()).toBe(true);
+    });
+  });
+
   test('mounting should not call onQueryMappings or onRunQuery if not graph type', () => {
     const onQueryMappings = jest.spyOn(DefineMonitor.prototype, 'onQueryMappings');
     const onRunQuery = jest.spyOn(DefineMonitor.prototype, 'onRunQuery');

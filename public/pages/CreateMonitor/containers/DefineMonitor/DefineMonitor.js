@@ -66,6 +66,8 @@ const propTypes = {
   detectorId: PropTypes.object,
   notifications: PropTypes.object.isRequired,
   flyoutMode: PropTypes.string,
+  /** The data source's plugins, when the parent looked them up; otherwise fetched here. */
+  plugins: PropTypes.arrayOf(PropTypes.string),
 };
 const defaultProps = {
   errors: {},
@@ -256,6 +258,8 @@ class DefineMonitor extends Component {
 
   async getPlugins() {
     const { httpClient } = this.props;
+    // The parent already looked them up (including the anomaly detection check).
+    if (Array.isArray(this.props.plugins)) return;
     try {
       const dataSourceQuery = getDataSourceQueryObj();
       const pluginsResponse = await httpClient.get('../api/alerting/_plugins', dataSourceQuery);
@@ -835,10 +839,16 @@ class DefineMonitor extends Component {
     }
   }
 
+  /** The parent's plugin list when it passes one, else this component's own lookup. */
+  getPluginList() {
+    return Array.isArray(this.props.plugins) ? this.props.plugins : this.state.plugins;
+  }
+
   showPluginWarning() {
     const { values } = this.props;
-    const { plugins } = this.state;
-    return values.searchType === SEARCH_TYPE.AD && plugins.indexOf(OS_AD_PLUGIN) === -1;
+    return (
+      values.searchType === SEARCH_TYPE.AD && this.getPluginList().indexOf(OS_AD_PLUGIN) === -1
+    );
   }
 
   render() {

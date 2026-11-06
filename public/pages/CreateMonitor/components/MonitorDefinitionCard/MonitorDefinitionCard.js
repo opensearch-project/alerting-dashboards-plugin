@@ -36,7 +36,7 @@ const onChangeDefinition = (e, form, values) => {
   form.setFieldValue('preventVisualEditor', preventVisualEditor);
 };
 
-const MonitorDefinitionCard = ({ values, plugins, isServerless }) => {
+const MonitorDefinitionCard = ({ values, plugins }) => {
   const hasADPlugin = plugins.indexOf(OS_AD_PLUGIN) !== -1;
   let supportsADOption;
   switch (values.monitor_type) {
@@ -94,8 +94,10 @@ const MonitorDefinitionCard = ({ values, plugins, isServerless }) => {
             }}
           />
         </EuiFlexItem>
-        {/*// Only show the anomaly detector option when anomaly detection plugin is present, and for supporting monitors.*/}
-        {hasADPlugin && supportsADOption && !isServerless && (
+        {/* Only show the anomaly detector option when anomaly detection is available for the data
+            source (getPlugins also asks the AD API when _cat/plugins doesn't report it), and for
+            supporting monitors. */}
+        {hasADPlugin && supportsADOption && (
           <EuiFlexItem grow={false} style={{ width: `${MONITOR_DEFINITION_CARD_WIDTH}px` }}>
             <FormikCheckableCard
               name="searchTypeAD"
