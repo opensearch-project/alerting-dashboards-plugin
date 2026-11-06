@@ -54,6 +54,23 @@ const addDocumentsToTestIndex = (indexName = '', numOfDocs = 0) => {
   }
 };
 
+/*
+  Selects an option from an OUI combo box by clicking it.
+
+  Typing `value{downarrow}{enter}` sends the selection keys immediately, which can run before the
+  option list has been populated, for example while the index mapping lookup that fills the Field
+  options is still in flight. The typed text then stays in the box with nothing selected, and the
+  form reports the field as missing. Asserting on the option first lets Cypress retry until the
+  list is ready.
+*/
+const selectComboBoxOption = (comboBoxTestSubj, optionText) => {
+  cy.get(`[data-test-subj="${comboBoxTestSubj}"]`).type(optionText);
+  // Match the whole option, since `cy.contains` matches substrings and the filtered list can hold
+  // options the typed text is a prefix of, such as `message` and `message.keyword`.
+  const exactOption = new RegExp(`^\\s*${_.escapeRegExp(optionText)}\\s*$`);
+  cy.contains('[role="option"]', exactOption).click({ force: true });
+};
+
 const addQuery = ({ queryIndex = 0, queryName, queryField, operator, query, tags = [] }) => {
   // Add another query
   if (queryIndex > 0) cy.get('[data-test-subj="addDocLevelQueryButton"]').click({ force: true });
@@ -62,9 +79,7 @@ const addQuery = ({ queryIndex = 0, queryName, queryField, operator, query, tags
   cy.get(`[data-test-subj="documentLevelQuery_queryName${queryIndex}"]`).type(queryName);
 
   // Enter query field
-  cy.get(`[data-test-subj="documentLevelQuery_field${queryIndex}"]`).type(
-    `${queryField}{downarrow}{enter}`
-  );
+  selectComboBoxOption(`documentLevelQuery_field${queryIndex}`, queryField);
 
   // Select query operator
   cy.get(`[data-test-subj="documentLevelQuery_operator${queryIndex}"]`).select(operator);
@@ -235,10 +250,9 @@ describe('DocumentLevelMonitor', () => {
       );
 
       // Define the first condition
-      cy.get(
-        '[data-test-subj="documentLevelTriggerExpression_query_triggerDefinitions[0].triggerConditions.0"]'
-      ).type(
-        `${sampleDocumentLevelMonitor.inputs[0].doc_level_input.queries[0].tags[0]}{downarrow}{enter}`
+      selectComboBoxOption(
+        'documentLevelTriggerExpression_query_triggerDefinitions[0].triggerConditions.0',
+        sampleDocumentLevelMonitor.inputs[0].doc_level_input.queries[0].tags[0]
       );
 
       // Add another condition
@@ -249,10 +263,9 @@ describe('DocumentLevelMonitor', () => {
         '[data-test-subj="documentLevelTriggerExpression_andOr_triggerDefinitions[0].triggerConditions.1"]'
       ).type('or{enter}');
 
-      cy.get(
-        '[data-test-subj="documentLevelTriggerExpression_query_triggerDefinitions[0].triggerConditions.1"]'
-      ).type(
-        `${sampleDocumentLevelMonitor.inputs[0].doc_level_input.queries[0].name}{downarrow}{enter}`
+      selectComboBoxOption(
+        'documentLevelTriggerExpression_query_triggerDefinitions[0].triggerConditions.1',
+        sampleDocumentLevelMonitor.inputs[0].doc_level_input.queries[0].name
       );
 
       // TODO: Test with Notifications plugin
@@ -414,7 +427,7 @@ describe('DocumentLevelMonitor', () => {
         cy.get('[data-test-subj="documentLevelQuery_queryName3"]').type(newQueryName);
 
         // Enter query field
-        cy.get('[data-test-subj="documentLevelQuery_field3"]').type('message{downarrow}{enter}');
+        selectComboBoxOption('documentLevelQuery_field3', 'message');
 
         // Enter query operator
         cy.get('[data-test-subj="documentLevelQuery_operator3"]').type('is not{enter}');
@@ -440,9 +453,10 @@ describe('DocumentLevelMonitor', () => {
         cy.get('input[name="triggerDefinitions[0].name"]').type(newTriggerName);
 
         // Define the triggere condition
-        cy.get(
-          '[data-test-subj="documentLevelTriggerExpression_query_triggerDefinitions[0].triggerConditions.0"]'
-        ).type(`${newQueryName}{downarrow}{enter}`);
+        selectComboBoxOption(
+          'documentLevelTriggerExpression_query_triggerDefinitions[0].triggerConditions.0',
+          newQueryName
+        );
 
         // TODO: Test with Notifications plugin
 
