@@ -183,6 +183,7 @@ function CreateNew({ embeddable, flyoutMode, formikProps, history, setFlyout, de
             values={values}
             errors={errors}
             touched={touched}
+            plugins={plugins}
             httpClient={httpClient}
             location={location}
             detectorId={detectorId}

@@ -22,6 +22,13 @@ export default function (services, router, dataSourceEnabled) {
     anomalyDetectorService.getDetector
   );
 
+  router.get(
+    {
+      path: '/api/alerting/detectors/_available',
+      validate: { query: createValidateQuerySchema(dataSourceEnabled) },
+    },
+    anomalyDetectorService.getAvailability
+  );
   router.post(
     {
       path: '/api/alerting/detectors/_search',

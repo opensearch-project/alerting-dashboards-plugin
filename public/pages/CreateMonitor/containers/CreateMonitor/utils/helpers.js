@@ -185,18 +185,19 @@ export const reinitializeForDataSource = (initialValues, currentValues, dataSour
 };
 
 /**
- * Whether Anomaly Detection answers for the selected data source, for when `_cat/plugins` doesn't
- * list it: some data sources serve the AD API while `_cat/plugins` fails or doesn't report the
- * plugin, which hid the anomaly detector monitor and turned the AD "Set up alerts" link into a
- * generic form. Same call the detector picker makes; it answers `ok: false` when AD isn't there.
+ * Whether Anomaly Detection is available on the selected data source, for when `_cat/plugins`
+ * doesn't list it: some data sources serve the AD API while `_cat/plugins` fails or doesn't
+ * report the plugin, which hid the anomaly detector monitor and turned the AD "Set up alerts" link
+ * into a generic form. The server's check is a `size: 0` detectors search that logs nothing, and
+ * counts "no detector yet" and "no permission to read detectors" as available.
  */
 const probeAnomalyDetectionPlugin = async (httpClient) => {
   try {
-    const dataSourceQuery = getDataSourceQueryObj();
-    const response = await httpClient.post('../api/alerting/detectors/_search', {
-      query: dataSourceQuery?.query,
-    });
-    return response?.ok === true;
+    const response = await httpClient.get(
+      '../api/alerting/detectors/_available',
+      getDataSourceQueryObj()
+    );
+    return response?.available === true;
   } catch {
     return false;
   }
@@ -219,10 +220,14 @@ const listPlugins = async (httpClient) => {
 };
 
 export const getPlugins = async (httpClient) => {
-  const plugins = await listPlugins(httpClient);
-  // Not listed (or the listing failed): ask the AD API itself before reporting it missing.
-  if (plugins.includes(OS_AD_PLUGIN)) return plugins;
-  return (await probeAnomalyDetectionPlugin(httpClient)) ? [...plugins, OS_AD_PLUGIN] : plugins;
+  // The AD check runs alongside the listing (one round trip, not one after another); its answer
+  // is used only when the listing doesn't include AD (or couldn't be read).
+  const [listed, adAvailable] = await Promise.all([
+    listPlugins(httpClient),
+    probeAnomalyDetectionPlugin(httpClient),
+  ]);
+  const plugins = Array.isArray(listed) ? listed : [];
+  return plugins.includes(OS_AD_PLUGIN) || !adAvailable ? plugins : [...plugins, OS_AD_PLUGIN];
 };
 
 export const prepareTriggers = ({
