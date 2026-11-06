@@ -8,7 +8,7 @@ import queryString from 'query-string';
 import { FORMIK_INITIAL_VALUES } from './constants';
 import monitorToFormik from './monitorToFormik';
 import { formikToMonitor } from './formikToMonitor';
-import { MONITOR_TYPE, OS_NOTIFICATION_PLUGIN } from '../../../../../utils/constants';
+import { MONITOR_TYPE, OS_AD_PLUGIN, OS_NOTIFICATION_PLUGIN } from '../../../../../utils/constants';
 import { initializeFromQueryParams } from './monitorQueryParams';
 import { backendErrorNotification, getDigitId } from '../../../../../utils/helpers';
 import {
@@ -24,6 +24,7 @@ import {
   getDataSourceId,
   getDataSourceQueryObj,
 } from '../../../../utils/helpers';
+
 import pplAlertingMonitorToFormik from './pplAlertingMonitorToFormik';
 
 export const getInitialValues = ({
@@ -183,7 +184,25 @@ export const reinitializeForDataSource = (initialValues, currentValues, dataSour
   };
 };
 
-export const getPlugins = async (httpClient) => {
+/**
+ * Whether Anomaly Detection answers for the selected data source, for when `_cat/plugins` doesn't
+ * list it: some data sources serve the AD API while `_cat/plugins` fails or doesn't report the
+ * plugin, which hid the anomaly detector monitor and turned the AD "Set up alerts" link into a
+ * generic form. Same call the detector picker makes; it answers `ok: false` when AD isn't there.
+ */
+const probeAnomalyDetectionPlugin = async (httpClient) => {
+  try {
+    const dataSourceQuery = getDataSourceQueryObj();
+    const response = await httpClient.post('../api/alerting/detectors/_search', {
+      query: dataSourceQuery?.query,
+    });
+    return response?.ok === true;
+  } catch {
+    return false;
+  }
+};
+
+const listPlugins = async (httpClient) => {
   try {
     const dataSourceQuery = getDataSourceQueryObj();
     const pluginsResponse = await httpClient.get('../api/alerting/_plugins', dataSourceQuery);
@@ -197,6 +216,13 @@ export const getPlugins = async (httpClient) => {
     console.error('There was a problem getting plugins list', e);
     return probeNotificationsPlugin(httpClient);
   }
+};
+
+export const getPlugins = async (httpClient) => {
+  const plugins = await listPlugins(httpClient);
+  // Not listed (or the listing failed): ask the AD API itself before reporting it missing.
+  if (plugins.includes(OS_AD_PLUGIN)) return plugins;
+  return (await probeAnomalyDetectionPlugin(httpClient)) ? [...plugins, OS_AD_PLUGIN] : plugins;
 };
 
 export const prepareTriggers = ({

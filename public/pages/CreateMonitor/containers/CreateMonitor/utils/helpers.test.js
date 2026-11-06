@@ -4,7 +4,12 @@
  */
 
 import { getInitialValues, getPlugins, reinitializeForDataSource } from './helpers';
-import { MONITOR_TYPE, OS_NOTIFICATION_PLUGIN, SEARCH_TYPE } from '../../../../../utils/constants';
+import {
+  MONITOR_TYPE,
+  OS_AD_PLUGIN,
+  OS_NOTIFICATION_PLUGIN,
+  SEARCH_TYPE,
+} from '../../../../../utils/constants';
 import { setDataSource, setDataSourceEnabled } from '../../../../../services';
 
 const pplMonitorToEdit = {
@@ -185,7 +190,52 @@ describe('getPlugins', () => {
         .mockRejectedValueOnce(new Error('boom'))
         .mockRejectedValueOnce(new Error('boom')),
     };
-
     await expect(getPlugins(httpClient)).resolves.toEqual([]);
+  });
+
+  describe('anomaly detection', () => {
+    test('asks the AD API when _cat/plugins does not report AD, and reports it', async () => {
+      const httpClient = {
+        get: jest.fn().mockResolvedValue(okPlugins),
+        post: jest.fn().mockResolvedValue({ ok: true, detectors: [] }),
+      };
+      await expect(getPlugins(httpClient)).resolves.toEqual([
+        'opensearch-alerting',
+        'opensearch-notifications',
+        OS_AD_PLUGIN,
+      ]);
+      expect(httpClient.post.mock.calls[0][0]).toBe('../api/alerting/detectors/_search');
+    });
+
+    test('leaves AD out when the AD API does not answer either', async () => {
+      const httpClient = {
+        get: jest.fn().mockResolvedValue(okPlugins),
+        post: jest.fn().mockResolvedValue({ ok: false, resp: 'no handler found' }),
+      };
+      await expect(getPlugins(httpClient)).resolves.toEqual([
+        'opensearch-alerting',
+        'opensearch-notifications',
+      ]);
+    });
+
+    test('asks the AD API when the plugin list could not be read', async () => {
+      const httpClient = {
+        get: jest
+          .fn()
+          .mockResolvedValueOnce({ ok: false, resp: 'forbidden' })
+          .mockResolvedValueOnce({ availableChannels: {} }),
+        post: jest.fn().mockResolvedValue({ ok: true, detectors: [] }),
+      };
+      await expect(getPlugins(httpClient)).resolves.toEqual([OS_NOTIFICATION_PLUGIN, OS_AD_PLUGIN]);
+    });
+
+    test('does not probe when _cat/plugins already lists AD', async () => {
+      const httpClient = {
+        get: jest.fn().mockResolvedValue({ ok: true, resp: [{ component: OS_AD_PLUGIN }] }),
+        post: jest.fn(),
+      };
+      await expect(getPlugins(httpClient)).resolves.toEqual([OS_AD_PLUGIN]);
+      expect(httpClient.post).not.toHaveBeenCalled();
+    });
   });
 });

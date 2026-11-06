@@ -144,7 +144,7 @@ const MonitorDetails = ({
       {!flyoutMode && displayMonitorDefinitionCards ? (
         <div>
           <EuiSpacer size="m" />
-          <MonitorDefinitionCard values={values} plugins={plugins} isServerless={isServerless} />
+          <MonitorDefinitionCard values={values} plugins={plugins} />
         </div>
       ) : null}
 
