@@ -43,6 +43,10 @@ describe('getOverviewStats', () => {
         value: DEFAULT_EMPTY_DATA,
       },
       {
+        header: 'Created by',
+        value: DEFAULT_EMPTY_DATA,
+      },
+      {
         header: 'Monitor ID',
         value: monitorId,
       },
@@ -51,5 +55,13 @@ describe('getOverviewStats', () => {
         value: monitorVersion,
       },
     ]);
+  });
+
+  test('shows created_by when present', () => {
+    const stats = getOverviewStats({ enabled: true, created_by: 'creator' }, 'id-1', 1, 0);
+    expect(stats.find((s) => s.header === 'Created by')).toEqual({
+      header: 'Created by',
+      value: 'creator',
+    });
   });
 });

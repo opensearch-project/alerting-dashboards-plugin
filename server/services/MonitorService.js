@@ -364,7 +364,7 @@ export default class MonitorService extends MDSEnabledClientService {
       }
 
       const isAoss = await this.isUnsupportedEndpoint(context, req);
-      const monitorSorts = { name: 'monitor.name.keyword' };
+      const monitorSorts = { name: 'monitor.name.keyword', createdBy: 'monitor.created_by' };
       const monitorSortPageData = { size: 1000 };
       if (monitorSorts[sortField]) {
         monitorSortPageData.sort = [{ [monitorSorts[sortField]]: sortDirection }];
@@ -415,8 +415,11 @@ export default class MonitorService extends MDSEnabledClientService {
         } = result;
         const monitor = _source.monitor ? _source.monitor : _source;
         monitor['item_type'] = monitor.workflow_type || monitor.monitor_type;
-        const { name, enabled, item_type } = monitor;
-        return [id, { id, version, ifSeqNo, ifPrimaryTerm, name, enabled, item_type, monitor }];
+        const { name, enabled, item_type, created_by: createdBy } = monitor;
+        return [
+          id,
+          { id, version, ifSeqNo, ifPrimaryTerm, name, enabled, item_type, createdBy, monitor },
+        ];
       }, {});
       const monitorMap = new Map(monitorKeyValueTuples);
       const associatedCompositeMonitorCountMap = {};
