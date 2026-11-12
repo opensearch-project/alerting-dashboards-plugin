@@ -59,6 +59,7 @@ import { ContentManagementPluginStart } from '../../../src/plugins/content_manag
 import { registerAlertsCard } from './utils/helpers';
 import type { ExplorePluginSetup, ExplorePluginStart } from '../../../src/plugins/explore/public';
 import { CreateMonitorFlyout } from './components/CreateMonitorFlyout';
+import { isExploreQueryMonitorable } from './utils/explore_create_monitor_gate';
 import { CoreContext } from './utils/CoreContext';
 declare module '../../../src/plugins/ui_actions/public' {
   export interface ActionContextMapping {
@@ -336,6 +337,11 @@ export class AlertingPlugin
                 ResultStatus.ERROR,
               ];
               const isStatusAllowed = allowedStatuses.includes(deps.resultStatus.status);
+              // Explore hides the action when this is false. The flyout only builds PPL monitors
+              // on OpenSearch, so other datasets and languages don't get it.
+              if (!isExploreQueryMonitorable(deps.query as any)) {
+                return false;
+              }
 
               // Check if data source is AOSS collection - if so, disable the button
               const isAOSSCollection =

@@ -5,6 +5,7 @@
 
 import { coreMock } from '../../../src/core/public/mocks';
 import { AlertingPlugin } from './plugin';
+import { setApplication } from './services';
 
 jest.mock('@osd/monaco', () => ({
   monaco: {
@@ -160,5 +161,38 @@ describe('AlertingPlugin Explore "Create monitor" coordination', () => {
     await flushMicrotasks();
 
     expect(register).not.toHaveBeenCalled();
+  });
+
+  describe('when the action is offered', () => {
+    const READY = { status: 'ready' };
+    const enabledFor = async (query: any) => {
+      const { register, deps } = buildSetupDeps();
+      withCapabilities(coreSetup, { alertManagerEnabled: false });
+      new AlertingPlugin().setup(coreSetup, deps);
+      await flushMicrotasks();
+      const action = register.mock.calls.find(
+        (call) => call[0]?.id === 'alerting-create-monitor-from-explore'
+      )[0];
+      return action.getIsEnabled({ query, resultStatus: READY, queryInEditor: '' });
+    };
+    // PPL alerting on: the `pplV2` capability isPplAlertingEnabled reads.
+    beforeEach(() => {
+      setApplication({ capabilities: { alertingDashboards: { pplV2: true } } } as any);
+    });
+    afterEach(() => setApplication(undefined as any));
+
+    it('offers it for a PPL query on an index pattern', async () => {
+      expect(await enabledFor({ language: 'PPL', dataset: { type: 'INDEX_PATTERN' } })).toBe(true);
+    });
+
+    it("hides it for datasets and languages the flyout can't build a monitor from", async () => {
+      expect(await enabledFor({ language: 'PROMQL', dataset: { type: 'PROMETHEUS' } })).toBe(false);
+      expect(await enabledFor({ language: 'OTHER_QL', dataset: { type: 'OTHER_SOURCE' } })).toBe(
+        false
+      );
+      expect(await enabledFor({ language: 'kuery', dataset: { type: 'INDEX_PATTERN' } })).toBe(
+        false
+      );
+    });
   });
 });
