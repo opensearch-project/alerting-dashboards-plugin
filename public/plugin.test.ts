@@ -5,7 +5,9 @@
 
 import { coreMock } from '../../../src/core/public/mocks';
 import { AlertingPlugin } from './plugin';
+import type { ApplicationStart } from '../../../src/core/public';
 import { setApplication } from './services';
+import type { ExploreQueryLike } from './utils/explore_create_monitor_gate';
 
 jest.mock('@osd/monaco', () => ({
   monaco: {
@@ -165,7 +167,7 @@ describe('AlertingPlugin Explore "Create monitor" coordination', () => {
 
   describe('when the action is offered', () => {
     const READY = { status: 'ready' };
-    const enabledFor = async (query: any) => {
+    const enabledFor = async (query: ExploreQueryLike) => {
       const { register, deps } = buildSetupDeps();
       withCapabilities(coreSetup, { alertManagerEnabled: false });
       new AlertingPlugin().setup(coreSetup, deps);
@@ -177,9 +179,11 @@ describe('AlertingPlugin Explore "Create monitor" coordination', () => {
     };
     // PPL alerting on: the `pplV2` capability isPplAlertingEnabled reads.
     beforeEach(() => {
-      setApplication({ capabilities: { alertingDashboards: { pplV2: true } } } as any);
+      setApplication({
+        capabilities: { alertingDashboards: { pplV2: true } },
+      } as unknown as ApplicationStart);
     });
-    afterEach(() => setApplication(undefined as any));
+    afterEach(() => setApplication(undefined as unknown as ApplicationStart));
 
     it('offers it for a PPL query on an index pattern', async () => {
       expect(await enabledFor({ language: 'PPL', dataset: { type: 'INDEX_PATTERN' } })).toBe(true);

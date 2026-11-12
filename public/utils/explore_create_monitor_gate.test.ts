@@ -3,9 +3,11 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { isExploreQueryMonitorable } from './explore_create_monitor_gate';
-
-const ppl = (dataset: any) => ({ language: 'PPL', dataset });
+import { ExploreQueryLike, isExploreQueryMonitorable } from './explore_create_monitor_gate';
+const ppl = (dataset: ExploreQueryLike['dataset']): ExploreQueryLike => ({
+  language: 'PPL',
+  dataset,
+});
 
 describe('isExploreQueryMonitorable', () => {
   it('accepts PPL on index patterns and indexes of the local cluster', () => {
@@ -76,5 +78,33 @@ describe('isExploreQueryMonitorable', () => {
         })
       )
     ).toBe(false);
+  });
+  it('accepts PPL on AnalyticEngine data sources (pluggable data format domains)', () => {
+    expect(
+      isExploreQueryMonitorable(
+        ppl({
+          type: 'INDEXES',
+          dataSource: { id: 'ds', type: 'DATA_SOURCE', engineType: 'AnalyticEngine' },
+        })
+      )
+    ).toBe(true);
+    expect(
+      isExploreQueryMonitorable(
+        ppl({ type: 'INDEX_PATTERN', dataSource: { id: 'ds', type: 'AnalyticEngine' } })
+      )
+    ).toBe(true);
+  });
+
+  it('rejects an engine too old for PPL monitors, when the version is known', () => {
+    const on = (version?: string) =>
+      isExploreQueryMonitorable(
+        ppl({ type: 'INDEX_PATTERN', dataSource: { id: 'ds', type: 'OpenSearch', version } })
+      );
+    expect(on('3.4.1')).toBe(false);
+    expect(on('2.19.0')).toBe(false);
+    expect(on('3.5.0')).toBe(true);
+    expect(on('3.10.0-SNAPSHOT')).toBe(true);
+    // Unknown: the capability alone decides, as in the Alerting app.
+    expect(on(undefined)).toBe(true);
   });
 });

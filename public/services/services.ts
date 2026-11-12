@@ -108,11 +108,17 @@ export const isPplAlertingEnabled = () => {
 export const isPplAlertingSupportedByDataSource = () => {
   const metadata = getDataSourceMetadata();
   if (metadata?.dataSourceEngineType === 'OpenSearch Serverless') return true;
-  if (!metadata?.dataSourceVersion) return true;
-  return semver.gte(
-    semver.coerce(metadata.dataSourceVersion) || '0.0.0',
-    BASE_PPL_ALERTING_SUPPORTED_VERSION
-  );
+  return isPplAlertingSupportedByVersion(metadata?.dataSourceVersion);
+};
+
+/**
+ * Whether an engine version can run PPL monitors (BASE_PPL_ALERTING_SUPPORTED_VERSION or later).
+ * An unknown version is a yes, so the capability alone decides. Shared by the Alerting app's
+ * data source check and Explore's "Create monitor" gate.
+ */
+export const isPplAlertingSupportedByVersion = (version?: string): boolean => {
+  if (!version) return true;
+  return semver.gte(semver.coerce(version) || '0.0.0', BASE_PPL_ALERTING_SUPPORTED_VERSION);
 };
 
 /** PPL alerting is on for the deployment AND the selected data source can run it. */
