@@ -59,6 +59,7 @@ import { ContentManagementPluginStart } from '../../../src/plugins/content_manag
 import { registerAlertsCard } from './utils/helpers';
 import type { ExplorePluginSetup, ExplorePluginStart } from '../../../src/plugins/explore/public';
 import { CreateMonitorFlyout } from './components/CreateMonitorFlyout';
+import { isExploreQueryMonitorable } from './utils/explore_create_monitor_gate';
 import { CoreContext } from './utils/CoreContext';
 declare module '../../../src/plugins/ui_actions/public' {
   export interface ActionContextMapping {
@@ -294,10 +295,11 @@ export class AlertingPlugin
       // Defer registration until `getStartServices()` resolves so we can
       // read `capabilities.observability.alertManagerEnabled` and decide
       // whether dashboards-observability is owning the "Create monitor"
-      // entry on Explore. Explore's registry has no `isVisible` hook —
-      // only `getIsEnabled`, which greys out rather than hides — so the
-      // only way to avoid two duplicate menu entries is to skip
-      // `register()` entirely on the loser side. We're the loser when
+      // entry on Explore. Explore hides an action whose `getIsEnabled`
+      // returns false, but that is decided per query, while which plugin
+      // owns the entry is decided once from a capability. Two registered
+      // entries would both show for a query both accept, so the loser side
+      // skips `register()` entirely. We're the loser when
       // observability's capability is on; observability is the loser
       // when it's off.
       //
@@ -329,19 +331,20 @@ export class AlertingPlugin
               if (!isPplAlertingEnabled()) {
                 return false;
               }
+              // Explore hides the action when this is false. The flyout only builds PPL monitors
+              // on an OpenSearch engine, so other datasets, languages and data sources don't get
+              // it. Metrics (PromQL) rules come from dashboards-observability's own Explore
+              // action, not this one.
+              if (!isExploreQueryMonitorable(deps.query)) {
+                return false;
+              }
               // Allow monitor creation for READY, NO_RESULTS, and ERROR statuses
               const allowedStatuses = [
                 ResultStatus.READY,
                 ResultStatus.NO_RESULTS,
                 ResultStatus.ERROR,
               ];
-              const isStatusAllowed = allowedStatuses.includes(deps.resultStatus.status);
-
-              // Check if data source is AOSS collection - if so, disable the button
-              const isAOSSCollection =
-                deps.query?.dataset?.dataSource?.type === 'OpenSearch Serverless';
-
-              return isStatusAllowed && !isAOSSCollection;
+              return allowedStatuses.includes(deps.resultStatus.status);
             },
             getLabel: () => 'Create monitor',
             getIcon: () => 'bell',
