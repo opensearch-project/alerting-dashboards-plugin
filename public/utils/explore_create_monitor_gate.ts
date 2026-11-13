@@ -4,7 +4,6 @@
  */
 
 import { DEFAULT_DATA } from '../../../../src/plugins/data/common';
-import { isPplAlertingSupportedByVersion } from '../services/services';
 
 /**
  * Whether Explore's "Create monitor" action can build a monitor from a query. Its flyout creates a
@@ -15,9 +14,11 @@ import { isPplAlertingSupportedByVersion } from '../services/services';
  *
  * The Alerting app decides which data sources it lists with `dataSourceFilterFn` (saved object
  * attributes: version, installed plugins, the prefetched pluggable data format setting). An
- * Explore dataset carries none of those besides the version, so this gate works from what the
- * dataset has: the engine type and the version, through the same version check the app uses
- * (`isPplAlertingSupportedByVersion`).
+ * Explore dataset carries only the engine type and a version, so this gate works from the engine
+ * type. It doesn't check the version: the dataset's version is the one the data source saved
+ * object recorded at registration, which isn't refreshed after an upgrade (the Alerting app
+ * re-reads the live version for that reason), so it could hide the action on a cluster that can
+ * run PPL monitors.
  */
 
 const SUPPORTED_DATASET_TYPES: string[] = [
@@ -45,6 +46,7 @@ interface DataSourceLike {
   id?: string;
   type?: string;
   engineType?: string;
+  /** Not used by the gate (see the header); kept so Explore's data source fits this type. */
   version?: string;
 }
 
@@ -74,7 +76,5 @@ export const isExploreQueryMonitorable = (query?: ExploreQueryLike): boolean => 
   const dataset = query?.dataset;
   if (!dataset?.type || !SUPPORTED_DATASET_TYPES.includes(dataset.type)) return false;
   if (query?.language?.toUpperCase() !== SUPPORTED_LANGUAGE) return false;
-  if (!SUPPORTED_ENGINES.includes(engineOf(dataset.dataSource))) return false;
-  // An engine too old for PPL monitors would only fail the create request deep in the backend.
-  return isPplAlertingSupportedByVersion(dataset.dataSource?.version);
+  return SUPPORTED_ENGINES.includes(engineOf(dataset.dataSource));
 };

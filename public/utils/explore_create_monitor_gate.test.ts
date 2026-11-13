@@ -95,16 +95,15 @@ describe('isExploreQueryMonitorable', () => {
     ).toBe(true);
   });
 
-  it('rejects an engine too old for PPL monitors, when the version is known', () => {
-    const on = (version?: string) =>
-      isExploreQueryMonitorable(
-        ppl({ type: 'INDEX_PATTERN', dataSource: { id: 'ds', type: 'OpenSearch', version } })
-      );
-    expect(on('3.4.1')).toBe(false);
-    expect(on('2.19.0')).toBe(false);
-    expect(on('3.5.0')).toBe(true);
-    expect(on('3.10.0-SNAPSHOT')).toBe(true);
-    // Unknown: the capability alone decides, as in the Alerting app.
-    expect(on(undefined)).toBe(true);
+  // The dataset's version is the saved object's, recorded at registration and not refreshed after
+  // an upgrade, so the gate doesn't use it: a stale 2.x version must not hide the action.
+  it('ignores the data source version', () => {
+    for (const version of ['2.19.0', '3.4.1', '3.5.0', undefined]) {
+      expect(
+        isExploreQueryMonitorable(
+          ppl({ type: 'INDEX_PATTERN', dataSource: { id: 'ds', type: 'OpenSearch', version } })
+        )
+      ).toBe(true);
+    }
   });
 });
