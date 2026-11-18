@@ -3,7 +3,12 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { getResourceCreators, getResourceSharingAvailableTypes, setClient } from '../services';
+import {
+  getResourceCreator,
+  getResourceCreators,
+  getResourceSharingAvailableTypes,
+  setClient,
+} from '../services';
 
 const mockGet = jest.fn();
 
@@ -42,18 +47,13 @@ describe('getResourceSharingAvailableTypes', () => {
   });
 
   it('handles a bare array types response (no { types } wrapper)', async () => {
-    mockGet.mockImplementation(
-      respondPerRoute({ enabled: true }, [{ type: 'monitor' }])
-    );
+    mockGet.mockImplementation(respondPerRoute({ enabled: true }, [{ type: 'monitor' }]));
     await expect(getResourceSharingAvailableTypes()).resolves.toEqual(['monitor']);
   });
 
   it('filters out malformed type entries', async () => {
     mockGet.mockImplementation(
-      respondPerRoute(
-        { enabled: true },
-        { types: [{ type: 'monitor' }, {}, { type: '' }] }
-      )
+      respondPerRoute({ enabled: true }, { types: [{ type: 'monitor' }, {}, { type: '' }] })
     );
     await expect(getResourceSharingAvailableTypes()).resolves.toEqual(['monitor']);
   });
@@ -160,5 +160,42 @@ describe('getResourceCreators', () => {
     setClient(undefined as any);
     const creators = await getResourceCreators(['monitor']);
     expect(creators.size).toBe(0);
+  });
+});
+
+describe('getResourceCreator', () => {
+  beforeEach(() => {
+    mockGet.mockReset();
+    setClient({ get: mockGet } as any);
+  });
+
+  it('returns the creator from the sharing record and passes the data source id', async () => {
+    mockGet.mockResolvedValue({ sharing_info: { created_by: { user: 'alice' } } });
+    await expect(getResourceCreator('monitor-1', 'monitor', 'ds-1')).resolves.toBe('alice');
+    expect(mockGet).toHaveBeenCalledWith('/api/resource/view', {
+      query: { resourceId: 'monitor-1', resourceType: 'monitor', dataSourceId: 'ds-1' },
+    });
+  });
+
+  it('omits the data source id for the local cluster', async () => {
+    mockGet.mockResolvedValue({ sharing_info: { created_by: { user: 'alice' } } });
+    await getResourceCreator('monitor-1', 'monitor');
+    expect(mockGet).toHaveBeenCalledWith('/api/resource/view', {
+      query: { resourceId: 'monitor-1', resourceType: 'monitor' },
+    });
+  });
+
+  it('returns undefined for a missing or malformed creator', async () => {
+    mockGet.mockResolvedValueOnce({});
+    await expect(getResourceCreator('monitor-1', 'monitor')).resolves.toBeUndefined();
+    mockGet.mockResolvedValueOnce({ sharing_info: { created_by: { user: '' } } });
+    await expect(getResourceCreator('monitor-1', 'monitor')).resolves.toBeUndefined();
+    mockGet.mockResolvedValueOnce({ sharing_info: { created_by: { user: 42 } } });
+    await expect(getResourceCreator('monitor-1', 'monitor')).resolves.toBeUndefined();
+  });
+
+  it('returns undefined when the request fails', async () => {
+    mockGet.mockRejectedValue(new Error('403'));
+    await expect(getResourceCreator('monitor-1', 'monitor')).resolves.toBeUndefined();
   });
 });

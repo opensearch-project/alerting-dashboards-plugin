@@ -15,7 +15,8 @@ import MonitorEmptyPrompt from '../../components/MonitorEmptyPrompt';
 import { DEFAULT_PAGE_SIZE_OPTIONS, DEFAULT_QUERY_PARAMS } from './utils/constants';
 import { getURLQueryParams } from './utils/helpers';
 import { columns as staticColumns } from './utils/tableUtils';
-import { DEFAULT_EMPTY_DATA, MONITOR_ACTIONS, MONITOR_TYPE } from '../../../../utils/constants';
+import { getMonitorCreator } from '../../../../utils/monitorCreator';
+import { MONITOR_ACTIONS, MONITOR_TYPE } from '../../../../utils/constants';
 import {
   backendErrorNotification,
   deleteMonitor,
@@ -212,19 +213,17 @@ export default class Monitors extends Component {
         : undefined;
 
     return [
-      ...staticColumns,
+      ...staticColumns.map((column) =>
+        column.field === 'createdBy'
+          ? {
+              ...column,
+              render: (createdBy, item) =>
+                getMonitorCreator(item.monitor, creatorsById?.get(item.id)),
+            }
+          : column
+      ),
       ...(resourceSharingAvailable
         ? [
-            {
-              // Not sortable: monitors are sorted server-side, and the creator
-              // lives in the security plugin's sharing record, not the monitor.
-              field: 'id',
-              name: 'Created by',
-              sortable: false,
-              truncateText: true,
-              textOnly: true,
-              render: (id) => creatorsById?.get(id) ?? DEFAULT_EMPTY_DATA,
-            },
             {
               // Resource-sharing SPI marker column: the centralized Share
               // button is mounted here by security-dashboards-plugin when

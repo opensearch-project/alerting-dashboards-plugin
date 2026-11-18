@@ -8,6 +8,7 @@ import { EuiLink } from '@elastic/eui';
 import moment from 'moment';
 import { DEFAULT_EMPTY_DATA, MONITOR_TYPE } from '../../../../../utils/constants';
 import { getItemLevelType } from './helpers';
+import { getMonitorCreator } from '../../../../../utils/monitorCreator';
 
 const renderTime = (time) => {
   const momentTime = moment(time);
@@ -40,6 +41,15 @@ export const columns = [
     sortable: false,
     truncateText: false,
     render: (item_type) => getItemLevelType(item_type),
+  },
+  {
+    field: 'createdBy',
+    name: 'Created by',
+    sortable: true,
+    truncateText: true,
+    textOnly: true,
+    // Monitors.js adds the resource-sharing creator when resource sharing is enabled.
+    render: (createdBy, item) => getMonitorCreator(item.monitor),
   },
   {
     field: 'latestAlert',

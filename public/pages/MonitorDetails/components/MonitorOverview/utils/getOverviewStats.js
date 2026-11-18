@@ -8,6 +8,7 @@ import _ from 'lodash';
 import { EuiBadge, EuiLink } from '@elastic/eui';
 import moment from 'moment-timezone';
 import getScheduleFromMonitor from './getScheduleFromMonitor';
+import { getMonitorCreator } from '../../../../../utils/monitorCreator';
 import {
   DEFAULT_EMPTY_DATA,
   MONITOR_TYPE,
@@ -110,7 +111,8 @@ export default function getOverviewStats(
   detector,
   detectorId,
   localClusterName,
-  setFlyout
+  setFlyout,
+  resourceSharingCreator
 ) {
   const searchType = _.has(monitor, 'inputs[0].uri')
     ? SEARCH_TYPE.CLUSTER_METRICS
@@ -163,6 +165,10 @@ export default function getOverviewStats(
     {
       header: 'Last updated',
       value: getTime(monitor.last_update_time),
+    },
+    {
+      header: 'Created by',
+      value: getMonitorCreator(monitor, resourceSharingCreator),
     },
     {
       header: 'Monitor ID',

@@ -8,6 +8,7 @@ import moment from 'moment-timezone';
 import { EuiIcon, EuiToolTip } from '@elastic/eui';
 import getScheduleFromPplMonitor from './getScheduleFromPplMonitor';
 import { DEFAULT_EMPTY_DATA } from '../../../../../utils/constants';
+import { getMonitorCreator } from '../../../../../utils/monitorCreator';
 import { formatDuration } from '../../../../CreateMonitor/containers/CreateMonitor/utils/pplAlertingHelpers';
 
 const getTime = (time) => {
@@ -28,7 +29,12 @@ const getLastUpdatedHeader = () => {
   );
 };
 
-export default function getOverviewStatsV2(monitor, monitorId, activeCount = 0) {
+export default function getOverviewStatsV2(
+  monitor,
+  monitorId,
+  activeCount = 0,
+  resourceSharingCreator
+) {
   const firstRow = [
     {
       header: 'Total active alerts',
@@ -52,6 +58,10 @@ export default function getOverviewStatsV2(monitor, monitorId, activeCount = 0) 
     {
       header: 'Description',
       value: monitor.description || DEFAULT_EMPTY_DATA,
+    },
+    {
+      header: 'Created by',
+      value: getMonitorCreator(monitor, resourceSharingCreator),
     },
   ];
 
