@@ -3,6 +3,7 @@
     "package.json",
     "yarn.lock",
     ".yarnrc",
+    "scripts/extract_zip_shim/**",
     "{lib,server,webpackShims,translations,utils}/**/*",
     "!test",
     "!__tests__"

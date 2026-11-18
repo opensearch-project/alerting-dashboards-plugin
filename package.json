@@ -30,6 +30,7 @@
     "@cfaester/enzyme-adapter-react-18": "^0.8.0",
     "@elastic/elastic-eslint-config-kibana": "link:../../packages/opensearch-eslint-config-opensearch-dashboards",
     "@elastic/eslint-import-resolver-kibana": "link:../../packages/osd-eslint-import-resolver-opensearch-dashboards",
+    "@electron-internal/extract-zip": "^1.0.8",
     "cypress": "^13.6.0",
     "husky": "^8.0.3",
     "lint-staged": "^15.2.10"
@@ -45,7 +46,8 @@
   "resolutions": {
     "ansi-regex": "^5.0.1",
     "qs": "^6.16.0",
-    "**/@cypress/request/uuid": "^11.1.1"
+    "**/@cypress/request/uuid": "^11.1.1",
+    "**/extract-zip": "file:./scripts/extract_zip_shim"
   },
   "engines": {
     "yarn": "^1.21.1"
