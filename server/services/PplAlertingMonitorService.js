@@ -56,7 +56,10 @@ const toEngineMonitorBody = (body) => {
   if (pplMon.look_back_window_minutes !== undefined)
     engineMonitor.look_back_window_minutes = pplMon.look_back_window_minutes;
   if (pplMon.timestamp_field !== undefined) engineMonitor.timestamp_field = pplMon.timestamp_field;
-  if (body?.look_back_window_minutes !== undefined && engineMonitor.look_back_window_minutes === undefined)
+  if (
+    body?.look_back_window_minutes !== undefined &&
+    engineMonitor.look_back_window_minutes === undefined
+  )
     engineMonitor.look_back_window_minutes = body.look_back_window_minutes;
   if (body?.timestamp_field !== undefined && engineMonitor.timestamp_field === undefined)
     engineMonitor.timestamp_field = body.timestamp_field;
@@ -164,7 +167,7 @@ export default class PplAlertingMonitorService extends MDSEnabledClientService {
       normalized.dataSourceId = dataSourceId;
     }
 
-    const monitorIdValue = Array.isArray(monitorIds) ? monitorIds[0] : monitorIds ?? monitorId;
+    const monitorIdValue = Array.isArray(monitorIds) ? monitorIds[0] : (monitorIds ?? monitorId);
     if (monitorIdValue) normalized.monitorId = String(monitorIdValue);
 
     return normalized;
@@ -316,7 +319,7 @@ export default class PplAlertingMonitorService extends MDSEnabledClientService {
         should.push({ term: { 'workflow.enabled': enabled } });
       }
 
-      const monitorSorts = { name: 'monitor.name.keyword' };
+      const monitorSorts = { name: 'monitor.name.keyword', createdBy: 'monitor.created_by' };
       const isAoss = await this.isUnsupportedEndpoint(context, req);
       const monitorSortPageData = { size: isAoss ? 100 : 1000 };
 
@@ -405,6 +408,7 @@ export default class PplAlertingMonitorService extends MDSEnabledClientService {
             name,
             enabled,
             item_type,
+            createdBy: monitor.created_by,
             monitor,
           },
         ];

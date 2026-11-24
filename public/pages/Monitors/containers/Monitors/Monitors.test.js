@@ -598,6 +598,10 @@ describe('Monitors resource sharing Created by column', () => {
       .buildColumns()
       .find((column) => column.name === 'Created by');
 
+  // Renders the column for a list item the way EuiBasicTable does: (field value, item).
+  const renderCreator = (wrapper, id, monitor = {}) =>
+    createdByColumn(wrapper).render(monitor.created_by, { id, monitor });
+
   test('fetches creators for the shared monitor and workflow types and renders them', async () => {
     services.getResourceSharingAvailableTypes.mockImplementation(() =>
       Promise.resolve(['monitor', 'alerting-workflow', 'other-type'])
@@ -618,11 +622,10 @@ describe('Monitors resource sharing Created by column', () => {
       ['monitor', 'alerting-workflow'],
       'ds-1'
     );
-    const column = createdByColumn(wrapper);
-    expect(column).toBeDefined();
-    expect(column.sortable).toBe(false);
-    expect(column.render('monitor-1')).toBe('alice');
-    expect(column.render('workflow-1')).toBe('bob');
+    // Sorted server-side on monitor.created_by.
+    expect(createdByColumn(wrapper).sortable).toBe(true);
+    expect(renderCreator(wrapper, 'monitor-1')).toBe('alice');
+    expect(renderCreator(wrapper, 'workflow-1')).toBe('bob');
   });
 
   test('renders the empty placeholder for a monitor without a sharing record', async () => {
@@ -636,15 +639,36 @@ describe('Monitors resource sharing Created by column', () => {
     const wrapper = getMountWrapper();
     await flush();
 
-    expect(createdByColumn(wrapper).render('monitor-unknown')).toBe('-');
+    expect(renderCreator(wrapper, 'monitor-unknown')).toBe('-');
   });
 
-  test('does not add the column or fetch creators when resource sharing is unavailable', async () => {
+  test('does not fetch creators when resource sharing is unavailable', async () => {
     const wrapper = getMountWrapper();
     await flush();
 
-    expect(createdByColumn(wrapper)).toBeUndefined();
     expect(services.getResourceCreators).not.toHaveBeenCalled();
+    expect(renderCreator(wrapper, 'monitor-1', { created_by: 'carol' })).toBe('carol');
+  });
+
+  test('prefers the sharing record, then created_by, then ui_metadata.created_by', async () => {
+    services.getResourceSharingAvailableTypes.mockImplementation(() =>
+      Promise.resolve(['monitor'])
+    );
+    services.getResourceCreators.mockImplementation(() =>
+      Promise.resolve(new Map([['monitor-1', 'alice']]))
+    );
+
+    const wrapper = getMountWrapper({ landingDataSourceId: 'ds-1' });
+    await settle();
+
+    const monitor = { created_by: 'carol', ui_metadata: { created_by: 'dave' } };
+    expect(renderCreator(wrapper, 'monitor-1', monitor)).toBe('alice');
+    // No sharing record for this monitor: fall back to the monitor's own fields.
+    expect(renderCreator(wrapper, 'monitor-2', monitor)).toBe('carol');
+    expect(renderCreator(wrapper, 'monitor-2', { ui_metadata: { created_by: 'dave' } })).toBe(
+      'dave'
+    );
+    expect(renderCreator(wrapper, 'monitor-2')).toBe('-');
   });
 
   test('does not fetch creators when no monitor or workflow type is shared', async () => {
@@ -656,7 +680,9 @@ describe('Monitors resource sharing Created by column', () => {
     await flush();
 
     expect(services.getResourceCreators).not.toHaveBeenCalled();
-    expect(createdByColumn(wrapper)).toBeUndefined();
+    expect(renderCreator(wrapper, 'monitor-1', { ui_metadata: { created_by: 'dave' } })).toBe(
+      'dave'
+    );
   });
 
   test('discards creators that resolve after the data source has changed', async () => {
@@ -704,7 +730,7 @@ describe('Monitors resource sharing Created by column', () => {
       });
     });
 
-    expect(createdByColumn(wrapper).render('monitor-1')).toBe('-');
+    expect(renderCreator(wrapper, 'monitor-1')).toBe('-');
   });
 
   test('re-fetches creators when a list load shows a monitor not checked before', async () => {
@@ -747,7 +773,7 @@ describe('Monitors resource sharing Created by column', () => {
     await settle();
 
     expect(services.getResourceCreators).toHaveBeenCalledTimes(2);
-    expect(createdByColumn(wrapper).render('monitor-2')).toBe('bob');
+    expect(renderCreator(wrapper, 'monitor-2')).toBe('bob');
   });
 
   test('does not re-fetch creators when every monitor on the page was already checked', async () => {
@@ -783,6 +809,6 @@ describe('Monitors resource sharing Created by column', () => {
     await settle();
 
     expect(services.getResourceCreators).toHaveBeenCalledTimes(1);
-    expect(createdByColumn(wrapper).render('monitor-2')).toBe('-');
+    expect(renderCreator(wrapper, 'monitor-2')).toBe('-');
   });
 });

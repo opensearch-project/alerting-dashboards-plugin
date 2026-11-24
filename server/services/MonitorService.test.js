@@ -102,4 +102,46 @@ describe('MonitorService.getMonitors', () => {
     expect(sent).toEqual(buildNameSearchQuery('agentqa-run-s003'));
     expect(JSON.stringify(sent)).not.toContain('query_string');
   });
+
+  test('sorts on the created_by keyword field when sorting by createdBy', async () => {
+    const client = jest.fn();
+    emptyListResponses(client);
+    const service = buildService(client);
+
+    await service.getMonitors(
+      {},
+      { query: { ...baseQuery, search: '', sortField: 'createdBy', sortDirection: 'desc' } },
+      buildRes()
+    );
+
+    expect(client.mock.calls[0][1].body.sort).toEqual([{ 'monitor.created_by': 'desc' }]);
+  });
+
+  test('returns createdBy for each monitor and undefined when absent', async () => {
+    const client = jest.fn();
+    client
+      .mockResolvedValueOnce({
+        hits: {
+          total: { value: 2 },
+          hits: [
+            {
+              _id: 'm1',
+              _source: {
+                monitor: { name: 'a', monitor_type: 'query_level_monitor', created_by: 'creator' },
+              },
+            },
+            { _id: 'm2', _source: { workflow: { name: 'b', workflow_type: 'composite' } } },
+          ],
+        },
+        aggregations: {},
+      })
+      .mockResolvedValueOnce({ aggregations: { uniq_monitor_ids: { buckets: [] } } });
+    const service = buildService(client);
+
+    const res = await service.getMonitors({}, { query: { ...baseQuery, search: '' } }, buildRes());
+
+    const byId = Object.fromEntries(res.body.monitors.map((m) => [m.id, m]));
+    expect(byId.m1.createdBy).toBe('creator');
+    expect(byId.m2.createdBy).toBeUndefined();
+  });
 });
