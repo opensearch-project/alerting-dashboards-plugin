@@ -25,11 +25,16 @@ export function getTypeFromMappings(mappings, dataTypes, path = '') {
   // Example structures of index mappings:
   // properties: { "field_name":{"properties": ...} }
   // properties: { "field_name":{"type": "text"} }
+  // properties: { "field_name":{"type": "text", "fields": ...} }
   if (shouldSkip(mappings)) return dataTypes;
   // if there are properties then type is inherently an object
   if (mappings.properties) {
     getFieldsFromProperties(mappings.properties, dataTypes, path);
     return dataTypes;
+  }
+  // if there are fields then this type has subfields
+  if (mappings.fields) {
+    getFieldsFromProperties(mappings.fields, dataTypes, path);
   }
 
   const type = mappings.type;
